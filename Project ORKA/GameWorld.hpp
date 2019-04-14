@@ -3,20 +3,44 @@
 #include <vector>
 #include "Sky.hpp"
 
-class Triangle {
+class Component {
 public:
-	std::vector<glm::vec2> vertecies;
-	
-	Triangle(){
-		vertecies.push_back(glm::vec2(-1.0f, -1.0f));
-		vertecies.push_back(glm::vec2(-1.0f, +1.0f));
-		vertecies.push_back(glm::vec2(+1.0f, +0.0f));
-	};
+	std::string componentType = "empty";
+};
+
+class MeshComponent : public Component {
+public:
+	std::string path = "";
+	MeshComponent(std::string path) : path(path) {
+		componentType = "mesh";
+	}
+};
+
+class Entity {
+public:
+	std::vector<Component *> components;
+	~Entity() {
+		for (int i = 0; i < components.size(); i++) {
+			delete components[i];
+		}
+		components.clear();
+	}
+};
+
+class Triangle : public Entity {
+public:
+	Triangle() {
+		Component * tmp = new MeshComponent("objects/triangle");
+		components.push_back(tmp);
+	}
 };
 
 class GameWorld {
 public:
 	Sky sky;
-	Triangle triangle;
+	std::vector<Entity *> entities;
+	GameWorld() {
+		Entity * tmp = new Triangle;
+		entities.push_back(tmp);
+	}
 };
-
