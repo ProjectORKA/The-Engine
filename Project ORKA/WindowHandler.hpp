@@ -32,15 +32,15 @@ public:
 
 		glfwSetErrorCallback(whenGLFWThrowsError);
 
-		addWindow();
-		addWindow();
+		addWindow(renderingSystem);
+		addWindow(renderingSystem);
 	}
 	~WindowHandler() {
 		glfwTerminate();
 	}
-	void addWindow() {
+	void addWindow(RenderingSystem & renderingSystem) {
 		debugPrint("Adding Window...");
-		Window * tmp = new Window;
+		Window * tmp = new Window(renderingSystem);
 		windows.push_back(tmp);
 	}
 	void update() {
@@ -54,7 +54,7 @@ public:
 	};
 	void render() {
 		for (int i = 0; i < windows.size(); i++) {
-			windows[i]->render(renderingSystem);
+			windows[i]->render();
 		}
 
 	}

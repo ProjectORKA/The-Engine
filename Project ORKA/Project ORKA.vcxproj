@@ -27,6 +27,7 @@
   <ItemGroup>
     <ClInclude Include="Debug.hpp" />
     <ClInclude Include="GameWorld.hpp" />
+    <ClInclude Include="Input.hpp" />
     <ClInclude Include="Program.hpp" />
     <ClInclude Include="RenderingSystem.hpp" />
     <ClInclude Include="Sky.hpp" />
