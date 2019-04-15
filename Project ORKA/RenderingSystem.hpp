@@ -30,7 +30,8 @@ public:
 	RenderingSystem(GameWorld & gameWorld) : gameWorld(gameWorld) {
 
 	}
-	void render() {
+	void render(int width, int height) {
+		glViewport(0, 0, width, height);
 		renderSky(gameWorld.sky);
 		renderEntities(gameWorld.entities);
 	}
