@@ -16,7 +16,7 @@ public:
 	unsigned int antiAliasing;
 	WindowSettings() {
 		title = "Project ORKA"; //mountain strike
-		fullScreen = false;
+		fullScreen = true;
 		width = 1600;
 		height = 900;
 		antiAliasing = 4;
@@ -81,9 +81,8 @@ public:
 		//glfwSetInputMode(glfwWindow, GLFW_STICKY_MOUSE_BUTTONS, GL_TRUE);		   [TODO] check for bugs related to this
 		setWindowCallbacks();
 		glfwShowWindow(glfwWindow);
-
-		glfwMaximizeWindow(glfwWindow);
 		if (settings.fullScreen) {
+			settings.fullScreen = false;
 			toggleFullscreen();
 		}
 	}
@@ -93,6 +92,18 @@ public:
 		renderingSystem.render(settings.width, settings.height);
 		glfwSwapBuffers(glfwWindow);
 	}
+	void inputs() {
+		glfwMakeContextCurrent(glfwWindow);
+
+		input.forward.set(glfwGetKey(glfwWindow, GLFW_KEY_W) == GLFW_PRESS);
+		input.backward.set(glfwGetKey(glfwWindow, GLFW_KEY_S) == GLFW_PRESS);
+		input.right.set(glfwGetKey(glfwWindow, GLFW_KEY_D) == GLFW_PRESS);
+		input.left.set(glfwGetKey(glfwWindow, GLFW_KEY_A) == GLFW_PRESS);
+		input.down.set(glfwGetKey(glfwWindow, GLFW_KEY_Q) == GLFW_PRESS);
+		input.up.set(glfwGetKey(glfwWindow, GLFW_KEY_E) == GLFW_PRESS);
+		input.escape.set(glfwGetKey(glfwWindow, GLFW_KEY_ESCAPE) == GLFW_PRESS || glfwWindowShouldClose(glfwWindow));
+		input.wireframe.set(glfwGetKey(glfwWindow, GLFW_KEY_F) == GLFW_PRESS);
+	};
 	void setWindowHints() {
 		glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
 		glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);

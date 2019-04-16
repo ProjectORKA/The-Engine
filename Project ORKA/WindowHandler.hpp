@@ -33,7 +33,7 @@ public:
 		glfwSetErrorCallback(whenGLFWThrowsError);
 
 		addWindow(renderingSystem);
-		addWindow(renderingSystem);
+		//addWindow(renderingSystem);
 	}
 	~WindowHandler() {
 		glfwTerminate();
@@ -46,6 +46,7 @@ public:
 	void update() {
 		glfwPollEvents();
 		for (int i = 0; i < windows.size(); i++) {
+			windows[i]->inputs();
 			if (glfwWindowShouldClose(windows[i]->glfwWindow)) {
 				delete windows[i];
 				windows.erase(windows.begin() + i);
