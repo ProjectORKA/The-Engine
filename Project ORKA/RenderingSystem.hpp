@@ -5,6 +5,8 @@
 
 #define GLEW_STATIC
 #include "GL/glew.h"
+#include "glm/glm.hpp"
+#include "glm/gtc/matrix_transform.hpp"
 #include "GameWorld.hpp"
 
 class Mesh {
@@ -27,39 +29,47 @@ public:
 class RenderingSystem {
 public:
 	GameWorld & gameWorld;
+
+
 	RenderingSystem(GameWorld & gameWorld) : gameWorld(gameWorld) {
 
 	}
 	void render(int width, int height) {
 		glViewport(0, 0, width, height);
+		//matrices stuff
+			// -> camera settings stuff
+		glm::mat4 projectionMatrix;
+		
+			// -> camera transformation stuff
+		glm::mat4 viewMatrix;
+		
+			// -> model Stuff
+		glm::mat4 modelMatrix;
+		projectionMatrix = glm::perspective(glm::radians(45.0f), 4.0f / 3.0f, 0.1f, 100.f);
+
 		renderSky(gameWorld.sky);
 		renderEntities(gameWorld.entities);
 	}
-
 	void renderSky(Sky & sky) {
 		glClearColor(sky.skyColor.r, sky.skyColor.g, sky.skyColor.b, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 	}
-
 	void renderEntities(std::vector<Entity *> & entities) {
 		for (int i = 0; i < entities.size(); i++) {
 			renderEntity(*entities[i]);
 		}
 	}
-
 	void renderEntity(Entity & entity){
 		for (int i = 0; i < entity.components.size(); i++) {
 			renderComponents(entity.components[i]);
 		}
 	}
-
 	void renderComponents(Component * component){
 		if (component->componentType == "mesh") {
 			std::string path = static_cast<MeshComponent *>(component)->path;
 			renderMesh(path);
 		}
 	}
-
 	void renderMesh(std::string path) {
 		Mesh t;
 		t.render();
