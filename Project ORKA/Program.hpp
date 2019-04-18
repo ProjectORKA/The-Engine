@@ -15,6 +15,7 @@ public:
 		//Update Loop
 		while (windowHandler.windows.size() > 0) {
 			windowHandler.update();
+
 			windowHandler.render();
 		}
 	}

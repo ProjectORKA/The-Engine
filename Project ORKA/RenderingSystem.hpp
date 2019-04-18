@@ -51,7 +51,7 @@ public:
 		renderEntities(gameWorld.entities);
 	}
 	void renderSky(Sky & sky) {
-		glClearColor(sky.skyColor.r, sky.skyColor.g, sky.skyColor.b, 1.0f);
+		glClearColor(sky.skyColor.r, sky.skyColor.g, sky.skyColor.b, 0.75f);
 		glClear(GL_COLOR_BUFFER_BIT);
 	}
 	void renderEntities(std::vector<Entity *> & entities) {
