@@ -101,12 +101,12 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>D:\Daten\P R O J E K T E\Project ORKA\Programming\Project ORKA\External Libraries\ASSIMP\include;D:\Daten\P R O J E K T E\Project ORKA\Programming\Project ORKA\External Libraries\STB IMAGE;D:\Daten\P R O J E K T E\Project ORKA\Programming\Project ORKA\External Libraries\GLM;D:\Daten\P R O J E K T E\Project ORKA\Programming\Project ORKA\External Libraries\GLEW\include;D:\Daten\P R O J E K T E\Project ORKA\Programming\Project ORKA\External Libraries\GLFW 32 bit\include;%(AdditionalIncludeDirectories);D:\Daten\P R O J E K T E\Project ORKA\Programming\Project ORKA\External Libraries\STB IMAGE;D:\Daten\P R O J E K T E\Project ORKA\Programming\Project ORKA\External Libraries\ASSIMP\assimp-4.1.0\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\External Libraries\ASSIMP\include;$(SolutionDir)\External Libraries\STB IMAGE;$(SolutionDir)\External Libraries\GLM;$(SolutionDir)\External Libraries\GLEW\include;$(SolutionDir)\External Libraries\GLFW 32 bit\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <AdditionalDependencies>opengl32.lib;assimp.lib;opengl32.lib;glfw3.lib;glew32s.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>D:\Daten\P R O J E K T E\Project ORKA\Programming\Project ORKA\External Libraries\ASSIMP\lib32;D:\Daten\P R O J E K T E\Project ORKA\Programming\Project ORKA\External Libraries\GLFW 32 bit\lib-vc2015;D:\Daten\P R O J E K T E\Project ORKA\Programming\Project ORKA\External Libraries\GLEW\lib\Release\Win32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)\External Libraries\ASSIMP\lib32;$(SolutionDir)\External Libraries\GLFW 32 bit\lib-vc2015;$(SolutionDir)\External Libraries\GLEW\lib\Release\Win32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>msvcrt.lib</IgnoreSpecificDefaultLibraries>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <SubSystem>Console</SubSystem>
@@ -118,13 +118,13 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>D:\Daten\P R O J E K T E\Project ORKA\Programming\Project ORKA\External Libraries\ASSIMP\include;D:\Daten\P R O J E K T E\Project ORKA\Programming\Project ORKA\External Libraries\STB IMAGE;D:\Daten\P R O J E K T E\Project ORKA\Programming\Project ORKA\External Libraries\GLM;D:\Daten\P R O J E K T E\Project ORKA\Programming\Project ORKA\External Libraries\GLEW\include;D:\Daten\P R O J E K T E\Project ORKA\Programming\Project ORKA\External Libraries\GLFW 64 bit\include;%(AdditionalIncludeDirectories);D:\Daten\P R O J E K T E\Project ORKA\Programming\Project ORKA\External Libraries\STB IMAGE;D:\Daten\P R O J E K T E\Project ORKA\Programming\Project ORKA\External Libraries\ASSIMP\assimp-4.1.0\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\External Libraries\ASSIMP\include;$(SolutionDir)\External Libraries\STB IMAGE;$(SolutionDir)\External Libraries\GLM;$(SolutionDir)\External Libraries\GLEW\include;$(SolutionDir)\External Libraries\GLFW 64 bit\include;%(AdditionalIncludeDirectories);$(SolutionDir)\External Libraries\ASSIMP\assimp-4.1.0\include</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <SupportJustMyCode>true</SupportJustMyCode>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>D:\Daten\P R O J E K T E\Project ORKA\Programming\Project ORKA\External Libraries\ASSIMP\lib64;D:\Daten\P R O J E K T E\Project ORKA\Programming\Project ORKA\External Libraries\GLFW 64 bit\lib-vc2015;D:\Daten\P R O J E K T E\Project ORKA\Programming\Project ORKA\External Libraries\GLEW\lib\Release\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)\External Libraries\ASSIMP\lib64;$(SolutionDir)\External Libraries\GLFW 64 bit\lib-vc2015;$(SolutionDir)\External Libraries\GLEW\lib\Release\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <AdditionalDependencies>opengl32.lib;assimp.lib;glfw3.lib;glew32s.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>msvcrt.lib</IgnoreSpecificDefaultLibraries>
@@ -139,7 +139,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>D:\Daten\P R O J E K T E\Project ORKA\Programming\Project ORKA\External Libraries\ASSIMP\include;D:\Daten\P R O J E K T E\Project ORKA\Programming\Project ORKA\External Libraries\STB IMAGE;D:\Daten\P R O J E K T E\Project ORKA\Programming\Project ORKA\External Libraries\GLM;D:\Daten\P R O J E K T E\Project ORKA\Programming\Project ORKA\External Libraries\GLEW\include;D:\Daten\P R O J E K T E\Project ORKA\Programming\Project ORKA\External Libraries\GLFW 32 bit\include;%(AdditionalIncludeDirectories);D:\Daten\P R O J E K T E\Project ORKA\Programming\Project ORKA\External Libraries\STB IMAGE;D:\Daten\P R O J E K T E\Project ORKA\Programming\Project ORKA\External Libraries\ASSIMP\assimp-4.1.0\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\External Libraries\ASSIMP\include;$(SolutionDir)\External Libraries\STB IMAGE;$(SolutionDir)\External Libraries\GLM;$(SolutionDir)\External Libraries\GLEW\include;$(SolutionDir)\External Libraries\GLFW 32 bit\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <FloatingPointModel>Fast</FloatingPointModel>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
@@ -147,7 +147,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalDependencies>opengl32.lib;assimp.lib;glfw3.lib;glew32s.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>D:\Daten\P R O J E K T E\Project ORKA\Programming\Project ORKA\External Libraries\ASSIMP\lib32;D:\Daten\P R O J E K T E\Project ORKA\Programming\Project ORKA\External Libraries\GLFW 32 bit\lib-vc2015;D:\Daten\P R O J E K T E\Project ORKA\Programming\Project ORKA\External Libraries\GLEW\lib\Release\Win32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)\External Libraries\ASSIMP\lib32;$(SolutionDir)\External Libraries\GLFW 32 bit\lib-vc2015;$(SolutionDir)\External Libraries\GLEW\lib\Release\Win32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>
       </IgnoreSpecificDefaultLibraries>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>

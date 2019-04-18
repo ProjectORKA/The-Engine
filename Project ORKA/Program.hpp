@@ -9,7 +9,9 @@ public:
 	Program() {
 		GameWorld gameWorld;
 		RenderingSystem renderingSystem(gameWorld);
-		WindowHandler windowHandler(renderingSystem);
+		WindowHandler windowHandler;
+		windowHandler.addWindow(&renderingSystem);
+		windowHandler.addWindow(&renderingSystem);
 		//Update Loop
 		while (windowHandler.windows.size() > 0) {
 			windowHandler.update();

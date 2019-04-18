@@ -7,23 +7,9 @@
 #include "Debug.hpp"
 #include "GLFW/glfw3.h"
 
-class WindowSettings {
-public:
-	std::string title;
-	bool fullScreen;
-	unsigned int width;
-	unsigned int height;
-	unsigned int antiAliasing;
-	WindowSettings() {
-		title = "Project ORKA"; //mountain strike
-		fullScreen = true;
-		width = 1600;
-		height = 900;
-		antiAliasing = 4;
-	}
-};
 
 //callback definitions
+void whenWindowIsMoved(GLFWwindow* window, int xPos, int yPos);
 void whenWindowIsResized(GLFWwindow* window, int width, int height);
 void whenWindowChangedFocus(GLFWwindow* window, int focused);
 void whenMouseIsMoving(GLFWwindow* window, double xpos, double ypos);
@@ -35,21 +21,40 @@ void APIENTRY DebugOutputCallback(GLenum source, GLenum type, GLuint id, GLenum 
 
 class Window {
 public:
-	GLFWwindow * glfwWindow;
-	WindowSettings settings;
-	RenderingSystem & renderingSystem;
-	InputHandler input;
-	bool capturingCursor;
+	unsigned int antiAliasing;
 	bool insideWindow;
+	bool capturingCursor;
+	//settings
+	std::string title;
+	bool fullScreen;
+	unsigned int width;
+	unsigned int height;
 	double ssCurPosX, ssCurPosY;
+	double deltaX, deltaY;
 	int winPosX, winPosY;
 
-	Window(RenderingSystem & renderingSystem) : renderingSystem(renderingSystem)  {
-		capturingCursor = settings.fullScreen;
+	GLFWwindow * glfwWindow;
+	RenderingSystem * renderingSystem;
+	InputHandler input;
+
+	Window(RenderingSystem * renderingSystem) : renderingSystem(renderingSystem) {
+
+		title = "Project ORKA"; //mountain strike
+		fullScreen = false;
+		capturingCursor = fullScreen;
+		width = 1600;
+		height = 900;
+		antiAliasing = 4;
+		//create the window
+		makeTheWindow();
+		printf("window was made\n");
+		centerWindow();
+	}
+	void makeTheWindow() {
 		setWindowHints();
 		try {
 
-			glfwWindow = glfwCreateWindow(settings.width, settings.height, settings.title.c_str(), NULL, NULL);
+			glfwWindow = glfwCreateWindow(width, height, title.c_str(), NULL, NULL);
 			if (!glfwWindow) {
 				throw std::exception("Failed to initialize Window!");
 			}
@@ -59,8 +64,6 @@ public:
 			std::getchar();
 			exit(EXIT_FAILURE);
 		};
-		
-		glfwSetWindowUserPointer(glfwWindow, this);
 		
 		glfwMakeContextCurrent(glfwWindow);
 
@@ -76,20 +79,40 @@ public:
 			exit(EXIT_FAILURE);
 		};
 
-		centerWindow();
-		//glfwSetInputMode(glfwWindow, GLFW_STICKY_KEYS, GL_TRUE);				   [TODO] check for bugs related to this
-		//glfwSetInputMode(glfwWindow, GLFW_STICKY_MOUSE_BUTTONS, GL_TRUE);		   [TODO] check for bugs related to this
-		setWindowCallbacks();
+		glfwSetWindowUserPointer(glfwWindow, this);
+
 		glfwShowWindow(glfwWindow);
-		if (settings.fullScreen) {
-			settings.fullScreen = false;
+
+		if (fullScreen) {
+			fullScreen = false;
 			toggleFullscreen();
 		}
+
+		glfwSetCursorPos(glfwWindow,ssCurPosX, ssCurPosY);
+
+		if (capturingCursor) {
+			captureCursor();
+		}
+		else {
+			uncaptureCursor();
+		}
+
+
+
+		glfwSetWindowPos(glfwWindow, winPosX, winPosY);
+		setWindowCallbacks();
 	}
+	void destroyTheWindow() {
+		glfwDestroyWindow(glfwWindow);
+	}
+	void reloadTheWindow() {
+		destroyTheWindow();
+		makeTheWindow();
+	};
 	void render() {
 		glfwMakeContextCurrent(glfwWindow);
-		
-		renderingSystem.render(settings.width, settings.height);
+
+		renderingSystem->render(width, height);
 		glfwSwapBuffers(glfwWindow);
 	}
 	void inputs() {
@@ -104,31 +127,50 @@ public:
 		input.escape.set(glfwGetKey(glfwWindow, GLFW_KEY_ESCAPE) == GLFW_PRESS || glfwWindowShouldClose(glfwWindow));
 		input.wireframe.set(glfwGetKey(glfwWindow, GLFW_KEY_F) == GLFW_PRESS);
 	};
+	void changeAntiAliasing(unsigned int antiAliasing) {
+		this->antiAliasing = antiAliasing;
+		reloadTheWindow();
+	}
+	void captureCursor() {
+		glfwGetCursorPos(glfwWindow, &ssCurPosX, &ssCurPosY);
+		glfwSetInputMode(glfwWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+		capturingCursor = true;
+	}
+	void uncaptureCursor() {
+		glfwSetInputMode(glfwWindow, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+		glfwSetCursorPos(glfwWindow, ssCurPosX, ssCurPosY);
+		deltaX = 0;
+		deltaY = 0;
+		capturingCursor = false;
+	};
 	void setWindowHints() {
 		glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
 		glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
-		glfwWindowHint(GLFW_SAMPLES, settings.antiAliasing);
+		glfwWindowHint(GLFW_SAMPLES, antiAliasing);
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
 		glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_COMPAT_PROFILE);
 	}
 	void centerWindow() {
-		glfwSetWindowPos(glfwWindow, (glfwGetVideoMode(glfwGetPrimaryMonitor())->width - settings.width) / 2, (glfwGetVideoMode(glfwGetPrimaryMonitor())->height - settings.height) / 2);
+		winPosX = (glfwGetVideoMode(glfwGetPrimaryMonitor())->width - width) / 2;
+		winPosY = (glfwGetVideoMode(glfwGetPrimaryMonitor())->height - height) / 2;
+		glfwSetWindowPos(glfwWindow, winPosX, winPosY);
 	}
 	void toggleFullscreen() {
-		settings.fullScreen = !settings.fullScreen;
-		if (settings.fullScreen) {
+		fullScreen = !fullScreen;
+		if (fullScreen) {
 			glfwGetWindowPos(glfwWindow, &winPosX, &winPosY);
 			glfwMaximizeWindow(glfwWindow);
-			glfwSetWindowMonitor(glfwWindow, glfwGetPrimaryMonitor(), winPosX, winPosY, settings.width, settings.height, GLFW_DONT_CARE);
+			glfwSetWindowMonitor(glfwWindow, glfwGetPrimaryMonitor(), winPosX, winPosY, width, height, GLFW_DONT_CARE);
 		}
 		else {
-			glfwSetWindowMonitor(glfwWindow, nullptr, winPosX, winPosY, settings.width, settings.height, GLFW_DONT_CARE);
+			glfwSetWindowMonitor(glfwWindow, nullptr, winPosX, winPosY, width, height, GLFW_DONT_CARE);
 			glfwRestoreWindow(glfwWindow);
 		}
 	};
 	void setWindowCallbacks() {
+		glfwSetWindowPosCallback(glfwWindow, whenWindowIsMoved);
 		glfwSetFramebufferSizeCallback(glfwWindow, whenWindowIsResized);
 		glfwSetCursorPosCallback(glfwWindow, whenMouseIsMoving);
 		glfwSetScrollCallback(glfwWindow, whenMouseIsScrolling);
@@ -140,25 +182,28 @@ public:
 		//glDebugMessageCallback(DebugOutputCallback, 0);
 	}
 	~Window() {
-		glfwDestroyWindow(glfwWindow);
+		destroyTheWindow();
 	}
 };
 
 //callback definitions
-void whenWindowIsResized(GLFWwindow* window, int width, int height) {
-	printf("window resized\n");
-	//get parent class
+void whenWindowIsMoved(GLFWwindow* window, int xPos, int yPos) {
+	printf("window was moved\n");
 	Window * parentWindowClass = static_cast<Window *>(glfwGetWindowUserPointer(window));
-
-	parentWindowClass->settings.width = width;
-	parentWindowClass->settings.height = height;
+	parentWindowClass->winPosX = xPos;
+	parentWindowClass->winPosY = yPos;
+};
+void whenWindowIsResized(GLFWwindow* window, int width, int height) {
+	Window * parentWindowClass = static_cast<Window *>(glfwGetWindowUserPointer(window));
+	parentWindowClass->width = width;
+	parentWindowClass->height = height;
 	if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
 		parentWindowClass->centerWindow();
 	}
 	parentWindowClass->render();
 }
 void whenWindowChangedFocus(GLFWwindow* window, int focused) {
-	printf("window changed focus\n");
+
 	Window * parentWindowClass = static_cast<Window *>(glfwGetWindowUserPointer(window));
 	if (focused) {
 		if (parentWindowClass->capturingCursor) {
@@ -177,13 +222,13 @@ void whenMouseIsMoving(GLFWwindow* window, double xpos, double ypos) {
 	Window * parentWindowClass = static_cast<Window *>(glfwGetWindowUserPointer(window));
 	if (parentWindowClass->insideWindow) {
 		if (parentWindowClass->capturingCursor) {
-			double deltaX = xpos - parentWindowClass->ssCurPosX;
-			double deltaY = ypos - parentWindowClass->ssCurPosY;
-			std::cout << "mm: (" << deltaX << "/" << deltaY << ")" << std::endl;
+			parentWindowClass->deltaX = xpos - parentWindowClass->ssCurPosX;
+			parentWindowClass->deltaY = ypos - parentWindowClass->ssCurPosY;
 			glfwSetCursorPos(window, parentWindowClass->ssCurPosX, parentWindowClass->ssCurPosY);
 		}
 		else {
-			std::cout << "mm: (" << xpos << "/" << ypos << ")" << std::endl;
+			parentWindowClass->ssCurPosX = xpos;
+			parentWindowClass->ssCurPosY = ypos;
 		}
 	}
 	//get parent class
@@ -207,7 +252,7 @@ void whenMouseIsMoving(GLFWwindow* window, double xpos, double ypos) {
 	//glfwSetCursorPos(window, parentWindowClass->width / 2, parentWindowClass->height / 2);
 };
 void whenMouseEnterWindow(GLFWwindow* window, int entered) {
-	printf("mouse entered/left window\n");
+
 	Window * parentWindowClass = static_cast<Window *>(glfwGetWindowUserPointer(window));
 	if (entered) {
 		parentWindowClass->insideWindow = true;
@@ -217,7 +262,7 @@ void whenMouseEnterWindow(GLFWwindow* window, int entered) {
 	}
 };
 void whenMouseIsScrolling(GLFWwindow* window, double xoffset, double yoffset) {
-	printf("mouse scrolled\n");
+
 	//get parent class
 
 	//Window *parentWindowClass = static_cast<Window*>(glfwGetWindowUserPointer(window));
@@ -227,36 +272,45 @@ void whenMouseIsScrolling(GLFWwindow* window, double xoffset, double yoffset) {
 	//parentWindowClass->camera->cameraMovementSpeed = pow(1.1f, mvspeed);
 };
 void whenMouseIsPressed(GLFWwindow* window, int button, int action, int mods) {
-	printf("mouse pressed\n");
 	Window * parentWindowClass = static_cast<Window *>(glfwGetWindowUserPointer(window));
-	//parentWindowClass.
+	//LMB
 	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
-		if (glfwGetInputMode(window, GLFW_CURSOR) == GLFW_CURSOR_DISABLED) {
+		if (parentWindowClass->capturingCursor) {
 			parentWindowClass->input.action.set(glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS);
 		}
 		else {
-			glfwGetCursorPos(window, &(parentWindowClass->ssCurPosX), &(parentWindowClass->ssCurPosY));
-			glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-			parentWindowClass->capturingCursor = true;
+			parentWindowClass->captureCursor();
 		}
 	}
+
+	//RMB
 	if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS) {
-		if (glfwGetInputMode(window, GLFW_CURSOR) == GLFW_CURSOR_DISABLED) {
-			glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-			parentWindowClass->capturingCursor = false;
-			//glfwSetCursorPos(window, parentWindowClass->ssCurPosX, parentWindowClass->ssCurPosY);
+		if (parentWindowClass->capturingCursor) {
+			parentWindowClass->uncaptureCursor();
 		}
 	}
 };
 void whenButtonIsPressed(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
 	Window * parentWindowClass = static_cast<Window *>(glfwGetWindowUserPointer(window));
-	printf("button pressed\n");
-	if (key == GLFW_KEY_B && action == GLFW_PRESS) {// && mods == GLFW_MOD_ALT) {
+
+	if (key == GLFW_KEY_B && action == GLFW_PRESS) {
 		parentWindowClass->toggleFullscreen();
 	}
-	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {// && mods == GLFW_MOD_ALT) {
+	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
 		glfwSetWindowShouldClose(parentWindowClass->glfwWindow, GLFW_TRUE);
+	}
+	if (key == GLFW_KEY_1 && action == GLFW_PRESS) {
+		parentWindowClass->changeAntiAliasing(0);
+	}
+	if (key == GLFW_KEY_2 && action == GLFW_PRESS) {
+		parentWindowClass->changeAntiAliasing(4);
+	}
+	if (key == GLFW_KEY_3 && action == GLFW_PRESS) {
+		parentWindowClass->changeAntiAliasing(8);
+	}
+	if (key == GLFW_KEY_4 && action == GLFW_PRESS) {
+		parentWindowClass->changeAntiAliasing(16);
 	}
 }
 void APIENTRY DebugOutputCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam) {

@@ -15,9 +15,8 @@ void whenGLFWThrowsError(int error, const char* description);
 
 class WindowHandler {
 public:
-	RenderingSystem & renderingSystem;
 	std::vector<Window *> windows;
-	WindowHandler(RenderingSystem & renderingSystem) : renderingSystem(renderingSystem) {
+	WindowHandler(){
 		debugPrint("Initializing GLFW...");
 		try {
 			if (glfwInit() != GLFW_TRUE) {
@@ -31,14 +30,11 @@ public:
 		};
 
 		glfwSetErrorCallback(whenGLFWThrowsError);
-
-		addWindow(renderingSystem);
-		//addWindow(renderingSystem);
 	}
 	~WindowHandler() {
 		glfwTerminate();
 	}
-	void addWindow(RenderingSystem & renderingSystem) {
+	void addWindow(RenderingSystem * renderingSystem) {
 		debugPrint("Adding Window...");
 		Window * tmp = new Window(renderingSystem);
 		windows.push_back(tmp);
