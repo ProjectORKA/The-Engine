@@ -5,6 +5,7 @@
 //GLAPIENTRY
 int main(int argc, char *argv[]) {
 	Program program;
+	return 0;
 }
 
 #ifdef _WIN32

@@ -33,18 +33,18 @@ public:
 	}
 };
 
-//class Axis {
-//public:
-//	float current = 0.0f;
-//	float previous = 0.0f;
-//	float delta = 0.0f;
-//
-//	void set(float value) {
-//		previous = current;
-//		current = value;
-//		delta = current - previous;
-//	}
-//};
+class Axis {
+public:
+	double current = 0.0f;
+	double previous = 0.0f;
+	double delta = 0.0f;
+
+	void set(double value) {
+		previous = current;
+		current = value;
+		delta = current - previous;
+	}
+};
 
 class InputHandler {
 public:
@@ -58,6 +58,6 @@ public:
 	Key down;
 	Key escape;
 	Key wireframe;
-	//Axis yaw;
-	//Axis pitch;
+	Axis yaw;
+	Axis pitch;
 };
