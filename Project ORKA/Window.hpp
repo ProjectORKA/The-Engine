@@ -13,7 +13,6 @@
 void whenWindowIsMoved(GLFWwindow* window, int xPos, int yPos);
 void whenWindowIsResized(GLFWwindow* window, int width, int height);
 void whenWindowChangedFocus(GLFWwindow* window, int focused);
-void whenMouseIsMoving(GLFWwindow* window, double xpos, double ypos);
 void whenMouseIsScrolling(GLFWwindow* window, double xoffset, double yoffset);
 void whenMouseIsPressed(GLFWwindow* window, int button, int action, int mods);
 void whenButtonIsPressed(GLFWwindow* window, int key, int scancode, int action, int mods);
@@ -28,22 +27,20 @@ public:
 	bool fullScreen;
 	unsigned int width;
 	unsigned int height;
-	double ssCurPosX, ssCurPosY;
-	double deltaX, deltaY;
 	int winPosX, winPosY;
-
+	double curPosX, curPosY;
+	double deltaX, deltaY;
 	GLFWwindow * glfwWindow;
 	RenderingSystem * renderingSystem;
 	InputHandler input;
 
 	Window(RenderingSystem * renderingSystem) : renderingSystem(renderingSystem) {
 		title = "Project ORKA"; //mountain strike
-		fullScreen = true;
-		capturingCursor = fullScreen;
+		fullScreen = false;
+		capturingCursor = false;
 		width = 1600;
 		height = 900;
 		antiAliasing = 4;
-
 		createTheWindow();
 		centerWindow();
 	}
@@ -62,6 +59,8 @@ public:
 			exit(EXIT_FAILURE);
 		};
 
+
+
 		glfwMakeContextCurrent(glfwWindow);
 
 		debugPrint("Initializing GLEW...");
@@ -76,6 +75,8 @@ public:
 			exit(EXIT_FAILURE);
 		};
 
+		renderingSystem->setDebugMessageCallback();
+
 		glfwSetWindowUserPointer(glfwWindow, this);
 
 		setIcon("icon.png");
@@ -87,16 +88,16 @@ public:
 			toggleFullscreen();
 		}
 
-		glfwSetCursorPos(glfwWindow, ssCurPosX, ssCurPosY);
-
 		if (glfwRawMouseMotionSupported()) glfwSetInputMode(glfwWindow, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
 
-		if (capturingCursor) {
-			captureCursor();
-		}
-		else {
-			uncaptureCursor();
-		}
+		capturingCursor ? captureCursor() : uncaptureCursor();
+
+		//if (capturingCursor) {
+		//	captureCursor();
+		//}
+		//else {
+		//	uncaptureCursor();
+		//}
 
 		glfwSetWindowPos(glfwWindow, winPosX, winPosY);
 
@@ -113,8 +114,7 @@ public:
 	};
 	void render() {
 		glfwMakeContextCurrent(glfwWindow);
-
-		renderingSystem->render(width, height);
+		renderingSystem->render();
 		glfwSwapBuffers(glfwWindow);
 	}
 	void inputs() {
@@ -128,22 +128,42 @@ public:
 		input.up.set(glfwGetKey(glfwWindow, GLFW_KEY_E) == GLFW_PRESS);
 		input.escape.set(glfwGetKey(glfwWindow, GLFW_KEY_ESCAPE) == GLFW_PRESS || glfwWindowShouldClose(glfwWindow));
 		input.wireframe.set(glfwGetKey(glfwWindow, GLFW_KEY_F) == GLFW_PRESS);
+
+
+		if (capturingCursor) {
+			glfwGetCursorPos(glfwWindow, &deltaX, &deltaY);
+			glfwSetCursorPos(glfwWindow, 0, 0);
+			input.yaw.set(deltaX);
+			input.pitch.set(deltaY);
+		}
+		else {
+			glfwGetCursorPos(glfwWindow, &curPosX, &curPosY);
+		}
+		std::cout << deltaX  << std::endl;
+		std::cout << deltaY  << std::endl;
+		std::cout << curPosX << std::endl;
+		std::cout << curPosY << std::endl;
 	};
 	void changeAntiAliasing(unsigned int antiAliasing) {
 		this->antiAliasing = antiAliasing;
 		reloadTheWindow();
 	}
 	void captureCursor() {
-		glfwGetCursorPos(glfwWindow, &ssCurPosX, &ssCurPosY);
-		glfwSetInputMode(glfwWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-		capturingCursor = true;
+		if (glfwGetInputMode(glfwWindow, GLFW_CURSOR) != GLFW_CURSOR_DISABLED) {
+			printf("capturing\n");
+			glfwGetCursorPos(glfwWindow, &curPosX, &curPosY);
+			glfwSetInputMode(glfwWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+			glfwSetCursorPos(glfwWindow, 0, 0);
+			capturingCursor = true;
+		}
 	}
 	void uncaptureCursor() {
-		glfwSetInputMode(glfwWindow, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-		glfwSetCursorPos(glfwWindow, ssCurPosX, ssCurPosY);
-		deltaX = 0;
-		deltaY = 0;
-		capturingCursor = false;
+		if (glfwGetInputMode(glfwWindow, GLFW_CURSOR) != GLFW_CURSOR_NORMAL) {
+			printf("not capturing\n");
+			glfwSetInputMode(glfwWindow, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+			glfwSetCursorPos(glfwWindow, curPosX, curPosY);
+			capturingCursor = false;
+		}
 	};
 	void setWindowHints() {
 		const GLFWvidmode * videoMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
@@ -181,29 +201,27 @@ public:
 			glfwMaximizeWindow(glfwWindow);
 			GLFWmonitor * monitor = glfwGetPrimaryMonitor();
 			const GLFWvidmode * videoMode = glfwGetVideoMode(monitor);
-			glfwSetWindowMonitor(glfwWindow, monitor, 0, 0, videoMode->width, videoMode->height, GLFW_DONT_CARE);
+			glfwSetWindowMonitor(glfwWindow, monitor, 0, 0, width = videoMode->width, height = videoMode->height, GLFW_DONT_CARE);
 		}
 		else {
 			glfwSetWindowMonitor(glfwWindow, nullptr, winPosX, winPosY, width, height, GLFW_DONT_CARE);
 			glfwRestoreWindow(glfwWindow);
 		}
+		renderingSystem->adaptViewport(width, height);
 	};
-	void setWindowCallbacks() {
-		glfwSetWindowPosCallback(glfwWindow, whenWindowIsMoved);
-		glfwSetFramebufferSizeCallback(glfwWindow, whenWindowIsResized);
-		glfwSetCursorPosCallback(glfwWindow, whenMouseIsMoving);
-		glfwSetScrollCallback(glfwWindow, whenMouseIsScrolling);
-		glfwSetKeyCallback(glfwWindow, whenButtonIsPressed);
-		glfwSetMouseButtonCallback(glfwWindow, whenMouseIsPressed);
-		glfwSetWindowFocusCallback(glfwWindow, whenWindowChangedFocus);
-		glEnable(GL_DEBUG_OUTPUT);
-		glDebugMessageCallback(DebugOutputCallback, 0);
-	}
 	void setIcon(std::string path) {
 		GLFWimage images[1];
 		images[0].pixels = stbi_load(path.c_str(), &images[0].width, &images[0].height, 0, 4);
 		glfwSetWindowIcon(glfwWindow, 1, images);
 		stbi_image_free(images[0].pixels);
+	}
+	void setWindowCallbacks() {
+		glfwSetWindowPosCallback(glfwWindow, whenWindowIsMoved);
+		glfwSetFramebufferSizeCallback(glfwWindow, whenWindowIsResized);
+		glfwSetScrollCallback(glfwWindow, whenMouseIsScrolling);
+		glfwSetKeyCallback(glfwWindow, whenButtonIsPressed);
+		glfwSetMouseButtonCallback(glfwWindow, whenMouseIsPressed);
+		glfwSetWindowFocusCallback(glfwWindow, whenWindowChangedFocus);
 	}
 	~Window() {
 		destroyTheWindow();
@@ -223,6 +241,7 @@ void whenWindowIsResized(GLFWwindow* window, int width, int height) {
 	if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
 		parentWindowClass->centerWindow();
 	}
+	parentWindowClass->renderingSystem->adaptViewport(width, height);
 	parentWindowClass->render();
 }
 void whenWindowChangedFocus(GLFWwindow* window, int focused) {
@@ -241,22 +260,6 @@ void whenWindowChangedFocus(GLFWwindow* window, int focused) {
 	}
 
 }
-void whenMouseIsMoving(GLFWwindow* window, double xpos, double ypos) {
-	Window * parentWindowClass = static_cast<Window *>(glfwGetWindowUserPointer(window));
-	if (glfwGetWindowAttrib(window, GLFW_HOVERED)) {
-		if (parentWindowClass->capturingCursor) {
-			parentWindowClass->deltaX = xpos - parentWindowClass->ssCurPosX;
-			parentWindowClass->deltaY = ypos - parentWindowClass->ssCurPosY;
-			glfwSetCursorPos(window, parentWindowClass->ssCurPosX, parentWindowClass->ssCurPosY);
-			std::cout << "mouse ( " << parentWindowClass->deltaX << " / " << parentWindowClass->deltaY << " )" << std::endl;
-		}
-		else {
-			parentWindowClass->ssCurPosX = xpos;
-			parentWindowClass->ssCurPosY = ypos;
-		}
-	}
-	//parentWindowClass->camera->rotateCamera(mouseX, mouseY);
-};
 void whenMouseIsScrolling(GLFWwindow* window, double xoffset, double yoffset) {
 
 	//get parent class
@@ -309,32 +312,7 @@ void whenButtonIsPressed(GLFWwindow* window, int key, int scancode, int action, 
 		parentWindowClass->changeAntiAliasing(16);
 	}
 	if (key == GLFW_KEY_5 && action == GLFW_PRESS) {
-	
-	}
-}
-void APIENTRY DebugOutputCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam) {
-	if (severity != GL_DEBUG_SEVERITY_NOTIFICATION) {
-		printf("OpenGL Debug Output message : ");
 
-		if (source == GL_DEBUG_SOURCE_API_ARB)					printf("Source : API; ");
-		else if (source == GL_DEBUG_SOURCE_WINDOW_SYSTEM_ARB)	printf("Source : WINDOW_SYSTEM; ");
-		else if (source == GL_DEBUG_SOURCE_SHADER_COMPILER_ARB)	printf("Source : SHADER_COMPILER; ");
-		else if (source == GL_DEBUG_SOURCE_THIRD_PARTY_ARB)		printf("Source : THIRD_PARTY; ");
-		else if (source == GL_DEBUG_SOURCE_APPLICATION_ARB)		printf("Source : APPLICATION; ");
-		else if (source == GL_DEBUG_SOURCE_OTHER_ARB)			printf("Source : OTHER; ");
-
-		if (type == GL_DEBUG_TYPE_ERROR_ARB)					printf("Type : ERROR; ");
-		else if (type == GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR_ARB)	printf("Type : DEPRECATED_BEHAVIOR; ");
-		else if (type == GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR_ARB)	printf("Type : UNDEFINED_BEHAVIOR; ");
-		else if (type == GL_DEBUG_TYPE_PORTABILITY_ARB)			printf("Type : PORTABILITY; ");
-		else if (type == GL_DEBUG_TYPE_PERFORMANCE_ARB)			printf("Type : PERFORMANCE; ");
-		else if (type == GL_DEBUG_TYPE_OTHER_ARB)				printf("Type : OTHER; ");
-
-		if (severity == GL_DEBUG_SEVERITY_HIGH_ARB)				printf("Severity : HIGH; ");
-		else if (severity == GL_DEBUG_SEVERITY_MEDIUM_ARB)		printf("Severity : MEDIUM; ");
-		else if (severity == GL_DEBUG_SEVERITY_LOW_ARB)			printf("Severity : LOW; ");
-		printf("Message : %s\n", message);
-		system("pause");
 	}
 }
 #endif // !WINDOW_HPP

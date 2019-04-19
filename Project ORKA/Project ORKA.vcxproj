@@ -19,7 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="projectorka.rc" />
+    <ResourceCompile Include="icon.rc" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
