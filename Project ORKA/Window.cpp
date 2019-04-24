@@ -5,6 +5,7 @@
 Window::Window(RenderingSystem * renderingSystem) : renderingSystem(renderingSystem) {
 	title = "Project ORKA"; //mountain strike
 	fullScreen = false;
+	borderlessFullScreen = false;
 	capturingCursor = false;
 	width = 1600;
 	height = 900;
@@ -163,12 +164,20 @@ void Window::toggleFullscreen() {
 	fullScreen = !fullScreen;
 	if (fullScreen) {
 		glfwGetWindowPos(glfwWindow, &winPosX, &winPosY);
-		glfwMaximizeWindow(glfwWindow);
-		GLFWmonitor * monitor = glfwGetPrimaryMonitor();
-		const GLFWvidmode * videoMode = glfwGetVideoMode(monitor);
-		glfwSetWindowMonitor(glfwWindow, monitor, 0, 0, width = videoMode->width, height = videoMode->height, GLFW_DONT_CARE);
+
+		if (borderlessFullScreen){
+			glfwSetWindowAttrib(glfwWindow, GLFW_DECORATED, GLFW_FALSE);
+			glfwMaximizeWindow(glfwWindow);
+		}
+		else {
+			glfwMaximizeWindow(glfwWindow);
+			GLFWmonitor * monitor = glfwGetPrimaryMonitor();
+			const GLFWvidmode * videoMode = glfwGetVideoMode(monitor);
+			glfwSetWindowMonitor(glfwWindow, monitor, 0, 0, width = videoMode->width, height = videoMode->height, GLFW_DONT_CARE);
+		}
 	}
 	else {
+		glfwSetWindowAttrib(glfwWindow, GLFW_DECORATED, GLFW_TRUE);
 		glfwSetWindowMonitor(glfwWindow, nullptr, winPosX, winPosY, width, height, GLFW_DONT_CARE);
 		glfwRestoreWindow(glfwWindow);
 	}
@@ -272,7 +281,7 @@ void whenButtonIsPressed(GLFWwindow* window, int key, int scancode, int action, 
 	if (key == GLFW_KEY_4 && action == GLFW_PRESS) {
 		parentWindowClass->changeAntiAliasing(16);
 	}
-	if (key == GLFW_KEY_5 && action == GLFW_PRESS) {
+	if (key == GLFW_KEY_B && action == GLFW_PRESS) {
 
 	}
 }

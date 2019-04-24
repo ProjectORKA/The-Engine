@@ -23,6 +23,7 @@ public:
 	//settings
 	std::string title;
 	bool fullScreen;
+	bool borderlessFullScreen;
 	unsigned int width;
 	unsigned int height;
 	int winPosX, winPosY;
