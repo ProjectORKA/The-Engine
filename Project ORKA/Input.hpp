@@ -1,4 +1,6 @@
 #pragma once
+#ifndef INPUT_HPP
+#define INPUT_HPP
 
 class Key {
 public:
@@ -7,30 +9,8 @@ public:
 	bool toggled = false; //active every toggle
 	bool toggleStatus = false; //do not confuse with holding! toggles with every press down
 
-	void set(bool pressed) {
-		if (holding != pressed) {
-			toggled = true;
-		}
-
-		if (toggled && pressed) {
-			activated = true;
-		}
-		else {
-			activated = false;
-		}
-
-		if (activated) {
-			toggleStatus = !toggleStatus;
-		}
-
-		holding = pressed;
-	}
-	void reset() {
-		holding = false;
-		activated = false;
-		toggled = false;
-		toggleStatus = false;
-	}
+	void set(bool pressed);
+	void reset();
 };
 
 class Axis {
@@ -39,11 +19,7 @@ public:
 	double previous = 0.0f;
 	double delta = 0.0f;
 
-	void set(double value) {
-		previous = current;
-		current = value;
-		delta = current - previous;
-	}
+	void set(double value);
 };
 
 class InputHandler {
@@ -61,3 +37,4 @@ public:
 	Axis yaw;
 	Axis pitch;
 };
+#endif // !INPUT_HPP
