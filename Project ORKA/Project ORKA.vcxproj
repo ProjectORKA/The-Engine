@@ -22,18 +22,33 @@
     <ResourceCompile Include="icon.rc" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Components.cpp" />
+    <ClCompile Include="Debug.cpp" />
+    <ClCompile Include="Entity.cpp" />
+    <ClCompile Include="Input.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Mesh.cpp" />
+    <ClCompile Include="Program.cpp" />
+    <ClCompile Include="RenderingSystem.cpp" />
+    <ClCompile Include="Sky.cpp" />
+    <ClCompile Include="Window.cpp" />
+    <ClCompile Include="WindowHandler.cpp" />
+    <ClCompile Include="WorldSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Components.hpp" />
     <ClInclude Include="Debug.hpp" />
-    <ClInclude Include="GameWorld.hpp" />
+    <ClInclude Include="Entity.hpp" />
+    <ClInclude Include="GameServer.hpp" />
     <ClInclude Include="Image.hpp" />
     <ClInclude Include="Input.hpp" />
+    <ClInclude Include="Mesh.hpp" />
     <ClInclude Include="Program.hpp" />
     <ClInclude Include="RenderingSystem.hpp" />
     <ClInclude Include="Sky.hpp" />
     <ClInclude Include="Window.hpp" />
     <ClInclude Include="WindowHandler.hpp" />
+    <ClInclude Include="WorldSystem.hpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>

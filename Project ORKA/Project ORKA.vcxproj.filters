@@ -13,39 +13,114 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Source Files\Components">
+      <UniqueIdentifier>{8fd2086e-1238-4e57-9f74-d35c40f3f3a3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Sky">
+      <UniqueIdentifier>{231858ce-bc7c-441f-b8cc-e29c01e278ca}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Window">
+      <UniqueIdentifier>{a8df6538-15d1-4789-96bf-137c2de2c0d6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Entity">
+      <UniqueIdentifier>{eb0f01f1-7cfe-47df-9d5d-7dfd12c960fb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\WorldSystem">
+      <UniqueIdentifier>{128db9d4-dc83-4a4d-861d-58639af9c8b5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Mesh">
+      <UniqueIdentifier>{382e5729-ba8d-4c55-a64f-ad9bc2b75684}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\RenderingSystem">
+      <UniqueIdentifier>{deb9537c-51ab-419b-95e1-6d6d2e59487f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Input">
+      <UniqueIdentifier>{7b3397e0-a49a-4177-988e-a0d5018ee725}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Program">
+      <UniqueIdentifier>{1210f5a3-2e9f-4e96-a407-f5a0bf83d19c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Debug">
+      <UniqueIdentifier>{335010f6-bf48-4587-bee4-ddf78fb2b595}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Components.cpp">
+      <Filter>Source Files\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Sky.cpp">
+      <Filter>Source Files\Sky</Filter>
+    </ClCompile>
+    <ClCompile Include="Window.cpp">
+      <Filter>Source Files\Window</Filter>
+    </ClCompile>
+    <ClCompile Include="Entity.cpp">
+      <Filter>Source Files\Entity</Filter>
+    </ClCompile>
+    <ClCompile Include="WorldSystem.cpp">
+      <Filter>Source Files\WorldSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="Mesh.cpp">
+      <Filter>Source Files\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderingSystem.cpp">
+      <Filter>Source Files\RenderingSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="Input.cpp">
+      <Filter>Source Files\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="WindowHandler.cpp">
+      <Filter>Source Files\Window</Filter>
+    </ClCompile>
+    <ClCompile Include="Program.cpp">
+      <Filter>Source Files\Program</Filter>
+    </ClCompile>
+    <ClCompile Include="Debug.cpp">
+      <Filter>Source Files\Debug</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="WindowHandler.hpp">
+    <ClInclude Include="Image.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Components.hpp">
+      <Filter>Source Files\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Sky.hpp">
+      <Filter>Source Files\Sky</Filter>
+    </ClInclude>
+    <ClInclude Include="GameServer.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Window.hpp">
-      <Filter>Header Files</Filter>
+      <Filter>Source Files\Window</Filter>
     </ClInclude>
-    <ClInclude Include="Debug.hpp">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Entity.hpp">
+      <Filter>Source Files\Entity</Filter>
     </ClInclude>
-    <ClInclude Include="Program.hpp">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="WorldSystem.hpp">
+      <Filter>Source Files\WorldSystem</Filter>
     </ClInclude>
-    <ClInclude Include="GameWorld.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Sky.hpp">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Mesh.hpp">
+      <Filter>Source Files\Mesh</Filter>
     </ClInclude>
     <ClInclude Include="RenderingSystem.hpp">
-      <Filter>Header Files</Filter>
+      <Filter>Source Files\RenderingSystem</Filter>
     </ClInclude>
     <ClInclude Include="Input.hpp">
-      <Filter>Header Files</Filter>
+      <Filter>Source Files\Input</Filter>
     </ClInclude>
-    <ClInclude Include="Image.hpp">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="WindowHandler.hpp">
+      <Filter>Source Files\Window</Filter>
+    </ClInclude>
+    <ClInclude Include="Program.hpp">
+      <Filter>Source Files\Program</Filter>
+    </ClInclude>
+    <ClInclude Include="Debug.hpp">
+      <Filter>Source Files\Debug</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
