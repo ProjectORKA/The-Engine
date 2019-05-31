@@ -18,17 +18,17 @@
 #define GLEW_STATIC
 #include "GL/glew.h"
 #include "glm/glm.hpp"
+#include "glm/gtc/matrix_transform.hpp"
 #include "GLFW/glfw3.h"
 
 #pragma endregion
 
-//bug:					not recapturing cursor on reloadWindow
 //minor bug:			framebuffer flickering on resize
 //clue:						main and render thread are not syncronized
 
 //minor perf issue:		switching anti aliasing is slow and not instant
-
-//cleanup:				turn shader creation into own code 
+//clue:						reloading the entire window and rendering system is not instant
+//possible solution:		rendering to a multisampled framebuffer could prevent having to reload the window for aa
 
 #define DEBUG					//enables debug messages
 
@@ -60,6 +60,9 @@ struct MeshHandler {
 struct ShaderProgram {
 	bool loaded = false;
 	GLuint programID;
+	GLuint      modelMatrixID;
+	GLuint       viewMatrixID;
+	GLuint projectionMatrixID;
 	ShaderProgram();
 	~ShaderProgram();
 };
@@ -82,6 +85,9 @@ struct RenderingSystem {
 	ShaderProgram primitiveShader;
 	MeshHandler meshHandler;
 	GameServer * gameServer;
+	glm::mat4 projectionMatrix;
+	glm::mat4 viewMatrix;
+	glm::mat4 modelMatrix;
 	RenderingSystem(GameServer * gameServer);
 	~RenderingSystem();
 };
@@ -101,7 +107,8 @@ struct Window {
 	double deltaX, deltaY = 0;
 	GLFWwindow * glfwWindow;
 	InputHandler input;
-	RenderingSystem * renderingSystem;
+	std::unique_ptr<RenderingSystem> renderingSystem;
+	//RenderingSystem * renderingSystem;
 
 	bool keepThreadRunning = true;
 	std::unique_ptr<std::thread> thread;
@@ -109,8 +116,24 @@ struct Window {
 	Window(GameServer * gameServer);
 	~Window();
 };
+
+struct Component {
+	void execute();
+};
+
+struct TransformationComponent : public Component {
+	glm::vec3 location;
+	glm::vec3 rotation;
+	glm::vec3 scale;
+	
+	TransformationComponent();
+
+	void execute();
+};
+
 struct Entity {
 	std::string type = "empty";
+	std::vector<Component> components;
 	Entity();
 	~Entity();
 };
@@ -163,7 +186,6 @@ struct Program {
 	~Program();
 };
 
-
 //FUNCTIONS
 //debug
 void debugPrint								(const char * debugMessage);
@@ -176,9 +198,8 @@ void renderMesh						(Mesh & mesh);
 //render settings
 void changeAntiAliasing				(Window & window, unsigned int antiAliasing);
 //rendering system
-void setDebugMessageCallback		();
 void renderSky						(Sky & sky);
-void renderChunks					(Chunk & chunk, RenderingSystem & renderingSystem);
+void renderChunk					(Chunk & chunk, RenderingSystem & renderingSystem);
 void renderEntity					(Entity & entity, RenderingSystem & renderingSystem);
 void renderFrame					(RenderingSystem & renderingSystem, int width, int height);
 void renderWorld					(WorldSystem & worldSystem, RenderingSystem & renderingSystem);

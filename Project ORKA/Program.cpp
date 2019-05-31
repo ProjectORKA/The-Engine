@@ -4,8 +4,6 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
-
-
 //function definitions
 void resetKey						(Key & key) {
 	key.holding = false;
@@ -43,9 +41,9 @@ void loadMesh						(Mesh & mesh)
 	glBindVertexArray(mesh.vertexArrayObject);
 
 	std::vector<glm::vec3> vertecies;
-	vertecies.push_back(glm::vec3(-1.0f, -1.0f, 0.0f));
-	vertecies.push_back(glm::vec3(1.0f, -1.0f, 0.0f));
-	vertecies.push_back(glm::vec3(0.0f, 1.0f, 0.0f));
+	vertecies.push_back(glm::vec3(-1.0f, -1.0f, -1.0f));
+	vertecies.push_back(glm::vec3( 1.0f, -1.0f, -1.0f));
+	vertecies.push_back(glm::vec3( 1.0f,  1.0f, -1.0f));
 
 	glGenBuffers(1, &mesh.vertexBuffer);
 	glBindBuffer(GL_ARRAY_BUFFER, mesh.vertexBuffer);
@@ -103,16 +101,17 @@ void setWindowHints					(Window & window) {
 	glfwWindowHint(GLFW_BLUE_BITS, videoMode->blueBits);
 	glfwWindowHint(GLFW_REFRESH_RATE, videoMode->refreshRate);
 
+#ifdef DEBUG
+	glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
+#endif
 	glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
-	//glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
 	glfwWindowHint(GLFW_SAMPLES, window.antiAliasing);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_API);
 	glfwWindowHint(GLFW_CONTEXT_CREATION_API, GLFW_NATIVE_CONTEXT_API);
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-	//glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_COMPAT_PROFILE);
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_COMPAT_PROFILE);	//GLFW_OPENGL_CORE_PROFILE);
 	//transparency
 	glfwWindowHint(GLFW_TRANSPARENT_FRAMEBUFFER, GL_TRUE);
 	//glfwWindowHint(GLFW_DECORATED, GL_FALSE);
@@ -178,9 +177,8 @@ void toggleFullscreen				(Window & window) {
 	}
 }
 void destroyGLFWWindow				(Window & window) {
-	delete window.renderingSystem;
-	glfwDestroyWindow(window.glfwWindow);
 	uncaptureCursor(window);
+	glfwDestroyWindow(window.glfwWindow);
 }
 void setWindowCallbacks				(Window & window) {
 	//glfwSetWindowPosCallback(window.glfwWindow, whenWindowIsMoved);
@@ -299,13 +297,9 @@ void createGLFWWindow				(Window & window, GameServer * gameServer) {
 	setIcon(window, "icon.png");
 
 	if (glfwRawMouseMotionSupported()) glfwSetInputMode(window.glfwWindow, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
+	
 
-	window.capturingCursor ? captureCursor(window) : uncaptureCursor(window);
-
-	window.renderingSystem = new RenderingSystem(gameServer);
-
-
-	//glfwSetWindowPos(window.glfwWindow, window.winPosX, window.winPosY);
+	window.renderingSystem = std::make_unique<RenderingSystem>(gameServer);
 
 	if (window.fullScreen) {
 		window.fullScreen = false;
@@ -313,7 +307,7 @@ void createGLFWWindow				(Window & window, GameServer * gameServer) {
 	}
 	
 	glfwShowWindow(window.glfwWindow);
-	
+		
 	setWindowCallbacks(window);
 }
 void whenWindowIsResized			(GLFWwindow * window, int width, int height) {
@@ -328,12 +322,29 @@ void changeAntiAliasing				(Window & window, unsigned int antiAliasing) {
 	window.antiAliasing = antiAliasing;
 	reloadTheWindow(window);
 }
-void renderChunks					(Chunk & chunk, RenderingSystem & renderingSystem) {
+void renderChunk					(Chunk & chunk, RenderingSystem & renderingSystem) {
+
+	//view matrix
+	renderingSystem.viewMatrix = glm::lookAt(
+		glm::vec3(0, -2, 1), // Camera is at (4,3,3), in World Space
+		glm::vec3(0, 0, 0), // and looks at the origin
+		glm::vec3(0, 0, 1)  // Head is up (set to 0,-1,0 to look upside-down)
+	);
+
 	renderEntities(chunk.entities, renderingSystem);
 }
 void renderEntity					(Entity & entity, RenderingSystem & renderingSystem) {
+
+	//model matrix
+	renderingSystem.modelMatrix = glm::rotate(glm::mat4(1), (float)renderingSystem.gameServer->time.getTotal(), glm::vec3(0, 0, 1));
+	
 	if (entity.type == "triangle") {
 		useShader(renderingSystem.primitiveShader);
+		glUniformMatrix4fv(renderingSystem.primitiveShader.projectionMatrixID, 1, GL_FALSE, &renderingSystem.projectionMatrix[0][0]);
+		glUniformMatrix4fv(renderingSystem.primitiveShader.viewMatrixID, 1, GL_FALSE, &renderingSystem.viewMatrix[0][0]);
+		glUniformMatrix4fv(renderingSystem.primitiveShader.modelMatrixID, 1, GL_FALSE, &renderingSystem.modelMatrix[0][0]);
+
+
 		renderMesh(*renderingSystem.meshHandler.meshMap["triangle"]);
 	}
 }
@@ -371,15 +382,18 @@ void createNewWindow				(WindowHandler & windowHandler, GameServer * gameServer)
 	windowHandler.windows.push_back(tmp);
 }
 void renderFrame					(RenderingSystem & renderingSystem, int width, int height) {
-	//glm::mat4 projectionMatrix = glm::perspective(glm::radians(45.0f), 4.0f / 3.0f, 0.1f, 100.f);
 	glViewport(0, 0, width, height);
 	glClear(GL_DEPTH_BUFFER_BIT);
+
+	//projection matrix
+	renderingSystem.projectionMatrix = glm::perspective(glm::radians(70.0f), (float)width / (float)height, 0.1f, 1000.0f);
+
 	renderWorld(renderingSystem.gameServer->worldSystem, renderingSystem);
 	glUseProgram(0); // somehow gets rid of shader recompilation on nvidia cards
 }
 void renderWorld					(WorldSystem & worldSystem, RenderingSystem & renderingSystem) {
 	renderSky(worldSystem.sky);
-	renderChunks(worldSystem.chunk, renderingSystem);
+	renderChunk(worldSystem.chunk, renderingSystem);
 }
 void whenButtonIsPressed			(GLFWwindow * window, int key, int scancode, int action, int mods)
 {
@@ -408,24 +422,28 @@ void renderEntities					(std::vector<std::shared_ptr<Entity>>& entities, Renderi
 	}
 }
 void loadShader						(ShaderProgram & shaderProgram, const char * vertexPath, const char * fragmentPath) {
-	debugPrint("Loading Shader");
 	GLuint VertexShaderID = glCreateShader(GL_VERTEX_SHADER);
 	GLuint FragmentShaderID = glCreateShader(GL_FRAGMENT_SHADER);
 
-	// Read the Vertex Shader code from the file
 	std::string VertexShaderCode;
 	std::ifstream VertexShaderStream(vertexPath, std::ios::in);
-	if (VertexShaderStream.is_open()) {
-		std::stringstream sstr;
-		sstr << VertexShaderStream.rdbuf();
-		VertexShaderCode = sstr.str();
-		VertexShaderStream.close();
+	try {
+		if (VertexShaderStream.is_open()) {
+			std::stringstream sstr;
+			sstr << VertexShaderStream.rdbuf();
+			VertexShaderCode = sstr.str();
+			VertexShaderStream.close();
+		}
+		else {
+			throw std::exception{ "Could not load vertex shader!" };
+		}
 	}
-	else {
-		throw std::runtime_error{ "Could not load vertex shader!" };
-	}
+	catch (std::exception error) {
+		std::cout << "Error: " << error.what() << std::endl;
+		std::getchar();
+		exit(EXIT_FAILURE);
+	};
 
-	// Read the Fragment Shader code from the file
 	std::string FragmentShaderCode;
 	std::ifstream FragmentShaderStream(fragmentPath, std::ios::in);
 	if (FragmentShaderStream.is_open()) {
@@ -442,7 +460,7 @@ void loadShader						(ShaderProgram & shaderProgram, const char * vertexPath, co
 	int InfoLogLength;
 
 	// Compile Vertex Shader
-	printf("Compiling shader : %s\n", vertexPath);
+	//printf("Compiling shader : %s\n", vertexPath);
 	char const * VertexSourcePointer = VertexShaderCode.c_str();
 	glShaderSource(VertexShaderID, 1, &VertexSourcePointer, NULL);
 	glCompileShader(VertexShaderID);
@@ -457,7 +475,7 @@ void loadShader						(ShaderProgram & shaderProgram, const char * vertexPath, co
 	}
 
 	// Compile Fragment Shader
-	printf("Compiling shader : %s\n", fragmentPath);
+	//printf("Compiling shader : %s\n", fragmentPath);
 	char const * FragmentSourcePointer = FragmentShaderCode.c_str();
 	glShaderSource(FragmentShaderID, 1, &FragmentSourcePointer, NULL);
 	glCompileShader(FragmentShaderID);
@@ -472,7 +490,6 @@ void loadShader						(ShaderProgram & shaderProgram, const char * vertexPath, co
 	}
 
 	// Link the program
-	printf("Linking program\n");
 	shaderProgram.programID = glCreateProgram();
 	glAttachShader(shaderProgram.programID, VertexShaderID);
 	glAttachShader(shaderProgram.programID, FragmentShaderID);
@@ -492,6 +509,18 @@ void loadShader						(ShaderProgram & shaderProgram, const char * vertexPath, co
 
 	glDeleteShader(VertexShaderID);
 	glDeleteShader(FragmentShaderID);
+
+	glUseProgram(shaderProgram.programID);
+
+	//set up matrix IDs
+	shaderProgram.modelMatrixID = glGetUniformLocation(shaderProgram.programID, "modelMatrix");
+	shaderProgram.viewMatrixID = glGetUniformLocation(shaderProgram.programID, "viewMatrix");
+	shaderProgram.projectionMatrixID = glGetUniformLocation(shaderProgram.programID, "projectionMatrix");
+
+	glUniformMatrix4fv(shaderProgram.modelMatrixID, 1, GL_FALSE, &glm::mat4(1)[0][0]);
+	glUniformMatrix4fv(shaderProgram.viewMatrixID, 1, GL_FALSE, &glm::mat4(1)[0][0]);
+	glUniformMatrix4fv(shaderProgram.projectionMatrixID, 1, GL_FALSE, &glm::mat4(1)[0][0]);
+
 	shaderProgram.loaded = true;
 }
 void __stdcall DebugOutputCallback	(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar * message, const void * userParam) {
@@ -611,6 +640,8 @@ Program::~Program()
 }
 Triangle::Triangle() {
 	type = "triangle";
+	components.push_back(Component());
+	components.push_back(TransformationComponent());
 	debugPrint("|--+Triangle (Entity) was created!");
 }
 double Time::getDelta() {
@@ -682,10 +713,38 @@ Window::~Window() {
 }
 RenderingSystem::RenderingSystem(GameServer * gameServer)
 {
-	this->gameServer = gameServer;
+	this->gameServer	= gameServer;
+	projectionMatrix	= glm::mat4(1);
+	viewMatrix			= glm::mat4(1);
+	modelMatrix			= glm::mat4(1);
+
 	debugPrint("|---RenderingSystem was created!");
 }
 RenderingSystem::~RenderingSystem()
 {
 	debugPrint("|---RenderingSystem was destroyed!");
+}
+
+TransformationComponent::TransformationComponent()
+{
+	location = glm::vec3(0);
+	rotation = glm::vec3(0);
+	scale    = glm::vec3(1);
+}
+
+void TransformationComponent::execute()
+{
+	glm::mat4 matrix = glm::mat4(1);
+	matrix = glm::scale(matrix, scale);
+	matrix = glm::rotate(matrix, rotation.y, glm::vec3(0, 1, 0));
+	matrix = glm::rotate(matrix, rotation.x, glm::vec3(1, 0, 0));
+	matrix = glm::rotate(matrix, rotation.z, glm::vec3(0, 0, 1));
+	matrix = glm::translate(matrix, location);
+
+	debugPrint("Executing transformation component!");
+}
+
+void Component::execute()
+{
+	debugPrint("Executing empty component!");
 }
