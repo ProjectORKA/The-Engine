@@ -1,3 +1,4 @@
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma region ignore
 
 #pragma once
@@ -5,14 +6,15 @@
 #define GAME_HPP
 
 //std libs
-#include <iostream>
-#include <fstream>
-#include <sstream>
-#include <vector>
 #include <map>
+#include <bitset>
+#include <memory>
+#include <vector>
 #include <chrono>
 #include <thread>
-#include <memory>
+#include <sstream>
+#include <fstream>
+#include <iostream>
 
 #define GLAPI
 #define GLEW_STATIC
@@ -20,8 +22,31 @@
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 #include "GLFW/glfw3.h"
+#include <assimp/Importer.hpp>      // C++ importer interface
+#include <assimp/postprocess.h>     // Post processing flags
+#include <assimp/scene.h>           // Output data structure
 
 #pragma endregion
+
+#pragma region notes
+
+#pragma region todo
+
+//todo:		make whenMouseIsMoving function
+//todo:		implement ECS
+//todo:			+ transformation component
+//todo:			- mesh component
+//todo:			- rendering component
+//note:		differentiate systems into write and (only) read systems
+//note:		the rendering is strictly a read system
+
+//todo:		separate rendering into own thread
+
+#pragma endregion
+
+#pragma region bugs
+
+//bug:					window jumps into capture after indirectly changing focus and then changing back
 
 //minor bug:			framebuffer flickering on resize
 //clue:						main and render thread are not syncronized
@@ -30,16 +55,51 @@
 //clue:						reloading the entire window and rendering system is not instant
 //possible solution:		rendering to a multisampled framebuffer could prevent having to reload the window for aa
 
+#pragma endregion
+
+#pragma region features
+//multithreading
+//entity component system
+//multiple windows
+//	per window render settings
+//fullscreen
+//	instant fullscreen
+//	borderless fullscreen
+//change graphics settings on run time
+//render independent game instance
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+#pragma endregion
+
+#pragma endregion
+
+#pragma region preprocessor definitions
+
 #define DEBUG					//enables debug messages
 
-//STRUCTS (sorted in inverted hierarchical order)
+#define NUMBER_OF_AVAIVABLE_COMPONENTS 1
 
-struct Key {
-	bool holding = false;		//active every frame while button is pressed
-	bool activated = false;		//activated once every press
-	bool toggled = false;		//active every toggle
-	bool toggleStatus = false;	//do not confuse with holding! toggles with every press down
-};
+#pragma endregion
+
+#pragma region data
+//DATA (sorted in inverted hierarchical order)
+using Entity = std::bitset<NUMBER_OF_AVAIVABLE_COMPONENTS>;
+//struct Key {
+//	bool holding = false;		//active every frame while button is pressed
+//	bool activated = false;		//activated once every press
+//	bool toggled = false;		//active every toggle
+//	bool toggleStatus = false;	//do not confuse with holding! toggles with every press down
+//};
 struct Axis {
 	double current = 0.0f;
 	double previous = 0.0f;
@@ -47,8 +107,10 @@ struct Axis {
 };
 struct Mesh {
 	bool loaded = false;
+	unsigned int indexCount = 0;
 	GLuint vertexArrayObject;
 	GLuint vertexBuffer;
+	GLuint indexBuffer;
 	Mesh();
 	~Mesh();
 };
@@ -68,16 +130,16 @@ struct ShaderProgram {
 };
 struct GameServer;
 struct InputHandler {
-	Key action;
-	Key interact;
-	Key forward;
-	Key backward;
-	Key right;
-	Key left;
-	Key up;
-	Key down;
-	Key escape;
-	Key wireframe;
+	//Key action;
+	//Key interact;
+	//Key forward;
+	//Key backward;
+	//Key right;
+	//Key left;
+	//Key up;
+	//Key down;
+	//Key escape;
+	//Key wireframe;
 	Axis yaw;
 	Axis pitch;
 };
@@ -88,60 +150,52 @@ struct RenderingSystem {
 	glm::mat4 projectionMatrix;
 	glm::mat4 viewMatrix;
 	glm::mat4 modelMatrix;
-	RenderingSystem(GameServer * gameServer);
+	RenderingSystem(GameServer & gameServer);
 	~RenderingSystem();
 };
 struct Window {
 	//settings
 	std::string title = "Project ORKA";
 	bool fullScreen = false;
-	bool borderlessFullScreen = false;
+	bool borderlessFullScreen = true;
+	bool decorated = true;
 	unsigned int width = 1600;
 	unsigned int height = 900;
 	unsigned short antiAliasing = 4;
 
 	//local variables
+	bool duplicateWindow = false;
 	bool capturingCursor = false;
-	//int winPosX, winPosY = 0;
 	double curPosX, curPosY = 0;
 	double deltaX, deltaY = 0;
 	GLFWwindow * glfwWindow;
 	InputHandler input;
 	std::unique_ptr<RenderingSystem> renderingSystem;
-	//RenderingSystem * renderingSystem;
 
+	//thread
 	bool keepThreadRunning = true;
 	std::unique_ptr<std::thread> thread;
 
-	Window(GameServer * gameServer);
+	Window(GameServer & gameServer);
 	~Window();
 };
+struct Transformation {
+	glm::vec3 location = glm::vec3(0);
+	glm::vec3 rotation = glm::vec3(0);
+	glm::vec3 scale = glm::vec3(1);
 
-struct Component {
-	void execute();
+	glm::mat4 modelMatrix();
 };
-
-struct TransformationComponent : public Component {
-	glm::vec3 location;
-	glm::vec3 rotation;
-	glm::vec3 scale;
-	
-	TransformationComponent();
-
-	void execute();
+struct TransformationSystem {
+	std::vector<Transformation> transformations;
+	std::vector<Transformation * > interfaceLayer;
 };
-
-struct Entity {
-	std::string type = "empty";
-	std::vector<Component> components;
-	Entity();
-	~Entity();
-};
-struct Triangle : public Entity {
-	Triangle();
+struct ECS {
+	std::vector<Entity> entities;
+	TransformationSystem transformationSystem;
 };
 struct Chunk {
-	std::vector<std::shared_ptr<Entity>> entities;
+	ECS entityComponentSystem;
 	Chunk();
 	~Chunk();
 };
@@ -186,57 +240,72 @@ struct Program {
 	~Program();
 };
 
-//FUNCTIONS
+#pragma endregion
+
+#pragma region functions
+
 //debug
-void debugPrint								(const char * debugMessage);
+void debugPrint						(const char * debugMessage);
+
 //shader
-void useShader								(ShaderProgram & program);
-void loadShader(ShaderProgram & shaderProgram, const char * vertexPath, const char * fragmentPath);
+void useShader						(ShaderProgram & program);
+void loadShader						(ShaderProgram & shaderProgram, const char * vertexPath, const char * fragmentPath);
+
 //mesh
-void loadMesh						(Mesh & mesh);
+void loadMesh						(Mesh & mesh, const char * path);
 void renderMesh						(Mesh & mesh);
+
 //render settings
 void changeAntiAliasing				(Window & window, unsigned int antiAliasing);
+
 //rendering system
 void renderSky						(Sky & sky);
 void renderChunk					(Chunk & chunk, RenderingSystem & renderingSystem);
-void renderEntity					(Entity & entity, RenderingSystem & renderingSystem);
 void renderFrame					(RenderingSystem & renderingSystem, int width, int height);
 void renderWorld					(WorldSystem & worldSystem, RenderingSystem & renderingSystem);
-void renderEntities					(std::vector<std::shared_ptr<Entity>>& entities, RenderingSystem & renderingSystem);
+void renderEntities					(ECS & entityComponentSystem, RenderingSystem & renderingSystem);
 void __stdcall DebugOutputCallback	(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam);
+
 //input
-void resetKey						(Key & key);
-void setKey							(Key & key, bool pressed);
-void setAxis						(Axis & axis, double value);
-void whenMouseIsPressed				(GLFWwindow* window, int button, int action, int mods);
-void whenMouseIsScrolling			(GLFWwindow* window, double xoffset, double yoffset);
-void whenButtonIsPressed			(GLFWwindow* window, int key, int scancode, int action, int mods);
-//window
-void renderWindow					(Window & window);
-void setWindowHints					(Window & window);
+//void resetKey						(Key & key);
+//void setKey							(Key & key, bool pressed);
 void captureCursor					(Window & window);
 void uncaptureCursor				(Window & window);
-void toggleFullscreen				(Window & window);
-void setIcon						(Window & window, std::string path);
-void createNewWindow				(WindowHandler & windowHandler, GameServer * gameServer);
+void setAxis						(Axis & axis, double value);
+void whenMouseIsMoving				(GLFWwindow* window, double xpos, double ypos);
+void whenMouseIsScrolling			(GLFWwindow* window, double xoffset, double yoffset);
+void whenMouseIsPressed				(GLFWwindow* window, int button, int action, int mods);
+void whenButtonIsPressed			(GLFWwindow* window, int key, int scancode, int action, int mods);
+
+//window
 void centerWindow					(Window & window);
+void renderWindow					(Window & window);
 void reloadTheWindow				(Window & window);
+void toggleFullscreen				(Window & window);
 void destroyGLFWWindow				(Window & window);
 void setWindowCallbacks				(Window & window);
-void processWindowInputs			(Window & window);
 void whenWindowChangedFocus			(GLFWwindow* window, int focused);
-void createGLFWWindow				(Window & window, GameServer * gameServer);
+void setIcon						(Window & window, std::string path);
+void createGLFWWindow				(Window & window, GameServer & gameServer);
 void whenWindowIsResized			(GLFWwindow* window, int width, int height);
+void createNewWindow				(WindowHandler & windowHandler, GameServer & gameServer);
+
 //window handler
-void updateWindows				(WindowHandler & windowHandler);
-void whenGLFWThrowsError		(int error, const char* description);
+void checkWindowEvents					(WindowHandler & windowHandler);
+void whenGLFWThrowsError			(int error, const char* description);
+
 //time
-void resetTime					(Time & time);
-void updateTime					(Time & time);
+void resetTime						(Time & time);
+void updateTime						(Time & time);
+//entity component system
+void addTriangle					(ECS & entityComponentSystem);
+void addEmptyEntity					(ECS & entityComponentSystem);
 
 //THREADS
-void GameServerThread			(GameServer & gameServer);
-void WindowThread				(Window & window, GameServer * gameServer);
+void GameServerThread				(GameServer & gameServer);
+void WindowThread					(Window & window, GameServer * gameServer);
+
+#pragma endregion
 
 #endif // !GAME_HPP
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
