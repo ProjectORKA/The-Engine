@@ -54,8 +54,5 @@ int main(int argc, char *argv[]) {
 	{
 		Program program;//<-- In Visual Studio press F12 to see what "Program" actually does
 	}
-
-	system("pause");
-
 	return 0;
 }
