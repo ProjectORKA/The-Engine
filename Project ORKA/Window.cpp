@@ -76,7 +76,6 @@ void destroyGLFWWindow(Window & window) {
 }
 
 void setWindowCallbacks(Window & window) {
-	//glfwSetWindowPosCallback(window.glfwWindow, whenWindowIsMoved);
 	glfwSetFramebufferSizeCallback(window.glfwWindow, whenWindowIsResized);
 	glfwSetScrollCallback(window.glfwWindow, whenMouseIsScrolling);
 	glfwSetKeyCallback(window.glfwWindow, whenButtonIsPressed);
@@ -167,6 +166,7 @@ void changeAntiAliasing(Window & window, unsigned int antiAliasing) {
 
 Window::Window(GameServer & gameServer)
 {
+	cameraSystem = &gameServer.worldSystem.chunk.entityComponentSystem.cameraSystem;
 	createGLFWWindow(*this, gameServer);
 	centerWindow(*this);
 
@@ -199,8 +199,14 @@ void WindowThread(Window & window, GameServer * gameServer)
 
 	glEnable(GL_DEBUG_OUTPUT);
 	glDebugMessageCallback(DebugOutputCallback, 0);
-
+	std::chrono::steady_clock::time_point t;
 	while (window.keepThreadRunning) {
+		t = std::chrono::steady_clock::now();
+
 		renderWindow(window);
+		processKeyboardInput(window);
+
+		t += std::chrono::milliseconds(16);
+		std::this_thread::sleep_until(t);
 	}
 }

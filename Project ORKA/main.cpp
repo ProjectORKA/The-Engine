@@ -25,13 +25,10 @@
 //			- pointers/references
 //			- other structs/containers
 //		However, they do NOT have member-functions/methods!
-//		Constructors are allowed in the context of
-//			1. Immediate initialisation
-//			2. Safe destruction
-//			3. Thread handling
+//			(unless the stored data always needs conversion)
 //	2. Functions
-//		All functions are of type void
-//		They only take a minimal amount of references as inputs
+//		All functions are (ideally) of type void and should be self explainatory
+//		They only take a minimal amount of references (and data) as inputs
 //		Functions start with a lowercase letter and describe what they do e.g. "startSpaceShip"
 //		Any kind of initialization or destruction should be a constructor/destructor instead
 //	3. Threads

@@ -9,10 +9,25 @@ void renderWindow(Window & window) {
 }
 
 void renderFrame(RenderingSystem & renderingSystem, int width, int height) {
+	if (!width || !height) { return; };
 	glViewport(0, 0, width, height);
+	
+	//backface culling
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_BACK);
+	
+	//depth testing
 	glClear(GL_DEPTH_BUFFER_BIT);
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LESS);
+
+	//wireframe mode
+	if (renderingSystem.wireframeMode) {
+		glPolygonMode(GL_FRONT_AND_BACK , GL_LINE);
+	} else {
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	}
+
 	//projection matrix
 	renderingSystem.projectionMatrix = glm::perspective(glm::radians(75.0f), (float)width / (float)height, 0.1f, 1000.0f);
 
@@ -32,12 +47,7 @@ void renderSky(Sky & sky) {
 
 void renderChunk(Chunk & chunk, RenderingSystem & renderingSystem) {
 
-	//view matrix
-	renderingSystem.viewMatrix = glm::lookAt(
-		glm::vec3(+0.0f, -3.0f, +0.5f),	//position
-		glm::vec3(+0.0f, +0.0f, +0.0f),		//looking at
-		glm::vec3(+0.0f, +0.0f, +1.0f)		//up vector
-	);
+	renderingSystem.viewMatrix = chunk.entityComponentSystem.cameraSystem.viewMatrices[renderingSystem.cameraID];
 
 	renderEntities(chunk.entityComponentSystem, renderingSystem);
 
@@ -47,10 +57,15 @@ void renderEntities(ECS & entityComponentSystem, RenderingSystem & renderingSyst
 	for (unsigned int i = 0; i < entityComponentSystem.transformationSystem.transformations.size(); i++) {
 		//model matrix
 		renderingSystem.modelMatrix = entityComponentSystem.transformationSystem.transformations[i].modelMatrix();
+
+		//mvp matrix
+		glm::mat4 mvpMatrix = renderingSystem.projectionMatrix * renderingSystem.viewMatrix * renderingSystem.modelMatrix;
+
 		useShader(renderingSystem.primitiveShader);
-		glUniformMatrix4fv(renderingSystem.primitiveShader.projectionMatrixID, 1, GL_FALSE, &renderingSystem.projectionMatrix[0][0]);
-		glUniformMatrix4fv(renderingSystem.primitiveShader.viewMatrixID, 1, GL_FALSE, &renderingSystem.viewMatrix[0][0]);
-		glUniformMatrix4fv(renderingSystem.primitiveShader.modelMatrixID, 1, GL_FALSE, &renderingSystem.modelMatrix[0][0]);
+		//glUniformMatrix4fv(renderingSystem.primitiveShader.projectionMatrixID, 1, GL_FALSE, &renderingSystem.projectionMatrix[0][0]);
+		//glUniformMatrix4fv(renderingSystem.primitiveShader.viewMatrixID, 1, GL_FALSE, &renderingSystem.viewMatrix[0][0]);
+		//glUniformMatrix4fv(renderingSystem.primitiveShader.modelMatrixID, 1, GL_FALSE, &renderingSystem.modelMatrix[0][0]);
+		glUniformMatrix4fv(renderingSystem.primitiveShader.mvpMatrixID, 1, GL_FALSE, &mvpMatrix[0][0]);
 		renderMesh(*renderingSystem.meshHandler.meshMap["triangle"]);
 	}
 }
@@ -59,6 +74,7 @@ void renderEntities(ECS & entityComponentSystem, RenderingSystem & renderingSyst
 RenderingSystem::RenderingSystem(GameServer & gameServer)
 {
 	this->gameServer = &gameServer;
+
 	projectionMatrix = glm::mat4(1);
 	viewMatrix = glm::mat4(1);
 	modelMatrix = glm::mat4(1);
