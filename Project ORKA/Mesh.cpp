@@ -2,11 +2,14 @@
 #include "Program.hpp"
 
 void loadMesh(Mesh & mesh, const char * path) {
+	
+	debugPrint("Loading Mesh!");
+
 	std::vector<unsigned int> indices;
 	std::vector<glm::vec3> vertices;
 	//std::vector<glm::vec3> normals;
 	//std::vector<glm::vec2> UVs;
-	
+
 	if (!mesh.loaded) {
 		//load file
 		Assimp::Importer Importer;
@@ -100,6 +103,9 @@ void loadMesh(Mesh & mesh, const char * path) {
 		mesh.indexCount = (unsigned int)indices.size();
 
 		mesh.loaded = true;
+
+		debugPrint("Loaded Mesh!");
+
 	}
 }
 
@@ -207,7 +213,6 @@ Mesh::~Mesh()
 	debugPrint("|-----Mesh destroyed!");
 }
 
-
 MeshHandler::MeshHandler()
 {
 	meshMap["triangle"] = std::make_shared<Mesh>();
@@ -217,4 +222,5 @@ MeshHandler::MeshHandler()
 MeshHandler::~MeshHandler()
 {
 	debugPrint("|----MeshHandler was destroyed!");
+
 }

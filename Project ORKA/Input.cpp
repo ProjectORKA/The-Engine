@@ -7,10 +7,10 @@ void whenMouseIsMoving(GLFWwindow* window, double xpos, double ypos) {
 	if (parentWindowClass.capturingCursor) {
 		glfwGetCursorPos(parentWindowClass.glfwWindow, &parentWindowClass.deltaX, &parentWindowClass.deltaY);
 		glfwSetCursorPos(parentWindowClass.glfwWindow, 0, 0);
-		setAxis(parentWindowClass.input.yaw, parentWindowClass.deltaX);
-		setAxis(parentWindowClass.input.pitch, parentWindowClass.deltaY);
-	}
-	else {
+		
+		rotateCamera(*parentWindowClass.cameraSystem, parentWindowClass.renderingSystem->cameraID, xpos, ypos);
+	
+	} else {
 		glfwGetCursorPos(parentWindowClass.glfwWindow, &parentWindowClass.curPosX, &parentWindowClass.curPosY);
 	}
 }
@@ -32,22 +32,25 @@ void whenButtonIsPressed(GLFWwindow * window, int key, int scancode, int action,
 		changeAntiAliasing(*parentWindowClass, 8);
 	}
 	if (key == GLFW_KEY_P && action == GLFW_PRESS) {
-		parentWindowClass->renderingSystem->gameServer->time.paused = !parentWindowClass->renderingSystem->gameServer->time.paused;
+		parentWindowClass->renderingSystem->gameServer->gameTime.paused = !parentWindowClass->renderingSystem->gameServer->gameTime.paused;
 	}
 	if (key == GLFW_KEY_N && action == GLFW_PRESS) {
 		parentWindowClass->duplicateWindow = true;
 	}
+	if (key == GLFW_KEY_B && action == GLFW_PRESS) {
+		parentWindowClass->borderlessFullScreen = !parentWindowClass->borderlessFullScreen;
+	}
+	if (key == GLFW_KEY_F && action == GLFW_PRESS) {
+		parentWindowClass->renderingSystem->wireframeMode = !parentWindowClass->renderingSystem->wireframeMode;
+	}
 }
 
 void whenMouseIsScrolling(GLFWwindow * window, double xoffset, double yoffset) {
-
-	//get parent class
-
-	//Window *parentWindowClass = static_cast<Window*>(glfwGetWindowUserPointer(window));
-	//
-	//static int mvspeed = 1;
-	//mvspeed += (int)yoffset;
-	//parentWindowClass->camera->cameraMovementSpeed = pow(1.1f, mvspeed);
+	Window *parentWindowClass = static_cast<Window*>(glfwGetWindowUserPointer(window));
+	
+	static int mvspeed = 24; //1.1 pow 24 is closest to 10.0
+	mvspeed += (int)yoffset;
+	parentWindowClass->cameraSystem->cameraSpeed[parentWindowClass->renderingSystem->cameraID] = pow(1.1f, mvspeed);
 }
 
 void whenMouseIsPressed(GLFWwindow * window, int button, int action, int mods) {
@@ -55,7 +58,7 @@ void whenMouseIsPressed(GLFWwindow * window, int button, int action, int mods) {
 	//LMB
 	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
 		if (parentWindowClass->capturingCursor) {
-			//setKey(parentWindowClass->input.action, glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS);
+			
 		}
 		else {
 			captureCursor(*parentWindowClass);
@@ -79,41 +82,6 @@ void whenWindowIsResized(GLFWwindow * window, int width, int height) {
 	}
 }
 
-
-//void setKey(Key & key, bool pressed) {
-//	if (key.holding != pressed) {
-//		key.toggled = true;
-//	}
-//
-//	if (key.toggled && pressed) {
-//		key.activated = true;
-//	}
-//	else {
-//		key.activated = false;
-//	}
-//
-//	if (key.activated) {
-//		key.toggleStatus = !key.toggleStatus;
-//	}
-//
-//	key.holding = pressed;
-//}
-//
-//void resetKey(Key & key) {
-//	key.holding = false;
-//	key.activated = false;
-//	key.toggled = false;
-//	key.toggleStatus = false;
-//}
-
-
-void setAxis(Axis & axis, double value) {
-	axis.previous = axis.current;
-	axis.current = value;
-	axis.delta = axis.current - axis.previous;
-}
-
-
 void captureCursor(Window & window) {
 	if (glfwGetInputMode(window.glfwWindow, GLFW_CURSOR) != GLFW_CURSOR_DISABLED) {
 		glfwGetCursorPos(window.glfwWindow, &window.curPosX, &window.curPosY);
@@ -129,4 +97,25 @@ void uncaptureCursor(Window & window) {
 		glfwSetCursorPos(window.glfwWindow, window.curPosX, window.curPosY);
 		window.capturingCursor = false;
 	}
+}
+
+void processKeyboardInput(Window & window) {
+	float delta = window.renderingSystem->gameServer->serverTime.getDelta();
+
+	unsigned int cameraID = window.renderingSystem->cameraID;
+	CameraSystem & cameraSystem = *window.cameraSystem;
+	glm::vec3 totalAccelerationVector(0.0f);
+
+	if (glfwGetKey(window.glfwWindow, GLFW_KEY_E) == GLFW_PRESS) totalAccelerationVector += cameraSystem.upVector[cameraID];
+	if (glfwGetKey(window.glfwWindow, GLFW_KEY_Q) == GLFW_PRESS) totalAccelerationVector -= cameraSystem.upVector[cameraID];
+
+	if (glfwGetKey(window.glfwWindow, GLFW_KEY_W) == GLFW_PRESS) totalAccelerationVector += cameraSystem.forwardVector[cameraID];
+	if (glfwGetKey(window.glfwWindow, GLFW_KEY_S) == GLFW_PRESS) totalAccelerationVector -= cameraSystem.forwardVector[cameraID];
+
+	if (glfwGetKey(window.glfwWindow, GLFW_KEY_D) == GLFW_PRESS) totalAccelerationVector += cameraSystem.rightVector[cameraID];
+	if (glfwGetKey(window.glfwWindow, GLFW_KEY_A) == GLFW_PRESS) totalAccelerationVector -= cameraSystem.rightVector[cameraID];
+
+	totalAccelerationVector *= cameraSystem.cameraSpeed[cameraID] * delta;
+
+	cameraSystem.cameraLocation[cameraID] += totalAccelerationVector;
 }
