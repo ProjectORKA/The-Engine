@@ -27,7 +27,7 @@
     <ClCompile Include="GameServer.cpp" />
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="Math.cpp" />
-    <ClCompile Include="Mesh.cpp" />
+    <ClCompile Include="MeshSystem.cpp" />
     <ClCompile Include="Program.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Render.cpp" />

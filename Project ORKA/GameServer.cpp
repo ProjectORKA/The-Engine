@@ -1,33 +1,48 @@
 
 #include "Program.hpp"
 
-void processTransformations(std::vector<Transformation> & transformations, Time & time) {
-	for (int i = 0; i < transformations.size(); i++) {
-		//transformations[i].location.z = sin(0.1 * transformations[i].location.x + 0.1 * transformations[i].location.y + time.getTotal());
-		transformations[i].location += glm::vec3(randomFloat(-0.1, 0.1), randomFloat(-0.1, 0.1), randomFloat(-0.1, 0.1));
+void processTransformations(TransformationSystem & transformationSystem, Time & time) {
+
+	//apply motion to every object
+	if (!time.paused) {
+		for (int i = 0; i < transformationSystem.transformations.size(); i++) {
+
+			float distance = sqrt(glm::length(transformationSystem.transformations[i].location));
+
+			glm::mat4 rotMat = glm::rotate(glm::mat4(1), distance / 100.0f, glm::vec3(0, 0, 1));
+
+			transformationSystem.transformations[i].location = rotMat * glm::vec4(transformationSystem.transformations[i].location, 1);
+
+			//transformationSystem.transformations[i].location.z = 3 * sin(0.1 * transformationSystem.transformations[i].location.x + time.getTotal()) * sin(0.1 * transformationSystem.transformations[i].location.y + time.getTotal());
+			transformationSystem.transformations[i].location += glm::vec3(randomFloat(-0.2, 0.2), randomFloat(-0.2, 0.2), randomFloat(-0.2, 0.2));
+			transformationSystem.transformations[i].rotation += glm::vec3(randomFloat(-0.05, 0.05), randomFloat(-0.05, 0.05), randomFloat(-0.05, 0.05));
+		}
+	}
+
+	//calculate modelMatrices
+	transformationSystem.modelMatrices.resize(transformationSystem.transformations.size());
+	for (int i = 0; i < transformationSystem.transformations.size(); i++) {
+		calculateModelMatrix(transformationSystem.modelMatrices[i], transformationSystem.transformations[i]);
 	}
 }
 
 void GameServerThread(GameServer & gameServer) {
+
+	gameServer.gameTime.paused = true;
 
 	std::chrono::steady_clock::time_point t;
 
 	while (gameServer.keepThreadRunning) {
 		t = std::chrono::steady_clock::now();
 		updateTime(gameServer.gameTime);
-		updateTime(gameServer.serverTime);
-		
-		if (!gameServer.gameTime.paused) {
-			processTransformations(gameServer.worldSystem.chunk.entityComponentSystem.transformationSystem.transformations, gameServer.gameTime);
-		}
-		
-		pocessCameras(gameServer.worldSystem.chunk.entityComponentSystem.cameraSystem);
 
-		t += std::chrono::milliseconds(16);
+		processTransformations(gameServer.worldSystem.chunk.entityComponentSystem.transformationSystem, gameServer.gameTime);
+
+
+		t += std::chrono::milliseconds(16); //game server running at 60 Hz
 		std::this_thread::sleep_until(t);
 	}
 }
-
 
 GameServer::GameServer() {
 	thread = std::make_unique<std::thread>(GameServerThread, std::ref(*this));

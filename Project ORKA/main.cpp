@@ -36,6 +36,7 @@
 //		The functions they run follow the conventions above, but are declared in their own section and start with an uppercase letter
 
 #pragma region ignore
+
 #ifdef _WIN32
 int main(int argc, char *argv[]);
 #include <Windows.h>

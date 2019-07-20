@@ -40,7 +40,6 @@ void loadShader(ShaderProgram & shaderProgram, const char * vertexPath, const ch
 	int InfoLogLength;
 
 	// Compile Vertex Shader
-	//printf("Compiling shader : %s\n", vertexPath);
 	char const * VertexSourcePointer = VertexShaderCode.c_str();
 	glShaderSource(VertexShaderID, 1, &VertexSourcePointer, NULL);
 	glCompileShader(VertexShaderID);
@@ -55,7 +54,6 @@ void loadShader(ShaderProgram & shaderProgram, const char * vertexPath, const ch
 	}
 
 	// Compile Fragment Shader
-	//printf("Compiling shader : %s\n", fragmentPath);
 	char const * FragmentSourcePointer = FragmentShaderCode.c_str();
 	glShaderSource(FragmentShaderID, 1, &FragmentSourcePointer, NULL);
 	glCompileShader(FragmentShaderID);

@@ -27,7 +27,7 @@ void reloadTheWindow(Window & window) {
 	glfwGetWindowPos(window.glfwWindow, &x, &y);
 
 	//1. destroy window
-	GameServer * tmp = window.renderingSystem->gameServer;
+	GameServer * tmp = window.renderer->gameServer;
 	destroyGLFWWindow(window);
 
 	//mirror
@@ -47,8 +47,6 @@ void reloadTheWindow(Window & window) {
 void toggleFullscreen(Window & window) {
 	window.fullScreen = !window.fullScreen;
 	if (window.fullScreen) {
-		/*glfwGetWindowPos(window.glfwWindow, &window.winPosX, &window.winPosY);*/
-
 		if (window.borderlessFullScreen) {
 			glfwSetWindowAttrib(window.glfwWindow, GLFW_DECORATED, GLFW_FALSE);
 
@@ -98,7 +96,6 @@ void whenWindowChangedFocus(GLFWwindow * window, int focused) {
 	else {
 		uncaptureCursor(*parentWindowClass);
 	}
-
 }
 
 void setIcon(Window & window, std::string path) {
@@ -147,7 +144,7 @@ void createGLFWWindow(Window & window, GameServer & gameServer) {
 	if (glfwRawMouseMotionSupported()) glfwSetInputMode(window.glfwWindow, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
 
 
-	window.renderingSystem = std::make_unique<RenderingSystem>(gameServer);
+	window.renderer = std::make_unique<Renderer>(gameServer);
 
 	if (window.fullScreen) {
 		window.fullScreen = false;
@@ -166,7 +163,6 @@ void changeAntiAliasing(Window & window, unsigned int antiAliasing) {
 
 Window::Window(GameServer & gameServer)
 {
-	cameraSystem = &gameServer.worldSystem.chunk.entityComponentSystem.cameraSystem;
 	createGLFWWindow(*this, gameServer);
 	centerWindow(*this);
 
@@ -199,14 +195,16 @@ void WindowThread(Window & window, GameServer * gameServer)
 
 	glEnable(GL_DEBUG_OUTPUT);
 	glDebugMessageCallback(DebugOutputCallback, 0);
-	std::chrono::steady_clock::time_point t;
+	//std::chrono::steady_clock::time_point t;
+	makeMeshAvaivable(*window.renderer, "monkey", "objects/suzanne.fbx");
+	makeMeshAvaivable(*window.renderer, "icosphere", "objects/icosphere.fbx");
+	makeMeshAvaivable(*window.renderer, "triangle", "objects/triangle.fbx");
+	makeMeshAvaivable(*window.renderer, "plane", "objects/simple plane x 2.fbx");
+
 	while (window.keepThreadRunning) {
-		t = std::chrono::steady_clock::now();
-
-		renderWindow(window);
+		updateTime(window.renderer->renderTime);
 		processKeyboardInput(window);
-
-		t += std::chrono::milliseconds(16);
-		std::this_thread::sleep_until(t);
+		pocessCamera(window.camera);
+		renderWindow(window);
 	}
 }
