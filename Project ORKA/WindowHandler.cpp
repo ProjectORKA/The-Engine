@@ -9,7 +9,7 @@ void checkWindowEvents(WindowHandler & windowHandler) {
 	glfwWaitEvents();
 	for (unsigned int i = 0; i < windowHandler.windows.size(); i++) {
 		if (windowHandler.windows[i]->duplicateWindow) {
-			createNewWindow(windowHandler, *windowHandler.windows[i]->renderingSystem->gameServer); //sketchy
+			createNewWindow(windowHandler, *windowHandler.windows[i]->renderer->gameServer); //sketchy
 			windowHandler.windows[i]->duplicateWindow = false;
 		}
 		if (glfwWindowShouldClose(windowHandler.windows[i]->glfwWindow)) {

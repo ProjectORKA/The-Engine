@@ -1,79 +1,151 @@
 
 #include "Program.hpp"
 
-//entity
-void addEmptyEntity(ECS & entityComponentSystem) {
-	entityComponentSystem.entities.emplace_back();
-	entityComponentSystem.names.emplace_back();
-}
-
-
 //camera
-void addCamera(CameraSystem & cameraSystem)
-{
-
-	cameraSystem.cameraLocation.push_back(glm::vec3(0.0f));
-	cameraSystem.cameraRotationX.push_back(0.0f);
-	cameraSystem.cameraRotationZ.push_back(0.0f);
-	cameraSystem.cameraSpeed.push_back(10.0f);
-
-	cameraSystem.forwardVector.push_back(glm::vec3(0, 1, 0));
-	cameraSystem.rightVector.push_back(  glm::vec3(1, 0, 0));
-	cameraSystem.upVector.push_back(     glm::vec3(0, 0, 1));
-
-	cameraSystem.viewMatrices.push_back(glm::lookAt( glm::vec3(0), glm::vec3(0,1,0), glm::vec3(0,0,1)));
+void rotateCamera(Camera & camera, float x, float y) {
+	camera.cameraRotationX -= 0.005f * y;
+	camera.cameraRotationZ += 0.005f * x;
 }
-void rotateCamera(CameraSystem & cameraSystem, unsigned int cameraID, float x, float y) {
-	cameraSystem.cameraRotationX[cameraID] -= 0.005 * y;
-	cameraSystem.cameraRotationZ[cameraID] += 0.005 * x;
-}
-void pocessCameras(CameraSystem & cameraSystem)
+void pocessCamera(Camera & camera)
 {
-	for (int i = 0; i < cameraSystem.cameraLocation.size(); i++) {
+	//prevent looking upside down
+
+	float cap = PI/2;
+
+	if (camera.cameraRotationX < -cap){
 		
-		//prevent looking upside down
-		if (cameraSystem.cameraRotationX[i] < -1) cameraSystem.cameraRotationX[i] = -1;
-		if (cameraSystem.cameraRotationX[i] > +1) cameraSystem.cameraRotationX[i] = +1;
+		camera.cameraRotationX = -cap;
 
-		//calculate directional vectors
-		cameraSystem.forwardVector[i] = glm::vec3(
-			cos(cameraSystem.cameraRotationX[i]) * sin(cameraSystem.cameraRotationZ[i]),
-			cos(cameraSystem.cameraRotationX[i]) * cos(cameraSystem.cameraRotationZ[i]),
-			sin(cameraSystem.cameraRotationX[i])
-		);
-
-		cameraSystem.rightVector[i] = glm::vec3(
-			-sin(cameraSystem.cameraRotationZ[i] - PI/2),
-			-cos(cameraSystem.cameraRotationZ[i] - PI/2),
-			0
-		);
-		cameraSystem.upVector[i] = glm::cross(cameraSystem.rightVector[i], cameraSystem.forwardVector[i]);
-
-		//calculate viewMatrix
-		cameraSystem.viewMatrices[i] = glm::lookAt(cameraSystem.cameraLocation[i], cameraSystem.cameraLocation[i] + cameraSystem.forwardVector[i], cameraSystem.upVector[i]);
 	}
+	if (camera.cameraRotationX > +cap) {
+
+		camera.cameraRotationX = +cap;
+
+	}
+
+	//calculate directional vectors
+	camera.forwardVector = glm::vec3(
+		cos(camera.cameraRotationX) * sin(camera.cameraRotationZ),
+		cos(camera.cameraRotationX) * cos(camera.cameraRotationZ),
+		sin(camera.cameraRotationX)
+	);
+
+	std::cout << camera.forwardVector.z << std::endl;
+
+	camera.rightVector = glm::vec3(
+		-sin(camera.cameraRotationZ - PI / 2),
+		-cos(camera.cameraRotationZ - PI / 2),
+		0
+	);
+	camera.upVector = glm::cross(camera.rightVector, camera.forwardVector);
+
+	//calculate viewMatrix
+	camera.viewMatrices = glm::lookAt(camera.cameraLocation, camera.cameraLocation + camera.forwardVector, camera.upVector);
 }
-CameraSystem::CameraSystem()
+
+void addEntityType(EntityTypes & entityTypes, std::string name, ComponentStructure structure) {
+
+	bool nameExists = false;
+	unsigned int nameExistsAtLocation = 0;
+	for (unsigned int i = 0; i < entityTypes.numberOfEntityTypes; i++) {
+		if (entityTypes.names[i] == name) {
+			nameExists = true;
+			nameExistsAtLocation = i;
+		}
+	}
+
+	if (nameExists) {
+		if (entityTypes.structure[nameExistsAtLocation] == structure) {
+			debugPrint("EntityType does already exist!");
+			return;
+		}
+		else {
+			debugPrint("Name for EntityType is already in use!");
+			return;
+		}
+	}
+	else {
+		entityTypes.numberOfEntityTypes++;
+		entityTypes.names.push_back(name);
+		entityTypes.structure.push_back(structure);
+		//entityTypes.count.push_back(0);
+		std::vector<Entity> tmp;
+		entityTypes.entityArrays.push_back(tmp);
+	}
+};
+
+void spawnEntity(EntityComponentSystem & ecs, std::string name)
 {
-	addCamera(*this);
+	//name to index
+	unsigned int entityTypeIndex = 0;
+	for (unsigned int i = 0; i < ecs.entityTypes.numberOfEntityTypes; i++) {
+		if (ecs.entityTypes.names[i] == name) {
+			entityTypeIndex = i;
+		}
+	}
+
+	//create the data
+	Entity tmp;
+	//transformation component
+	if (ecs.entityTypes.structure[entityTypeIndex][0]) {
+		tmp.componentIndices.push_back(ecs.transformationSystem.transformations.size());
+		addTransformationComponent(ecs);
+	}
+
+	/////////////////////////////////////////////////////////////////////////////
+	//		//another component												   //
+	//	if (ecs.entityTypes.structure[entityTypeIndex][999]) {				   //
+	//		tmp.componentIndices.push_back(ecs.anotherSystem.anothers.size()); //
+	//		addAnotherComponent(ecs);										   //
+	//	}																	   //
+	/////////////////////////////////////////////////////////////////////////////
+
+	//spawn the entity
+	ecs.entityTypes.entityArrays[entityTypeIndex].push_back(tmp);
 }
 
 //transformation
-void addTriangle(ECS & ecs)
-{
-	addEmptyEntity(ecs);
-	ecs.names.back() = "triangle";
-	addTransformationComponent(ecs, Transformation());
+void addTransformationComponent(EntityComponentSystem & entityComponentSystem) {
+	entityComponentSystem.transformationSystem.transformations.push_back(Transformation());
 }
-void addTransformationComponent(ECS & entityComponentSystem, Transformation transformation) {
-	
-	entityComponentSystem.transformationSystem.transformations.push_back(transformation);
-	entityComponentSystem.transformationSystem.interfaceLayer.push_back(&entityComponentSystem.transformationSystem.transformations.back());
-	entityComponentSystem.entities.back()[0] = 1;
 
-}
-glm::mat4 Transformation::modelMatrix()
+void calculateModelMatrix(glm::mat4 & matrix, Transformation & transformation)
 {
-	//make more performant
-	return glm::scale(glm::rotate(glm::rotate(glm::rotate(glm::translate(glm::mat4(1), location), rotation.z, glm::vec3(0, 0, 1)), rotation.x, glm::vec3(1, 0, 0)), rotation.y, glm::vec3(0, 1, 0)), scale);
+	matrix = glm::scale(glm::rotate(glm::rotate(glm::rotate(glm::translate(glm::mat4(1), transformation.location), transformation.rotation.z, glm::vec3(0, 0, 1)), transformation.rotation.x, glm::vec3(1, 0, 0)), transformation.rotation.y, glm::vec3(0, 1, 0)), transformation.scale);
+}
+
+//mesh
+//void addMeshComponent(ECS & entityComponentSystem, const char * path){
+//	entityComponentSystem.entitySystem.usedComponents.back()[1] = true;
+//	entityComponentSystem.entitySystem.meshIndex.back() = entityComponentSystem.
+//
+//	entityComponentSystem.transformationSystem.transformations.push_back(transformation);
+//}
+
+
+EntityTypes::EntityTypes()
+{
+	numberOfEntityTypes = 0;
+	//empty
+	addEntityType(*this, "empty", ComponentStructure());
+
+	//monkey
+	ComponentStructure monkeyStructure;
+	monkeyStructure[0] = true;
+	addEntityType(*this, "monkey", monkeyStructure);
+
+	//icosphere
+	ComponentStructure icosphereStructure;
+	icosphereStructure[0] = true;
+	addEntityType(*this, "icosphere", icosphereStructure);
+
+	//triangle
+	ComponentStructure triangleStructure;
+	triangleStructure[0] = true;
+	addEntityType(*this, "triangle", triangleStructure);
+
+	//plane
+	ComponentStructure planeStructure;
+	planeStructure[0] = true;
+	addEntityType(*this, "plane", planeStructure);
 }
