@@ -3,11 +3,15 @@
 
 Chunk::Chunk()
 {
-	int gridSize = 201;
+	unsigned int level = 1;
+	long long xPos = 0;
+	long long yPos = 0;
+
+	int gridSize = 301;
 	for (int x = 0; x < gridSize; x++) {
 		for (int y = 0; y < gridSize; y++) {
 
-			static int flopper = 0;
+			static int flopper = 1;
 
 			spawnEntity(entityComponentSystem, entityComponentSystem.entityTypes.names[flopper]);
 
@@ -19,7 +23,7 @@ Chunk::Chunk()
 			flopper++;
 
 			if (flopper >= entityComponentSystem.entityTypes.numberOfEntityTypes) {
-				flopper = 0;
+				flopper = 1;
 			}
 		}
 	}

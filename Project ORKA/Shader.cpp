@@ -94,21 +94,15 @@ void loadShader(ShaderProgram & shaderProgram, const char * vertexPath, const ch
 	//shaderProgram.modelMatrixID = glGetUniformLocation(shaderProgram.programID, "modelMatrix");
 	//shaderProgram.viewMatrixID = glGetUniformLocation(shaderProgram.programID, "viewMatrix");
 	//shaderProgram.projectionMatrixID = glGetUniformLocation(shaderProgram.programID, "projectionMatrix");
-	shaderProgram.mvpMatrixID = glGetUniformLocation(shaderProgram.programID, "mvpMatrix");
+	shaderProgram.mvpMatrixID = glGetUniformLocation(shaderProgram.programID, "vpMatrix");
 
 	//glUniformMatrix4fv(shaderProgram.modelMatrixID, 1, GL_FALSE, &glm::mat4(1)[0][0]);
 	//glUniformMatrix4fv(shaderProgram.viewMatrixID, 1, GL_FALSE, &glm::mat4(1)[0][0]);
 	//glUniformMatrix4fv(shaderProgram.projectionMatrixID, 1, GL_FALSE, &glm::mat4(1)[0][0]);
 	glUniformMatrix4fv(shaderProgram.mvpMatrixID, 1, GL_FALSE, &glm::mat4(1)[0][0]);
-
-
-	shaderProgram.loaded = true;
 }
 
 void useShader(ShaderProgram & program) {
-	if (!program.loaded) {
-		loadShader(program, "shaders/primitive.vert", "shaders/primitive.frag");
-	}
 	glUseProgram(program.programID);
 }
 
@@ -120,6 +114,5 @@ ShaderProgram::ShaderProgram()
 
 ShaderProgram::~ShaderProgram() {
 	glDeleteProgram(programID);
-	loaded = false;
 	debugPrint("|----ShaderProgram was destroyed!");
 }

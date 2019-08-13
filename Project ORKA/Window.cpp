@@ -16,7 +16,11 @@ void centerWindow(Window & window) {
 }
 
 void reloadTheWindow(Window & window) {
+	
 	debugPrint("\nWindow is being reloaded!");
+	
+
+	
 	//3. stop rendering thread
 	window.keepThreadRunning = false;
 	window.thread->join();
@@ -113,8 +117,8 @@ void createGLFWWindow(Window & window, GameServer & gameServer) {
 	glfwWindowHint(GLFW_REFRESH_RATE, videoMode->refreshRate);
 	glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
 	glfwWindowHint(GLFW_SAMPLES, window.antiAliasing);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
 	glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_API);
 	glfwWindowHint(GLFW_CONTEXT_CREATION_API, GLFW_NATIVE_CONTEXT_API);
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
@@ -195,16 +199,81 @@ void WindowThread(Window & window, GameServer * gameServer)
 
 	glEnable(GL_DEBUG_OUTPUT);
 	glDebugMessageCallback(DebugOutputCallback, 0);
+	
+	loadShader(window.renderer->primitiveShader, "shaders/primitive.vert", "shaders/primitive.frag");
+	loadShader(window.renderer->primitiveShaderInstanced, "shaders/primitive instanced.vert", "shaders/primitive.frag");
+
+	{
+		createAndUploadMeshFromFile(window.renderer->meshSystem, GL_TRIANGLES, "objects/tree.fbx", "tree");
+		createAndUploadMeshFromFile(window.renderer->meshSystem, GL_TRIANGLES, "objects/cube.fbx", "cube");
+		createAndUploadMeshFromFile(window.renderer->meshSystem, GL_TRIANGLES, "objects/suzanne.fbx", "monkey");
+		createAndUploadMeshFromFile(window.renderer->meshSystem, GL_TRIANGLES, "objects/icosphere.fbx", "icosphere");
+		createAndUploadMeshFromFile(window.renderer->meshSystem, GL_TRIANGLES, "objects/triangle.fbx", "triangle");
+		createAndUploadMeshFromFile(window.renderer->meshSystem, GL_TRIANGLES, "objects/plane.fbx", "plane");
+		createAndUploadMeshFromFile(window.renderer->meshSystem, GL_TRIANGLES, "objects/triangle.fbx", "error");
+
+		//create hardcoded bounding box
+		MeshContainer boundingBox;
+		boundingBox.name = "bounds";
+		boundingBox.primitiveMode = GL_LINES;
+		boundingBox.vertices.push_back(glm::vec3(+1.0f, +1.0f, +1.0f));
+		boundingBox.vertices.push_back(glm::vec3(+1.0f, +1.0f, -1.0f));
+		boundingBox.vertices.push_back(glm::vec3(+1.0f, -1.0f, +1.0f));
+		boundingBox.vertices.push_back(glm::vec3(+1.0f, -1.0f, -1.0f));
+		boundingBox.vertices.push_back(glm::vec3(-1.0f, +1.0f, +1.0f));
+		boundingBox.vertices.push_back(glm::vec3(-1.0f, +1.0f, -1.0f));
+		boundingBox.vertices.push_back(glm::vec3(-1.0f, -1.0f, +1.0f));
+		boundingBox.vertices.push_back(glm::vec3(-1.0f, -1.0f, -1.0f));
+		boundingBox.indices.push_back(7);
+		boundingBox.indices.push_back(3);
+		boundingBox.indices.push_back(7);
+		boundingBox.indices.push_back(5);
+		boundingBox.indices.push_back(7);
+		boundingBox.indices.push_back(6);
+		boundingBox.indices.push_back(1);
+		boundingBox.indices.push_back(3);
+		boundingBox.indices.push_back(1);
+		boundingBox.indices.push_back(5);
+		boundingBox.indices.push_back(1);
+		boundingBox.indices.push_back(0);
+		boundingBox.indices.push_back(2);
+		boundingBox.indices.push_back(6);
+		boundingBox.indices.push_back(2);
+		boundingBox.indices.push_back(0);
+		boundingBox.indices.push_back(2);
+		boundingBox.indices.push_back(3);
+		boundingBox.indices.push_back(4);
+		boundingBox.indices.push_back(6);
+		boundingBox.indices.push_back(4);
+		boundingBox.indices.push_back(5);
+		boundingBox.indices.push_back(4);
+		boundingBox.indices.push_back(0);
+		uploadStaticMesh(window.renderer->meshSystem, boundingBox);
+
+		//create hardcoded point mesh
+		MeshContainer singlePoint;
+		singlePoint.name = "point";
+		singlePoint.primitiveMode = GL_POINTS;
+		singlePoint.vertices.push_back(glm::vec3(0.0f));
+		singlePoint.uvs.push_back(glm::vec2(0.5f));
+		singlePoint.indices.push_back(0);
+		uploadStaticMesh(window.renderer->meshSystem, singlePoint);
+
+		////create hardcoded point mesh
+		//createAndUploadMeshFromFile(window.renderer->meshSystem, GL_POINTS, "objects/detailed monkey.fbx", "point cloud");
+	}
+
 	//std::chrono::steady_clock::time_point t;
-	makeMeshAvaivable(*window.renderer, "monkey", "objects/suzanne.fbx");
-	makeMeshAvaivable(*window.renderer, "icosphere", "objects/icosphere.fbx");
-	makeMeshAvaivable(*window.renderer, "triangle", "objects/triangle.fbx");
-	makeMeshAvaivable(*window.renderer, "plane", "objects/simple plane x 2.fbx");
 
 	while (window.keepThreadRunning) {
+		//t = std::chrono::steady_clock::now();
+		
 		updateTime(window.renderer->renderTime);
 		processKeyboardInput(window);
 		pocessCamera(window.camera);
 		renderWindow(window);
+
+		//t += std::chrono::milliseconds(16); //game server running at 60 Hz
+		//std::this_thread::sleep_until(t);
 	}
 }
