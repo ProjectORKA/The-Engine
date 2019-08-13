@@ -42,6 +42,7 @@
     <ClInclude Include="Program.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="shaders\primitive instanced.vert" />
     <None Include="shaders\primitive.frag" />
     <None Include="shaders\primitive.vert" />
   </ItemGroup>

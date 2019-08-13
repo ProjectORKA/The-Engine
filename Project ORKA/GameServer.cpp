@@ -9,13 +9,14 @@ void processTransformations(TransformationSystem & transformationSystem, Time & 
 
 			float distance = sqrt(glm::length(transformationSystem.transformations[i].location));
 
-			glm::mat4 rotMat = glm::rotate(glm::mat4(1), distance / 100.0f, glm::vec3(0, 0, 1));
-
-			transformationSystem.transformations[i].location = rotMat * glm::vec4(transformationSystem.transformations[i].location, 1);
-
-			//transformationSystem.transformations[i].location.z = 3 * sin(0.1 * transformationSystem.transformations[i].location.x + time.getTotal()) * sin(0.1 * transformationSystem.transformations[i].location.y + time.getTotal());
-			transformationSystem.transformations[i].location += glm::vec3(randomFloat(-0.2, 0.2), randomFloat(-0.2, 0.2), randomFloat(-0.2, 0.2));
+			//glm::mat4 rotMat = glm::rotate(glm::mat4(1), distance / 100.0f, glm::vec3(0, 0, 1));
+			//transformationSystem.transformations[i].location = rotMat * glm::vec4(transformationSystem.transformations[i].location, 1);
+			
+			float randomSpeed = 100.0f;
+			transformationSystem.transformations[i].location += glm::vec3(randomFloat(-randomSpeed, randomSpeed), randomFloat(-randomSpeed, randomSpeed), 0);
 			transformationSystem.transformations[i].rotation += glm::vec3(randomFloat(-0.05, 0.05), randomFloat(-0.05, 0.05), randomFloat(-0.05, 0.05));
+			
+			transformationSystem.transformations[i].location.z = 3 * sin(0.1 * transformationSystem.transformations[i].location.x + time.getTotal()) * sin(0.1 * transformationSystem.transformations[i].location.y + time.getTotal());
 		}
 	}
 

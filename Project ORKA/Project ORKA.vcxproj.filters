@@ -71,6 +71,9 @@
     <None Include="shaders\primitive.vert">
       <Filter>Resource Files\Shaders</Filter>
     </None>
+    <None Include="shaders\primitive instanced.vert">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Program.hpp">

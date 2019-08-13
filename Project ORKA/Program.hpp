@@ -75,6 +75,11 @@
 
 #pragma endregion
 
+#pragma region future optimizations
+//combine buffers of different objects into larger chunks (combine all static objects of a chunk)
+#pragma endregion
+
+
 #pragma endregion
 
 #pragma region preprocessor definitions
@@ -90,8 +95,19 @@
 
 struct GameServer;
 using ComponentIndex = unsigned int;
+struct MeshContainer {
+	std::string name;
+	unsigned short primitiveMode;
+	std::vector<glm::vec3> vertices;
+	std::vector<glm::vec2> uvs;
+	//std::vector<glm::vec3> colors;
+	//std::vector<glm::vec3> normals;
+	//std::vector<glm::vec2> uvs;
+	//std::vector<glm::vec3> tangents;
+	//std::vector<glm::vec3> bitangents;
+	std::vector<unsigned int> indices;
+};
 struct ShaderProgram {
-	bool loaded = false;
 	GLuint programID;
 	GLuint mvpMatrixID;
 	ShaderProgram();
@@ -100,12 +116,13 @@ struct ShaderProgram {
 struct MeshSystem {
 	unsigned int meshCount;
 	std::vector<std::string> names;
-	std::vector<const char *> paths;
-	std::vector<bool> loaded;
+	std::vector<unsigned short> primitiveMode;
 	std::vector<unsigned int> indexCount;
 	std::vector<GLuint> vertexArrayObject;
 	std::vector<GLuint> vertexBuffer;
+	std::vector<GLuint> uvBuffer;
 	std::vector<GLuint> indexBuffer;
+	std::vector<GLuint> positionBuffer;
 	MeshSystem();
 	~MeshSystem();
 };
@@ -114,6 +131,8 @@ struct Camera {
 	glm::vec3 cameraLocation = {0.0f,0.0f,0.0f };
 	float cameraRotationX = 0.0f;
 	float cameraRotationZ = 0.0f;
+
+	float mouseSensitivity = 0.001f;
 	float cameraSpeed = 1.0f;
 	int speedMultiplier = 1;
 	// soft data
@@ -166,12 +185,13 @@ struct Renderer {
 	Time renderTime;
 
 	ShaderProgram primitiveShader; //[TODO] turn into shader system
+	ShaderProgram primitiveShaderInstanced;
 
 	MeshSystem meshSystem;
-
 	GameServer * gameServer;
 
 	bool wireframeMode = false;
+	//unsigned int currentMeshIndex;
 
 	glm::mat4 projectionMatrix;
 	glm::mat4 viewMatrix;
@@ -207,6 +227,9 @@ struct Window {
 	~Window();
 };
 struct Chunk {
+	unsigned int level;
+	long long xPos;
+	long long yPos;
 	EntityComponentSystem entityComponentSystem;
 	Chunk();
 	~Chunk();
@@ -258,17 +281,21 @@ void loadShader						(ShaderProgram & shaderProgram, const char * vertexPath, co
 
 //mesh system
 void unbindMesh						();
-void makeMeshAvaivable				(Renderer & renderer, std::string name, const char * path);
-void renderMesh						(Renderer & renderer, unsigned int index);
-void bindMesh						(Renderer & renderer, unsigned int index);
-void loadMesh						(Renderer & renderer, ComponentIndex meshIndex);
-void unloadMesh						(MeshSystem & meshSystem, ComponentIndex meshIndex);
+void bindMesh						(MeshSystem & meshSystem, int index);
+void renderMesh						(MeshSystem & meshSystem, int meshIndex);
+void unloadMesh						(MeshSystem & meshSystem, int meshIndex);
+void uploadStaticMesh				(MeshSystem & meshSystem, MeshContainer & mesh);
+void getMeshIndexFromName			(MeshSystem & meshSystem, std::string meshName, int & meshIndex);
+void renderInstancedMesh			(MeshSystem & meshSystem, int meshIndex, unsigned int numberOfInstances);
+void createMeshFromFile				(MeshContainer & mesh, unsigned short primitiveMode, const char * path, std::string name);
+void createAndUploadMeshFromFile	(MeshSystem & meshSystem, unsigned short primitiveMode, const char * path, std::string name);
 
 //render settings
 void changeAntiAliasing				(Window & window, unsigned int antiAliasing);
 
 //rendering system
 void renderSky						(Sky & sky);
+void renderChunkBoundingBox			(Chunk & chunk, Renderer & renderer);
 void renderChunk					(Chunk & chunk, Renderer & renderingSystem);
 void renderFrame					(Renderer & renderingSystem, int width, int height);
 void renderWorld					(WorldSystem & worldSystem, Renderer & renderingSystem);
@@ -298,7 +325,7 @@ void whenWindowIsResized			(GLFWwindow* window, int width, int height);
 void createNewWindow				(WindowHandler & windowHandler, GameServer & gameServer);
 
 //window handler
-void checkWindowEvents					(WindowHandler & windowHandler);
+void checkWindowEvents				(WindowHandler & windowHandler);
 void whenGLFWThrowsError			(int error, const char* description);
 
 //time
@@ -309,8 +336,8 @@ void updateTime						(Time & time);
 void spawnEntity					(EntityComponentSystem & ecs, std::string name);
 
 //transformation component
-void addTransformationComponent		(EntityComponentSystem & entityComponentSystem);
 void calculateModelMatrix			(glm::mat4 & matrix, Transformation & transformation);
+void addTransformationComponent		(TransformationSystem & transformationSystem, Entity & entity);
 //camera component
 void pocessCamera					(Camera & cameraSystem);
 void rotateCamera					(Camera & cameraSystem, float x, float y);
