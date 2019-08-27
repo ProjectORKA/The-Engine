@@ -100,10 +100,14 @@ void loadShader(ShaderProgram & shaderProgram, const char * vertexPath, const ch
 	//glUniformMatrix4fv(shaderProgram.viewMatrixID, 1, GL_FALSE, &glm::mat4(1)[0][0]);
 	//glUniformMatrix4fv(shaderProgram.projectionMatrixID, 1, GL_FALSE, &glm::mat4(1)[0][0]);
 	glUniformMatrix4fv(shaderProgram.mvpMatrixID, 1, GL_FALSE, &glm::mat4(1)[0][0]);
+
+	shaderProgram.loaded = true;
 }
 
-void useShader(ShaderProgram & program) {
-	glUseProgram(program.programID);
+void useShader(ShaderProgram & shader) {
+	if (shader.loaded) {
+		glUseProgram(shader.programID);
+	}
 }
 
 

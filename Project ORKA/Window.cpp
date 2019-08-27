@@ -18,9 +18,7 @@ void centerWindow(Window & window) {
 void reloadTheWindow(Window & window) {
 	
 	debugPrint("\nWindow is being reloaded!");
-	
 
-	
 	//3. stop rendering thread
 	window.keepThreadRunning = false;
 	window.thread->join();
@@ -44,7 +42,7 @@ void reloadTheWindow(Window & window) {
 
 	//3. start rendering thread
 	window.keepThreadRunning = true;
-	window.thread = std::make_unique<std::thread>(WindowThread, std::ref(window), tmp);
+	window.thread = std::make_unique<std::thread>(RenderThread, std::ref(window));
 
 }
 
@@ -148,7 +146,7 @@ void createGLFWWindow(Window & window, GameServer & gameServer) {
 	if (glfwRawMouseMotionSupported()) glfwSetInputMode(window.glfwWindow, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
 
 
-	window.renderer = std::make_unique<Renderer>(gameServer);
+	window.renderer = std::make_unique<Renderer>(gameServer,window.camera);
 
 	if (window.fullScreen) {
 		window.fullScreen = false;
@@ -170,7 +168,7 @@ Window::Window(GameServer & gameServer)
 	createGLFWWindow(*this, gameServer);
 	centerWindow(*this);
 
-	thread = std::make_unique<std::thread>(WindowThread, std::ref(*this), &gameServer);
+	thread = std::make_unique<std::thread>(RenderThread, std::ref(*this));
 	debugPrint("|--Window was created!");
 }
 Window::~Window() {
@@ -181,7 +179,7 @@ Window::~Window() {
 	debugPrint("|--Window was destroyed!");
 }
 
-void WindowThread(Window & window, GameServer * gameServer)
+void RenderThread(Window & window)
 {
 	glfwMakeContextCurrent(window.glfwWindow);
 
@@ -203,77 +201,12 @@ void WindowThread(Window & window, GameServer * gameServer)
 	loadShader(window.renderer->primitiveShader, "shaders/primitive.vert", "shaders/primitive.frag");
 	loadShader(window.renderer->primitiveShaderInstanced, "shaders/primitive instanced.vert", "shaders/primitive.frag");
 
-	{
-		createAndUploadMeshFromFile(window.renderer->meshSystem, GL_TRIANGLES, "objects/tree.fbx", "tree");
-		createAndUploadMeshFromFile(window.renderer->meshSystem, GL_TRIANGLES, "objects/cube.fbx", "cube");
-		createAndUploadMeshFromFile(window.renderer->meshSystem, GL_TRIANGLES, "objects/suzanne.fbx", "monkey");
-		createAndUploadMeshFromFile(window.renderer->meshSystem, GL_TRIANGLES, "objects/icosphere.fbx", "icosphere");
-		createAndUploadMeshFromFile(window.renderer->meshSystem, GL_TRIANGLES, "objects/triangle.fbx", "triangle");
-		createAndUploadMeshFromFile(window.renderer->meshSystem, GL_TRIANGLES, "objects/plane.fbx", "plane");
-		createAndUploadMeshFromFile(window.renderer->meshSystem, GL_TRIANGLES, "objects/triangle.fbx", "error");
-
-		//create hardcoded bounding box
-		MeshContainer boundingBox;
-		boundingBox.name = "bounds";
-		boundingBox.primitiveMode = GL_LINES;
-		boundingBox.vertices.push_back(glm::vec3(+1.0f, +1.0f, +1.0f));
-		boundingBox.vertices.push_back(glm::vec3(+1.0f, +1.0f, -1.0f));
-		boundingBox.vertices.push_back(glm::vec3(+1.0f, -1.0f, +1.0f));
-		boundingBox.vertices.push_back(glm::vec3(+1.0f, -1.0f, -1.0f));
-		boundingBox.vertices.push_back(glm::vec3(-1.0f, +1.0f, +1.0f));
-		boundingBox.vertices.push_back(glm::vec3(-1.0f, +1.0f, -1.0f));
-		boundingBox.vertices.push_back(glm::vec3(-1.0f, -1.0f, +1.0f));
-		boundingBox.vertices.push_back(glm::vec3(-1.0f, -1.0f, -1.0f));
-		boundingBox.indices.push_back(7);
-		boundingBox.indices.push_back(3);
-		boundingBox.indices.push_back(7);
-		boundingBox.indices.push_back(5);
-		boundingBox.indices.push_back(7);
-		boundingBox.indices.push_back(6);
-		boundingBox.indices.push_back(1);
-		boundingBox.indices.push_back(3);
-		boundingBox.indices.push_back(1);
-		boundingBox.indices.push_back(5);
-		boundingBox.indices.push_back(1);
-		boundingBox.indices.push_back(0);
-		boundingBox.indices.push_back(2);
-		boundingBox.indices.push_back(6);
-		boundingBox.indices.push_back(2);
-		boundingBox.indices.push_back(0);
-		boundingBox.indices.push_back(2);
-		boundingBox.indices.push_back(3);
-		boundingBox.indices.push_back(4);
-		boundingBox.indices.push_back(6);
-		boundingBox.indices.push_back(4);
-		boundingBox.indices.push_back(5);
-		boundingBox.indices.push_back(4);
-		boundingBox.indices.push_back(0);
-		uploadStaticMesh(window.renderer->meshSystem, boundingBox);
-
-		//create hardcoded point mesh
-		MeshContainer singlePoint;
-		singlePoint.name = "point";
-		singlePoint.primitiveMode = GL_POINTS;
-		singlePoint.vertices.push_back(glm::vec3(0.0f));
-		singlePoint.uvs.push_back(glm::vec2(0.5f));
-		singlePoint.indices.push_back(0);
-		uploadStaticMesh(window.renderer->meshSystem, singlePoint);
-
-		////create hardcoded point mesh
-		//createAndUploadMeshFromFile(window.renderer->meshSystem, GL_POINTS, "objects/detailed monkey.fbx", "point cloud");
-	}
-
-	//std::chrono::steady_clock::time_point t;
-
-	while (window.keepThreadRunning) {
-		//t = std::chrono::steady_clock::now();
-		
+	loadAllMeshes(window.renderer->meshSystem);
+	
+	while (window.keepThreadRunning) {		
 		updateTime(window.renderer->renderTime);
 		processKeyboardInput(window);
 		pocessCamera(window.camera);
 		renderWindow(window);
-
-		//t += std::chrono::milliseconds(16); //game server running at 60 Hz
-		//std::this_thread::sleep_until(t);
 	}
 }

@@ -24,4 +24,3 @@ Program::~Program()
 {
 	debugPrint("|Program was destroyed!");
 }
-

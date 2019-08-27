@@ -4,8 +4,9 @@
 void renderWindow(Window & window) {
 	int vWidth, vHeight;
 	glfwGetFramebufferSize(window.glfwWindow, &vWidth, &vHeight);
-	window.renderer->viewMatrix = window.camera.viewMatrices;
+	
 	renderFrame(*window.renderer, vWidth, vHeight);
+	
 	glfwSwapBuffers(window.glfwWindow);
 }
 
@@ -33,14 +34,19 @@ void renderFrame(Renderer & renderer, int width, int height) {
 	//transparency / alpha
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	//glBlendEquation(GL_FUNC_ADD);
 	
 	//point renderer
-	//glPointSize(10.0f);
 	glEnable(GL_PROGRAM_POINT_SIZE);
+
+	//view matrix
+	renderer.viewMatrix = renderer.camera->viewMatrix;
 
 	//projection matrix
 	renderer.projectionMatrix = glm::perspective(glm::radians(80.0f), (float)width / (float)height, 0.1f, 20000.0f);
+
+	if (renderer.meshSystem.meshQueue.size() > 0) {
+		uploadNextMeshFromQueue(renderer.meshSystem);
+	}
 
 	renderWorld(renderer.gameServer->worldSystem, renderer);
 	glUseProgram(0); // somehow gets rid of shader recompilation on nvidia cards
@@ -48,34 +54,12 @@ void renderFrame(Renderer & renderer, int width, int height) {
 
 void renderWorld(WorldSystem & worldSystem, Renderer & renderer) {
 	renderSky(worldSystem.sky);
-	renderChunk(worldSystem.chunk, renderer);
-	renderChunkBoundingBox(worldSystem.chunk, renderer);
+	renderChunk(worldSystem.root, renderer);
 }
 
 void renderSky(Sky & sky) {
 	glClearColor(sky.skyColor.r, sky.skyColor.g, sky.skyColor.b, 0.75f);
 	glClear(GL_COLOR_BUFFER_BIT);
-}
-
-void renderChunkBoundingBox(Chunk & chunk, Renderer & renderer) {
-	useShader(renderer.primitiveShader);
-
-	int meshIndex;
-	getMeshIndexFromName(renderer.meshSystem, "bounds", meshIndex);
-
-	bindMesh(renderer.meshSystem, meshIndex);
-
-	glm::mat4 modelMatrix = glm::scale(glm::mat4(1), glm::vec3(5));
-	glm::mat4 mvpMatrix = renderer.projectionMatrix * renderer.viewMatrix * modelMatrix;
-	glUniformMatrix4fv(renderer.primitiveShader.mvpMatrixID, 1, GL_FALSE, &mvpMatrix[0][0]);
-
-	renderMesh(renderer.meshSystem, meshIndex);
-
-	unbindMesh();
-}
-
-void renderChunk(Chunk & chunk, Renderer & renderer) {
-	renderEntities(chunk.entityComponentSystem, renderer);
 }
 
 void getMeshIndexOfEntityType(std::string entityTypeName, std::vector<std::string> & meshNames, int & meshIndex) {
@@ -90,14 +74,14 @@ void getMeshIndexOfEntityType(std::string entityTypeName, std::vector<std::strin
 void renderEntities(EntityComponentSystem & ecs, Renderer & renderer) {
 	//for all entity types
 	
-	for (int i = 0; i < ecs.entityTypes.numberOfEntityTypes; i++) {
+	for (int currentEntityTypeIndex = 0; currentEntityTypeIndex < ecs.entityTypes.numberOfEntityTypes; currentEntityTypeIndex++) {
 		//check if it has entities
-		if (ecs.entityTypes.structure[i][0] && ecs.entityTypes.entityArrays[i].size() > 0) {
+		if (ecs.entityTypes.structure[currentEntityTypeIndex][0] && ecs.entityTypes.entityArrays[currentEntityTypeIndex].size() > 0) {
 			//render entities based on name
 			useShader(renderer.primitiveShaderInstanced);
 
 			int meshIndex;
-			getMeshIndexFromName(renderer.meshSystem, ecs.entityTypes.names[i], meshIndex);
+			getMeshIndexFromName(renderer.meshSystem, ecs.entityTypes.names[currentEntityTypeIndex], meshIndex);
 
 			if (meshIndex != -1) {
 			
@@ -105,9 +89,10 @@ void renderEntities(EntityComponentSystem & ecs, Renderer & renderer) {
 				
 				std::vector<glm::vec3> instancedPositions;
 
-				for (int j = 0; j < ecs.entityTypes.entityArrays[i].size(); j++) {
-					unsigned int transformationIndex = ecs.entityTypes.entityArrays[i][j].componentIndices[0];
-					glm::mat4 vpMatrix = renderer.projectionMatrix * renderer.viewMatrix;
+				for (int j = 0; j < ecs.entityTypes.entityArrays[currentEntityTypeIndex].size(); j++) {
+					
+					unsigned int transformationIndex = ecs.entityTypes.entityArrays[currentEntityTypeIndex][j].componentIndices[0];
+					glm::mat4 vpMatrix = renderer.projectionMatrix * renderer.chunkAdjustedViewMatrix;
 					
 					glUniformMatrix4fv(renderer.primitiveShaderInstanced.mvpMatrixID, 1, GL_FALSE, &vpMatrix[0][0]);
 					
@@ -125,10 +110,10 @@ void renderEntities(EntityComponentSystem & ecs, Renderer & renderer) {
 	}
 }
 
-Renderer::Renderer(GameServer & gameServer)
+Renderer::Renderer(GameServer & gameServer, Camera & camera)
 {
 	this->gameServer = &gameServer;
-
+	this->camera = &camera;
 	projectionMatrix = glm::mat4(1);
 	viewMatrix = glm::mat4(1);
 
