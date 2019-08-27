@@ -10,9 +10,9 @@ void pocessCamera(Camera & camera)
 {
 	//prevent looking upside down
 
-	float cap = PI/2;
+	float cap = PI / 2;
 
-	if (camera.cameraRotationX < -cap){
+	if (camera.cameraRotationX < -cap) {
 		camera.cameraRotationX = -cap;
 	}
 	if (camera.cameraRotationX > +cap) {
@@ -34,7 +34,7 @@ void pocessCamera(Camera & camera)
 	camera.upVector = glm::cross(camera.rightVector, camera.forwardVector);
 
 	//calculate viewMatrix
-	camera.viewMatrices = glm::lookAt(camera.cameraLocation, camera.cameraLocation + camera.forwardVector, camera.upVector);
+	camera.viewMatrix = glm::lookAt(camera.cameraLocation, camera.cameraLocation + camera.forwardVector, camera.upVector);
 }
 
 void addEntityType(EntityTypes & entityTypes, std::string name, ComponentStructure structure) {
@@ -62,7 +62,6 @@ void addEntityType(EntityTypes & entityTypes, std::string name, ComponentStructu
 		entityTypes.numberOfEntityTypes++;
 		entityTypes.names.push_back(name);
 		entityTypes.structure.push_back(structure);
-		//entityTypes.count.push_back(0);
 		std::vector<Entity> tmp;
 		entityTypes.entityArrays.push_back(tmp);
 	}
@@ -80,23 +79,25 @@ void spawnEntity(EntityComponentSystem & ecs, std::string name)
 	if (entityTypeIndex == UINT_MAX) {
 		debugPrint("Entity type doesn't exist!");
 	}
-	//create the data
-	Entity tmp;
-	//transformation component
-	if (ecs.entityTypes.structure[entityTypeIndex][0]) {
-		addTransformationComponent(ecs.transformationSystem, tmp);
+	else {
+		//create the data
+		Entity tmp;
+		//transformation component
+		if (ecs.entityTypes.structure[entityTypeIndex][0]) {
+			addTransformationComponent(ecs.transformationSystem, tmp);
+		}
+
+		/////////////////////////////////////////////////////////////////////////////
+		//		//another component												   //
+		//	if (ecs.entityTypes.structure[entityTypeIndex][999]) {				   //
+		//		tmp.componentIndices.push_back(ecs.anotherSystem.anothers.size()); //
+		//		addAnotherComponent(ecs);										   //
+		//	}																	   //
+		/////////////////////////////////////////////////////////////////////////////
+
+		//spawn the entity
+		ecs.entityTypes.entityArrays[entityTypeIndex].push_back(tmp);
 	}
-
-	/////////////////////////////////////////////////////////////////////////////
-	//		//another component												   //
-	//	if (ecs.entityTypes.structure[entityTypeIndex][999]) {				   //
-	//		tmp.componentIndices.push_back(ecs.anotherSystem.anothers.size()); //
-	//		addAnotherComponent(ecs);										   //
-	//	}																	   //
-	/////////////////////////////////////////////////////////////////////////////
-
-	//spawn the entity
-	ecs.entityTypes.entityArrays[entityTypeIndex].push_back(tmp);
 }
 
 //transformation
@@ -122,9 +123,11 @@ void calculateModelMatrix(glm::mat4 & matrix, Transformation & transformation)
 EntityTypes::EntityTypes()
 {
 	numberOfEntityTypes = 0;
-	//empty
-	ComponentStructure emptyStructure;
-	addEntityType(*this, "empty", emptyStructure);
+
+
+	////empty
+	//ComponentStructure emptyStructure;
+	//addEntityType(*this, "empty", emptyStructure);
 
 	//error
 	ComponentStructure errorStructure;
@@ -156,11 +159,11 @@ EntityTypes::EntityTypes()
 	planeStructure[0] = true;
 	addEntityType(*this, "plane", planeStructure);
 
-	//point
-	ComponentStructure pointStructure;
-	pointStructure[0] = true;
-	addEntityType(*this, "point", pointStructure);
-	
+	////point
+	//ComponentStructure pointStructure;
+	//pointStructure[0] = true;
+	//addEntityType(*this, "point", pointStructure);
+	//
 	////point cloud
 	//ComponentStructure pointCloudStructure;
 	//pointCloudStructure[0] = true;
@@ -170,4 +173,9 @@ EntityTypes::EntityTypes()
 	ComponentStructure treeStructure;
 	treeStructure[0] = true;
 	addEntityType(*this, "tree", treeStructure);
+
+	//terrain mesh
+	ComponentStructure terrainStructure;
+	terrainStructure[0] = true;
+	addEntityType(*this, "terrain", terrainStructure);
 }

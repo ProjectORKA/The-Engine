@@ -1,94 +1,39 @@
 
 #include "Program.hpp"
 
-void createAndUploadMeshFromFile(MeshSystem & meshSystem, unsigned short primitiveMode, const char * path, std::string name) {
-	MeshContainer mesh;
-	createMeshFromFile(mesh, primitiveMode, path, name);
-	uploadStaticMesh(meshSystem, mesh);
-}
+void getMeshIndexFromName(MeshSystem & meshSystem, std::string meshName, int & meshIndex) {
 
-void createMeshFromFile(MeshContainer & mesh, unsigned short primitiveMode, const char * path, std::string name) {
+	meshIndex = -1;
 
-	mesh.name = name;
-	mesh.primitiveMode = primitiveMode;
-
-	Assimp::Importer Importer;
-	const aiScene * scene = Importer.ReadFile(path,
-		aiProcess_CalcTangentSpace |
-		aiProcess_GenSmoothNormals |
-		aiProcess_JoinIdenticalVertices |
-		aiProcess_SortByPType |
-		aiProcess_Triangulate
-	);
-
-	//check if file is valid
-	bool error = false;
-	if (scene) {
-		if (scene->HasMeshes()) {
-			if (scene->mMeshes[0]->HasPositions()) {
-				for (unsigned int i = 0; i < scene->mMeshes[0]->mNumVertices; i++) {
-					glm::vec3 vertex;
-					vertex.x = scene->mMeshes[0]->mVertices[i].x;
-					vertex.y = scene->mMeshes[0]->mVertices[i].y;
-					vertex.z = scene->mMeshes[0]->mVertices[i].z;
-					mesh.vertices.push_back(vertex);
-
-					glm::vec2 texCoord;
-					texCoord.x = scene->mMeshes[0]->mTextureCoords[0][i].x;
-					texCoord.y = scene->mMeshes[0]->mTextureCoords[0][i].y;
-					mesh.uvs.push_back(texCoord);
-
-					//glm::vec3 normal;
-					//normal.x = scene->mMeshes[0]->mNormals[i].x;
-					//normal.y = scene->mMeshes[0]->mNormals[i].y;
-					//normal.z = scene->mMeshes[0]->mNormals[i].z;
-					//normals.push_back(normal);
-
-					//glm::vec3 tangent;
-					//tangent.x = scene->mMeshes[0]->mTangents->x;
-					//tangent.y = scene->mMeshes[0]->mTangents->y;
-					//tangent.z = scene->mMeshes[0]->mTangents->z;
-					//tangents.push_back(tangent);
-					//
-					//glm::vec3 bitangent;
-					//bitangent.x = scene->mMeshes[0]->mBitangents->x;
-					//bitangent.y = scene->mMeshes[0]->mBitangents->y;
-					//bitangent.z = scene->mMeshes[0]->mBitangents->z;
-					//bitangents.push_back(bitangent);
-				}
-				if (scene->mMeshes[0]->HasFaces()) {
-					for (unsigned int i = 0; i < scene->mMeshes[0]->mNumFaces; i++) {
-						for (unsigned int j = 0; j < scene->mMeshes[0]->mFaces->mNumIndices; j++) { //should always be 3 (0 -> 1 -> 2 <<)
-							unsigned int index = scene->mMeshes[0]->mFaces[i].mIndices[j];
-							mesh.indices.push_back(index);
-						}
-					}
-				}
-				else error = true;
-			}
-			else error = true;
+	//find the name
+	for (int i = 0; i < meshSystem.meshCount; i++) {
+		if (meshSystem.names[i] == meshName) {
+			meshIndex = i;
 		}
-		else error = true;
 	}
-	else error = true;
-	if (error) std::cout << "The " << name << " model could not be loaded. (" << path << ")" << std::endl;
+
+	//if (meshIndex == -1) {
+	//	std::cout << "A mesh with the name " << meshName << " doesent exist!" << std::endl;
+	//}
 }
 
-void uploadStaticMesh(MeshSystem & meshSystem, MeshContainer & mesh) {
+void uploadNextMeshFromQueue(MeshSystem & meshSystem) {
+	MeshContainer & mesh = meshSystem.meshQueue.front();
+	if (mesh.uploadable) {
 	//update mesh count
 	meshSystem.meshCount++;
 	//add name
 	meshSystem.names.push_back(mesh.name);
+	//add loaded variable
+	meshSystem.loaded.push_back(false);
 	//save index count
 	meshSystem.indexCount.push_back(mesh.indices.size());
 	//save primitive mode
 	meshSystem.primitiveMode.push_back(mesh.primitiveMode);
 
-
 	//create vertex array object
 	meshSystem.vertexArrayObject.push_back(GLuint(0));
 	glGenVertexArrays(1, &meshSystem.vertexArrayObject.back());
-
 
 	//create vertex buffer
 	meshSystem.vertexBuffer.push_back(GLuint(0));
@@ -112,41 +57,25 @@ void uploadStaticMesh(MeshSystem & meshSystem, MeshContainer & mesh) {
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, meshSystem.indexBuffer.back());
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, mesh.indices.size() * sizeof(unsigned int), mesh.indices.data(), GL_STATIC_DRAW);
 
+	meshSystem.meshQueue.pop_front();
+
+	meshSystem.loaded.back() = true;
+	}
 }
-
 void unloadMesh(MeshSystem & meshSystem, int meshIndex) {
-
 	glDeleteBuffers(1, &meshSystem.vertexBuffer[meshIndex]);
 	glDeleteBuffers(1, &meshSystem.positionBuffer[meshIndex]);
 	glDeleteBuffers(1, &meshSystem.uvBuffer[meshIndex]);
-	//glDeleteBuffers(1, &normalBuffer);
-	//glDeleteBuffers(1, &tangentBuffer);
-	//glDeleteBuffers(1, &bitangentBuffer);
 
 	glDeleteBuffers(1, &meshSystem.indexBuffer[meshIndex]);
 
 	//delete vertex array object
 	glDeleteVertexArrays(1, &meshSystem.vertexArrayObject[meshIndex]);
+
+	meshSystem.loaded[meshIndex] = false;
 }
-
-void getMeshIndexFromName(MeshSystem & meshSystem, std::string meshName, int & meshIndex) {
-
-	meshIndex = -1;
-
-	//find the name
-	for (int i = 0; i < meshSystem.meshCount; i++) {
-		if (meshSystem.names[i] == meshName) {
-			meshIndex = i;
-		}
-	}
-
-	if (meshIndex == -1) {
-		std::cout << "A mesh with the name " << meshName << " doesent exist!" << std::endl;
-	}
-}
-
 void bindMesh(MeshSystem & meshSystem, int meshIndex) {
-	if (meshIndex != -1) {
+	if (meshIndex != -1 && meshSystem.loaded[meshIndex]) {
 		//vertex array object
 		glBindVertexArray(meshSystem.vertexArrayObject[meshIndex]);
 
@@ -169,9 +98,8 @@ void bindMesh(MeshSystem & meshSystem, int meshIndex) {
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, meshSystem.indexBuffer[meshIndex]);
 	}
 }
-
 void renderMesh(MeshSystem & meshSystem, int meshIndex) {
-	if (meshIndex != -1) {
+	if (meshIndex != -1 && meshSystem.loaded[meshIndex]) {
 		glDrawElements(
 			meshSystem.primitiveMode[meshIndex],	// mode
 			meshSystem.indexCount[meshIndex],		// count
@@ -180,9 +108,9 @@ void renderMesh(MeshSystem & meshSystem, int meshIndex) {
 		);
 	}
 }
-
 void renderInstancedMesh(MeshSystem & meshSystem, int meshIndex, unsigned int numberOfInstances) {
-	if (meshIndex != -1) {
+	if (meshIndex != -1 && meshSystem.loaded[meshIndex]) {
+		
 		glDrawElementsInstanced(
 			meshSystem.primitiveMode[meshIndex],	// mode
 			meshSystem.indexCount[meshIndex],		// count
@@ -192,7 +120,6 @@ void renderInstancedMesh(MeshSystem & meshSystem, int meshIndex, unsigned int nu
 		);
 	}
 }
-
 void unbindMesh() {
 	//disable attributes
 	glDisableVertexAttribArray(0);
@@ -202,14 +129,161 @@ void unbindMesh() {
 	//glDisableVertexAttribArray(4);
 }
 
+void createMeshFromFile(MeshSystem & meshSystem) {
+	//add new mesh to upload queue
+	meshSystem.meshQueue.push_back(MeshContainer());
+	MeshContainer & mesh = meshSystem.meshQueue.back();
+	
+	//take info from file queue
+	MeshFileInfo & info = meshSystem.loaderQueue.front();
 
+	//create the mesh
+	mesh.name = info.name;
+	mesh.primitiveMode = info.primitiveMode;
+	Assimp::Importer Importer;
+	const aiScene * scene = Importer.ReadFile(info.path,
+		aiProcess_CalcTangentSpace |
+		aiProcess_GenSmoothNormals |
+		aiProcess_JoinIdenticalVertices |
+		aiProcess_SortByPType |
+		aiProcess_Triangulate
+	);
+
+	//check if file is valid
+	bool error = false;
+	if (scene) {
+		if (scene->HasMeshes()) {
+			if (scene->mMeshes[0]->HasPositions()) {
+				for (unsigned int i = 0; i < scene->mMeshes[0]->mNumVertices; i++) {
+					glm::vec3 vertex;
+					vertex.x = scene->mMeshes[0]->mVertices[i].x;
+					vertex.y = scene->mMeshes[0]->mVertices[i].y;
+					vertex.z = scene->mMeshes[0]->mVertices[i].z;
+					mesh.vertices.push_back(vertex);
+
+					glm::vec2 texCoord;
+					texCoord.x = scene->mMeshes[0]->mTextureCoords[0][i].x;
+					texCoord.y = scene->mMeshes[0]->mTextureCoords[0][i].y;
+					mesh.uvs.push_back(texCoord);
+				}
+				if (scene->mMeshes[0]->HasFaces()) {
+					for (unsigned int i = 0; i < scene->mMeshes[0]->mNumFaces; i++) {
+						for (unsigned int j = 0; j < scene->mMeshes[0]->mFaces->mNumIndices; j++) { //should always be 3 (0 -> 1 -> 2 <<)
+							unsigned int index = scene->mMeshes[0]->mFaces[i].mIndices[j];
+							mesh.indices.push_back(index);
+						}
+					}
+				}
+				else error = true;
+			}
+			else error = true;
+		}
+		else error = true;
+	}
+	else error = true;
+	if (error) std::cout << "The " << info.name << " model could not be loaded. (" << info.path << ")" << std::endl;
+	
+	//remove entry from loader queue
+	meshSystem.loaderQueue.pop_front();
+
+	mesh.uploadable = true;
+
+}
+void loadAllMeshes(MeshSystem & meshSystem)
+{
+	addMeshFileToLoaderQueue(meshSystem, GL_TRIANGLES, "objects/tree trunk.fbx", "tree");
+	addMeshFileToLoaderQueue(meshSystem, GL_TRIANGLES, "objects/tree leaves.fbx", "tree");
+
+	addMeshFileToLoaderQueue(meshSystem, GL_TRIANGLES, "objects/cube.fbx", "cube");
+	addMeshFileToLoaderQueue(meshSystem, GL_TRIANGLES, "objects/plane.fbx", "plane");
+	addMeshFileToLoaderQueue(meshSystem, GL_TRIANGLES, "objects/error.fbx", "error");
+	addMeshFileToLoaderQueue(meshSystem, GL_TRIANGLES, "objects/triangle.fbx", "triangle");
+	addMeshFileToLoaderQueue(meshSystem, GL_TRIANGLES, "objects/icosphere.fbx", "icosphere");
+	addMeshFileToLoaderQueue(meshSystem, GL_TRIANGLES, "objects/ground plane.fbx", "terrain");
+	addMeshFileToLoaderQueue(meshSystem, GL_TRIANGLES, "objects/suzanne.fbx", "monkey");
+	addMeshFileToLoaderQueue(meshSystem, GL_POINTS   , "objects/suzanne high detail.fbx", "point cloud");
+
+	//create hardcoded bounding box
+	MeshContainer boundingBox;
+	boundingBox.name = "bounds";
+	boundingBox.primitiveMode = GL_LINES;
+	boundingBox.vertices.push_back(glm::vec3(+1.0f, +1.0f, +1.0f));
+	boundingBox.vertices.push_back(glm::vec3(+1.0f, +1.0f, -1.0f));
+	boundingBox.vertices.push_back(glm::vec3(+1.0f, -1.0f, +1.0f));
+	boundingBox.vertices.push_back(glm::vec3(+1.0f, -1.0f, -1.0f));
+	boundingBox.vertices.push_back(glm::vec3(-1.0f, +1.0f, +1.0f));
+	boundingBox.vertices.push_back(glm::vec3(-1.0f, +1.0f, -1.0f));
+	boundingBox.vertices.push_back(glm::vec3(-1.0f, -1.0f, +1.0f));
+	boundingBox.vertices.push_back(glm::vec3(-1.0f, -1.0f, -1.0f));
+	boundingBox.indices.push_back(7);
+	boundingBox.indices.push_back(3);
+	boundingBox.indices.push_back(7);
+	boundingBox.indices.push_back(5);
+	boundingBox.indices.push_back(7);
+	boundingBox.indices.push_back(6);
+	boundingBox.indices.push_back(1);
+	boundingBox.indices.push_back(3);
+	boundingBox.indices.push_back(1);
+	boundingBox.indices.push_back(5);
+	boundingBox.indices.push_back(1);
+	boundingBox.indices.push_back(0);
+	boundingBox.indices.push_back(2);
+	boundingBox.indices.push_back(6);
+	boundingBox.indices.push_back(2);
+	boundingBox.indices.push_back(0);
+	boundingBox.indices.push_back(2);
+	boundingBox.indices.push_back(3);
+	boundingBox.indices.push_back(4);
+	boundingBox.indices.push_back(6);
+	boundingBox.indices.push_back(4);
+	boundingBox.indices.push_back(5);
+	boundingBox.indices.push_back(4);
+	boundingBox.indices.push_back(0);
+	addMeshToUploadQueue(meshSystem, boundingBox);
+
+	//create hardcoded point mesh
+	MeshContainer singlePoint;
+	singlePoint.name = "point";
+	singlePoint.primitiveMode = GL_POINTS;
+	singlePoint.vertices.push_back(glm::vec3(0.0f));
+	singlePoint.uvs.push_back(glm::vec2(0.5f));
+	singlePoint.indices.push_back(0);
+	addMeshToUploadQueue(meshSystem, singlePoint);
+}
+void MeshLoaderThread(MeshSystem & meshSystem) {
+	debugPrint("Loader thread started.");
+
+	while (meshSystem.keepThreadRunning) {
+		if (meshSystem.loaderQueue.size() > 0) {
+			createMeshFromFile(meshSystem);
+		}
+		else {
+			std::this_thread::sleep_for(std::chrono::milliseconds(200));
+		}
+	}
+}
+void addMeshFileToLoaderQueue(MeshSystem & meshSystem, unsigned short primitiveMode, const char * path, std::string name) {
+	debugPrint("Adding mesh to loader queue.");
+	MeshFileInfo info;
+	info.name = name;
+	info.path = path;
+	info.primitiveMode = primitiveMode;
+	meshSystem.loaderQueue.push_back(info);
+}
+void addMeshToUploadQueue(MeshSystem & meshSystem, MeshContainer & mesh) {
+	mesh.uploadable = false;
+	meshSystem.meshQueue.push_back(mesh);
+	meshSystem.meshQueue.back().uploadable = true;
+}
 MeshSystem::MeshSystem()
 {
-	meshCount = 0;
+	thread = std::make_unique<std::thread>(MeshLoaderThread, std::ref(*this));
 }
-
 MeshSystem::~MeshSystem()
 {
+	keepThreadRunning = false;
+	thread->join();
+
 	for (int i = 0; i < meshCount; i++) {
 		unloadMesh(*this, i);
 	}

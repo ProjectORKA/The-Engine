@@ -43,14 +43,23 @@ void whenButtonIsPressed(GLFWwindow * window, int key, int scancode, int action,
 	if (key == GLFW_KEY_F && action == GLFW_PRESS) {
 		parentWindowClass->renderer->wireframeMode = !parentWindowClass->renderer->wireframeMode;
 	}
+	if (key == GLFW_KEY_R && action == GLFW_PRESS) {
+		
+		Chunk * someChunk = &parentWindowClass->renderer->gameServer->worldSystem.root;
+
+		while (someChunk->nXnYnZ != nullptr) {
+			someChunk = someChunk->nXnYnZ;
+		}
+
+		subdivideChunk(*someChunk);
+	}
 }
 
 void whenMouseIsScrolling(GLFWwindow * window, double xoffset, double yoffset) {
 	Window & parentWindowClass = *static_cast<Window*>(glfwGetWindowUserPointer(window));
-	Camera & camera = parentWindowClass.camera;
 
-	camera.speedMultiplier += (int)yoffset;
-	camera.cameraSpeed = pow(1.1f, camera.speedMultiplier);
+	parentWindowClass.camera.speedMultiplier += (int)yoffset;
+	parentWindowClass.camera.cameraSpeed = pow(1.1f, parentWindowClass.camera.speedMultiplier); //[TODO] put in renderer
 }
 
 void whenMouseIsPressed(GLFWwindow * window, int button, int action, int mods) {

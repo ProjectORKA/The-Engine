@@ -9,11 +9,15 @@
 //	This engine can NOT be used for your own personal or commercial use!
 //	Do not distribute any source code outside of our official websites and platforms without permission!
 
-//	The "Project ORKA" engine is built in an data driven way (i think)
+//	The "Project ORKA" engine is built in a data driven way (i think)
 //	This means everything is divided into
 //		1. data stored in structs and
 //		2. functions that act on that data
 //		(3. also threads, but they are essentially functions)
+//	This engine uses a left-handed coordinate system like Blender:
+//	+X = right
+//	+Y = forward
+//	+Z = up
 
 //	Rules:
 //	1. Data
@@ -25,7 +29,7 @@
 //			- pointers/references
 //			- other structs/containers
 //		However, they do NOT have member-functions/methods!
-//			(unless the stored data always needs conversion)
+//		(unless the stored data always needs conversion)
 //	2. Functions
 //		All functions are (ideally) of type void and should be self explainatory
 //		They only take a minimal amount of references (and data) as inputs
