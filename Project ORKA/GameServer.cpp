@@ -15,7 +15,7 @@ void processTransformations(TransformationSystem & transformationSystem, Time & 
 			//transformationSystem.transformations[i].location += glm::vec3(randomFloat(-randomSpeed, randomSpeed), randomFloat(-randomSpeed, randomSpeed), 0);
 			//transformationSystem.transformations[i].rotation += glm::vec3(randomFloat(-0.05, 0.05), randomFloat(-0.05, 0.05), randomFloat(-0.05, 0.05));
 			
-			transformationSystem.transformations[i].location.z = 30 * sin(0.01 * transformationSystem.transformations[i].location.x + time.getTotal()) * sin(0.01 * transformationSystem.transformations[i].location.y + time.getTotal());
+			transformationSystem.transformations[i].location.z = 30 * sin(0.01 * transformationSystem.transformations[i].location.x + (float)time.getTotal()) * sin(0.01 * transformationSystem.transformations[i].location.y + time.getTotal());
 		}
 	}
 
@@ -37,6 +37,8 @@ void GameServerThread(GameServer & gameServer) {
 		updateTime(gameServer.gameTime);
 
 		processTransformations(gameServer.worldSystem.root.ecs.transformationSystem, gameServer.gameTime);
+
+		//processChunks();
 
 		t += std::chrono::milliseconds(16); //game server running at 60 Hz
 		std::this_thread::sleep_until(t);

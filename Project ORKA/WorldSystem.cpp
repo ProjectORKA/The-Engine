@@ -6,6 +6,31 @@ WorldSystem::WorldSystem()
 {
 }
 
+void renderWorld(WorldSystem & worldSystem, Renderer & renderer) {
+	renderSky(worldSystem.sky);
+	renderGizmo(renderer);
+	renderChunksByLevel(worldSystem.root, renderer);
+}
+
+void renderGizmo(Renderer & renderer) {
+	useShader(renderer.primitiveShader);
+
+	std::vector<int> meshIndices;
+	getMeshIndicesFromName(renderer.meshSystem, "gizmo", meshIndices);
+	for (int i = 0; i < meshIndices.size(); i++) {
+
+		bindMesh(renderer.meshSystem, meshIndices[i]);
+
+		glm::mat4 modelMatrix = glm::mat4(1);
+		glm::mat4 mvpMatrix = renderer.projectionMatrix * renderer.viewMatrix * modelMatrix;
+		glUniformMatrix4fv(renderer.primitiveShader.mvpMatrixID, 1, GL_FALSE, &mvpMatrix[0][0]);
+
+		renderMesh(renderer.meshSystem, meshIndices[i]);
+
+		unbindMesh();
+	}
+}
+
 //CHUNK
 void subdivideChunk(Chunk & chunk)
 {
@@ -17,14 +42,14 @@ void subdivideChunk(Chunk & chunk)
 	int newPosYp = newPosYn + 1;
 	int newPosZp = newPosZn + 1;
 
-	if(chunk.pXpYpZ == nullptr) chunk.pXpYpZ = new Chunk(newLevel, newPosXp, newPosYp, newPosZp);
-	if(chunk.nXpYpZ == nullptr) chunk.nXpYpZ = new Chunk(newLevel, newPosXn, newPosYp, newPosZp);
-	if(chunk.pXnYpZ == nullptr) chunk.pXnYpZ = new Chunk(newLevel, newPosXp, newPosYn, newPosZp);
-	if(chunk.nXnYpZ == nullptr) chunk.nXnYpZ = new Chunk(newLevel, newPosXn, newPosYn, newPosZp);
-	if(chunk.pXpYnZ == nullptr) chunk.pXpYnZ = new Chunk(newLevel, newPosXp, newPosYp, newPosZn);
-	if(chunk.nXpYnZ == nullptr) chunk.nXpYnZ = new Chunk(newLevel, newPosXn, newPosYp, newPosZn);
-	if(chunk.pXnYnZ == nullptr) chunk.pXnYnZ = new Chunk(newLevel, newPosXp, newPosYn, newPosZn);
-	if(chunk.nXnYnZ == nullptr) chunk.nXnYnZ = new Chunk(newLevel, newPosXn, newPosYn, newPosZn);
+	if (chunk.pXpYpZ == nullptr) chunk.pXpYpZ = new Chunk(newLevel, newPosXp, newPosYp, newPosZp);
+	if (chunk.nXpYpZ == nullptr) chunk.nXpYpZ = new Chunk(newLevel, newPosXn, newPosYp, newPosZp);
+	if (chunk.pXnYpZ == nullptr) chunk.pXnYpZ = new Chunk(newLevel, newPosXp, newPosYn, newPosZp);
+	if (chunk.nXnYpZ == nullptr) chunk.nXnYpZ = new Chunk(newLevel, newPosXn, newPosYn, newPosZp);
+	if (chunk.pXpYnZ == nullptr) chunk.pXpYnZ = new Chunk(newLevel, newPosXp, newPosYp, newPosZn);
+	if (chunk.nXpYnZ == nullptr) chunk.nXpYnZ = new Chunk(newLevel, newPosXn, newPosYp, newPosZn);
+	if (chunk.pXnYnZ == nullptr) chunk.pXnYnZ = new Chunk(newLevel, newPosXp, newPosYn, newPosZn);
+	if (chunk.nXnYnZ == nullptr) chunk.nXnYnZ = new Chunk(newLevel, newPosXn, newPosYn, newPosZn);
 }
 
 void unsubdivideChunk(Chunk & chunk) {
@@ -39,64 +64,67 @@ void unsubdivideChunk(Chunk & chunk) {
 };
 
 void renderChunkBoundingBox(Chunk & chunk, Renderer & renderer) {
-	
 	useShader(renderer.primitiveShader);
 
-	int meshIndex;
-	getMeshIndexFromName(renderer.meshSystem, "bounds", meshIndex);
+	std::vector<int> meshIndices;
+	getMeshIndicesFromName(renderer.meshSystem, "bounds", meshIndices);
+	for (int i = 0; i < meshIndices.size(); i++) {
 
-	bindMesh(renderer.meshSystem, meshIndex);
+		bindMesh(renderer.meshSystem, meshIndices[i]);
 
-	glm::mat4 modelMatrix = glm::mat4(1);
-	glm::mat4 mvpMatrix = renderer.projectionMatrix * renderer.chunkAdjustedViewMatrix * modelMatrix;
-	glUniformMatrix4fv(renderer.primitiveShader.mvpMatrixID, 1, GL_FALSE, &mvpMatrix[0][0]);
+		glm::mat4 modelMatrix = glm::mat4(1);
+		glm::mat4 mvpMatrix = renderer.projectionMatrix * renderer.chunkAdjustedViewMatrix * modelMatrix;
+		glUniformMatrix4fv(renderer.primitiveShader.mvpMatrixID, 1, GL_FALSE, &mvpMatrix[0][0]);
 
-	renderMesh(renderer.meshSystem, meshIndex);
+		renderMesh(renderer.meshSystem, meshIndices[i]);
 
-	unbindMesh();
+		unbindMesh();
+	}
 }
 
-void renderChunk(Chunk & chunk, Renderer & renderer) {
-	
-	renderer.chunkAdjustedViewMatrix = renderer.viewMatrix;
+void renderChunksByLevel(Chunk & chunk, Renderer & renderer) {
 
-	//renderer.chunkAdjustedViewMatrix = glm::translate(renderer.chunkAdjustedViewMatrix, glm::vec3(-0.5));
-	//renderer.chunkAdjustedViewMatrix = glm::scale(renderer.chunkAdjustedViewMatrix, glm::vec3(1/pow(2,chunk.level)));
-	renderer.chunkAdjustedViewMatrix = glm::translate(renderer.chunkAdjustedViewMatrix, glm::vec3(1-pow(2, chunk.level)) * renderer.camera->cameraLocation);
+	std::vector<Chunk *> chunksToRender;
+	chunksToRender.push_back(&chunk);
+	std::vector<Chunk *> children;
+
+	while (chunksToRender.size() > 0) {
+		glClear(GL_DEPTH_BUFFER_BIT);
+
+		for (int i = 0; i < chunksToRender.size(); i++) {
+			renderChunk(*chunksToRender[i], renderer, children);
+		}
+
+		chunksToRender = children;
+		children.clear();
+	}
+}
+
+void renderChunk(Chunk & chunk, Renderer & renderer, std::vector<Chunk *> & children) {
+	renderer.chunkAdjustedViewMatrix = renderer.viewMatrix;
+	renderer.chunkAdjustedViewMatrix = glm::translate(renderer.chunkAdjustedViewMatrix, glm::vec3(1 - pow(2, chunk.level)) * renderer.camera->cameraLocation);
 	renderer.chunkAdjustedViewMatrix = glm::translate(renderer.chunkAdjustedViewMatrix, glm::vec3(1 + 2 * chunk.posX, 1 + 2 * chunk.posY, 1 + 2 * chunk.posZ));
 
-	if (chunk.nXnYnZ == nullptr) {
-		renderEntities(chunk.ecs, renderer);
-		renderChunkBoundingBox(chunk, renderer);
-	}
+	//renderEntities(chunk.ecs, renderer);
+	renderChunkBoundingBox(chunk, renderer);
 
-
-
-
-	if (chunk.pXpYpZ != nullptr) renderChunk(*chunk.pXpYpZ, renderer);
-	if (chunk.nXpYpZ != nullptr) renderChunk(*chunk.nXpYpZ, renderer);
-	if (chunk.pXnYpZ != nullptr) renderChunk(*chunk.pXnYpZ, renderer);
-	if (chunk.nXnYpZ != nullptr) renderChunk(*chunk.nXnYpZ, renderer);
-	if (chunk.pXpYnZ != nullptr) renderChunk(*chunk.pXpYnZ, renderer);
-	if (chunk.nXpYnZ != nullptr) renderChunk(*chunk.nXpYnZ, renderer);
-	if (chunk.pXnYnZ != nullptr) renderChunk(*chunk.pXnYnZ, renderer);
-	if (chunk.nXnYnZ != nullptr) renderChunk(*chunk.nXnYnZ, renderer);
-
-	glClear(GL_DEPTH_BUFFER_BIT);
+	if (chunk.pXpYpZ != nullptr) children.push_back(chunk.pXpYpZ);
+	if (chunk.nXpYpZ != nullptr) children.push_back(chunk.nXpYpZ);
+	if (chunk.pXnYpZ != nullptr) children.push_back(chunk.pXnYpZ);
+	if (chunk.nXnYpZ != nullptr) children.push_back(chunk.nXnYpZ);
+	if (chunk.pXpYnZ != nullptr) children.push_back(chunk.pXpYnZ);
+	if (chunk.nXpYnZ != nullptr) children.push_back(chunk.nXpYnZ);
+	if (chunk.pXnYnZ != nullptr) children.push_back(chunk.pXnYnZ);
+	if (chunk.nXnYnZ != nullptr) children.push_back(chunk.nXnYnZ);
 }
 
 Chunk::Chunk()
 {
-	level = 1;
-	posX = 0;
-	posY = 0;
-	posZ = 0;
-	
 	spawnEntity(ecs, "terrain");
-	
+
 	//spawnEntity(entityComponentSystem, "monkey");
 	int gridSize = 50;
-	
+
 	for (int x = 0; x < gridSize; x++) {
 		for (int y = 0; y < gridSize; y++) {
 
