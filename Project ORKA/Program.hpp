@@ -88,6 +88,8 @@
 #define DEBUG					//enables debug messages
 
 #define NUMBER_OF_AVAIVABLE_COMPONENTS 2
+#define CHUNK_LEVEL_MAX 128
+
 
 #pragma endregion
 
@@ -142,6 +144,8 @@ struct MeshSystem {
 	~MeshSystem();
 };
 struct Camera {
+
+
 	// hard data
 	glm::vec3 cameraLocation = {0.0f,0.0f,0.0f };
 	float cameraRotationX = 0.0f;
@@ -244,13 +248,13 @@ struct Window {
 	Window(GameServer & gameServer);
 	~Window();
 };
-struct Chunk;
 struct Chunk {
-	int level;
-	short posX;
-	short posY;
-	short posZ;
+	unsigned short level = 0;
+	short posX = 0;
+	short posY = 0;
+	short posZ = 0;
 	EntityComponentSystem ecs;
+
 	Chunk * pXpYpZ = nullptr;	//p = positive / n = negative
 	Chunk * nXpYpZ = nullptr;
 	Chunk * pXnYpZ = nullptr;
@@ -303,11 +307,16 @@ struct Program {
 //chunk
 void subdivideChunk					(Chunk & chunk);
 void unsubdivideChunk				(Chunk & chunk);
+void renderChunkBoundingBox			(Chunk & chunk, Renderer & renderer);
+void renderChunksByLevel			(Chunk & chunk, Renderer & renderingSystem);
+void renderWorld					(WorldSystem & worldSystem, Renderer & renderingSystem);
+void renderChunk					(Chunk & chunk, Renderer & renderer, std::vector<Chunk *> & children);
 
 //math
 float randomFloat					(float low, float high);
 
 //debug
+void renderGizmo					(Renderer & renderer);
 void debugPrint						(const char * debugMessage);
 
 //shader
@@ -317,14 +326,14 @@ void loadShader						(ShaderProgram & shaderProgram, const char * vertexPath, co
 //mesh system
 void unbindMesh						();
 void loadAllMeshes					(MeshSystem & meshSystem);
+void createMeshFromFile				(MeshSystem & meshSystem);
 void uploadNextMeshFromQueue		(MeshSystem & meshSystem);
 void bindMesh						(MeshSystem & meshSystem, int index);
 void renderMesh						(MeshSystem & meshSystem, int meshIndex);
 void unloadMesh						(MeshSystem & meshSystem, int meshIndex);
 void addMeshToUploadQueue			(MeshSystem & meshSystem, MeshContainer & mesh);
-void getMeshIndexFromName			(MeshSystem & meshSystem, std::string meshName, int & meshIndex);
 void renderInstancedMesh			(MeshSystem & meshSystem, int meshIndex, unsigned int numberOfInstances);
-void createMeshFromFile				(MeshSystem & meshSystem);
+void getMeshIndicesFromName			(MeshSystem & meshSystem, std::string meshName, std::vector<int> & meshIndices);
 
 //mesh loader
 void addMeshFileToLoaderQueue					(MeshSystem & meshSystem, unsigned short primitiveMode, const char * path, std::string name);
@@ -334,10 +343,7 @@ void changeAntiAliasing				(Window & window, unsigned int antiAliasing);
 
 //rendering system
 void renderSky						(Sky & sky);
-void renderChunkBoundingBox			(Chunk & chunk, Renderer & renderer);
-void renderChunk					(Chunk & chunk, Renderer & renderingSystem);
 void renderFrame					(Renderer & renderingSystem, int width, int height);
-void renderWorld					(WorldSystem & worldSystem, Renderer & renderingSystem);
 void renderEntities					(EntityComponentSystem & entityComponentSystem, Renderer & renderingSystem);
 void __stdcall DebugOutputCallback	(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam);
 

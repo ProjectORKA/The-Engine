@@ -21,7 +21,7 @@ void renderFrame(Renderer & renderer, int width, int height) {
 	//depth testing
 	glClear(GL_DEPTH_BUFFER_BIT);
 	glEnable(GL_DEPTH_TEST);
-	glDepthFunc(GL_LESS);
+	glDepthFunc(GL_LEQUAL);
 
 	//wireframe mode
 	if (renderer.wireframeMode) {
@@ -52,11 +52,6 @@ void renderFrame(Renderer & renderer, int width, int height) {
 	glUseProgram(0); // somehow gets rid of shader recompilation on nvidia cards
 }
 
-void renderWorld(WorldSystem & worldSystem, Renderer & renderer) {
-	renderSky(worldSystem.sky);
-	renderChunk(worldSystem.root, renderer);
-}
-
 void renderSky(Sky & sky) {
 	glClearColor(sky.skyColor.r, sky.skyColor.g, sky.skyColor.b, 0.75f);
 	glClear(GL_COLOR_BUFFER_BIT);
@@ -80,12 +75,12 @@ void renderEntities(EntityComponentSystem & ecs, Renderer & renderer) {
 			//render entities based on name
 			useShader(renderer.primitiveShaderInstanced);
 
-			int meshIndex;
-			getMeshIndexFromName(renderer.meshSystem, ecs.entityTypes.names[currentEntityTypeIndex], meshIndex);
+			std::vector<int> meshIndices;
+			getMeshIndicesFromName(renderer.meshSystem, ecs.entityTypes.names[currentEntityTypeIndex], meshIndices);
 
-			if (meshIndex != -1) {
+			for(int i = 0; i < meshIndices.size(); i++) {
 			
-				bindMesh(renderer.meshSystem, meshIndex);
+				bindMesh(renderer.meshSystem, meshIndices[i]);
 				
 				std::vector<glm::vec3> instancedPositions;
 
@@ -99,13 +94,14 @@ void renderEntities(EntityComponentSystem & ecs, Renderer & renderer) {
 					instancedPositions.push_back(ecs.transformationSystem.transformations[transformationIndex].location);
 				}
 
-				glBindBuffer(GL_ARRAY_BUFFER, renderer.meshSystem.positionBuffer[meshIndex]);
+				glBindBuffer(GL_ARRAY_BUFFER, renderer.meshSystem.positionBuffer[meshIndices[i]]);
 				glBufferData(GL_ARRAY_BUFFER, instancedPositions.size() * sizeof(glm::vec3), instancedPositions.data(), GL_STREAM_DRAW);
 
-				renderInstancedMesh(renderer.meshSystem, meshIndex, instancedPositions.size());
+				renderInstancedMesh(renderer.meshSystem, meshIndices[i], instancedPositions.size());
 
 				unbindMesh();
 			}
+
 		}
 	}
 }

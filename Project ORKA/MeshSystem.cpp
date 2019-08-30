@@ -1,20 +1,16 @@
 
 #include "Program.hpp"
 
-void getMeshIndexFromName(MeshSystem & meshSystem, std::string meshName, int & meshIndex) {
+void getMeshIndicesFromName(MeshSystem & meshSystem, std::string meshName, std::vector<int> & meshIndices) {
 
-	meshIndex = -1;
+	meshIndices.clear();
 
 	//find the name
-	for (int i = 0; i < meshSystem.meshCount; i++) {
+	for (unsigned int i = 0; i < meshSystem.meshCount; i++) {
 		if (meshSystem.names[i] == meshName) {
-			meshIndex = i;
+			meshIndices.push_back(i);
 		}
 	}
-
-	//if (meshIndex == -1) {
-	//	std::cout << "A mesh with the name " << meshName << " doesent exist!" << std::endl;
-	//}
 }
 
 void uploadNextMeshFromQueue(MeshSystem & meshSystem) {
@@ -194,13 +190,16 @@ void loadAllMeshes(MeshSystem & meshSystem)
 	addMeshFileToLoaderQueue(meshSystem, GL_TRIANGLES, "objects/tree trunk.fbx", "tree");
 	addMeshFileToLoaderQueue(meshSystem, GL_TRIANGLES, "objects/tree leaves.fbx", "tree");
 
+	addMeshFileToLoaderQueue(meshSystem, GL_TRIANGLES, "objects/suzanne.fbx", "bounds");
+
+	addMeshFileToLoaderQueue(meshSystem, GL_TRIANGLES, "objects/gizmo.fbx", "gizmo");
 	addMeshFileToLoaderQueue(meshSystem, GL_TRIANGLES, "objects/cube.fbx", "cube");
 	addMeshFileToLoaderQueue(meshSystem, GL_TRIANGLES, "objects/plane.fbx", "plane");
 	addMeshFileToLoaderQueue(meshSystem, GL_TRIANGLES, "objects/error.fbx", "error");
+	addMeshFileToLoaderQueue(meshSystem, GL_TRIANGLES, "objects/suzanne.fbx", "monkey");
 	addMeshFileToLoaderQueue(meshSystem, GL_TRIANGLES, "objects/triangle.fbx", "triangle");
 	addMeshFileToLoaderQueue(meshSystem, GL_TRIANGLES, "objects/icosphere.fbx", "icosphere");
 	addMeshFileToLoaderQueue(meshSystem, GL_TRIANGLES, "objects/ground plane.fbx", "terrain");
-	addMeshFileToLoaderQueue(meshSystem, GL_TRIANGLES, "objects/suzanne.fbx", "monkey");
 	addMeshFileToLoaderQueue(meshSystem, GL_POINTS   , "objects/suzanne high detail.fbx", "point cloud");
 
 	//create hardcoded bounding box
