@@ -6,6 +6,6 @@ in vec4 vertexColor;
 
 void main(){
 
-	color = vertexColor;
+	color = vec4(vertexColor);
 
 };

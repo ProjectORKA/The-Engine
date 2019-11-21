@@ -13,6 +13,15 @@ void getMeshIndicesFromName(MeshSystem & meshSystem, std::string meshName, std::
 	}
 }
 
+void getMeshIndexOfEntityType(std::string entityTypeName, std::vector<std::string> & meshNames, int & meshIndex) {
+	for (int i = 0; i < meshNames.size(); i++) {
+		if (meshNames[i] == entityTypeName) {
+			meshIndex = i;
+			return;
+		}
+	}
+}
+
 void uploadNextMeshFromQueue(MeshSystem & meshSystem) {
 	MeshContainer & mesh = meshSystem.meshQueue.front();
 	if (mesh.uploadable) {
@@ -106,7 +115,6 @@ void renderMesh(MeshSystem & meshSystem, int meshIndex) {
 }
 void renderInstancedMesh(MeshSystem & meshSystem, int meshIndex, unsigned int numberOfInstances) {
 	if (meshIndex != -1 && meshSystem.loaded[meshIndex]) {
-		
 		glDrawElementsInstanced(
 			meshSystem.primitiveMode[meshIndex],	// mode
 			meshSystem.indexCount[meshIndex],		// count
@@ -126,6 +134,7 @@ void unbindMesh() {
 }
 
 void createMeshFromFile(MeshSystem & meshSystem) {
+
 	//add new mesh to upload queue
 	meshSystem.meshQueue.push_back(MeshContainer());
 	MeshContainer & mesh = meshSystem.meshQueue.back();
@@ -190,30 +199,31 @@ void loadAllMeshes(MeshSystem & meshSystem)
 	addMeshFileToLoaderQueue(meshSystem, GL_TRIANGLES, "objects/tree trunk.fbx", "tree");
 	addMeshFileToLoaderQueue(meshSystem, GL_TRIANGLES, "objects/tree leaves.fbx", "tree");
 
-	addMeshFileToLoaderQueue(meshSystem, GL_TRIANGLES, "objects/suzanne.fbx", "bounds");
-
-	addMeshFileToLoaderQueue(meshSystem, GL_TRIANGLES, "objects/gizmo.fbx", "gizmo");
 	addMeshFileToLoaderQueue(meshSystem, GL_TRIANGLES, "objects/cube.fbx", "cube");
 	addMeshFileToLoaderQueue(meshSystem, GL_TRIANGLES, "objects/plane.fbx", "plane");
 	addMeshFileToLoaderQueue(meshSystem, GL_TRIANGLES, "objects/error.fbx", "error");
+	addMeshFileToLoaderQueue(meshSystem, GL_TRIANGLES, "objects/gizmo.fbx", "gizmo");
 	addMeshFileToLoaderQueue(meshSystem, GL_TRIANGLES, "objects/suzanne.fbx", "monkey");
 	addMeshFileToLoaderQueue(meshSystem, GL_TRIANGLES, "objects/triangle.fbx", "triangle");
 	addMeshFileToLoaderQueue(meshSystem, GL_TRIANGLES, "objects/icosphere.fbx", "icosphere");
 	addMeshFileToLoaderQueue(meshSystem, GL_TRIANGLES, "objects/ground plane.fbx", "terrain");
+	//addMeshFileToLoaderQueue(meshSystem, GL_TRIANGLES, "objects/terrain.fbx", "bounding plane");
 	addMeshFileToLoaderQueue(meshSystem, GL_POINTS   , "objects/suzanne high detail.fbx", "point cloud");
 
 	//create hardcoded bounding box
 	MeshContainer boundingBox;
 	boundingBox.name = "bounds";
 	boundingBox.primitiveMode = GL_LINES;
-	boundingBox.vertices.push_back(glm::vec3(+1.0f, +1.0f, +1.0f));
-	boundingBox.vertices.push_back(glm::vec3(+1.0f, +1.0f, -1.0f));
-	boundingBox.vertices.push_back(glm::vec3(+1.0f, -1.0f, +1.0f));
-	boundingBox.vertices.push_back(glm::vec3(+1.0f, -1.0f, -1.0f));
-	boundingBox.vertices.push_back(glm::vec3(-1.0f, +1.0f, +1.0f));
-	boundingBox.vertices.push_back(glm::vec3(-1.0f, +1.0f, -1.0f));
-	boundingBox.vertices.push_back(glm::vec3(-1.0f, -1.0f, +1.0f));
-	boundingBox.vertices.push_back(glm::vec3(-1.0f, -1.0f, -1.0f));
+	float bSize = 0.5;
+	float bSize2 = -0.5;
+	boundingBox.vertices.push_back(glm::vec3(bSize, bSize, bSize));
+	boundingBox.vertices.push_back(glm::vec3(bSize, bSize, bSize2));
+	boundingBox.vertices.push_back(glm::vec3(bSize, bSize2, bSize));
+	boundingBox.vertices.push_back(glm::vec3(bSize, bSize2, bSize2));
+	boundingBox.vertices.push_back(glm::vec3(bSize2, bSize, bSize));
+	boundingBox.vertices.push_back(glm::vec3(bSize2, bSize, bSize2));
+	boundingBox.vertices.push_back(glm::vec3(bSize2, bSize2, bSize));
+	boundingBox.vertices.push_back(glm::vec3(bSize2, bSize2, bSize2));
 	boundingBox.indices.push_back(7);
 	boundingBox.indices.push_back(3);
 	boundingBox.indices.push_back(7);
@@ -239,6 +249,22 @@ void loadAllMeshes(MeshSystem & meshSystem)
 	boundingBox.indices.push_back(4);
 	boundingBox.indices.push_back(0);
 	addMeshToUploadQueue(meshSystem, boundingBox);
+
+	//create hardcoded bounding box
+	MeshContainer boundingPlane;
+	boundingPlane.name = "bounding plane";
+	boundingPlane.primitiveMode = GL_TRIANGLES;
+	boundingPlane.vertices.push_back(glm::vec3(bSize, bSize, bSize2));
+	boundingPlane.vertices.push_back(glm::vec3(bSize, bSize2, bSize2));
+	boundingPlane.vertices.push_back(glm::vec3(bSize2, bSize, bSize2));
+	boundingPlane.vertices.push_back(glm::vec3(bSize2, bSize2, bSize2));
+	boundingPlane.indices.push_back(0);
+	boundingPlane.indices.push_back(2);
+	boundingPlane.indices.push_back(1);
+	boundingPlane.indices.push_back(1);
+	boundingPlane.indices.push_back(2);
+	boundingPlane.indices.push_back(3);
+	addMeshToUploadQueue(meshSystem, boundingPlane);
 
 	//create hardcoded point mesh
 	MeshContainer singlePoint;

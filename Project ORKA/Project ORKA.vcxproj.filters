@@ -58,6 +58,9 @@
     <ClCompile Include="MeshSystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Camera.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="icon.rc">
@@ -72,6 +75,12 @@
       <Filter>Resource Files\Shaders</Filter>
     </None>
     <None Include="shaders\primitive instanced.vert">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="shaders\primitive chunk.frag">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="shaders\primitive chunk.vert">
       <Filter>Resource Files\Shaders</Filter>
     </None>
   </ItemGroup>

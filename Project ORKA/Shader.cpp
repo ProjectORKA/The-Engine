@@ -101,6 +101,8 @@ void loadShader(ShaderProgram & shaderProgram, const char * vertexPath, const ch
 	//glUniformMatrix4fv(shaderProgram.projectionMatrixID, 1, GL_FALSE, &glm::mat4(1)[0][0]);
 	glUniformMatrix4fv(shaderProgram.mvpMatrixID, 1, GL_FALSE, &glm::mat4(1)[0][0]);
 
+	shaderProgram.worldOffsetID = glGetUniformLocation(shaderProgram.programID, "worldOffset");
+	
 	shaderProgram.loaded = true;
 }
 

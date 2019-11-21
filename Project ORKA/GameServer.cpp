@@ -1,6 +1,26 @@
 
 #include "Program.hpp"
 
+void GameServerThread(GameServer & gameServer) {
+
+	gameServer.gameTime.paused = true;
+
+	std::chrono::steady_clock::time_point t;
+
+	while (gameServer.keepThreadRunning) {
+		t = std::chrono::steady_clock::now();
+		updateTime(gameServer.gameTime);
+		updateWorld(gameServer.worldSystem, gameServer.gameTime);
+
+		t += std::chrono::milliseconds(16); //game server running at 60 Hz
+		std::this_thread::sleep_until(t);
+	}
+}
+
+void updateWorld(WorldSystem & worldSystem, Time & time) {
+	processTransformations(worldSystem.ecs.transformationSystem, time);
+};
+
 void processTransformations(TransformationSystem & transformationSystem, Time & time) {
 
 	//apply motion to every object
@@ -23,25 +43,6 @@ void processTransformations(TransformationSystem & transformationSystem, Time & 
 	transformationSystem.modelMatrices.resize(transformationSystem.transformations.size());
 	for (int i = 0; i < transformationSystem.transformations.size(); i++) {
 		calculateModelMatrix(transformationSystem.modelMatrices[i], transformationSystem.transformations[i]);
-	}
-}
-
-void GameServerThread(GameServer & gameServer) {
-
-	gameServer.gameTime.paused = true;
-
-	std::chrono::steady_clock::time_point t;
-
-	while (gameServer.keepThreadRunning) {
-		t = std::chrono::steady_clock::now();
-		updateTime(gameServer.gameTime);
-
-		processTransformations(gameServer.worldSystem.root.ecs.transformationSystem, gameServer.gameTime);
-
-		//processChunks();
-
-		t += std::chrono::milliseconds(16); //game server running at 60 Hz
-		std::this_thread::sleep_until(t);
 	}
 }
 

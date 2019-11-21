@@ -29,14 +29,15 @@ void reloadTheWindow(Window & window) {
 	glfwGetWindowPos(window.glfwWindow, &x, &y);
 
 	//1. destroy window
-	GameServer * tmp = window.renderer->gameServer;
+	GameServer * tmpG = window.renderer->gameServer;
+	bool tmpWireframe = window.renderer->wireframeMode;
 	destroyGLFWWindow(window);
 
 	//mirror
 
 	//1. create window
-	createGLFWWindow(window, *tmp);
-
+	createGLFWWindow(window, *tmpG);
+	window.renderer->wireframeMode = tmpWireframe;
 	//2. set current position
 	glfwSetWindowPos(window.glfwWindow, x, y);
 
@@ -176,6 +177,7 @@ Window::~Window() {
 	thread->join();
 
 	destroyGLFWWindow(*this);
+
 	debugPrint("|--Window was destroyed!");
 }
 
@@ -200,13 +202,14 @@ void RenderThread(Window & window)
 	
 	loadShader(window.renderer->primitiveShader, "shaders/primitive.vert", "shaders/primitive.frag");
 	loadShader(window.renderer->primitiveShaderInstanced, "shaders/primitive instanced.vert", "shaders/primitive.frag");
+	loadShader(window.renderer->primitiveChunk, "shaders/primitive chunk.vert", "shaders/primitive chunk.frag");
 
 	loadAllMeshes(window.renderer->meshSystem);
 	
 	while (window.keepThreadRunning) {		
 		updateTime(window.renderer->renderTime);
 		processKeyboardInput(window);
-		pocessCamera(window.camera);
+		pocessCamera(window.camera, window.renderer->renderTime);
 		renderWindow(window);
 	}
 }

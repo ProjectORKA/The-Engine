@@ -16,9 +16,7 @@ void updateTime(Time & time) {
 		time.total += time.delta;
 	}
 	else {
-
 		time.delta = std::chrono::seconds::zero();
-
 	}
 }
 
@@ -30,7 +28,6 @@ double Time::getDelta() {
 double Time::getTotal() {
 	return total.count();
 }
-
 
 Time::Time() {
 	resetTime(*this);
