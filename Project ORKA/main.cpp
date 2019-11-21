@@ -53,8 +53,27 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdL
 #include "Program.hpp"
 
 int main(int argc, char *argv[]) {
+
+	
+	if(true) //quickly switches between the game and custom testing code
 	{
+
 		Program program;//<-- In Visual Studio press F12 to see what "Program" actually does
+	
+	} else {
+
+		///////////////////////////////////////////////////
+
+		unsigned long long a = LLONG_MAX * 2 +2;
+		long long b;
+		b = a;
+
+		std::cout << a << std::endl;
+
+		system("pause");
+
+		///////////////////////////////////////////////////
+
 	}
 	return 0;
 }

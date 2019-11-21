@@ -31,6 +31,9 @@ void whenButtonIsPressed(GLFWwindow * window, int key, int scancode, int action,
 	if (key == GLFW_KEY_2 && action == GLFW_PRESS) {
 		changeAntiAliasing(*parentWindowClass, 8);
 	}
+	if (key == GLFW_KEY_3 && action == GLFW_PRESS) {
+		parentWindowClass->renderer->chunkBorders = !parentWindowClass->renderer->chunkBorders;
+	}
 	if (key == GLFW_KEY_P && action == GLFW_PRESS) {
 		parentWindowClass->renderer->gameServer->gameTime.paused = !parentWindowClass->renderer->gameServer->gameTime.paused;
 	}
@@ -43,33 +46,36 @@ void whenButtonIsPressed(GLFWwindow * window, int key, int scancode, int action,
 	if (key == GLFW_KEY_F && action == GLFW_PRESS) {
 		parentWindowClass->renderer->wireframeMode = !parentWindowClass->renderer->wireframeMode;
 	}
-	if (key == GLFW_KEY_R && action == GLFW_PRESS) {
-		
-		Chunk * someChunk = &parentWindowClass->renderer->gameServer->worldSystem.root;
+	//if (key == GLFW_KEY_R && action == GLFW_PRESS) {
 
-		while (someChunk->nXnYnZ != nullptr) {
-			someChunk = someChunk->nXnYnZ;
-		}
-
-		subdivideChunk(*someChunk);
-	}
+	//	if (true) {
+	//		static unsigned short level = 62;
+	//		subdivideToLevel(parentWindowClass->renderer->gameServer->worldSystem.root, level);
+	//		countChunks(parentWindowClass->renderer->gameServer->worldSystem.root);
+	//		level--;
+	//	}
+	//	else {
+	//		refineChunkBasedOnPos(parentWindowClass->renderer->gameServer->worldSystem.root, parentWindowClass->camera.location);
+	//	}
+	//}
 }
 
 void whenMouseIsScrolling(GLFWwindow * window, double xoffset, double yoffset) {
 	Window & parentWindowClass = *static_cast<Window*>(glfwGetWindowUserPointer(window));
 
 	parentWindowClass.camera.speedMultiplier += (int)yoffset;
-	parentWindowClass.camera.cameraSpeed = pow(1.1f, parentWindowClass.camera.speedMultiplier); //[TODO] put in renderer
+
+	//calculate camera speed
+	parentWindowClass.camera.cameraSpeed = pow(CAMERA_SPEED_MULTIPLIER, parentWindowClass.camera.speedMultiplier);
+
+	std::cout << "Camera speed set to: " << parentWindowClass.camera.speedMultiplier << std::endl;
 }
 
 void whenMouseIsPressed(GLFWwindow * window, int button, int action, int mods) {
 	Window & parentWindowClass = *static_cast<Window*>(glfwGetWindowUserPointer(window));
 	//LMB
 	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
-		if (parentWindowClass.capturingCursor) {
-			
-		}
-		else {
+		if (!parentWindowClass.capturingCursor){
 			captureCursor(parentWindowClass);
 		}
 	}
@@ -110,21 +116,12 @@ void uncaptureCursor(Window & window) {
 }
 
 void processKeyboardInput(Window & window) {
-	float delta = window.renderer->renderTime.getDelta();
+	if (glfwGetKey(window.glfwWindow, GLFW_KEY_E) == GLFW_PRESS) window.camera.accelerationVector += window.camera.upVector;
+	if (glfwGetKey(window.glfwWindow, GLFW_KEY_Q) == GLFW_PRESS) window.camera.accelerationVector -= window.camera.upVector;
 
-	Camera & camera = window.camera;
-	glm::vec3 totalAccelerationVector(0.0f);
+	if (glfwGetKey(window.glfwWindow, GLFW_KEY_W) == GLFW_PRESS) window.camera.accelerationVector += window.camera.forwardVector;
+	if (glfwGetKey(window.glfwWindow, GLFW_KEY_S) == GLFW_PRESS) window.camera.accelerationVector -= window.camera.forwardVector;
 
-	if (glfwGetKey(window.glfwWindow, GLFW_KEY_E) == GLFW_PRESS) totalAccelerationVector += camera.upVector;
-	if (glfwGetKey(window.glfwWindow, GLFW_KEY_Q) == GLFW_PRESS) totalAccelerationVector -= camera.upVector;
-
-	if (glfwGetKey(window.glfwWindow, GLFW_KEY_W) == GLFW_PRESS) totalAccelerationVector += camera.forwardVector;
-	if (glfwGetKey(window.glfwWindow, GLFW_KEY_S) == GLFW_PRESS) totalAccelerationVector -= camera.forwardVector;
-
-	if (glfwGetKey(window.glfwWindow, GLFW_KEY_D) == GLFW_PRESS) totalAccelerationVector += camera.rightVector;
-	if (glfwGetKey(window.glfwWindow, GLFW_KEY_A) == GLFW_PRESS) totalAccelerationVector -= camera.rightVector;
-
-	totalAccelerationVector *= camera.cameraSpeed * delta;
-
-	camera.cameraLocation += totalAccelerationVector;
+	if (glfwGetKey(window.glfwWindow, GLFW_KEY_D) == GLFW_PRESS) window.camera.accelerationVector += window.camera.rightVector;
+	if (glfwGetKey(window.glfwWindow, GLFW_KEY_A) == GLFW_PRESS) window.camera.accelerationVector -= window.camera.rightVector;
 }

@@ -21,6 +21,7 @@
 #define GLEW_STATIC
 #include "GL/glew.h"
 #include "glm/glm.hpp"
+#include <glm/gtc/type_ptr.hpp>
 #include "glm/gtc/matrix_transform.hpp"
 #include "GLFW/glfw3.h"
 #include <assimp/Importer.hpp>      // C++ importer interface
@@ -68,9 +69,10 @@
 //	change graphics settings on run time
 //	render independent game instance
 //	per window render settings
+//  automatic instanced rendering
 
-//"editor"
-//spectator camera
+//editor
+//  spectator camera
 //	3d movement
 //	speed control
 
@@ -78,26 +80,133 @@
 
 #pragma region future optimizations
 //combine buffers of different objects into larger chunks (combine all static objects of a chunk)
+//use function callbacks to operate on only selected chunks in the world system by passing the operation function into a selection function
 #pragma endregion
-
 
 #pragma endregion
 
 #pragma region preprocessor definitions
 
-#define DEBUG					//enables debug messages
+#define DEBUG
+
+#define VIEW_DISTANCE 2.0f
+#define CHUNK_LEVEL_MAX 62
+#define METER_DIVIDER_INT 16777216
+#define METER_DIVIDER_FLOAT 16777216.0f
+
+#define INITIAL_CAMERA_SPEED 440
+#define CAMERA_SPEED_MULTIPLIER 1.1f
 
 #define NUMBER_OF_AVAIVABLE_COMPONENTS 2
-#define CHUNK_LEVEL_MAX 128
-
+#define TRANSFORMATION 0
+#define CAMERA 1
 
 #pragma endregion
 
 #pragma region data
 //DATA (sorted in inverted hierarchical order)
 
+struct Time {
+	bool paused = false;
+	std::chrono::steady_clock::time_point lastTime;
+	std::chrono::steady_clock::time_point currentTime;
+	std::chrono::duration<double, std::ratio< 1 / 1 >> delta;
+	std::chrono::duration<double, std::ratio< 1 / 1 >> total;
+	Time();
+	~Time();
+	double getDelta();
+	double getTotal();
+};
+//gameserver stuff
 struct GameServer;
 using ComponentIndex = unsigned int;
+using ComponentStructure = std::bitset<NUMBER_OF_AVAIVABLE_COMPONENTS>;
+struct Entity {
+	//indices corresponding to the components defined in the archetype
+	//e.g. archetype consists of components A, B, C then {0,3,2} means A[0], B[3], C[2]
+	std::vector<ComponentIndex> componentIndices;
+};
+struct EntityTypes {
+	unsigned int						numberOfEntityTypes = 0;
+	std::vector<std::string>			names;
+	std::vector<ComponentStructure>		structures;
+	std::vector<std::vector<Entity>>	entityArrays;
+	
+	EntityTypes();
+};
+struct Transformation {
+	glm::vec3 location = glm::vec3(0);
+	glm::vec3 rotation = glm::vec3(0);
+	glm::vec3 scale = glm::vec3(1);
+};
+struct TransformationSystem {
+	std::vector<Transformation> transformations;
+	std::vector<glm::mat4> modelMatrices;
+};
+struct EntityComponentSystem {
+	EntityTypes entityTypes;
+	TransformationSystem transformationSystem;
+};
+struct Chunk{
+	//unsigned long long to not loose precision
+	glm::u64vec3 location = glm::u64vec3(0);
+	
+	//max 64 levels (based on ull bits)
+	unsigned short level = 0;
+
+	//has sub nodes
+	bool subdivided = false;
+
+	//pointer to parent node
+	Chunk * parent = nullptr;
+
+	//pointers to sub nodes
+	Chunk * tfr = nullptr; //top front right = +X +Y +Z
+	Chunk * tfl = nullptr;
+	Chunk * tbr = nullptr;
+	Chunk * tbl = nullptr;
+	Chunk * bfr = nullptr;
+	Chunk * bfl = nullptr;
+	Chunk * bbr = nullptr;
+	Chunk * bbl = nullptr; //bottom back left = -X -Y -Z
+
+	//create root node
+	Chunk();
+	
+	//create sub node
+	Chunk(Chunk & chunk, bool x, bool y, bool z);
+	
+	//unsubdivide and destroy node
+	~Chunk();
+};
+struct Sky {
+	glm::vec3 skyColor;
+	Sky();
+};
+struct WorldSystem {
+	Sky sky;
+	//glm::vec3 cameraPosition;
+	EntityComponentSystem ecs;
+	Chunk root;
+	WorldSystem();
+};
+struct GameServer {
+	Time gameTime;				//<-- starts the time
+	//Time serverTime;
+	WorldSystem worldSystem;	//<-- creates the world
+	GameServer();				//<-- starts the simulation (thread)
+	~GameServer();				//<-- stops the simulation (thread)
+
+	//thread
+	bool keepThreadRunning = true;
+	std::unique_ptr<std::thread> thread;
+};
+
+//renderer stuff
+struct ChunkRenderInfo {
+	Chunk * chunk;
+	glm::mat4 viewMatrix;
+};
 struct MeshContainer {
 	std::string name = "empty";
 	unsigned short primitiveMode = 0;
@@ -107,9 +216,15 @@ struct MeshContainer {
 	bool uploadable = false;
 };
 struct ShaderProgram {
+	
 	bool loaded = false;
+	
 	GLuint programID;
+	
+	//uniforms
 	GLuint mvpMatrixID;
+	GLuint worldOffsetID;
+	
 	ShaderProgram();
 	~ShaderProgram();
 };
@@ -144,60 +259,24 @@ struct MeshSystem {
 	~MeshSystem();
 };
 struct Camera {
-
-
 	// hard data
-	glm::vec3 cameraLocation = {0.0f,0.0f,0.0f };
+	glm::u64vec3 location = glm::u64vec3(0, 0, 1);
+	glm::vec3 subChunkLocation = glm::vec3(0);
+
 	float cameraRotationX = 0.0f;
 	float cameraRotationZ = 0.0f;
 
 	float mouseSensitivity = 0.002f;
-	float cameraSpeed = 1.0f;
-	int speedMultiplier = 1;
+	int speedMultiplier = INITIAL_CAMERA_SPEED;
+	glm::vec3 accelerationVector = glm::vec3(0);
+	
 	// soft data
+	float cameraSpeed = pow(CAMERA_SPEED_MULTIPLIER, INITIAL_CAMERA_SPEED);
 	glm::vec3 forwardVector = { 0.0f, 1.0f, 0.0f };
 	glm::vec3 rightVector	= { 1.0f, 0.0f, 0.0f };
 	glm::vec3 upVector		= { 0.0f, 0.0f, 1.0f };
 
 	glm::mat4 viewMatrix = glm::lookAt(glm::vec3(0), glm::vec3(0, 1, 0), glm::vec3(0, 0, 1));
-};
-using ComponentStructure = std::bitset<NUMBER_OF_AVAIVABLE_COMPONENTS>;
-struct Entity {
-	//indices corresponding to the components defined in the archetype
-	//e.g. archetype consists of components A, B, C then {0,3,2} means A[0], B[3], C[2]
-	std::vector<ComponentIndex> componentIndices;
-};
-struct EntityTypes {
-	unsigned int						numberOfEntityTypes = 0;
-	std::vector<std::string>			names;
-	std::vector<ComponentStructure>		structure;
-	std::vector<std::vector<Entity>>	entityArrays;
-	
-	EntityTypes();
-};
-struct Transformation {
-	glm::vec3 location = glm::vec3(0);
-	glm::vec3 rotation = glm::vec3(0);
-	glm::vec3 scale = glm::vec3(1);
-};
-struct TransformationSystem {
-	std::vector<Transformation> transformations;
-	std::vector<glm::mat4> modelMatrices;
-};
-struct EntityComponentSystem {
-	EntityTypes entityTypes;
-	TransformationSystem transformationSystem;
-};
-struct Time {
-	bool paused = false;
-	std::chrono::steady_clock::time_point lastTime;
-	std::chrono::steady_clock::time_point currentTime;
-	std::chrono::duration<double, std::ratio< 1/1 >> delta;
-	std::chrono::duration<double, std::ratio< 1/1 >> total;
-	Time();
-	~Time();
-	double getDelta();
-	double getTotal();
 };
 struct Renderer {
 
@@ -205,19 +284,21 @@ struct Renderer {
 
 	ShaderProgram primitiveShader; //[TODO] turn into shader system
 	ShaderProgram primitiveShaderInstanced;
+	ShaderProgram primitiveChunk;
 
 	MeshSystem meshSystem;
 	GameServer * gameServer;
 
 	bool wireframeMode = false;
-	//unsigned int currentMeshIndex;
+	bool chunkBorders = false;
 
 	Camera * camera;
 
+	std::vector<std::vector<ChunkRenderInfo>> chunkRenderQueues;
+
 	glm::mat4 projectionMatrix;
 	glm::mat4 viewMatrix;
-	glm::mat4 chunkAdjustedViewMatrix;
-
+	Renderer() = delete;
 	Renderer(GameServer & gameServer, Camera & camera);
 	~Renderer();
 };
@@ -248,46 +329,6 @@ struct Window {
 	Window(GameServer & gameServer);
 	~Window();
 };
-struct Chunk {
-	unsigned short level = 0;
-	short posX = 0;
-	short posY = 0;
-	short posZ = 0;
-	EntityComponentSystem ecs;
-
-	Chunk * pXpYpZ = nullptr;	//p = positive / n = negative
-	Chunk * nXpYpZ = nullptr;
-	Chunk * pXnYpZ = nullptr;
-	Chunk * nXnYpZ = nullptr;
-	Chunk * pXpYnZ = nullptr;
-	Chunk * nXpYnZ = nullptr;
-	Chunk * pXnYnZ = nullptr;
-	Chunk * nXnYnZ = nullptr;
-
-	Chunk();
-	Chunk(int level, int x, int y, int z);
-	~Chunk();
-};
-struct Sky {
-	glm::vec3 skyColor;
-	Sky();
-};
-struct WorldSystem {
-	Sky sky;
-	Chunk root;
-	WorldSystem();
-};
-struct GameServer {
-	Time gameTime;				//<-- starts the time
-	//Time serverTime;
-	WorldSystem worldSystem;	//<-- creates the world
-	GameServer();				//<-- starts the simulation (thread)
-	~GameServer();				//<-- stops the simulation (thread)
-
-	//thread
-	bool keepThreadRunning = true;
-	std::unique_ptr<std::thread> thread;
-};
 struct WindowHandler {
 	std::vector<std::shared_ptr<Window>> windows;
 	WindowHandler();
@@ -299,7 +340,6 @@ struct Program {
 	Program();						//<-- creates windows that render the game
 	~Program();
 };
-
 #pragma endregion
 
 #pragma region functions
@@ -307,16 +347,22 @@ struct Program {
 //chunk
 void subdivideChunk					(Chunk & chunk);
 void unsubdivideChunk				(Chunk & chunk);
-void renderChunkBoundingBox			(Chunk & chunk, Renderer & renderer);
-void renderChunksByLevel			(Chunk & chunk, Renderer & renderingSystem);
+
+
+void renderChunk					(ChunkRenderInfo & info, Renderer & renderer);
+void renderChunkBoundingBox			(ChunkRenderInfo & info, Renderer & renderer);
+
+//world system
+void renderChunkQueue				(Renderer & renderer);
+void addChunkToRenderQueue			(Chunk & chunk, Renderer & renderer);
+void processChunkQueue				(Chunk & chunk, Renderer & renderer);
+void updateWorld					(WorldSystem & worldSystem, Time & time);
 void renderWorld					(WorldSystem & worldSystem, Renderer & renderingSystem);
-void renderChunk					(Chunk & chunk, Renderer & renderer, std::vector<Chunk *> & children);
 
 //math
 float randomFloat					(float low, float high);
 
 //debug
-void renderGizmo					(Renderer & renderer);
 void debugPrint						(const char * debugMessage);
 
 //shader
@@ -382,10 +428,12 @@ void spawnEntity					(EntityComponentSystem & ecs, std::string name);
 
 //transformation component
 void calculateModelMatrix			(glm::mat4 & matrix, Transformation & transformation);
+void processTransformations			(TransformationSystem & transformationSystem, Time & time);
 void addTransformationComponent		(TransformationSystem & transformationSystem, Entity & entity);
+
 //camera component
-void pocessCamera					(Camera & cameraSystem);
-void rotateCamera					(Camera & cameraSystem, float x, float y);
+void pocessCamera					(Camera & camera, Time & time);
+void rotateCamera					(Camera & camera, float x, float y);
 
 //threads
 void GameServerThread				(GameServer & gameServer);

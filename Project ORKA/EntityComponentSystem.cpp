@@ -1,41 +1,6 @@
 
 #include "Program.hpp"
 
-//camera
-void rotateCamera(Camera & camera, float x, float y) {
-	camera.cameraRotationX -= camera.mouseSensitivity * y;
-	camera.cameraRotationZ += camera.mouseSensitivity * x;
-}
-void pocessCamera(Camera & camera)
-{
-	//prevent looking upside down
-
-	float cap = PI / 2;
-
-	if (camera.cameraRotationX < -cap) {
-		camera.cameraRotationX = -cap;
-	}
-	if (camera.cameraRotationX > +cap) {
-		camera.cameraRotationX = +cap;
-	}
-
-	//calculate directional vectors
-	camera.forwardVector = glm::vec3(
-		cos(camera.cameraRotationX) * sin(camera.cameraRotationZ),
-		cos(camera.cameraRotationX) * cos(camera.cameraRotationZ),
-		sin(camera.cameraRotationX)
-	);
-
-	camera.rightVector = glm::vec3(
-		-sin(camera.cameraRotationZ - PI / 2),
-		-cos(camera.cameraRotationZ - PI / 2),
-		0
-	);
-	camera.upVector = glm::cross(camera.rightVector, camera.forwardVector);
-
-	//calculate viewMatrix
-	camera.viewMatrix = glm::lookAt(camera.cameraLocation, camera.cameraLocation + camera.forwardVector, camera.upVector);
-}
 
 void addEntityType(EntityTypes & entityTypes, std::string name, ComponentStructure structure) {
 
@@ -49,7 +14,7 @@ void addEntityType(EntityTypes & entityTypes, std::string name, ComponentStructu
 	}
 
 	if (nameExists) {
-		if (entityTypes.structure[nameExistsAtLocation] == structure) {
+		if (entityTypes.structures[nameExistsAtLocation] == structure) {
 			debugPrint("EntityType does already exist!");
 			return;
 		}
@@ -61,7 +26,7 @@ void addEntityType(EntityTypes & entityTypes, std::string name, ComponentStructu
 	else {
 		entityTypes.numberOfEntityTypes++;
 		entityTypes.names.push_back(name);
-		entityTypes.structure.push_back(structure);
+		entityTypes.structures.push_back(structure);
 		std::vector<Entity> tmp;
 		entityTypes.entityArrays.push_back(tmp);
 	}
@@ -83,9 +48,10 @@ void spawnEntity(EntityComponentSystem & ecs, std::string name)
 		//create the data
 		Entity tmp;
 		//transformation component
-		if (ecs.entityTypes.structure[entityTypeIndex][0]) {
+		if (ecs.entityTypes.structures[entityTypeIndex][TRANSFORMATION]) {
 			addTransformationComponent(ecs.transformationSystem, tmp);
 		}
+
 
 		/////////////////////////////////////////////////////////////////////////////
 		//		//another component												   //
@@ -111,71 +77,68 @@ void calculateModelMatrix(glm::mat4 & matrix, Transformation & transformation)
 	matrix = glm::scale(glm::rotate(glm::rotate(glm::rotate(glm::translate(glm::mat4(1), transformation.location), transformation.rotation.z, glm::vec3(0, 0, 1)), transformation.rotation.x, glm::vec3(1, 0, 0)), transformation.rotation.y, glm::vec3(0, 1, 0)), transformation.scale);
 }
 
-//mesh
-//void addMeshComponent(ECS & entityComponentSystem, const char * path){
-//	entityComponentSystem.entitySystem.usedComponents.back()[1] = true;
-//	entityComponentSystem.entitySystem.meshIndex.back() = entityComponentSystem.
-//
-//	entityComponentSystem.transformationSystem.transformations.push_back(transformation);
-//}
-
+void addComponent(ComponentStructure structure, unsigned int componentID)
+{
+	structure[componentID] = true;
+}
 
 EntityTypes::EntityTypes()
 {
-	numberOfEntityTypes = 0;
+	numberOfEntityTypes = 0; //[TODO] check if necessary
 
-
-	////empty
-	//ComponentStructure emptyStructure;
-	//addEntityType(*this, "empty", emptyStructure);
+	//error
+	ComponentStructure player;
+	addComponent(player,TRANSFORMATION);
+	addEntityType(*this, "player", player);
 
 	//error
 	ComponentStructure errorStructure;
-	errorStructure[0] = true;
+	addComponent(errorStructure, TRANSFORMATION);
 	addEntityType(*this, "error", errorStructure);
 
 	//monkey
 	ComponentStructure monkeyStructure;
-	monkeyStructure[0] = true;
+	addComponent(monkeyStructure, TRANSFORMATION);
 	addEntityType(*this, "monkey", monkeyStructure);
 
 	//cube
 	ComponentStructure cubeStructure;
-	cubeStructure[0] = true;
+	addComponent(cubeStructure, TRANSFORMATION);
 	addEntityType(*this, "cube", cubeStructure);
 
 	//icosphere
 	ComponentStructure icosphereStructure;
-	icosphereStructure[0] = true;
+	addComponent(icosphereStructure, TRANSFORMATION);
 	addEntityType(*this, "icosphere", icosphereStructure);
 
 	//triangle
 	ComponentStructure triangleStructure;
-	triangleStructure[0] = true;
+	addComponent(triangleStructure, TRANSFORMATION);
 	addEntityType(*this, "triangle", triangleStructure);
 
 	//plane
 	ComponentStructure planeStructure;
-	planeStructure[0] = true;
+	addComponent(planeStructure, TRANSFORMATION);
 	addEntityType(*this, "plane", planeStructure);
 
 	////point
 	//ComponentStructure pointStructure;
-	//pointStructure[0] = true;
+	//pointStructure.addComponent(TRANSFORMATION);
 	//addEntityType(*this, "point", pointStructure);
 	//
 	////point cloud
 	//ComponentStructure pointCloudStructure;
-	//pointCloudStructure[0] = true;
+	//pointCloudStructure.addComponent(TRANSFORMATION);
 	//addEntityType(*this, "point cloud", pointCloudStructure);
 
 	//tree
 	ComponentStructure treeStructure;
-	treeStructure[0] = true;
+	addComponent(treeStructure, TRANSFORMATION);
 	addEntityType(*this, "tree", treeStructure);
 
 	//terrain mesh
 	ComponentStructure terrainStructure;
-	terrainStructure[0] = true;
+	addComponent(terrainStructure, TRANSFORMATION);
 	addEntityType(*this, "terrain", terrainStructure);
 }
+
