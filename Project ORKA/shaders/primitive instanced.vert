@@ -6,7 +6,9 @@ layout(location = 2) in vec2 uvs;
 
 out vec4 vertexColor; 
 
+uniform vec4 worldOffset;
 uniform mat4 vpMatrix;
+
 
 void main() {
 	vec4 position = vpMatrix * vec4(vertex + positions, 1.0f);

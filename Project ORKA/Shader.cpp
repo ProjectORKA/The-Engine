@@ -90,16 +90,12 @@ void loadShader(ShaderProgram & shaderProgram, const char * vertexPath, const ch
 
 	glUseProgram(shaderProgram.programID);
 
-	//set up matrix IDs
-	//shaderProgram.modelMatrixID = glGetUniformLocation(shaderProgram.programID, "modelMatrix");
-	//shaderProgram.viewMatrixID = glGetUniformLocation(shaderProgram.programID, "viewMatrix");
-	//shaderProgram.projectionMatrixID = glGetUniformLocation(shaderProgram.programID, "projectionMatrix");
-	shaderProgram.mvpMatrixID = glGetUniformLocation(shaderProgram.programID, "vpMatrix");
+	//set up matrix ID
+	shaderProgram.mMatrixID = glGetUniformLocation(shaderProgram.programID, "mMatrix");
+	shaderProgram.vpMatrixID = glGetUniformLocation(shaderProgram.programID, "vpMatrix");
 
-	//glUniformMatrix4fv(shaderProgram.modelMatrixID, 1, GL_FALSE, &glm::mat4(1)[0][0]);
-	//glUniformMatrix4fv(shaderProgram.viewMatrixID, 1, GL_FALSE, &glm::mat4(1)[0][0]);
-	//glUniformMatrix4fv(shaderProgram.projectionMatrixID, 1, GL_FALSE, &glm::mat4(1)[0][0]);
-	glUniformMatrix4fv(shaderProgram.mvpMatrixID, 1, GL_FALSE, &glm::mat4(1)[0][0]);
+	glUniformMatrix4fv(shaderProgram.mMatrixID, 1, GL_FALSE, &glm::mat4(1)[0][0]);
+	glUniformMatrix4fv(shaderProgram.vpMatrixID, 1, GL_FALSE, &glm::mat4(1)[0][0]);
 
 	shaderProgram.worldOffsetID = glGetUniformLocation(shaderProgram.programID, "worldOffset");
 	

@@ -3,6 +3,20 @@
 
 //CHUNK
 //subdivision
+void subdivideChunk(Chunk & chunk) {
+	if (chunk.subdivided == false && chunk.level < CHUNK_LEVEL_MAX) {
+		chunk.tfr = new Chunk(chunk, 1, 1, 1);
+		chunk.tfl = new Chunk(chunk, 0, 1, 1);
+		chunk.tbr = new Chunk(chunk, 1, 0, 1);
+		chunk.tbl = new Chunk(chunk, 0, 0, 1);
+		chunk.bfr = new Chunk(chunk, 1, 1, 0);
+		chunk.bfl = new Chunk(chunk, 0, 1, 0);
+		chunk.bbr = new Chunk(chunk, 1, 0, 0);
+		chunk.bbl = new Chunk(chunk, 0, 0, 0);
+
+		chunk.subdivided = true;
+	}
+};
 void unsubdivideChunk(Chunk & chunk) {
 	if (chunk.subdivided) {
 		delete chunk.tfr;
@@ -26,22 +40,6 @@ void unsubdivideChunk(Chunk & chunk) {
 		chunk.subdivided = false;
 	}
 };
-void subdivideChunk(Chunk & chunk) {
-	if (chunk.subdivided == false && chunk.level < CHUNK_LEVEL_MAX) {
-		std::cout << chunk.level << std::endl;
-		unsigned short newLevel = chunk.level + 1;
-		chunk.tfr = new Chunk(chunk, 1, 1, 1);
-		chunk.tfl = new Chunk(chunk, 0, 1, 1);
-		chunk.tbr = new Chunk(chunk, 1, 0, 1);
-		chunk.tbl = new Chunk(chunk, 0, 0, 1);
-		chunk.bfr = new Chunk(chunk, 1, 1, 0);
-		chunk.bfl = new Chunk(chunk, 0, 1, 0);
-		chunk.bbr = new Chunk(chunk, 1, 0, 0);
-		chunk.bbl = new Chunk(chunk, 0, 0, 0);
-
-		chunk.subdivided = true;
-	}
-};
 
 Chunk::Chunk()
 {
@@ -53,6 +51,12 @@ Chunk::Chunk(Chunk & chunk, bool x, bool y, bool z)
 	this->location.y = (chunk.location.y << 1) + y;
 	this->location.z = (chunk.location.z << 1) + z;
 	this->parent = &chunk;
+
+	//world generation code
+	hasContents = (location.z == 0);
+
+
+
 }
 Chunk::~Chunk()
 {
