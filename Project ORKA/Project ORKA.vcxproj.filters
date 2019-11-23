@@ -77,9 +77,6 @@
     <None Include="shaders\primitive instanced.vert">
       <Filter>Resource Files\Shaders</Filter>
     </None>
-    <None Include="shaders\primitive chunk.frag">
-      <Filter>Resource Files\Shaders</Filter>
-    </None>
     <None Include="shaders\primitive chunk.vert">
       <Filter>Resource Files\Shaders</Filter>
     </None>

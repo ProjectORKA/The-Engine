@@ -43,7 +43,6 @@
     <ClInclude Include="Program.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="shaders\primitive chunk.frag" />
     <None Include="shaders\primitive chunk.vert" />
     <None Include="shaders\primitive instanced.vert" />
     <None Include="shaders\primitive.frag" />

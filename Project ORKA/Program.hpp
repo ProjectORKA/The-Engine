@@ -94,8 +94,8 @@
 #define METER_DIVIDER_INT 16777216
 #define METER_DIVIDER_FLOAT 16777216.0f
 
-#define INITIAL_CAMERA_SPEED 440
-#define CAMERA_SPEED_MULTIPLIER 1.1f
+#define INITIAL_CAMERA_SPEED 300
+#define CAMERA_SPEED_MULTIPLIER 1.15f
 
 #define NUMBER_OF_AVAIVABLE_COMPONENTS 2
 #define TRANSFORMATION 0
@@ -157,6 +157,9 @@ struct Chunk{
 	//has sub nodes
 	bool subdivided = false;
 
+	//has renderable content
+	bool hasContents = true;
+
 	//pointer to parent node
 	Chunk * parent = nullptr;
 
@@ -169,6 +172,8 @@ struct Chunk{
 	Chunk * bfl = nullptr;
 	Chunk * bbr = nullptr;
 	Chunk * bbl = nullptr; //bottom back left = -X -Y -Z
+
+
 
 	//create root node
 	Chunk();
@@ -205,7 +210,7 @@ struct GameServer {
 //renderer stuff
 struct ChunkRenderInfo {
 	Chunk * chunk;
-	glm::mat4 viewMatrix;
+	glm::mat4 offsetMatrix;
 };
 struct MeshContainer {
 	std::string name = "empty";
@@ -222,7 +227,8 @@ struct ShaderProgram {
 	GLuint programID;
 	
 	//uniforms
-	GLuint mvpMatrixID;
+	GLuint mMatrixID;
+	GLuint vpMatrixID;
 	GLuint worldOffsetID;
 	
 	ShaderProgram();
@@ -260,7 +266,7 @@ struct MeshSystem {
 };
 struct Camera {
 	// hard data
-	glm::u64vec3 location = glm::u64vec3(0, 0, 1);
+	glm::u64vec3 location = glm::u64vec3(0, 0, LLONG_MAX);
 	glm::vec3 subChunkLocation = glm::vec3(0);
 
 	float cameraRotationX = 0.0f;

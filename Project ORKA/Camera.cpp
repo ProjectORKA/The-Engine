@@ -39,8 +39,7 @@ void pocessCamera(Camera & camera, Time & time)
 	camera.accelerationVector *= camera.cameraSpeed * time.getDelta();
 	
 	//add acceleration to floating point position vector
-	camera.subChunkLocation += camera.accelerationVector;
-
+	camera.subChunkLocation += glm::clamp(camera.accelerationVector, (float)LLONG_MIN / 2, (float)LLONG_MAX / 2);
 	//transfer floating point delta to integer position if bigger than 1
 	if (camera.subChunkLocation.x >= 1 | camera.subChunkLocation.x <= -1) {
 		long long x = camera.subChunkLocation.x;
@@ -60,7 +59,8 @@ void pocessCamera(Camera & camera, Time & time)
 		if (newZ > camera.location.z) {
 			intDeltaZ = camera.location.z;
 			camera.location.z = 0;
-			camera.subChunkLocation += intDeltaZ;
+			//camera.subChunkLocation += intDeltaZ;
+			camera.subChunkLocation.z = -0.99;
 		}
 		else {
 			camera.subChunkLocation.z += intDeltaZ;
@@ -69,11 +69,12 @@ void pocessCamera(Camera & camera, Time & time)
 	}
 
 	if (camera.subChunkLocation.z >= 1) {
+		unsigned long long maximum = ULLONG_MAX / 2;
 		unsigned long long intDeltaZ = camera.subChunkLocation.z;
 		unsigned long long newZ = camera.location.z + intDeltaZ;
-		if (newZ < camera.location.z) {
-			intDeltaZ = ULLONG_MAX - camera.location.z;
-			camera.location.z = ULLONG_MAX;
+		if (newZ < camera.location.z | newZ > maximum) {
+			intDeltaZ = maximum - camera.location.z;
+			camera.location.z = maximum;
 			camera.subChunkLocation -= intDeltaZ;
 		}
 		else {

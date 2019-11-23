@@ -82,7 +82,7 @@ void renderEntities(EntityComponentSystem & ecs, Renderer & renderer) {
 					unsigned int transformationIndex = ecs.entityTypes.entityArrays[currentEntityTypeIndex][j].componentIndices[0];
 					glm::mat4 vpMatrix = renderer.projectionMatrix * renderer.viewMatrix;
 					
-					glUniformMatrix4fv(renderer.primitiveShaderInstanced.mvpMatrixID, 1, GL_FALSE, &vpMatrix[0][0]);
+					glUniformMatrix4fv(renderer.primitiveShaderInstanced.vpMatrixID, 1, GL_FALSE, &vpMatrix[0][0]);
 					
 					instancedPositions.push_back(ecs.transformationSystem.transformations[transformationIndex].location);
 				}
@@ -117,9 +117,6 @@ void processChunkQueue(Chunk & chunk, Renderer & renderer) {
 	long long y = chunk.location.y << levelBasedBitShift;	//converts to actual position
 	long long z = chunk.location.z << levelBasedBitShift; 	//converts to actual position
 
-	//needed later to clamp z
-	long long oldZ = z;
-
 	Camera & camera = *renderer.camera;
 	//subtract location of camera to get delta/distance
 	x -= camera.location.x - offset;
@@ -133,7 +130,7 @@ void processChunkQueue(Chunk & chunk, Renderer & renderer) {
 	delta /= pow(2, 64 - chunk.level);
 
 	//check visibility
-	if (glm::length(delta) < VIEW_DISTANCE & chunk.level != CHUNK_LEVEL_MAX) {
+	if (glm::length(delta) < VIEW_DISTANCE & chunk.level != CHUNK_LEVEL_MAX & chunk.hasContents) {
 		if (!chunk.subdivided) {
 			subdivideChunk(chunk);
 		}
@@ -152,7 +149,7 @@ void processChunkQueue(Chunk & chunk, Renderer & renderer) {
 		//add to render queue
 		ChunkRenderInfo info;
 		info.chunk = &chunk;
-		info.viewMatrix = glm::translate(renderer.viewMatrix, delta);
+		info.offsetMatrix = glm::translate(glm::mat4(1), delta);
 		renderer.chunkRenderQueues[chunk.level].push_back(info);
 	}
 }
@@ -166,8 +163,10 @@ void renderGizmo(ChunkRenderInfo & info, Renderer & renderer) {
 
 		bindMesh(renderer.meshSystem, meshIndices[i]);
 
-		glm::mat4 mvpMatrix = renderer.projectionMatrix * glm::scale(info.viewMatrix, glm::vec3(0.05));;
-		glUniformMatrix4fv(renderer.primitiveShader.mvpMatrixID, 1, GL_FALSE, &mvpMatrix[0][0]);
+		glm::mat4 vpMatrix = renderer.projectionMatrix * renderer.viewMatrix;
+		glm::mat4 mMatrix = glm::scale(info.offsetMatrix, glm::vec3(0.05));
+		glUniformMatrix4fv(renderer.primitiveShader.mMatrixID, 1, GL_FALSE, &mMatrix[0][0]);
+		glUniformMatrix4fv(renderer.primitiveShader.vpMatrixID, 1, GL_FALSE, &vpMatrix[0][0]);
 
 		renderMesh(renderer.meshSystem, meshIndices[i]);
 
@@ -181,6 +180,7 @@ void renderChunkQueue(Renderer & renderer) {
 	for (int level = 0; level < renderer.chunkRenderQueues.size(); level++) {
 		for (int chunk = 0; chunk < renderer.chunkRenderQueues[level].size(); chunk++) {
 			renderChunk(renderer.chunkRenderQueues[level][chunk], renderer);
+			if (level == 2) renderGizmo(renderer.chunkRenderQueues[level][chunk], renderer);
 		}
 		renderer.chunkRenderQueues[level].clear();
 		glClear(GL_DEPTH_BUFFER_BIT);
@@ -196,18 +196,18 @@ void renderChunk(ChunkRenderInfo & info, Renderer & renderer) {
 }
 
 void renderChunkBoundingBox(ChunkRenderInfo & info, Renderer & renderer) {
+	//use shader
 	useShader(renderer.primitiveChunk);
 
-	//world Offset
+	//apply uniforms
 	glm::vec4 worldOffset = glm::vec4(info.chunk->location, info.chunk->level);
+	glm::mat4 vpMatrix = renderer.projectionMatrix * renderer.viewMatrix;
 	glUniform4fv(renderer.primitiveChunk.worldOffsetID, 1, glm::value_ptr(worldOffset));
+	glUniformMatrix4fv(renderer.primitiveChunk.mMatrixID, 1, GL_FALSE, &info.offsetMatrix[0][0]);
+	glUniformMatrix4fv(renderer.primitiveChunk.vpMatrixID, 1, GL_FALSE, &vpMatrix[0][0]);
 
-	//mvp matrix
-	glm::mat4 mvpMatrix = renderer.projectionMatrix * info.viewMatrix;
-	glUniformMatrix4fv(renderer.primitiveChunk.mvpMatrixID, 1, GL_FALSE, glm::value_ptr(mvpMatrix));
-
+	//render meshes
 	std::vector<int> meshIndices;
-
 	if (renderer.chunkBorders) {
 		getMeshIndicesFromName(renderer.meshSystem, "bounds", meshIndices);
 		for (int i = 0; i < meshIndices.size(); i++) {
@@ -216,7 +216,6 @@ void renderChunkBoundingBox(ChunkRenderInfo & info, Renderer & renderer) {
 			unbindMesh();
 		}
 	}
-
 	if (info.chunk->location.z == 0) {
 		getMeshIndicesFromName(renderer.meshSystem, "bounding plane", meshIndices);
 		for (int i = 0; i < meshIndices.size(); i++) {

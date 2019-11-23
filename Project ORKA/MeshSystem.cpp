@@ -207,7 +207,7 @@ void loadAllMeshes(MeshSystem & meshSystem)
 	addMeshFileToLoaderQueue(meshSystem, GL_TRIANGLES, "objects/triangle.fbx", "triangle");
 	addMeshFileToLoaderQueue(meshSystem, GL_TRIANGLES, "objects/icosphere.fbx", "icosphere");
 	addMeshFileToLoaderQueue(meshSystem, GL_TRIANGLES, "objects/ground plane.fbx", "terrain");
-	//addMeshFileToLoaderQueue(meshSystem, GL_TRIANGLES, "objects/terrain.fbx", "bounding plane");
+	addMeshFileToLoaderQueue(meshSystem, GL_TRIANGLES, "objects/terrain.fbx", "bounding plane");
 	addMeshFileToLoaderQueue(meshSystem, GL_POINTS   , "objects/suzanne high detail.fbx", "point cloud");
 
 	//create hardcoded bounding box
@@ -251,20 +251,20 @@ void loadAllMeshes(MeshSystem & meshSystem)
 	addMeshToUploadQueue(meshSystem, boundingBox);
 
 	//create hardcoded bounding box
-	MeshContainer boundingPlane;
-	boundingPlane.name = "bounding plane";
-	boundingPlane.primitiveMode = GL_TRIANGLES;
-	boundingPlane.vertices.push_back(glm::vec3(bSize, bSize, bSize2));
-	boundingPlane.vertices.push_back(glm::vec3(bSize, bSize2, bSize2));
-	boundingPlane.vertices.push_back(glm::vec3(bSize2, bSize, bSize2));
-	boundingPlane.vertices.push_back(glm::vec3(bSize2, bSize2, bSize2));
-	boundingPlane.indices.push_back(0);
-	boundingPlane.indices.push_back(2);
-	boundingPlane.indices.push_back(1);
-	boundingPlane.indices.push_back(1);
-	boundingPlane.indices.push_back(2);
-	boundingPlane.indices.push_back(3);
-	addMeshToUploadQueue(meshSystem, boundingPlane);
+	//MeshContainer boundingPlane;
+	//boundingPlane.name = "bounding plane";
+	//boundingPlane.primitiveMode = GL_TRIANGLES;
+	//boundingPlane.vertices.push_back(glm::vec3(bSize, bSize, bSize2));
+	//boundingPlane.vertices.push_back(glm::vec3(bSize, bSize2, bSize2));
+	//boundingPlane.vertices.push_back(glm::vec3(bSize2, bSize, bSize2));
+	//boundingPlane.vertices.push_back(glm::vec3(bSize2, bSize2, bSize2));
+	//boundingPlane.indices.push_back(0);
+	//boundingPlane.indices.push_back(2);
+	//boundingPlane.indices.push_back(1);
+	//boundingPlane.indices.push_back(1);
+	//boundingPlane.indices.push_back(2);
+	//boundingPlane.indices.push_back(3);
+	//addMeshToUploadQueue(meshSystem, boundingPlane);
 
 	//create hardcoded point mesh
 	MeshContainer singlePoint;

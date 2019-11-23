@@ -200,9 +200,9 @@ void RenderThread(Window & window)
 	glEnable(GL_DEBUG_OUTPUT);
 	glDebugMessageCallback(DebugOutputCallback, 0);
 	
+	loadShader(window.renderer->primitiveChunk, "shaders/primitive chunk.vert", "shaders/primitive.frag");
 	loadShader(window.renderer->primitiveShader, "shaders/primitive.vert", "shaders/primitive.frag");
 	loadShader(window.renderer->primitiveShaderInstanced, "shaders/primitive instanced.vert", "shaders/primitive.frag");
-	loadShader(window.renderer->primitiveChunk, "shaders/primitive chunk.vert", "shaders/primitive chunk.frag");
 
 	loadAllMeshes(window.renderer->meshSystem);
 	
