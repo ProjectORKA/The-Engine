@@ -25,7 +25,7 @@
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Debug.cpp" />
     <ClCompile Include="EntityComponentSystem.cpp" />
-    <ClCompile Include="GameServer.cpp" />
+    <ClCompile Include="GameSimulation.cpp" />
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="Math.cpp" />
     <ClCompile Include="MeshSystem.cpp" />
@@ -34,50 +34,51 @@
     <ClCompile Include="Render.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="Time.cpp" />
+    <ClCompile Include="Transformations.cpp" />
     <ClCompile Include="Window.cpp" />
-    <ClCompile Include="WindowHandler.cpp" />
     <ClCompile Include="WorldSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Math.hpp" />
+    <ClInclude Include="PerlinNoise.hpp" />
     <ClInclude Include="Program.hpp" />
+    <ClInclude Include="Time.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="shaders\primitive chunk instanced.vert" />
     <None Include="shaders\primitive chunk.vert" />
-    <None Include="shaders\primitive instanced.vert" />
     <None Include="shaders\primitive.frag" />
-    <None Include="shaders\primitive.vert" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{AD44ABC9-E10E-485B-A111-65EE96C2FFC1}</ProjectGuid>
     <RootNamespace>ProjectORKA</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
@@ -115,8 +116,9 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)\External Libraries\ASSIMP\include;$(SolutionDir)\External Libraries\STB IMAGE;$(SolutionDir)\External Libraries\GLM;$(SolutionDir)\External Libraries\GLEW\include;$(SolutionDir)\External Libraries\GLFW 32 bit\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\External Libraries\STB IMAGE;$(SolutionDir)\Modules;$(SolutionDir)\External Libraries\ASSIMP\include;$(SolutionDir)\External Libraries\GLM;$(SolutionDir)\External Libraries\GLEW\include;$(SolutionDir)\External Libraries\GLFW 32 bit\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <AdditionalDependencies>opengl32.lib;assimp-vc141-mtd.lib;opengl32.lib;glfw3.lib;glew32s.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -125,6 +127,10 @@
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <SubSystem>Console</SubSystem>
     </Link>
+    <PostBuildEvent>
+      <Command>XCOPY "$(SolutionDir)\Project ORKA\shaders" "$(TargetDir)\shaders" /S /Y /I
+XCOPY "$(SolutionDir)\Project ORKA\objects" "$(TargetDir)\objects" /S /Y /I</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -132,11 +138,12 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)\External Libraries\ASSIMP\include;$(SolutionDir)\External Libraries\STB IMAGE;$(SolutionDir)\External Libraries\GLM;$(SolutionDir)\External Libraries\GLEW\include;$(SolutionDir)\External Libraries\GLFW 64 bit\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\External Libraries\STB IMAGE;$(SolutionDir)\Modules;$(SolutionDir)\External Libraries\ASSIMP\include;$(SolutionDir)\External Libraries\GLM;$(SolutionDir)\External Libraries\GLEW\include;$(SolutionDir)\External Libraries\GLFW 64 bit\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <SupportJustMyCode>true</SupportJustMyCode>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>$(SolutionDir)\External Libraries\ASSIMP\lib\lib 64\debug;$(SolutionDir)\External Libraries\GLFW 64 bit\lib-vc2015;$(SolutionDir)\External Libraries\GLEW\lib\Release\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -145,6 +152,10 @@
       <IgnoreSpecificDefaultLibraries>msvcrt.lib</IgnoreSpecificDefaultLibraries>
       <SubSystem>Console</SubSystem>
     </Link>
+    <PostBuildEvent>
+      <Command>XCOPY "$(SolutionDir)\Project ORKA\shaders" "$(TargetDir)\shaders" /S /Y /I
+XCOPY "$(SolutionDir)\Project ORKA\objects" "$(TargetDir)\objects" /S /Y /I</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -154,20 +165,25 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>D:\Daten\P R O J E K T E\Project ORKA\ENGINE\Project ORKA\External Libraries\ASSIMP\include;$(SolutionDir)\External Libraries\STB IMAGE;$(SolutionDir)\External Libraries\GLM;$(SolutionDir)\External Libraries\GLEW\include;$(SolutionDir)\External Libraries\GLFW 32 bit\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\External Libraries\STB IMAGE;$(SolutionDir)\Modules;$(SolutionDir)\External Libraries\ASSIMP\include;$(SolutionDir)\External Libraries\GLM;$(SolutionDir)\External Libraries\GLEW\include;$(SolutionDir)\External Libraries\GLFW 32 bit\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <FloatingPointModel>Fast</FloatingPointModel>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalDependencies>opengl32.lib;assimp-vc141-mt.lib;glfw3.lib;glew32s.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>D:\Daten\P R O J E K T E\Project ORKA\ENGINE\Project ORKA\External Libraries\ASSIMP\lib\lib 32\release;$(SolutionDir)\External Libraries\GLFW 32 bit\lib-vc2015;$(SolutionDir)\External Libraries\GLEW\lib\Release\Win32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)\External Libraries\ASSIMP\lib\lib 32\release;$(SolutionDir)\External Libraries\GLFW 32 bit\lib-vc2015;$(SolutionDir)\External Libraries\GLEW\lib\Release\Win32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>
       </IgnoreSpecificDefaultLibraries>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <SubSystem>Windows</SubSystem>
     </Link>
+    <PostBuildEvent>
+      <Command>XCOPY "$(SolutionDir)\Project ORKA\shaders" "$(TargetDir)\shaders" /S /Y /I
+XCOPY "$(SolutionDir)\Project ORKA\objects" "$(TargetDir)\objects" /S /Y /I</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -177,9 +193,11 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)\External Libraries\ASSIMP\include;$(SolutionDir)\External Libraries\STB IMAGE;$(SolutionDir)\External Libraries\GLM;$(SolutionDir)\External Libraries\GLEW\include;$(SolutionDir)\External Libraries\GLFW 64 bit\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\External Libraries\STB IMAGE;$(SolutionDir)\Modules;$(SolutionDir)\External Libraries\ASSIMP\include;$(SolutionDir)\External Libraries\GLM;$(SolutionDir)\External Libraries\GLEW\include;$(SolutionDir)\External Libraries\GLFW 64 bit\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <FloatingPointModel>Fast</FloatingPointModel>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -191,6 +209,10 @@
       </IgnoreSpecificDefaultLibraries>
       <SubSystem>Windows</SubSystem>
     </Link>
+    <PostBuildEvent>
+      <Command>XCOPY "$(SolutionDir)\Project ORKA\shaders" "$(TargetDir)\shaders" /S /Y /I
+XCOPY "$(SolutionDir)\Project ORKA\objects" "$(TargetDir)\objects" /S /Y /I</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
