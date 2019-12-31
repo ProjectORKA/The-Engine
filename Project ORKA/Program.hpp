@@ -16,6 +16,8 @@
 #include <fstream>
 #include <iostream>
 #include <list>
+#include <filesystem>
+#include <shared_mutex>
 
 #define GLAPI
 #define GLEW_STATIC
@@ -28,17 +30,16 @@
 #include <assimp/postprocess.h>     // Post processing flags
 #include <assimp/scene.h>           // Output data structure
 
+#include "Time.hpp"
 #include "Math.hpp"
+#include "PerlinNoise.hpp"
 
 #pragma endregion
 
 #pragma region notes
 
 #pragma region todo
-//todo:		implement ECS
-//note:		differentiate systems into write and (only) read systems
-//note:		the rendering is strictly a read system
-
+//todo:		update time only once for every game tick (gamesimulation) and every frame (renderer)
 //todo:		mesh LOD loading
 #pragma endregion
 
@@ -87,191 +88,150 @@
 
 #pragma region preprocessor definitions
 
-#define DEBUG
-
-#define VIEW_DISTANCE 2.0f
-#define CHUNK_LEVEL_MAX 62
-#define METER_DIVIDER_INT 16777216
-#define METER_DIVIDER_FLOAT 16777216.0f
-
-#define INITIAL_CAMERA_SPEED 300
-#define CAMERA_SPEED_MULTIPLIER 1.15f
-
-#define NUMBER_OF_AVAIVABLE_COMPONENTS 2
-#define TRANSFORMATION 0
-#define CAMERA 1
+#define DEBUG								//if defined enables debug messages
+#define CHUNK_LEVEL_MAX 62					//the highest detail level the world system can go (max 62 62 = 63 + 1 extra precision for half way point)
+#define INITIAL_CAMERA_SPEED 1				//1 as fast as a human 300 as fast as light
+#define CAMERA_SPEED_MULTIPLIER 1.1f		//controls the increase in speed when scrolling mouse
+#define CHUNK_DISTANCE_MULTIPLIER 1.003f	//controls the increase in distance for the world system
 
 #pragma endregion
 
 #pragma region data
 //DATA (sorted in inverted hierarchical order)
 
-struct Time {
-	bool paused = false;
-	std::chrono::steady_clock::time_point lastTime;
-	std::chrono::steady_clock::time_point currentTime;
-	std::chrono::duration<double, std::ratio< 1 / 1 >> delta;
-	std::chrono::duration<double, std::ratio< 1 / 1 >> total;
-	Time();
-	~Time();
-	double getDelta();
-	double getTotal();
+// generic data (these can have member functions as they are very small closed systems used multiple times throughout the program)
+using Index = unsigned int;
+enum ComponentType {
+	TransformationComponentType,
+	RenderComponentType,
+	ModelMatrixComponentType,
+	ComponentType_COUNT
 };
-//gameserver stuff
-struct GameServer;
-using ComponentIndex = unsigned int;
-using ComponentStructure = std::bitset<NUMBER_OF_AVAIVABLE_COMPONENTS>;
-struct Entity {
-	//indices corresponding to the components defined in the archetype
-	//e.g. archetype consists of components A, B, C then {0,3,2} means A[0], B[3], C[2]
-	std::vector<ComponentIndex> componentIndices;
-};
-struct EntityTypes {
-	unsigned int						numberOfEntityTypes = 0;
-	std::vector<std::string>			names;
-	std::vector<ComponentStructure>		structures;
-	std::vector<std::vector<Entity>>	entityArrays;
-	
-	EntityTypes();
+enum ShaderType{
+	VertexShaderType = GL_VERTEX_SHADER,
+	TessellationControlShaderType = GL_TESS_CONTROL_SHADER,
+	TessellationEvaluationShaderType = GL_TESS_EVALUATION_SHADER,
+	GeometryShaderType = GL_GEOMETRY_SHADER,
+	FragmentShaderType = GL_FRAGMENT_SHADER,
+	ComputeShaderType = GL_COMPUTE_SHADER
 };
 struct Transformation {
-	glm::vec3 location = glm::vec3(0);
-	glm::vec3 rotation = glm::vec3(0);
-	glm::vec3 scale = glm::vec3(1);
+	glm::mat4 calculateModelMatrix();
+
+	void addRotation(glm::vec3 rotation);
+	void setRotation(glm::vec3 rotation);
+	void addTranslation(glm::vec3 location);
+	void setTranslation(glm::vec3 location);
+	void setScale(glm::vec3 scale);
+	void setScale(float scale);
+	glm::vec3 getLocation();
+private:
+	glm::vec3 location	= glm::vec3(0);
+	glm::vec3 rotation	= glm::vec3(0);
+	glm::vec3 scale		= glm::vec3(1);
+
+	glm::mat4 translationMatrix = glm::mat4(1);
+	glm::mat4 rotationMatrix	= glm::mat4(1);
+	glm::mat4 scaleMatrix		= glm::mat4(1);
 };
-struct TransformationSystem {
-	std::vector<Transformation> transformations;
-	std::vector<glm::mat4> modelMatrices;
-};
-struct EntityComponentSystem {
-	EntityTypes entityTypes;
-	TransformationSystem transformationSystem;
+struct Entity {
+	unsigned int indices[ComponentType_COUNT];
 };
 struct Chunk{
-	//unsigned long long to not loose precision
-	glm::u64vec3 location = glm::u64vec3(0);
+	std::vector<Entity> entities;							//<-- objects inside the chunk
+	glm::u64vec3 location = glm::u64vec3(0);				//<-- location of the chunk
+	unsigned short level = 0;								//<-- detail level of the chunk 0 = big 62 = small
+	bool subdivided = false;								//<-- bool to check if chunk has sub nodes
+	std::unique_ptr<Chunk> tfr = nullptr;					//<-- pointers to sub nodes
+	std::unique_ptr<Chunk> tfl = nullptr;					//    "tfr" means "top front right" = +Z +Y +X from the middle of the chunk
+	std::unique_ptr<Chunk> tbr = nullptr;
+	std::unique_ptr<Chunk> tbl = nullptr;
+	std::unique_ptr<Chunk> bfr = nullptr;
+	std::unique_ptr<Chunk> bfl = nullptr;
+	std::unique_ptr<Chunk> bbr = nullptr;
+	std::unique_ptr<Chunk> bbl = nullptr;					//    bottom back left = -X -Y -Z
 	
-	//max 64 levels (based on ull bits)
-	unsigned short level = 0;
-
-	//has sub nodes
-	bool subdivided = false;
-
-	//has renderable content
-	bool hasContents = true;
-
-	//pointer to parent node
-	Chunk * parent = nullptr;
-
-	//pointers to sub nodes
-	Chunk * tfr = nullptr; //top front right = +X +Y +Z
-	Chunk * tfl = nullptr;
-	Chunk * tbr = nullptr;
-	Chunk * tbl = nullptr;
-	Chunk * bfr = nullptr;
-	Chunk * bfl = nullptr;
-	Chunk * bbr = nullptr;
-	Chunk * bbl = nullptr; //bottom back left = -X -Y -Z
-
-
-
-	//create root node
-	Chunk();
-	
-	//create sub node
-	Chunk(Chunk & chunk, bool x, bool y, bool z);
-	
-	//unsubdivide and destroy node
-	~Chunk();
+	std::mutex mutex;										//<-- locks access if in use
+	std::chrono::steady_clock::time_point expirationDate;	//<-- if it runs out simulation will delete the chunk
 };
 struct Sky {
-	glm::vec3 skyColor;
-	Sky();
+	glm::vec3 skyColor = glm::vec3(0.0f);
 };
-struct WorldSystem {
-	Sky sky;
-	//glm::vec3 cameraPosition;
-	EntityComponentSystem ecs;
-	Chunk root;
-	WorldSystem();
+struct RenderComponentSystem{
+	std::shared_mutex mutex;
+	std::vector<const char*> names;
+	std::vector<glm::mat4> modelMatrices;
 };
-struct GameServer {
-	Time gameTime;				//<-- starts the time
-	//Time serverTime;
-	WorldSystem worldSystem;	//<-- creates the world
-	GameServer();				//<-- starts the simulation (thread)
-	~GameServer();				//<-- stops the simulation (thread)
+struct ModelMatrixSystem{
+	std::mutex mutex;
+	std::vector<glm::mat4> modelMatrices;
+};
+struct TransformationSystem{
+	std::shared_mutex mutex;
+	std::vector<Transformation> transformations;
+};
+struct WorldSystem { //[TODO] let worldsystem point to batches of entities stored inside an  entity system instead of storing them inside the chunk
+	Sky sky;			//<-- gives renderer a color to fill the background [TODO] add mesh support
+	Chunk root;			//<-- root chunk for octree-based world system
+};
+struct GameSimulation {
+	Time gameTime;													//<-- stores total and delta times
+
+	WorldSystem worldSystem;										//<-- advanced container for objects
+	TransformationSystem transformationSystem;						//<-- stores location rotation and scale of an object
+	RenderComponentSystem renderComponentSystem;					//<-- gives renderer a key that can be associated with renderable content
+	ModelMatrixSystem modelMatrixSystem;							//<-- stores model matrices to be used by the renderers
 
 	//thread
-	bool keepThreadRunning = true;
-	std::unique_ptr<std::thread> thread;
+	bool keepThreadRunning = true;									//<-- stops thread if set to false
+	std::unique_ptr<std::thread> thread;							//<-- pointer to the thread
 };
-
-//renderer stuff
 struct ChunkRenderInfo {
 	Chunk * chunk;
-	glm::mat4 offsetMatrix;
+	glm::vec3 chunkOffsetVector;
 };
-struct MeshContainer {
+struct MeshFileInfo {
+	std::string name;
+	unsigned short primitiveMode;
+	std::string path;
+};
+struct CPUMesh {
 	std::string name = "empty";
 	unsigned short primitiveMode = 0;
 	std::vector<glm::vec3> vertices;
 	std::vector<glm::vec2> uvs;
 	std::vector<unsigned int> indices;
-	bool uploadable = false;
+	bool readyToUploadToGPU = false;
 };
-struct ShaderProgram {
-	
-	bool loaded = false;
-	
-	GLuint programID;
-	
-	//uniforms
-	GLuint mMatrixID;
-	GLuint vpMatrixID;
-	GLuint worldOffsetID;
-	
-	ShaderProgram();
-	~ShaderProgram();
-};
-struct MeshFileInfo {
-	std::string name;
-	unsigned short primitiveMode;
-	const char * path;
+struct GPUMesh {
+	std::string name = "empty";
+	bool readyToRender = false;
+	unsigned short primitiveMode = GL_TRIANGLES;
+	unsigned int indexCount = 0;
+	GLuint vertexArrayObject = 0;
+	GLuint vertexBuffer = 0;
+	GLuint uvBuffer = 0;
+	GLuint indexBuffer = 0;
+	GLuint positionBuffer = 0;
 };
 struct MeshSystem {
-	//loader queue
-	std::list<MeshFileInfo> loaderQueue;	//info to load meshes from files
-	//upload queue
-	std::list<MeshContainer> meshQueue;		//loaded meshes waiting for upload
-	//loader thread
+	std::list<MeshFileInfo> meshLoadQueue;	//info to load meshes from files
+	std::list<CPUMesh> cpuMeshes;			//loaded meshes waiting for upload
+	std::vector<GPUMesh> gpuMeshes;			//uploaded meshes ready to be drawn
+
+	std::map<Index, Index> renderComponentIndexToGPUMeshIndex;
+
 	bool keepThreadRunning = true;
 	std::unique_ptr<std::thread> thread;
-
-
-	//loaded meshes
-	unsigned int meshCount = 0;;
-	std::vector<std::string> names;
-	std::vector<bool> loaded;
-	std::vector<unsigned short> primitiveMode;
-	std::vector<unsigned int> indexCount;
-	std::vector<GLuint> vertexArrayObject;
-	std::vector<GLuint> vertexBuffer;
-	std::vector<GLuint> uvBuffer;
-	std::vector<GLuint> indexBuffer;
-	std::vector<GLuint> positionBuffer;
-
-	MeshSystem();
-	~MeshSystem();
 };
 struct Camera {
 	// hard data
-	glm::u64vec3 location = glm::u64vec3(0, 0, LLONG_MAX);
+	glm::u64vec3 location = glm::u64vec3(0, 0, 1000000000);
 	glm::vec3 subChunkLocation = glm::vec3(0);
 
 	float cameraRotationX = 0.0f;
 	float cameraRotationZ = 0.0f;
-
+	float fieldOfView = 85.0;
 	float mouseSensitivity = 0.002f;
 	int speedMultiplier = INITIAL_CAMERA_SPEED;
 	glm::vec3 accelerationVector = glm::vec3(0);
@@ -284,29 +244,44 @@ struct Camera {
 
 	glm::mat4 viewMatrix = glm::lookAt(glm::vec3(0), glm::vec3(0, 1, 0), glm::vec3(0, 0, 1));
 };
-struct Renderer {
+struct Shader {
+	GLuint shaderID;
+};
+struct ShaderProgram {
+	bool loaded = false;
+	GLuint programID = 0;
 
+	//uniform IDs
+	GLuint timeID = 0;
+	GLuint chunkOffsetVectorID = 0;
+	GLuint mMatrixID = 0;
+	GLuint vpMatrixID = 0;
+	GLuint worldOffsetID = 0;
+};
+struct Renderer {
 	Time renderTime;
 
-	ShaderProgram primitiveShader; //[TODO] turn into shader system
-	ShaderProgram primitiveShaderInstanced;
-	ShaderProgram primitiveChunk;
+	Shader vertexShader;
+	Shader fragmentShader;
+	ShaderProgram primitiveChunkShaderProgram;
 
 	MeshSystem meshSystem;
-	GameServer * gameServer;
+	GameSimulation* gameSimulation;
 
+	//settings
+	float minimumFrameRate = 100;
+	float maximunFrameRate = 200;
 	bool wireframeMode = false;
 	bool chunkBorders = false;
+	bool adjustRenderVariables = true;
+	unsigned int worldSystemRenderDistance = 100;
 
-	Camera * camera;
+	Camera camera;
 
 	std::vector<std::vector<ChunkRenderInfo>> chunkRenderQueues;
 
-	glm::mat4 projectionMatrix;
-	glm::mat4 viewMatrix;
-	Renderer() = delete;
-	Renderer(GameServer & gameServer, Camera & camera);
-	~Renderer();
+	glm::mat4 projectionMatrix = glm::mat4(1);
+	glm::mat4 viewMatrix = glm::mat4(1);
 };
 struct Window {
 	//settings
@@ -321,132 +296,130 @@ struct Window {
 	//local variables
 	bool duplicateWindow = false;
 	bool capturingCursor = false;
-	double curPosX, curPosY = 0;
-	double deltaX, deltaY = 0;
-	GLFWwindow * glfwWindow;
-	std::unique_ptr<Renderer> renderer;
+	double curPosX = 0;
+	double curPosY = 0;
+	double deltaX = 0;
+	double deltaY = 0;
+	GLFWwindow* glfwWindow = nullptr;
 
-	Camera camera;
+	Renderer renderer;
 
 	//thread
 	bool keepThreadRunning = true;
 	std::unique_ptr<std::thread> thread;
 
-	Window(GameServer & gameServer);
-	~Window();
-};
-struct WindowHandler {
-	std::vector<std::shared_ptr<Window>> windows;
-	WindowHandler();
-	~WindowHandler();
+	Window() {}
+	~Window() {}
+	Window(const Window& other) : Window() {}
+	Window(Window&& other) noexcept {}
+	Window& operator=(const Window& other) { return *this = Window(other); }
+	Window& operator=(Window&& other) noexcept { return *this; }
 };
 struct Program {
-	GameServer gameServer;			//<-- already starts simulating the gameWorld
-	WindowHandler windowHandler;	//<-- is just a container for all windows
-	Program();						//<-- creates windows that render the game
-	~Program();
+	GameSimulation gameSimulation;	//<-- already starts simulating the gameWorld
+	std::list<Window> windows;
 };
 #pragma endregion
 
 #pragma region functions
 
-//chunk
-void subdivideChunk					(Chunk & chunk);
-void unsubdivideChunk				(Chunk & chunk);
-
-
-void renderChunk					(ChunkRenderInfo & info, Renderer & renderer);
-void renderChunkBoundingBox			(ChunkRenderInfo & info, Renderer & renderer);
-
-//world system
-void renderChunkQueue				(Renderer & renderer);
-void addChunkToRenderQueue			(Chunk & chunk, Renderer & renderer);
-void processChunkQueue				(Chunk & chunk, Renderer & renderer);
-void updateWorld					(WorldSystem & worldSystem, Time & time);
-void renderWorld					(WorldSystem & worldSystem, Renderer & renderingSystem);
-
+//program
+void runProgram							();
+void startGLFW							();
+void stopGLFW							(Program& program);
+void startGameSimulation				(GameSimulation & gameSimulation);
+void stopGameSimulation					(GameSimulation & gameSimulation);
 //math
-float randomFloat					(float low, float high);
-
+float randomFloat						(float low, float high);
 //debug
-void debugPrint						(const char * debugMessage);
-
+void debugPrint							(const char * debugMessage);
+void renderGizmo						(ChunkRenderInfo& info, Renderer& renderer);
 //shader
-void useShader						(ShaderProgram & program);
-void loadShader						(ShaderProgram & shaderProgram, const char * vertexPath, const char * fragmentPath);
-
+void useShaderProgram					(ShaderProgram & program);
+void unloadShaderProgram				(ShaderProgram & shaderProgram);
+void loadShaderProgram					(ShaderProgram & shaderProgram, Shader & vertexShader, Shader & fragmentShader);
+void loadShader						(Shader& shader, GLuint shaderType, const char* shaderPath);
+void unloadShader						(Shader& shader);
 //mesh system
-void unbindMesh						();
-void loadAllMeshes					(MeshSystem & meshSystem);
-void createMeshFromFile				(MeshSystem & meshSystem);
-void uploadNextMeshFromQueue		(MeshSystem & meshSystem);
-void bindMesh						(MeshSystem & meshSystem, int index);
-void renderMesh						(MeshSystem & meshSystem, int meshIndex);
-void unloadMesh						(MeshSystem & meshSystem, int meshIndex);
-void addMeshToUploadQueue			(MeshSystem & meshSystem, MeshContainer & mesh);
-void renderInstancedMesh			(MeshSystem & meshSystem, int meshIndex, unsigned int numberOfInstances);
-void getMeshIndicesFromName			(MeshSystem & meshSystem, std::string meshName, std::vector<int> & meshIndices);
-
-//mesh loader
-void addMeshFileToLoaderQueue					(MeshSystem & meshSystem, unsigned short primitiveMode, const char * path, std::string name);
-
+void unbindMesh							();
+void unloadMesh							(GPUMesh & gpuMesh);
+void loadAllMeshes						(MeshSystem & meshSystem);
+void startMeshLoaderThread				(MeshSystem & meshSystem);
+void stopMeshLoaderThread				(MeshSystem & meshSystem);
+void uploadNextMeshFromQueue			(MeshSystem & meshSystem);
+void generateCPUMeshFromLoaderQueue		(MeshSystem & meshSystem);
+void bindMesh							(MeshSystem & meshSystem, Index meshIndex);
+void addMeshToUploadQueue				(MeshSystem & meshSystem, CPUMesh & mesh);
+void addMeshFileToLoaderQueue			(MeshSystem & meshSystem, std::filesystem::path path);
+void getMeshIndexFromName				(MeshSystem & meshSystem, const char* name, Index & meshIndex);
+void getMeshIndexFromRenderComponent	(Renderer & renderer, Index& inputRenderComponentID, Index& outputGPUMeshIndex);
 //render settings
-void changeAntiAliasing				(Window & window, unsigned int antiAliasing);
-
-//rendering system
-void renderSky						(Sky & sky);
-void renderFrame					(Renderer & renderingSystem, int width, int height);
-void renderEntities					(EntityComponentSystem & entityComponentSystem, Renderer & renderingSystem);
-void __stdcall DebugOutputCallback	(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam);
-
+void changeAntiAliasing					(Window & window, unsigned short antiAliasing);
+//renderer
+void renderWindow						(Window & window);
+void renderChunkQueue					(Renderer & renderer);
+void dynamicallyAdjustValue				(unsigned int & value, Renderer& renderer);
+void renderMesh							(MeshSystem & meshSystem, Index meshIndex);
+void renderFrame						(Renderer & renderer, int width, int height);
+void renderEntities						(ChunkRenderInfo & info, Renderer& renderer);
+void renderChunk						(ChunkRenderInfo & info, Renderer & renderer);
+void renderChunkBoundingBox				(ChunkRenderInfo & info, Renderer & renderer);
+void initializeRenderer					(Renderer & renderer, GameSimulation& gameSimulation);
+void renderInstancedMesh				(MeshSystem & meshSystem, Index meshIndex, unsigned int numberOfInstances);
+void __stdcall DebugOutputCallback		(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam);
 //input
-void processKeyboardInput			(Window & window);
-void captureCursor					(Window & window);
-void uncaptureCursor				(Window & window);
-void whenMouseIsMoving				(GLFWwindow* window, double xpos, double ypos);
-void whenMouseIsScrolling			(GLFWwindow* window, double xoffset, double yoffset);
-void whenMouseIsPressed				(GLFWwindow* window, int button, int action, int mods);
-void whenButtonIsPressed			(GLFWwindow* window, int key, int scancode, int action, int mods);
-
+void processKeyboardInput				(Window & window);
+void captureCursor						(Window & window);
+void uncaptureCursor					(Window & window);
+void whenMouseIsMoving					(GLFWwindow* window, double xpos, double ypos);
+void whenMouseIsScrolling				(GLFWwindow* window, double xoffset, double yoffset);
+void whenMouseIsPressed					(GLFWwindow* window, int button, int action, int mods);
+void whenButtonIsPressed				(GLFWwindow* window, int key, int scancode, int action, int mods);
 //window
-void centerWindow					(Window & window);
-void renderWindow					(Window & window);
-void reloadTheWindow				(Window & window);
-void toggleFullscreen				(Window & window);
-void destroyGLFWWindow				(Window & window);
-void setWindowCallbacks				(Window & window);
-void whenWindowChangedFocus			(GLFWwindow* window, int focused);
-void setIcon						(Window & window, std::string path);
-void createGLFWWindow				(Window & window, GameServer & gameServer);
-void whenWindowIsResized			(GLFWwindow* window, int width, int height);
-void createNewWindow				(WindowHandler & windowHandler, GameServer & gameServer);
-
-//window handler
-void checkWindowEvents				(WindowHandler & windowHandler);
-void whenGLFWThrowsError			(int error, const char* description);
-
-//time
-void resetTime						(Time & time);
-void updateTime						(Time & time);
-
-//entity component system
-void spawnEntity					(EntityComponentSystem & ecs, std::string name);
-
-//transformation component
-void calculateModelMatrix			(glm::mat4 & matrix, Transformation & transformation);
-void processTransformations			(TransformationSystem & transformationSystem, Time & time);
-void addTransformationComponent		(TransformationSystem & transformationSystem, Entity & entity);
-
-//camera component
-void pocessCamera					(Camera & camera, Time & time);
-void rotateCamera					(Camera & camera, float x, float y);
-
+void destroyWindow						(Window & window);
+void centerWindow						(Window & window);
+void reloadTheWindow					(Window & window);
+void toggleFullscreen					(Window & window);
+void destroyGLFWWindow					(Window & window);
+void setWindowCallbacks					(Window & window);
+void checkWindowEvents					(Program & program);
+void whenWindowChangedFocus				(GLFWwindow* window, int focused);
+void setIcon							(Window & window, std::string path);
+void whenGLFWThrowsError				(int error, const char* description);
+void whenWindowIsResized				(GLFWwindow* window, int width, int height);
+void createWindow						(Window & window, GameSimulation& gameSimulation);
+void createGLFWWindow					(Window & window, GameSimulation & gameSimulation);
+void createNewWindow					(std::list<Window>& windows, GameSimulation& gameSimulation);
+//transformation system
+void processTransformationSystem		(GameSimulation & gameSimulation);
+//model matrix system
+void processModelMatrixSystem			(GameSimulation & gameSimulation);
+//world system
+void renderSky							(Sky & sky);
+void chunkIsInUse						(Chunk & chunk);
+void processChunkQueue					(Chunk & chunk, Renderer & renderer);
+void unsubdivideChunk					(Chunk & chunk, GameSimulation & gameSimulation);
+void subdivideChunk						(Chunk & chunk, GameSimulation & gameSimulation);
+void processWorldSystem					(Chunk & chunk, GameSimulation & gameSimulation);
+void generateEntities					(Chunk & chunk, GameSimulation & gameSimulation);
+void renderWorld						(WorldSystem & worldSystem, Renderer & renderer);
+void createChildChunk					(Chunk & child, Chunk & parent, GameSimulation& gameSimulation, bool x, bool y, bool z);
+//add components
+void addTransformation					(Entity & entity, GameSimulation & gameSimulation);
+void addModelMatrix						(Entity & entity, ModelMatrixSystem & modelMatrixSystem);
+void addRenderingComponent				(Entity & entity, GameSimulation & gameSimulation, const char* name);
+void addTransformation					(Entity & entity, GameSimulation & gameSimulation, Transformation & transformation);
+void addModelMatrix						(Entity & entity, ModelMatrixSystem & modelMatrixSystem, Transformation& transformation);
+//camera
+void pocessCamera						(Camera & camera, Time & time);
+void rotateCamera						(Camera & camera, float x, float y);
 //threads
-void GameServerThread				(GameServer & gameServer);
-void RenderThread					(Window & window);
-void MeshLoaderThread				(MeshSystem & meshSystem);
+void GameSimulationThread				(GameSimulation & gameSimulation);
+void RenderThread						(Window & window);
+void MeshLoaderThread					(MeshSystem & meshSystem);
 
 #pragma endregion
+
 
 #endif // !GAME_HPP
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

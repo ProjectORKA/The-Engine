@@ -36,16 +36,10 @@
     <ClCompile Include="Time.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="WindowHandler.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Shader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Debug.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="GameServer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="WorldSystem.cpp">
@@ -61,6 +55,12 @@
     <ClCompile Include="Camera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="GameSimulation.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Transformations.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="icon.rc">
@@ -71,10 +71,7 @@
     <None Include="shaders\primitive.frag">
       <Filter>Resource Files\Shaders</Filter>
     </None>
-    <None Include="shaders\primitive.vert">
-      <Filter>Resource Files\Shaders</Filter>
-    </None>
-    <None Include="shaders\primitive instanced.vert">
+    <None Include="shaders\primitive chunk instanced.vert">
       <Filter>Resource Files\Shaders</Filter>
     </None>
     <None Include="shaders\primitive chunk.vert">
@@ -86,6 +83,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Math.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PerlinNoise.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Time.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -3,6 +3,19 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
+void createWindow(Window& window, GameSimulation& gameSimulation) {
+	createGLFWWindow(window, gameSimulation);
+	centerWindow(window);
+
+	window.thread = std::make_unique<std::thread>(RenderThread, std::ref(window));
+};
+
+void destroyWindow(Window& window) {
+	window.keepThreadRunning = false;
+	window.thread->join();
+	destroyGLFWWindow(window);
+}
+
 void centerWindow(Window & window) {
 	//figure out center of WORKABLE area
 	int x, y, w, h;
@@ -29,22 +42,21 @@ void reloadTheWindow(Window & window) {
 	glfwGetWindowPos(window.glfwWindow, &x, &y);
 
 	//1. destroy window
-	GameServer * tmpG = window.renderer->gameServer;
-	bool tmpWireframe = window.renderer->wireframeMode;
+	GameSimulation * tmpG = window.renderer.gameSimulation;
+	bool tmpWireframe = window.renderer.wireframeMode;
 	destroyGLFWWindow(window);
 
 	//mirror
 
 	//1. create window
 	createGLFWWindow(window, *tmpG);
-	window.renderer->wireframeMode = tmpWireframe;
+	window.renderer.wireframeMode = tmpWireframe;
 	//2. set current position
 	glfwSetWindowPos(window.glfwWindow, x, y);
 
 	//3. start rendering thread
 	window.keepThreadRunning = true;
 	window.thread = std::make_unique<std::thread>(RenderThread, std::ref(window));
-
 }
 
 void toggleFullscreen(Window & window) {
@@ -102,13 +114,18 @@ void whenWindowChangedFocus(GLFWwindow * window, int focused) {
 }
 
 void setIcon(Window & window, std::string path) {
-	GLFWimage images[1];
-	images[0].pixels = stbi_load(path.c_str(), &images[0].width, &images[0].height, 0, 4);
-	glfwSetWindowIcon(window.glfwWindow, 1, images);
-	stbi_image_free(images[0].pixels);
+	GLFWimage icon[1];
+	icon[0].pixels = stbi_load(path.c_str(), &icon[0].width, &icon[0].height, 0, 4);
+	if (icon->pixels != nullptr) {
+		glfwSetWindowIcon(window.glfwWindow, 1, icon);
+	}
+	else {
+		debugPrint("No Icon available! (icon.png)");
+	}
+	stbi_image_free(icon[0].pixels);
 }
 
-void createGLFWWindow(Window & window, GameServer & gameServer) {
+void createGLFWWindow(Window & window, GameSimulation & gameSimulation) {
 	const GLFWvidmode * videoMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
 	glfwWindowHint(GLFW_RED_BITS, videoMode->redBits);
 	glfwWindowHint(GLFW_GREEN_BITS, videoMode->greenBits);
@@ -146,9 +163,6 @@ void createGLFWWindow(Window & window, GameServer & gameServer) {
 
 	if (glfwRawMouseMotionSupported()) glfwSetInputMode(window.glfwWindow, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
 
-
-	window.renderer = std::make_unique<Renderer>(gameServer,window.camera);
-
 	if (window.fullScreen) {
 		window.fullScreen = false;
 		toggleFullscreen(window);
@@ -157,59 +171,12 @@ void createGLFWWindow(Window & window, GameServer & gameServer) {
 	glfwShowWindow(window.glfwWindow);
 
 	setWindowCallbacks(window);
+
+	initializeRenderer(window.renderer, gameSimulation);
 }
 
-void changeAntiAliasing(Window & window, unsigned int antiAliasing) {
+void changeAntiAliasing(Window & window, unsigned short antiAliasing) {
 	window.antiAliasing = antiAliasing;
 	reloadTheWindow(window);
 }
 
-Window::Window(GameServer & gameServer)
-{
-	createGLFWWindow(*this, gameServer);
-	centerWindow(*this);
-
-	thread = std::make_unique<std::thread>(RenderThread, std::ref(*this));
-	debugPrint("|--Window was created!");
-}
-Window::~Window() {
-	keepThreadRunning = false;
-	thread->join();
-
-	destroyGLFWWindow(*this);
-
-	debugPrint("|--Window was destroyed!");
-}
-
-void RenderThread(Window & window)
-{
-	glfwMakeContextCurrent(window.glfwWindow);
-
-	glewExperimental = true;
-	try {
-		if (glewInit() != GLEW_OK) {
-			throw std::exception("Failed to initialize GLEW!");
-		}
-	}
-	catch (std::exception error) {
-		std::cout << "Error: " << error.what() << std::endl;
-		std::getchar();
-		exit(EXIT_FAILURE);
-	};
-
-	glEnable(GL_DEBUG_OUTPUT);
-	glDebugMessageCallback(DebugOutputCallback, 0);
-	
-	loadShader(window.renderer->primitiveChunk, "shaders/primitive chunk.vert", "shaders/primitive.frag");
-	loadShader(window.renderer->primitiveShader, "shaders/primitive.vert", "shaders/primitive.frag");
-	loadShader(window.renderer->primitiveShaderInstanced, "shaders/primitive instanced.vert", "shaders/primitive.frag");
-
-	loadAllMeshes(window.renderer->meshSystem);
-	
-	while (window.keepThreadRunning) {		
-		updateTime(window.renderer->renderTime);
-		processKeyboardInput(window);
-		pocessCamera(window.camera, window.renderer->renderTime);
-		renderWindow(window);
-	}
-}

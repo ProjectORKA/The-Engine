@@ -57,23 +57,15 @@ int main(int argc, char *argv[]) {
 	
 	if(true) //quickly switches between the game and custom testing code
 	{
-
-		Program program;//<-- In Visual Studio press F12 to see what "Program" actually does
-	
+		runProgram();		//<-- starts execution of ALL code
 	} else {
-
-		///////////////////////////////////////////////////
-
-		unsigned long long a = LLONG_MAX * 2 +2;
-		long long b;
-		b = a;
-
-		std::cout << a << std::endl;
-
+		//testing code
+		/////////////////////////////////////////////////////////////////////////////////////////////////
+		{
+		
+		}
+		/////////////////////////////////////////////////////////////////////////////////////////////////
 		system("pause");
-
-		///////////////////////////////////////////////////
-
 	}
 	return 0;
 }

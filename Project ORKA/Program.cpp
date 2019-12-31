@@ -1,26 +1,68 @@
 
 #include "Program.hpp"
 
-Program::Program() {
+void runProgram() {
+	Program program;
 
 	srand(static_cast <unsigned> (time(0)));
-	
-	debugPrint("\nCreating a Window!");
-	createNewWindow(windowHandler, gameServer);
 
-	std::chrono::steady_clock::time_point t; 
-	debugPrint("\nStarted Window Management Loop!");
-	while (windowHandler.windows.size() > 0) {
+	startGLFW();
+
+	startGameSimulation(program.gameSimulation);
+
+	std::chrono::steady_clock::time_point t;
+
+	createNewWindow(program.windows, program.gameSimulation);
+
+	while (program.windows.size() > 0) {
 		t = std::chrono::steady_clock::now();
-		
-		checkWindowEvents(windowHandler);
-		
-		t += std::chrono::milliseconds(8);
+		t += std::chrono::milliseconds(16);
+
+		checkWindowEvents(program);
+
 		std::this_thread::sleep_until(t);
 	}
-	debugPrint("\nNo more Windows! Program is being terminated!");
+
+	stopGameSimulation(program.gameSimulation);
+
+	stopGLFW(program);
+};
+
+void startGLFW() {
+	try {
+		if (glfwInit() != GLFW_TRUE) {
+			throw std::exception("Failed to initialize GLFW!");
+		}
+	}
+	catch (std::exception error) {
+		std::cout << "Error: " << error.what() << std::endl;
+		std::getchar();
+		exit(EXIT_FAILURE);
+	};
+	glfwSetErrorCallback(whenGLFWThrowsError);
 }
-Program::~Program()
-{
-	debugPrint("|Program was destroyed!");
+
+void stopGLFW(Program & program) {
+	program.windows.clear();
+	glfwTerminate();
+}
+
+void createNewWindow(std::list<Window> & windows, GameSimulation& gameSimulation) {
+	windows.emplace_back();
+	createWindow(windows.back(), gameSimulation);
+}
+
+void checkWindowEvents(Program& program) {
+	glfwWaitEvents();
+	for (std::list<Window>::iterator it = program.windows.begin(); it != program.windows.end(); it++) {
+		if (it->duplicateWindow) {
+			createNewWindow(program.windows, program.gameSimulation);
+			it->duplicateWindow = false;
+		}
+		if (glfwWindowShouldClose(it->glfwWindow)) {
+			destroyWindow(*it);
+			program.windows.erase(it);
+			return;
+		}
+	}
 }

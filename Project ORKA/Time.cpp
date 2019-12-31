@@ -1,40 +1,33 @@
 
-#include "Program.hpp"
+#include "Time.hpp"
 
-void resetTime(Time & time) {
-	time.currentTime = time.lastTime = std::chrono::steady_clock::now();
-	time.delta = std::chrono::seconds::zero();
-	time.total = std::chrono::seconds::zero();
+void Time::resetTime()
+{
+	currentTime = lastTime = std::chrono::steady_clock::now();
+	deltaDuration = std::chrono::seconds::zero();
+	totalDuration = std::chrono::seconds::zero();
 }
 
-void updateTime(Time & time) {
-	time.lastTime = time.currentTime;
-	time.currentTime = std::chrono::steady_clock::now();
+void Time::processTime()
+{
+	lastTime = currentTime;
+	currentTime = std::chrono::steady_clock::now();
 
-	if (!time.paused) {
-		time.delta = time.currentTime - time.lastTime;
-		time.total += time.delta;
+	if (!paused) {
+		deltaDuration = currentTime - lastTime;
+		totalDuration += deltaDuration;
 	}
 	else {
-		time.delta = std::chrono::seconds::zero();
+		deltaDuration = std::chrono::seconds::zero();
 	}
 }
 
-
-double Time::getDelta() {
-	return delta.count();
-}
-
-double Time::getTotal() {
-	return total.count();
-}
-
-Time::Time() {
-	resetTime(*this);
-	debugPrint("|--Time was created!");
-}
-
-Time::~Time()
+float Time::delta()
 {
-	debugPrint("|--Time was destroyed!");
+	return deltaDuration.count();
+}
+
+float Time::total()
+{
+	return totalDuration.count();
 }
