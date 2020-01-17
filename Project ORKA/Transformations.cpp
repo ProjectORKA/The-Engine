@@ -1,9 +1,25 @@
 
 #include "Program.hpp"
 
+glm::vec3 Transformation::getLocation()
+{
+	return location;
+}
+
+float Transformation::getScale()
+{
+	return scale;
+}
+
 glm::mat4 Transformation::calculateModelMatrix()
 {
-	return translationMatrix * rotationMatrix * scaleMatrix;
+	return translationMatrix * scaleMatrix * rotationMatrix;
+}
+
+void Transformation::setScale(float scale)
+{
+	this->scale = scale;
+	this->scaleMatrix = glm::scale(glm::mat4(1), glm::vec3(scale));
 }
 
 void Transformation::addRotation(glm::vec3 rotation)
@@ -30,37 +46,20 @@ void Transformation::setTranslation(glm::vec3 location)
 	this->translationMatrix = glm::translate(glm::mat4(1), this->location);
 }
 
-void Transformation::setScale(glm::vec3 scale)
-{
-	this->scale = scale;
-	this->scaleMatrix = glm::scale(glm::mat4(1), scale);
-}
+void addTransformation(Entity& entity, GameSimulation& gameSimulation) {
+	gameSimulation.transformationSystem.mutex.lock();
+	///
+	gameSimulation.transformationSystem.transformations.emplace_back();
 
-void Transformation::setScale(float scale)
-{
-	this->scale = glm::vec3(scale);
-	this->scaleMatrix = glm::scale(glm::mat4(1), glm::vec3(scale));
-}
-
-glm::vec3 Transformation::getLocation()
-{
-	return location;
+	entity.indices[TransformationComponentType] = gameSimulation.transformationSystem.transformations.size() - 1;
+	///
+	gameSimulation.transformationSystem.mutex.unlock();
 }
 
 void addTransformation(Entity& entity, GameSimulation& gameSimulation, Transformation & transformation) {
 	gameSimulation.transformationSystem.mutex.lock();
 	///
 	gameSimulation.transformationSystem.transformations.push_back(transformation);
-	entity.indices[TransformationComponentType] = gameSimulation.transformationSystem.transformations.size() - 1;
-	///
-	gameSimulation.transformationSystem.mutex.unlock();
-}
-
-void addTransformation(Entity& entity, GameSimulation& gameSimulation) {
-	gameSimulation.transformationSystem.mutex.lock();
-	///
-	gameSimulation.transformationSystem.transformations.emplace_back();
-
 	entity.indices[TransformationComponentType] = gameSimulation.transformationSystem.transformations.size() - 1;
 	///
 	gameSimulation.transformationSystem.mutex.unlock();

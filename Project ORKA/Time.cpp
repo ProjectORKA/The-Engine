@@ -1,6 +1,16 @@
 
 #include "Time.hpp"
 
+float Time::delta()
+{
+	return deltaDuration.count();
+}
+
+float Time::total()
+{
+	return totalDuration.count();
+}
+
 void Time::resetTime()
 {
 	currentTime = lastTime = std::chrono::steady_clock::now();
@@ -20,14 +30,4 @@ void Time::processTime()
 	else {
 		deltaDuration = std::chrono::seconds::zero();
 	}
-}
-
-float Time::delta()
-{
-	return deltaDuration.count();
-}
-
-float Time::total()
-{
-	return totalDuration.count();
 }

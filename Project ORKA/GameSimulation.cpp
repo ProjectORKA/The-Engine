@@ -1,25 +1,23 @@
 
 #include "Program.hpp"
 
-void startGameSimulation(GameSimulation & gameSimulation) {
-
-	gameSimulation.gameTime.resetTime();
-
-	chunkIsInUse(gameSimulation.worldSystem.root);
-
-	generateEntities(gameSimulation.worldSystem.root, gameSimulation);
-
-	gameSimulation.thread = std::make_unique<std::thread>(GameSimulationThread, std::ref(gameSimulation));
-};
-
 void stopGameSimulation(GameSimulation & gameSimulation) {
 	gameSimulation.keepThreadRunning = false;
 	gameSimulation.thread->join();
 }
 
-void GameSimulationThread(GameSimulation & gameSimulation) {
+void startGameSimulation(GameSimulation & gameSimulation) {
 
-	gameSimulation.gameTime.paused = true;								//<-- starts game paused [TODO] switch on
+	gameSimulation.gameTime.resetTime();
+
+	chunkIsInUse(gameSimulation.worldSystem.octreeRoot);
+
+	generateEntities(gameSimulation.worldSystem.octreeRoot, gameSimulation);
+
+	gameSimulation.thread = std::make_unique<std::thread>(GameSimulationThread, std::ref(gameSimulation));
+};
+
+int GameSimulationThread(GameSimulation & gameSimulation) {
 
 	std::chrono::steady_clock::time_point t;
 
@@ -29,7 +27,7 @@ void GameSimulationThread(GameSimulation & gameSimulation) {
 		t += std::chrono::milliseconds(8); //game simulation running at 120 Hz
 		///////////////////////////////////////////////////////////////
 		gameSimulation.gameTime.processTime();
-		processWorldSystem(gameSimulation.worldSystem.root, gameSimulation);
+		processWorldSystem(gameSimulation.worldSystem.octreeRoot, gameSimulation);
 		processModelMatrixSystem(gameSimulation);
 		processTransformationSystem(gameSimulation);
 
@@ -37,29 +35,8 @@ void GameSimulationThread(GameSimulation & gameSimulation) {
 		std::this_thread::sleep_until(t);
 
 	}
-}
 
-void processWorldSystem(Chunk& chunk, GameSimulation& gameSimulation) {
-	if (((chunk.expirationDate - std::chrono::steady_clock::now()).count() > 0) | (chunk.level == 0)) {
-		if (chunk.subdivided) {
-			processWorldSystem(*chunk.tfr, gameSimulation);
-			processWorldSystem(*chunk.tfl, gameSimulation);
-			processWorldSystem(*chunk.tbr, gameSimulation);
-			processWorldSystem(*chunk.tbl, gameSimulation);
-			processWorldSystem(*chunk.bfr, gameSimulation);
-			processWorldSystem(*chunk.bfl, gameSimulation);
-			processWorldSystem(*chunk.bbr, gameSimulation);
-			processWorldSystem(*chunk.bbl, gameSimulation);
-		}
-		else {
-			subdivideChunk(chunk, gameSimulation);
-		}
-	}
-	else {
-		if (chunk.subdivided) {
-			unsubdivideChunk(chunk, gameSimulation);
-		}
-	}
+	return 0;
 }
 
 void processModelMatrixSystem(GameSimulation& gameSimulation)
@@ -82,4 +59,28 @@ void processTransformationSystem(GameSimulation& gameSimulation)
 		gameSimulation.transformationSystem.transformations[i].setRotation(glm::vec3(0,0,gameSimulation.gameTime.total()));
 	}
 	gameSimulation.transformationSystem.mutex.unlock();
+}
+
+void processWorldSystem(std::shared_ptr<Chunk> chunk, GameSimulation& gameSimulation) {
+	Chunk& rChunk = *chunk;
+	if (((rChunk.expirationDate - std::chrono::steady_clock::now()).count() > 0) | (rChunk.level == 0)) {
+		if (rChunk.subdivided) {
+			processWorldSystem(rChunk.tfr, gameSimulation);
+			processWorldSystem(rChunk.tfl, gameSimulation);
+			processWorldSystem(rChunk.tbr, gameSimulation);
+			processWorldSystem(rChunk.tbl, gameSimulation);
+			processWorldSystem(rChunk.bfr, gameSimulation);
+			processWorldSystem(rChunk.bfl, gameSimulation);
+			processWorldSystem(rChunk.bbr, gameSimulation);
+			processWorldSystem(rChunk.bbl, gameSimulation);
+		}
+		else {
+			subdivideChunk(chunk, gameSimulation);
+		}
+	}
+	else {
+		if (rChunk.subdivided) {
+			unsubdivideChunk(chunk, gameSimulation);
+		}
+	}
 }
