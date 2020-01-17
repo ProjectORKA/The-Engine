@@ -2,5 +2,5 @@
 #include "Test.h"
 
 void test() {
-	std::cout << "Hello from the dll" << std::endl;
+	std::cout << "hello from the dlls" << std::endl;
 }

@@ -1,6 +1,20 @@
 
 #include "Program.hpp"
 
+void startGLFW() {
+	try {
+		if (glfwInit() != GLFW_TRUE) {
+			throw std::exception("Failed to initialize GLFW!");
+		}
+	}
+	catch (std::exception error) {
+		std::cout << "Error: " << error.what() << std::endl;
+		std::getchar();
+		exit(EXIT_FAILURE);
+	};
+	glfwSetErrorCallback(whenGLFWThrowsError);
+}
+
 void runProgram() {
 	Program program;
 
@@ -16,7 +30,7 @@ void runProgram() {
 
 	while (program.windows.size() > 0) {
 		t = std::chrono::steady_clock::now();
-		t += std::chrono::milliseconds(16);
+		t += std::chrono::milliseconds(8);
 
 		checkWindowEvents(program);
 
@@ -28,28 +42,9 @@ void runProgram() {
 	stopGLFW(program);
 };
 
-void startGLFW() {
-	try {
-		if (glfwInit() != GLFW_TRUE) {
-			throw std::exception("Failed to initialize GLFW!");
-		}
-	}
-	catch (std::exception error) {
-		std::cout << "Error: " << error.what() << std::endl;
-		std::getchar();
-		exit(EXIT_FAILURE);
-	};
-	glfwSetErrorCallback(whenGLFWThrowsError);
-}
-
 void stopGLFW(Program & program) {
 	program.windows.clear();
 	glfwTerminate();
-}
-
-void createNewWindow(std::list<Window> & windows, GameSimulation& gameSimulation) {
-	windows.emplace_back();
-	createWindow(windows.back(), gameSimulation);
 }
 
 void checkWindowEvents(Program& program) {
@@ -65,4 +60,9 @@ void checkWindowEvents(Program& program) {
 			return;
 		}
 	}
+}
+
+void createNewWindow(std::list<Window> & windows, GameSimulation& gameSimulation) {
+	windows.emplace_back();
+	createWindow(windows.back(), gameSimulation);
 }

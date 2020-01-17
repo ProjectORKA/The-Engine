@@ -6,6 +6,8 @@ layout(location = 2) in vec2 uvs;
 
 out vec4 vertexColor; 
 
+uniform int distortion;
+
 uniform float time;
 
 uniform vec4 worldOffset;
@@ -18,21 +20,18 @@ void main() {
 	vec3 chunkPosition = (mMatrix * vec4(vertex, 1)).xyz;
 	vec3 cameraRelativePosition = chunkOffsetVector + chunkPosition;
 
-	//this code creates the distortion
-	if(worldOffset.w < 11){
-
-		cameraRelativePosition.z = 0.5;
-		float r = pow(4,worldOffset.w-2);
-		float inside = r - cameraRelativePosition.x*cameraRelativePosition.x - cameraRelativePosition.y * cameraRelativePosition.y;
-		if(inside > 0){
-			cameraRelativePosition.z = sqrt(inside) - sqrt(r) + 0.5 + chunkPosition.z + worldOffset.z;
-		} else {
-			cameraRelativePosition.z = - sqrt(r) + chunkPosition.z + 0.5 + worldOffset.z;
-			vec2 dist = normalize(cameraRelativePosition.xy);
-			cameraRelativePosition.xy = pow(2,worldOffset.w-2) * dist;	
+	if(distortion > 0){
+		if(worldOffset.w < 13){
+			float r = pow(2,worldOffset.w-2);
+			
+			float h = chunkPosition.z + 0.5;
+			
+			vec2 dir = normalize(cameraRelativePosition.xy);
+			float dist = length(vec2(cameraRelativePosition.xy));
+			
+			cameraRelativePosition.xy = dir * sin(dist/r) * (r + h);
+			cameraRelativePosition.z = cos(dist/r) * (r + h) - r + chunkOffsetVector.z - 0.5;
 		}
-		cameraRelativePosition.z += chunkOffsetVector.z - 0.5;
-
 	}
 
 	gl_Position  = vpMatrix * vec4(cameraRelativePosition.xyz,1);

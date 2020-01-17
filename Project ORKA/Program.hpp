@@ -1,9 +1,7 @@
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 #pragma region ignore
 
 #pragma once
-#ifndef GAME_HPP
-#define GAME_HPP
 
 //std libs
 #include <map>
@@ -33,6 +31,8 @@
 #include "Time.hpp"
 #include "Math.hpp"
 #include "PerlinNoise.hpp"
+#include "Debug.hpp"
+#include "Test.h"
 
 #pragma endregion
 
@@ -90,8 +90,8 @@
 
 #define DEBUG								//if defined enables debug messages
 #define CHUNK_LEVEL_MAX 62					//the highest detail level the world system can go (max 62 62 = 63 + 1 extra precision for half way point)
-#define INITIAL_CAMERA_SPEED 1				//1 as fast as a human 300 as fast as light
-#define CAMERA_SPEED_MULTIPLIER 1.1f		//controls the increase in speed when scrolling mouse
+#define INITIAL_CAMERA_SPEED 200			//1 as fast as a human 400 as fast as light
+#define CAMERA_SPEED_MULTIPLIER 1.2f		//controls the increase in speed when scrolling mouse
 #define CHUNK_DISTANCE_MULTIPLIER 1.003f	//controls the increase in distance for the world system
 
 #pragma endregion
@@ -122,45 +122,31 @@ struct Transformation {
 	void setRotation(glm::vec3 rotation);
 	void addTranslation(glm::vec3 location);
 	void setTranslation(glm::vec3 location);
-	void setScale(glm::vec3 scale);
 	void setScale(float scale);
 	glm::vec3 getLocation();
+	float getScale();
 private:
-	glm::vec3 location	= glm::vec3(0);
-	glm::vec3 rotation	= glm::vec3(0);
-	glm::vec3 scale		= glm::vec3(1);
+	glm::vec3 location = glm::vec3(0);
+	glm::vec3 rotation = glm::vec3(0);
+	float scale = 1.0f;
 
 	glm::mat4 translationMatrix = glm::mat4(1);
-	glm::mat4 rotationMatrix	= glm::mat4(1);
-	glm::mat4 scaleMatrix		= glm::mat4(1);
+	glm::mat4 rotationMatrix = glm::mat4(1);
+	glm::mat4 scaleMatrix = glm::mat4(1);
 };
 struct Entity {
-	unsigned int indices[ComponentType_COUNT];
+	Index indices[ComponentType_COUNT];
 };
-struct Chunk{
-	std::vector<Entity> entities;							//<-- objects inside the chunk
-	glm::u64vec3 location = glm::u64vec3(0);				//<-- location of the chunk
-	unsigned short level = 0;								//<-- detail level of the chunk 0 = big 62 = small
-	bool subdivided = false;								//<-- bool to check if chunk has sub nodes
-	std::unique_ptr<Chunk> tfr = nullptr;					//<-- pointers to sub nodes
-	std::unique_ptr<Chunk> tfl = nullptr;					//    "tfr" means "top front right" = +Z +Y +X from the middle of the chunk
-	std::unique_ptr<Chunk> tbr = nullptr;
-	std::unique_ptr<Chunk> tbl = nullptr;
-	std::unique_ptr<Chunk> bfr = nullptr;
-	std::unique_ptr<Chunk> bfl = nullptr;
-	std::unique_ptr<Chunk> bbr = nullptr;
-	std::unique_ptr<Chunk> bbl = nullptr;					//    bottom back left = -X -Y -Z
-	
-	std::mutex mutex;										//<-- locks access if in use
-	std::chrono::steady_clock::time_point expirationDate;	//<-- if it runs out simulation will delete the chunk
+
+struct Terrain {
+	bool hasTerrain = false;
+	float height = 0.0f;
 };
-struct Sky {
-	glm::vec3 skyColor = glm::vec3(0.0f);
-};
+
 struct RenderComponentSystem{
 	std::shared_mutex mutex;
 	std::vector<const char*> names;
-	std::vector<glm::mat4> modelMatrices;
+	std::vector<glm::mat4> modelMatrices; // [TODO] get rid of em
 };
 struct ModelMatrixSystem{
 	std::mutex mutex;
@@ -170,9 +156,41 @@ struct TransformationSystem{
 	std::shared_mutex mutex;
 	std::vector<Transformation> transformations;
 };
+
+struct Chunk{
+	std::vector<Entity> entities;							//<-- objects inside the chunk
+	glm::u64vec3 location = glm::u64vec3(0);				//<-- location of the chunk
+	unsigned short level = 0;								//<-- detail level of the chunk 0 = big 62 = small
+	bool subdivided = false;								//<-- bool to check if chunk has sub nodes
+	
+	Terrain terrain;
+
+	std::shared_ptr<Chunk> tfr = nullptr;					//<-- pointers to sub nodes
+	std::shared_ptr<Chunk> tfl = nullptr;					//    "tfr" means "top front right" = +Z +Y +X from the middle of the chunk
+	std::shared_ptr<Chunk> tbr = nullptr;
+	std::shared_ptr<Chunk> tbl = nullptr;
+	std::shared_ptr<Chunk> bfr = nullptr;
+	std::shared_ptr<Chunk> bfl = nullptr;
+	std::shared_ptr<Chunk> bbr = nullptr;
+	std::shared_ptr<Chunk> bbl = nullptr;					//    bottom back left = -X -Y -Z
+	std::shared_mutex mutex;
+	std::chrono::steady_clock::time_point expirationDate;	//<-- if it runs out simulation will delete the chunk
+};
+
+//struct Chunk2D {
+//	glm::u64vec2 location = glm::u64vec2(0,0);
+//
+//	Terrain terrain;
+//
+//	std::shared_ptr<Chunk> fr = nullptr;
+//	std::shared_ptr<Chunk> fl = nullptr;
+//	std::shared_ptr<Chunk> br = nullptr;
+//	std::shared_ptr<Chunk> bl = nullptr;
+//};
+
 struct WorldSystem { //[TODO] let worldsystem point to batches of entities stored inside an  entity system instead of storing them inside the chunk
-	Sky sky;			//<-- gives renderer a color to fill the background [TODO] add mesh support
-	Chunk root;			//<-- root chunk for octree-based world system
+	std::shared_ptr<Chunk> octreeRoot = std::make_shared<Chunk>();			//<-- root chunk for octree-based world system
+	//std::shared_ptr<Chunk2D> quadtreeRoot = std::make_shared<Chunk2D>();	//<-- root chunk for octree-based world system
 };
 struct GameSimulation {
 	Time gameTime;													//<-- stores total and delta times
@@ -187,7 +205,7 @@ struct GameSimulation {
 	std::unique_ptr<std::thread> thread;							//<-- pointer to the thread
 };
 struct ChunkRenderInfo {
-	Chunk * chunk;
+	std::shared_ptr<Chunk> chunk;
 	glm::vec3 chunkOffsetVector;
 };
 struct MeshFileInfo {
@@ -221,28 +239,33 @@ struct MeshSystem {
 
 	std::map<Index, Index> renderComponentIndexToGPUMeshIndex;
 
+	bool readyForUpload = false;
+
 	bool keepThreadRunning = true;
 	std::unique_ptr<std::thread> thread;
 };
 struct Camera {
 	// hard data
-	glm::u64vec3 location = glm::u64vec3(0, 0, 1000000000);
+	glm::u64vec3 location = glm::u64vec3(0, 0, LLONG_MAX);
 	glm::vec3 subChunkLocation = glm::vec3(0);
 
+	bool vrEnabled = false;
 	float cameraRotationX = 0.0f;
 	float cameraRotationZ = 0.0f;
 	float fieldOfView = 85.0;
 	float mouseSensitivity = 0.002f;
 	int speedMultiplier = INITIAL_CAMERA_SPEED;
 	glm::vec3 accelerationVector = glm::vec3(0);
-	
+
 	// soft data
 	float cameraSpeed = pow(CAMERA_SPEED_MULTIPLIER, INITIAL_CAMERA_SPEED);
 	glm::vec3 forwardVector = { 0.0f, 1.0f, 0.0f };
-	glm::vec3 rightVector	= { 1.0f, 0.0f, 0.0f };
-	glm::vec3 upVector		= { 0.0f, 0.0f, 1.0f };
+	glm::vec3 rightVector = { 1.0f, 0.0f, 0.0f };
+	glm::vec3 upVector = { 0.0f, 0.0f, 1.0f };
 
 	glm::mat4 viewMatrix = glm::lookAt(glm::vec3(0), glm::vec3(0, 1, 0), glm::vec3(0, 0, 1));
+	glm::mat4 viewMatrixRightEye = glm::lookAt(glm::vec3(0), glm::vec3(0, 1, 0), glm::vec3(0, 0, 1));
+	glm::mat4 viewMatrixLeftEye = glm::lookAt(glm::vec3(0), glm::vec3(0, 1, 0), glm::vec3(0, 0, 1));
 };
 struct Shader {
 	GLuint shaderID;
@@ -252,12 +275,36 @@ struct ShaderProgram {
 	GLuint programID = 0;
 
 	//uniform IDs
+	GLuint distortionID = 0;
 	GLuint timeID = 0;
 	GLuint chunkOffsetVectorID = 0;
 	GLuint mMatrixID = 0;
 	GLuint vpMatrixID = 0;
 	GLuint worldOffsetID = 0;
 };
+struct Viewport {
+	float relativeX = 0.0f;
+	float relativeY = 0.0f;
+	float relativeWidth = 1.0f;
+	float relativeHeight = 1.0f;
+	int absoluteX = 0;
+	int absoluteY = 0;
+	int absoluteWidth = 1;
+	int absoluteHeight = 1;
+};
+
+struct RenderSettings {
+	//settings
+	float minimumFrameRate = 100;
+	float maximumFrameRate = 150;
+	bool distortion = true;
+	bool chunkBorders = false;
+	bool wireframeMode = false;
+	bool backfaceCulling = false;
+	bool adjustRenderVariables = true;
+	unsigned int worldSystemRenderDistance = 100;
+};
+
 struct Renderer {
 	Time renderTime;
 
@@ -268,13 +315,14 @@ struct Renderer {
 	MeshSystem meshSystem;
 	GameSimulation* gameSimulation;
 
-	//settings
-	float minimumFrameRate = 100;
-	float maximunFrameRate = 200;
-	bool wireframeMode = false;
-	bool chunkBorders = false;
-	bool adjustRenderVariables = true;
-	unsigned int worldSystemRenderDistance = 100;
+	std::vector<Viewport> viewports;
+
+	int frameBufferWidth = 0;
+	int frameBufferHeight = 0;
+	int newFrameBufferWidth = 0;
+	int newFrameBufferHeight = 0;
+
+	RenderSettings settings;
 
 	Camera camera;
 
@@ -307,16 +355,10 @@ struct Window {
 	//thread
 	bool keepThreadRunning = true;
 	std::unique_ptr<std::thread> thread;
-
-	Window() {}
-	~Window() {}
-	Window(const Window& other) : Window() {}
-	Window(Window&& other) noexcept {}
-	Window& operator=(const Window& other) { return *this = Window(other); }
-	Window& operator=(Window&& other) noexcept { return *this; }
 };
 struct Program {
 	GameSimulation gameSimulation;	//<-- already starts simulating the gameWorld
+	
 	std::list<Window> windows;
 };
 #pragma endregion
@@ -332,13 +374,12 @@ void stopGameSimulation					(GameSimulation & gameSimulation);
 //math
 float randomFloat						(float low, float high);
 //debug
-void debugPrint							(const char * debugMessage);
 void renderGizmo						(ChunkRenderInfo& info, Renderer& renderer);
 //shader
 void useShaderProgram					(ShaderProgram & program);
 void unloadShaderProgram				(ShaderProgram & shaderProgram);
 void loadShaderProgram					(ShaderProgram & shaderProgram, Shader & vertexShader, Shader & fragmentShader);
-void loadShader						(Shader& shader, GLuint shaderType, const char* shaderPath);
+void loadShader							(Shader& shader, GLuint shaderType, const char* shaderPath);
 void unloadShader						(Shader& shader);
 //mesh system
 void unbindMesh							();
@@ -357,10 +398,10 @@ void getMeshIndexFromRenderComponent	(Renderer & renderer, Index& inputRenderCom
 void changeAntiAliasing					(Window & window, unsigned short antiAliasing);
 //renderer
 void renderWindow						(Window & window);
+void renderFrame						(Renderer & renderer);
 void renderChunkQueue					(Renderer & renderer);
 void dynamicallyAdjustValue				(unsigned int & value, Renderer& renderer);
 void renderMesh							(MeshSystem & meshSystem, Index meshIndex);
-void renderFrame						(Renderer & renderer, int width, int height);
 void renderEntities						(ChunkRenderInfo & info, Renderer& renderer);
 void renderChunk						(ChunkRenderInfo & info, Renderer & renderer);
 void renderChunkBoundingBox				(ChunkRenderInfo & info, Renderer & renderer);
@@ -385,7 +426,6 @@ void setWindowCallbacks					(Window & window);
 void checkWindowEvents					(Program & program);
 void whenWindowChangedFocus				(GLFWwindow* window, int focused);
 void setIcon							(Window & window, std::string path);
-void whenGLFWThrowsError				(int error, const char* description);
 void whenWindowIsResized				(GLFWwindow* window, int width, int height);
 void createWindow						(Window & window, GameSimulation& gameSimulation);
 void createGLFWWindow					(Window & window, GameSimulation & gameSimulation);
@@ -395,15 +435,15 @@ void processTransformationSystem		(GameSimulation & gameSimulation);
 //model matrix system
 void processModelMatrixSystem			(GameSimulation & gameSimulation);
 //world system
-void renderSky							(Sky & sky);
-void chunkIsInUse						(Chunk & chunk);
-void processChunkQueue					(Chunk & chunk, Renderer & renderer);
-void unsubdivideChunk					(Chunk & chunk, GameSimulation & gameSimulation);
-void subdivideChunk						(Chunk & chunk, GameSimulation & gameSimulation);
-void processWorldSystem					(Chunk & chunk, GameSimulation & gameSimulation);
-void generateEntities					(Chunk & chunk, GameSimulation & gameSimulation);
+void chunkIsInUse						(std::shared_ptr<Chunk> chunk);
+void renderTerrain						(ChunkRenderInfo& info, Renderer& renderer);
 void renderWorld						(WorldSystem & worldSystem, Renderer & renderer);
-void createChildChunk					(Chunk & child, Chunk & parent, GameSimulation& gameSimulation, bool x, bool y, bool z);
+void processChunkQueue					(std::shared_ptr<Chunk> chunk, Renderer & renderer);
+void unsubdivideChunk					(std::shared_ptr<Chunk> chunk, GameSimulation & gameSimulation);
+void subdivideChunk						(std::shared_ptr<Chunk> chunk, GameSimulation & gameSimulation);
+void processWorldSystem					(std::shared_ptr<Chunk> chunk, GameSimulation & gameSimulation);
+void generateEntities					(std::shared_ptr<Chunk> chunk, GameSimulation & gameSimulation);
+void createChildChunk					(std::shared_ptr<Chunk> child, std::shared_ptr<Chunk> parent, GameSimulation& gameSimulation, bool x, bool y, bool z);
 //add components
 void addTransformation					(Entity & entity, GameSimulation & gameSimulation);
 void addModelMatrix						(Entity & entity, ModelMatrixSystem & modelMatrixSystem);
@@ -411,15 +451,11 @@ void addRenderingComponent				(Entity & entity, GameSimulation & gameSimulation,
 void addTransformation					(Entity & entity, GameSimulation & gameSimulation, Transformation & transformation);
 void addModelMatrix						(Entity & entity, ModelMatrixSystem & modelMatrixSystem, Transformation& transformation);
 //camera
-void pocessCamera						(Camera & camera, Time & time);
-void rotateCamera						(Camera & camera, float x, float y);
+void pocessCamera						(Camera& camera, Time& time);
+void rotateCamera						(Camera& camera, float x, float y);
 //threads
-void GameSimulationThread				(GameSimulation & gameSimulation);
-void RenderThread						(Window & window);
-void MeshLoaderThread					(MeshSystem & meshSystem);
+int GameSimulationThread				(GameSimulation & gameSimulation);
+int RenderThread						(Window & window);
+int MeshLoaderThread					(MeshSystem & meshSystem);
 
 #pragma endregion
-
-
-#endif // !GAME_HPP
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

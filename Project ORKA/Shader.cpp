@@ -1,6 +1,20 @@
 
 #include "Program.hpp"
 
+void unloadShader(Shader& shader) {
+	glDeleteShader(shader.shaderID);
+}
+
+void useShaderProgram(ShaderProgram & shaderProgram) {
+	if (shaderProgram.loaded) {
+		glUseProgram(shaderProgram.programID);
+	}
+}
+
+void unloadShaderProgram(ShaderProgram& shaderProgram) {
+	glDeleteProgram(shaderProgram.programID);
+}
+
 void loadShader(Shader& shader, GLuint shaderType, const char* shaderPath){
 	shader.shaderID = glCreateShader(shaderType);
 	std::string ShaderCode;
@@ -39,10 +53,6 @@ void loadShader(Shader& shader, GLuint shaderType, const char* shaderPath){
 	}
 }
 
-void unloadShader(Shader& shader) {
-	glDeleteShader(shader.shaderID);
-}
-
 void loadShaderProgram(ShaderProgram& shaderProgram, Shader & vertexShader, Shader & fragmentShader){
 	// Link the program
 	shaderProgram.programID = glCreateProgram();
@@ -68,6 +78,7 @@ void loadShaderProgram(ShaderProgram& shaderProgram, Shader & vertexShader, Shad
 	glUseProgram(shaderProgram.programID);
 
 	//set up matrix ID
+	shaderProgram.distortionID = glGetUniformLocation(shaderProgram.programID, "distortion");
 	shaderProgram.timeID = glGetUniformLocation(shaderProgram.programID, "time");
 	shaderProgram.chunkOffsetVectorID = glGetUniformLocation(shaderProgram.programID, "chunkOffsetVector");
 	shaderProgram.mMatrixID = glGetUniformLocation(shaderProgram.programID, "mMatrix");
@@ -75,14 +86,4 @@ void loadShaderProgram(ShaderProgram& shaderProgram, Shader & vertexShader, Shad
 	shaderProgram.worldOffsetID = glGetUniformLocation(shaderProgram.programID, "worldOffset");
 	
 	shaderProgram.loaded = true;
-}
-
-void unloadShaderProgram(ShaderProgram& shaderProgram) {
-	glDeleteProgram(shaderProgram.programID);
-}
-
-void useShaderProgram(ShaderProgram & shaderProgram) {
-	if (shaderProgram.loaded) {
-		glUseProgram(shaderProgram.programID);
-	}
 }

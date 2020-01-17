@@ -3,13 +3,6 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
-void createWindow(Window& window, GameSimulation& gameSimulation) {
-	createGLFWWindow(window, gameSimulation);
-	centerWindow(window);
-
-	window.thread = std::make_unique<std::thread>(RenderThread, std::ref(window));
-};
-
 void destroyWindow(Window& window) {
 	window.keepThreadRunning = false;
 	window.thread->join();
@@ -43,14 +36,14 @@ void reloadTheWindow(Window & window) {
 
 	//1. destroy window
 	GameSimulation * tmpG = window.renderer.gameSimulation;
-	bool tmpWireframe = window.renderer.wireframeMode;
+	bool tmpWireframe = window.renderer.settings.wireframeMode;
 	destroyGLFWWindow(window);
 
 	//mirror
 
 	//1. create window
 	createGLFWWindow(window, *tmpG);
-	window.renderer.wireframeMode = tmpWireframe;
+	window.renderer.settings.wireframeMode = tmpWireframe;
 	//2. set current position
 	glfwSetWindowPos(window.glfwWindow, x, y);
 
@@ -97,6 +90,18 @@ void setWindowCallbacks(Window & window) {
 	glfwSetCursorPosCallback(window.glfwWindow, whenMouseIsMoving);
 }
 
+void setIcon(Window & window, std::string path) {
+	GLFWimage icon[1];
+	icon[0].pixels = stbi_load(path.c_str(), &icon[0].width, &icon[0].height, 0, 4);
+	if (icon->pixels != nullptr) {
+		glfwSetWindowIcon(window.glfwWindow, 1, icon);
+	}
+	else {
+		debugPrint("No Icon available! (icon.png)");
+	}
+	stbi_image_free(icon[0].pixels);
+}
+
 void whenWindowChangedFocus(GLFWwindow * window, int focused) {
 
 	Window * parentWindowClass = static_cast<Window *>(glfwGetWindowUserPointer(window));
@@ -113,16 +118,27 @@ void whenWindowChangedFocus(GLFWwindow * window, int focused) {
 	}
 }
 
-void setIcon(Window & window, std::string path) {
-	GLFWimage icon[1];
-	icon[0].pixels = stbi_load(path.c_str(), &icon[0].width, &icon[0].height, 0, 4);
-	if (icon->pixels != nullptr) {
-		glfwSetWindowIcon(window.glfwWindow, 1, icon);
+void createWindow(Window& window, GameSimulation& gameSimulation) {
+	createGLFWWindow(window, gameSimulation);
+	centerWindow(window);
+
+	window.thread = std::make_unique<std::thread>(RenderThread, std::ref(window));
+};
+
+void whenWindowIsResized(GLFWwindow* window, int width, int height) {
+	Window& parentWindowClass = *static_cast<Window*>(glfwGetWindowUserPointer(window));
+
+
+	parentWindowClass.width = width;
+	parentWindowClass.height = height;
+	if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
+		centerWindow(parentWindowClass);
 	}
-	else {
-		debugPrint("No Icon available! (icon.png)");
-	}
-	stbi_image_free(icon[0].pixels);
+}
+
+void changeAntiAliasing(Window & window, unsigned short antiAliasing) {
+	window.antiAliasing = antiAliasing;
+	reloadTheWindow(window);
 }
 
 void createGLFWWindow(Window & window, GameSimulation & gameSimulation) {
@@ -174,9 +190,3 @@ void createGLFWWindow(Window & window, GameSimulation & gameSimulation) {
 
 	initializeRenderer(window.renderer, gameSimulation);
 }
-
-void changeAntiAliasing(Window & window, unsigned short antiAliasing) {
-	window.antiAliasing = antiAliasing;
-	reloadTheWindow(window);
-}
-

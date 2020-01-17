@@ -1,6 +1,10 @@
 
 #include "Program.hpp"
 
+void beep() {
+	std::cout << '\a';
+}
+
 void debugPrint(const char * debugMessage) {
 #ifdef DEBUG
 	std::cout << debugMessage << std::endl;

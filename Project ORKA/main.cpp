@@ -45,7 +45,7 @@
 int main(int argc, char *argv[]);
 #include <Windows.h>
 int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLine, int nCmdShow) {
-	main(__argc, __argv);
+	return main(__argc, __argv);
 }
 #endif
 #pragma endregion
@@ -53,17 +53,13 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdL
 #include "Program.hpp"
 
 int main(int argc, char *argv[]) {
-
-	
 	if(true) //quickly switches between the game and custom testing code
 	{
 		runProgram();		//<-- starts execution of ALL code
 	} else {
 		//testing code
 		/////////////////////////////////////////////////////////////////////////////////////////////////
-		{
-		
-		}
+
 		/////////////////////////////////////////////////////////////////////////////////////////////////
 		system("pause");
 	}

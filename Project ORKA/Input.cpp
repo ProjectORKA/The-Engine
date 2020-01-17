@@ -46,42 +46,6 @@ void whenMouseIsMoving(GLFWwindow* window, double xpos, double ypos) {
 	}
 }
 
-void whenButtonIsPressed(GLFWwindow * window, int key, int scancode, int action, int mods)
-{
-	Window * parentWindowClass = static_cast<Window *>(glfwGetWindowUserPointer(window));
-
-	if (key == GLFW_KEY_ENTER && action == GLFW_PRESS && mods == GLFW_MOD_ALT) {
-		toggleFullscreen(*parentWindowClass);
-	}
-	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
-		glfwSetWindowShouldClose(parentWindowClass->glfwWindow, GLFW_TRUE);
-	}
-	if (key == GLFW_KEY_1 && action == GLFW_PRESS) {
-		changeAntiAliasing(*parentWindowClass, 0);
-	}
-	if (key == GLFW_KEY_2 && action == GLFW_PRESS) {
-		changeAntiAliasing(*parentWindowClass, 16);
-	}
-	if (key == GLFW_KEY_3 && action == GLFW_PRESS) {
-		parentWindowClass->renderer.chunkBorders = !parentWindowClass->renderer.chunkBorders;
-	}
-	if (key == GLFW_KEY_P && action == GLFW_PRESS) {
-		parentWindowClass->renderer.gameSimulation->gameTime.paused = !parentWindowClass->renderer.gameSimulation->gameTime.paused;
-	}
-	if (key == GLFW_KEY_N && action == GLFW_PRESS) {
-		parentWindowClass->duplicateWindow = true;
-	}
-	if (key == GLFW_KEY_B && action == GLFW_PRESS) {
-		parentWindowClass->borderlessFullScreen = !parentWindowClass->borderlessFullScreen;
-	}
-	if (key == GLFW_KEY_F && action == GLFW_PRESS) {
-		parentWindowClass->renderer.wireframeMode = !parentWindowClass->renderer.wireframeMode;
-	}
-	if (key == GLFW_KEY_J && action == GLFW_PRESS) {
-		parentWindowClass->renderer.adjustRenderVariables = !parentWindowClass->renderer.adjustRenderVariables;
-	}
-}
-
 void whenMouseIsScrolling(GLFWwindow * window, double xoffset, double yoffset) {
 	static_cast<Window*>(glfwGetWindowUserPointer(window))->renderer.camera.speedMultiplier += yoffset;
 }
@@ -103,12 +67,41 @@ void whenMouseIsPressed(GLFWwindow * window, int button, int action, int mods) {
 	}
 }
 
-void whenWindowIsResized(GLFWwindow * window, int width, int height) {
-	Window & parentWindowClass = *static_cast<Window*>(glfwGetWindowUserPointer(window));
+void whenButtonIsPressed(GLFWwindow * window, int key, int scancode, int action, int mods)
+{
+	Window * parentWindowClass = static_cast<Window *>(glfwGetWindowUserPointer(window));
 
-	parentWindowClass.width = width;
-	parentWindowClass.height = height;
-	if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
-		centerWindow(parentWindowClass);
+	if (key == GLFW_KEY_ENTER && action == GLFW_PRESS && mods == GLFW_MOD_ALT) {
+		toggleFullscreen(*parentWindowClass);
+	}
+	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
+		glfwSetWindowShouldClose(parentWindowClass->glfwWindow, GLFW_TRUE);
+	}
+	if (key == GLFW_KEY_1 && action == GLFW_PRESS) {
+		changeAntiAliasing(*parentWindowClass, 0);
+	}
+	if (key == GLFW_KEY_2 && action == GLFW_PRESS) {
+		changeAntiAliasing(*parentWindowClass, 16);
+	}
+	if (key == GLFW_KEY_3 && action == GLFW_PRESS) {
+		parentWindowClass->renderer.settings.chunkBorders = !parentWindowClass->renderer.settings.chunkBorders;
+	}
+	if (key == GLFW_KEY_P && action == GLFW_PRESS) {
+		parentWindowClass->renderer.gameSimulation->gameTime.paused = !parentWindowClass->renderer.gameSimulation->gameTime.paused;
+	}
+	if (key == GLFW_KEY_N && action == GLFW_PRESS) {
+		parentWindowClass->duplicateWindow = true;
+	}
+	if (key == GLFW_KEY_B && action == GLFW_PRESS) {
+		parentWindowClass->borderlessFullScreen = !parentWindowClass->borderlessFullScreen;
+	}
+	if (key == GLFW_KEY_F && action == GLFW_PRESS) {
+		parentWindowClass->renderer.settings.wireframeMode = !parentWindowClass->renderer.settings.wireframeMode;
+	}
+	if (key == GLFW_KEY_J && action == GLFW_PRESS) {
+		parentWindowClass->renderer.settings.adjustRenderVariables = !parentWindowClass->renderer.settings.adjustRenderVariables;
+	}
+	if (key == GLFW_KEY_K && action == GLFW_PRESS) {
+		parentWindowClass->renderer.settings.distortion = !parentWindowClass->renderer.settings.distortion;
 	}
 }
