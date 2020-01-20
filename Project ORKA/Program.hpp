@@ -17,6 +17,8 @@
 #include <filesystem>
 #include <shared_mutex>
 
+
+
 #define GLAPI
 #define GLEW_STATIC
 #include "GL/glew.h"
@@ -32,7 +34,7 @@
 #include "Math.hpp"
 #include "PerlinNoise.hpp"
 #include "Debug.hpp"
-#include "Test.h"
+
 
 #pragma endregion
 
@@ -90,7 +92,7 @@
 
 #define DEBUG								//if defined enables debug messages
 #define CHUNK_LEVEL_MAX 62					//the highest detail level the world system can go (max 62 62 = 63 + 1 extra precision for half way point)
-#define INITIAL_CAMERA_SPEED 200			//1 as fast as a human 400 as fast as light
+#define INITIAL_CAMERA_SPEED 230			//1 as fast as a human 400 as fast as light
 #define CAMERA_SPEED_MULTIPLIER 1.2f		//controls the increase in speed when scrolling mouse
 #define CHUNK_DISTANCE_MULTIPLIER 1.003f	//controls the increase in distance for the world system
 
@@ -137,12 +139,10 @@ private:
 struct Entity {
 	Index indices[ComponentType_COUNT];
 };
-
 struct Terrain {
 	bool hasTerrain = false;
 	float height = 0.0f;
 };
-
 struct RenderComponentSystem{
 	std::shared_mutex mutex;
 	std::vector<const char*> names;
@@ -156,7 +156,6 @@ struct TransformationSystem{
 	std::shared_mutex mutex;
 	std::vector<Transformation> transformations;
 };
-
 struct Chunk{
 	std::vector<Entity> entities;							//<-- objects inside the chunk
 	glm::u64vec3 location = glm::u64vec3(0);				//<-- location of the chunk
@@ -176,7 +175,6 @@ struct Chunk{
 	std::shared_mutex mutex;
 	std::chrono::steady_clock::time_point expirationDate;	//<-- if it runs out simulation will delete the chunk
 };
-
 //struct Chunk2D {
 //	glm::u64vec2 location = glm::u64vec2(0,0);
 //
@@ -187,7 +185,6 @@ struct Chunk{
 //	std::shared_ptr<Chunk> br = nullptr;
 //	std::shared_ptr<Chunk> bl = nullptr;
 //};
-
 struct WorldSystem { //[TODO] let worldsystem point to batches of entities stored inside an  entity system instead of storing them inside the chunk
 	std::shared_ptr<Chunk> octreeRoot = std::make_shared<Chunk>();			//<-- root chunk for octree-based world system
 	//std::shared_ptr<Chunk2D> quadtreeRoot = std::make_shared<Chunk2D>();	//<-- root chunk for octree-based world system
@@ -246,7 +243,7 @@ struct MeshSystem {
 };
 struct Camera {
 	// hard data
-	glm::u64vec3 location = glm::u64vec3(0, 0, LLONG_MAX);
+	glm::u64vec3 location = glm::u64vec3(LLONG_MAX, LLONG_MAX, LLONG_MAX);
 	glm::vec3 subChunkLocation = glm::vec3(0);
 
 	bool vrEnabled = false;
@@ -292,11 +289,10 @@ struct Viewport {
 	int absoluteWidth = 1;
 	int absoluteHeight = 1;
 };
-
 struct RenderSettings {
 	//settings
-	float minimumFrameRate = 100;
-	float maximumFrameRate = 150;
+	float minimumFrameRate = 45;
+	float maximumFrameRate = minimumFrameRate * 1.5f;
 	bool distortion = true;
 	bool chunkBorders = false;
 	bool wireframeMode = false;
@@ -304,7 +300,6 @@ struct RenderSettings {
 	bool adjustRenderVariables = true;
 	unsigned int worldSystemRenderDistance = 100;
 };
-
 struct Renderer {
 	Time renderTime;
 

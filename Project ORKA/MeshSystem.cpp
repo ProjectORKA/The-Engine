@@ -95,8 +95,6 @@ int MeshLoaderThread(MeshSystem& meshSystem) {
 
 	loadAllMeshes(meshSystem);
 
-	std::cout << "hello" << std::endl;
-
 	while (meshSystem.keepThreadRunning) {
 		if (meshSystem.meshLoadQueue.size() > 0) {
 			generateCPUMeshFromLoaderQueue(meshSystem);

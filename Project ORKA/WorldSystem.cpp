@@ -23,17 +23,15 @@ void generateTerrain(std::shared_ptr<Chunk> chunk) {
 
 	noise.reseed(12345);
 
-	long double x = ((unsigned long long)(rChunk.location.x << (64 - rChunk.level)))/(long double)LLONG_MAX/4;
-	long double y = ((unsigned long long)(rChunk.location.y << (64 - rChunk.level)))/(long double)LLONG_MAX/4;
+	float noiseSize = 32;
+
+	long double x = ((unsigned long long)(rChunk.location.x << (64 - rChunk.level)))/((long double)LLONG_MAX/noiseSize);
+	long double y = ((unsigned long long)(rChunk.location.y << (64 - rChunk.level)))/((long double)LLONG_MAX/noiseSize);
 	long double z = (unsigned long long)(rChunk.location.z << (64 - rChunk.level));
 
 	long double lowBorder = (long double)(((unsigned long long)(rChunk.location.z)) << (64 - rChunk.level));
 	long double highBorder = (long double)(((unsigned long long)(rChunk.location.z+1)) << (64 - rChunk.level));
-	long double target = ((long double)noise.octaveNoise0_1(x, y, 16)) * (long double)LLONG_MAX/2;
-	
-	
-	std::cout << x << "/" << y << std::endl;
-	//std::cout << target << std::endl;
+	long double target = ((long double)noise.octaveNoise0_1(x, y, 16)) * ((long double)LLONG_MAX/ (4* noiseSize));
 
 	if (rChunk.location.z == 0) {
 		rChunk.terrain.hasTerrain = true;
@@ -89,7 +87,7 @@ void dynamicallyAdjustValue(unsigned int& value, Renderer& renderer) {
 			}
 		}
 		else {
-			if (renderer.renderTime.delta() * renderer.settings.maximumFrameRate < 1 & value < 1000) {
+			if (renderer.renderTime.delta() * renderer.settings.maximumFrameRate < 1 & value < 10000) {
 				value++;
 			}
 		}
