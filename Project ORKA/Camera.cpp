@@ -1,97 +1,107 @@
 
-#include "Program.hpp"
+#include "Camera.hpp"
+#include "Renderer.hpp"
 
-void applySubChunkLocation(Camera& camera) {
-	if ((camera.subChunkLocation.x > 1) | (camera.subChunkLocation.x <= -1)) {
-		long long x = camera.subChunkLocation.x;
-		camera.subChunkLocation.x -= x;
-		camera.location.x += x;
+void applySubChunkLocation(OctreeWorldSystemCamera& camera) {
+	if ((camera.chunkLocation.x > 1) | (camera.chunkLocation.x <= -1)) {
+		LL x = camera.location.x;
+		camera.location.x -= x;
+		camera.chunkLocation.x += x;
 	}
 
-	if ((camera.subChunkLocation.y > 1) | (camera.subChunkLocation.y <= -1)) {
-		long long y = camera.subChunkLocation.y;
-		camera.subChunkLocation.y -= y;
-		camera.location.y += y;
+	if ((camera.location.y > 1) | (camera.location.y <= -1)) {
+		LL y = camera.location.y;
+		camera.location.y -= y;
+		camera.chunkLocation.y += y;
 	}
 
-	float lowest = 0.99;
+	Float lowest = 0.99;
 
-	if ((camera.subChunkLocation.z < -lowest) & (camera.location.z == 0)) {
-		camera.subChunkLocation.z = -lowest;
-		camera.location.z = 0;
+	if ((camera.location.z < -lowest) & (camera.chunkLocation.z == 0)) {
+		camera.location.z = -lowest;
+		camera.chunkLocation.z = 0;
 	}
 	else {
-		if (camera.subChunkLocation.z < -1) {
-			unsigned long long intDeltaZ = 0;
-			intDeltaZ -= camera.subChunkLocation.z;
-			unsigned long long newZ = camera.location.z - intDeltaZ;
+		if (camera.location.z < -1) {
+			ULL intDeltaZ = 0;
+			intDeltaZ -= camera.location.z;
+			ULL newZ = camera.chunkLocation.z - intDeltaZ;
 
-			if (newZ > camera.location.z) {
-				camera.location.z = 0;
-				camera.subChunkLocation.z = -lowest;
+			if (newZ > camera.chunkLocation.z) {
+				camera.chunkLocation.z = 0;
+				camera.location.z = -lowest;
 			}
 			else {
-				camera.subChunkLocation.z += intDeltaZ;
-				camera.location.z = newZ;
+				camera.location.z += intDeltaZ;
+				camera.chunkLocation.z = newZ;
 			}
 		}
-		if (camera.subChunkLocation.z > 1) {
-			unsigned long long maximum = ULLONG_MAX / 2;
-			unsigned long long intDeltaZ = camera.subChunkLocation.z;
-			unsigned long long newZ = camera.location.z + intDeltaZ;
-			if ((newZ < camera.location.z) | (newZ > maximum)) {
-				intDeltaZ = maximum - camera.location.z;
-				camera.location.z = maximum;
-				camera.subChunkLocation -= intDeltaZ;
+		if (camera.location.z > 1) {
+			ULL maximum = ULLONG_MAX / 2;
+			ULL intDeltaZ = camera.location.z;
+			ULL newZ = camera.chunkLocation.z + intDeltaZ;
+			if ((newZ < camera.chunkLocation.z) | (newZ > maximum)) {
+				intDeltaZ = maximum - camera.chunkLocation.z;
+				camera.chunkLocation.z = maximum;
+				camera.location -= intDeltaZ;
 			}
 			else {
-				camera.subChunkLocation.z -= intDeltaZ;
-				camera.location.z = newZ;
+				camera.location.z -= intDeltaZ;
+				camera.chunkLocation.z = newZ;
 			}
 		}
 	}
 }
 
-void pocessCamera(Camera & camera, Time & time)
+void CameraSystem::create()
 {
-	camera.cameraSpeed = pow(CAMERA_SPEED_MULTIPLIER, camera.speedMultiplier);
-	camera.accelerationVector *= camera.cameraSpeed * time.delta();
-	
-	camera.subChunkLocation += glm::clamp(camera.accelerationVector, (float)LLONG_MIN / 2, (float)LLONG_MAX / 2);
-
-	applySubChunkLocation(camera);
-
-	camera.accelerationVector = { 0,0,0 };
+	add();
+	select(0);
+	current().rotate(0,0);
 }
 
-void rotateCamera(Camera & camera, float x, float y) {
-	camera.cameraRotationX -= camera.mouseSensitivity * y;
-	camera.cameraRotationZ += camera.mouseSensitivity * x;
+void CameraSystem::add()
+{
+	cameras.emplace_back();
+}
 
-	//prevent looking upside down
-	float cap = PI / 2;
+void CameraSystem::select(Index cameraID)
+{
+	currentCamera = cameraID;
+}
 
-	if (camera.cameraRotationX < -cap) {
-		camera.cameraRotationX = -cap;
-	}
-	if (camera.cameraRotationX > +cap) {
-		camera.cameraRotationX = +cap;
-	}
+void CameraSystem::render(Renderer& renderer)
+{
+	
+}
 
-	//calculate directional vectors
-	camera.forwardVector = glm::vec3(
-		cos(camera.cameraRotationX) * sin(camera.cameraRotationZ),
-		cos(camera.cameraRotationX) * cos(camera.cameraRotationZ),
-		sin(camera.cameraRotationX)
-	);
+Camera& CameraSystem::current()
+{
+	return cameras[currentCamera];
+}
 
-	camera.rightVector = glm::vec3(
-		-sin(camera.cameraRotationZ - PI / 2),
-		-cos(camera.cameraRotationZ - PI / 2),
-		0
-	);
+void CameraSystem::destroy()
+{
+	cameras.clear();
+}
 
-	camera.upVector = glm::cross(camera.rightVector, camera.forwardVector);
+void OctreeWorldSystemCamera::process(Time & renderTime)
+{
+	cameraSpeed = pow(CAMERA_SPEED_MULTIPLIER, speedMultiplier);
+	accelerationVector *= cameraSpeed * renderTime.delta;
 
-	camera.viewMatrix = glm::lookAt(glm::vec3(0), glm::vec3(0) + camera.forwardVector, camera.upVector);
+	location += glm::clamp(accelerationVector, (Float)LLONG_MIN / 2, (Float)LLONG_MAX / 2);
+
+	applySubChunkLocation(*this);
+
+	accelerationVector = { 0,0,0 };
+}
+
+void Camera::processLocation(Time& renderTime) {
+	cameraSpeed = pow(CAMERA_SPEED_MULTIPLIER, speedMultiplier);
+	accelerationVector *= cameraSpeed * renderTime.delta;
+
+	location += glm::clamp(accelerationVector, (Float)LLONG_MIN / 2, (Float)LLONG_MAX / 2);
+
+	accelerationVector = { 0,0,0 };
 }

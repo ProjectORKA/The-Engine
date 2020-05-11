@@ -9,60 +9,66 @@
 //	This engine can NOT be used for your own personal or commercial use!
 //	Do not distribute any source code outside of our official websites and platforms without permission!
 
-//	The "Project ORKA" engine is built in a data driven way (i think)
-//	This means everything is divided into
-//		1. data stored in structs and
-//		2. functions that act on that data
-//		(3. also threads, but they are essentially functions)
+//	The "Project ORKA" engine is divided into
+//		1. data stored in structs (yes everything is public)
+//		2. functions that act on that data in form of void or member functions
+//	It has a minimal amount of inheritance and polymorphism and avoids de/constructors as much as possible 
 //	This engine uses a left-handed coordinate system like Blender:
 //	+X = right
 //	+Y = forward
 //	+Z = up
 
-//	Rules:
-//	1. Data
-//		All relevant data will be stored in structs
-//		Structs start with an uppercase letter e.g. "SpaceShip"
-//		They can have
-//			- constructors
-//			- destructors
-//			- pointers/references
-//			- other structs/containers
-//		However, they do NOT have member-functions/methods!
-//		(unless the stored data always needs conversion)
-//	2. Functions
-//		All functions are (ideally) of type void and should be self explainatory
-//		They only take a minimal amount of references (and data) as inputs
-//		Functions start with a lowercase letter and describe what they do e.g. "startSpaceShip"
-//		Any kind of initialization or destruction should be a constructor/destructor instead
-//	3. Threads
-//		Threads are initialized through constructors and destructors
-//		The functions they run follow the conventions above, but are declared in their own section and start with an uppercase letter
-
-#pragma region ignore
-
-#ifdef _WIN32
-int main(int argc, char *argv[]);
-#include <Windows.h>
-int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLine, int nCmdShow) {
-	return main(__argc, __argv);
-}
-#endif
-#pragma endregion
+#include "WindowsEntry.hpp"
 
 #include "Program.hpp"
 
-int main(int argc, char *argv[]) {
-	if(true) //quickly switches between the game and custom testing code
+int main(int argc, char* argv[]) {
+
+	srand(static_cast <unsigned> (time(0)));
+
+	if (true) //quickly switches between the game and custom testing code
 	{
-		runProgram();		//<-- starts execution of ALL code
-	} else {
+		Program program;		//<-- creates Program Data
+		program.start();		//<-- starts the Program
+	}
+	else {
 		//testing code
 		/////////////////////////////////////////////////////////////////////////////////////////////////
 
+		//std::ofstream outputFileStream;
+		//outputFileStream.open("config.txt");		
+		//outputFileStream.close();
+
+//#include <stdio.h>
+//
+//		struct data {
+//			Vector<Byte> memory;
+//		};
+//
+//		Vector<ULL> data {};
+//		for (int i = 0; i < count; i++) {
+//			data.push_back(115564237);
+//		}
+//
+//		std::ofstream myfile = std::ofstream("file.bin", std::ios::out | std::ios::binary);
+//		myfile.write((char*)&data[0], sizeof(ULL) * data.size());
+//		myfile.close();
+//
+//
+//		std::ifstream myinfile = std::ifstream("file.bin", std::ios::in | std::ios::ate| std::ios::binary);
+//
+//		ULL data[] = new ULL(size);
+//
+//
+//		myinfile.read((char*)p, sizeof(ULL) * count);
+//		myinfile.close();
+//
+//		for (int i = 0; i < count; i++) {
+//			std::cout << p[i] << "\n";
+//		}
 
 		/////////////////////////////////////////////////////////////////////////////////////////////////
-		system("pause");
+		pause();
 	}
 	return 0;
 }

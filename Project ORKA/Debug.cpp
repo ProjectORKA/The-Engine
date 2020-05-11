@@ -1,24 +1,61 @@
 
-#include "Program.hpp"
+#include <iostream>
+#include "Debug.hpp"
 
 void beep() {
 	std::cout << '\a';
 }
 
-void debugPrint(const char * debugMessage) {
+void pause() {
+#ifdef _WIN32
+	system("pause");
+#else
+	std::cout << "Thread was paused..." << "\n";
+	char a;
+	std::cin >> a;
+#endif
+}
+void debugPrint(Vec2& t)
+{
 #ifdef DEBUG
-	std::cout << debugMessage << std::endl;
+	std::cout << "(" << t.x << "|" << t.y << ")" << "\n";
+#endif // DEBUG
+}
+;
+
+void debugPrint(Vec3 & t) {
+#ifdef DEBUG
+	std::cout << "(" << t.x << "|" << t.y << "|" << t.z << ")" << "\n";
 #endif // DEBUG
 }
 
-void whenGLFWThrowsError(int error, const char * description)
+void pollGraphicsAPIError() {
+#ifdef GRAPHICS_API_OPENGL
+	GLenum error = glGetError();
+	if (error) {
+		std::cout << "OpenGl Error: " << error << "\n";
+	}
+#endif
+}
+
+void debugPrint(Matrix& matrix) {
+#ifdef DEBUG
+	std::cout << "[ " << matrix[0][0] << "  " << matrix[0][1] << "  " << matrix[0][2] << "  " << matrix[0][3] << " ]" << "\n";
+	std::cout << "[ " << matrix[1][0] << "  " << matrix[1][1] << "  " << matrix[1][2] << "  " << matrix[1][3] << " ]" << "\n";
+	std::cout << "[ " << matrix[2][0] << "  " << matrix[2][1] << "  " << matrix[2][2] << "  " << matrix[2][3] << " ]" << "\n";
+	std::cout << "[ " << matrix[3][0] << "  " << matrix[3][1] << "  " << matrix[3][2] << "  " << matrix[3][3] << " ]" << "\n";
+#endif // DEBUG
+}
+
+void whenWindowAPIThrowsError(Int error, const char * description)
 {
-	std::cout << "Error: " << description << std::endl;
+	std::cout << "Error: " << description << "\n";
 	std::getchar();
 	exit(EXIT_FAILURE);
 }
 
-void __stdcall DebugOutputCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar * message, const void * userParam) {
+#ifdef GRAPHICS_API_OPENGL
+void __stdcall DebugOutputCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam) {
 	if (severity != GL_DEBUG_SEVERITY_NOTIFICATION) {
 		printf("OpenGL Debug Output message : ");
 
@@ -42,3 +79,4 @@ void __stdcall DebugOutputCallback(GLenum source, GLenum type, GLuint id, GLenum
 		printf("Message : %s\n", message);
 	}
 }
+#endif // GRAPHICS_API_OPENGL

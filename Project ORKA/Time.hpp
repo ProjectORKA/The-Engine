@@ -1,17 +1,22 @@
+#pragma once
+
+#include "Basics.hpp"
 
 #include <chrono>
 
+using TimePoint = std::chrono::steady_clock::time_point;
+
+using Duration = std::chrono::duration<Double, std::ratio< 1 / 1 >>;
+
 struct Time {
-	bool paused = false;
+	Bool paused = false;
+	TimePoint lastTime;
+	TimePoint currentTime;
+	Duration deltaDuration = std::chrono::seconds::zero();
+	Duration totalDuration = std::chrono::seconds::zero();
+	Float delta = 0.0f;
+	Float total = 0.0f;
 
-	void resetTime();
-	void processTime();
-	float delta();
-	float total();
-
-private:
-	std::chrono::steady_clock::time_point lastTime;
-	std::chrono::steady_clock::time_point currentTime;
-	std::chrono::duration<double, std::ratio< 1 / 1 >> deltaDuration = std::chrono::seconds::zero();
-	std::chrono::duration<double, std::ratio< 1 / 1 >> totalDuration = std::chrono::seconds::zero();
+	void reset();
+	void update();
 };
