@@ -31,9 +31,8 @@
 # include <algorithm>
 # include <random>
 
-namespace siv
-{
-	class PerlinNoise
+
+class PerlinNoise
 	{
 	private:
 
@@ -216,4 +215,3 @@ namespace siv
 			return octaveNoise(x, y, z, octaves) * 0.5 + 0.5;
 		}
 	};
-}

@@ -23,32 +23,69 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="Chunk.cpp" />
+    <ClCompile Include="CPUMesh.cpp" />
     <ClCompile Include="Debug.cpp" />
-    <ClCompile Include="EntityComponentSystem.cpp" />
+    <ClCompile Include="Entity.cpp" />
+    <ClCompile Include="Files.cpp" />
+    <ClCompile Include="Framebuffer.cpp" />
     <ClCompile Include="GameSimulation.cpp" />
-    <ClCompile Include="Input.cpp" />
     <ClCompile Include="Math.cpp" />
+    <ClCompile Include="GPUMesh.cpp" />
     <ClCompile Include="MeshSystem.cpp" />
+    <ClCompile Include="ProceduralMeshes.cpp" />
     <ClCompile Include="Program.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Render.cpp" />
-    <ClCompile Include="Shader.cpp" />
+    <ClCompile Include="Renderer.cpp" />
+    <ClCompile Include="RenderInfoPipeline.cpp" />
+    <ClCompile Include="RenderObjectSystem.cpp" />
+    <ClCompile Include="ShaderSystem.cpp" />
+    <ClCompile Include="STB_Image.cpp" />
+    <ClCompile Include="TextureSystem.cpp" />
     <ClCompile Include="Time.cpp" />
-    <ClCompile Include="Transformations.cpp" />
+    <ClCompile Include="Uniforms.cpp" />
+    <ClCompile Include="ViewportSystem.cpp" />
     <ClCompile Include="Window.cpp" />
-    <ClCompile Include="WorldSystem.cpp" />
+    <ClCompile Include="WindowSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\External Libraries\STB IMAGE\stb_image.h" />
+    <ClInclude Include="Basics.hpp" />
+    <ClInclude Include="Camera.hpp" />
+    <ClInclude Include="CPUMesh.hpp" />
     <ClInclude Include="Debug.hpp" />
+    <ClInclude Include="Chunk.hpp" />
+    <ClInclude Include="Entity.hpp" />
+    <ClInclude Include="Files.hpp" />
+    <ClInclude Include="Framebuffer.hpp" />
+    <ClInclude Include="GameSimulation.hpp" />
+    <ClInclude Include="GraphicsAPI.hpp" />
     <ClInclude Include="Math.hpp" />
+    <ClInclude Include="GPUMesh.hpp" />
+    <ClInclude Include="MeshFileInfo.hpp" />
+    <ClInclude Include="MeshSystem.hpp" />
     <ClInclude Include="PerlinNoise.hpp" />
+    <ClInclude Include="PrimitiveModes.hpp" />
+    <ClInclude Include="ProceduralMeshes.hpp" />
+    <ClInclude Include="Rectangle.hpp" />
+    <ClInclude Include="RenderObjectSystem.hpp" />
+    <ClInclude Include="RenderQueue.hpp" />
     <ClInclude Include="Program.hpp" />
+    <ClInclude Include="Renderer.hpp" />
+    <ClInclude Include="ShaderSystem.hpp" />
+    <ClInclude Include="Terrain.hpp" />
+    <ClInclude Include="TextureSystem.hpp" />
     <ClInclude Include="Time.hpp" />
+    <ClInclude Include="Uniforms.hpp" />
+    <ClInclude Include="ViewportSystem.hpp" />
+    <ClInclude Include="Window.hpp" />
+    <ClInclude Include="WindowAPI.hpp" />
+    <ClInclude Include="WindowsEntry.hpp" />
+    <ClInclude Include="WindowSystem.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="shaders\primitive chunk instanced.vert" />
-    <None Include="shaders\primitive chunk.vert" />
-    <None Include="shaders\primitive.frag" />
+    <None Include="Data\shaders\primitive.frag" />
+    <None Include="Data\shaders\primitive.vert" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
@@ -130,9 +167,11 @@
       <SubSystem>Console</SubSystem>
     </Link>
     <PostBuildEvent>
-      <Command>XCOPY "$(SolutionDir)\Project ORKA\shaders" "$(TargetDir)\shaders" /S /Y /I
-XCOPY "$(SolutionDir)\Project ORKA\objects" "$(TargetDir)\objects" /S /Y /I</Command>
+      <Command>XCOPY "$(SolutionDir)\Project ORKA\Data" "$(TargetDir)\Data" /S /Y /I</Command>
     </PostBuildEvent>
+    <Manifest>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+    </Manifest>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -156,9 +195,11 @@ XCOPY "$(SolutionDir)\Project ORKA\objects" "$(TargetDir)\objects" /S /Y /I</Com
       <SubSystem>Console</SubSystem>
     </Link>
     <PostBuildEvent>
-      <Command>XCOPY "$(SolutionDir)\Project ORKA\shaders" "$(TargetDir)\shaders" /S /Y /I
-XCOPY "$(SolutionDir)\Project ORKA\objects" "$(TargetDir)\objects" /S /Y /I</Command>
+      <Command>XCOPY "$(SolutionDir)\Project ORKA\Data" "$(TargetDir)\Data" /S /Y /I</Command>
     </PostBuildEvent>
+    <Manifest>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+    </Manifest>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -182,11 +223,10 @@ XCOPY "$(SolutionDir)\Project ORKA\objects" "$(TargetDir)\objects" /S /Y /I</Com
       <IgnoreSpecificDefaultLibraries>
       </IgnoreSpecificDefaultLibraries>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
-      <SubSystem>Windows</SubSystem>
+      <SubSystem>Console</SubSystem>
     </Link>
     <PostBuildEvent>
-      <Command>XCOPY "$(SolutionDir)\Project ORKA\shaders" "$(TargetDir)\shaders" /S /Y /I
-XCOPY "$(SolutionDir)\Project ORKA\objects" "$(TargetDir)\objects" /S /Y /I</Command>
+      <Command>XCOPY "$(SolutionDir)\Project ORKA\Data" "$(TargetDir)\Data" /S /Y /I</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -212,11 +252,10 @@ XCOPY "$(SolutionDir)\Project ORKA\objects" "$(TargetDir)\objects" /S /Y /I</Com
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <IgnoreSpecificDefaultLibraries>
       </IgnoreSpecificDefaultLibraries>
-      <SubSystem>Windows</SubSystem>
+      <SubSystem>Console</SubSystem>
     </Link>
     <PostBuildEvent>
-      <Command>XCOPY "$(SolutionDir)\Project ORKA\shaders" "$(TargetDir)\shaders" /S /Y /I
-XCOPY "$(SolutionDir)\Project ORKA\objects" "$(TargetDir)\objects" /S /Y /I</Command>
+      <Command>XCOPY "$(SolutionDir)\Project ORKA\Data" "$(TargetDir)\Data" /S /Y /I</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
