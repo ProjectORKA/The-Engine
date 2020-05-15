@@ -34,7 +34,8 @@ struct Renderer {
 	//render state
 	RenderObjectSystem renderObjectSystem;
 
-	Bool renderSync = false;
+	Mutex mutex;
+
 	void sync();
 
 	void create();

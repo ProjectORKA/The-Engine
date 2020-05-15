@@ -33,7 +33,8 @@ void ViewportSystem::render(Framebuffer& framebuffer)
 
 Viewport& ViewportSystem::current()
 {
-	return viewports[currentViewport];
+	Viewport & viewport = viewports[currentViewport];
+	return viewport;
 }
 
 void ViewportSystem::destroy()
@@ -45,10 +46,10 @@ void ViewportSystem::destroy()
 
 void Viewport::update(Framebuffer& framebuffer)
 {
-	absoluteX		= framebuffer.size.x * relativeX;
-	absoluteY		= framebuffer.size.y * relativeY;
-	absoluteWidth	= framebuffer.size.x * relativeWidth;
-	absoluteHeight	= framebuffer.size.y * relativeHeight;
+	absoluteX		= framebuffer.width * relativeX;
+	absoluteY		= framebuffer.height * relativeY;
+	absoluteWidth	= max(1,framebuffer.width * relativeWidth);
+	absoluteHeight	= max(1,framebuffer.height * relativeHeight);
 }
 
 void Viewport::render() {

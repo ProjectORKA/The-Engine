@@ -22,6 +22,8 @@
 
 #include "Program.hpp"
 
+//Logger logger;
+
 int main(int argc, char* argv[]) {
 
 	srand(static_cast <unsigned> (time(0)));
@@ -35,40 +37,7 @@ int main(int argc, char* argv[]) {
 		//testing code
 		/////////////////////////////////////////////////////////////////////////////////////////////////
 
-		//std::ofstream outputFileStream;
-		//outputFileStream.open("config.txt");		
-		//outputFileStream.close();
-
-//#include <stdio.h>
-//
-//		struct data {
-//			Vector<Byte> memory;
-//		};
-//
-//		Vector<ULL> data {};
-//		for (int i = 0; i < count; i++) {
-//			data.push_back(115564237);
-//		}
-//
-//		std::ofstream myfile = std::ofstream("file.bin", std::ios::out | std::ios::binary);
-//		myfile.write((char*)&data[0], sizeof(ULL) * data.size());
-//		myfile.close();
-//
-//
-//		std::ifstream myinfile = std::ifstream("file.bin", std::ios::in | std::ios::ate| std::ios::binary);
-//
-//		ULL data[] = new ULL(size);
-//
-//
-//		myinfile.read((char*)p, sizeof(ULL) * count);
-//		myinfile.close();
-//
-//		for (int i = 0; i < count; i++) {
-//			std::cout << p[i] << "\n";
-//		}
-
 		/////////////////////////////////////////////////////////////////////////////////////////////////
-		pause();
 	}
 	return 0;
 }

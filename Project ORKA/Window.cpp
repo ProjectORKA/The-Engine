@@ -17,7 +17,7 @@ void Window::create()
 void Window::center() {
 	Rect<Int> workableArea;
 	getWorkableArea(workableArea);
-	setPosition(workableArea.center() - renderer.framebuffer.size/Vec2(2));
+	setPosition(workableArea.center() - Vec2(renderer.framebuffer.width / 2, renderer.framebuffer.height/2));
 }
 void Window::reload() {
 #ifdef WINDOW_API_GLFW
@@ -31,6 +31,7 @@ void Window::destroy() {
 void Window::pushFrame()
 {
 #ifdef WINDOW_API_GLFW
+	beep();
 	glfwSwapBuffers(apiWindow);
 #endif // WINDOW_API_GLFW
 }
@@ -69,7 +70,7 @@ void Window::stopThread()
 		thread.join();
 	}
 	else {
-		debugPrint("Error: WindowThread is not joinable!");
+		logError("WindowThread is not joinable!");
 	}
 }
 void Window::processInput() {
@@ -125,7 +126,7 @@ void Window::createAPIWindow() {
 		glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
 #endif
 
-		apiWindow = glfwCreateWindow(renderer.framebuffer.size.x, renderer.framebuffer.size.y, title.c_str(), NULL, NULL);
+		apiWindow = glfwCreateWindow(renderer.framebuffer.width, renderer.framebuffer.height, title.c_str(), NULL, NULL);
 
 		assert(apiWindow);
 
@@ -155,7 +156,7 @@ void Window::createAPIWindow() {
 		glfwSetFramebufferSizeCallback(apiWindow, whenFramebufferIsResized);
 	}
 	else {
-		debugPrint("Error: Window already exists!");
+		logError("Window already exists!");
 	}
 }
 void Window::destroyAPIWindow() {
@@ -171,7 +172,7 @@ void Window::destroyAPIWindow() {
 #endif // WINDOW_API_GLFW
 		apiWindow = nullptr;
 	}
-	debugPrint("API Window destroyed!");
+	logEvent("API Window destroyed!");
 }
 void Window::toggleFullscreen() {
 	fullScreen = !fullScreen;
@@ -185,11 +186,11 @@ void Window::toggleFullscreen() {
 			glfwMaximizeWindow(apiWindow);
 			GLFWmonitor* monitor = glfwGetPrimaryMonitor();
 			const GLFWvidmode* videoMode = glfwGetVideoMode(monitor);
-			glfwSetWindowMonitor(apiWindow, monitor, 0, 0, renderer.framebuffer.size.x = videoMode->width, renderer.framebuffer.size.y = videoMode->height, GLFW_DONT_CARE);
+			glfwSetWindowMonitor(apiWindow, monitor, 0, 0, renderer.framebuffer.width = videoMode->width, renderer.framebuffer.height = videoMode->height, GLFW_DONT_CARE);
 		}
 	}
 	else {
-		glfwSetWindowMonitor(apiWindow, nullptr, 0, 0, renderer.framebuffer.size.x, renderer.framebuffer.size.y, GLFW_DONT_CARE);
+		glfwSetWindowMonitor(apiWindow, nullptr, 0, 0, renderer.framebuffer.width, renderer.framebuffer.height, GLFW_DONT_CARE);
 		glfwRestoreWindow(apiWindow);
 		if (decorated) {
 			glfwSetWindowAttrib(apiWindow, GLFW_DECORATED, GLFW_TRUE);
@@ -199,7 +200,9 @@ void Window::toggleFullscreen() {
 void Window::setIcon(Path path) {
 
 	CPUTexture cpuTexture;
+	stbi_set_flip_vertically_on_load(false);
 	cpuTexture.loadRGBA(path, "Icon");
+	stbi_set_flip_vertically_on_load(true);
 
 	if (cpuTexture.bytePixels && cpuTexture.dataType == dataTypeByte) {
 		GLFWimage icon;
@@ -266,6 +269,7 @@ void whenWindowChangedFocus(APIWindow window, Int focused) {
 }
 void whenWindowWasMinimized(APIWindow window, Int minimized)
 {
+	logEvent("Window minimized!");
 	Window& parentWindowClass = *static_cast<Window*>(glfwGetWindowUserPointer(window));
 	if (minimized)
 	{

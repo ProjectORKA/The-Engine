@@ -21,7 +21,7 @@ void ShaderSystem::create() {
 	);
 	fragmentShader.load(FragmentShaderType,
 	"#version 330 core\n\
-	in vec2 textureCoordinate;\n\
+	in vec2 textureCoordinate; \n\
 	out vec4 color;;\n\
 	uniform sampler2D texture0;\n\
 	void main()\n\
@@ -135,13 +135,13 @@ void ShaderProgram::use(Uniforms& uniforms) {
 		}
 	}
 	else {
-		debugPrint("Error: ShaderProgram not loaded!");
+		logError("ShaderProgram not loaded!");
 	}
 #endif // GRAPHICS_API_OPENGL
 };
 void ShaderProgram::load(Shader& vertexShader, Shader& fragmentShader) {
 	if (loaded) {
-		debugPrint("Error: ShaderProgram already loaded!");
+		logError("ShaderProgram already loaded!");
 	}
 	else {
 #ifdef GRAPHICS_API_OPENGL
@@ -177,6 +177,6 @@ void ShaderProgram::unload()
 #endif // GRAPHICS_API_OPENGL
 	}
 	else {
-		debugPrint("Error: ShaderProgram already unloaded!");
+		logDebug("ShaderProgram already unloaded!");
 	}
 }

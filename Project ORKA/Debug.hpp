@@ -6,6 +6,12 @@
 
 #define DEBUG
 
+void logEvent(String message);
+void logDebug(String message);
+void logError(String message);
+
+
+
 //functions
 void beep();
 void pause();
@@ -13,13 +19,13 @@ void debugPrint(Vec2& t);
 void debugPrint(Vec3 & t);
 void debugPrint(Matrix & t);
 
-//templates
-template<typename T>
-void debugPrint(T t) {
-#ifdef DEBUG
-	std::cout << t << "\n";
-#endif // DEBUG
-}
+////templates
+//template<typename T>
+//void debugPrint(T t) {
+//#ifdef DEBUG
+//	std::cout << t << "\n";
+//#endif // DEBUG
+//}
 
 #ifdef GRAPHICS_API_OPENGL
 void __stdcall DebugOutputCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam);

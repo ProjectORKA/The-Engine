@@ -30,7 +30,7 @@ void GPUMesh::upload(CPUMesh& cpuMesh) {
 		}
 	}
 	else {
-		debugPrint("Error: CPUMesh not loaded!");
+		logError("CPUMesh not loaded!");
 	}
 }
 
@@ -65,7 +65,7 @@ void GPUMesh::render() {
 		glDisableVertexAttribArray(2);
 	}
 	else {
-		debugPrint("Error: GPUMesh not loaded!");
+		logError("GPUMesh not loaded!");
 	}
 #endif // GRAPHICS_API_OPENGL
 }

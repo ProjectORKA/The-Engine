@@ -88,9 +88,6 @@
     <Filter Include="Source Files\Renderer\MeshSystem\CPUMesh">
       <UniqueIdentifier>{081e9c71-bbb8-4b7d-89be-bdfbffb7daaf}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Renderer\MeshSystem\MeshFileInfo">
-      <UniqueIdentifier>{eab5b8ba-a2d4-43f7-9bb0-c433ac0ab289}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\Renderer\MeshSystem\Procedural Meshes">
       <UniqueIdentifier>{0016b895-e579-4149-a337-b4c2826fbeae}</UniqueIdentifier>
     </Filter>
@@ -265,9 +262,6 @@
     </ClInclude>
     <ClInclude Include="PrimitiveModes.hpp">
       <Filter>Source Files\Renderer\MeshSystem</Filter>
-    </ClInclude>
-    <ClInclude Include="MeshFileInfo.hpp">
-      <Filter>Source Files\Renderer\MeshSystem\MeshFileInfo</Filter>
     </ClInclude>
     <ClInclude Include="ViewportSystem.hpp">
       <Filter>Source Files\Renderer\ViewportSystem</Filter>

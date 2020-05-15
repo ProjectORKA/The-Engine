@@ -12,14 +12,12 @@ void CPUTexture::loadHDR(Path path, String name) {
 	//stbi_hdr_to_ldr_gamma(2.2f);
 	//stbi_hdr_to_ldr_scale(1.0f);
 	//float *data = stbi_loadf(filepath, &width, &height, &bytes, 3);
-	stbi_set_flip_vertically_on_load(true);
 	if (pixels) loaded = true;
 }
 void CPUTexture::loadRGBA(Path path, String name)
 {
 
 	this->name = name;
-	stbi_set_flip_vertically_on_load(true);
 	pixels = stbi_load(path.string().c_str(), &width, &height, &channels, STBI_rgb_alpha);
 	std::cout << stbi_failure_reason() << "\n";
 	if (pixels) loaded = true;
@@ -28,7 +26,6 @@ void CPUTexture::loadRGBA(Path path, String name)
 void CPUTexture::loadRGB(Path path, String name)
 {
 	this->name = name;
-	stbi_set_flip_vertically_on_load(true);
 	pixels = stbi_load(path.string().c_str(), &width, &height, &channels, STBI_rgb);
 	std::cout << stbi_failure_reason() << "\n";
 	if (pixels) loaded = true;
@@ -142,5 +139,5 @@ void loadAllTextures(TextureSystem& textureSystem)
 			tmp.loadRGB(entry.path(), entry.path().filename().replace_extension().string());
 			if (tmp.loaded) textureSystem.add(tmp);
 		}
-	else debugPrint("Error: Texture folder (Data/textures) doesent exist!");
+	else logError("Texture folder (Data/textures) doesent exist!");
 }

@@ -12,12 +12,12 @@ struct Camera {
 	//hard data
 	Vec3 location = Vec3(0, -10, 0);
 
-	Float cameraRotationX = 1;// -PI / 2;
-	Float cameraRotationZ = 0.0f;
+	Float cameraRotationX = -PI / 2;
+	Float cameraRotationZ = -PI / 2;
 	Float fieldOfView = 80.0;
-	Float nearClipValue = 0.001f;
-	Float farClipValue = 10.0f;
-	Float mouseSensitivity = 0.002f;
+	Float nearClipValue = 0.002f;
+	Float farClipValue = 100.0f;
+	Float mouseSensitivity = 0.0015f;
 	Int speedMultiplier = INITIAL_CAMERA_SPEED;
 	Vec3 accelerationVector = Vec3(0);
 
@@ -27,6 +27,9 @@ struct Camera {
 	Vec3 rightVector = { 1.0f, 0.0f, 0.0f };
 	Vec3 upVector = { 0.0f, 0.0f, 1.0f };
 
+	Matrix projectionMatrix(float aspectRatio);
+	Matrix viewMatrix();
+	Matrix viewMatrixOnlyRot();
 	virtual void processLocation(Time& renderTime);
 	void rotate(float x, float y) {
 		cameraRotationX -= mouseSensitivity * y;
