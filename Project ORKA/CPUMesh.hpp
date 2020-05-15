@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Basics.hpp"
-#include "MeshFileInfo.hpp"
+#include "Debug.hpp"
 #include "PrimitiveModes.hpp"
 //assimp
 #include <assimp/Importer.hpp>
@@ -16,6 +16,17 @@ struct CPUMesh {
 	Vector<Index> indices;
 	Bool readyForUpload = false;
 	
-	void load(MeshFileInfo & info);
-	void load(String name, PrimitiveMode mode, Path path);
+	void loadFBX(String name, PrimitiveMode mode, Path path);
+
+	void loadMeshFile(Path path);
+	void saveMeshFile();
+};
+
+struct MeshHeaderV1 {
+	const unsigned int version = 1;
+	char meshName[100] = {0};
+	PrimitiveMode primitiveMode = Triangles;
+	unsigned int vertexCount = 0;
+	unsigned int uvCount = 0;
+	unsigned int indexCount = 0;
 };

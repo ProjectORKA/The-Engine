@@ -8,14 +8,22 @@ void RenderObjectSystem::create() {
 
 	shaderSystem.create();
 
-	addRenderObject("defaultObject", "skeleton", "skeleton", "default");
+	addRenderObject("default", "default", "default", "default");
+	addRenderObject("skeleton", "skeleton", "skeleton", "default");
+	addRenderObject("monkey", "monkey", "default", "default");
+	addRenderObject("sky", "sky", "sky", "default");
 
 }
 void RenderObjectSystem::addRenderObject(String name, String meshName, String textureName, String shaderName) {
 	
-	meshSystem.loadFromMeshFile(meshName);
-
+	//find the specified mesh
 	auto itM = meshSystem.meshNames.find(meshName);
+	if (itM == meshSystem.meshNames.end()) {
+		//its not already loaded
+		meshSystem.loadMesh(name);
+	}
+	itM = meshSystem.meshNames.find(meshName);
+
 	auto itS = shaderSystem.shaderNames.find(shaderName);
 	auto itT = textureSystem.textureNames.find(textureName);
 
@@ -27,7 +35,7 @@ void RenderObjectSystem::addRenderObject(String name, String meshName, String te
 		nameToIndex[name] = renderObjects.size() - 1;
 	}
 	else {
-		debugPrint("Could not find assets to create Render Object.");
+		logDebug(String("Could not find assets to create Render Object. (").append(name).append(" = ").append(meshName).append("|").append(textureName).append("|").append(shaderName).append(")"));
 	}
 }
 void RenderObjectSystem::render(String name) {
@@ -39,7 +47,7 @@ void RenderObjectSystem::render(String name) {
 		meshSystem.renderMesh(renderObject.meshID);
 	}
 	else {
-		debugPrint("RenderObject With this name doesent exist.");
+		logDebug("RenderObject With this name doesent exist.");
 	}
 }
 

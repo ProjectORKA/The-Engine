@@ -2,10 +2,26 @@
 #include <iostream>
 #include "Debug.hpp"
 
+bool showEvents = true;
+bool showDebug = true;
+bool showError = true;
+
+void logEvent(String message)
+{
+	if(showEvents) std::cout <<	"Event: " << message << "\n";
+}
+void logDebug(String message)
+{
+	if(showDebug) std::cout <<	"Debug: " << message << "\n";
+}
+void logError(String message)
+{
+	if(showError) std::cout <<	"Error: " << message << "\n";
+}
+
 void beep() {
 	std::cout << '\a';
 }
-
 void pause() {
 #ifdef _WIN32
 	system("pause");
@@ -20,8 +36,7 @@ void debugPrint(Vec2& t)
 #ifdef DEBUG
 	std::cout << "(" << t.x << "|" << t.y << ")" << "\n";
 #endif // DEBUG
-}
-;
+};
 
 void debugPrint(Vec3 & t) {
 #ifdef DEBUG

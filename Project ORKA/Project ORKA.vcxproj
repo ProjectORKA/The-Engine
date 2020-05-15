@@ -62,7 +62,6 @@
     <ClInclude Include="GraphicsAPI.hpp" />
     <ClInclude Include="Math.hpp" />
     <ClInclude Include="GPUMesh.hpp" />
-    <ClInclude Include="MeshFileInfo.hpp" />
     <ClInclude Include="MeshSystem.hpp" />
     <ClInclude Include="PerlinNoise.hpp" />
     <ClInclude Include="PrimitiveModes.hpp" />
