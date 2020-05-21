@@ -1,7 +1,9 @@
 # Project-ORKA
 The official engine source code for Project ORKA
 
-For now Windows only, so easiest way to set it up is by using Visual Studio 2019. With Visual Studio, the libreries should already be connected as they use relative paths. The Data folder will automatically be copied to the output folder.
+For now Windows only, so easiest way to set it up is by using Visual Studio 2019. With Visual Studio, the libraries should already be connected as they use relative paths.
+The Data folder should automatically be copied to the output folder when you build.
+The dlls for assimp however need to be included for the final .exe.
 
 ## Features
 * clean and easy to read
