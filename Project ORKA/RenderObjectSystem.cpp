@@ -3,26 +3,32 @@
 
 void RenderObjectSystem::create() {
 	meshSystem.create();
-
 	textureSystem.create();
-
 	shaderSystem.create();
 
-	addRenderObject("default", "default", "default", "default");
-	addRenderObject("skeleton", "skeleton", "skeleton", "default");
-	addRenderObject("monkey", "monkey", "default", "default");
-	addRenderObject("sky", "sky", "sky", "default");
 
+	addRenderObject("spaceShip", "spaceShip", "spaceShip", "spaceShip");
+	addRenderObject("spaceShipLOD", "spaceShipLOD", "spaceShip", "spaceShip");
+	addRenderObject("earth", "earth", "earth", "primitive");
+
+	addRenderObject("wireBox", "wireMeshBox", "default", "debug");
+	addRenderObject("default", "default", "default", "primitive");
+	addRenderObject("plane", "plane", "default", "debug");
+	addRenderObject("terrain", "terrain", "default", "primitive");
+	addRenderObject("boundingBox", "boundingBox", "default", "debug");
+	addRenderObject("skeleton", "skeleton", "skeleton", "primitive");
+	addRenderObject("monkey", "monkey", "default", "primitive");
+	addRenderObject("sky", "sky", "stars", "primitive");
 }
-void RenderObjectSystem::addRenderObject(String name, String meshName, String textureName, String shaderName) {
+void RenderObjectSystem::addRenderObject(String name, Name meshName, Name textureName, Name shaderName) {
 	
 	//find the specified mesh
 	auto itM = meshSystem.meshNames.find(meshName);
 	if (itM == meshSystem.meshNames.end()) {
-		//its not already loaded
-		meshSystem.loadMesh(name);
+		//maybe its not loaded
+		meshSystem.loadMesh(meshName);
+		itM = meshSystem.meshNames.find(meshName);
 	}
-	itM = meshSystem.meshNames.find(meshName);
 
 	auto itS = shaderSystem.shaderNames.find(shaderName);
 	auto itT = textureSystem.textureNames.find(textureName);
@@ -35,7 +41,7 @@ void RenderObjectSystem::addRenderObject(String name, String meshName, String te
 		nameToIndex[name] = renderObjects.size() - 1;
 	}
 	else {
-		logDebug(String("Could not find assets to create Render Object. (").append(name).append(" = ").append(meshName).append("|").append(textureName).append("|").append(shaderName).append(")"));
+		logDebug(String("Could not find assets to create Render Object. (").append(name).append(" = ").append(meshName.data).append("|").append(textureName.data).append("|").append(shaderName.data).append(")"));
 	}
 }
 void RenderObjectSystem::render(String name) {

@@ -3,20 +3,20 @@
 #include "Math.hpp"
 #include "Time.hpp"
 
-#define INITIAL_CAMERA_SPEED 1 //230		//1 as fast as a human 400 as fast as light
+#define INITIAL_CAMERA_SPEED 230		//1 as fast as a human 400 as fast as light
 #define CAMERA_SPEED_MULTIPLIER 1.2f		//controls the increase in speed when scrolling mouse
 
 struct Renderer;
 
 struct Camera {
 	//hard data
-	Vec3 location = Vec3(0, -10, 0);
+	Vec3 location = Vec3(0, 0, 0);
 
 	Float cameraRotationX = -PI / 2;
 	Float cameraRotationZ = -PI / 2;
 	Float fieldOfView = 80.0;
-	Float nearClipValue = 0.002f;
-	Float farClipValue = 100.0f;
+	Float nearClipValue = 0.01f;
+	Float farClipValue = 10000.0f;
 	Float mouseSensitivity = 0.0015f;
 	Int speedMultiplier = INITIAL_CAMERA_SPEED;
 	Vec3 accelerationVector = Vec3(0);
@@ -60,12 +60,14 @@ struct Camera {
 
 		upVector = glm::cross(rightVector, forwardVector);
 	}
+	void render(Renderer& renderer);
 };
 
 struct OctreeWorldSystemCamera : public Camera {
+	Bool clampMovement = true;
 	ULLVec3 chunkLocation = ULLVec3(LLONG_MAX, LLONG_MAX, LLONG_MAX);
-
-	void process(Time & renderTime);
+	void applySubChunkLocation();
+	void processLocation(Time & renderTime);
 };
 
 struct CameraSystem {
@@ -78,5 +80,5 @@ struct CameraSystem {
 	void add();
 	void select(Index cameraID);
 	void render(Renderer & renderer);
-	Camera & current();
+	OctreeWorldSystemCamera& current();
 };

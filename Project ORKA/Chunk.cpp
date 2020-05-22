@@ -1,108 +1,106 @@
 
 #include "Chunk.hpp"
+#include "Renderer.hpp"
+#include "PerlinNoise.hpp"
 
-void generateTerrain(Chunk& chunk) {
+void Chunk::processSubdivision(GameSimulation& gameSimulation) {
+	if (subdivided) {
+		if (nextTicksInUse > 0) {
+			nextTicksInUse--;
+			tfr->processSubdivision(gameSimulation);
+			tfl->processSubdivision(gameSimulation);
+			tbr->processSubdivision(gameSimulation);
+			tbl->processSubdivision(gameSimulation);
+			bfr->processSubdivision(gameSimulation);
+			bfl->processSubdivision(gameSimulation);
+			bbr->processSubdivision(gameSimulation);
+			bbl->processSubdivision(gameSimulation);
+		}
+		else {
+			unsubdivide();
+		}
+	}
+	else {
+		if (nextTicksInUse > 0) {
+			subdivide(gameSimulation);
+			nextTicksInUse--;
+		}
+		else {
+			unsubdivide();
+		}
+	}
+}
+void Chunk::unsubdivide() {
+	if (subdivided) {
+		mutex.lock();
+		subdivided = false;
+		delete tfr;
+		delete tfl;
+		delete tbr;
+		delete tbl;
+		delete bfr;
+		delete bfl;
+		delete bbr;
+		delete bbl;
+		tfr = nullptr;
+		tfl = nullptr;
+		tbr = nullptr;
+		tbl = nullptr;
+		bfr = nullptr;
+		bfl = nullptr;
+		bbr = nullptr;
+		bbl = nullptr;
+		mutex.unlock();
+	}
+}
+
+void Chunk::subdivide(GameSimulation& gameSimulation) {
+	mutex.lock();
+	logEvent(String("Subdividing!"));
+	if (subdivided == false && level < CHUNK_LEVEL_MAX) {
+		tfr = new Chunk(gameSimulation, *this, 1, 1, 1);
+		tfl = new Chunk(gameSimulation, *this, 0, 1, 1);
+		tbr = new Chunk(gameSimulation, *this, 1, 0, 1);
+		tbl = new Chunk(gameSimulation, *this, 0, 0, 1);
+		bfr = new Chunk(gameSimulation, *this, 1, 1, 0);
+		bfl = new Chunk(gameSimulation, *this, 0, 1, 0);
+		bbr = new Chunk(gameSimulation, *this, 1, 0, 0);
+		bbl = new Chunk(gameSimulation, *this, 0, 0, 0);
+		subdivided = true;
+	}
+	mutex.unlock();
+};
+void Chunk::generateTerrain() {
 	static PerlinNoise noise;
 
 	noise.reseed(12345);
 
-	long double noiseSize = 32;
+	long double noiseSize = 1;
 
-	long double x = ((unsigned long long)(chunk.location.x << (64 - chunk.level))) / ((long double)LLONG_MAX / noiseSize);
-	long double y = ((unsigned long long)(chunk.location.y << (64 - chunk.level))) / ((long double)LLONG_MAX / noiseSize);
-	long double z = (unsigned long long)(chunk.location.z << (64 - chunk.level));
+	long double x = (location.x << 64 - level) / (long double(ULLONG_MAX) / noiseSize);
+	long double y = (location.y << 64 - level) / (long double(ULLONG_MAX) / noiseSize);
 
-	long double lowBorder = (long double)(((unsigned long long)(chunk.location.z)) << (64 - chunk.level));
-	long double highBorder = (long double)(((unsigned long long)(chunk.location.z + 1)) << (64 - chunk.level));
-	long double target = ((long double)noise.octaveNoise0_1(x, y, 16)) * ((long double)LLONG_MAX / ((long double)4.0 * noiseSize));
+	unsigned long long target = unsigned long long(long double(noise.octaveNoise0_1(x, y,8)) * long double(LLONG_MAX)/8);
 
-	if (chunk.location.z == 0) {
-		chunk.terrain.hasTerrain = true;
-		chunk.terrain.height = (float)(target / pow(2, 64 - chunk.level));
-	}
+	terrain.hasTerrain = (location.z << 64 - level < target);
 }
-
-void unsubdivideChunk(Chunk& chunk) {
-	chunk.mutex.lock();
-	chunk.subdivided = false;
-	chunk.tfr = nullptr;
-	chunk.tfl = nullptr;
-	chunk.tbr = nullptr;
-	chunk.tbl = nullptr;
-	chunk.bfr = nullptr;
-	chunk.bfl = nullptr;
-	chunk.bbr = nullptr;
-	chunk.bbl = nullptr;
-	chunk.mutex.unlock();
-};
-
-void subdivideChunk(Chunk& chunk, GameSimulation& gameSimulation) {
-	if (chunk.subdivided == false && chunk.level < CHUNK_LEVEL_MAX) {
-		chunk.tfr = std::make_shared<Chunk>();
-		chunk.tfl = std::make_shared<Chunk>();
-		chunk.tbr = std::make_shared<Chunk>();
-		chunk.tbl = std::make_shared<Chunk>();
-		chunk.bfr = std::make_shared<Chunk>();
-		chunk.bfl = std::make_shared<Chunk>();
-		chunk.bbr = std::make_shared<Chunk>();
-		chunk.bbl = std::make_shared<Chunk>();
-		createChildChunk(*chunk.tfr, chunk, gameSimulation, 1, 1, 1);
-		createChildChunk(*chunk.tfl, chunk, gameSimulation, 0, 1, 1);
-		createChildChunk(*chunk.tbr, chunk, gameSimulation, 1, 0, 1);
-		createChildChunk(*chunk.tbl, chunk, gameSimulation, 0, 0, 1);
-		createChildChunk(*chunk.bfr, chunk, gameSimulation, 1, 1, 0);
-		createChildChunk(*chunk.bfl, chunk, gameSimulation, 0, 1, 0);
-		createChildChunk(*chunk.bbr, chunk, gameSimulation, 1, 0, 0);
-		createChildChunk(*chunk.bbl, chunk, gameSimulation, 0, 0, 0);
-		chunk.subdivided = true;
-	}
-};
-
-void setChunkIsInUse(Chunk& chunk, GameSimulation& gameSimulation) {
-	chunk.nextTicksInUse = 100;
+void Chunk::setIsInUse() {
+	nextTicksInUse = 1000;
 }
-
-void processSubdivision(Chunk& chunk, GameSimulation& gameSimulation) {
-	if (chunk.subdivided) {
-		if (chunk.nextTicksInUse > 0) {
-			chunk.nextTicksInUse--;
-			processSubdivision(*chunk.tfr, gameSimulation);
-			processSubdivision(*chunk.tfl, gameSimulation);
-			processSubdivision(*chunk.tbr, gameSimulation);
-			processSubdivision(*chunk.tbl, gameSimulation);
-			processSubdivision(*chunk.bfr, gameSimulation);
-			processSubdivision(*chunk.bfl, gameSimulation);
-			processSubdivision(*chunk.bbr, gameSimulation);
-			processSubdivision(*chunk.bbl, gameSimulation);
-		}
-		else {
-			unsubdivideChunk(chunk);
-		}
-	}
-	else {
-		if (chunk.nextTicksInUse > 0) {
-			subdivideChunk(chunk, gameSimulation);
-			chunk.nextTicksInUse--;
-		}
-		else {
-			unsubdivideChunk(chunk);
-		}
-	}
-}
-
-void createChildChunk(Chunk& chunk, Chunk& parent, GameSimulation& gameSimulation, bool x, bool y, bool z) {
-	chunk.parent = &parent;
-	//chunk.locationInParentChunkX = x;
-	//chunk.locationInParentChunkY = y;
-	//chunk.locationInParentChunkZ = z;
-
-	chunk.level = parent.level + 1;
-	chunk.location.x = (parent.location.x << 1) + x;
-	chunk.location.y = (parent.location.y << 1) + y;
-	chunk.location.z = (parent.location.z << 1) + z;
+Chunk::Chunk(){};
+Chunk::Chunk(GameSimulation& gameSimualtion, Chunk & parent, Bool x, Bool y, Bool z) {
+	level = parent.level + 1;
+	location.x = (parent.location.x << 1) + x;
+	location.y = (parent.location.y << 1) + y;
+	location.z = (parent.location.z << 1) + z;
 
 	//transferEntities(chunk, parent, gameSimulation,x,y,z);
 
 	//generateEntities(chunk, gameSimulation);
-	generateTerrain(chunk);
+
+	generateTerrain();
+}
+Chunk::~Chunk()
+{
+	unsubdivide();
 }

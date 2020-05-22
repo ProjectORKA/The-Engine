@@ -25,14 +25,17 @@
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Chunk.cpp" />
     <ClCompile Include="CPUMesh.cpp" />
+    <ClCompile Include="CPUTexture.cpp" />
     <ClCompile Include="Debug.cpp" />
     <ClCompile Include="Entity.cpp" />
     <ClCompile Include="Files.cpp" />
     <ClCompile Include="Framebuffer.cpp" />
     <ClCompile Include="GameSimulation.cpp" />
+    <ClCompile Include="HeightMap.cpp" />
     <ClCompile Include="Math.cpp" />
     <ClCompile Include="GPUMesh.cpp" />
     <ClCompile Include="MeshSystem.cpp" />
+    <ClCompile Include="Name.cpp" />
     <ClCompile Include="ProceduralMeshes.cpp" />
     <ClCompile Include="Program.cpp" />
     <ClCompile Include="main.cpp" />
@@ -40,7 +43,8 @@
     <ClCompile Include="RenderInfoPipeline.cpp" />
     <ClCompile Include="RenderObjectSystem.cpp" />
     <ClCompile Include="ShaderSystem.cpp" />
-    <ClCompile Include="STB_Image.cpp" />
+    <ClCompile Include="stb_image.cpp" />
+    <ClCompile Include="Terrain.cpp" />
     <ClCompile Include="TextureSystem.cpp" />
     <ClCompile Include="Time.cpp" />
     <ClCompile Include="Uniforms.cpp" />
@@ -49,10 +53,10 @@
     <ClCompile Include="WindowSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\External Libraries\STB IMAGE\stb_image.h" />
     <ClInclude Include="Basics.hpp" />
     <ClInclude Include="Camera.hpp" />
     <ClInclude Include="CPUMesh.hpp" />
+    <ClInclude Include="CPUTexture.hpp" />
     <ClInclude Include="Debug.hpp" />
     <ClInclude Include="Chunk.hpp" />
     <ClInclude Include="Entity.hpp" />
@@ -60,9 +64,11 @@
     <ClInclude Include="Framebuffer.hpp" />
     <ClInclude Include="GameSimulation.hpp" />
     <ClInclude Include="GraphicsAPI.hpp" />
+    <ClInclude Include="HeightMap.hpp" />
     <ClInclude Include="Math.hpp" />
     <ClInclude Include="GPUMesh.hpp" />
     <ClInclude Include="MeshSystem.hpp" />
+    <ClInclude Include="Name.hpp" />
     <ClInclude Include="PerlinNoise.hpp" />
     <ClInclude Include="PrimitiveModes.hpp" />
     <ClInclude Include="ProceduralMeshes.hpp" />
@@ -72,6 +78,7 @@
     <ClInclude Include="Program.hpp" />
     <ClInclude Include="Renderer.hpp" />
     <ClInclude Include="ShaderSystem.hpp" />
+    <ClInclude Include="stb_image.h" />
     <ClInclude Include="Terrain.hpp" />
     <ClInclude Include="TextureSystem.hpp" />
     <ClInclude Include="Time.hpp" />
@@ -83,8 +90,12 @@
     <ClInclude Include="WindowSystem.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Data\shaders\debug.frag" />
+    <None Include="Data\shaders\debug.vert" />
     <None Include="Data\shaders\primitive.frag" />
     <None Include="Data\shaders\primitive.vert" />
+    <None Include="Data\shaders\spaceShip.frag" />
+    <None Include="Data\shaders\spaceShip.vert" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>

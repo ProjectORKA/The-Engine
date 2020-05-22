@@ -30,17 +30,15 @@ struct ShaderProgram {
 
 	Index programID = 0;
 
-	Vector<String> uniformNames;
-	Vector<UShort> type;
-	Vector<Index> shaderUniformIDs;
+	Map<Name, Index> uniformNameToID;
 
-	void load(Shader& vertexShader, Shader& fragmentShader);
+	void load(Shader& vertexShader, Shader& fragmentShader, Uniforms & uniforms);
 	void use(Uniforms & uniforms);
 	void unload();
 };
 
 struct ShaderSystem {
-	Map<String, Index> shaderNames;
+	Map<Name, Index> shaderNames;
 	Vector<ShaderProgram> shaderPrograms;
 	Uniforms uniforms;
 
@@ -51,7 +49,7 @@ struct ShaderSystem {
 	void create();
 	void destroy();
 
-	void add(Shader& vertexShader, Shader& fragmentShader, String name);
+	void add(Shader& vertexShader, Shader& fragmentShader, Name name);
 	void useShader(Index shaderID);
-	void useShader(String name);
+	void useShader(Name name);
 };

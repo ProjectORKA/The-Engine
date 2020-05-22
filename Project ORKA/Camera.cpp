@@ -4,62 +4,11 @@
 
 struct Viewport;
 
-void applySubChunkLocation(OctreeWorldSystemCamera& camera) {
-	if ((camera.chunkLocation.x > 1) | (camera.chunkLocation.x <= -1)) {
-		LL x = camera.location.x;
-		camera.location.x -= x;
-		camera.chunkLocation.x += x;
-	}
-
-	if ((camera.location.y > 1) | (camera.location.y <= -1)) {
-		LL y = camera.location.y;
-		camera.location.y -= y;
-		camera.chunkLocation.y += y;
-	}
-
-	Float lowest = 0.99;
-
-	if ((camera.location.z < -lowest) & (camera.chunkLocation.z == 0)) {
-		camera.location.z = -lowest;
-		camera.chunkLocation.z = 0;
-	}
-	else {
-		if (camera.location.z < -1) {
-			ULL intDeltaZ = 0;
-			intDeltaZ -= camera.location.z;
-			ULL newZ = camera.chunkLocation.z - intDeltaZ;
-
-			if (newZ > camera.chunkLocation.z) {
-				camera.chunkLocation.z = 0;
-				camera.location.z = -lowest;
-			}
-			else {
-				camera.location.z += intDeltaZ;
-				camera.chunkLocation.z = newZ;
-			}
-		}
-		if (camera.location.z > 1) {
-			ULL maximum = ULLONG_MAX / 2;
-			ULL intDeltaZ = camera.location.z;
-			ULL newZ = camera.chunkLocation.z + intDeltaZ;
-			if ((newZ < camera.chunkLocation.z) | (newZ > maximum)) {
-				intDeltaZ = maximum - camera.chunkLocation.z;
-				camera.chunkLocation.z = maximum;
-				camera.location -= intDeltaZ;
-			}
-			else {
-				camera.location.z -= intDeltaZ;
-				camera.chunkLocation.z = newZ;
-			}
-		}
-	}
-}
-
 void CameraSystem::create()
 {
 	add();
 	select(0);
-	current().rotate(0,0);
+	current().rotate(0, 0);
 }
 void CameraSystem::add()
 {
@@ -71,9 +20,11 @@ void CameraSystem::select(Index cameraID)
 }
 void CameraSystem::render(Renderer& renderer)
 {
-	
+	renderer.renderObjectSystem.shaderSystem.uniforms.matrices["vpMatrix"]
+		= current().projectionMatrix(renderer.viewportSystem.current().aspectRatio())
+		* current().viewMatrix();
 }
-Camera& CameraSystem::current()
+OctreeWorldSystemCamera& CameraSystem::current()
 {
 	return cameras[currentCamera];
 }
@@ -113,15 +64,78 @@ void Camera::processLocation(Time& renderTime) {
 
 	accelerationVector = { 0,0,0 };
 }
+void Camera::render(Renderer& renderer) {
+	renderer.renderObjectSystem.shaderSystem.uniforms.matrices["vpMatrix"] = projectionMatrix(renderer.viewportSystem.current().aspectRatio()) * viewMatrix();
+}
 
-void OctreeWorldSystemCamera::process(Time & renderTime)
+void OctreeWorldSystemCamera::applySubChunkLocation() {
+
+	//all values > 1 or < 0 will be applied to the chunkLocation
+
+	if (floor(location.x) != 0) {
+		if (floor(location.x) > 0) {
+			unsigned long long chunkDelta = floor(location.x);
+			location.x -= chunkDelta;
+			chunkLocation.x += chunkDelta;
+		}
+		else {
+			unsigned long long chunkDelta = -floor(location.x);
+			location.x += chunkDelta;
+			chunkLocation.x -= chunkDelta;
+		}
+	}
+
+	if (floor(location.y) != 0) {
+		if (floor(location.y) > 0) {
+			unsigned long long chunkDelta = floor(location.y);
+			location.y -= chunkDelta;
+			chunkLocation.y += chunkDelta;
+		}
+		else {
+			unsigned long long chunkDelta = -floor(location.y);
+			location.y += chunkDelta;
+			chunkLocation.y -= chunkDelta;
+		}
+	}
+
+	if (floor(location.z) != 0) {
+		if (floor(location.z) > 0) {
+			unsigned long long chunkDelta = floor(location.z);
+
+			if (chunkLocation.z + chunkDelta > chunkLocation.z) {
+				location.z -= chunkDelta;
+				chunkLocation.z += chunkDelta;
+			}
+			else {
+				//camera is outside world bounds, but we will render anyway
+				chunkDelta = ULLONG_MAX - chunkLocation.z;
+				chunkLocation.z = ULLONG_MAX;
+				location.z -= chunkDelta;
+			}
+		}
+		else {
+
+			unsigned long long chunkDelta = -floor(location.z);
+
+			if (chunkDelta > chunkLocation.z) {
+				chunkLocation.z = 0;
+				location.z = 0;
+			}
+			else {
+				location.z += chunkDelta;
+				chunkLocation.z -= chunkDelta;
+			}
+		}
+	}
+}
+void OctreeWorldSystemCamera::processLocation(Time& renderTime)
 {
 	cameraSpeed = pow(CAMERA_SPEED_MULTIPLIER, speedMultiplier);
 	accelerationVector *= cameraSpeed * renderTime.delta;
 
-	location += glm::clamp(accelerationVector, (Float)LLONG_MIN / 2, (Float)LLONG_MAX / 2);
+	location += accelerationVector;
 
-	applySubChunkLocation(*this);
+	if(clampMovement)applySubChunkLocation();
 
 	accelerationVector = { 0,0,0 };
 }

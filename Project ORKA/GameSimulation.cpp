@@ -2,10 +2,15 @@
 #include "GameSimulation.hpp"
 
 void GameSimulation::process() {
-	processSubdivision(world, *this);
+	world.processSubdivision(*this);
+	if (!gameTime.paused) {
+		for (SpaceShip& ship : spaceShips) {
+			ship.update(gameTime);
+		}
+	}
 }
 
-void GameSimulationThread(GameSimulation & gameSimulation) {
+void GameSimulationThread(GameSimulation& gameSimulation) {
 
 	gameSimulation.gameTime.reset();
 
@@ -22,14 +27,28 @@ void GameSimulationThread(GameSimulation & gameSimulation) {
 		//wait for next tick
 		std::this_thread::sleep_until(t);
 	}
-	
-	//cleanup
-	//unsubdivideChunk(*gameSimulation.worldSystem.octreeRoot);
-	//destroyEntities(*gameSimulation.worldSystem.octreeRoot);
 }
 
 void GameSimulation::start()
 {
+	UShort team = 0;
+
+	float extend = 5;
+
+	for (int i = 0; i < 10000; i++) {
+		spaceShips.emplace_back();
+		spaceShips.back().location = Vec3(randomFloat(-extend, extend), randomFloat(-extend, extend), randomFloat(-extend, extend));
+		spaceShips.back().velocity = Vec3(randomFloat(-extend, extend), randomFloat(-extend, extend), randomFloat(-extend, extend));
+		spaceShips.back().team = team;
+		team++;
+
+		spaceShips.emplace_back();
+		spaceShips.back().location = Vec3(randomFloat(-extend, extend), randomFloat(-extend, extend), randomFloat(-extend, extend));
+		spaceShips.back().velocity = Vec3(randomFloat(-extend, extend), randomFloat(-extend, extend), randomFloat(-extend, extend));
+		spaceShips.back().team = team;
+		team--;
+	}
+
 	keepThreadRunning = true;
 	thread = Thread(GameSimulationThread, std::ref(*this));
 }

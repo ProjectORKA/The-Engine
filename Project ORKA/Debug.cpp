@@ -16,6 +16,7 @@ void logDebug(String message)
 }
 void logError(String message)
 {
+	beep();
 	if(showError) std::cout <<	"Error: " << message << "\n";
 }
 

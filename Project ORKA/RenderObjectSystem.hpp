@@ -20,7 +20,7 @@ struct RenderObjectSystem {
 	Vector<RenderObject> renderObjects;
 
 	void create();
-	void addRenderObject(String name, String meshName, String textureName, String shaderName);
+	void addRenderObject(String name, Name meshName, Name textureName, Name shaderName);
 	void render(String name);
 	void destroy();
 };
