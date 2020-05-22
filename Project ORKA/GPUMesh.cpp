@@ -1,31 +1,93 @@
 
 #include "GPUMesh.hpp"
 
+#include "Renderer.hpp"
+
+void VertexBufferObject::create(UInt location, float* data, UInt byteSize, UInt usage, Index components)
+{
+#ifdef GRAPHICS_API_OPENGL
+	glGenBuffers(1, &bufferID);
+	glBindBuffer(GL_ARRAY_BUFFER, bufferID);
+	glBufferData(GL_ARRAY_BUFFER, byteSize, data, usage);
+	glVertexAttribPointer(location, components, GL_FLOAT, GL_FALSE, 0, (void*)0);
+#endif // GRAPHICS_API_OPENGL
+}
+void VertexBufferObject::unload()
+{
+#ifdef GRAPHICS_API_OPENGL
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glDeleteBuffers(1, &bufferID);
+#endif // GRAPHICS_API_OPENGL
+}
+
+void IndexBufferObject::create(Index* data, UInt byteSize, UInt usage)
+{
+#ifdef GRAPHICS_API_OPENGL
+	glGenBuffers(1, &bufferID);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bufferID);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, byteSize, data, usage);
+#endif // GRAPHICS_API_OPENGL
+}
+void IndexBufferObject::unload()
+{
+#ifdef GRAPHICS_API_OPENGL
+	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	glDeleteBuffers(1, &bufferID);
+#endif // GRAPHICS_API_OPENGL
+}
+
+void VertexArrayObject::create(CPUMesh& mesh)
+{
+
+#ifdef GRAPHICS_API_OPENGL
+	glGenVertexArrays(1, &arrayObjectID);
+	glBindVertexArray(arrayObjectID);
+#endif // GRAPHICS_API_OPENGL
+
+	add(glm::value_ptr(mesh.vertices[0]), mesh.vertices.size() * sizeof(Vec3), StaticBufferUsage, 3);
+	add(glm::value_ptr(mesh.uvs[0]), mesh.uvs.size() * sizeof(Vec2), StaticBufferUsage, 2);
+
+	indexBuffer.create(mesh.indices.data(), mesh.indices.size() * sizeof(Index), StaticBufferUsage);
+
+}
+void VertexArrayObject::add(float* data, UInt byteSize, UInt usage, Index components)
+{
+	buffers.emplace_back();
+	buffers.back().create(vertexAttributeCount, data, byteSize, usage, components);
+#ifdef GRAPHICS_API_OPENGL
+	glEnableVertexAttribArray(vertexAttributeCount);
+#endif // GRAPHICS_API_OPENGL
+	vertexAttributeCount++;
+}
+void VertexArrayObject::render()
+{
+#ifdef GRAPHICS_API_OPENGL
+	glBindVertexArray(arrayObjectID);
+
+#endif // GRAPHICS_API_OPENGL
+}
+void VertexArrayObject::unload()
+{
+	for (auto& buffer : buffers) {
+		buffer.unload();
+	}
+	buffers.clear();
+
+	indexBuffer.unload();
+#ifdef GRAPHICS_API_OPENGL
+	//glBindVertexArray(0);
+	glDeleteVertexArrays(1, &arrayObjectID);
+#endif // GRAPHICS_API_OPENGL
+}
+
 void GPUMesh::upload(CPUMesh& cpuMesh) {
 	if (!loaded) {
 		if (cpuMesh.readyForUpload) {
 			indexCount = cpuMesh.indices.size();
 			primitiveMode = cpuMesh.primitiveMode;
 
-			//create vertex array
-#ifdef GRAPHICS_API_OPENGL
-			glGenVertexArrays(1, &vertexArrayObjectID);
-			glBindVertexArray(vertexArrayObjectID);
-			//create vertex buffer
-			glGenBuffers(1, &vertexBufferID);
-			glBindBuffer(GL_ARRAY_BUFFER, vertexBufferID);
-			glBufferData(GL_ARRAY_BUFFER, cpuMesh.vertices.size() * sizeof(glm::vec3), cpuMesh.vertices.data(), GL_STATIC_DRAW);
+			vao.create(cpuMesh);
 
-			//create uv buffer
-			glGenBuffers(1, &uvBufferID);
-			glBindBuffer(GL_ARRAY_BUFFER, uvBufferID);
-			glBufferData(GL_ARRAY_BUFFER, cpuMesh.uvs.size() * sizeof(glm::vec2), cpuMesh.uvs.data(), GL_STATIC_DRAW);
-
-			//create index buffer
-			glGenBuffers(1, &indexBufferID);
-			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBufferID);
-			glBufferData(GL_ELEMENT_ARRAY_BUFFER, cpuMesh.indices.size() * sizeof(unsigned int), cpuMesh.indices.data(), GL_STATIC_DRAW);
-#endif // GRAPHICS_API_OPENGL
 			loaded = true;
 		}
 	}
@@ -33,23 +95,11 @@ void GPUMesh::upload(CPUMesh& cpuMesh) {
 		logError("CPUMesh not loaded!");
 	}
 }
-
 void GPUMesh::render() {
 	if (loaded) {
 #ifdef GRAPHICS_API_OPENGL
 
-		//bind
-		glBindVertexArray(vertexArrayObjectID);
-		//vertices
-		glEnableVertexAttribArray(0);
-		glBindBuffer(GL_ARRAY_BUFFER, vertexBufferID);
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
-		//uvs
-		glEnableVertexAttribArray(1);
-		glBindBuffer(GL_ARRAY_BUFFER, uvBufferID);
-		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);
-		//indices
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBufferID);
+		vao.render();
 
 		//render
 		glDrawElements(
@@ -58,33 +108,14 @@ void GPUMesh::render() {
 			GL_UNSIGNED_INT,
 			(void*)0
 		);
-
-		//unbind
-		glDisableVertexAttribArray(0);
-		glDisableVertexAttribArray(1);
-		glDisableVertexAttribArray(2);
 	}
 	else {
 		logError("GPUMesh not loaded!");
 	}
 #endif // GRAPHICS_API_OPENGL
 }
-
 void GPUMesh::unload() {
 	//make unavailable for rendering
 	loaded = false;
-#ifdef GRAPHICS_API_OPENGL
-	//delete buffers
-
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glDeleteBuffers(1, &vertexBufferID);
-	glDeleteBuffers(1, &uvBufferID);
-	
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-	glDeleteBuffers(1, &indexBufferID);
-
-	//delete vertex array object
-	glBindVertexArray(0);
-	glDeleteVertexArrays(1, &vertexArrayObjectID);
-#endif // GRAPHICS_API_OPENGL
+	vao.unload();
 }

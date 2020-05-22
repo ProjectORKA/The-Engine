@@ -1,10 +1,8 @@
+
 #pragma once
 
-#include "Terrain.hpp"
-//noise
-#include "PerlinNoise.hpp"
+#include "Basics.hpp"
 
 struct Terrain {
 	Bool hasTerrain = false;
-	Float height = 0.0f;
 };

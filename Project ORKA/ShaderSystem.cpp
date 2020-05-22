@@ -40,19 +40,29 @@ void ShaderSystem::create() {
 	vertexShader.unload();
 	fragmentShader.unload();
 
+	vertexShader.loadFromFile(VertexShaderType, "Data/shaders/debug.vert");
+	fragmentShader.loadFromFile(FragmentShaderType, "Data/shaders/debug.frag");
+	add(vertexShader, fragmentShader, "debug");
+	vertexShader.unload();
+	fragmentShader.unload();
 
+	vertexShader.loadFromFile(VertexShaderType, "Data/shaders/spaceShip.vert");
+	fragmentShader.loadFromFile(FragmentShaderType, "Data/shaders/spaceShip.frag");
+	add(vertexShader, fragmentShader, "spaceShip");
+	vertexShader.unload();
+	fragmentShader.unload();
 }
-void ShaderSystem::add(Shader& vertexShader, Shader& fragmentShader, String name)
+void ShaderSystem::add(Shader& vertexShader, Shader& fragmentShader, Name name)
 {
 	shaderPrograms.emplace_back();
-	shaderPrograms.back().load(vertexShader, fragmentShader);
+	shaderPrograms.back().load(vertexShader, fragmentShader, uniforms);
 	shaderNames[name] = shaderPrograms.size() - 1;
 }
 void ShaderSystem::useShader(Index shaderID)
 {
 	shaderPrograms[shaderID].use(uniforms);
 }
-void ShaderSystem::useShader(String name)
+void ShaderSystem::useShader(Name name)
 {
 	auto it = shaderNames.find(name);
 	if (it != shaderNames.end()) {
@@ -110,28 +120,28 @@ void ShaderProgram::use(Uniforms& uniforms) {
 	if (loaded) {
 		glUseProgram(programID);
 
-		for (auto bVariable : uniforms.bools) {
-			glUniform1i(glGetUniformLocation(programID, bVariable.first.c_str()), bVariable.second);
+		for (auto & bVariable : uniforms.bools) {
+			glUniform1i(uniformNameToID[bVariable.first.data], bVariable.second);
 		}
 
-		for (auto iVariable : uniforms.ints) {
-			glUniform1i(glGetUniformLocation(programID, iVariable.first.c_str()), iVariable.second);
+		for (auto& iVariable : uniforms.ints) {
+			glUniform1i(uniformNameToID[iVariable.first.data], iVariable.second);
 		}
 
-		for (auto fVariable : uniforms.floats) {
-			glUniform1f(glGetUniformLocation(programID, fVariable.first.c_str()), fVariable.second);
+		for (auto& fVariable : uniforms.floats) {
+			glUniform1f(uniformNameToID[fVariable.first.data], fVariable.second);
 		}
 
-		for (auto vec3Variable : uniforms.vec3s) {
-			glUniform3f(glGetUniformLocation(programID, vec3Variable.first.c_str()), vec3Variable.second.x, vec3Variable.second.y, vec3Variable.second.z);
+		for (auto & vec3Variable : uniforms.vec3s) {
+			glUniform3f(uniformNameToID[vec3Variable.first.data], vec3Variable.second.x, vec3Variable.second.y, vec3Variable.second.z);
 		}
 
-		for (auto vec4Variable : uniforms.vec4s) {
-			glUniform4f(glGetUniformLocation(programID, vec4Variable.first.c_str()), vec4Variable.second.x, vec4Variable.second.y, vec4Variable.second.z, vec4Variable.second.w);
+		for (auto & vec4Variable : uniforms.vec4s) {
+			glUniform4f(uniformNameToID[vec4Variable.first.data], vec4Variable.second.x, vec4Variable.second.y, vec4Variable.second.z, vec4Variable.second.w);
 		}
 
-		for (auto matVariable : uniforms.matrices) {
-			glUniformMatrix4fv(glGetUniformLocation(programID, matVariable.first.c_str()), 1, GL_FALSE, glm::value_ptr(matVariable.second));
+		for (auto & matVariable : uniforms.matrices) {
+			glUniformMatrix4fv(uniformNameToID[matVariable.first.data], 1, GL_FALSE, glm::value_ptr(matVariable.second));
 		}
 	}
 	else {
@@ -139,7 +149,7 @@ void ShaderProgram::use(Uniforms& uniforms) {
 	}
 #endif // GRAPHICS_API_OPENGL
 };
-void ShaderProgram::load(Shader& vertexShader, Shader& fragmentShader) {
+void ShaderProgram::load(Shader& vertexShader, Shader& fragmentShader, Uniforms & uniforms) {
 	if (loaded) {
 		logError("ShaderProgram already loaded!");
 	}
@@ -165,7 +175,34 @@ void ShaderProgram::load(Shader& vertexShader, Shader& fragmentShader) {
 		glDetachShader(programID, fragmentShader.shaderID);
 
 		glUseProgram(programID);
+
+		//check for all uniforms
+		for (auto & b : uniforms.bools) {
+			uniformNameToID[b.first.data] = glGetUniformLocation(programID, b.first.data);
+		}
+
+		for (auto & i : uniforms.ints) {
+			uniformNameToID[i.first.data] = glGetUniformLocation(programID, i.first.data);
+		}
+
+		for (auto & f : uniforms.floats) {
+			uniformNameToID[f.first.data] = glGetUniformLocation(programID, f.first.data);
+		}
+
+		for (auto & v3 : uniforms.vec3s) {
+			uniformNameToID[v3.first.data] = glGetUniformLocation(programID, v3.first.data);
+		}
+
+		for (auto & v4 : uniforms.vec4s) {
+			uniformNameToID[v4.first.data] = glGetUniformLocation(programID, v4.first.data);
+		}
+
+		for (auto & m : uniforms.matrices) {
+			uniformNameToID[m.first.data] = glGetUniformLocation(programID, m.first.data);
+		}
+
 #endif // GRAPHICS_API_OPENGL
+
 		loaded = true;
 	}
 }

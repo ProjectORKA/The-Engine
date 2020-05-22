@@ -8,5 +8,8 @@ in vec2 textureCoordinate;
 uniform sampler2D texture0;
 
 void main(){
-	color = vec4(texture(texture0, textureCoordinate).rgb,1.0);
+	
+	if(texture(texture0,textureCoordinate).a != 1) discard;
+
+	color = vec4(texture(texture0, textureCoordinate).rgba);
 };

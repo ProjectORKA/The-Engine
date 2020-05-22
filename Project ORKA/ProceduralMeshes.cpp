@@ -1,18 +1,18 @@
 #include "ProceduralMeshes.hpp"
 
-void proceduralWireframeCubeMesh(CPUMesh& cpuMesh, Float size)
+void proceduralWireframeCubeMesh(CPUMesh& cpuMesh, Float size, Float size2)
 {
 	cpuMesh.primitiveMode = Lines;
 
 	cpuMesh.vertices = {
-		Vec3(size,  size,  size),
-		Vec3(size,  size, -size),
-		Vec3(size, -size,  size),
-		Vec3(size, -size, -size),
-		Vec3(-size,  size,  size),
-		Vec3(-size,  size, -size),
-		Vec3(-size, -size,  size),
-		Vec3(-size, -size, -size)
+		Vec3(size,size,1),
+		Vec3(size,size,0),
+		Vec3(size,size2,1),
+		Vec3(size,size2,0),
+		Vec3(size2,size,1),
+		Vec3(size2,size,0),
+		Vec3(size2,size2,1),
+		Vec3(size2,size2,0)
 	};
 
 	cpuMesh.uvs = {

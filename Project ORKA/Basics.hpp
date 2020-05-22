@@ -25,6 +25,8 @@ using Byte = unsigned char;
 #include <string>
 using String = std::string;
 
+#include "Name.hpp"
+
 //glm
 #include "glm/glm.hpp"
 #include <glm/gtc/type_ptr.hpp>
@@ -41,6 +43,11 @@ using Color = glm::vec4;
 using ULLVec3 = glm::u64vec3;
 
 using Matrix = glm::mat4;
+
+#include "glm/gtc/quaternion.hpp"
+#include "glm/gtx/quaternion.hpp"
+
+using Rotation = glm::quat;
 
 //input output
 #include <iostream>

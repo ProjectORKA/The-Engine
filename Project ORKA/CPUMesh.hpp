@@ -9,22 +9,22 @@
 #include <assimp/scene.h>
 
 struct CPUMesh {
-	String name = "empty";
+	Name name = "empty";
 	PrimitiveMode primitiveMode = Triangles;
 	Vector<Vec3> vertices;
 	Vector<Vec2> uvs;
 	Vector<Index> indices;
 	Bool readyForUpload = false;
 	
-	void loadFBX(String name, PrimitiveMode mode, Path path);
-
+	void autoLoadFromFile(Name name);
+	void loadFBX(Path path);
 	void loadMeshFile(Path path);
 	void saveMeshFile();
 };
 
 struct MeshHeaderV1 {
 	const unsigned int version = 1;
-	char meshName[100] = {0};
+	Name meshName = "";
 	PrimitiveMode primitiveMode = Triangles;
 	unsigned int vertexCount = 0;
 	unsigned int uvCount = 0;

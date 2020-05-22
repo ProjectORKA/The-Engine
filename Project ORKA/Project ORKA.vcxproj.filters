@@ -61,15 +61,6 @@
     <Filter Include="Source Files\Math">
       <UniqueIdentifier>{2e13d5ce-260d-4969-8d33-be51b594853b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Chunk">
-      <UniqueIdentifier>{d4500e7d-bec5-49e7-bb6c-561aa78823ca}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Entity">
-      <UniqueIdentifier>{d3851aab-272f-4729-98cf-dfcc8439cabb}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Terrain">
-      <UniqueIdentifier>{98c06bda-03a6-4770-b679-fa9438bc1b55}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\Files">
       <UniqueIdentifier>{8a8febb3-04cd-4e46-a5a9-bab78f5fd4d9}</UniqueIdentifier>
     </Filter>
@@ -103,6 +94,30 @@
     <Filter Include="Source Files\Renderer\TextureSystem\STBImage">
       <UniqueIdentifier>{957fac7d-8447-4f84-96d9-96a685c2e12b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\GameSimulation\Chunk">
+      <UniqueIdentifier>{d4500e7d-bec5-49e7-bb6c-561aa78823ca}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\GameSimulation\Chunk\Terrain">
+      <UniqueIdentifier>{98c06bda-03a6-4770-b679-fa9438bc1b55}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Renderer\TextureSystem\HeightMaps">
+      <UniqueIdentifier>{578f485a-7834-4681-a534-f700ac3c9b71}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Renderer\TextureSystem\CPUTexture">
+      <UniqueIdentifier>{10467fa2-a405-4cc1-acdc-0ac086fb5eee}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\GameSimulation\Entity">
+      <UniqueIdentifier>{d3851aab-272f-4729-98cf-dfcc8439cabb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Shaders\debug">
+      <UniqueIdentifier>{8057ee02-1eca-49b3-9c61-27e8bd0e455b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Shaders\primitive">
+      <UniqueIdentifier>{b4447bb9-dc42-4638-87e1-88d2e0781b1b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Shaders\spaceShip">
+      <UniqueIdentifier>{ca68672c-2d35-4481-bcdc-ec899da11103}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -113,10 +128,7 @@
       <Filter>Source Files\GameSimulation</Filter>
     </ClCompile>
     <ClCompile Include="Chunk.cpp">
-      <Filter>Source Files\Chunk</Filter>
-    </ClCompile>
-    <ClCompile Include="Entity.cpp">
-      <Filter>Source Files\Entity</Filter>
+      <Filter>Source Files\GameSimulation\Chunk</Filter>
     </ClCompile>
     <ClCompile Include="Camera.cpp">
       <Filter>Source Files\Renderer\CameraSystem</Filter>
@@ -141,9 +153,6 @@
     </ClCompile>
     <ClCompile Include="TextureSystem.cpp">
       <Filter>Source Files\Renderer\TextureSystem</Filter>
-    </ClCompile>
-    <ClCompile Include="STB_Image.cpp">
-      <Filter>Source Files\Renderer\TextureSystem\STBImage</Filter>
     </ClCompile>
     <ClCompile Include="Time.cpp">
       <Filter>Source Files\Time</Filter>
@@ -178,6 +187,24 @@
     <ClCompile Include="ProceduralMeshes.cpp">
       <Filter>Source Files\Renderer\MeshSystem\Procedural Meshes</Filter>
     </ClCompile>
+    <ClCompile Include="Name.cpp">
+      <Filter>Source Files\Basics</Filter>
+    </ClCompile>
+    <ClCompile Include="stb_image.cpp">
+      <Filter>Source Files\Renderer\TextureSystem\STBImage</Filter>
+    </ClCompile>
+    <ClCompile Include="Terrain.cpp">
+      <Filter>Source Files\GameSimulation\Chunk\Terrain</Filter>
+    </ClCompile>
+    <ClCompile Include="HeightMap.cpp">
+      <Filter>Source Files\Renderer\TextureSystem\HeightMaps</Filter>
+    </ClCompile>
+    <ClCompile Include="Entity.cpp">
+      <Filter>Source Files\GameSimulation\Entity</Filter>
+    </ClCompile>
+    <ClCompile Include="CPUTexture.cpp">
+      <Filter>Source Files\Renderer\TextureSystem\CPUTexture</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="icon.rc">
@@ -192,10 +219,10 @@
       <Filter>Source Files\GameSimulation</Filter>
     </ClInclude>
     <ClInclude Include="Chunk.hpp">
-      <Filter>Source Files\Chunk</Filter>
+      <Filter>Source Files\GameSimulation\Chunk</Filter>
     </ClInclude>
     <ClInclude Include="Terrain.hpp">
-      <Filter>Source Files\Terrain</Filter>
+      <Filter>Source Files\GameSimulation\Chunk\Terrain</Filter>
     </ClInclude>
     <ClInclude Include="Basics.hpp">
       <Filter>Source Files\Basics</Filter>
@@ -230,9 +257,6 @@
     <ClInclude Include="TextureSystem.hpp">
       <Filter>Source Files\Renderer\TextureSystem</Filter>
     </ClInclude>
-    <ClInclude Include="..\External Libraries\STB IMAGE\stb_image.h">
-      <Filter>Source Files\Renderer\TextureSystem\STBImage</Filter>
-    </ClInclude>
     <ClInclude Include="PerlinNoise.hpp">
       <Filter>Source Files\Math</Filter>
     </ClInclude>
@@ -246,7 +270,7 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Entity.hpp">
-      <Filter>Source Files\Entity</Filter>
+      <Filter>Source Files\GameSimulation\Entity</Filter>
     </ClInclude>
     <ClInclude Include="WindowAPI.hpp">
       <Filter>Source Files\WindowAPI</Filter>
@@ -281,13 +305,37 @@
     <ClInclude Include="Rectangle.hpp">
       <Filter>Source Files\Math</Filter>
     </ClInclude>
+    <ClInclude Include="Name.hpp">
+      <Filter>Source Files\Basics</Filter>
+    </ClInclude>
+    <ClInclude Include="stb_image.h">
+      <Filter>Source Files\Renderer\TextureSystem\STBImage</Filter>
+    </ClInclude>
+    <ClInclude Include="HeightMap.hpp">
+      <Filter>Source Files\Renderer\TextureSystem\HeightMaps</Filter>
+    </ClInclude>
+    <ClInclude Include="CPUTexture.hpp">
+      <Filter>Source Files\Renderer\TextureSystem\CPUTexture</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Data\shaders\debug.frag">
+      <Filter>Resource Files\Shaders\debug</Filter>
+    </None>
+    <None Include="Data\shaders\debug.vert">
+      <Filter>Resource Files\Shaders\debug</Filter>
+    </None>
     <None Include="Data\shaders\primitive.frag">
-      <Filter>Resource Files\Shaders</Filter>
+      <Filter>Resource Files\Shaders\primitive</Filter>
     </None>
     <None Include="Data\shaders\primitive.vert">
-      <Filter>Resource Files\Shaders</Filter>
+      <Filter>Resource Files\Shaders\primitive</Filter>
+    </None>
+    <None Include="Data\shaders\spaceShip.frag">
+      <Filter>Resource Files\Shaders\spaceShip</Filter>
+    </None>
+    <None Include="Data\shaders\spaceShip.vert">
+      <Filter>Resource Files\Shaders\spaceShip</Filter>
     </None>
   </ItemGroup>
 </Project>

@@ -8,15 +8,14 @@
 
 struct MeshSystem {
 	Vector<GPUMesh>		gpuMeshes;	//uploaded meshes ready to be drawn
-	Map<Index, Index> renderComponentIndexToGPUMeshIndex;
-	Map<String, Index> meshNames;
+	Map<Name, Index> meshNames;
 
 	void create();
 	void destroy();
 
 	//mesh
-	void loadMesh(String name);
+	void loadMesh(Name name);
 	void addMesh(CPUMesh& cpuMesh);
 	void renderMesh(Index meshID);
-	void renderMesh(String meshName);
+	void renderMesh(Name meshName);
 };

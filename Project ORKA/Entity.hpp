@@ -1,16 +1,18 @@
 #pragma once
 
+#include "Time.hpp"
+#include "Name.hpp"
 #include "Basics.hpp"
+#include "Math.hpp"
 
-struct Entity {
-	virtual void process() {
-		std::cout << "i am an entity" << std::endl;
-	}
-};
+struct Renderer;
 
-struct Monkey : virtual Entity{
+struct SpaceShip {
+	UShort team = 1;
+	Location location = Vec3(0);
+	Vec3 velocity = Vec3(0,0,0);
+	Rotation rotation;
 
-	void process() {
-		std::cout << "i am a monkey" << std::endl;
-	}
+	void update(Time& time);
+	void render(Renderer& renderer);
 };

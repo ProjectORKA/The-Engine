@@ -31,13 +31,22 @@ void Window::destroy() {
 void Window::pushFrame()
 {
 #ifdef WINDOW_API_GLFW
-	beep();
 	glfwSwapBuffers(apiWindow);
 #endif // WINDOW_API_GLFW
 }
 void Window::renderLoop() {
 
 	renderer.create();
+
+
+	glfwShowWindow(apiWindow);
+
+	if (fullScreen) {
+		setFullscreen();
+	}
+	else {
+		setWindowed();
+	}
 
 	while (keepThreadRunning) {
 		if (isShown) {
@@ -52,6 +61,16 @@ void Window::renderLoop() {
 
 	renderer.destroy();
 }
+void Window::stopThread()
+{
+	keepThreadRunning = false;
+	if (thread.joinable()) {
+		thread.join();
+	}
+	else {
+		logError("WindowThread is not joinable!");
+	}
+}
 bool Window::shouldClose()
 {
 #ifdef WINDOW_API_GLFW
@@ -63,15 +82,15 @@ void Window::startThread()
 	keepThreadRunning = true;
 	thread = Thread(windowThread, std::ref(*this));
 }
-void Window::stopThread()
+void Window::setWindowed()
 {
-	keepThreadRunning = false;
-	if (thread.joinable()) {
-		thread.join();
+	glfwSetWindowMonitor(apiWindow, nullptr, 0, 0, renderer.framebuffer.width, renderer.framebuffer.height, GLFW_DONT_CARE);
+	glfwRestoreWindow(apiWindow);
+	if (decorated) {
+		glfwSetWindowAttrib(apiWindow, GLFW_DECORATED, GLFW_TRUE);
 	}
-	else {
-		logError("WindowThread is not joinable!");
-	}
+	center();
+	fullScreen = false;
 }
 void Window::processInput() {
 	processCameraMovement();
@@ -85,18 +104,26 @@ void Window::captureCursor()
 		capturingCursor = true;
 	}
 }
+void Window::setFullscreen() {
+
+	if (borderlessFullScreen) {
+		glfwSetWindowAttrib(apiWindow, GLFW_DECORATED, GLFW_FALSE);
+
+		glfwMaximizeWindow(apiWindow);
+	}
+	else {
+		glfwMaximizeWindow(apiWindow);
+		GLFWmonitor* monitor = glfwGetPrimaryMonitor();
+		const GLFWvidmode* videoMode = glfwGetVideoMode(monitor);
+		glfwSetWindowMonitor(apiWindow, monitor, 0, 0, renderer.framebuffer.width = videoMode->width, renderer.framebuffer.height = videoMode->height, GLFW_DONT_CARE);
+	}
+	fullScreen = true;
+}
 void Window::updatePosition()
 {
 #ifdef WINDOW_API_GLFW
 	glfwSetWindowPos(apiWindow, windowPosition.x, windowPosition.y);
 #endif // WINDOW_API_GLFW
-}
-void Window::uncaptureCursor() {
-	if (glfwGetInputMode(apiWindow, GLFW_CURSOR) != GLFW_CURSOR_NORMAL) {
-		glfwSetInputMode(apiWindow, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-		glfwSetCursorPos(apiWindow, cursorPosition.x, cursorPosition.y);
-		capturingCursor = false;
-	}
 }
 void Window::createAPIWindow() {
 	if (!apiWindow) {
@@ -107,8 +134,7 @@ void Window::createAPIWindow() {
 		glfwWindowHint(GLFW_BLUE_BITS, videoMode->blueBits);
 		glfwWindowHint(GLFW_REFRESH_RATE, videoMode->refreshRate);
 		//visibility
-		//glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
-		glfwWindowHint(GLFW_VISIBLE, GLFW_TRUE);
+		glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
 		//opengl stuff
 		glfwWindowHint(GLFW_SAMPLES, antiAliasing);
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
@@ -138,11 +164,6 @@ void Window::createAPIWindow() {
 
 		updatePosition();
 
-		if (fullScreen) {
-			fullScreen = false;
-			toggleFullscreen();
-		}
-
 		startThread();
 
 		//set window callbacks
@@ -157,6 +178,13 @@ void Window::createAPIWindow() {
 	}
 	else {
 		logError("Window already exists!");
+	}
+}
+void Window::uncaptureCursor() {
+	if (glfwGetInputMode(apiWindow, GLFW_CURSOR) != GLFW_CURSOR_NORMAL) {
+		glfwSetInputMode(apiWindow, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+		glfwSetCursorPos(apiWindow, cursorPosition.x, cursorPosition.y);
+		capturingCursor = false;
 	}
 }
 void Window::destroyAPIWindow() {
@@ -174,34 +202,11 @@ void Window::destroyAPIWindow() {
 	}
 	logEvent("API Window destroyed!");
 }
-void Window::toggleFullscreen() {
-	fullScreen = !fullScreen;
-	if (fullScreen) {
-		if (borderlessFullScreen) {
-			glfwSetWindowAttrib(apiWindow, GLFW_DECORATED, GLFW_FALSE);
-
-			glfwMaximizeWindow(apiWindow);
-		}
-		else {
-			glfwMaximizeWindow(apiWindow);
-			GLFWmonitor* monitor = glfwGetPrimaryMonitor();
-			const GLFWvidmode* videoMode = glfwGetVideoMode(monitor);
-			glfwSetWindowMonitor(apiWindow, monitor, 0, 0, renderer.framebuffer.width = videoMode->width, renderer.framebuffer.height = videoMode->height, GLFW_DONT_CARE);
-		}
-	}
-	else {
-		glfwSetWindowMonitor(apiWindow, nullptr, 0, 0, renderer.framebuffer.width, renderer.framebuffer.height, GLFW_DONT_CARE);
-		glfwRestoreWindow(apiWindow);
-		if (decorated) {
-			glfwSetWindowAttrib(apiWindow, GLFW_DECORATED, GLFW_TRUE);
-		}
-	}
-}
 void Window::setIcon(Path path) {
 
 	CPUTexture cpuTexture;
 	stbi_set_flip_vertically_on_load(false);
-	cpuTexture.loadRGBA(path, "Icon");
+	cpuTexture.load(path, "Icon");
 	stbi_set_flip_vertically_on_load(true);
 
 	if (cpuTexture.bytePixels && cpuTexture.dataType == dataTypeByte) {
@@ -214,7 +219,7 @@ void Window::setIcon(Path path) {
 }
 void Window::processCameraMovement() {
 
-	Camera& camera = renderer.cameraSystem.current();
+	OctreeWorldSystemCamera& camera = renderer.cameraSystem.current();
 
 	if (glfwGetKey(apiWindow, GLFW_KEY_E) == GLFW_PRESS) camera.accelerationVector += camera.upVector;
 	if (glfwGetKey(apiWindow, GLFW_KEY_Q) == GLFW_PRESS) camera.accelerationVector -= camera.upVector;
@@ -248,7 +253,7 @@ void Window::getWorkableArea(Rect<Int>& rect)
 #endif // WINDOW_API_GLFW
 }
 void Window::changeAntiAliasing(UShort antiAliasing) {
-	antiAliasing = antiAliasing;
+	this->antiAliasing = antiAliasing;
 	reload();
 }
 
@@ -335,7 +340,8 @@ void whenButtonIsPressed(APIWindow window, Int key, Int scancode, Int action, In
 	Window* parentWindowClass = static_cast<Window*>(glfwGetWindowUserPointer(window));
 
 	if (key == GLFW_KEY_ENTER && action == GLFW_PRESS && mods == GLFW_MOD_ALT) {
-		parentWindowClass->toggleFullscreen();
+		if (parentWindowClass->fullScreen) parentWindowClass->setWindowed();
+		else parentWindowClass->setFullscreen();
 	}
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
 		glfwSetWindowShouldClose(parentWindowClass->apiWindow, GLFW_TRUE);
@@ -365,6 +371,6 @@ void whenButtonIsPressed(APIWindow window, Int key, Int scancode, Int action, In
 		parentWindowClass->renderer.settings.adjustRenderVariables = !parentWindowClass->renderer.settings.adjustRenderVariables;
 	}
 	if (key == GLFW_KEY_K && action == GLFW_PRESS) {
-		parentWindowClass->renderer.renderObjectSystem.shaderSystem.uniforms.updateUniform("distortion", !parentWindowClass->renderer.renderObjectSystem.shaderSystem.uniforms.bools["distortion"]);
+		parentWindowClass->renderer.worldDistortion = !parentWindowClass->renderer.worldDistortion;
 	}
 }

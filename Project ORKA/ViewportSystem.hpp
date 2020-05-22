@@ -21,6 +21,7 @@ struct Viewport {
 	void render();
 };
 
+//[TODO] turn into RegionSystem using glScissor instead of viewport;
 struct ViewportSystem {
 	Vector<Viewport> viewports;
 	Map<String, Index> viewportNames;

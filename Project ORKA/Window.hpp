@@ -40,7 +40,8 @@ struct Window {
 	//rendering
 	void pushFrame();
 	void renderLoop();
-	void toggleFullscreen();
+	void setFullscreen();
+	void setWindowed();
 	void setIcon(Path path);
 
 	//input
