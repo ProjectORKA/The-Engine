@@ -9,7 +9,7 @@ The dlls for assimp however need to be included for the final .exe.
 * clean and easy to read
 * game-independent renderer (allows for visual customization and extremely low input lag)
 * multiple window support
-* ".fbx" loader and fully automatic ".mesh" converter
+* Mesh loader
 * Texture loader
 * instant fullscreen (Alt + Enter)
 * transparent framebuffer
