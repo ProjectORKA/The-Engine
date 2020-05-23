@@ -17,7 +17,7 @@ void RenderObjectSystem::create() {
 	addRenderObject("terrain", "terrain", "default", "primitive");
 	addRenderObject("boundingBox", "boundingBox", "default", "debug");
 	addRenderObject("skeleton", "skeleton", "skeleton", "primitive");
-	addRenderObject("monkey", "monkey", "default", "primitive");
+	addRenderObject("monkey", "monkey", "default", "debug");
 	addRenderObject("sky", "sky", "stars", "primitive");
 }
 void RenderObjectSystem::addRenderObject(String name, Name meshName, Name textureName, Name shaderName) {
@@ -48,8 +48,8 @@ void RenderObjectSystem::render(String name) {
 	auto it = nameToIndex.find(name);
 	if (it != nameToIndex.end()) {
 		RenderObject& renderObject = renderObjects[it->second];
-		textureSystem.render(renderObject.textureID);
 		shaderSystem.useShader(renderObject.shaderID);
+		textureSystem.render(renderObject.textureID);
 		meshSystem.renderMesh(renderObject.meshID);
 	}
 	else {

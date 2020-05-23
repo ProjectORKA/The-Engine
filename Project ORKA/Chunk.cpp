@@ -82,7 +82,7 @@ void Chunk::generateTerrain() {
 
 	unsigned long long target = unsigned long long(long double(noise.octaveNoise0_1(x, y,8)) * long double(LLONG_MAX)/8);
 
-	terrain.hasTerrain = (location.z << 64 - level < target);
+	terrain.hasTerrain = location.z == 0;// (location.z << 64 - level < target);
 }
 void Chunk::setIsInUse() {
 	nextTicksInUse = 1000;

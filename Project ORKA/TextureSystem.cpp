@@ -2,6 +2,7 @@
 #include "TextureSystem.hpp"
 
 void GPUTexture::load(CPUTexture& cpuTexture) {
+	
 	if (!loaded) {
 		wrapping = cpuTexture.wrapping;
 		filter = cpuTexture.filter;

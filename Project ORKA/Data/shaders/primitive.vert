@@ -2,7 +2,7 @@
 
 layout(location = 0) in vec3 vertex;
 layout(location = 1) in vec2 uvs;
-//layout(location = 1) in vec3 positions;
+layout(location = 2) in vec3 positions;
 
 out vec4 vertexColor;
 out vec2 textureCoordinate; 
@@ -21,42 +21,6 @@ void main() {
 	vec3 positionInChunk = (mMatrix * vec4(vertex, 1)).xyz;
 	vec3 cameraRelativePosition = chunkOffsetVector + positionInChunk;
 
-//	if(distortion > 0){
-//		if(worldOffset.w < 13){
-//			float r = pow(2,worldOffset.w-2);
-//			
-//			float h = positionInChunk.z + chunkOffsetVector.z;
-//
-//			float dist = length(vec2(cameraRelativePosition.xy));
-//			vec2 dir = vec2(0);
-//			if(dist>0){
-//				 dir = normalize(cameraRelativePosition.xy);
-//			}
-//
-//			cameraRelativePosition.xy = dir * sin(dist/r) * (r + h);
-//			cameraRelativePosition.z = cos(dist/r) * (r + h);
-//		}
-//	}
-
-
-//	if(distortion > 0){
-//		if(worldOffset.w < 13){
-//
-//			float radius = pow(2,worldOffset.w) ;
-//			
-//			float height = positionInChunk.z;// + worldOffset.z)/pow(2,64-worldOffset.w);
-//
-//			float height2 = height + worldOffset.z;
-//
-//			float dist = length(vec2(cameraRelativePosition.xy));
-//			
-//			if(cameraRelativePosition.xy != vec2(0)){
-//				vec2 direction = normalize(cameraRelativePosition.xy);
-//				cameraRelativePosition.xy = direction * (height2 + radius) * sin(dist/radius);
-//			}
-//			cameraRelativePosition.z = chunkOffsetVector.z + (height + radius) * cos(dist/radius)-radius;
-//		}
-//	}
 
 	if(distortion > 0){
 		if(worldOffset.w < 13){

@@ -1,6 +1,28 @@
 
 #include "GameSimulation.hpp"
 
+void GameSimulation::start()
+{
+	UShort team = 0;
+
+	float extend = 5;
+
+	for (int i = 0; i < 20000; i++) {
+		spaceShips.emplace_back();
+		spaceShips.back().location = Vec3(randomFloat(-extend, extend), randomFloat(-extend, extend), randomFloat(-extend, extend));
+		spaceShips.back().velocity = Vec3(randomFloat(-extend, extend), randomFloat(-extend, extend), randomFloat(-extend, extend));
+		spaceShips.back().team = team;
+	}
+
+	keepThreadRunning = true;
+	thread = Thread(GameSimulationThread, std::ref(*this));
+}
+
+void GameSimulation::stop() {
+	keepThreadRunning = false;
+	thread.join();
+}
+
 void GameSimulation::process() {
 	world.processSubdivision(*this);
 	if (!gameTime.paused) {
@@ -27,33 +49,4 @@ void GameSimulationThread(GameSimulation& gameSimulation) {
 		//wait for next tick
 		std::this_thread::sleep_until(t);
 	}
-}
-
-void GameSimulation::start()
-{
-	UShort team = 0;
-
-	float extend = 5;
-
-	for (int i = 0; i < 10000; i++) {
-		spaceShips.emplace_back();
-		spaceShips.back().location = Vec3(randomFloat(-extend, extend), randomFloat(-extend, extend), randomFloat(-extend, extend));
-		spaceShips.back().velocity = Vec3(randomFloat(-extend, extend), randomFloat(-extend, extend), randomFloat(-extend, extend));
-		spaceShips.back().team = team;
-		team++;
-
-		spaceShips.emplace_back();
-		spaceShips.back().location = Vec3(randomFloat(-extend, extend), randomFloat(-extend, extend), randomFloat(-extend, extend));
-		spaceShips.back().velocity = Vec3(randomFloat(-extend, extend), randomFloat(-extend, extend), randomFloat(-extend, extend));
-		spaceShips.back().team = team;
-		team--;
-	}
-
-	keepThreadRunning = true;
-	thread = Thread(GameSimulationThread, std::ref(*this));
-}
-
-void GameSimulation::stop() {
-	keepThreadRunning = false;
-	thread.join();
 }
