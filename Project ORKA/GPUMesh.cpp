@@ -1,14 +1,17 @@
 
 #include "GPUMesh.hpp"
-
 #include "Renderer.hpp"
 
 void VertexBufferObject::create(UInt location, float* data, UInt byteSize, UInt usage, Index components)
 {
 #ifdef GRAPHICS_API_OPENGL
+	this->location = location;
+	this->components = components;
+	this->byteSize = byteSize;
 	glGenBuffers(1, &bufferID);
 	glBindBuffer(GL_ARRAY_BUFFER, bufferID);
 	glBufferData(GL_ARRAY_BUFFER, byteSize, data, usage);
+	glEnableVertexAttribArray(location);
 	glVertexAttribPointer(location, components, GL_FLOAT, GL_FALSE, 0, (void*)0);
 #endif // GRAPHICS_API_OPENGL
 }
@@ -20,12 +23,14 @@ void VertexBufferObject::unload()
 #endif // GRAPHICS_API_OPENGL
 }
 
-void IndexBufferObject::create(Index* data, UInt byteSize, UInt usage)
+void IndexBufferObject::create(Index* data, UInt indexCount, UInt usage)
 {
+	this->indexCount = indexCount;
+
 #ifdef GRAPHICS_API_OPENGL
 	glGenBuffers(1, &bufferID);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bufferID);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, byteSize, data, usage);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexCount * sizeof(Index), data, usage);
 #endif // GRAPHICS_API_OPENGL
 }
 void IndexBufferObject::unload()
@@ -44,26 +49,21 @@ void VertexArrayObject::create(CPUMesh& mesh)
 	glBindVertexArray(arrayObjectID);
 #endif // GRAPHICS_API_OPENGL
 
-	add(glm::value_ptr(mesh.vertices[0]), mesh.vertices.size() * sizeof(Vec3), StaticBufferUsage, 3);
-	add(glm::value_ptr(mesh.uvs[0]), mesh.uvs.size() * sizeof(Vec2), StaticBufferUsage, 2);
+	add(0, glm::value_ptr(mesh.vertices[0]), mesh.vertices.size() * sizeof(Vec3), StaticBufferUsage, 3);
+	add(1, glm::value_ptr(mesh.uvs[0]), mesh.uvs.size() * sizeof(Vec2), StaticBufferUsage, 2);
 
-	indexBuffer.create(mesh.indices.data(), mesh.indices.size() * sizeof(Index), StaticBufferUsage);
+	indexBuffer.create(mesh.indices.data(), mesh.indices.size(), StaticBufferUsage);
 
 }
-void VertexArrayObject::add(float* data, UInt byteSize, UInt usage, Index components)
+void VertexArrayObject::add(Index location, float* data, UInt byteSize, UInt usage, Index components)
 {
 	buffers.emplace_back();
-	buffers.back().create(vertexAttributeCount, data, byteSize, usage, components);
-#ifdef GRAPHICS_API_OPENGL
-	glEnableVertexAttribArray(vertexAttributeCount);
-#endif // GRAPHICS_API_OPENGL
-	vertexAttributeCount++;
+	buffers.back().create(location, data, byteSize, usage, components);
 }
 void VertexArrayObject::render()
 {
 #ifdef GRAPHICS_API_OPENGL
 	glBindVertexArray(arrayObjectID);
-
 #endif // GRAPHICS_API_OPENGL
 }
 void VertexArrayObject::unload()
@@ -83,7 +83,7 @@ void VertexArrayObject::unload()
 void GPUMesh::upload(CPUMesh& cpuMesh) {
 	if (!loaded) {
 		if (cpuMesh.readyForUpload) {
-			indexCount = cpuMesh.indices.size();
+
 			primitiveMode = cpuMesh.primitiveMode;
 
 			vao.create(cpuMesh);
@@ -104,7 +104,7 @@ void GPUMesh::render() {
 		//render
 		glDrawElements(
 			primitiveMode,
-			indexCount,
+			vao.indexBuffer.indexCount,
 			GL_UNSIGNED_INT,
 			(void*)0
 		);

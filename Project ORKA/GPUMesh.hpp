@@ -10,29 +10,29 @@ enum BufferUsage {
 };
 
 struct VertexBufferObject {
-
-	Name name = ("vertex");
-	Index bufferID;
+	Index bufferID = 0;
+	Index location = 0;
+	Byte components = 3;
+	UInt byteSize = 0;
 
 	void create(UInt location, float* data, UInt byteSize, UInt usage, Index components);
 	void unload();
-
 };
 
 struct IndexBufferObject {
 	Index bufferID;
+	UInt indexCount;
 	void create(Index* data, UInt byteSize, UInt usage);
 	void unload();
 };
 
 struct VertexArrayObject {
 	Index arrayObjectID;
-	Index vertexAttributeCount = 0;
 	Vector<VertexBufferObject> buffers;
 	IndexBufferObject indexBuffer;
 
 	void create(CPUMesh& mesh);
-	void add(float* data, UInt byteSize, UInt usage, Index components);
+	void add(Index location, float* data, UInt byteSize, UInt usage, Index components);
 	void render();
 	void unload();
 
@@ -40,16 +40,11 @@ struct VertexArrayObject {
 
 struct GPUMesh {
 	Bool loaded = false;
-	Int indexCount = 0;
-	Index vertexArrayObjectID = 0;
-	Index vertexBufferID = 0;
-	Index uvBufferID = 0;
-	Index indexBufferID = 0;
 	PrimitiveMode primitiveMode = Triangles;
 
 	VertexArrayObject vao;
 
-	void upload(CPUMesh & cpuMesh);
+	void upload(CPUMesh& cpuMesh);
 	void render();
 	void unload();
 };

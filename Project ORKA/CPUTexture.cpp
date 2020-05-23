@@ -9,6 +9,7 @@ void CPUTexture::loadHDR(Path path, Name name) {
 }
 void CPUTexture::load(Path path, Name name)
 {
+
 	logEvent(String("Loading texture: (").append(name.data).append(" | ").append(path.string()).append(")"));
 	this->name = name;
 	pixels = stbi_load(path.string().c_str(), &width, &height, &channels, 0);

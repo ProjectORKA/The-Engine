@@ -8,7 +8,7 @@ void Renderer::create()
 	viewportSystem.create();
 	renderObjectSystem.create();
 
-	cameraSystem.current().speedMultiplier = 1;
+	//cameraSystem.current().speedMultiplier = 1;
 }
 void Renderer::renderTest() {
 
@@ -19,11 +19,8 @@ void Renderer::render()
 
 	renderTime.update();
 	dynamicallyAdjustValue(*this, settings.worldSystemRenderDistance);
-	cameraSystem.current().clampMovement = false;
+	cameraSystem.current().clampMovement = true;
 	cameraSystem.current().processLocation(renderTime);
-
-	//logDebug(String("CameraHeight: ").append(std::to_string(cameraSystem.current().chunkLocation.z)));
-	//logDebug(String("CameraHeight: ").append(std::to_string(cameraSystem.current().location.z)));
 
 	//setup frame
 	clearColor(Color(0, 0, 0, 0.75));
@@ -38,6 +35,7 @@ void Renderer::render()
 	resetModelMatrix();
 	renderObjectSystem.shaderSystem.uniforms.vec3s["chunkOffsetVector"] = Vec3(0);
 	renderObjectSystem.shaderSystem.uniforms.matrices["vpMatrix"] = cameraSystem.current().projectionMatrix(viewportSystem.current().aspectRatio()) * cameraSystem.current().viewMatrixOnlyRot();
+	
 	renderObjectSystem.render("sky");
 
 	//setup actual scene
@@ -47,17 +45,19 @@ void Renderer::render()
 
 	cameraSystem.current().render(*this);
 
+	//renderObjectSystem.render("monkey");
+
 	//render earth
-	renderObjectSystem.shaderSystem.uniforms.matrices["mMatrix"] = glm::scale(Matrix(1), Vec3(100));
-	renderObjectSystem.render("earth");
+	//renderObjectSystem.shaderSystem.uniforms.matrices["mMatrix"] = glm::scale(Matrix(1), Vec3(100));
+	//renderObjectSystem.render("earth");
 
 	//render spaceShips
-	for (SpaceShip& ship : gameSimulation->spaceShips) {
-		ship.render(*this);
-	}
+	//for (SpaceShip& ship : gameSimulation->spaceShips) {
+	//	ship.render(*this);
+	//}
 
-	//createWorldRenderData(gameSimulation->world);
-	//renderWorld(worldRenderData);
+	createWorldRenderData(gameSimulation->world);
+	renderWorld(worldRenderData);
 
 
 	/////////////////
