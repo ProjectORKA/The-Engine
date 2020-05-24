@@ -11,6 +11,9 @@ struct GameSimulation;
 struct Renderer;
 
 struct Chunk {
+
+	Vector<Index> entityIDs;
+
 	ULLVec3 location = ULLVec3(0);
 	UShort level = 0;
 	Bool subdivided = false;
@@ -36,5 +39,6 @@ struct Chunk {
 	void subdivide(GameSimulation& gameSimulation);
 	void processSubdivision(GameSimulation& gamesimulation);
 	void generateTerrain();
+	void generateEntities();
 	void setIsInUse();
 };

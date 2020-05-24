@@ -5,6 +5,7 @@
 #include "RenderObjectSystem.hpp"
 #include "ViewportSystem.hpp"
 #include "HeightMap.hpp"
+#include "Math.hpp"
 
 #define TARGETFRAMERATE 60
 
@@ -41,6 +42,8 @@ struct Renderer {
 
 	//render state
 	RenderObjectSystem renderObjectSystem;
+
+	Bool pauseWorldDataCollection = false;
 	WorldRenderData worldRenderData;
 
 	Mutex mutex;

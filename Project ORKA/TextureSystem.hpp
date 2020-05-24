@@ -1,7 +1,7 @@
 #pragma once
 
 #include "GraphicsAPI.hpp"
-#include "Basics.hpp"
+#include "BasicsModule.hpp"
 #include "Debug.hpp"
 #include "CPUTexture.hpp"
 #include "HeightMap.hpp"

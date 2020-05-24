@@ -1,3 +1,11 @@
+
+
+#ifdef BASICSMODULE_EXPORTS
+#define MODULE __declspec(dllexport)
+#else
+#define MODULE __declspec(dllimport)
+#endif
+
 #pragma once
 
 //standard
@@ -25,7 +33,23 @@ using Byte = unsigned char;
 #include <string>
 using String = std::string;
 
-#include "Name.hpp"
+#include <cstring>
+
+#pragma warning(disable : 4996) //disables unsecure warning
+
+#define NAME_SIZE 100
+
+struct MODULE Name {
+	char data[NAME_SIZE] = {};
+
+	Name();
+	Name(const char* name);
+	Name& operator=(const char* other);
+	Name& operator=(std::string other);
+	bool operator==(const Name& rhs);
+};
+
+bool MODULE operator<(const Name& l, const Name& r);
 
 //glm
 #include "glm/glm.hpp"
@@ -55,6 +79,7 @@ using Rotation = glm::quat;
 #include <sstream>
 #include <filesystem>
 using Path = std::filesystem::path;
+
 
 //tread
 #include <thread>

@@ -1,7 +1,7 @@
 
 #pragma once
 
-#include "Basics.hpp"
+#include "BasicsModule.hpp"
 #include "Window.hpp"
 
 struct WindowSystem {

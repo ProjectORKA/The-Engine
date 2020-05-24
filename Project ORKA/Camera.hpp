@@ -65,7 +65,7 @@ struct Camera {
 
 struct OctreeWorldSystemCamera : public Camera {
 	Bool clampMovement = true;
-	ULLVec3 chunkLocation = ULLVec3(LLONG_MAX, LLONG_MAX, LLONG_MAX);
+	ULLVec3 chunkLocation = ULLVec3(0, 0, 1);
 	void applySubChunkLocation();
 	void processLocation(Time & renderTime);
 };

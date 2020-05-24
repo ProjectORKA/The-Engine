@@ -84,6 +84,12 @@ void Chunk::generateTerrain() {
 
 	terrain.hasTerrain = location.z == 0;// (location.z << 64 - level < target);
 }
+void Chunk::generateEntities()
+{
+	if ((level == 63) && (location.z == 0)) {
+		entityIDs.push_back(0);
+	}
+}
 void Chunk::setIsInUse() {
 	nextTicksInUse = 1000;
 }
@@ -96,7 +102,7 @@ Chunk::Chunk(GameSimulation& gameSimualtion, Chunk & parent, Bool x, Bool y, Boo
 
 	//transferEntities(chunk, parent, gameSimulation,x,y,z);
 
-	//generateEntities(chunk, gameSimulation);
+	generateEntities();
 
 	generateTerrain();
 }
