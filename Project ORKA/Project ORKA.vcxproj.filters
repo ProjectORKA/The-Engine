@@ -25,9 +25,6 @@
     <Filter Include="Source Files\Time">
       <UniqueIdentifier>{7831713e-cda6-410e-bf5f-1073081775c5}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Dump Files">
-      <UniqueIdentifier>{ddc0be21-9b5f-4f71-a80e-95c9032ea252}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\GameSimulation">
       <UniqueIdentifier>{dd2cb503-71f5-4dd8-839a-e0b849380ba8}</UniqueIdentifier>
     </Filter>
@@ -157,9 +154,6 @@
     <ClCompile Include="Time.cpp">
       <Filter>Source Files\Time</Filter>
     </ClCompile>
-    <ClCompile Include="RenderInfoPipeline.cpp">
-      <Filter>Dump Files</Filter>
-    </ClCompile>
     <ClCompile Include="RenderObjectSystem.cpp">
       <Filter>Source Files\Renderer\RenderObjectSystem</Filter>
     </ClCompile>
@@ -186,9 +180,6 @@
     </ClCompile>
     <ClCompile Include="ProceduralMeshes.cpp">
       <Filter>Source Files\Renderer\MeshSystem\Procedural Meshes</Filter>
-    </ClCompile>
-    <ClCompile Include="Name.cpp">
-      <Filter>Source Files\Basics</Filter>
     </ClCompile>
     <ClCompile Include="stb_image.cpp">
       <Filter>Source Files\Renderer\TextureSystem\STBImage</Filter>
@@ -223,9 +214,6 @@
     </ClInclude>
     <ClInclude Include="Terrain.hpp">
       <Filter>Source Files\GameSimulation\Chunk\Terrain</Filter>
-    </ClInclude>
-    <ClInclude Include="Basics.hpp">
-      <Filter>Source Files\Basics</Filter>
     </ClInclude>
     <ClInclude Include="Time.hpp">
       <Filter>Source Files\Time</Filter>
@@ -266,9 +254,6 @@
     <ClInclude Include="RenderQueue.hpp">
       <Filter>Source Files\Renderer\RenderQueue</Filter>
     </ClInclude>
-    <ClInclude Include="WindowsEntry.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Entity.hpp">
       <Filter>Source Files\GameSimulation\Entity</Filter>
     </ClInclude>
@@ -305,9 +290,6 @@
     <ClInclude Include="Rectangle.hpp">
       <Filter>Source Files\Math</Filter>
     </ClInclude>
-    <ClInclude Include="Name.hpp">
-      <Filter>Source Files\Basics</Filter>
-    </ClInclude>
     <ClInclude Include="stb_image.h">
       <Filter>Source Files\Renderer\TextureSystem\STBImage</Filter>
     </ClInclude>
@@ -317,6 +299,7 @@
     <ClInclude Include="CPUTexture.hpp">
       <Filter>Source Files\Renderer\TextureSystem\CPUTexture</Filter>
     </ClInclude>
+    <ClInclude Include="WindowsEntry.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Data\shaders\debug.frag">

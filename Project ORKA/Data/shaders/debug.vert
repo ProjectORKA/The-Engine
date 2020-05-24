@@ -44,6 +44,6 @@ void main() {
 	//outputs
 	gl_Position  = vpMatrix * vec4(cameraRelativePosition.xyz,1);
 
-	vertexColor = vec4(vec3((worldColor+0.1*vec3(uvs,1))/1.1),1.0f);
+	vertexColor = vec4(vec3((worldColor+0.5*vec3(uvs,1))/1.5),1.0f);
 	textureCoordinate = uvs;
 };

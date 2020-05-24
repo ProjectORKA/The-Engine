@@ -8,7 +8,7 @@ void Renderer::create()
 	viewportSystem.create();
 	renderObjectSystem.create();
 
-	//cameraSystem.current().speedMultiplier = 1;
+	cameraSystem.current().speedMultiplier = 1;
 }
 void Renderer::renderTest() {
 
@@ -35,7 +35,7 @@ void Renderer::render()
 	resetModelMatrix();
 	renderObjectSystem.shaderSystem.uniforms.vec3s["chunkOffsetVector"] = Vec3(0);
 	renderObjectSystem.shaderSystem.uniforms.matrices["vpMatrix"] = cameraSystem.current().projectionMatrix(viewportSystem.current().aspectRatio()) * cameraSystem.current().viewMatrixOnlyRot();
-	
+
 	renderObjectSystem.render("sky");
 
 	//setup actual scene
@@ -97,70 +97,72 @@ void Renderer::updateUniforms() {
 
 void Renderer::createWorldRenderData(Chunk& world)
 {
-	world.mutex.lock_shared();
+	if (!pauseWorldDataCollection) {
 
-	long long x = world.location.x + 1 << 64 - world.level;
-	long long y = world.location.y + 1 << 64 - world.level;
-	long double z = world.location.z << 64 - world.level;
+		world.mutex.lock_shared();
 
-	x -= cameraSystem.current().chunkLocation.x;
-	y -= cameraSystem.current().chunkLocation.y;
-	z -= cameraSystem.current().chunkLocation.z;
+		long long x = world.location.x + 1 << 64 - world.level;
+		long long y = world.location.y + 1 << 64 - world.level;
+		long double z = world.location.z << 64 - world.level;
 
-	unsigned long long offset = ULLONG_MAX >> (world.level + 1);
-	x -= offset;
-	y -= offset;
+		x -= cameraSystem.current().chunkLocation.x;
+		y -= cameraSystem.current().chunkLocation.y;
+		z -= cameraSystem.current().chunkLocation.z;
 
-	glm::highp_dvec3 delta(x, y, z);
+		unsigned long long offset = ULLONG_MAX >> (world.level + 1);
+		x -= offset;
+		y -= offset;
 
-	delta -= glm::highp_dvec3(cameraSystem.current().location);
+		glm::highp_dvec3 delta(x, y, z);
 
-	//imitate scale by moving it closer/further instead of scaling (allows for constant clipping)
-	delta /= pow(2, 64 - world.level);
+		delta -= glm::highp_dvec3(cameraSystem.current().location);
 
-	delta -= glm::highp_dvec3(0.5, 0.5, 0);
+		//imitate scale by moving it closer/further instead of scaling (allows for constant clipping)
+		delta /= pow(2, 64 - world.level);
 
-	//check visibility
-	bool isLowestLevel = world.level >= CHUNK_LEVEL_MAX;
-	bool tooBig = world.level < 3;
-	bool hasRenderableContent = world.terrain.hasTerrain;
-	bool isInRenderDistance = glm::length(delta) < pow(CHUNK_DISTANCE_MULTIPLIER, settings.worldSystemRenderDistance);
+		delta -= glm::highp_dvec3(0.5, 0.5, 0);
 
-	bool renderNow = false;
-	//chunks need entities inside to be rendered
-	if (hasRenderableContent | tooBig) {
-		if (tooBig | (isInRenderDistance & !isLowestLevel)) {
-			//too close to be rendered
-			//will be subdivided and checked
-			world.setIsInUse();
-			if (world.subdivided) {
-				createWorldRenderData(*world.tfr);
-				createWorldRenderData(*world.tfl);
-				createWorldRenderData(*world.tbr);
-				createWorldRenderData(*world.tbl);
-				createWorldRenderData(*world.bfr);
-				createWorldRenderData(*world.bfl);
-				createWorldRenderData(*world.bbr);
-				createWorldRenderData(*world.bbl);
+		//check visibility
+		bool isLowestLevel = world.level >= CHUNK_LEVEL_MAX;
+		bool tooBig = world.level < 3;
+		bool hasRenderableContent = world.terrain.hasTerrain;
+		bool isInRenderDistance = glm::length(delta) < pow(CHUNK_DISTANCE_MULTIPLIER, settings.worldSystemRenderDistance);
 
-				renderNow = false;
+		bool renderNow = false;
+		//chunks need entities inside to be rendered
+		if (hasRenderableContent | tooBig) {
+			if (tooBig | (isInRenderDistance & !isLowestLevel)) {
+				//too close to be rendered
+				//will be subdivided and checked
+				world.setIsInUse();
+				if (world.subdivided) {
+					createWorldRenderData(*world.tfr);
+					createWorldRenderData(*world.tfl);
+					createWorldRenderData(*world.tbr);
+					createWorldRenderData(*world.tbl);
+					createWorldRenderData(*world.bfr);
+					createWorldRenderData(*world.bfl);
+					createWorldRenderData(*world.bbr);
+					createWorldRenderData(*world.bbl);
+
+					renderNow = false;
+				}
+				else {
+					renderNow = true;
+				}
 			}
 			else {
 				renderNow = true;
 			}
 		}
-		else {
-			renderNow = true;
+		world.mutex.unlock_shared();
+
+		if (renderNow & world.terrain.hasTerrain) {
+			worldRenderData[world.level].emplace_back();
+			worldRenderData[world.level].back().chunk = &world;
+			worldRenderData[world.level].back().chunkOffsetVector = delta;
 		}
 	}
-	world.mutex.unlock_shared();
-
-	if (renderNow & world.terrain.hasTerrain) {
-		worldRenderData[world.level].emplace_back();
-		worldRenderData[world.level].back().chunk = &world;
-		worldRenderData[world.level].back().chunkOffsetVector = delta;
-	}
-
 }
 void Renderer::renderWorld(WorldRenderData& world)
 {
@@ -178,8 +180,9 @@ void Renderer::renderWorld(WorldRenderData& world)
 			renderObjectSystem.shaderSystem.useShader("debug");
 			renderObjectSystem.meshSystem.renderMesh("terrain");
 
+			if (data.chunk->entityIDs.size() > 0) renderObjectSystem.render("monkey");
 		}
-		vec.clear();
+		if(!pauseWorldDataCollection) vec.clear();
 		clearDepth();
 	}
 
@@ -239,8 +242,7 @@ void dynamicallyAdjustValue(Renderer& renderer, unsigned int& value) {
 
 		if (minimumFrameTimeMatchup > 1) {
 			if (value != 0) {
-				value /= minimumFrameTimeMatchup;
-				//value--;
+				value /= min(minimumFrameTimeMatchup, 1.5f);
 			}
 		}
 		else {

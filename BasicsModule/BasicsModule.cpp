@@ -1,4 +1,4 @@
-#include "Name.hpp"
+#include "BasicsModule.hpp"
 
 Name::Name() {
 	memset(&data[0], 0, NAME_SIZE);
@@ -15,7 +15,7 @@ Name& Name::operator=(const char* other) {
 	return *this;
 }
 
-Name& Name::operator=(String other)
+Name& Name::operator=(std::string other)
 {
 	memset(&data[0], 0, NAME_SIZE);
 	strcpy(&data[0], other.data());

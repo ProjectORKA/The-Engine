@@ -7,6 +7,10 @@ float max(Float a, Float b) {
 float min(Float a, Float b) {
 	return !(b < a) ? a : b;
 }
+Float lerp(Float from, Float to, Float t)
+{
+	return (from * (1 - t)) + (to * t);
+}
 float randomFloat()
 {
 	return randomFloat(0, 1);

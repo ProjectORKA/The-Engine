@@ -1,8 +1,7 @@
 #pragma once
 
 #include "Time.hpp"
-#include "Name.hpp"
-#include "Basics.hpp"
+#include "BasicsModule.hpp"
 #include "Math.hpp"
 
 struct Renderer;

@@ -1,8 +1,6 @@
 
 #pragma once
 
-#include "Basics.hpp"
-
-
+#include "BasicsModule.hpp"
 
 void loadString(String& string, Path path);
