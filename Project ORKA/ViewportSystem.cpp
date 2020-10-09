@@ -23,9 +23,9 @@ void ViewportSystem::select(String name)
 	auto it = viewportNames.find(name);
 	if (it != viewportNames.end()) currentViewport = it->second;
 }
-void ViewportSystem::render(Framebuffer& framebuffer)
+void ViewportSystem::render(Int adaptiveWidth, Int adaptiveHeight)
 {
-	viewports[currentViewport].update(framebuffer);
+	viewports[currentViewport].update(adaptiveWidth, adaptiveHeight);
 	viewports[currentViewport].render();
 }
 void ViewportSystem::add(String name, Float x, Float y, Float w, Float h)
@@ -46,10 +46,10 @@ void Viewport::render() {
 float Viewport::aspectRatio() {
 	return float(absoluteWidth) / float(absoluteHeight);
 };
-void Viewport::update(Framebuffer& framebuffer)
+void Viewport::update(Int & adaptiveWidth, Int & adaptiveHeight)
 {
-	absoluteX		= framebuffer.width * relativeX;
-	absoluteY		= framebuffer.height * relativeY;
-	absoluteWidth	= max(1,framebuffer.width * relativeWidth);
-	absoluteHeight	= max(1,framebuffer.height * relativeHeight);
+	absoluteX		= adaptiveWidth * relativeX;
+	absoluteY		= adaptiveHeight * relativeY;
+	absoluteWidth	= max(1, adaptiveWidth * relativeWidth);
+	absoluteHeight	= max(1, adaptiveHeight * relativeHeight);
 }

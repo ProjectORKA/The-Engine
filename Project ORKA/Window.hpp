@@ -16,6 +16,10 @@ struct Window {
 
 	UShort antiAliasing = 4; //[TODO]
 
+	Int windowContentWidth = 1600;
+	Int windowContentHeight = 900;
+
+
 	//local variables
 	Bool duplicateWindow = false;
 	Bool capturingCursor = false;
@@ -74,3 +78,7 @@ void whenFramebufferIsResized(APIWindow window, Int width, Int height);
 void whenMouseIsScrolling(APIWindow window, Double xoffset, Double yoffset);
 void whenMouseIsPressed(APIWindow apiWindow, Int button, Int action, Int mods);
 void whenButtonIsPressed(APIWindow window, Int key, Int scancode, Int action, Int mods);
+
+#ifdef GRAPHICS_API_OPENGL
+void __stdcall DebugOutputCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam);
+#endif // GRAPHICS_API_OPENGL

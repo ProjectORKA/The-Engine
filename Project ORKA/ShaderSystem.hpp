@@ -3,8 +3,8 @@
 #include "Uniforms.hpp"
 #include "Debug.hpp"
 #include "GraphicsAPI.hpp"
-#include "BasicsModule.hpp"
-#include "Files.hpp"
+#include "Basics.hpp"
+#include "FileSystem.hpp"
 
 struct ShaderSystem;
 

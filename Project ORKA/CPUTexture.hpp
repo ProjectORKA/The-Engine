@@ -1,6 +1,6 @@
 #pragma once
 
-#include "BasicsModule.hpp"
+#include "Basics.hpp"
 #include "Debug.hpp"
 #include "stb_image.h"
 #include "GraphicsAPI.hpp"
@@ -36,7 +36,7 @@ struct CPUTexture {
 	Int channels = 0;
 	Int dataType = dataTypeByte;
 	union {
-		void* pixels;
+		void* pixels = nullptr;
 		Byte* bytePixels;
 		Float* floatPixels;
 	};

@@ -36,6 +36,12 @@ void CPUMesh::loadFBX(Path path) {
 						texCoord.x = scene->mMeshes[0]->mTextureCoords[0][i].x;
 						texCoord.y = scene->mMeshes[0]->mTextureCoords[0][i].y;
 						uvs.push_back(texCoord);
+						
+						glm::vec3 normal;
+						normal.x = scene->mMeshes[0]->mNormals[i].x;
+						normal.y = scene->mMeshes[0]->mNormals[i].y;
+						normal.z = scene->mMeshes[0]->mNormals[i].z;
+						normals.push_back(normal);
 					}
 					if (scene->mMeshes[0]->HasFaces()) {
 						for (unsigned int i = 0; i < scene->mMeshes[0]->mNumFaces; i++) {
@@ -105,11 +111,12 @@ void CPUMesh::saveMeshFile()
 
 	logEvent(String("Saving mesh: (").append(name.data).append(") from(").append(path.string()).append(")"));
 
-	MeshHeaderV1 header;
+	MeshHeaderV2 header;
 	header.meshName = name;
 	header.primitiveMode = Triangles;
 	header.vertexCount = vertices.size();
 	header.uvCount = uvs.size();
+	header.normalCount = normals.size();
 	header.indexCount = indices.size();
 
 
@@ -121,9 +128,10 @@ void CPUMesh::saveMeshFile()
 
 	std::ofstream file(path, std::ios::trunc | std::ios::binary | std::ios::out);
 	if (file.is_open()) {
-		file.write((char*)&header, sizeof(MeshHeaderV1));
+		file.write((char*)&header, sizeof(MeshHeaderV2));
 		file.write((char*)&vertices[0], vertices.size() * sizeof(Vec3));
 		file.write((char*)&uvs[0], uvs.size() * sizeof(Vec2));
+		file.write((char*)&normals[0], normals.size() * sizeof(Vec3));
 		file.write((char*)&indices[0], indices.size() * sizeof(Index));
 		file.close();
 	}
@@ -133,10 +141,6 @@ void CPUMesh::saveMeshFile()
 }
 
 void CPUMesh::loadMeshFile(Path path) {
-
-
-
-
 	bool error = false;
 
 	std::ifstream ifstream(path, std::ios::binary | std::ios::in);
@@ -144,10 +148,10 @@ void CPUMesh::loadMeshFile(Path path) {
 	logEvent(String("Loading mesh file from(").append(path.string()).append(")"));
 
 	if (ifstream.is_open()) {
-		MeshHeaderV1 header;
-		ifstream.read((char*)&header, sizeof(MeshHeaderV1));
+		MeshHeaderV2 header;
+		ifstream.read((char*)&header, sizeof(MeshHeaderV2));
 
-		if (header.version == 1) {
+		if (header.version == 2) {
 			name = header.meshName;
 			primitiveMode = header.primitiveMode;
 
@@ -158,6 +162,10 @@ void CPUMesh::loadMeshFile(Path path) {
 			//load texture coordinates
 			uvs.resize(header.uvCount);
 			ifstream.read((char*)&uvs[0], header.uvCount * sizeof(Vec2));
+
+			//load normals
+			normals.resize(header.normalCount);
+			ifstream.read((char*)&normals[0], header.normalCount * sizeof(Vec3));
 
 			//load indices
 			indices.resize(header.indexCount);
@@ -173,7 +181,10 @@ void CPUMesh::loadMeshFile(Path path) {
 				logDebug(String("Error: The mesh (").append(name.data).append(") was loaded, but did not reach the end of the file!"));
 			}
 		}
-		else error = true;
+		else {
+			logError("Mesh version not supported!");
+			error = true;
+		}
 
 		ifstream.close();
 	}

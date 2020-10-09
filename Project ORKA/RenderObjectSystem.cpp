@@ -6,19 +6,30 @@ void RenderObjectSystem::create() {
 	textureSystem.create();
 	shaderSystem.create();
 
-
-	addRenderObject("spaceShip", "spaceShip", "spaceShip", "spaceShip");
-	addRenderObject("spaceShipLOD", "spaceShipLOD", "spaceShip", "spaceShip");
+	//space scene
+	addRenderObject("spaceShip", "spaceShip", "spaceShip", "primitive");
+	addRenderObject("spaceShipLOD", "spaceShipLOD", "spaceShip", "primitive");
 	addRenderObject("earth", "earth", "earth", "primitive");
 
-	addRenderObject("wireBox", "wireMeshBox", "default", "debug");
+	//general objects
+	addRenderObject("sky", "sky", "stars", "sky");
+	addRenderObject("monkey", "monkey", "uv", "primitive");
+	addRenderObject("plane", "plane", "default", "primitive");
 	addRenderObject("default", "default", "default", "primitive");
-	addRenderObject("plane", "plane", "default", "debug");
-	addRenderObject("terrain", "terrain", "default", "primitive");
-	addRenderObject("boundingBox", "boundingBox", "default", "debug");
 	addRenderObject("skeleton", "skeleton", "skeleton", "primitive");
-	addRenderObject("monkey", "monkey", "default", "debug");
-	addRenderObject("sky", "sky", "stars", "primitive");
+	addRenderObject("wireBox", "wireMeshBox", "default", "primitive");
+
+	//planet scene
+	addRenderObject("monkey0", "monkey0", "uv", "primitive");
+	addRenderObject("monkey1", "monkey1", "uv", "primitive");
+	addRenderObject("monkey2", "monkey2", "uv", "primitive");
+	addRenderObject("monkey3", "monkey3", "uv", "primitive");
+	addRenderObject("monkey4", "monkey4", "uv", "primitive");
+	addRenderObject("monkey5", "monkey5", "uv", "primitive");
+	addRenderObject("monkey6", "monkey6", "uv", "primitive");
+	addRenderObject("monkey7", "monkey7", "uv", "primitive");
+	addRenderObject("terrain", "terrain", "default2", "primitive");
+	addRenderObject("boundingBox", "boundingBox", "default", "primitive");
 }
 void RenderObjectSystem::addRenderObject(String name, Name meshName, Name textureName, Name shaderName) {
 	
@@ -41,7 +52,7 @@ void RenderObjectSystem::addRenderObject(String name, Name meshName, Name textur
 		nameToIndex[name] = renderObjects.size() - 1;
 	}
 	else {
-		logDebug(String("Could not find assets to create Render Object. (").append(name).append(" = ").append(meshName.data).append("|").append(textureName.data).append("|").append(shaderName.data).append(")"));
+		logError(String("Could not find assets to create Render Object. (").append(name).append(" = ").append(meshName.data).append("|").append(textureName.data).append("|").append(shaderName.data).append(")"));
 	}
 }
 void RenderObjectSystem::render(String name) {
@@ -49,11 +60,11 @@ void RenderObjectSystem::render(String name) {
 	if (it != nameToIndex.end()) {
 		RenderObject& renderObject = renderObjects[it->second];
 		shaderSystem.useShader(renderObject.shaderID);
-		textureSystem.render(renderObject.textureID);
+		textureSystem.use(renderObject.textureID);
 		meshSystem.renderMesh(renderObject.meshID);
 	}
 	else {
-		logDebug("RenderObject With this name doesent exist.");
+		logDebug(String("RenderObject With this name doesent exist. (").append(name).append(")"));
 	}
 }
 

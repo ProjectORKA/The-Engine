@@ -1,15 +1,57 @@
-#version 330 core
+#version 400
 
-out vec4 color;
+layout(location = 0) out vec4 color;
 
 in vec4 vertexColor;
-in vec2 textureCoordinate; 
+in vec3 vertexPosition;
+in vec2 textureCoordinate;
+in vec3 normal;
+in float depth;
 
-uniform sampler2D texture0;
+uniform vec3 cameraVector;
+uniform vec4 worldOffset;
+
+uniform sampler2D baseColor;
+//uniform sampler2D normalMap;
+
 
 void main(){
-	
-	if(texture(texture0,textureCoordinate).a != 1) discard;
+	if(texture(baseColor,textureCoordinate).a != 1) discard;
 
-	color = vec4(texture(texture0, textureCoordinate).rgba);
+	vec3 fragmentViewVector = normalize(vertexPosition);
+	vec3 sunDir = normalize(vec3(1,1,1));
+	vec3 reflection = normalize(reflect(fragmentViewVector,normal));
+
+
+
+	float diffuse = clamp(dot(normalize(normal),sunDir),0,1);
+	float specular = clamp(1 * pow(max(dot(reflection, sunDir), 0.0f), 8.0f),0,1);
+	float fresnel = clamp(0.2f * (1-dot(-fragmentViewVector,normalize(normal))),0,1);
+	float ambient = 0.05f;
+
+	float coloredLight = fresnel + ambient + diffuse;
+	float externelLight = specular;
+	
+	vec3 fragmentColor = texture(baseColor, textureCoordinate).rgb;
+	//vec3 fragmentColor = vec3(textureCoordinate,1);
+
+	//draw phong lighting
+	color = vec4(fragmentColor * vec3(coloredLight) + vec3(externelLight),1);
+
+	//draw normals
+	//color  = vec4(normal,1.0f);
+
+	//draw vertexColor
+	//color  = vec4(vertexColor,1.0f);
+
+	//draw uvs
+	//color  = vec4(textureCoordinate,0.0f,1.0f);
+
+	//draw lighting
+	//color = vec4(vec3(lighting),1);
+	
+	//draw depth
+	//color = vec4(vec3(depth/pow(2,worldOffset.w)),1);
+	
+	//color = vec4(vec3(sqrt(vertexColor.z / pow(2,worldOffset.w))),1);
 };

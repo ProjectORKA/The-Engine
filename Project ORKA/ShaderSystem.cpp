@@ -51,6 +51,18 @@ void ShaderSystem::create() {
 	add(vertexShader, fragmentShader, "spaceShip");
 	vertexShader.unload();
 	fragmentShader.unload();
+
+	vertexShader.loadFromFile(VertexShaderType, "Data/shaders/sky.vert");
+	fragmentShader.loadFromFile(FragmentShaderType, "Data/shaders/sky.frag");
+	add(vertexShader, fragmentShader, "sky");
+	vertexShader.unload();
+	fragmentShader.unload();
+
+	vertexShader.loadFromFile(VertexShaderType, "Data/shaders/postProcess.vert");
+	fragmentShader.loadFromFile(FragmentShaderType, "Data/shaders/postProcess.frag");
+	add(vertexShader, fragmentShader, "postProcess");
+	vertexShader.unload();
+	fragmentShader.unload();
 }
 void ShaderSystem::add(Shader& vertexShader, Shader& fragmentShader, Name name)
 {
@@ -200,6 +212,15 @@ void ShaderProgram::load(Shader& vertexShader, Shader& fragmentShader, Uniforms 
 		for (auto & m : uniforms.matrices) {
 			uniformNameToID[m.first.data] = glGetUniformLocation(programID, m.first.data);
 		}
+
+		glUniform1i(glGetUniformLocation(programID, "baseColor"), 0);
+		//glUniform1i(glGetUniformLocation(programID, "normal"), 1);
+		//glUniform1i(glGetUniformLocation(programID, "roughness"), 2);
+		//glUniform1i(glGetUniformLocation(programID, "metalness"), 3);
+
+		//for (auto& t : uniforms.textures) {
+		//	uniformNameToID[t.first.data] = 
+		//}
 
 #endif // GRAPHICS_API_OPENGL
 
