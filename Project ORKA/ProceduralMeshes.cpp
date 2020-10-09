@@ -26,6 +26,17 @@ void proceduralWireframeCubeMesh(CPUMesh& cpuMesh, Float size, Float size2)
 		Vec2(0.0, 0.0)
 	};
 
+	cpuMesh.normals = {
+	Vec3(0.0f, 0.0f, 1.0f),
+	Vec3(0.0f, 0.0f, 1.0f),
+	Vec3(0.0f, 0.0f, 1.0f),
+	Vec3(0.0f, 0.0f, 1.0f),
+	Vec3(0.0f, 0.0f, 1.0f),
+	Vec3(0.0f, 0.0f, 1.0f),
+	Vec3(0.0f, 0.0f, 1.0f),
+	Vec3(0.0f, 0.0f, 1.0f)
+	};
+
 	cpuMesh.indices = {
 		7, 3, 7,
 		5, 7, 6,
@@ -54,6 +65,13 @@ void proceduralPlaneMesh(CPUMesh& cpuMesh, Float width, Float height) {
 		Vec2(1.0f, 0.0f),
 		Vec2(0.0f, 1.0f),
 		Vec2(0.0f, 0.0f)
+	};
+
+	cpuMesh.normals = {
+	Vec3(0.0f, 0.0f, 1.0f),
+	Vec3(0.0f, 0.0f, 1.0f),
+	Vec3(0.0f, 0.0f, 1.0f),
+	Vec3(0.0f, 0.0f, 1.0f)
 	};
 
 	cpuMesh.indices = {

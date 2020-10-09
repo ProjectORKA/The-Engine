@@ -7,7 +7,7 @@ void GameSimulation::start()
 
 	float extend = 5;
 
-	for (int i = 0; i < 20000; i++) {
+	for (int i = 0; i < 10000; i++) {
 		spaceShips.emplace_back();
 		spaceShips.back().location = Vec3(randomFloat(-extend, extend), randomFloat(-extend, extend), randomFloat(-extend, extend));
 		spaceShips.back().velocity = Vec3(randomFloat(-extend, extend), randomFloat(-extend, extend), randomFloat(-extend, extend));
@@ -24,7 +24,9 @@ void GameSimulation::stop() {
 }
 
 void GameSimulation::process() {
+
 	world.processSubdivision(*this);
+	
 	if (!gameTime.paused) {
 		for (SpaceShip& ship : spaceShips) {
 			ship.update(gameTime);
@@ -40,7 +42,7 @@ void GameSimulationThread(GameSimulation& gameSimulation) {
 
 	while (gameSimulation.keepThreadRunning) {
 
-		t = std::chrono::steady_clock::now() + std::chrono::milliseconds(8); //game simulation running at 120 Hz
+		t = std::chrono::steady_clock::now() + std::chrono::milliseconds(16); //game simulation running at 60 Hz
 
 		gameSimulation.gameTime.update();
 

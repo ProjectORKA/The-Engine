@@ -9,3 +9,7 @@
 #include "GL/glew.h"
 #endif // GRAPHICS_API_OPENGL
 
+enum {
+	StaticBufferUsage = GL_STATIC_DRAW,
+	DynamicBufferUsage = GL_DYNAMIC_DRAW
+};

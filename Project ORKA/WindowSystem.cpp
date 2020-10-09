@@ -18,12 +18,10 @@ void WindowSystem::processLoop(GameSimulation & gameSimulation) {
 		glfwWaitEvents();
 
 		for (auto it = windows.begin(); it != windows.end(); it++) {
-			
 			if (it->duplicateWindow) {
 				addWindow(gameSimulation);
 				it->duplicateWindow = false;
 			}
-
 			if (it->shouldClose()) {
 				it->destroy();
 				windows.erase(it);
@@ -37,4 +35,11 @@ void WindowSystem::stop()
 {
 	windows.clear();
 	glfwTerminate();
+}
+
+void whenWindowAPIThrowsError(Int error, const char* description)
+{
+	std::cout << "Error: " << description << "\n";
+	std::getchar();
+	exit(EXIT_FAILURE);
 }

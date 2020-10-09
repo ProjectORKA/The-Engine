@@ -1,7 +1,7 @@
 
 #pragma once
 
-#include "BasicsModule.hpp"
+#include "Basics.hpp"
 #include "Window.hpp"
 
 struct WindowSystem {
@@ -12,3 +12,5 @@ struct WindowSystem {
 	void processLoop(GameSimulation& gameSimualtion);
 	void stop();
 };
+
+void whenWindowAPIThrowsError(Int error, const char* description);

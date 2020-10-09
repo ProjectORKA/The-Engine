@@ -1,4 +1,5 @@
 
+
 #include "Window.hpp"
 
 void windowThread(Window& window)
@@ -17,7 +18,7 @@ void Window::create()
 void Window::center() {
 	Rect<Int> workableArea;
 	getWorkableArea(workableArea);
-	setPosition(workableArea.center() - Vec2(renderer.framebuffer.width / 2, renderer.framebuffer.height/2));
+	setPosition(workableArea.center() - Vec2(Float(windowContentWidth) / 2, Float(windowContentHeight)/2));
 }
 void Window::reload() {
 #ifdef WINDOW_API_GLFW
@@ -37,7 +38,6 @@ void Window::pushFrame()
 void Window::renderLoop() {
 
 	renderer.create();
-
 
 	glfwShowWindow(apiWindow);
 
@@ -84,7 +84,7 @@ void Window::startThread()
 }
 void Window::setWindowed()
 {
-	glfwSetWindowMonitor(apiWindow, nullptr, 0, 0, renderer.framebuffer.width, renderer.framebuffer.height, GLFW_DONT_CARE);
+	glfwSetWindowMonitor(apiWindow, nullptr, 0, 0, windowContentWidth, windowContentHeight, GLFW_DONT_CARE);
 	glfwRestoreWindow(apiWindow);
 	if (decorated) {
 		glfwSetWindowAttrib(apiWindow, GLFW_DECORATED, GLFW_TRUE);
@@ -115,7 +115,11 @@ void Window::setFullscreen() {
 		glfwMaximizeWindow(apiWindow);
 		GLFWmonitor* monitor = glfwGetPrimaryMonitor();
 		const GLFWvidmode* videoMode = glfwGetVideoMode(monitor);
-		glfwSetWindowMonitor(apiWindow, monitor, 0, 0, renderer.framebuffer.width = videoMode->width, renderer.framebuffer.height = videoMode->height, GLFW_DONT_CARE);
+		glfwSetWindowMonitor(apiWindow, monitor, 0, 0, videoMode->width, videoMode->height, GLFW_DONT_CARE);
+
+		//[TODO] check if necessary
+		//renderer.framebufferSystem.current().update(width = videoMode->width;
+		//renderer.framebufferSystem.current().height = videoMode->height;
 	}
 	fullScreen = true;
 }
@@ -132,6 +136,7 @@ void Window::createAPIWindow() {
 		glfwWindowHint(GLFW_RED_BITS, videoMode->redBits);
 		glfwWindowHint(GLFW_GREEN_BITS, videoMode->greenBits);
 		glfwWindowHint(GLFW_BLUE_BITS, videoMode->blueBits);
+		glfwWindowHint(GLFW_DEPTH_BITS, 32);
 		glfwWindowHint(GLFW_REFRESH_RATE, videoMode->refreshRate);
 		//visibility
 		glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
@@ -152,7 +157,7 @@ void Window::createAPIWindow() {
 		glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
 #endif
 
-		apiWindow = glfwCreateWindow(renderer.framebuffer.width, renderer.framebuffer.height, title.c_str(), NULL, NULL);
+		apiWindow = glfwCreateWindow(windowContentWidth, windowContentHeight, title.c_str(), NULL, NULL);
 
 		assert(apiWindow);
 
@@ -205,9 +210,9 @@ void Window::destroyAPIWindow() {
 void Window::setIcon(Path path) {
 
 	CPUTexture cpuTexture;
-	stbi_set_flip_vertically_on_load(false);
+	invertOnLoad(false);
 	cpuTexture.load(path, "Icon");
-	stbi_set_flip_vertically_on_load(true);
+	invertOnLoad(true);
 
 	if (cpuTexture.bytePixels && cpuTexture.dataType == dataTypeByte) {
 		GLFWimage icon;
@@ -236,7 +241,10 @@ void Window::initializeGraphicsAPI() {
 	glfwMakeContextCurrent(apiWindow);
 #endif // WINDOW_API_GLFW
 	glewExperimental = true;
-	assert(glewInit() == GLEW_OK);
+	if (glewInit() == GLEW_OK) {
+		logDebug("GLEW successfully initialized!");
+	}
+
 	glEnable(GL_DEBUG_OUTPUT);
 	glDebugMessageCallback(DebugOutputCallback, 0);
 #endif // GRAPHICS_API_OPENGL
@@ -274,6 +282,9 @@ void whenWindowChangedFocus(APIWindow window, Int focused) {
 }
 void whenWindowWasMinimized(APIWindow window, Int minimized)
 {
+	//[TODO] possible optimization
+	//- change framebuffer to 1 x 1
+
 	logEvent("Window minimized!");
 	Window& parentWindowClass = *static_cast<Window*>(glfwGetWindowUserPointer(window));
 	if (minimized)
@@ -308,7 +319,9 @@ void whenMouseIsMoving(APIWindow apiWindow, Double xpos, Double ypos) {
 void whenFramebufferIsResized(APIWindow window, Int width, Int height) {
 	Window& parentWindowClass = *static_cast<Window*>(glfwGetWindowUserPointer(window));
 
-	parentWindowClass.renderer.framebuffer.update(width, height);
+	parentWindowClass.windowContentWidth = width;
+	parentWindowClass.windowContentHeight = height;
+	parentWindowClass.renderer.framebufferSystem.adaptiveResolution = Vec2(width, height);
 
 	parentWindowClass.renderer.sync();
 
@@ -353,7 +366,7 @@ void whenButtonIsPressed(APIWindow window, Int key, Int scancode, Int action, In
 		parentWindowClass->changeAntiAliasing(4);
 	}
 	if (key == GLFW_KEY_3 && action == GLFW_PRESS) {
-		parentWindowClass->renderer.settings.chunkBorders = !parentWindowClass->renderer.settings.chunkBorders;
+		parentWindowClass->renderer.chunkBorders = !parentWindowClass->renderer.chunkBorders;
 	}
 	if (key == GLFW_KEY_P && action == GLFW_PRESS) {
 		parentWindowClass->renderer.gameSimulation->gameTime.paused = !parentWindowClass->renderer.gameSimulation->gameTime.paused;
@@ -368,9 +381,40 @@ void whenButtonIsPressed(APIWindow window, Int key, Int scancode, Int action, In
 		parentWindowClass->renderer.wireframeMode = !parentWindowClass->renderer.wireframeMode;
 	}
 	if (key == GLFW_KEY_J && action == GLFW_PRESS) {
-		parentWindowClass->renderer.settings.adjustRenderVariables = !parentWindowClass->renderer.settings.adjustRenderVariables;
+		parentWindowClass->renderer.adjustRenderVariables = !parentWindowClass->renderer.adjustRenderVariables;
 	}
 	if (key == GLFW_KEY_K && action == GLFW_PRESS) {
 		parentWindowClass->renderer.worldDistortion = !parentWindowClass->renderer.worldDistortion;
 	}
+	if (key == GLFW_KEY_G && action == GLFW_PRESS) {
+		parentWindowClass->renderer.chunkBorders = !parentWindowClass->renderer.chunkBorders;
+	}
 }
+
+#ifdef GRAPHICS_API_OPENGL
+void __stdcall DebugOutputCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam) {
+	if (severity != GL_DEBUG_SEVERITY_NOTIFICATION) {
+		printf("OpenGL Debug Output message : ");
+
+		if (source == GL_DEBUG_SOURCE_API_ARB)					printf("Source : API; ");
+		else if (source == GL_DEBUG_SOURCE_WINDOW_SYSTEM_ARB)	printf("Source : WINDOW_SYSTEM; ");
+		else if (source == GL_DEBUG_SOURCE_SHADER_COMPILER_ARB)	printf("Source : SHADER_COMPILER; ");
+		else if (source == GL_DEBUG_SOURCE_THIRD_PARTY_ARB)		printf("Source : THIRD_PARTY; ");
+		else if (source == GL_DEBUG_SOURCE_APPLICATION_ARB)		printf("Source : APPLICATION; ");
+		else if (source == GL_DEBUG_SOURCE_OTHER_ARB)			printf("Source : OTHER; ");
+
+		if (type == GL_DEBUG_TYPE_ERROR_ARB)					printf("Type : ERROR; ");
+		else if (type == GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR_ARB)	printf("Type : DEPRECATED_BEHAVIOR; ");
+		else if (type == GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR_ARB)	printf("Type : UNDEFINED_BEHAVIOR; ");
+		else if (type == GL_DEBUG_TYPE_PORTABILITY_ARB)			printf("Type : PORTABILITY; ");
+		else if (type == GL_DEBUG_TYPE_PERFORMANCE_ARB)			printf("Type : PERFORMANCE; ");
+		else if (type == GL_DEBUG_TYPE_OTHER_ARB)				printf("Type : OTHER; ");
+
+		if (severity == GL_DEBUG_SEVERITY_HIGH_ARB)				printf("Severity : HIGH; ");
+		else if (severity == GL_DEBUG_SEVERITY_MEDIUM_ARB)		printf("Severity : MEDIUM; ");
+		else if (severity == GL_DEBUG_SEVERITY_LOW_ARB)			printf("Severity : LOW; ");
+		printf("Message : %s\n", message);
+
+	}
+}
+#endif // GRAPHICS_API_OPENGL

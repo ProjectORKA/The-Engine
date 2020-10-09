@@ -3,12 +3,14 @@
 void Renderer::create()
 {
 	renderTime.reset();
-
 	cameraSystem.create();
 	viewportSystem.create();
 	renderObjectSystem.create();
+	framebufferSystem.create(renderObjectSystem);
 
-	cameraSystem.current().speedMultiplier = 1;
+	glClipControl(GL_LOWER_LEFT, GL_ZERO_TO_ONE);
+
+	//cameraSystem.current().speedMultiplier = 1;
 }
 void Renderer::renderTest() {
 
@@ -18,24 +20,28 @@ void Renderer::render()
 	mutex.lock();
 
 	renderTime.update();
-	dynamicallyAdjustValue(*this, settings.worldSystemRenderDistance);
+	dynamicallyAdjustValue(*this, worldSystemRenderDistance);
 	cameraSystem.current().clampMovement = true;
 	cameraSystem.current().processLocation(renderTime);
 
 	//setup frame
-	clearColor(Color(0, 0, 0, 0.75));
-	updateWireframeMode(wireframeMode);
+	framebufferSystem.updateFramebuffers(renderObjectSystem.textureSystem);
+	framebufferSystem.select(0);
+	framebufferSystem.current().use();
+	framebufferSystem.current().clear();
 
+	updateWireframeMode(wireframeMode);
 	viewportSystem.select("full");
-	viewportSystem.render(framebuffer);
+	viewportSystem.render(framebufferSystem.adaptiveResolution.x, framebufferSystem.adaptiveResolution.y);
+
 
 	//render sky
 	culling(false);
 	depthTest(false);
 	resetModelMatrix();
-	renderObjectSystem.shaderSystem.uniforms.vec3s["chunkOffsetVector"] = Vec3(0);
-	renderObjectSystem.shaderSystem.uniforms.matrices["vpMatrix"] = cameraSystem.current().projectionMatrix(viewportSystem.current().aspectRatio()) * cameraSystem.current().viewMatrixOnlyRot();
-
+	uniforms().setVec3("chunkOffsetVector", Vec3(0));
+	uniforms().setVec3("cameraVector", cameraSystem.current().forwardVector);
+	uniforms().setMatrix("vpMatrix", cameraSystem.current().projectionMatrix(viewportSystem.current().aspectRatio()) * cameraSystem.current().viewMatrixOnlyRot());
 	renderObjectSystem.render("sky");
 
 	//setup actual scene
@@ -45,20 +51,17 @@ void Renderer::render()
 
 	cameraSystem.current().render(*this);
 
-	//renderObjectSystem.render("monkey");
-
-	//render earth
-	//renderObjectSystem.shaderSystem.uniforms.matrices["mMatrix"] = glm::scale(Matrix(1), Vec3(100));
-	//renderObjectSystem.render("earth");
-
-	//render spaceShips
-	//for (SpaceShip& ship : gameSimulation->spaceShips) {
-	//	ship.render(*this);
-	//}
-
 	createWorldRenderData(gameSimulation->world);
 	renderWorld(worldRenderData);
 
+	framebufferSystem.selectFinal();
+	depthTest(false);
+	culling(false);
+	updateWireframeMode(false);
+	clearColor(Color(0, 0, 0, 0.75));
+	clearDepth();
+
+	renderObjectSystem.render("postProcess");
 
 	/////////////////
 	pollGraphicsAPIError();
@@ -78,7 +81,7 @@ void Renderer::destroy()
 }
 void Renderer::resetModelMatrix()
 {
-	renderObjectSystem.shaderSystem.uniforms.matrices["mMatrix"] = Matrix(1);
+	uniforms().setMatrix("mMatrix", Matrix(1));
 }
 void Renderer::clearDepth() {
 #ifdef GRAPHICS_API_OPENGL
@@ -92,102 +95,149 @@ void Renderer::clearColor(Color color) {
 #endif // GRAPHICS_API_OPENGL
 }
 void Renderer::updateUniforms() {
-	renderObjectSystem.shaderSystem.uniforms.matrices["mMatrix"] = Matrix(1);
+	uniforms().setMatrix("mMatrix", Matrix(1));
 }
 
-void Renderer::createWorldRenderData(Chunk& world)
+void Renderer::createWorldRenderData(WorldChunk& chunk)
 {
-	if (!pauseWorldDataCollection) {
+	bool isLowestLevel;
+	bool tooBig;
+	bool hasRenderableContent;
+	bool isInRenderDistance;
+	bool renderNow;
 
-		world.mutex.lock_shared();
+	chunk.mutex.lock_shared();
 
-		long long x = world.location.x + 1 << 64 - world.level;
-		long long y = world.location.y + 1 << 64 - world.level;
-		long double z = world.location.z << 64 - world.level;
+	long long x = chunk.location.x + 1 << 64 - chunk.level;
+	long long y = chunk.location.y + 1 << 64 - chunk.level;
+	long double z = chunk.location.z << 64 - chunk.level;
 
-		x -= cameraSystem.current().chunkLocation.x;
-		y -= cameraSystem.current().chunkLocation.y;
-		z -= cameraSystem.current().chunkLocation.z;
+	x -= cameraSystem.current().chunkLocation.x;
+	y -= cameraSystem.current().chunkLocation.y;
+	z -= cameraSystem.current().chunkLocation.z;
 
-		unsigned long long offset = ULLONG_MAX >> (world.level + 1);
-		x -= offset;
-		y -= offset;
+	unsigned long long offset = ULLONG_MAX >> (chunk.level + 1);
+	x -= offset;
+	y -= offset;
 
-		glm::highp_dvec3 delta(x, y, z);
+	glm::highp_dvec3 delta(x, y, z);
 
-		delta -= glm::highp_dvec3(cameraSystem.current().location);
+	delta -= glm::highp_dvec3(cameraSystem.current().location);
 
-		//imitate scale by moving it closer/further instead of scaling (allows for constant clipping)
-		delta /= pow(2, 64 - world.level);
+	//imitate scale by moving it closer/further instead of scaling (allows for constant clipping)
+	delta /= pow(2, 64 - chunk.level);
 
-		delta -= glm::highp_dvec3(0.5, 0.5, 0);
+	delta -= glm::highp_dvec3(0.5, 0.5, 0);
 
-		//check visibility
-		bool isLowestLevel = world.level >= CHUNK_LEVEL_MAX;
-		bool tooBig = world.level < 3;
-		bool hasRenderableContent = world.terrain.hasTerrain;
-		bool isInRenderDistance = glm::length(delta) < pow(CHUNK_DISTANCE_MULTIPLIER, settings.worldSystemRenderDistance);
+	//check visibility
+	isLowestLevel = chunk.level >= CHUNK_LEVEL_MAX;
+	tooBig = chunk.level < 3;
+	hasRenderableContent = (chunk.location.z == 0) | chunk.worldData.terrain.hasTerrain | (chunk.worldData.entityIDs.size() > 0);
 
-		bool renderNow = false;
-		//chunks need entities inside to be rendered
-		if (hasRenderableContent | tooBig) {
-			if (tooBig | (isInRenderDistance & !isLowestLevel)) {
-				//too close to be rendered
-				//will be subdivided and checked
-				world.setIsInUse();
-				if (world.subdivided) {
-					createWorldRenderData(*world.tfr);
-					createWorldRenderData(*world.tfl);
-					createWorldRenderData(*world.tbr);
-					createWorldRenderData(*world.tbl);
-					createWorldRenderData(*world.bfr);
-					createWorldRenderData(*world.bfl);
-					createWorldRenderData(*world.bbr);
-					createWorldRenderData(*world.bbl);
+	//isInRenderDistance = glm::length(delta) < worldSystemRenderDistance;
+	isInRenderDistance = chunk.isInRenderDistance(cameraSystem.current().chunkLocation, 2);
 
-					renderNow = false;
-				}
-				else {
-					renderNow = true;
-				}
-			}
-			else {
-				renderNow = true;
-			}
+	renderNow = false;
+
+
+	//tell game its in use now
+	chunk.setIsInUse();
+	
+	//is chunk in view
+	if (isInRenderDistance) {
+		//does it have children
+		if (chunk.subdivided) {
+			//render children instead
+			createWorldRenderData(*chunk.tfr);
+			createWorldRenderData(*chunk.tfl);
+			createWorldRenderData(*chunk.tbr);
+			createWorldRenderData(*chunk.tbl);
+			createWorldRenderData(*chunk.bfr);
+			createWorldRenderData(*chunk.bfl);
+			createWorldRenderData(*chunk.bbr);
+			createWorldRenderData(*chunk.bbl);
+			if (chunk.level == 37) renderNow = true;
+			else renderNow = false;
 		}
-		world.mutex.unlock_shared();
-
-		if (renderNow & world.terrain.hasTerrain) {
-			worldRenderData[world.level].emplace_back();
-			worldRenderData[world.level].back().chunk = &world;
-			worldRenderData[world.level].back().chunkOffsetVector = delta;
+		else {
+			//will be subdivided soon, but needs to be rendered now
+			renderNow = true;
 		}
 	}
+	// is border of view and will be rendered
+	else renderNow = true;
+
+
+	chunk.mutex.unlock_shared();
+
+	if (renderNow) {
+		worldRenderData[chunk.level].emplace_back();
+		worldRenderData[chunk.level].back().chunk = &chunk;
+		worldRenderData[chunk.level].back().chunkOffsetVector = delta;
+	}
+}
+Viewport& Renderer::currentViewport()
+{
+	return viewportSystem.current();
+}
+Uniforms& Renderer::uniforms()
+{
+	return renderObjectSystem.shaderSystem.uniforms;
 }
 void Renderer::renderWorld(WorldRenderData& world)
 {
 
-	renderObjectSystem.shaderSystem.uniforms.bools["distortion"] = worldDistortion;
+	//uniforms().setBool("distortion",worldDistortion);
+	uniforms().setBool("distortion", false);
 
-	renderObjectSystem.shaderSystem.uniforms.matrices["vpMatrix"] = cameraSystem.current().projectionMatrix(viewportSystem.current().aspectRatio()) * cameraSystem.current().viewMatrixOnlyRot();
-	for (auto& vec : world) {
+	uniforms().setMatrix("vpMatrix", cameraSystem.current().projectionMatrix(viewportSystem.current().aspectRatio()) * cameraSystem.current().viewMatrixOnlyRot());
+	for (int i = 0; i <= CHUNK_LEVEL_MAX; i++) {
+
+		auto& vec = worldRenderData[i];
+
 		for (auto& data : vec) {
-			renderObjectSystem.shaderSystem.uniforms.floats["cameraHeight"] = (long double(cameraSystem.current().chunkLocation.z) + cameraSystem.current().location.z) / pow(2, 64 - data.chunk->level);
-			renderObjectSystem.shaderSystem.uniforms.vec3s["chunkOffsetVector"] = Vec3(data.chunkOffsetVector);
-			renderObjectSystem.shaderSystem.uniforms.vec4s["worldOffset"] = Vec4(data.chunk->location, data.chunk->level);
-			renderObjectSystem.shaderSystem.uniforms.matrices["mMatrix"] = Matrix(1);
 
-			renderObjectSystem.shaderSystem.useShader("debug");
-			renderObjectSystem.meshSystem.renderMesh("terrain");
+			uniforms().setFloat("cameraHeight", (long double(cameraSystem.current().chunkLocation.z) + cameraSystem.current().location.z) / pow(2, 64 - data.chunk->level));
+			uniforms().setVec3("chunkOffsetVector", Vec3(data.chunkOffsetVector));
+			uniforms().setVec4("worldOffset", Vec4(data.chunk->location, data.chunk->level));
+			uniforms().setMatrix("mMatrix", Matrix(1));
 
-			if (data.chunk->entityIDs.size() > 0) renderObjectSystem.render("monkey");
+			if (chunkBorders)renderObjectSystem.render("boundingBox");
+
+			renderObjectSystem.render("terrain");
+
+			if (data.chunk->location.z == 0) {
+
+				switch (data.chunk->level) {
+				case 37:renderObjectSystem.render("monkey0");
+					break;
+				case 36:renderObjectSystem.render("monkey1");
+					break;
+				case 35:renderObjectSystem.render("monkey2");
+					break;
+				case 34:renderObjectSystem.render("monkey3");
+					break;
+				case 33:renderObjectSystem.render("monkey4");
+					break;
+				case 32:renderObjectSystem.render("monkey5");
+					break;
+				case 31:renderObjectSystem.render("monkey6");
+					break;
+				case 30:renderObjectSystem.render("monkey7");
+					break;
+				default:
+					break;
+				}
+			}
 		}
-		if(!pauseWorldDataCollection) vec.clear();
+		vec.clear();
+
 		clearDepth();
 	}
 
-	renderObjectSystem.shaderSystem.uniforms.bools["distortion"] = false;
+	uniforms().setBool("distortion", false);
 }
+
 
 void culling(bool isCulling) {
 	if (isCulling) {
@@ -227,28 +277,35 @@ void updateWireframeMode(bool wireframeMode) {
 #endif // GRAPHICS_API_OPENGL
 	}
 }
-void dynamicallyAdjustValue(Renderer& renderer, unsigned int& value) {
-	if (renderer.settings.adjustRenderVariables) {
-		static float minimumFrameTimeMatchup = 1;
-		static float maximumFrameTimeMatchup = 1;
 
-		const float lerpFactor = 0.1;
-
-		minimumFrameTimeMatchup += lerpFactor * renderer.renderTime.delta * renderer.settings.minimumFrameRate;
-		maximumFrameTimeMatchup += lerpFactor * renderer.renderTime.delta * renderer.settings.maximumFrameRate;
-
-		minimumFrameTimeMatchup /= 1 + lerpFactor;
-		maximumFrameTimeMatchup /= 1 + lerpFactor;
-
-		if (minimumFrameTimeMatchup > 1) {
-			if (value != 0) {
-				value /= min(minimumFrameTimeMatchup, 1.5f);
-			}
-		}
-		else {
-			if (maximumFrameTimeMatchup < 1) {
-				value++;
-			}
-		}
+void pollGraphicsAPIError() {
+#ifdef GRAPHICS_API_OPENGL
+	GLenum error = glGetError();
+	if (error) {
+		std::cout << "OpenGl Error: " << error << "\n";
 	}
+#endif
+}
+void dynamicallyAdjustValue(Renderer& renderer, Float& value) {
+	if (renderer.adjustRenderVariables) {
+		//get current fps relative to target
+		//>1 means too low fps <1 means too high
+		static float timePerFrameRatio = 1;
+		timePerFrameRatio = renderer.renderTime.delta * renderer.targetFrameRate;
+
+		if ((timePerFrameRatio > 1.1) | (timePerFrameRatio < 0.9)) {
+			float lerpFactor = renderer.renderTime.delta / 2;
+			value += lerpFactor * (value / timePerFrameRatio);
+			value /= 1 + lerpFactor;
+		}
+		logDebug(std::to_string(value));
+		logDebug(std::to_string(renderer.worldRenderData[3].size()));
+	}
+}
+void renderSpaceShip(Renderer& renderer, SpaceShip& spaceShip)
+{
+	spaceShip.rotation = getRotationBetweenVectors(Vec3(0, 0, 1), spaceShip.velocity);
+	renderer.uniforms().setMatrix("mMatrix", glm::translate(Matrix(1), spaceShip.location) * glm::toMat4(spaceShip.rotation) * glm::scale(Matrix(1), Vec3(2)));
+	//renderer.renderObjectSystem.render("spaceShip");
+	renderer.renderObjectSystem.render("spaceShipLOD");
 }

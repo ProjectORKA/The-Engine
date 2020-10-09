@@ -4,68 +4,69 @@
 #include "Framebuffer.hpp"
 #include "RenderObjectSystem.hpp"
 #include "ViewportSystem.hpp"
-#include "HeightMap.hpp"
 #include "Math.hpp"
+#include "UserInterface.hpp"
+#include "Debug.hpp"
 
 #define TARGETFRAMERATE 60
 
-struct RenderSettings {
-	//settings
-	Bool chunkBorders = false;
-	Bool adjustRenderVariables = true;
-
-	UInt worldSystemRenderDistance = 10;
-
-	Float minimumFrameRate = TARGETFRAMERATE;
-	Float maximumFrameRate = minimumFrameRate * 1.2;
-};
-
 struct WorldRenderChunk {
-	Chunk* chunk;
+	WorldChunk* chunk;
 	Vec3 chunkOffsetVector;
 };
 
 using WorldRenderData = Vector<WorldRenderChunk>[64];
 
 struct Renderer {
-	GameSimulation* gameSimulation = nullptr;
-	Time renderTime;
-	RenderSettings settings;
-
+	Bool chunkBorders = false;
 	Bool wireframeMode = false;
-	Bool worldDistortion = false;
+	Bool worldDistortion = true;
+	Bool adjustRenderVariables = true;
+	Bool pauseWorldDataCollection = false;
 
-	//render source
-	Framebuffer framebuffer;
+	Time renderTime;
+	GameSimulation* gameSimulation = nullptr;
+	//UserInterface ui;
+
+	//framerate
+	Float targetFrameRate = 100;
+
+	//render data
+	FramebufferSystem framebufferSystem;
 	ViewportSystem viewportSystem;
 	CameraSystem cameraSystem;
-
-	//render state
 	RenderObjectSystem renderObjectSystem;
 
-	Bool pauseWorldDataCollection = false;
+	//worldSystem
+	Float worldSystemRenderDistance = 5;
 	WorldRenderData worldRenderData;
+	void createWorldRenderData(WorldChunk & world);
+	void renderWorld(WorldRenderData& world);
 
 	Mutex mutex;
-
 	void sync();
 
 	void create();
-	void render();
-	void renderTest();
 	void destroy();
 
-	void resetModelMatrix();
+	void render();
+	void renderTest();
+
 	void clearDepth();
 	void clearColor(Color color);
+
 	void updateUniforms();
+	void resetModelMatrix();
+	Uniforms& uniforms();
 
-
-	void createWorldRenderData(Chunk& world);
-	void renderWorld(WorldRenderData& world);
+	Viewport& currentViewport();
 };
 
 void culling(bool isCulling);
 void depthTest(bool isUsingDepth);
 void updateWireframeMode(bool wireframeMode);
-void dynamicallyAdjustValue(Renderer& renderer, unsigned int& value);
+void dynamicallyAdjustValue(Renderer& renderer, Float& value);
+
+void renderSpaceShip(Renderer & renderer, SpaceShip & spaceShip);
+
+void pollGraphicsAPIError();

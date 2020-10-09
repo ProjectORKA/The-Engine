@@ -2,7 +2,7 @@
 
 #include "Framebuffer.hpp"
 #include "GraphicsAPI.hpp"
-#include "BasicsModule.hpp"
+#include "Basics.hpp"
 
 struct Viewport {
 	Float relativeX = 0.0f;
@@ -16,21 +16,22 @@ struct Viewport {
 	Float absoluteWidth = 0.0f;
 	Float absoluteHeight = 0.0f;
 
-	void update(Framebuffer& framebuffer);
+	void update(Int & adaptiveWidth, Int & adaptiveHeight);
 	float aspectRatio();
 	void render();
 };
 
 //[TODO] turn into RegionSystem using glScissor instead of viewport;
 struct ViewportSystem {
+	void create();
+	void destroy();
+	Viewport& current();
+	void select(String name);
+	void render(Int adaptiveWidth , Int adaptiveHeight);
+	void add(String name, Float x, Float y, Float w, Float h);
+
+private:
 	Vector<Viewport> viewports;
 	Map<String, Index> viewportNames;
 	Index currentViewport = 0;
-
-	void create();
-	void add(String name, Float x, Float y, Float w, Float h);
-	void select(String name);
-	void render(Framebuffer & framebuffer);
-	Viewport& current();
-	void destroy();
 };

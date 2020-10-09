@@ -20,9 +20,7 @@ void CameraSystem::select(Index cameraID)
 }
 void CameraSystem::render(Renderer& renderer)
 {
-	renderer.renderObjectSystem.shaderSystem.uniforms.matrices["vpMatrix"]
-		= current().projectionMatrix(renderer.viewportSystem.current().aspectRatio())
-		* current().viewMatrix();
+	current().render(renderer);
 }
 OctreeWorldSystemCamera& CameraSystem::current()
 {
@@ -65,7 +63,8 @@ void Camera::processLocation(Time& renderTime) {
 	accelerationVector = { 0,0,0 };
 }
 void Camera::render(Renderer& renderer) {
-	renderer.renderObjectSystem.shaderSystem.uniforms.matrices["vpMatrix"] = projectionMatrix(renderer.viewportSystem.current().aspectRatio()) * viewMatrix();
+	renderer.uniforms().setVec3("cameraVector",forwardVector);
+	renderer.uniforms().setMatrix("vpMatrix", projectionMatrix(renderer.currentViewport().aspectRatio()) * viewMatrix());
 }
 
 void OctreeWorldSystemCamera::applySubChunkLocation() {

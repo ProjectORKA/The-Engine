@@ -10,7 +10,7 @@ struct Renderer;
 
 struct Camera {
 	//hard data
-	Vec3 location = Vec3(0, 0, 0);
+	Vec3 location = Vec3(15, 1564564, 7);
 
 	Float cameraRotationX = -PI / 2;
 	Float cameraRotationZ = -PI / 2;

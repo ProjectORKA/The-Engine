@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Time.hpp"
-#include "BasicsModule.hpp"
+#include "Basics.hpp"
 #include "Math.hpp"
 
 struct Renderer;
@@ -13,5 +13,4 @@ struct SpaceShip {
 	Rotation rotation;
 
 	void update(Time& time);
-	void render(Renderer& renderer);
 };

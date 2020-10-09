@@ -1,12 +1,14 @@
-#version 330 core
+#version 400
 
 layout(location = 0) in vec3 vertex;
 layout(location = 1) in vec2 uvs;
-layout(location = 2) in vec3 positions;
+layout(location = 2) in vec3 normals;
 
 out vec4 vertexColor;
+out vec3 vertexPosition;
 out vec2 textureCoordinate; 
-
+out vec3 normal;
+out float depth;
 
 uniform float time;
 uniform mat4 mMatrix;
@@ -25,7 +27,7 @@ void main() {
 	if(distortion > 0){
 		if(worldOffset.w < 13){
 
-			float radius = pow(2,worldOffset.w-1) ;
+			float radius = pow(2,worldOffset.w-2) ;
 			
 			float height = cameraRelativePosition.z;
 
@@ -39,15 +41,14 @@ void main() {
 		}
 	}
 
-	//cameraRelativePosition.z -= cameraHeight;
-
-	
-//	vec3 levelColor = vec3(mod(worldOffset.w / 5.0f,0.9) + 0.1);
-//	vec3 worldColor = ((vertex) + vec3(0.5,0.5,0.0) + worldOffset.xyz)/vec3(pow(2,worldOffset.w),pow(2,worldOffset.w),pow(2,worldOffset.w-1));
+	vec3 worldColor = ((vertex) + vec3(0.5,0.5,0.0) + worldOffset.xyz)/vec3(pow(2,worldOffset.w),pow(2,worldOffset.w),pow(2,worldOffset.w-1));
 
 	//outputs
-	gl_Position  = vpMatrix * vec4(cameraRelativePosition.xyz,1);
-
-	vertexColor = vec4(1);		//vec4(vec3((worldColor+vec3(uvs,1))/2),1.0f);
+	vec4 screenSpacePosition = vpMatrix * vec4(cameraRelativePosition.xyz,1);
+	gl_Position  = screenSpacePosition;
+	vertexPosition = cameraRelativePosition.xyz;
+	depth = screenSpacePosition.w;
+	vertexColor = vec4(vec3((worldColor+vec3(uvs,1))/2),1.0f);
+	normal = normals;
 	textureCoordinate = uvs;
 };

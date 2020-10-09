@@ -19,93 +19,6 @@
     <Filter Include="Source Files\Program">
       <UniqueIdentifier>{23ae75d0-990b-4171-994e-7dc2a31c13cf}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Basics">
-      <UniqueIdentifier>{0b6066e1-6edf-4447-a852-1604739d4061}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Time">
-      <UniqueIdentifier>{7831713e-cda6-410e-bf5f-1073081775c5}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\GameSimulation">
-      <UniqueIdentifier>{dd2cb503-71f5-4dd8-839a-e0b849380ba8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\WindowSystem">
-      <UniqueIdentifier>{bad6ac57-ea1f-41b8-a966-cf17f4977092}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Window">
-      <UniqueIdentifier>{8bb4f09b-4996-4acf-a152-b1a52731c705}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Renderer">
-      <UniqueIdentifier>{4be13713-870d-4068-b2b6-80f3234754ea}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Renderer\RenderQueue">
-      <UniqueIdentifier>{8c32ce4e-43bf-420f-8742-bbdd825938db}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Renderer\Framebuffer">
-      <UniqueIdentifier>{228a90fd-8a7b-4c6a-b6dd-c3a9e44c501f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Renderer\RenderObjectSystem">
-      <UniqueIdentifier>{2c5dcead-20b5-47a0-9ffd-03803f394989}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Renderer\ViewportSystem">
-      <UniqueIdentifier>{6f705341-d236-4881-9f42-b8d122ba7bc1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Renderer\CameraSystem">
-      <UniqueIdentifier>{61efd7ea-faef-4b8c-b48d-482d35168ae8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Debug">
-      <UniqueIdentifier>{e0d1a0fc-e7ef-4239-8a6a-6855ccabd975}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Math">
-      <UniqueIdentifier>{2e13d5ce-260d-4969-8d33-be51b594853b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Files">
-      <UniqueIdentifier>{8a8febb3-04cd-4e46-a5a9-bab78f5fd4d9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\GraphicsAPI">
-      <UniqueIdentifier>{b2fe7406-be79-4efd-843d-c0b3f7f25f64}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\WindowAPI">
-      <UniqueIdentifier>{ed3e5fea-86d3-40eb-8bfa-f94f81ffcc99}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Renderer\MeshSystem">
-      <UniqueIdentifier>{9b6b48e6-a33d-4490-839e-0cb40985b5f3}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Renderer\MeshSystem\GPUMesh">
-      <UniqueIdentifier>{01cfce47-b8e0-49a2-a767-c42825883c98}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Renderer\MeshSystem\CPUMesh">
-      <UniqueIdentifier>{081e9c71-bbb8-4b7d-89be-bdfbffb7daaf}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Renderer\MeshSystem\Procedural Meshes">
-      <UniqueIdentifier>{0016b895-e579-4149-a337-b4c2826fbeae}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Renderer\ShaderSystem">
-      <UniqueIdentifier>{bbb4dda3-3ff6-4ce5-a222-75368dd38b6f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Renderer\ShaderSystem\Uniforms">
-      <UniqueIdentifier>{57894e16-d8ed-4293-8fb3-1dcc3376cd43}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Renderer\TextureSystem">
-      <UniqueIdentifier>{e5808c33-0a24-488c-8754-68f5fee93dd5}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Renderer\TextureSystem\STBImage">
-      <UniqueIdentifier>{957fac7d-8447-4f84-96d9-96a685c2e12b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\GameSimulation\Chunk">
-      <UniqueIdentifier>{d4500e7d-bec5-49e7-bb6c-561aa78823ca}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\GameSimulation\Chunk\Terrain">
-      <UniqueIdentifier>{98c06bda-03a6-4770-b679-fa9438bc1b55}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Renderer\TextureSystem\HeightMaps">
-      <UniqueIdentifier>{578f485a-7834-4681-a534-f700ac3c9b71}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Renderer\TextureSystem\CPUTexture">
-      <UniqueIdentifier>{10467fa2-a405-4cc1-acdc-0ac086fb5eee}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\GameSimulation\Entity">
-      <UniqueIdentifier>{d3851aab-272f-4729-98cf-dfcc8439cabb}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Resource Files\Shaders\debug">
       <UniqueIdentifier>{8057ee02-1eca-49b3-9c61-27e8bd0e455b}</UniqueIdentifier>
     </Filter>
@@ -115,86 +28,134 @@
     <Filter Include="Resource Files\Shaders\spaceShip">
       <UniqueIdentifier>{ca68672c-2d35-4481-bcdc-ec899da11103}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files\Shaders\sky">
+      <UniqueIdentifier>{355914a4-8b20-4f42-84d8-3e0e164c10c3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Chunk">
+      <UniqueIdentifier>{cede2a8c-fec9-4b01-b5ce-081728698443}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Util">
+      <UniqueIdentifier>{4684f843-1ee9-4813-bd3f-ed28cefdc038}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\GameSimulation">
+      <UniqueIdentifier>{e9634dc3-942c-49f4-9b33-c43f93332bc3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Renderer">
+      <UniqueIdentifier>{8983aea4-6e5e-4a1d-b227-3a1ad3157f11}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Renderer\Mesh">
+      <UniqueIdentifier>{fe7d1840-f4e9-4212-bd63-094c59350e7a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Renderer\Texture">
+      <UniqueIdentifier>{6185e155-1bba-482a-adea-515da0616a59}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Window">
+      <UniqueIdentifier>{5c13c41c-17df-4f45-b7fa-504918bd03e7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Shaders\postProcess">
+      <UniqueIdentifier>{4db6f633-ae60-4a54-8c18-7603ecd0774d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\WorldSystem">
+      <UniqueIdentifier>{29891783-4580-46ff-a5bb-d0759f151e76}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Common">
+      <UniqueIdentifier>{2c581f34-8b03-450b-a04c-313828e4fa55}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Chunk\Terrain">
+      <UniqueIdentifier>{c0645fb3-cd06-4737-920c-08a14efeb58f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Program.cpp">
       <Filter>Source Files\Program</Filter>
     </ClCompile>
+    <ClCompile Include="Basics.cpp">
+      <Filter>Source Files\Util</Filter>
+    </ClCompile>
+    <ClCompile Include="Chunk.cpp">
+      <Filter>Source Files\Chunk</Filter>
+    </ClCompile>
+    <ClCompile Include="CPUMesh.cpp">
+      <Filter>Source Files\Renderer\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="GPUMesh.cpp">
+      <Filter>Source Files\Renderer\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshSystem.cpp">
+      <Filter>Source Files\Renderer\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="CPUTexture.cpp">
+      <Filter>Source Files\Renderer\Texture</Filter>
+    </ClCompile>
+    <ClCompile Include="TextureSystem.cpp">
+      <Filter>Source Files\Renderer\Texture</Filter>
+    </ClCompile>
+    <ClCompile Include="Debug.cpp">
+      <Filter>Source Files\Util</Filter>
+    </ClCompile>
+    <ClCompile Include="FileSystem.cpp">
+      <Filter>Source Files\Util</Filter>
+    </ClCompile>
+    <ClCompile Include="Math.cpp">
+      <Filter>Source Files\Util</Filter>
+    </ClCompile>
+    <ClCompile Include="Entity.cpp">
+      <Filter>Source Files\GameSimulation</Filter>
+    </ClCompile>
+    <ClCompile Include="Framebuffer.cpp">
+      <Filter>Source Files\Renderer</Filter>
+    </ClCompile>
     <ClCompile Include="GameSimulation.cpp">
       <Filter>Source Files\GameSimulation</Filter>
     </ClCompile>
-    <ClCompile Include="Chunk.cpp">
-      <Filter>Source Files\GameSimulation\Chunk</Filter>
+    <ClCompile Include="IndexBufferObject.cpp">
+      <Filter>Source Files\Renderer</Filter>
     </ClCompile>
-    <ClCompile Include="Camera.cpp">
-      <Filter>Source Files\Renderer\CameraSystem</Filter>
-    </ClCompile>
-    <ClCompile Include="Window.cpp">
-      <Filter>Source Files\Window</Filter>
-    </ClCompile>
-    <ClCompile Include="Framebuffer.cpp">
-      <Filter>Source Files\Renderer\Framebuffer</Filter>
-    </ClCompile>
-    <ClCompile Include="Debug.cpp">
-      <Filter>Source Files\Debug</Filter>
-    </ClCompile>
-    <ClCompile Include="MeshSystem.cpp">
-      <Filter>Source Files\Renderer\MeshSystem</Filter>
-    </ClCompile>
-    <ClCompile Include="ShaderSystem.cpp">
-      <Filter>Source Files\Renderer\ShaderSystem</Filter>
-    </ClCompile>
-    <ClCompile Include="Math.cpp">
-      <Filter>Source Files\Math</Filter>
-    </ClCompile>
-    <ClCompile Include="TextureSystem.cpp">
-      <Filter>Source Files\Renderer\TextureSystem</Filter>
-    </ClCompile>
-    <ClCompile Include="Time.cpp">
-      <Filter>Source Files\Time</Filter>
-    </ClCompile>
-    <ClCompile Include="RenderObjectSystem.cpp">
-      <Filter>Source Files\Renderer\RenderObjectSystem</Filter>
-    </ClCompile>
-    <ClCompile Include="GPUMesh.cpp">
-      <Filter>Source Files\Renderer\MeshSystem\GPUMesh</Filter>
-    </ClCompile>
-    <ClCompile Include="CPUMesh.cpp">
-      <Filter>Source Files\Renderer\MeshSystem\CPUMesh</Filter>
-    </ClCompile>
-    <ClCompile Include="ViewportSystem.cpp">
-      <Filter>Source Files\Renderer\ViewportSystem</Filter>
-    </ClCompile>
-    <ClCompile Include="Uniforms.cpp">
-      <Filter>Source Files\Renderer\ShaderSystem\Uniforms</Filter>
-    </ClCompile>
-    <ClCompile Include="WindowSystem.cpp">
-      <Filter>Source Files\WindowSystem</Filter>
-    </ClCompile>
-    <ClCompile Include="Files.cpp">
-      <Filter>Source Files\Files</Filter>
+    <ClCompile Include="ProceduralMeshes.cpp">
+      <Filter>Source Files\Renderer\Mesh</Filter>
     </ClCompile>
     <ClCompile Include="Renderer.cpp">
       <Filter>Source Files\Renderer</Filter>
     </ClCompile>
-    <ClCompile Include="ProceduralMeshes.cpp">
-      <Filter>Source Files\Renderer\MeshSystem\Procedural Meshes</Filter>
+    <ClCompile Include="RenderObjectSystem.cpp">
+      <Filter>Source Files\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="ShaderSystem.cpp">
+      <Filter>Source Files\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="stb_image.cpp">
-      <Filter>Source Files\Renderer\TextureSystem\STBImage</Filter>
+      <Filter>Source Files\Renderer\Texture</Filter>
+    </ClCompile>
+    <ClCompile Include="Camera.cpp">
+      <Filter>Source Files\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="Time.cpp">
+      <Filter>Source Files\Util</Filter>
+    </ClCompile>
+    <ClCompile Include="Uniforms.cpp">
+      <Filter>Source Files\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="UserInterface.cpp">
+      <Filter>Source Files\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="VertexArrayObject.cpp">
+      <Filter>Source Files\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="VertexBufferObject.cpp">
+      <Filter>Source Files\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="ViewportSystem.cpp">
+      <Filter>Source Files\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="Window.cpp">
+      <Filter>Source Files\Window</Filter>
+    </ClCompile>
+    <ClCompile Include="WindowSystem.cpp">
+      <Filter>Source Files\Window</Filter>
     </ClCompile>
     <ClCompile Include="Terrain.cpp">
-      <Filter>Source Files\GameSimulation\Chunk\Terrain</Filter>
-    </ClCompile>
-    <ClCompile Include="HeightMap.cpp">
-      <Filter>Source Files\Renderer\TextureSystem\HeightMaps</Filter>
-    </ClCompile>
-    <ClCompile Include="Entity.cpp">
-      <Filter>Source Files\GameSimulation\Entity</Filter>
-    </ClCompile>
-    <ClCompile Include="CPUTexture.cpp">
-      <Filter>Source Files\Renderer\TextureSystem\CPUTexture</Filter>
+      <Filter>Source Files\Chunk\Terrain</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -206,100 +167,118 @@
     <ClInclude Include="Program.hpp">
       <Filter>Source Files\Program</Filter>
     </ClInclude>
+    <ClInclude Include="WindowsEntry.hpp" />
+    <ClInclude Include="Basics.hpp">
+      <Filter>Source Files\Util</Filter>
+    </ClInclude>
+    <ClInclude Include="Chunk.hpp">
+      <Filter>Source Files\Chunk</Filter>
+    </ClInclude>
+    <ClInclude Include="CPUMesh.hpp">
+      <Filter>Source Files\Renderer\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="GPUMesh.hpp">
+      <Filter>Source Files\Renderer\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshSystem.hpp">
+      <Filter>Source Files\Renderer\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="CPUTexture.hpp">
+      <Filter>Source Files\Renderer\Texture</Filter>
+    </ClInclude>
+    <ClInclude Include="TextureSystem.hpp">
+      <Filter>Source Files\Renderer\Texture</Filter>
+    </ClInclude>
+    <ClInclude Include="Debug.hpp">
+      <Filter>Source Files\Util</Filter>
+    </ClInclude>
+    <ClInclude Include="FileSystem.hpp">
+      <Filter>Source Files\Util</Filter>
+    </ClInclude>
+    <ClInclude Include="Math.hpp">
+      <Filter>Source Files\Util</Filter>
+    </ClInclude>
+    <ClInclude Include="Entity.hpp">
+      <Filter>Source Files\GameSimulation</Filter>
+    </ClInclude>
+    <ClInclude Include="Framebuffer.hpp">
+      <Filter>Source Files\Renderer</Filter>
+    </ClInclude>
     <ClInclude Include="GameSimulation.hpp">
       <Filter>Source Files\GameSimulation</Filter>
     </ClInclude>
-    <ClInclude Include="Chunk.hpp">
-      <Filter>Source Files\GameSimulation\Chunk</Filter>
+    <ClInclude Include="GraphicsAPI.hpp">
+      <Filter>Source Files\Renderer</Filter>
     </ClInclude>
-    <ClInclude Include="Terrain.hpp">
-      <Filter>Source Files\GameSimulation\Chunk\Terrain</Filter>
+    <ClInclude Include="IndexBufferObject.hpp">
+      <Filter>Source Files\Renderer</Filter>
     </ClInclude>
-    <ClInclude Include="Time.hpp">
-      <Filter>Source Files\Time</Filter>
+    <ClInclude Include="PrimitiveModes.hpp">
+      <Filter>Source Files\Renderer</Filter>
     </ClInclude>
-    <ClInclude Include="Camera.hpp">
-      <Filter>Source Files\Renderer\CameraSystem</Filter>
+    <ClInclude Include="ProceduralMeshes.hpp">
+      <Filter>Source Files\Renderer\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="Rectangle.hpp">
+      <Filter>Source Files\Util</Filter>
     </ClInclude>
     <ClInclude Include="Renderer.hpp">
       <Filter>Source Files\Renderer</Filter>
     </ClInclude>
-    <ClInclude Include="Framebuffer.hpp">
-      <Filter>Source Files\Renderer\Framebuffer</Filter>
+    <ClInclude Include="RenderObjectSystem.hpp">
+      <Filter>Source Files\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Resource Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ShaderSystem.hpp">
+      <Filter>Source Files\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="stb_image.h">
+      <Filter>Source Files\Renderer\Texture</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.hpp">
+      <Filter>Source Files\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Time.hpp">
+      <Filter>Source Files\Util</Filter>
+    </ClInclude>
+    <ClInclude Include="Uniforms.hpp">
+      <Filter>Source Files\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="UserInterface.hpp">
+      <Filter>Source Files\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="VertexArrayObject.hpp">
+      <Filter>Source Files\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="VertexBufferObject.hpp">
+      <Filter>Source Files\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="ViewportSystem.hpp">
+      <Filter>Source Files\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="WindowSystem.hpp">
+      <Filter>Source Files\Window</Filter>
     </ClInclude>
     <ClInclude Include="Window.hpp">
       <Filter>Source Files\Window</Filter>
     </ClInclude>
-    <ClInclude Include="Debug.hpp">
-      <Filter>Source Files\Debug</Filter>
-    </ClInclude>
-    <ClInclude Include="MeshSystem.hpp">
-      <Filter>Source Files\Renderer\MeshSystem</Filter>
-    </ClInclude>
-    <ClInclude Include="ShaderSystem.hpp">
-      <Filter>Source Files\Renderer\ShaderSystem</Filter>
-    </ClInclude>
-    <ClInclude Include="Math.hpp">
-      <Filter>Source Files\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="TextureSystem.hpp">
-      <Filter>Source Files\Renderer\TextureSystem</Filter>
-    </ClInclude>
-    <ClInclude Include="PerlinNoise.hpp">
-      <Filter>Source Files\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="GraphicsAPI.hpp">
-      <Filter>Source Files\GraphicsAPI</Filter>
-    </ClInclude>
-    <ClInclude Include="RenderQueue.hpp">
-      <Filter>Source Files\Renderer\RenderQueue</Filter>
-    </ClInclude>
-    <ClInclude Include="Entity.hpp">
-      <Filter>Source Files\GameSimulation\Entity</Filter>
-    </ClInclude>
     <ClInclude Include="WindowAPI.hpp">
-      <Filter>Source Files\WindowAPI</Filter>
+      <Filter>Source Files\Window</Filter>
     </ClInclude>
-    <ClInclude Include="RenderObjectSystem.hpp">
-      <Filter>Source Files\Renderer\RenderObjectSystem</Filter>
+    <ClInclude Include="TictacToe.hpp">
+      <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="GPUMesh.hpp">
-      <Filter>Source Files\Renderer\MeshSystem\GPUMesh</Filter>
+    <ClInclude Include="WorldSystem.hpp">
+      <Filter>Source Files\WorldSystem</Filter>
     </ClInclude>
-    <ClInclude Include="CPUMesh.hpp">
-      <Filter>Source Files\Renderer\MeshSystem\CPUMesh</Filter>
+    <ClInclude Include="TaskSystem.hpp">
+      <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="PrimitiveModes.hpp">
-      <Filter>Source Files\Renderer\MeshSystem</Filter>
+    <ClInclude Include="Terrain.hpp">
+      <Filter>Source Files\Chunk\Terrain</Filter>
     </ClInclude>
-    <ClInclude Include="ViewportSystem.hpp">
-      <Filter>Source Files\Renderer\ViewportSystem</Filter>
-    </ClInclude>
-    <ClInclude Include="Uniforms.hpp">
-      <Filter>Source Files\Renderer\ShaderSystem\Uniforms</Filter>
-    </ClInclude>
-    <ClInclude Include="WindowSystem.hpp">
-      <Filter>Source Files\WindowSystem</Filter>
-    </ClInclude>
-    <ClInclude Include="Files.hpp">
-      <Filter>Source Files\Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ProceduralMeshes.hpp">
-      <Filter>Source Files\Renderer\MeshSystem\Procedural Meshes</Filter>
-    </ClInclude>
-    <ClInclude Include="Rectangle.hpp">
-      <Filter>Source Files\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="stb_image.h">
-      <Filter>Source Files\Renderer\TextureSystem\STBImage</Filter>
-    </ClInclude>
-    <ClInclude Include="HeightMap.hpp">
-      <Filter>Source Files\Renderer\TextureSystem\HeightMaps</Filter>
-    </ClInclude>
-    <ClInclude Include="CPUTexture.hpp">
-      <Filter>Source Files\Renderer\TextureSystem\CPUTexture</Filter>
-    </ClInclude>
-    <ClInclude Include="WindowsEntry.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Data\shaders\debug.frag">
@@ -319,6 +298,18 @@
     </None>
     <None Include="Data\shaders\spaceShip.vert">
       <Filter>Resource Files\Shaders\spaceShip</Filter>
+    </None>
+    <None Include="Data\shaders\sky.frag">
+      <Filter>Resource Files\Shaders\sky</Filter>
+    </None>
+    <None Include="Data\shaders\sky.vert">
+      <Filter>Resource Files\Shaders\sky</Filter>
+    </None>
+    <None Include="Data\shaders\postProcess.frag">
+      <Filter>Resource Files\Shaders\postProcess</Filter>
+    </None>
+    <None Include="Data\shaders\postProcess.vert">
+      <Filter>Resource Files\Shaders\postProcess</Filter>
     </None>
   </ItemGroup>
 </Project>

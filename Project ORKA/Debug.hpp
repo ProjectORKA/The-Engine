@@ -1,8 +1,6 @@
 #pragma once
 
-#include "GraphicsAPI.hpp"
-#include "BasicsModule.hpp"
-
+#include "Basics.hpp"
 
 #define DEBUG
 
@@ -15,9 +13,11 @@ void logError(String message);
 //functions
 void beep();
 void pause();
-void debugPrint(Vec2& t);
-void debugPrint(Vec3 & t);
-void debugPrint(Matrix & t);
+void logDebug(Vec2& t);
+void logDebug(Vec3 & t);
+void logDebug(ULLVec3& t);
+void logDebug(glm::highp_dvec3& t);
+void logDebug(Matrix & t);
 
 ////templates
 //template<typename T>
@@ -26,9 +26,3 @@ void debugPrint(Matrix & t);
 //	std::cout << t << "\n";
 //#endif // DEBUG
 //}
-
-#ifdef GRAPHICS_API_OPENGL
-void __stdcall DebugOutputCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam);
-#endif // GRAPHICS_API_OPENGL
-
-void pollGraphicsAPIError();
