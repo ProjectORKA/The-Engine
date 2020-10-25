@@ -53,6 +53,7 @@
     <ClCompile Include="ViewportSystem.cpp" />
     <ClCompile Include="Window.cpp" />
     <ClCompile Include="WindowSystem.cpp" />
+    <ClCompile Include="PlanetSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Basics.hpp" />
@@ -93,7 +94,7 @@
     <ClInclude Include="WindowAPI.hpp" />
     <ClInclude Include="WindowsEntry.hpp" />
     <ClInclude Include="WindowSystem.hpp" />
-    <ClInclude Include="WorldSystem.hpp" />
+    <ClInclude Include="PlanetSystem.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Data\shaders\debug.frag" />

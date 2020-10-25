@@ -5,14 +5,16 @@
 #include "Chunk.hpp"
 #include "Math.hpp"
 #include "Entity.hpp"
-//#include "WorldSystem.hpp"
+#include "PlanetSystem.hpp"
 
 struct GameSimulation {
 	Time gameTime;
 
 	Vector<SpaceShip> spaceShips;
 
-	WorldChunk world;
+	PlanetSystem planetSystem;
+
+	//WorldChunk world;
 
 	//thread
 	Bool keepThreadRunning = true;

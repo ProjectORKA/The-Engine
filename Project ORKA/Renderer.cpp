@@ -1,5 +1,10 @@
 #include "Renderer.hpp"
 
+void Renderer::sync()
+{
+	mutex.lock();
+	mutex.unlock();
+}
 void Renderer::create()
 {
 	renderTime.reset();
@@ -12,25 +17,22 @@ void Renderer::create()
 
 	//cameraSystem.current().speedMultiplier = 1;
 }
-void Renderer::renderTest() {
-
-};
 void Renderer::render()
 {
 	mutex.lock();
-
 	renderTime.update();
-	dynamicallyAdjustValue(*this, worldSystemRenderDistance);
-	cameraSystem.current().clampMovement = true;
-	cameraSystem.current().processLocation(renderTime);
+	////////////////////////////////////////////////////////////////////////
 
-	//setup frame
+	//camera transform is immediate and handled by render client for best performance
+	currentCamera().update(renderTime);
+
+	//resizes all framebuffers if necessary
 	framebufferSystem.updateFramebuffers(renderObjectSystem.textureSystem);
 	framebufferSystem.select(0);
-	framebufferSystem.current().use();
-	framebufferSystem.current().clear();
-
+	currentFramebuffer().clear();
+	//enables or disables wireframe mode
 	updateWireframeMode(wireframeMode);
+
 	viewportSystem.select("full");
 	viewportSystem.render(framebufferSystem.adaptiveResolution.x, framebufferSystem.adaptiveResolution.y);
 
@@ -49,28 +51,16 @@ void Renderer::render()
 	clearDepth();
 	depthTest(true);
 
-	cameraSystem.current().render(*this);
+	currentCamera().render(*this);
 
-	createWorldRenderData(gameSimulation->world);
-	renderWorld(worldRenderData);
+	//render planet
+	renderPlanetSystem(gameSimulation->planetSystem);
 
-	framebufferSystem.selectFinal();
-	depthTest(false);
-	culling(false);
-	updateWireframeMode(false);
-	clearColor(Color(0, 0, 0, 0.75));
-	clearDepth();
+	//put rendered image in main framebuffer
+	currentFramebuffer().render();
 
-	renderObjectSystem.render("postProcess");
-
-	/////////////////
+	//////////////////////////////////////////////////////////////////
 	pollGraphicsAPIError();
-
-	mutex.unlock();
-}
-void Renderer::sync()
-{
-	mutex.lock();
 	mutex.unlock();
 }
 void Renderer::destroy()
@@ -79,14 +69,17 @@ void Renderer::destroy()
 	cameraSystem.destroy();
 	renderObjectSystem.destroy();
 }
-void Renderer::resetModelMatrix()
-{
-	uniforms().setMatrix("mMatrix", Matrix(1));
-}
 void Renderer::clearDepth() {
 #ifdef GRAPHICS_API_OPENGL
 	glClear(GL_DEPTH_BUFFER_BIT);
 #endif // GRAPHICS_API_OPENGL
+}
+void Renderer::updateUniforms() {
+	uniforms().setMatrix("mMatrix", Matrix(1));
+}
+void Renderer::resetModelMatrix()
+{
+	uniforms().setMatrix("mMatrix", Matrix(1));
 }
 void Renderer::clearColor(Color color) {
 #ifdef GRAPHICS_API_OPENGL
@@ -94,150 +87,53 @@ void Renderer::clearColor(Color color) {
 	glClear(GL_COLOR_BUFFER_BIT);
 #endif // GRAPHICS_API_OPENGL
 }
-void Renderer::updateUniforms() {
-	uniforms().setMatrix("mMatrix", Matrix(1));
+void Renderer::renderWorldChunk(WorldChunk& chunk)
+{
+	Vec3 chunkOffset = currentCamera().chunkLocation;
+	chunkOffset += currentCamera().location;
+	chunkOffset /= ULLONG_MAX;
+
+	uniforms().setVec3("chunkOffsetVector",-chunkOffset);
+
+	renderObjectSystem.render("terrain0");
+	if(chunkBorders)renderObjectSystem.render("boundingBox");
+}
+void Renderer::renderPlanetSystem(PlanetSystem& planetSystem)
+{
+	currentCamera().render(*this);
+	
+	uniforms().bools["distortion"] = worldDistortion;
+
+	renderWorldChunk(planetSystem.chunk);
+}
+void Renderer::renderFramebufferInQuad()
+{
+	framebufferSystem.selectFinal();
+	depthTest(false);
+	culling(false);
+	updateWireframeMode(false);
+	clearColor(Color(0, 0, 0, 0.75));
+	clearDepth();
+	renderObjectSystem.render("postProcess");
 }
 
-void Renderer::createWorldRenderData(WorldChunk& chunk)
+
+Uniforms& Renderer::uniforms()
 {
-	bool isLowestLevel;
-	bool tooBig;
-	bool hasRenderableContent;
-	bool isInRenderDistance;
-	bool renderNow;
-
-	chunk.mutex.lock_shared();
-
-	long long x = chunk.location.x + 1 << 64 - chunk.level;
-	long long y = chunk.location.y + 1 << 64 - chunk.level;
-	long double z = chunk.location.z << 64 - chunk.level;
-
-	x -= cameraSystem.current().chunkLocation.x;
-	y -= cameraSystem.current().chunkLocation.y;
-	z -= cameraSystem.current().chunkLocation.z;
-
-	unsigned long long offset = ULLONG_MAX >> (chunk.level + 1);
-	x -= offset;
-	y -= offset;
-
-	glm::highp_dvec3 delta(x, y, z);
-
-	delta -= glm::highp_dvec3(cameraSystem.current().location);
-
-	//imitate scale by moving it closer/further instead of scaling (allows for constant clipping)
-	delta /= pow(2, 64 - chunk.level);
-
-	delta -= glm::highp_dvec3(0.5, 0.5, 0);
-
-	//check visibility
-	isLowestLevel = chunk.level >= CHUNK_LEVEL_MAX;
-	tooBig = chunk.level < 3;
-	hasRenderableContent = (chunk.location.z == 0) | chunk.worldData.terrain.hasTerrain | (chunk.worldData.entityIDs.size() > 0);
-
-	//isInRenderDistance = glm::length(delta) < worldSystemRenderDistance;
-	isInRenderDistance = chunk.isInRenderDistance(cameraSystem.current().chunkLocation, 2);
-
-	renderNow = false;
-
-
-	//tell game its in use now
-	chunk.setIsInUse();
-	
-	//is chunk in view
-	if (isInRenderDistance) {
-		//does it have children
-		if (chunk.subdivided) {
-			//render children instead
-			createWorldRenderData(*chunk.tfr);
-			createWorldRenderData(*chunk.tfl);
-			createWorldRenderData(*chunk.tbr);
-			createWorldRenderData(*chunk.tbl);
-			createWorldRenderData(*chunk.bfr);
-			createWorldRenderData(*chunk.bfl);
-			createWorldRenderData(*chunk.bbr);
-			createWorldRenderData(*chunk.bbl);
-			if (chunk.level == 37) renderNow = true;
-			else renderNow = false;
-		}
-		else {
-			//will be subdivided soon, but needs to be rendered now
-			renderNow = true;
-		}
-	}
-	// is border of view and will be rendered
-	else renderNow = true;
-
-
-	chunk.mutex.unlock_shared();
-
-	if (renderNow) {
-		worldRenderData[chunk.level].emplace_back();
-		worldRenderData[chunk.level].back().chunk = &chunk;
-		worldRenderData[chunk.level].back().chunkOffsetVector = delta;
-	}
+	return renderObjectSystem.shaderSystem.uniforms;
+}
+Camera& Renderer::currentCamera()
+{
+	return cameraSystem.current();
 }
 Viewport& Renderer::currentViewport()
 {
 	return viewportSystem.current();
 }
-Uniforms& Renderer::uniforms()
+Framebuffer& Renderer::currentFramebuffer()
 {
-	return renderObjectSystem.shaderSystem.uniforms;
+	return framebufferSystem.current();
 }
-void Renderer::renderWorld(WorldRenderData& world)
-{
-
-	//uniforms().setBool("distortion",worldDistortion);
-	uniforms().setBool("distortion", false);
-
-	uniforms().setMatrix("vpMatrix", cameraSystem.current().projectionMatrix(viewportSystem.current().aspectRatio()) * cameraSystem.current().viewMatrixOnlyRot());
-	for (int i = 0; i <= CHUNK_LEVEL_MAX; i++) {
-
-		auto& vec = worldRenderData[i];
-
-		for (auto& data : vec) {
-
-			uniforms().setFloat("cameraHeight", (long double(cameraSystem.current().chunkLocation.z) + cameraSystem.current().location.z) / pow(2, 64 - data.chunk->level));
-			uniforms().setVec3("chunkOffsetVector", Vec3(data.chunkOffsetVector));
-			uniforms().setVec4("worldOffset", Vec4(data.chunk->location, data.chunk->level));
-			uniforms().setMatrix("mMatrix", Matrix(1));
-
-			if (chunkBorders)renderObjectSystem.render("boundingBox");
-
-			renderObjectSystem.render("terrain");
-
-			if (data.chunk->location.z == 0) {
-
-				switch (data.chunk->level) {
-				case 37:renderObjectSystem.render("monkey0");
-					break;
-				case 36:renderObjectSystem.render("monkey1");
-					break;
-				case 35:renderObjectSystem.render("monkey2");
-					break;
-				case 34:renderObjectSystem.render("monkey3");
-					break;
-				case 33:renderObjectSystem.render("monkey4");
-					break;
-				case 32:renderObjectSystem.render("monkey5");
-					break;
-				case 31:renderObjectSystem.render("monkey6");
-					break;
-				case 30:renderObjectSystem.render("monkey7");
-					break;
-				default:
-					break;
-				}
-			}
-		}
-		vec.clear();
-
-		clearDepth();
-	}
-
-	uniforms().setBool("distortion", false);
-}
-
 
 void culling(bool isCulling) {
 	if (isCulling) {
@@ -298,8 +194,6 @@ void dynamicallyAdjustValue(Renderer& renderer, Float& value) {
 			value += lerpFactor * (value / timePerFrameRatio);
 			value /= 1 + lerpFactor;
 		}
-		logDebug(std::to_string(value));
-		logDebug(std::to_string(renderer.worldRenderData[3].size()));
 	}
 }
 void renderSpaceShip(Renderer& renderer, SpaceShip& spaceShip)

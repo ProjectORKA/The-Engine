@@ -4,6 +4,7 @@
 
 struct Viewport;
 
+//camera system
 void CameraSystem::create()
 {
 	add();
@@ -22,15 +23,17 @@ void CameraSystem::render(Renderer& renderer)
 {
 	current().render(renderer);
 }
-OctreeWorldSystemCamera& CameraSystem::current()
-{
-	return cameras[currentCamera];
-}
 void CameraSystem::destroy()
 {
 	cameras.clear();
 }
 
+Camera& CameraSystem::current()
+{
+	return cameras[currentCamera];
+}
+
+//camera
 Matrix Camera::projectionMatrix(float aspectRatio)
 {
 	return glm::perspective(
@@ -54,20 +57,15 @@ Matrix Camera::viewMatrixOnlyRot() {
 		upVector
 	);
 }
-void Camera::processLocation(Time& renderTime) {
-	cameraSpeed = pow(CAMERA_SPEED_MULTIPLIER, speedMultiplier);
-	accelerationVector *= cameraSpeed * renderTime.delta;
-
-	location += glm::clamp(accelerationVector, (Float)LLONG_MIN / 2, (Float)LLONG_MAX / 2);
-
-	accelerationVector = { 0,0,0 };
+void Camera::update(Time& renderTime)
+{
+	processLocation(renderTime);
 }
 void Camera::render(Renderer& renderer) {
-	renderer.uniforms().setVec3("cameraVector",forwardVector);
-	renderer.uniforms().setMatrix("vpMatrix", projectionMatrix(renderer.currentViewport().aspectRatio()) * viewMatrix());
+	renderer.uniforms().setVec3("cameraVector", forwardVector);
+	renderer.uniforms().setMatrix("vpMatrix", projectionMatrix(renderer.currentViewport().aspectRatio()) * viewMatrixOnlyRot());
 }
-
-void OctreeWorldSystemCamera::applySubChunkLocation() {
+void Camera::applySubChunkLocation() {
 
 	//all values > 1 or < 0 will be applied to the chunkLocation
 
@@ -127,14 +125,14 @@ void OctreeWorldSystemCamera::applySubChunkLocation() {
 		}
 	}
 }
-void OctreeWorldSystemCamera::processLocation(Time& renderTime)
+void Camera::processLocation(Time& renderTime)
 {
 	cameraSpeed = pow(CAMERA_SPEED_MULTIPLIER, speedMultiplier);
 	accelerationVector *= cameraSpeed * renderTime.delta;
 
 	location += accelerationVector;
 
-	if(clampMovement)applySubChunkLocation();
+	applySubChunkLocation();
 
 	accelerationVector = { 0,0,0 };
 }

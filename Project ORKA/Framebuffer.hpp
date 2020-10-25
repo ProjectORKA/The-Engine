@@ -19,6 +19,8 @@ struct Framebuffer {
 	void create(TextureSystem & textureSystem);
 	void update(TextureSystem & textureSystem, Vec2 & resolution);
 	void use();
+	void render();
+	void renderAdvanced();
 	void clear();
 	void destroy();
 };

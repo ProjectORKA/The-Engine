@@ -25,13 +25,8 @@ void GameSimulation::stop() {
 
 void GameSimulation::process() {
 
-	world.processSubdivision(*this);
-	
-	if (!gameTime.paused) {
-		for (SpaceShip& ship : spaceShips) {
-			ship.update(gameTime);
-		}
-	}
+	planetSystem.process();
+
 }
 
 void GameSimulationThread(GameSimulation& gameSimulation) {

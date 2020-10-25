@@ -1,6 +1,8 @@
 
 #include <iostream>
+#include <bitset>
 #include "Debug.hpp"
+
 
 bool showEvents = true;
 bool showDebug = true;
@@ -49,6 +51,12 @@ void logDebug(Vec3 & t) {
 void logDebug(ULLVec3& t) {
 #ifdef DEBUG
 	std::cout << "(" << t.x << "|" << t.y << "|" << t.z << ")" << "\n";
+#endif // DEBUG
+}
+
+void logDebug(ULL& t) {
+#ifdef DEBUG
+	std::cout << t << " (" << std::bitset<32>(t) << ")" << "\n";
 #endif // DEBUG
 }
 

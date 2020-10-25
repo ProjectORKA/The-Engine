@@ -16,37 +16,37 @@ struct ChunkData {
 	Vector<Index> entityIDs;
 };
 
-struct WorldChunk {
-	//data
-	ChunkData worldData;
-
-	//user control
-	UInt nextTicksInUse = 0;
-	Mutex mutex;
-
-	//octree functionality
-	ULLVec3 location = ULLVec3(0);
-	UShort level = 0;				//0-63 0 = biggest level 63 = smallest level
-	Bool subdivided = false;
-
-	WorldChunk* tfr = nullptr;
-	WorldChunk* tfl = nullptr;
-	WorldChunk* tbr = nullptr;
-	WorldChunk* tbl = nullptr;
-	WorldChunk* bfr = nullptr;
-	WorldChunk* bfl = nullptr;
-	WorldChunk* bbr = nullptr;
-	WorldChunk* bbl = nullptr;
-
-	WorldChunk();
-	WorldChunk(WorldChunk & parent, Bool x, Bool y, Bool z);
-	~WorldChunk();
-
-	void unsubdivide();
-	void subdivide(GameSimulation& gameSimulation);
-	void generateEntities();
-	void setIsInUse();
-	
-	bool processSubdivision(GameSimulation& gamesimulation);
-	bool isInRenderDistance(ULLVec3 cameraLocation, UInt renderDistance);
-};
+//struct WorldChunk {
+//	//data
+//	ChunkData worldData;
+//
+//	//user control
+//	UInt nextTicksInUse = 0;
+//	Mutex mutex;
+//
+//	//octree functionality
+//	ULLVec3 location = ULLVec3(0);
+//	UShort level = 0;				//0-63 0 = biggest level 63 = smallest level
+//	Bool subdivided = false;
+//
+//	WorldChunk* tfr = nullptr;
+//	WorldChunk* tfl = nullptr;
+//	WorldChunk* tbr = nullptr;
+//	WorldChunk* tbl = nullptr;
+//	WorldChunk* bfr = nullptr;
+//	WorldChunk* bfl = nullptr;
+//	WorldChunk* bbr = nullptr;
+//	WorldChunk* bbl = nullptr;
+//
+//	WorldChunk();
+//	WorldChunk(WorldChunk & parent, Bool x, Bool y, Bool z);
+//	~WorldChunk();
+//
+//	void unsubdivide();
+//	void subdivide(GameSimulation& gameSimulation);
+//	void generateEntities();
+//	void setIsInUse();
+//	
+//	bool processSubdivision(GameSimulation& gamesimulation);
+//	bool isInRenderDistance(ULLVec3 cameraLocation, UInt renderDistance);
+//};
