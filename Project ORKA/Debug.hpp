@@ -13,6 +13,7 @@ void logError(String message);
 //functions
 void beep();
 void pause();
+void logDebug(ULL& t);
 void logDebug(Vec2& t);
 void logDebug(Vec3 & t);
 void logDebug(ULLVec3& t);

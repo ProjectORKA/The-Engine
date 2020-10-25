@@ -10,19 +10,13 @@
 
 #define TARGETFRAMERATE 60
 
-struct WorldRenderChunk {
-	WorldChunk* chunk;
-	Vec3 chunkOffsetVector;
-};
-
-using WorldRenderData = Vector<WorldRenderChunk>[64];
-
 struct Renderer {
 	Bool chunkBorders = false;
 	Bool wireframeMode = false;
 	Bool worldDistortion = true;
 	Bool adjustRenderVariables = true;
 	Bool pauseWorldDataCollection = false;
+	Short multisampleCount = 4;
 
 	Time renderTime;
 	GameSimulation* gameSimulation = nullptr;
@@ -37,29 +31,35 @@ struct Renderer {
 	CameraSystem cameraSystem;
 	RenderObjectSystem renderObjectSystem;
 
-	//worldSystem
-	Float worldSystemRenderDistance = 5;
-	WorldRenderData worldRenderData;
-	void createWorldRenderData(WorldChunk & world);
-	void renderWorld(WorldRenderData& world);
-
+	//synchronization
 	Mutex mutex;
 	void sync();
-
+	
+	//(de)initialization
 	void create();
 	void destroy();
 
+	//main render function
 	void render();
-	void renderTest();
 
+	//RENDERING
+	//generic framebuffer operations
 	void clearDepth();
 	void clearColor(Color color);
-
 	void updateUniforms();
 	void resetModelMatrix();
-	Uniforms& uniforms();
 
+
+	//render functions
+		//worldSystem
+	void renderWorldChunk(WorldChunk & chunk);
+	void renderPlanetSystem(PlanetSystem& planetSystem);
+	void renderFramebufferInQuad();
+	
+	Camera& currentCamera();
+	Uniforms& uniforms();
 	Viewport& currentViewport();
+	Framebuffer& currentFramebuffer();
 };
 
 void culling(bool isCulling);

@@ -24,22 +24,22 @@ void main() {
 	vec3 cameraRelativePosition = chunkOffsetVector + positionInChunk;
 
 
-	if(distortion > 0){
-		if(worldOffset.w < 13){
-
-			float radius = pow(2,worldOffset.w-2) ;
-			
-			float height = cameraRelativePosition.z;
-
-			float dist = length(vec2(cameraRelativePosition.xy));
-			
-			if(cameraRelativePosition.xy != vec2(0)){
-				vec2 direction = normalize(cameraRelativePosition.xy);
-				cameraRelativePosition.xy = direction * (height + radius + cameraHeight) * sin(dist/radius);
-			}
-			cameraRelativePosition.z = (height + radius + cameraHeight) * cos(dist/radius)-radius-cameraHeight;
-		}
-	}
+//	if(distortion > 0){
+//		if(worldOffset.w < 13){
+//
+//			float radius = pow(2,worldOffset.w-2) ;
+//			
+//			float height = cameraRelativePosition.z;
+//
+//			float dist = length(vec2(cameraRelativePosition.xy));
+//			
+//			if(cameraRelativePosition.xy != vec2(0)){
+//				vec2 direction = normalize(cameraRelativePosition.xy);
+//				cameraRelativePosition.xy = direction * (height + radius + cameraHeight) * sin(dist/radius);
+//			}
+//			cameraRelativePosition.z = (height + radius + cameraHeight) * cos(dist/radius)-radius-cameraHeight;
+//		}
+//	}
 
 	vec3 worldColor = ((vertex) + vec3(0.5,0.5,0.0) + worldOffset.xyz)/vec3(pow(2,worldOffset.w),pow(2,worldOffset.w),pow(2,worldOffset.w-1));
 

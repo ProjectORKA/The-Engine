@@ -3,14 +3,15 @@
 #include "Math.hpp"
 #include "Time.hpp"
 
-#define INITIAL_CAMERA_SPEED 230		//1 as fast as a human 400 as fast as light
-#define CAMERA_SPEED_MULTIPLIER 1.2f		//controls the increase in speed when scrolling mouse
+#define INITIAL_CAMERA_SPEED 200				//1 as fast as a human 400 as fast as light
+#define CAMERA_SPEED_MULTIPLIER 1.2f		//controls the de/increase in speed by this amount when scrolling
 
 struct Renderer;
 
 struct Camera {
 	//hard data
-	Vec3 location = Vec3(15, 1564564, 7);
+	Vec3 location = Vec3(0, 0, 0);
+	ULLVec3 chunkLocation = ULLVec3(0, 0, 10000000);
 
 	Float cameraRotationX = -PI / 2;
 	Float cameraRotationZ = -PI / 2;
@@ -30,7 +31,7 @@ struct Camera {
 	Matrix projectionMatrix(float aspectRatio);
 	Matrix viewMatrix();
 	Matrix viewMatrixOnlyRot();
-	virtual void processLocation(Time& renderTime);
+	void update(Time & renderTime);
 	void rotate(float x, float y) {
 		cameraRotationX -= mouseSensitivity * y;
 		cameraRotationZ += mouseSensitivity * x;
@@ -61,17 +62,12 @@ struct Camera {
 		upVector = glm::cross(rightVector, forwardVector);
 	}
 	void render(Renderer& renderer);
-};
-
-struct OctreeWorldSystemCamera : public Camera {
-	Bool clampMovement = true;
-	ULLVec3 chunkLocation = ULLVec3(0, 0, 1);
 	void applySubChunkLocation();
-	void processLocation(Time & renderTime);
+	void processLocation(Time& renderTime);
 };
 
 struct CameraSystem {
-	Vector<OctreeWorldSystemCamera> cameras;
+	Vector<Camera> cameras;
 	Index currentCamera = 0;
 	
 	void create();
@@ -80,5 +76,5 @@ struct CameraSystem {
 	void add();
 	void select(Index cameraID);
 	void render(Renderer & renderer);
-	OctreeWorldSystemCamera& current();
+	Camera& current();
 };

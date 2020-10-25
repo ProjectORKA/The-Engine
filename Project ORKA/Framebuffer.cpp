@@ -1,6 +1,28 @@
 
 #include "Framebuffer.hpp"
 
+void Framebuffer::use()
+{
+	glBindFramebuffer(GL_FRAMEBUFFER, framebufferID);
+	GLenum DrawBuffers[1] = { GL_COLOR_ATTACHMENT0 };
+	glDrawBuffers(1, DrawBuffers);
+}
+void Framebuffer::clear()
+{
+	glClearColor(backgroundColor.r, backgroundColor.g, backgroundColor.b, backgroundColor.a);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+}
+void Framebuffer::render()
+{
+	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+	glBindFramebuffer(GL_READ_FRAMEBUFFER, framebufferID);
+	glDrawBuffer(GL_BACK);
+	glBlitFramebuffer(0, 0, width, height, 0, 0, width, height, GL_COLOR_BUFFER_BIT, GL_LINEAR);
+}
+void Framebuffer::destroy()
+{
+	glDeleteFramebuffers(1, &framebufferID);
+}
 void Framebuffer::create(TextureSystem& textureSystem)
 {
 	//generate framebuffer
@@ -46,7 +68,6 @@ void Framebuffer::create(TextureSystem& textureSystem)
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
-
 void Framebuffer::update(TextureSystem& textureSystem, Vec2& resolution)
 {
 	resolution.x = max(1, resolution.x);
@@ -62,54 +83,13 @@ void Framebuffer::update(TextureSystem& textureSystem, Vec2& resolution)
 
 		textureSystem.use(depthTextureIndex);
 		textureSystem.resize(width, height);
-
-		//glBindRenderbuffer(GL_RENDERBUFFER, depthTextureIndex);
-		//glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, width, height);
 	}
 }
 
-void Framebuffer::use()
+void FramebufferSystem::selectFinal()
 {
-	glBindFramebuffer(GL_FRAMEBUFFER, framebufferID);
-	GLenum DrawBuffers[1] = { GL_COLOR_ATTACHMENT0 };
-	glDrawBuffers(1, DrawBuffers);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
-
-void Framebuffer::clear()
-{
-	glClearColor(backgroundColor.r, backgroundColor.g, backgroundColor.b, backgroundColor.a);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-}
-
-void Framebuffer::destroy()
-{
-	glDeleteFramebuffers(1, &framebufferID);
-}
-
-void FramebufferSystem::create(RenderObjectSystem & renderObjectSystem)
-{
-	framebuffers.clear();
-	add(adaptiveResolution, renderObjectSystem.textureSystem);
-	select(0);
-
-	//essential objects
-	renderObjectSystem.addRenderObject("postProcess", "postProcessPlane", "postProcessTexture", "postProcess");
-}
-
-void FramebufferSystem::add(Vec2 resolution, TextureSystem & textureSystem)
-{
-	framebuffers.emplace_back();
-	framebuffers.back().create(textureSystem);
-	framebuffers.back().update(textureSystem, resolution);
-}
-
-void FramebufferSystem::updateFramebuffers(TextureSystem & textureSystem)
-{
-	for (Framebuffer& framebuffer : framebuffers) {
-		framebuffer.update(textureSystem, adaptiveResolution);
-	}
-}
-
 void FramebufferSystem::select(Index framebufferIndex)
 {
 	if (framebufferIndex > (framebuffers.size() - 1)) {
@@ -119,12 +99,27 @@ void FramebufferSystem::select(Index framebufferIndex)
 	currentFramebufferIndex = framebufferIndex;
 	current().use();
 }
-
-void FramebufferSystem::selectFinal()
+void FramebufferSystem::create(RenderObjectSystem & renderObjectSystem)
 {
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-}
+	framebuffers.clear();
+	add(adaptiveResolution, renderObjectSystem.textureSystem);
+	select(0);
 
+	//essential objects
+	renderObjectSystem.addRenderObject("postProcess", "postProcessPlane", "postProcessTexture", "postProcess");
+}
+void FramebufferSystem::updateFramebuffers(TextureSystem & textureSystem)
+{
+	for (Framebuffer& framebuffer : framebuffers) {
+		framebuffer.update(textureSystem, adaptiveResolution);
+	}
+}
+void FramebufferSystem::add(Vec2 resolution, TextureSystem & textureSystem)
+{
+	framebuffers.emplace_back();
+	framebuffers.back().create(textureSystem);
+	framebuffers.back().update(textureSystem, resolution);
+}
 Framebuffer& FramebufferSystem::current()
 {
 	if ((currentFramebufferIndex > (framebuffers.size() - 1)) | (framebuffers.size() == 0)) {

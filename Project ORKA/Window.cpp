@@ -224,7 +224,7 @@ void Window::setIcon(Path path) {
 }
 void Window::processCameraMovement() {
 
-	OctreeWorldSystemCamera& camera = renderer.cameraSystem.current();
+	Camera& camera = renderer.cameraSystem.current();
 
 	if (glfwGetKey(apiWindow, GLFW_KEY_E) == GLFW_PRESS) camera.accelerationVector += camera.upVector;
 	if (glfwGetKey(apiWindow, GLFW_KEY_Q) == GLFW_PRESS) camera.accelerationVector -= camera.upVector;

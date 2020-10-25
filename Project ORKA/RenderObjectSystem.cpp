@@ -29,6 +29,7 @@ void RenderObjectSystem::create() {
 	addRenderObject("monkey6", "monkey6", "uv", "primitive");
 	addRenderObject("monkey7", "monkey7", "uv", "primitive");
 	addRenderObject("terrain", "terrain", "default2", "primitive");
+	addRenderObject("terrain0", "terrain0", "default2", "primitive");
 	addRenderObject("boundingBox", "boundingBox", "default", "primitive");
 }
 void RenderObjectSystem::addRenderObject(String name, Name meshName, Name textureName, Name shaderName) {
