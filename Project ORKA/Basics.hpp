@@ -97,3 +97,5 @@ using Set = std::set<T>;
 #include <map>
 template<typename T, typename K>
 using Map = std::map<T, K>;
+
+#include <bitset>

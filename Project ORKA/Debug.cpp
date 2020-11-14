@@ -35,42 +35,56 @@ void pause() {
 	std::cin >> a;
 #endif
 }
-void logDebug(Vec2& t)
+
+void logDebug(ULL t) {
+#ifdef DEBUG
+	std::cout << t << " (" << std::bitset<32>(t) << ")" << "\n";
+#endif // DEBUG
+}
+void logDebug(Int t)
+{
+#ifdef DEBUG
+	std::cout << t << "\n";
+#endif // DEBUG
+}
+void logDebug(UInt t)
+{
+#ifdef DEBUG
+	std::cout << t << "\n";
+#endif // DEBUG
+}
+void logDebug(Vec2 t)
 {
 #ifdef DEBUG
 	std::cout << "(" << t.x << "|" << t.y << ")" << "\n";
 #endif // DEBUG
 };
-
-void logDebug(Vec3 & t) {
+void logDebug(Vec3 t) {
 #ifdef DEBUG
 	std::cout << "(" << t.x << "|" << t.y << "|" << t.z << ")" << "\n";
 #endif // DEBUG
 }
-
-void logDebug(ULLVec3& t) {
+void logDebug(Short t)
+{
+#ifdef DEBUG
+	std::cout << t << "\n";
+#endif // DEBUG
+}
+void logDebug(ULLVec3 t) {
 #ifdef DEBUG
 	std::cout << "(" << t.x << "|" << t.y << "|" << t.z << ")" << "\n";
 #endif // DEBUG
 }
-
-void logDebug(ULL& t) {
-#ifdef DEBUG
-	std::cout << t << " (" << std::bitset<32>(t) << ")" << "\n";
-#endif // DEBUG
-}
-
-void logDebug(glm::highp_dvec3& t) {
-#ifdef DEBUG
-	std::cout << "(" << t.x << "|" << t.y << "|" << t.z << ")" << "\n";
-#endif // DEBUG
-}
-
-void logDebug(Matrix& matrix) {
+void logDebug(Matrix matrix) {
 #ifdef DEBUG
 	std::cout << "[ " << matrix[0][0] << "  " << matrix[0][1] << "  " << matrix[0][2] << "  " << matrix[0][3] << " ]" << "\n";
 	std::cout << "[ " << matrix[1][0] << "  " << matrix[1][1] << "  " << matrix[1][2] << "  " << matrix[1][3] << " ]" << "\n";
 	std::cout << "[ " << matrix[2][0] << "  " << matrix[2][1] << "  " << matrix[2][2] << "  " << matrix[2][3] << " ]" << "\n";
 	std::cout << "[ " << matrix[3][0] << "  " << matrix[3][1] << "  " << matrix[3][2] << "  " << matrix[3][3] << " ]" << "\n";
+#endif // DEBUG
+}
+void logDebug(glm::highp_dvec3 t) {
+#ifdef DEBUG
+	std::cout << "(" << t.x << "|" << t.y << "|" << t.z << ")" << "\n";
 #endif // DEBUG
 }

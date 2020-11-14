@@ -3,17 +3,6 @@
 
 void GameSimulation::start()
 {
-	UShort team = 0;
-
-	float extend = 5;
-
-	for (int i = 0; i < 10000; i++) {
-		spaceShips.emplace_back();
-		spaceShips.back().location = Vec3(randomFloat(-extend, extend), randomFloat(-extend, extend), randomFloat(-extend, extend));
-		spaceShips.back().velocity = Vec3(randomFloat(-extend, extend), randomFloat(-extend, extend), randomFloat(-extend, extend));
-		spaceShips.back().team = team;
-	}
-
 	keepThreadRunning = true;
 	thread = Thread(GameSimulationThread, std::ref(*this));
 }
@@ -23,9 +12,9 @@ void GameSimulation::stop() {
 	thread.join();
 }
 
-void GameSimulation::process() {
+void GameSimulation::update() {
 
-	planetSystem.process();
+	planetSystem.update();
 
 }
 
@@ -41,7 +30,7 @@ void GameSimulationThread(GameSimulation& gameSimulation) {
 
 		gameSimulation.gameTime.update();
 
-		gameSimulation.process();
+		gameSimulation.update();
 
 		//wait for next tick
 		std::this_thread::sleep_until(t);

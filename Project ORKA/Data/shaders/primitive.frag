@@ -7,6 +7,7 @@ in vec3 vertexPosition;
 in vec2 textureCoordinate;
 in vec3 normal;
 in float depth;
+in vec3 worldCoordinate;
 
 uniform vec3 cameraVector;
 uniform vec4 worldOffset;
@@ -17,6 +18,7 @@ uniform sampler2D baseColor;
 
 void main(){
 	if(texture(baseColor,textureCoordinate).a != 1) discard;
+	if(normal.z<0)discard;
 
 	vec3 fragmentViewVector = normalize(vertexPosition);
 	vec3 sunDir = normalize(vec3(1,1,1));
@@ -32,14 +34,17 @@ void main(){
 	float coloredLight = fresnel + ambient + diffuse;
 	float externelLight = specular;
 	
-	vec3 fragmentColor = texture(baseColor, textureCoordinate).rgb;
+	vec3 fragmentColor = (worldCoordinate.xyz + texture(baseColor, textureCoordinate).rgb) / 2;
 	//vec3 fragmentColor = vec3(textureCoordinate,1);
 
 	//draw phong lighting
 	color = vec4(fragmentColor * vec3(coloredLight) + vec3(externelLight),1);
 
+	//draw worldLocation
+	//color = vec4(worldCoordinate,1.0);
+
 	//draw normals
-	//color  = vec4(normal,1.0f);
+	//color  = vec4(normalize(normal),1.0f);
 
 	//draw vertexColor
 	//color  = vec4(vertexColor,1.0f);

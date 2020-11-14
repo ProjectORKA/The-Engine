@@ -9,30 +9,36 @@ struct Framebuffer {
 	Int width = 1600;
 	Int height = 900;
 
+	Short samples = 0;
+
 	Color backgroundColor = Color(0.05f, 0.05f, 0.05f, 0.75f);
 
 	GLuint framebufferID = 0;
 
-	Index colorTextureIndex = 0;
-	GLuint depthTextureIndex = 0;
+	GPUTexture colorTexture;
+	GPUTexture depthTexture;
 
-	void create(TextureSystem & textureSystem);
-	void update(TextureSystem & textureSystem, Vec2 & resolution);
 	void use();
 	void render();
-	void renderAdvanced();
-	void clear();
+	void create();
 	void destroy();
+	void detachTextures();
+	void resize(Vec2 & resolution);
+	void changeSamples(UShort samples);
+	void attachTexture(GPUTexture& texture);
 };
 
 struct FramebufferSystem {
 	Vec2 adaptiveResolution = Vec2(1600, 900);
 	Vector<Framebuffer> framebuffers;
 	Index currentFramebufferIndex = 0;
-	void create(RenderObjectSystem & renderObjectSystem);
-	void add(Vec2 resolution, TextureSystem & textureSystem);
-	void updateFramebuffers(TextureSystem& textureSystem);
+	
+	void create();
+	void destroy();
+	void deselect();
+	void updateFramebufferSizes();
 	void select(Index framebufferIndex);
-	void selectFinal();
+	void add(Vec2 resolution, UShort samples);
+
 	Framebuffer& current();
 };

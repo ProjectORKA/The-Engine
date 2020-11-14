@@ -4,11 +4,13 @@
 #include "Basics.hpp"
 #include "Debug.hpp"
 #include "CPUTexture.hpp"
+#include "Math.hpp"
 
 struct GPUTexture {
 	Index textureID = 0;
 	Int filter = linearMM;
 	Int wrapping = repeat;
+	Short multisampling = 0;
 	Int dataType = GL_BYTE;
 	Short channels = 4;
 	UInt width = 1;
@@ -29,12 +31,12 @@ struct TextureSystem {
 	Vector<GPUTexture> gpuTextures;
 
 	void create();
-	void add(CPUTexture& cpuTexture);
-	void use(Name name);
-	void use(Index textureID);
-	void resize(Int width, Int height);
 	void destroy();
+	void use(Name name);
 	GPUTexture& current();
+	void use(Index textureID);
+	void add(CPUTexture& cpuTexture);
+	void resize(Int width, Int height);
 };
 
 void loadAllTextures(TextureSystem & textureSystem);

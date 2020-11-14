@@ -62,6 +62,8 @@ void Camera::update(Time& renderTime)
 	processLocation(renderTime);
 }
 void Camera::render(Renderer& renderer) {
+	Float cameraHeight = (long double(chunkLocation.z) + location.z);
+	renderer.uniforms().setFloat("cameraHeight", cameraHeight);
 	renderer.uniforms().setVec3("cameraVector", forwardVector);
 	renderer.uniforms().setMatrix("vpMatrix", projectionMatrix(renderer.currentViewport().aspectRatio()) * viewMatrixOnlyRot());
 }

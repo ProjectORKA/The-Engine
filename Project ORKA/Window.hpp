@@ -14,8 +14,6 @@ struct Window {
 	Bool decorated = true;
 	Bool isShown = true;
 
-	UShort antiAliasing = 4; //[TODO]
-
 	Int windowContentWidth = 1600;
 	Int windowContentHeight = 900;
 

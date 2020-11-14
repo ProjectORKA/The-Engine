@@ -11,7 +11,8 @@ void Renderer::create()
 	cameraSystem.create();
 	viewportSystem.create();
 	renderObjectSystem.create();
-	framebufferSystem.create(renderObjectSystem);
+	framebufferSystem.create();
+	planetRenderSystem.create();
 
 	glClipControl(GL_LOWER_LEFT, GL_ZERO_TO_ONE);
 
@@ -21,15 +22,31 @@ void Renderer::render()
 {
 	mutex.lock();
 	renderTime.update();
+	dynamicallyAdjustValue(*this, planetRenderSystem.renderDistance);
+
+	//logDebug(planetRenderSystem.renderDistance);
+
 	////////////////////////////////////////////////////////////////////////
+
+	planetRenderSystem.update(gameSimulation->planetSystem.chunk, currentCamera());
 
 	//camera transform is immediate and handled by render client for best performance
 	currentCamera().update(renderTime);
 
 	//resizes all framebuffers if necessary
-	framebufferSystem.updateFramebuffers(renderObjectSystem.textureSystem);
-	framebufferSystem.select(0);
-	currentFramebuffer().clear();
+	framebufferSystem.updateFramebufferSizes();
+
+	switch (multisampleCount) {
+	case 0:  framebufferSystem.select(0); break;
+	case 2:  framebufferSystem.select(1); break;
+	case 4:  framebufferSystem.select(2); break;
+	case 8:  framebufferSystem.select(3); break;
+	case 16: framebufferSystem.select(4); break;
+	default: framebufferSystem.select(0);
+	}
+
+	clearColor(Color(0, 0, 0, 0.75));
+
 	//enables or disables wireframe mode
 	updateWireframeMode(wireframeMode);
 
@@ -54,13 +71,17 @@ void Renderer::render()
 	currentCamera().render(*this);
 
 	//render planet
-	renderPlanetSystem(gameSimulation->planetSystem);
+	currentCamera().render(*this);
+	planetRenderSystem.render(uniforms(), renderObjectSystem);
 
 	//put rendered image in main framebuffer
 	currentFramebuffer().render();
 
 	//////////////////////////////////////////////////////////////////
+	glFinish();
+
 	pollGraphicsAPIError();
+
 	mutex.unlock();
 }
 void Renderer::destroy()
@@ -87,36 +108,6 @@ void Renderer::clearColor(Color color) {
 	glClear(GL_COLOR_BUFFER_BIT);
 #endif // GRAPHICS_API_OPENGL
 }
-void Renderer::renderWorldChunk(WorldChunk& chunk)
-{
-	Vec3 chunkOffset = currentCamera().chunkLocation;
-	chunkOffset += currentCamera().location;
-	chunkOffset /= ULLONG_MAX;
-
-	uniforms().setVec3("chunkOffsetVector",-chunkOffset);
-
-	renderObjectSystem.render("terrain0");
-	if(chunkBorders)renderObjectSystem.render("boundingBox");
-}
-void Renderer::renderPlanetSystem(PlanetSystem& planetSystem)
-{
-	currentCamera().render(*this);
-	
-	uniforms().bools["distortion"] = worldDistortion;
-
-	renderWorldChunk(planetSystem.chunk);
-}
-void Renderer::renderFramebufferInQuad()
-{
-	framebufferSystem.selectFinal();
-	depthTest(false);
-	culling(false);
-	updateWireframeMode(false);
-	clearColor(Color(0, 0, 0, 0.75));
-	clearDepth();
-	renderObjectSystem.render("postProcess");
-}
-
 
 Uniforms& Renderer::uniforms()
 {
@@ -184,16 +175,28 @@ void pollGraphicsAPIError() {
 }
 void dynamicallyAdjustValue(Renderer& renderer, Float& value) {
 	if (renderer.adjustRenderVariables) {
+		//average fps, to avoid loopback
+		static float averageDelta = 0.16;
+		float oldToNewRatio = renderer.renderTime.delta / averageDelta; // >1 means framerate dropped
+		
+		//the code below gradually introduces the new values
+		averageDelta += oldToNewRatio * renderer.renderTime.delta;
+		averageDelta /= (1 + oldToNewRatio);
+
+		logDebug(1.0f/averageDelta);
+		logDebug(value);
 		//get current fps relative to target
 		//>1 means too low fps <1 means too high
 		static float timePerFrameRatio = 1;
-		timePerFrameRatio = renderer.renderTime.delta * renderer.targetFrameRate;
+		timePerFrameRatio = averageDelta * renderer.targetFrameRate;
 
 		if ((timePerFrameRatio > 1.1) | (timePerFrameRatio < 0.9)) {
 			float lerpFactor = renderer.renderTime.delta / 2;
 			value += lerpFactor * (value / timePerFrameRatio);
 			value /= 1 + lerpFactor;
 		}
+
+		value = max(0.1, value);
 	}
 }
 void renderSpaceShip(Renderer& renderer, SpaceShip& spaceShip)

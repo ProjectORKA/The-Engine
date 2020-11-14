@@ -21,7 +21,6 @@ struct Viewport {
 	void render();
 };
 
-//[TODO] turn into RegionSystem using glScissor instead of viewport;
 struct ViewportSystem {
 	void create();
 	void destroy();

@@ -52,23 +52,11 @@
     <Filter Include="Source Files\Chunk\Terrain">
       <UniqueIdentifier>{c0645fb3-cd06-4737-920c-08a14efeb58f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\GameSimulation\WorldSystem">
-      <UniqueIdentifier>{fe1d43d6-20f3-48d2-bad3-c4b5e7833eec}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\PlanetSystem">
-      <UniqueIdentifier>{29891783-4580-46ff-a5bb-d0759f151e76}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\Window\Renderer">
       <UniqueIdentifier>{8983aea4-6e5e-4a1d-b227-3a1ad3157f11}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\Window\Renderer\Mesh">
       <UniqueIdentifier>{fe7d1840-f4e9-4212-bd63-094c59350e7a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Window\Renderer\Texture">
-      <UniqueIdentifier>{6185e155-1bba-482a-adea-515da0616a59}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Window\Renderer\PlanetsystemRenderer">
-      <UniqueIdentifier>{ca539b90-5e4e-47e0-af26-da190d0e2e12}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\Window\Renderer\Camera">
       <UniqueIdentifier>{c344e3ab-b1e9-4ab0-9d9a-e53658cf77ce}</UniqueIdentifier>
@@ -85,6 +73,18 @@
     <Filter Include="Source Files\Window\Renderer\ShaderSystem">
       <UniqueIdentifier>{c9eaa8a5-3a6a-4110-a206-751a74dafb6b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Window\Renderer\TextureSystem">
+      <UniqueIdentifier>{6185e155-1bba-482a-adea-515da0616a59}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Window\Renderer\PlanetRenderSystem">
+      <UniqueIdentifier>{edf5df30-b6df-4df3-8656-ed098c6e68da}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\GameSimulation\PlanetSystem">
+      <UniqueIdentifier>{29891783-4580-46ff-a5bb-d0759f151e76}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\GameSimulation\TerrainSystem">
+      <UniqueIdentifier>{9f4e2832-a3b7-41c2-9fa4-117689f8f129}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -93,9 +93,6 @@
     </ClCompile>
     <ClCompile Include="Basics.cpp">
       <Filter>Source Files\Util</Filter>
-    </ClCompile>
-    <ClCompile Include="Chunk.cpp">
-      <Filter>Source Files\Chunk</Filter>
     </ClCompile>
     <ClCompile Include="CPUMesh.cpp">
       <Filter>Source Files\Window\Renderer\Mesh</Filter>
@@ -107,10 +104,10 @@
       <Filter>Source Files\Window\Renderer\Mesh</Filter>
     </ClCompile>
     <ClCompile Include="CPUTexture.cpp">
-      <Filter>Source Files\Window\Renderer\Texture</Filter>
+      <Filter>Source Files\Window\Renderer\TextureSystem</Filter>
     </ClCompile>
     <ClCompile Include="TextureSystem.cpp">
-      <Filter>Source Files\Window\Renderer\Texture</Filter>
+      <Filter>Source Files\Window\Renderer\TextureSystem</Filter>
     </ClCompile>
     <ClCompile Include="Debug.cpp">
       <Filter>Source Files\Util</Filter>
@@ -134,7 +131,7 @@
       <Filter>Source Files\Window\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="stb_image.cpp">
-      <Filter>Source Files\Window\Renderer\Texture</Filter>
+      <Filter>Source Files\Window\Renderer\TextureSystem</Filter>
     </ClCompile>
     <ClCompile Include="Time.cpp">
       <Filter>Source Files\Util</Filter>
@@ -164,7 +161,7 @@
       <Filter>Source Files\Chunk\Terrain</Filter>
     </ClCompile>
     <ClCompile Include="PlanetSystem.cpp">
-      <Filter>Source Files\PlanetSystem</Filter>
+      <Filter>Source Files\GameSimulation\PlanetSystem</Filter>
     </ClCompile>
     <ClCompile Include="Camera.cpp">
       <Filter>Source Files\Window\Renderer\Camera</Filter>
@@ -181,6 +178,12 @@
     <ClCompile Include="ShaderSystem.cpp">
       <Filter>Source Files\Window\Renderer\ShaderSystem</Filter>
     </ClCompile>
+    <ClCompile Include="PlanetRenderSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TerrainSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="icon.rc">
@@ -195,9 +198,6 @@
     <ClInclude Include="Basics.hpp">
       <Filter>Source Files\Util</Filter>
     </ClInclude>
-    <ClInclude Include="Chunk.hpp">
-      <Filter>Source Files\Chunk</Filter>
-    </ClInclude>
     <ClInclude Include="CPUMesh.hpp">
       <Filter>Source Files\Window\Renderer\Mesh</Filter>
     </ClInclude>
@@ -208,10 +208,10 @@
       <Filter>Source Files\Window\Renderer\Mesh</Filter>
     </ClInclude>
     <ClInclude Include="CPUTexture.hpp">
-      <Filter>Source Files\Window\Renderer\Texture</Filter>
+      <Filter>Source Files\Window\Renderer\TextureSystem</Filter>
     </ClInclude>
     <ClInclude Include="TextureSystem.hpp">
-      <Filter>Source Files\Window\Renderer\Texture</Filter>
+      <Filter>Source Files\Window\Renderer\TextureSystem</Filter>
     </ClInclude>
     <ClInclude Include="Debug.hpp">
       <Filter>Source Files\Util</Filter>
@@ -247,7 +247,7 @@
       <Filter>Resource Files</Filter>
     </ClInclude>
     <ClInclude Include="stb_image.h">
-      <Filter>Source Files\Window\Renderer\Texture</Filter>
+      <Filter>Source Files\Window\Renderer\TextureSystem</Filter>
     </ClInclude>
     <ClInclude Include="Time.hpp">
       <Filter>Source Files\Util</Filter>
@@ -286,7 +286,7 @@
       <Filter>Source Files\Chunk\Terrain</Filter>
     </ClInclude>
     <ClInclude Include="PlanetSystem.hpp">
-      <Filter>Source Files\PlanetSystem</Filter>
+      <Filter>Source Files\GameSimulation\PlanetSystem</Filter>
     </ClInclude>
     <ClInclude Include="Camera.hpp">
       <Filter>Source Files\Window\Renderer\Camera</Filter>
@@ -302,6 +302,12 @@
     </ClInclude>
     <ClInclude Include="ShaderSystem.hpp">
       <Filter>Source Files\Window\Renderer\ShaderSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="PlanetRenderSystem.hpp">
+      <Filter>Source Files\Window\Renderer\PlanetRenderSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="TerrainSystem.hpp">
+      <Filter>Source Files\GameSimulation\TerrainSystem</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
