@@ -30,7 +30,7 @@ enum Filter {
 };
 
 struct CPUTexture {
-	Name name = "empty";
+	Name name = "NULL";
 	Int width = 0;
 	Int height = 0;
 	Int channels = 0;
@@ -42,6 +42,7 @@ struct CPUTexture {
 	};
 	Int filter = linearMM;
 	Int wrapping = repeat;
+	Short multisampling = 0;
 	Bool loaded = false;
 
 	void load(Path path, Name name);

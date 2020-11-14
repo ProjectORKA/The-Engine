@@ -2,7 +2,6 @@
 #pragma once
 
 #include "Time.hpp"
-#include "Chunk.hpp"
 #include "Math.hpp"
 #include "Entity.hpp"
 #include "PlanetSystem.hpp"
@@ -21,7 +20,7 @@ struct GameSimulation {
 	Thread thread;
 
 	void start();
-	void process();
+	void update();
 	void stop();
 };
 

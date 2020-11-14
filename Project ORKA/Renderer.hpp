@@ -7,16 +7,15 @@
 #include "Math.hpp"
 #include "UserInterface.hpp"
 #include "Debug.hpp"
+#include "PlanetRenderSystem.hpp"
 
 #define TARGETFRAMERATE 60
 
 struct Renderer {
-	Bool chunkBorders = false;
 	Bool wireframeMode = false;
-	Bool worldDistortion = true;
 	Bool adjustRenderVariables = true;
 	Bool pauseWorldDataCollection = false;
-	Short multisampleCount = 4;
+	Short multisampleCount = 0;
 
 	Time renderTime;
 	GameSimulation* gameSimulation = nullptr;
@@ -30,6 +29,8 @@ struct Renderer {
 	ViewportSystem viewportSystem;
 	CameraSystem cameraSystem;
 	RenderObjectSystem renderObjectSystem;
+	PlanetRenderSystem planetRenderSystem;
+
 
 	//synchronization
 	Mutex mutex;
@@ -48,13 +49,6 @@ struct Renderer {
 	void clearColor(Color color);
 	void updateUniforms();
 	void resetModelMatrix();
-
-
-	//render functions
-		//worldSystem
-	void renderWorldChunk(WorldChunk & chunk);
-	void renderPlanetSystem(PlanetSystem& planetSystem);
-	void renderFramebufferInQuad();
 	
 	Camera& currentCamera();
 	Uniforms& uniforms();

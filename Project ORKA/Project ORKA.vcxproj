@@ -24,7 +24,6 @@
   <ItemGroup>
     <ClCompile Include="Basics.cpp" />
     <ClCompile Include="Camera.cpp" />
-    <ClCompile Include="Chunk.cpp" />
     <ClCompile Include="CPUMesh.cpp" />
     <ClCompile Include="CPUTexture.cpp" />
     <ClCompile Include="Debug.cpp" />
@@ -36,6 +35,7 @@
     <ClCompile Include="IndexBufferObject.cpp" />
     <ClCompile Include="Math.cpp" />
     <ClCompile Include="MeshSystem.cpp" />
+    <ClCompile Include="PlanetRenderSystem.cpp" />
     <ClCompile Include="ProceduralMeshes.cpp" />
     <ClCompile Include="Program.cpp" />
     <ClCompile Include="main.cpp" />
@@ -44,6 +44,7 @@
     <ClCompile Include="ShaderSystem.cpp" />
     <ClCompile Include="stb_image.cpp" />
     <ClCompile Include="Terrain.cpp" />
+    <ClCompile Include="TerrainSystem.cpp" />
     <ClCompile Include="TextureSystem.cpp" />
     <ClCompile Include="Time.cpp" />
     <ClCompile Include="Uniforms.cpp" />
@@ -58,7 +59,6 @@
   <ItemGroup>
     <ClInclude Include="Basics.hpp" />
     <ClInclude Include="Camera.hpp" />
-    <ClInclude Include="Chunk.hpp" />
     <ClInclude Include="CPUMesh.hpp" />
     <ClInclude Include="CPUTexture.hpp" />
     <ClInclude Include="Debug.hpp" />
@@ -71,6 +71,7 @@
     <ClInclude Include="IndexBufferObject.hpp" />
     <ClInclude Include="Math.hpp" />
     <ClInclude Include="MeshSystem.hpp" />
+    <ClInclude Include="PlanetRenderSystem.hpp" />
     <ClInclude Include="PrimitiveModes.hpp" />
     <ClInclude Include="ProceduralMeshes.hpp" />
     <ClInclude Include="Program.hpp" />
@@ -82,6 +83,7 @@
     <ClInclude Include="stb_image.h" />
     <ClInclude Include="TaskSystem.hpp" />
     <ClInclude Include="Terrain.hpp" />
+    <ClInclude Include="TerrainSystem.hpp" />
     <ClInclude Include="TextureSystem.hpp" />
     <ClInclude Include="TictacToe.hpp" />
     <ClInclude Include="Time.hpp" />
@@ -175,15 +177,16 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>G:\Daten\PROJEKTE\ProjectORKA\ENGINE\Project ORKA\RendererModule;G:\Daten\PROJEKTE\ProjectORKA\ENGINE\Project ORKA\WindowModule;G:\Daten\PROJEKTE\ProjectORKA\ENGINE\Project ORKA\GameSimulationModule;G:\Daten\PROJEKTE\ProjectORKA\ENGINE\Project ORKA\MathModule;G:\Daten\PROJEKTE\ProjectORKA\ENGINE\Project ORKA\TimeModule;G:\Daten\PROJEKTE\ProjectORKA\ENGINE\Project ORKA\GraphicsAPIModule;G:\Daten\PROJEKTE\ProjectORKA\ENGINE\Project ORKA\DebugModule;G:\Daten\PROJEKTE\ProjectORKA\ENGINE\Project ORKA\External Libraries\NANOGUI;G:\Daten\PROJEKTE\ProjectORKA\ENGINE\Project ORKA\BasicsModule;$(SolutionDir)\Modules;$(SolutionDir)\External Libraries\STB IMAGE;$(SolutionDir)\External Libraries\ASSIMP\include;$(SolutionDir)\External Libraries\GLM;$(SolutionDir)\External Libraries\GLEW\include;$(SolutionDir)\External Libraries\GLFW 32 bit\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\External Libraries\STB IMAGE;$(SolutionDir)\External Libraries\ASSIMP\include;$(SolutionDir)\External Libraries\GLM;$(SolutionDir)\External Libraries\GLEW\include;$(SolutionDir)\External Libraries\GLFW 32 bit\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <EnableModules>false</EnableModules>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>DebugModule.lib;RendererModule.lib;GameSimulationModule.lib;WindowModule.lib;opengl32.lib;assimp-vc141-mtd.lib;glfw3.lib;glew32s.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>opengl32.lib;assimp-vc141-mtd.lib;glfw3.lib;glew32s.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)\External Libraries\ASSIMP\lib\lib 32\debug;$(SolutionDir)\External Libraries\GLFW 32 bit\lib-vc2015;$(SolutionDir)\External Libraries\GLEW\lib\Release\Win32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <IgnoreSpecificDefaultLibraries>msvcrt.lib</IgnoreSpecificDefaultLibraries>
+      <IgnoreSpecificDefaultLibraries>
+      </IgnoreSpecificDefaultLibraries>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <SubSystem>Console</SubSystem>
     </Link>
@@ -200,7 +203,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>G:\Daten\PROJEKTE\ProjectORKA\ENGINE\Project ORKA\RendererModule;G:\Daten\PROJEKTE\ProjectORKA\ENGINE\Project ORKA\WindowModule;G:\Daten\PROJEKTE\ProjectORKA\ENGINE\Project ORKA\GameSimulationModule;G:\Daten\PROJEKTE\ProjectORKA\ENGINE\Project ORKA\MathModule;G:\Daten\PROJEKTE\ProjectORKA\ENGINE\Project ORKA\TimeModule;G:\Daten\PROJEKTE\ProjectORKA\ENGINE\Project ORKA\GraphicsAPIModule;G:\Daten\PROJEKTE\ProjectORKA\ENGINE\Project ORKA\DebugModule;G:\Daten\PROJEKTE\ProjectORKA\ENGINE\Project ORKA\External Libraries\NANOGUI;$(SolutionDir)\BasicsModule;$(SolutionDir)\External Libraries\STB IMAGE;$(SolutionDir)\External Libraries\ASSIMP\include;$(SolutionDir)\External Libraries\GLM;$(SolutionDir)\External Libraries\GLEW\include;$(SolutionDir)\External Libraries\GLFW 64 bit\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\External Libraries\STB IMAGE;$(SolutionDir)\External Libraries\ASSIMP\include;$(SolutionDir)\External Libraries\GLM;$(SolutionDir)\External Libraries\GLEW\include;$(SolutionDir)\External Libraries\GLFW 64 bit\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <SupportJustMyCode>true</SupportJustMyCode>
@@ -209,10 +212,11 @@
       <EnableModules>false</EnableModules>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>G:\Daten\PROJEKTE\ProjectORKA\ENGINE\Project ORKA\x64\Debug;$(SolutionDir)\External Libraries\ASSIMP\lib\lib 64\debug;$(SolutionDir)\External Libraries\GLFW 64 bit\lib-vc2015;$(SolutionDir)\External Libraries\GLEW\lib\Release\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)\External Libraries\ASSIMP\lib\lib 64\debug;$(SolutionDir)\External Libraries\GLFW 64 bit\lib-vc2015;$(SolutionDir)\External Libraries\GLEW\lib\Release\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <AdditionalDependencies>opengl32.lib;assimp-vc141-mtd.lib;glfw3.lib;glew32s.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <IgnoreSpecificDefaultLibraries>msvcrt.lib</IgnoreSpecificDefaultLibraries>
+      <IgnoreSpecificDefaultLibraries>
+      </IgnoreSpecificDefaultLibraries>
       <SubSystem>Console</SubSystem>
     </Link>
     <PostBuildEvent>
@@ -230,16 +234,17 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>G:\Daten\PROJEKTE\ProjectORKA\ENGINE\Project ORKA\RendererModule;G:\Daten\PROJEKTE\ProjectORKA\ENGINE\Project ORKA\WindowModule;G:\Daten\PROJEKTE\ProjectORKA\ENGINE\Project ORKA\GameSimulationModule;G:\Daten\PROJEKTE\ProjectORKA\ENGINE\Project ORKA\MathModule;G:\Daten\PROJEKTE\ProjectORKA\ENGINE\Project ORKA\TimeModule;G:\Daten\PROJEKTE\ProjectORKA\ENGINE\Project ORKA\GraphicsAPIModule;G:\Daten\PROJEKTE\ProjectORKA\ENGINE\Project ORKA\DebugModule;G:\Daten\PROJEKTE\ProjectORKA\ENGINE\Project ORKA\External Libraries\NANOGUI;G:\Daten\PROJEKTE\ProjectORKA\ENGINE\Project ORKA\BasicsModule;$(SolutionDir)\External Libraries\STB IMAGE;$(SolutionDir)\Modules;$(SolutionDir)\External Libraries\ASSIMP\include;$(SolutionDir)\External Libraries\GLM;$(SolutionDir)\External Libraries\GLEW\include;$(SolutionDir)\External Libraries\GLFW 32 bit\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\External Libraries\STB IMAGE;$(SolutionDir)\External Libraries\ASSIMP\include;$(SolutionDir)\External Libraries\GLM;$(SolutionDir)\External Libraries\GLEW\include;$(SolutionDir)\External Libraries\GLFW 32 bit\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <FloatingPointModel>Fast</FloatingPointModel>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <EnableModules>false</EnableModules>
+      <PreprocessorDefinitions>_MBCS;%(PreprocessorDefinitions);%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>DebugModule.lib;RendererModule.lib;GameSimulationModule.lib;WindowModule.lib;opengl32.lib;assimp-vc141-mt.lib;glfw3.lib;glew32s.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>opengl32.lib;assimp-vc141-mt.lib;glfw3.lib;glew32s.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)\External Libraries\ASSIMP\lib\lib 32\release;$(SolutionDir)\External Libraries\GLFW 32 bit\lib-vc2015;$(SolutionDir)\External Libraries\GLEW\lib\Release\Win32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>
       </IgnoreSpecificDefaultLibraries>
@@ -258,18 +263,19 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)\External Libraries\NANOVG;$(SolutionDir)\External Libraries\NANOGUI;$(SolutionDir)\BasicsModule;$(SolutionDir)\External Libraries\STB IMAGE;$(SolutionDir)\External Libraries\ASSIMP\include;$(SolutionDir)\External Libraries\GLM;$(SolutionDir)\External Libraries\GLEW\include;$(SolutionDir)\External Libraries\GLFW 64 bit\include;G:\Daten\PROJEKTE\ProjectORKA\ENGINE\Project ORKA\External Libraries\EIGEN;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\External Libraries\STB IMAGE;$(SolutionDir)\External Libraries\ASSIMP\include;$(SolutionDir)\External Libraries\GLM;$(SolutionDir)\External Libraries\GLEW\include;$(SolutionDir)\External Libraries\GLFW 64 bit\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <FloatingPointModel>Fast</FloatingPointModel>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <EnableModules>false</EnableModules>
+      <LanguageStandard_C>Default</LanguageStandard_C>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalDependencies>opengl32.lib;assimp-vc141-mt.lib;glfw3.lib;glew32s.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)\External Libraries\ASSIMP\lib\lib 64\release;$(SolutionDir)\External Libraries\GLFW 64 bit\lib-vc2015;$(SolutionDir)\External Libraries\GLEW\lib\Release\x64;G:\Daten\PROJEKTE\ProjectORKA\ENGINE\Project ORKA\External Libraries\NANOGUI;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)\External Libraries\ASSIMP\lib\lib 64\release;$(SolutionDir)\External Libraries\GLFW 64 bit\lib-vc2015;$(SolutionDir)\External Libraries\GLEW\lib\Release\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <IgnoreSpecificDefaultLibraries>
       </IgnoreSpecificDefaultLibraries>

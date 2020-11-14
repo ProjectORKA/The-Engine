@@ -1,11 +1,39 @@
 
 #include "TextureSystem.hpp"
 
-void GPUTexture::load(CPUTexture& cpuTexture) {
+void GPUTexture::use()
+{
+	if (loaded) {
+		if (multisampling == 0) {
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, textureID);
+		}
+		else {
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, textureID);
+		}
+	}
+}
+void GPUTexture::unload() {
 	
+	if (loaded) {
+		if (multisampling == 0) {
+			glBindTexture(GL_TEXTURE_2D, 0);
+			glDeleteTextures(1, &textureID);
+		}
+		else {
+			glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, 0);
+			glDeleteTextures(1, &textureID);
+		}
+		loaded = false;
+	}
+}
+void GPUTexture::load(CPUTexture& cpuTexture) {
+
 	if (!loaded) {
 		wrapping = cpuTexture.wrapping;
 		filter = cpuTexture.filter;
+		multisampling = cpuTexture.multisampling;
 		channels = cpuTexture.channels;
 		dataType = cpuTexture.dataType;
 		width = cpuTexture.width;
@@ -13,79 +41,82 @@ void GPUTexture::load(CPUTexture& cpuTexture) {
 #ifdef GRAPHICS_API_OPENGL
 		//create texture
 		glGenTextures(1, &textureID);
-		glBindTexture(GL_TEXTURE_2D, textureID);
 
 		//load data
-		switch (cpuTexture.dataType) {
-		case dataTypeByte:
-			if (channels == 1) glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, width, height, 0, GL_RED, dataTypeByte, cpuTexture.bytePixels);
-			if (channels == 3) glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, dataTypeByte, cpuTexture.bytePixels);
-			if (channels == 4) glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, dataTypeByte, cpuTexture.bytePixels);
-			if (channels == 5) glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, width, height, 0, GL_DEPTH_COMPONENT, dataTypeByte, cpuTexture.bytePixels);
-			break;
-		case dataTypeFloat:
-			break;
-			if (channels == 1) glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, width, height, 0, GL_RED, dataTypeFloat, cpuTexture.floatPixels);
-			if (channels == 3) glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, dataTypeFloat, cpuTexture.floatPixels);
-			if (channels == 4) glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, dataTypeFloat, cpuTexture.floatPixels);
-			if (channels == 5) glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, width, height, 0, GL_DEPTH_COMPONENT, dataTypeFloat, cpuTexture.floatPixels);
-		default:
-			assert(0);
+		if (multisampling == 0) {
+			glBindTexture(GL_TEXTURE_2D, textureID);
+
+			if (cpuTexture.dataType == dataTypeByte) {
+				if (channels == 1) glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, width, height, 0, GL_RED, dataTypeByte, cpuTexture.bytePixels);
+				if (channels == 3) glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, dataTypeByte, cpuTexture.bytePixels);
+				if (channels == 4) glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, dataTypeByte, cpuTexture.bytePixels);
+				if (channels == 5) glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, width, height, 0, GL_DEPTH_COMPONENT, dataTypeByte, cpuTexture.bytePixels);
+			}
+			if (cpuTexture.dataType == dataTypeFloat) {
+				if (channels == 1) glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, width, height, 0, GL_RED, dataTypeFloat, cpuTexture.floatPixels);
+				if (channels == 3) glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, dataTypeFloat, cpuTexture.floatPixels);
+				if (channels == 4) glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, dataTypeFloat, cpuTexture.floatPixels);
+				if (channels == 5) glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, width, height, 0, GL_DEPTH_COMPONENT, dataTypeFloat, cpuTexture.floatPixels);
+			}
+		}
+		else {
+			glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, textureID);
+
+			if (channels == 1) glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, multisampling, GL_RED, width, height, false);
+			if (channels == 3) glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, multisampling, GL_RGB, width, height, false);
+			if (channels == 4) glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, multisampling, GL_RGBA, width, height, false);
+			if (channels == 5) glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, multisampling, GL_DEPTH_COMPONENT24, width, height, false);
 		}
 
-		//set texture wrapping
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrapping);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrapping);
-		if (wrapping == border) {
-			glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, glm::value_ptr(Color(1.0f, 0.0f, 1.0f, 1.0f)));
-		}
+	}
 
-		//set texture filter
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filter);
-		//set up mip mapping
-		if (filter == linearMM || filter == nearestMM) glGenerateMipmap(GL_TEXTURE_2D);
+	//set texture wrapping
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrapping);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrapping);
+	if (wrapping == border) {
+		glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, glm::value_ptr(Color(1.0f, 0.0f, 1.0f, 1.0f)));
+	}
 
-		loaded = true;
+	//set texture filter
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filter);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY, 1.0f);
+	//set up mip mapping
+	if (filter == linearMM || filter == nearestMM) glGenerateMipmap(GL_TEXTURE_2D);
+
+	loaded = true;
 #endif
-	}
 }
-void GPUTexture::use()
+void GPUTexture::resize(Int newWidth, Int newHeight)
 {
-	if (loaded) {
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, textureID);
-	}
-}
-void GPUTexture::resize(Int width, Int height)
-{
-	this->width = width;
-	this->height = height;
+	width = newWidth;
+	height = newHeight;
 
-	glBindTexture(GL_TEXTURE_2D, textureID);
-	switch (dataType) {
-	case dataTypeByte:
-		if (channels == 1) glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, width, height, 0, GL_RED, dataTypeByte, 0);
-		if (channels == 3) glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, dataTypeByte, 0);
-		if (channels == 4) glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, dataTypeByte, 0);
-		if (channels == 5) glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, width, height, 0, GL_DEPTH_COMPONENT, dataTypeByte, 0);
-		break;
-	case dataTypeFloat:
-		break;
-		if (channels == 1) glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, width, height, 0, GL_RED, dataTypeFloat, 0);
-		if (channels == 3) glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, dataTypeFloat, 0);
-		if (channels == 4) glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, dataTypeFloat, 0);
-		if (channels == 5) glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, width, height, 0, GL_DEPTH_COMPONENT, dataTypeFloat, 0);
-	default:
-		assert(0);
+	width = max(1, newWidth);
+	height = max(1, newHeight);
+	//load data
+	if (multisampling == 0) {
+		glBindTexture(GL_TEXTURE_2D, textureID);
+		if (dataType == dataTypeByte) {
+			if (channels == 1) glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, width, height, 0, GL_RED, dataTypeByte, 0);
+			if (channels == 3) glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, dataTypeByte, 0);
+			if (channels == 4) glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, dataTypeByte, 0);
+			if (channels == 5) glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, width, height, 0, GL_DEPTH_COMPONENT, dataTypeByte, 0);
+		}
+		if (dataType == dataTypeFloat) {
+			if (channels == 1) glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, width, height, 0, GL_RED, dataTypeFloat, 0);
+			if (channels == 3) glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, dataTypeFloat, 0);
+			if (channels == 4) glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, dataTypeFloat, 0);
+			if (channels == 5) glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, width, height, 0, GL_DEPTH_COMPONENT, dataTypeFloat, 0);
+		}
 	}
-}
-void GPUTexture::unload() {
-	if (loaded) {
-#ifdef GRAPHICS_API_OPENGL
-		glBindTexture(GL_TEXTURE_2D, 0);
-		glDeleteTextures(1, &textureID);
-#endif // GRAPHICS_API_OPENGL
+	else {
+
+		glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, textureID);
+		if (channels == 1) glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, multisampling, GL_RED, width, height, false);
+		if (channels == 3) glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, multisampling, GL_RGB, width, height, false);
+		if (channels == 4) glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, multisampling, GL_RGBA, width, height, false);
+		if (channels == 5) glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, multisampling, GL_DEPTH_COMPONENT24, width, height, false);
 	}
 }
 

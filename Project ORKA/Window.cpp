@@ -116,10 +116,6 @@ void Window::setFullscreen() {
 		GLFWmonitor* monitor = glfwGetPrimaryMonitor();
 		const GLFWvidmode* videoMode = glfwGetVideoMode(monitor);
 		glfwSetWindowMonitor(apiWindow, monitor, 0, 0, videoMode->width, videoMode->height, GLFW_DONT_CARE);
-
-		//[TODO] check if necessary
-		//renderer.framebufferSystem.current().update(width = videoMode->width;
-		//renderer.framebufferSystem.current().height = videoMode->height;
 	}
 	fullScreen = true;
 }
@@ -136,19 +132,20 @@ void Window::createAPIWindow() {
 		glfwWindowHint(GLFW_RED_BITS, videoMode->redBits);
 		glfwWindowHint(GLFW_GREEN_BITS, videoMode->greenBits);
 		glfwWindowHint(GLFW_BLUE_BITS, videoMode->blueBits);
-		glfwWindowHint(GLFW_DEPTH_BITS, 32);
+		glfwWindowHint(GLFW_DEPTH_BITS, 24);
 		glfwWindowHint(GLFW_REFRESH_RATE, videoMode->refreshRate);
 		//visibility
 		glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
 		//opengl stuff
-		glfwWindowHint(GLFW_SAMPLES, antiAliasing);
+		glfwWindowHint(GLFW_SAMPLES, 0);
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
 		glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_API);
 		glfwWindowHint(GLFW_CONTEXT_CREATION_API, GLFW_NATIVE_CONTEXT_API);
 		glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_COMPAT_PROFILE);	//GLFW_OPENGL_CORE_PROFILE);
-
+		
+		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+		//glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_COMPAT_PROFILE);
 		glfwWindowHint(GLFW_TRANSPARENT_FRAMEBUFFER, GL_TRUE);
 		glfwWindowHint(GLFW_CENTER_CURSOR, GLFW_TRUE);
 		if (!decorated) glfwWindowHint(GLFW_DECORATED, GL_FALSE);
@@ -245,6 +242,8 @@ void Window::initializeGraphicsAPI() {
 		logDebug("GLEW successfully initialized!");
 	}
 
+	glfwSwapInterval(0);
+
 	glEnable(GL_DEBUG_OUTPUT);
 	glDebugMessageCallback(DebugOutputCallback, 0);
 #endif // GRAPHICS_API_OPENGL
@@ -261,8 +260,8 @@ void Window::getWorkableArea(Rect<Int>& rect)
 #endif // WINDOW_API_GLFW
 }
 void Window::changeAntiAliasing(UShort antiAliasing) {
-	this->antiAliasing = antiAliasing;
-	reload();
+	logDebug(String("Changing AA Samples (").append(std::to_string(renderer.multisampleCount)).append(")."));
+	renderer.multisampleCount = antiAliasing;
 }
 
 void whenWindowChangedFocus(APIWindow window, Int focused) {
@@ -282,9 +281,6 @@ void whenWindowChangedFocus(APIWindow window, Int focused) {
 }
 void whenWindowWasMinimized(APIWindow window, Int minimized)
 {
-	//[TODO] possible optimization
-	//- change framebuffer to 1 x 1
-
 	logEvent("Window minimized!");
 	Window& parentWindowClass = *static_cast<Window*>(glfwGetWindowUserPointer(window));
 	if (minimized)
@@ -308,12 +304,12 @@ void whenMouseIsMoving(APIWindow apiWindow, Double xpos, Double ypos) {
 			window.deltaX = xpos;
 			window.deltaY = ypos;
 			glfwSetCursorPos(window.apiWindow, 0, 0);
-			if(window.renderer.cameraSystem.cameras.size() > 0) window.renderer.cameraSystem.current().rotate(xpos, ypos);	
+			if (window.renderer.cameraSystem.cameras.size() > 0) window.renderer.cameraSystem.current().rotate(xpos, ypos);
 		}
 		else {
 			window.cursorPosition.x = xpos;
 			window.cursorPosition.y = ypos;
-	}
+		}
 	}
 }
 void whenFramebufferIsResized(APIWindow window, Int width, Int height) {
@@ -363,10 +359,10 @@ void whenButtonIsPressed(APIWindow window, Int key, Int scancode, Int action, In
 		parentWindowClass->changeAntiAliasing(0);
 	}
 	if (key == GLFW_KEY_2 && action == GLFW_PRESS) {
-		parentWindowClass->changeAntiAliasing(4);
+		parentWindowClass->changeAntiAliasing(2);
 	}
 	if (key == GLFW_KEY_3 && action == GLFW_PRESS) {
-		parentWindowClass->renderer.chunkBorders = !parentWindowClass->renderer.chunkBorders;
+		parentWindowClass->changeAntiAliasing(16);
 	}
 	if (key == GLFW_KEY_P && action == GLFW_PRESS) {
 		parentWindowClass->renderer.gameSimulation->gameTime.paused = !parentWindowClass->renderer.gameSimulation->gameTime.paused;
@@ -384,10 +380,10 @@ void whenButtonIsPressed(APIWindow window, Int key, Int scancode, Int action, In
 		parentWindowClass->renderer.adjustRenderVariables = !parentWindowClass->renderer.adjustRenderVariables;
 	}
 	if (key == GLFW_KEY_K && action == GLFW_PRESS) {
-		parentWindowClass->renderer.worldDistortion = !parentWindowClass->renderer.worldDistortion;
+		parentWindowClass->renderer.planetRenderSystem.worldDistortion = !parentWindowClass->renderer.planetRenderSystem.worldDistortion;
 	}
 	if (key == GLFW_KEY_G && action == GLFW_PRESS) {
-		parentWindowClass->renderer.chunkBorders = !parentWindowClass->renderer.chunkBorders;
+		parentWindowClass->renderer.planetRenderSystem.chunkBorders = !parentWindowClass->renderer.planetRenderSystem.chunkBorders;
 	}
 }
 
@@ -414,7 +410,7 @@ void __stdcall DebugOutputCallback(GLenum source, GLenum type, GLuint id, GLenum
 		else if (severity == GL_DEBUG_SEVERITY_MEDIUM_ARB)		printf("Severity : MEDIUM; ");
 		else if (severity == GL_DEBUG_SEVERITY_LOW_ARB)			printf("Severity : LOW; ");
 		printf("Message : %s\n", message);
-
+		pause();
 	}
 }
 #endif // GRAPHICS_API_OPENGL

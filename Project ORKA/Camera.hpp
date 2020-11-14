@@ -1,9 +1,10 @@
 #pragma once
 
+#include "Basics.hpp"
 #include "Math.hpp"
 #include "Time.hpp"
 
-#define INITIAL_CAMERA_SPEED 200				//1 as fast as a human 400 as fast as light
+#define INITIAL_CAMERA_SPEED 100				//1 as fast as a human 400 as fast as light
 #define CAMERA_SPEED_MULTIPLIER 1.2f		//controls the de/increase in speed by this amount when scrolling
 
 struct Renderer;
@@ -11,7 +12,7 @@ struct Renderer;
 struct Camera {
 	//hard data
 	Vec3 location = Vec3(0, 0, 0);
-	ULLVec3 chunkLocation = ULLVec3(0, 0, 10000000);
+	ULLVec3 chunkLocation = ULLVec3(0, 0, 0);
 
 	Float cameraRotationX = -PI / 2;
 	Float cameraRotationZ = -PI / 2;

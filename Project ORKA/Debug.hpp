@@ -13,17 +13,18 @@ void logError(String message);
 //functions
 void beep();
 void pause();
-void logDebug(ULL& t);
-void logDebug(Vec2& t);
-void logDebug(Vec3 & t);
-void logDebug(ULLVec3& t);
-void logDebug(glm::highp_dvec3& t);
-void logDebug(Matrix & t);
+//screw templates lol
+void logDebug(Int t);
+void logDebug(UInt t);
+void logDebug(ULL t);
+void logDebug(Vec2 t);
+void logDebug(Vec3 t);
+void logDebug(Short t);
+void logDebug(ULLVec3 t);
+void logDebug(glm::highp_dvec3 t);
+void logDebug(Matrix t);
 
-////templates
-//template<typename T>
-//void debugPrint(T t) {
-//#ifdef DEBUG
-//	std::cout << t << "\n";
-//#endif // DEBUG
-//}
+template <typename T>
+void logDebug(T t) {
+	std::cout << t << "\n";
+}
