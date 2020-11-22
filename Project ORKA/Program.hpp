@@ -5,6 +5,7 @@
 
 struct Program {
 	GameSimulation gameSimulation;
+
 	WindowSystem windowSystem;
 
 	void start();

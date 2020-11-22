@@ -13,8 +13,8 @@ struct RenderObject {
 
 struct RenderObjectSystem {
 	MeshSystem meshSystem;
-	ShaderSystem shaderSystem;
 	TextureSystem textureSystem;
+	ShaderSystem shaderSystem;
 
 	Map<String, Index> nameToIndex;
 	Vector<RenderObject> renderObjects;

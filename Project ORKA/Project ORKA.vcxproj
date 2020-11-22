@@ -44,6 +44,7 @@
     <ClCompile Include="ShaderSystem.cpp" />
     <ClCompile Include="stb_image.cpp" />
     <ClCompile Include="Terrain.cpp" />
+    <ClCompile Include="TerrainRenderSystem.cpp" />
     <ClCompile Include="TerrainSystem.cpp" />
     <ClCompile Include="TextureSystem.cpp" />
     <ClCompile Include="Time.cpp" />
@@ -83,6 +84,7 @@
     <ClInclude Include="stb_image.h" />
     <ClInclude Include="TaskSystem.hpp" />
     <ClInclude Include="Terrain.hpp" />
+    <ClInclude Include="TerrainRenderSystem.hpp" />
     <ClInclude Include="TerrainSystem.hpp" />
     <ClInclude Include="TextureSystem.hpp" />
     <ClInclude Include="TictacToe.hpp" />

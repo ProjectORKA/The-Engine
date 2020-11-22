@@ -3,6 +3,7 @@
 #include "Basics.hpp"
 #include "Debug.hpp"
 #include "Math.hpp"
+#include "TerrainSystem.hpp"
 
 #define MAX_CHUNK_LEVEL 52			//if level 0 is the size of earth then we stop at level 52 to get sub millimeter precision
 #define ONE_METER_CHUNK_LEVEL 39	//at this level 1 uit = 1 meter
@@ -14,9 +15,9 @@ struct WorldChunk {
 	ULL yLocation = 0;
 	ULL zLocation = 0;
 
-	Float terrainHeight = 0.0f;
-
 	UShort inUse = 0;
+
+	Terrain terrain;
 
 	WorldChunk* parentChunk = nullptr;
 	bool subdivided = false;
@@ -44,6 +45,7 @@ struct WorldChunk {
 struct PlanetSystem {
 
 	WorldChunk chunk;
+	TerrainSystem terrainSystem;
 
 	void update();
 	void count();

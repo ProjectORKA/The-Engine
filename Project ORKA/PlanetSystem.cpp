@@ -1,7 +1,7 @@
 
 #include "PlanetSystem.hpp"
 
-#define CHUNK_USAGE_TICK_COUNT 1000
+#define CHUNK_USAGE_TICK_COUNT 200
 
 //worldChunk
 void WorldChunk::isInUse()
@@ -84,7 +84,7 @@ void WorldChunk::count(Int& count)
 
 WorldChunk::WorldChunk()
 {
-	terrainHeight = randomFloat();
+	terrain.create();
 }
 WorldChunk::WorldChunk(WorldChunk& parent, Bool x, Bool y, Bool z)
 {
@@ -97,8 +97,9 @@ WorldChunk::WorldChunk(WorldChunk& parent, Bool x, Bool y, Bool z)
 	yLocation += y;
 	zLocation += z;
 	inUse = 0;
-}
 
+	terrain.create();
+}
 WorldChunk::~WorldChunk()
 {
 	unsubdivide();

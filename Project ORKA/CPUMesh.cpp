@@ -76,6 +76,62 @@ void CPUMesh::loadFBX(Path path) {
 	}
 }
 
+void CPUMesh::generate2DTerrainMesh(Terrain& terrain)
+{
+	readyForUpload = false;
+	name = "terrain";
+	primitiveMode = Triangles;
+
+	vertices.clear();
+	indices.clear();
+	normals.clear();
+	uvs.clear();
+
+	//for (int y = 0; y < TERRAIN_DETAIL+1; y++) {
+	//	for (int x = 0; x < TERRAIN_DETAIL+1; x++) {
+	//		Vec3 tmp = Vec3(Float(x) / Float(TERRAIN_DETAIL+1), Float(y) / Float(TERRAIN_DETAIL+1), terrain.heightmap[x][y]);
+
+	//		mesh.vertices.push_back(tmp);
+	//		mesh.normals.push_back(Vec3(0, 0, 1));
+	//		mesh.uvs.push_back(Vec2(tmp.x, tmp.y));
+
+	//		if ((x < TERRAIN_DETAIL) & (y < TERRAIN_DETAIL)) {
+	//			//first triangle
+	//			mesh.indices.push_back(y * TERRAIN_DETAIL + x);
+	//			mesh.indices.push_back(y * TERRAIN_DETAIL + x + 1);
+	//			mesh.indices.push_back((y + 1) * TERRAIN_DETAIL + x);
+	//			
+	//			//second triangle
+	//			mesh.indices.push_back((y + 1) * TERRAIN_DETAIL + x);
+	//			mesh.indices.push_back(y * TERRAIN_DETAIL + x + 1);
+	//			mesh.indices.push_back((y + 1) * TERRAIN_DETAIL + x + 1);
+	//		}
+	//	}
+	//}
+
+	vertices.push_back(Vec3(0, 0, 0));
+	vertices.push_back(Vec3(0, 1, 0));
+	vertices.push_back(Vec3(1, 0, 0));
+	vertices.push_back(Vec3(1, 1, 0));
+	normals.push_back(Vec3(0, 0, 1));
+	normals.push_back(Vec3(0, 0, 1));
+	normals.push_back(Vec3(0, 0, 1));
+	normals.push_back(Vec3(0, 0, 1));
+	uvs.push_back(Vec2(0, 0));
+	uvs.push_back(Vec2(0, 1));
+	uvs.push_back(Vec2(1, 0));
+	uvs.push_back(Vec2(1, 1));
+	indices.push_back(0);
+	indices.push_back(2);
+	indices.push_back(1);
+	indices.push_back(1);
+	indices.push_back(2);
+	indices.push_back(3);
+
+
+	readyForUpload = true;
+}
+
 void CPUMesh::autoLoadFromFile(Name name)
 {
 	Path meshPath = String("Data/meshes/").append(name.data).append(".mesh");
