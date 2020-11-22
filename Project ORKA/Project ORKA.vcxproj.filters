@@ -55,26 +55,14 @@
     <Filter Include="Source Files\Window\Renderer">
       <UniqueIdentifier>{8983aea4-6e5e-4a1d-b227-3a1ad3157f11}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Window\Renderer\Mesh">
-      <UniqueIdentifier>{fe7d1840-f4e9-4212-bd63-094c59350e7a}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\Window\Renderer\Camera">
       <UniqueIdentifier>{c344e3ab-b1e9-4ab0-9d9a-e53658cf77ce}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\Window\Renderer\Framebuffer">
       <UniqueIdentifier>{ddcde9e2-34dc-41c5-b145-75388667f7e1}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Window\Renderer\IndexedBufferObject">
-      <UniqueIdentifier>{dd4fa99f-7a02-4c26-a434-ab0f93ab8d37}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\Window\Renderer\RenderObjectSystem">
       <UniqueIdentifier>{461edde2-4db7-4a4e-9e3f-24912649b9ee}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Window\Renderer\ShaderSystem">
-      <UniqueIdentifier>{c9eaa8a5-3a6a-4110-a206-751a74dafb6b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Window\Renderer\TextureSystem">
-      <UniqueIdentifier>{6185e155-1bba-482a-adea-515da0616a59}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\Window\Renderer\PlanetRenderSystem">
       <UniqueIdentifier>{edf5df30-b6df-4df3-8656-ed098c6e68da}</UniqueIdentifier>
@@ -85,6 +73,30 @@
     <Filter Include="Source Files\GameSimulation\TerrainSystem">
       <UniqueIdentifier>{9f4e2832-a3b7-41c2-9fa4-117689f8f129}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Window\Renderer\PlanetRenderSystem\TerrainRenderSystem">
+      <UniqueIdentifier>{f489f721-e115-495b-bc13-35478a2db07f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Window\Renderer\RenderObjectSystem\MeshSystem">
+      <UniqueIdentifier>{fe7d1840-f4e9-4212-bd63-094c59350e7a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Window\Renderer\RenderObjectSystem\MeshSystem\IndexedBufferObject">
+      <UniqueIdentifier>{dd4fa99f-7a02-4c26-a434-ab0f93ab8d37}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Window\Renderer\RenderObjectSystem\ShaderSystem">
+      <UniqueIdentifier>{c9eaa8a5-3a6a-4110-a206-751a74dafb6b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Window\Renderer\RenderObjectSystem\TextureSystem">
+      <UniqueIdentifier>{6185e155-1bba-482a-adea-515da0616a59}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Window\Renderer\ViewportSystem">
+      <UniqueIdentifier>{62eda2c8-90eb-45b1-bba1-71020f2ec684}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Window\Renderer\RenderObjectSystem\MeshSystem\CPUMesh">
+      <UniqueIdentifier>{5f425866-fcf7-4a80-a6fb-99daf74feee6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Window\Renderer\RenderObjectSystem\MeshSystem\GPUMesh">
+      <UniqueIdentifier>{a55d4651-4649-432b-80b6-2184d953e3a1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -94,20 +106,14 @@
     <ClCompile Include="Basics.cpp">
       <Filter>Source Files\Util</Filter>
     </ClCompile>
-    <ClCompile Include="CPUMesh.cpp">
-      <Filter>Source Files\Window\Renderer\Mesh</Filter>
-    </ClCompile>
-    <ClCompile Include="GPUMesh.cpp">
-      <Filter>Source Files\Window\Renderer\Mesh</Filter>
-    </ClCompile>
     <ClCompile Include="MeshSystem.cpp">
-      <Filter>Source Files\Window\Renderer\Mesh</Filter>
+      <Filter>Source Files\Window\Renderer\RenderObjectSystem\MeshSystem</Filter>
     </ClCompile>
     <ClCompile Include="CPUTexture.cpp">
-      <Filter>Source Files\Window\Renderer\TextureSystem</Filter>
+      <Filter>Source Files\Window\Renderer\RenderObjectSystem\TextureSystem</Filter>
     </ClCompile>
     <ClCompile Include="TextureSystem.cpp">
-      <Filter>Source Files\Window\Renderer\TextureSystem</Filter>
+      <Filter>Source Files\Window\Renderer\RenderObjectSystem\TextureSystem</Filter>
     </ClCompile>
     <ClCompile Include="Debug.cpp">
       <Filter>Source Files\Util</Filter>
@@ -125,30 +131,18 @@
       <Filter>Source Files\GameSimulation</Filter>
     </ClCompile>
     <ClCompile Include="ProceduralMeshes.cpp">
-      <Filter>Source Files\Window\Renderer\Mesh</Filter>
+      <Filter>Source Files\Window\Renderer\RenderObjectSystem\MeshSystem</Filter>
     </ClCompile>
     <ClCompile Include="Renderer.cpp">
       <Filter>Source Files\Window\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="stb_image.cpp">
-      <Filter>Source Files\Window\Renderer\TextureSystem</Filter>
+      <Filter>Source Files\Window\Renderer\RenderObjectSystem\TextureSystem</Filter>
     </ClCompile>
     <ClCompile Include="Time.cpp">
       <Filter>Source Files\Util</Filter>
     </ClCompile>
-    <ClCompile Include="Uniforms.cpp">
-      <Filter>Source Files\Window\Renderer</Filter>
-    </ClCompile>
     <ClCompile Include="UserInterface.cpp">
-      <Filter>Source Files\Window\Renderer</Filter>
-    </ClCompile>
-    <ClCompile Include="VertexArrayObject.cpp">
-      <Filter>Source Files\Window\Renderer</Filter>
-    </ClCompile>
-    <ClCompile Include="VertexBufferObject.cpp">
-      <Filter>Source Files\Window\Renderer</Filter>
-    </ClCompile>
-    <ClCompile Include="ViewportSystem.cpp">
       <Filter>Source Files\Window\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="Window.cpp">
@@ -170,19 +164,40 @@
       <Filter>Source Files\Window\Renderer\Framebuffer</Filter>
     </ClCompile>
     <ClCompile Include="IndexBufferObject.cpp">
-      <Filter>Source Files\Window\Renderer\IndexedBufferObject</Filter>
+      <Filter>Source Files\Window\Renderer\RenderObjectSystem\MeshSystem\IndexedBufferObject</Filter>
     </ClCompile>
     <ClCompile Include="RenderObjectSystem.cpp">
       <Filter>Source Files\Window\Renderer\RenderObjectSystem</Filter>
     </ClCompile>
     <ClCompile Include="ShaderSystem.cpp">
-      <Filter>Source Files\Window\Renderer\ShaderSystem</Filter>
+      <Filter>Source Files\Window\Renderer\RenderObjectSystem\ShaderSystem</Filter>
     </ClCompile>
     <ClCompile Include="PlanetRenderSystem.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Window\Renderer\PlanetRenderSystem</Filter>
     </ClCompile>
     <ClCompile Include="TerrainSystem.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\GameSimulation\TerrainSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="VertexArrayObject.cpp">
+      <Filter>Source Files\Window\Renderer\RenderObjectSystem\MeshSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="VertexBufferObject.cpp">
+      <Filter>Source Files\Window\Renderer\RenderObjectSystem\MeshSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="Uniforms.cpp">
+      <Filter>Source Files\Window\Renderer\RenderObjectSystem\ShaderSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="ViewportSystem.cpp">
+      <Filter>Source Files\Window\Renderer\ViewportSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="CPUMesh.cpp">
+      <Filter>Source Files\Window\Renderer\RenderObjectSystem\MeshSystem\CPUMesh</Filter>
+    </ClCompile>
+    <ClCompile Include="GPUMesh.cpp">
+      <Filter>Source Files\Window\Renderer\RenderObjectSystem\MeshSystem\GPUMesh</Filter>
+    </ClCompile>
+    <ClCompile Include="TerrainRenderSystem.cpp">
+      <Filter>Source Files\Window\Renderer\PlanetRenderSystem\TerrainRenderSystem</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -198,20 +213,14 @@
     <ClInclude Include="Basics.hpp">
       <Filter>Source Files\Util</Filter>
     </ClInclude>
-    <ClInclude Include="CPUMesh.hpp">
-      <Filter>Source Files\Window\Renderer\Mesh</Filter>
-    </ClInclude>
-    <ClInclude Include="GPUMesh.hpp">
-      <Filter>Source Files\Window\Renderer\Mesh</Filter>
-    </ClInclude>
     <ClInclude Include="MeshSystem.hpp">
-      <Filter>Source Files\Window\Renderer\Mesh</Filter>
+      <Filter>Source Files\Window\Renderer\RenderObjectSystem\MeshSystem</Filter>
     </ClInclude>
     <ClInclude Include="CPUTexture.hpp">
-      <Filter>Source Files\Window\Renderer\TextureSystem</Filter>
+      <Filter>Source Files\Window\Renderer\RenderObjectSystem\TextureSystem</Filter>
     </ClInclude>
     <ClInclude Include="TextureSystem.hpp">
-      <Filter>Source Files\Window\Renderer\TextureSystem</Filter>
+      <Filter>Source Files\Window\Renderer\RenderObjectSystem\TextureSystem</Filter>
     </ClInclude>
     <ClInclude Include="Debug.hpp">
       <Filter>Source Files\Util</Filter>
@@ -235,7 +244,7 @@
       <Filter>Source Files\Window\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="ProceduralMeshes.hpp">
-      <Filter>Source Files\Window\Renderer\Mesh</Filter>
+      <Filter>Source Files\Window\Renderer\RenderObjectSystem\MeshSystem</Filter>
     </ClInclude>
     <ClInclude Include="Rectangle.hpp">
       <Filter>Source Files\Util</Filter>
@@ -247,24 +256,12 @@
       <Filter>Resource Files</Filter>
     </ClInclude>
     <ClInclude Include="stb_image.h">
-      <Filter>Source Files\Window\Renderer\TextureSystem</Filter>
+      <Filter>Source Files\Window\Renderer\RenderObjectSystem\TextureSystem</Filter>
     </ClInclude>
     <ClInclude Include="Time.hpp">
       <Filter>Source Files\Util</Filter>
     </ClInclude>
-    <ClInclude Include="Uniforms.hpp">
-      <Filter>Source Files\Window\Renderer</Filter>
-    </ClInclude>
     <ClInclude Include="UserInterface.hpp">
-      <Filter>Source Files\Window\Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="VertexArrayObject.hpp">
-      <Filter>Source Files\Window\Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="VertexBufferObject.hpp">
-      <Filter>Source Files\Window\Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="ViewportSystem.hpp">
       <Filter>Source Files\Window\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="WindowSystem.hpp">
@@ -295,19 +292,40 @@
       <Filter>Source Files\Window\Renderer\Framebuffer</Filter>
     </ClInclude>
     <ClInclude Include="IndexBufferObject.hpp">
-      <Filter>Source Files\Window\Renderer\IndexedBufferObject</Filter>
+      <Filter>Source Files\Window\Renderer\RenderObjectSystem\MeshSystem\IndexedBufferObject</Filter>
     </ClInclude>
     <ClInclude Include="RenderObjectSystem.hpp">
       <Filter>Source Files\Window\Renderer\RenderObjectSystem</Filter>
     </ClInclude>
     <ClInclude Include="ShaderSystem.hpp">
-      <Filter>Source Files\Window\Renderer\ShaderSystem</Filter>
+      <Filter>Source Files\Window\Renderer\RenderObjectSystem\ShaderSystem</Filter>
     </ClInclude>
     <ClInclude Include="PlanetRenderSystem.hpp">
       <Filter>Source Files\Window\Renderer\PlanetRenderSystem</Filter>
     </ClInclude>
     <ClInclude Include="TerrainSystem.hpp">
       <Filter>Source Files\GameSimulation\TerrainSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="VertexArrayObject.hpp">
+      <Filter>Source Files\Window\Renderer\RenderObjectSystem\MeshSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="VertexBufferObject.hpp">
+      <Filter>Source Files\Window\Renderer\RenderObjectSystem\MeshSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="Uniforms.hpp">
+      <Filter>Source Files\Window\Renderer\RenderObjectSystem\ShaderSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="ViewportSystem.hpp">
+      <Filter>Source Files\Window\Renderer\ViewportSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="CPUMesh.hpp">
+      <Filter>Source Files\Window\Renderer\RenderObjectSystem\MeshSystem\CPUMesh</Filter>
+    </ClInclude>
+    <ClInclude Include="GPUMesh.hpp">
+      <Filter>Source Files\Window\Renderer\RenderObjectSystem\MeshSystem\GPUMesh</Filter>
+    </ClInclude>
+    <ClInclude Include="TerrainRenderSystem.hpp">
+      <Filter>Source Files\Window\Renderer\PlanetRenderSystem\TerrainRenderSystem</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

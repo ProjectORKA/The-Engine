@@ -1,9 +1,9 @@
 #pragma once
 
 #include "Basics.hpp"
-
 #include "Debug.hpp"
 #include "PrimitiveModes.hpp"
+#include "TerrainSystem.hpp"
 //assimp
 #include <assimp/Importer.hpp>
 #include <assimp/postprocess.h>
@@ -18,10 +18,11 @@ struct CPUMesh {
 	Vector<Index> indices;
 	Bool readyForUpload = false;
 	
-	void autoLoadFromFile(Name name);
+	void saveMeshFile();
 	void loadFBX(Path path);
 	void loadMeshFile(Path path);
-	void saveMeshFile();
+	void autoLoadFromFile(Name name);
+	void generate2DTerrainMesh(Terrain& terrain);
 };
 
 //struct MeshHeaderV1 {

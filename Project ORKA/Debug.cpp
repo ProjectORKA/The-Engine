@@ -20,7 +20,7 @@ void logError(String message)
 {
 	if(showError) std::cout <<	"Error: " << message << "\n";
 	beep();
-	pause();
+	//pause();
 }
 
 void beep() {

@@ -4,13 +4,15 @@
 #include "Basics.hpp"
 #include "Math.hpp"
 
+#define TERRAIN_DETAIL 16
+
 struct Terrain {
 	//data
-	Float height = 0.0f;
+	Float heightmap[TERRAIN_DETAIL+1][TERRAIN_DETAIL+1]{};
 
-	ULL locationX = 0;
-	ULL locationY = 0;
+	UShort level = 0;
 
+	Terrain* parent = nullptr;
 	//children
 	Terrain* c00 = nullptr;
 	Terrain* c01 = nullptr;

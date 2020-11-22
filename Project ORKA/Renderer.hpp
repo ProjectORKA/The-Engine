@@ -14,7 +14,7 @@
 struct Renderer {
 	Bool wireframeMode = false;
 	Bool adjustRenderVariables = true;
-	Bool pauseWorldDataCollection = false;
+	//Bool pauseWorldDataCollection = false;
 	Short multisampleCount = 0;
 
 	Time renderTime;
@@ -22,7 +22,7 @@ struct Renderer {
 	//UserInterface ui;
 
 	//framerate
-	Float targetFrameRate = 100;
+	Float targetFrameRate = 75;
 
 	//render data
 	FramebufferSystem framebufferSystem;
@@ -30,7 +30,6 @@ struct Renderer {
 	CameraSystem cameraSystem;
 	RenderObjectSystem renderObjectSystem;
 	PlanetRenderSystem planetRenderSystem;
-
 
 	//synchronization
 	Mutex mutex;

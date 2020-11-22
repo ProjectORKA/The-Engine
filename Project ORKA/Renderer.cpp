@@ -61,6 +61,7 @@ void Renderer::render()
 	uniforms().setVec3("chunkOffsetVector", Vec3(0));
 	uniforms().setVec3("cameraVector", cameraSystem.current().forwardVector);
 	uniforms().setMatrix("vpMatrix", cameraSystem.current().projectionMatrix(viewportSystem.current().aspectRatio()) * cameraSystem.current().viewMatrixOnlyRot());
+	uniforms().setMatrix("mMatrix", Matrix(1));
 	renderObjectSystem.render("sky");
 
 	//setup actual scene
@@ -177,13 +178,20 @@ void dynamicallyAdjustValue(Renderer& renderer, Float& value) {
 	if (renderer.adjustRenderVariables) {
 		//average fps, to avoid loopback
 		static float averageDelta = 0.16;
-		float oldToNewRatio = renderer.renderTime.delta / averageDelta; // >1 means framerate dropped
-		
-		//the code below gradually introduces the new values
-		averageDelta += oldToNewRatio * renderer.renderTime.delta;
-		averageDelta /= (1 + oldToNewRatio);
 
-		logDebug(1.0f/averageDelta);
+		bool smoothing = false;
+
+		if (smoothing) {
+			float oldToNewRatio = 2 * renderer.renderTime.delta / averageDelta; // >1 means framerate dropped
+			//the code below gradually introduces the new values
+			averageDelta += oldToNewRatio * renderer.renderTime.delta;
+			averageDelta /= (1 + oldToNewRatio);
+		}
+		else {
+			averageDelta = renderer.renderTime.delta;
+		}
+
+		logDebug(1.0f / averageDelta);
 		logDebug(value);
 		//get current fps relative to target
 		//>1 means too low fps <1 means too high
@@ -196,7 +204,7 @@ void dynamicallyAdjustValue(Renderer& renderer, Float& value) {
 			value /= 1 + lerpFactor;
 		}
 
-		value = max(0.1, value);
+		value = max(1.41421356237, value);
 	}
 }
 void renderSpaceShip(Renderer& renderer, SpaceShip& spaceShip)

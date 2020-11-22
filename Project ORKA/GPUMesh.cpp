@@ -2,28 +2,11 @@
 #include "GPUMesh.hpp"
 //#include "Renderer.hpp"
 
-void GPUMesh::upload(CPUMesh& cpuMesh) {
-	if (!loaded) {
-		if (cpuMesh.readyForUpload) {
-
-			primitiveMode = cpuMesh.primitiveMode;
-
-			vao.create(cpuMesh);
-
-			loaded = true;
-		}
-	}
-	else {
-		logError("CPUMesh not loaded!");
-	}
-}
 void GPUMesh::render() {
 	if (loaded) {
-#ifdef GRAPHICS_API_OPENGL
-
+		//bind vertex data
 		vao.render();
-
-		//render
+		//render vertex data
 		glDrawElements(
 			primitiveMode,
 			vao.indexBuffer.indexCount,
@@ -34,10 +17,29 @@ void GPUMesh::render() {
 	else {
 		logError("GPUMesh not loaded!");
 	}
-#endif // GRAPHICS_API_OPENGL
 }
 void GPUMesh::unload() {
 	//make unavailable for rendering
-	loaded = false;
-	vao.unload();
+	if (loaded) {
+		loaded = false;
+		vao.unload();
+	}
+}
+void GPUMesh::upload(CPUMesh& cpuMesh) {
+	if (!loaded) {
+		if (cpuMesh.readyForUpload) {
+
+			primitiveMode = cpuMesh.primitiveMode;
+
+			vao.create(cpuMesh);
+
+			loaded = true;
+		}
+		else {
+			logError("CPUMesh not loaded! Cant upload!");
+		}
+	}
+	else {
+		logError("GPUMesh already loaded!");
+	}
 }
