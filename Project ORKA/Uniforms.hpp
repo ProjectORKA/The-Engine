@@ -27,4 +27,13 @@ struct Uniforms {
 	Map<Name, Vec3> vec3s;
 	Map<Name, Vec4> vec4s;
 	Map<Name, Matrix> matrices;
+	//
+	Map<Name, Index> sampler2Ds;
+	Map<Name, Index> sampler2DMS;
+};
+
+struct Uniform {
+	Index uniformID;
+	Name name;
+	UInt type;
 };

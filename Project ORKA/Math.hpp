@@ -4,15 +4,31 @@
 
 #define PI 3.14159265359f
 
-Float max(Float a, Float b);
-Float min(Float a, Float b);
+
+template<typename T>
+T max(T a, T b) {
+	return (a < b) ? b : a;
+}
+
+template <typename T>
+T min(T a, T b) {
+	return !(b < a) ? a : b;
+}
+
+template <typename T>
+T clamp(T a, T min, T max) {
+	if (a > max) return max;
+	if (a < min) return min;
+	return a;
+}
+
 Float lerp(Float a, Float b, Float alpha);
 Float randomFloat();
 Float randomFloat(Float low, Float high);
-Float clamp(Float a, Float min, Float max);
 bool isFloatNearOther(Float a, Float b, Float error);
 Rotation getRotationBetweenVectors(Vec3 start, Vec3 dest);
 
+UInt nextPowerOfTwo(UInt& value);
 
 //perlin noise by Ryo Suzuki
 //----------------------------------------------------------------------------------------
@@ -54,21 +70,21 @@ private:
 
 	std::int32_t p[512];
 
-	static double Fade(double t) noexcept
+	static Double Fade(Double t) noexcept
 	{
 		return t * t * t * (t * (t * 6 - 15) + 10);
 	}
 
-	static double Lerp(double t, double a, double b) noexcept
+	static Double Lerp(Double t, Double a, Double b) noexcept
 	{
 		return a + t * (b - a);
 	}
 
-	static double Grad(std::int32_t hash, double x, double y, double z) noexcept
+	static Double Grad(std::int32_t hash, Double x, Double y, Double z) noexcept
 	{
 		const std::int32_t h = hash & 15;
-		const double u = h < 8 ? x : y;
-		const double v = h < 4 ? y : h == 12 || h == 14 ? x : z;
+		const Double u = h < 8 ? x : y;
+		const Double v = h < 4 ? y : h == 12 || h == 14 ? x : z;
 		return ((h & 1) == 0 ? u : -u) + ((h & 2) == 0 ? v : -v);
 	}
 
@@ -116,17 +132,17 @@ public:
 		}
 	}
 
-	float noise(double x) const
+	Double noise(Double x) const
 	{
 		return noise(x, 0.0, 0.0);
 	}
 
-	float noise(double x, double y) const
+	Double noise(Double x, Double y) const
 	{
 		return noise(x, y, 0.0);
 	}
 
-	float noise(double x, double y, double z) const
+	Double noise(Double x, Double y, Double z) const
 	{
 		const std::int32_t X = static_cast<std::int32_t>(std::floor(x)) & 255;
 		const std::int32_t Y = static_cast<std::int32_t>(std::floor(y)) & 255;
@@ -136,9 +152,9 @@ public:
 		y -= std::floor(y);
 		z -= std::floor(z);
 
-		const double u = Fade(x);
-		const double v = Fade(y);
-		const double w = Fade(z);
+		const Double u = Fade(x);
+		const Double v = Fade(y);
+		const Double w = Fade(z);
 
 		const std::int32_t A = p[X] + Y, AA = p[A] + Z, AB = p[A + 1] + Z;
 		const std::int32_t B = p[X + 1] + Y, BA = p[B] + Z, BB = p[B + 1] + Z;
@@ -153,10 +169,10 @@ public:
 							  Grad(p[BB + 1], x - 1, y - 1, z - 1))));
 	}
 
-	float octaveNoise(double x, std::int32_t octaves) const
+	Double octaveNoise(Double x, std::int32_t octaves) const
 	{
-		double result = 0.0;
-		double amp = 1.0;
+		Double result = 0.0;
+		Double amp = 1.0;
 
 		for (std::int32_t i = 0; i < octaves; ++i)
 		{
@@ -168,10 +184,10 @@ public:
 		return result;
 	}
 
-	float octaveNoise(double x, double y, std::int32_t octaves) const
+	Double octaveNoise(Double x, Double y, std::int32_t octaves) const
 	{
-		double result = 0.0;
-		double amp = 1.0;
+		Double result = 0.0;
+		Double amp = 1.0;
 
 		for (std::int32_t i = 0; i < octaves; ++i)
 		{
@@ -184,10 +200,10 @@ public:
 		return result;
 	}
 
-	float octaveNoise(double x, double y, double z, std::int32_t octaves) const
+	Double octaveNoise(Double x, Double y, Double z, std::int32_t octaves) const
 	{
-		double result = 0.0;
-		double amp = 1.0;
+		Double result = 0.0;
+		Double amp = 1.0;
 
 		for (std::int32_t i = 0; i < octaves; ++i)
 		{
@@ -201,32 +217,32 @@ public:
 		return result;
 	}
 
-	float noise0_1(double x) const
+	Double noise0_1(Double x) const
 	{
 		return noise(x) * 0.5 + 0.5;
 	}
 
-	float noise0_1(double x, double y) const
+	Double noise0_1(Double x, Double y) const
 	{
 		return noise(x, y) * 0.5 + 0.5;
 	}
 
-	float noise0_1(double x, double y, double z) const
+	Double noise0_1(Double x, Double y, Double z) const
 	{
 		return noise(x, y, z) * 0.5 + 0.5;
 	}
 
-	float octaveNoise0_1(double x, std::int32_t octaves) const
+	Double octaveNoise0_1(Double x, std::int32_t octaves) const
 	{
 		return octaveNoise(x, octaves) * 0.5 + 0.5;
 	}
 
-	float octaveNoise0_1(double x, double y, std::int32_t octaves) const
+	Double octaveNoise0_1(Double x, Double y, std::int32_t octaves) const
 	{
 		return octaveNoise(x, y, octaves) * 0.5 + 0.5;
 	}
 
-	float octaveNoise0_1(double x, double y, double z, std::int32_t octaves) const
+	Double octaveNoise0_1(Double x, Double y, Double z, std::int32_t octaves) const
 	{
 		return octaveNoise(x, y, z, octaves) * 0.5 + 0.5;
 	}

@@ -11,10 +11,10 @@ struct Viewport {
 	Float relativeHeight = 1.0f;
 
 	//needs update
-	Float absoluteX = 0.0f;
-	Float absoluteY = 0.0f;
-	Float absoluteWidth = 0.0f;
-	Float absoluteHeight = 0.0f;
+	Int absoluteX = 0;
+	Int absoluteY = 0;
+	Int absoluteWidth = 0;
+	Int absoluteHeight = 0;
 
 	void update(Int & adaptiveWidth, Int & adaptiveHeight);
 	float aspectRatio();
@@ -26,7 +26,7 @@ struct ViewportSystem {
 	void destroy();
 	Viewport& current();
 	void select(String name);
-	void render(Int adaptiveWidth , Int adaptiveHeight);
+	void render(Framebuffer & framebuffer);
 	void add(String name, Float x, Float y, Float w, Float h);
 
 private:

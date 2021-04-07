@@ -7,11 +7,14 @@ void MeshSystem::create() {
 	proceduralPlaneMesh(standard, 1, 1);
 	addMesh(standard);
 
-
 	CPUMesh boundingBox;
 	boundingBox.name = "boundingBox";
-	proceduralWireframeCubeMesh(boundingBox, 0,1);
+	proceduralWireframeAxisLines(boundingBox);
 	addMesh(boundingBox);
+
+	CPUMesh fullScreenQuad;
+	fullScreenQuad.autoLoadFromFile("fullScreenQuad");
+	addMesh(fullScreenQuad);
 }
 void MeshSystem::destroy()
 {
@@ -21,7 +24,27 @@ void MeshSystem::destroy()
 	gpuMeshes.clear();
 	meshNames.clear();
 }
-
+void MeshSystem::use(Index meshID)
+{
+	currentMeshID = meshID;
+}
+void MeshSystem::use(Name meshName)
+{
+	auto it = meshNames.find(meshName);
+	if (it != meshNames.end()) {
+		currentMeshID = it->second;
+	}
+	else {
+		loadMesh(meshName);
+		it = meshNames.find(meshName);
+		if (it != meshNames.end()) {
+			currentMeshID = it->second;
+		}
+		else {
+			logError("Could not select nor load mesh!");
+		}
+	}
+}
 void MeshSystem::loadMesh(Name name)
 {
 	CPUMesh mesh;
@@ -31,23 +54,25 @@ void MeshSystem::loadMesh(Name name)
 		addMesh(mesh);
 	}
 	else {
-
+		logDebug("Mesh could not be loaded from file!");
 	}
+}
+void MeshSystem::renderMesh(Index meshID) {
+	use(meshID);
+	currentMesh().render();
 }
 void MeshSystem::addMesh(CPUMesh& cpuMesh) {
 	gpuMeshes.emplace_back();
-	gpuMeshes.back().upload(cpuMesh);
-	meshNames[cpuMesh.name] = gpuMeshes.size() - 1;
-}
-void MeshSystem::renderMesh(Index meshID) {
-	gpuMeshes[meshID].render();
+	use(gpuMeshes.size() - 1);
+	currentMesh().upload(cpuMesh);
+	meshNames[cpuMesh.name] = currentMeshID;
 }
 void MeshSystem::renderMesh(Name meshName) {
-	auto it = meshNames.find(meshName);
-	if (it != meshNames.end()) {
-		gpuMeshes[it->second].render();
-	}
-	else {
-		logDebug("Mesh not loaded.");
-	}
+	use(meshName);
+	currentMesh().render();
+}
+
+GPUMesh& MeshSystem::currentMesh()
+{
+	return gpuMeshes[currentMeshID];
 }

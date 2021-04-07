@@ -1,13 +1,12 @@
-#version 400
+#version 450
 
-out vec4 color;
+layout(location = 0) out vec4 color;
 
 in vec2 textureCoordinate;
 
-uniform sampler2D baseColor;
+uniform sampler2D texture0;
 
-void main(){
-
-	color = vec4(texture(baseColor, textureCoordinate).rgb,1);
-
-};
+void main( void )
+{
+    color = texture(texture0, textureCoordinate);
+}

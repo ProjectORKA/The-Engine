@@ -1,12 +1,10 @@
 # pragma once
-
-#include "GameSimulation.hpp"
+#include "Networking.hpp"
 #include "WindowSystem.hpp"
+#include "GameSimulation.hpp"
 
 struct Program {
-	GameSimulation gameSimulation;
-
-	WindowSystem windowSystem;
-
-	void start();
+	void run();
 };
+
+extern Program program;

@@ -1,6 +1,5 @@
 
 #include "GPUMesh.hpp"
-//#include "Renderer.hpp"
 
 void GPUMesh::render() {
 	if (loaded) {

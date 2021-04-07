@@ -1,26 +1,39 @@
 
-#include <iostream>
-#include <bitset>
-#include "Debug.hpp"
 
+#include "Debug.hpp"
 
 bool showEvents = true;
 bool showDebug = true;
+bool showWarning = true;
 bool showError = true;
 
 void logEvent(String message)
 {
+#ifdef DEBUG
 	if(showEvents) std::cout <<	"Event: " << message << "\n";
+#endif // DEBUG
 }
 void logDebug(String message)
 {
+#ifdef DEBUG
 	if(showDebug) std::cout <<	"Debug: " << message << "\n";
+#endif // DEBUG
+}
+void logWarning(String message) {
+#ifdef DEBUG
+	if (showWarning) std::cout << "Warning: " << message << "\n";
+	beep();
+	pause();
+#endif // DEBUG
 }
 void logError(String message)
 {
+#ifdef DEBUG
 	if(showError) std::cout <<	"Error: " << message << "\n";
 	beep();
-	//pause();
+	pause();
+	exit(EXIT_FAILURE);
+#endif // DEBUG
 }
 
 void beep() {
@@ -38,7 +51,7 @@ void pause() {
 
 void logDebug(ULL t) {
 #ifdef DEBUG
-	std::cout << t << " (" << std::bitset<32>(t) << ")" << "\n";
+	std::cout << " (" << std::bitset<64>(t) << ")" << t << "\n";
 #endif // DEBUG
 }
 void logDebug(Int t)
@@ -68,6 +81,12 @@ void logDebug(Short t)
 {
 #ifdef DEBUG
 	std::cout << t << "\n";
+#endif // DEBUG
+}
+void logDebug(ULLVec2 t)
+{
+#ifdef DEBUG
+	std::cout << "(" << t.x << "|" << t.y << ")" << "\n";
 #endif // DEBUG
 }
 void logDebug(ULLVec3 t) {

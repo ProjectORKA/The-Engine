@@ -1,29 +1,19 @@
-
 #pragma once
 
-#include "Basics.hpp"
 #include "Math.hpp"
+#include "ULLUtil.hpp"
+#include "Heightmap.hpp"
+#include "QuadtreeID.hpp"
 
-#define TERRAIN_DETAIL 16
+#define SEA_LEVEL 1677721600000
+#define TERRAIN_GENERATION_SEED 645123587412588622
 
 struct Terrain {
-	//data
-	Float heightmap[TERRAIN_DETAIL+1][TERRAIN_DETAIL+1]{};
+	HeightmapForNormals heightmapForNormals;
+	
+	ULL upperLimit = 0;
+	ULL lowerLimit = 0;
 
-	UShort level = 0;
-
-	Terrain* parent = nullptr;
-	//children
-	Terrain* c00 = nullptr;
-	Terrain* c01 = nullptr;
-	Terrain* c10 = nullptr;
-	Terrain* c11 = nullptr;
-
-	void create();
-};
-
-struct TerrainSystem {
-	Terrain terrain;
-
-	void create(); //[TODO] make seed dependent
+	Mutex mutex;
+	void create(QuadtreeID id);
 };

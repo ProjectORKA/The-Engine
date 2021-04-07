@@ -1,16 +1,46 @@
+
 #include "TerrainSystem.hpp"
 
-PerlinNoise noise;
+Double terrainGenerationFunction(Double x, Double y) {
+	static PerlinNoise noise(TERRAIN_GENERATION_SEED);
+	Double height = SEA_LEVEL;
+	height += pow(noise.octaveNoise0_1(6 * x, 6 * y, 16), 2) * LDouble(LLONG_MAX / 128);
+	return height;
+};
 
-#define TERRAIN_GENERATION_SEED 4797655348219768357
-
-void Terrain::create()
+void Terrain::create(QuadtreeID id)
 {
-	noise.reseed(TERRAIN_GENERATION_SEED);
+	ULLVec2 location = id.location;
+	LDouble xLocation = 0;
+	LDouble yLocation = 0;
 
-	for (int x = 0; x < TERRAIN_DETAIL+1; x++) {
-		for (int y = 0; y < TERRAIN_DETAIL+1; y++) {
-			heightmap[x][y] = randomFloat();
+	lowerLimit = ULLONG_MAX;
+
+	for (Int x = 0; x < HEIGHTMAP_FOR_NORMALS_SIZE; x++) {
+		for (Int y = 0; y < HEIGHTMAP_FOR_NORMALS_SIZE; y++) {
+
+			xLocation = LDouble(x - 1) / LDouble(HEIGHTMAP_FOR_NORMALS_SIZE - 3);
+			yLocation = LDouble(y - 1) / LDouble(HEIGHTMAP_FOR_NORMALS_SIZE - 3);
+
+			xLocation += LDouble(location.x) / pow(2, 64 - id.level);
+			yLocation += LDouble(location.y) / pow(2, 64 - id.level);
+
+			xLocation /= pow(2, id.level - 3);
+			yLocation /= pow(2, id.level - 3);
+
+			LDouble height = terrainGenerationFunction(xLocation, yLocation);
+
+			if (height > upperLimit) upperLimit = ceil(height);
+			if (height < lowerLimit) lowerLimit = floor(height);
+
+			heightmapForNormals[y][x] = height;
+		}
+	}
+
+	for (UInt x = 0; x < HEIGHTMAP_FOR_NORMALS_SIZE; x++) {
+		for (UInt y = 0; y < HEIGHTMAP_FOR_NORMALS_SIZE; y++) {
+			heightmapForNormals[y][x] -= Double(lowerLimit);
+			heightmapForNormals[y][x] /= pow(2, 64 - id.level);
 		}
 	}
 }

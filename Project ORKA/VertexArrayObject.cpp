@@ -1,6 +1,8 @@
 
 #include "VertexArrayObject.hpp"
 
+
+
 void VertexArrayObject::create(CPUMesh& mesh)
 {
 	if (mesh.readyForUpload) {

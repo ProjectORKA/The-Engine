@@ -6,27 +6,21 @@
 #include "GraphicsAPI.hpp"
 
 enum DataType {
-#ifdef GRAPHICS_API_OPENGL
 	dataTypeByte = GL_UNSIGNED_BYTE,
 	dataTypeFloat = GL_FLOAT
-#endif
 };
 enum Wrapping
 {
-#ifdef GRAPHICS_API_OPENGL
 	repeat = GL_REPEAT,
 	mirrored = GL_MIRRORED_REPEAT,
 	clamped = GL_CLAMP_TO_EDGE,
 	border = GL_CLAMP_TO_BORDER
-#endif
 };
 enum Filter {
-#ifdef GRAPHICS_API_OPENGL
 	nearest = GL_NEAREST,
 	nearestMM = GL_NEAREST_MIPMAP_NEAREST,
 	linear = GL_LINEAR,
 	linearMM = GL_LINEAR_MIPMAP_LINEAR
-#endif
 };
 
 struct CPUTexture {
@@ -45,9 +39,10 @@ struct CPUTexture {
 	Short multisampling = 0;
 	Bool loaded = false;
 
-	void load(Path path, Name name);
-	void loadHDR(Path path, Name name);
 	void unload();
+	void load(Path path, Name name);
 
 	~CPUTexture();
 };
+
+void setInvertOnLoad(Bool invert);

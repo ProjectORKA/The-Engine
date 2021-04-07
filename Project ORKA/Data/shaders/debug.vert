@@ -1,4 +1,4 @@
-#version 330 core
+#version 450
 
 layout(location = 0) in vec3 vertex;
 layout(location = 1) in vec2 uvs;
@@ -10,7 +10,7 @@ out vec2 textureCoordinate;
 uniform float time;
 uniform mat4 mMatrix;
 uniform mat4 vpMatrix;
-uniform int distortion;
+uniform bool distortion;
 uniform vec4 worldOffset;
 uniform float cameraHeight;
 uniform vec3 chunkOffsetVector;
@@ -22,7 +22,7 @@ void main() {
 
 	//planet curvature
 
-	if(distortion > 0){
+	if(distortion){
 		if(worldOffset.w < 13){
 
 			float radius = pow(2,worldOffset.w-2);

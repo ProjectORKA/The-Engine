@@ -1,80 +1,79 @@
 
 #include "RenderObjectSystem.hpp"
 
-void RenderObjectSystem::create() {
-	meshSystem.create();
-	textureSystem.create();
-	shaderSystem.create();
-
-	//space scene
-	addRenderObject("spaceShip", "spaceShip", "spaceShip", "primitive");
-	addRenderObject("spaceShipLOD", "spaceShipLOD", "spaceShip", "primitive");
-	addRenderObject("earth", "earth", "earth", "primitive");
-
-	//general objects
-	addRenderObject("sky", "sky", "stars", "sky");
-	addRenderObject("monkey", "monkey", "uv", "primitive");
-	addRenderObject("plane", "plane", "default", "primitive");
-	addRenderObject("default", "default", "default", "primitive");
-	addRenderObject("skeleton", "skeleton", "skeleton", "primitive");
-	addRenderObject("wireBox", "wireMeshBox", "default", "primitive");
-
-	//planet scene
-	addRenderObject("monkey0", "monkey0", "uv", "primitive");
-	addRenderObject("monkey1", "monkey1", "uv", "primitive");
-	addRenderObject("monkey2", "monkey2", "uv", "primitive");
-	addRenderObject("monkey3", "monkey3", "uv", "primitive");
-	addRenderObject("monkey4", "monkey4", "uv", "primitive");
-	addRenderObject("monkey5", "monkey5", "uv", "primitive");
-	addRenderObject("monkey6", "monkey6", "uv", "primitive");
-	addRenderObject("monkey7", "monkey7", "uv", "primitive");
-	addRenderObject("terrain", "terrain", "default2", "primitive");
-	addRenderObject("terrain0", "terrain0", "default2", "primitive");
-	addRenderObject("boundingBox", "boundingBox", "default", "primitive");
-}
-void RenderObjectSystem::addRenderObject(String name, Name meshName, Name textureName, Name shaderName) {
-	
-	//find the specified mesh
-	auto itM = meshSystem.meshNames.find(meshName);
-	if (itM == meshSystem.meshNames.end()) {
-		//maybe its not loaded
-		meshSystem.loadMesh(meshName);
-		itM = meshSystem.meshNames.find(meshName);
-	}
-
-	auto itS = shaderSystem.shaderNames.find(shaderName);
-	auto itT = textureSystem.textureNames.find(textureName);
-
-	if (itM != meshSystem.meshNames.end() && itS != shaderSystem.shaderNames.end() && itT != textureSystem.textureNames.end()) {
-		renderObjects.emplace_back();
-		renderObjects.back().meshID = itM->second;
-		renderObjects.back().shaderID = itS->second;
-		renderObjects.back().textureID = itT->second;
-		nameToIndex[name] = renderObjects.size() - 1;
-	}
-	else {
-		logError(String("Could not find assets to create Render Object. (").append(name).append(" = ").append(meshName.data).append("|").append(textureName.data).append("|").append(shaderName.data).append(")"));
-	}
-}
-void RenderObjectSystem::render(String name) {
-	auto it = nameToIndex.find(name);
-	if (it != nameToIndex.end()) {
-		RenderObject& renderObject = renderObjects[it->second];
-		shaderSystem.useShader(renderObject.shaderID);
-		textureSystem.use(renderObject.textureID);
-		meshSystem.renderMesh(renderObject.meshID);
-	}
-	else {
-		logDebug(String("RenderObject With this name doesent exist. (").append(name).append(")"));
-	}
-}
-
 void RenderObjectSystem::destroy()
 {
-	meshSystem.destroy();
-	shaderSystem.destroy();
-	textureSystem.destroy();
-
 	nameToIndex.clear();
 	renderObjects.clear();
+	renderObjectNamesQueue.clear();
+}
+void RenderObjectSystem::select(Index id)
+{
+	currentRenderobjectID = id;
+}
+void RenderObjectSystem::render(Name name) {
+	select(name);
+	shaderSystemPtr->use(current().shaderID);
+	textureSystemPtr->use(current().textureID);
+	meshSystemPtr->renderMesh(current().meshID);
+}
+void RenderObjectSystem::select(Name name)
+{
+	auto it = nameToIndex.find(name);
+	if (it != nameToIndex.end()) {
+		//id found, set to current
+		currentRenderobjectID = it->second;
+	}
+	else {
+		//id not found search in names list
+		for (Index i = 0; i < renderObjectNamesQueue.size(); i++) {
+			if (renderObjectNamesQueue[i].renderObjectName == name) {
+				
+				
+				shaderSystemPtr->use(renderObjectNamesQueue[i].shaderName);
+				textureSystemPtr->use(renderObjectNamesQueue[i].textureName);
+				meshSystemPtr->use(renderObjectNamesQueue[i].meshName);
+
+				if (shaderSystemPtr->currentShaderProgram().isValid & textureSystemPtr->currentTexture().loaded & meshSystemPtr->currentMesh().loaded) {
+
+					RenderObject renderObject;
+					renderObject.shaderID = shaderSystemPtr->currentShaderProgramID;
+					renderObject.textureID = textureSystemPtr->currentTextureID;
+					renderObject.meshID = meshSystemPtr->currentMeshID;
+					renderObjects.push_back(renderObject);
+					
+					currentRenderobjectID = renderObjects.size() - 1;
+					nameToIndex[name] = currentRenderobjectID;
+
+					//remove from queue
+					renderObjectNamesQueue.erase(renderObjectNamesQueue.begin() + i);
+					return;
+				}
+				else {
+					logError("RenderObject found, but could not be loaded!");
+				}
+			}
+		}
+		logError(String("RenderObject With this name doesent exist. (").append(name.data).append(")"));
+	}
+}
+void RenderObjectSystem::addRenderObject(String name, Name meshName, Name textureName, Name shaderName) {
+	RenderObjectNames renderObjectNames;
+	renderObjectNames.renderObjectName = name;
+	renderObjectNames.meshName = meshName;
+	renderObjectNames.shaderName = shaderName;
+	renderObjectNames.textureName = textureName;
+	
+	renderObjectNamesQueue.push_back(renderObjectNames);
+}
+void RenderObjectSystem::create(MeshSystem& meshSystem, TextureSystem& textureSystem, ShaderSystem& shaderSystem)
+{
+	meshSystemPtr = &meshSystem;
+	textureSystemPtr = &textureSystem;
+	shaderSystemPtr = &shaderSystem;
+}
+
+RenderObject& RenderObjectSystem::current()
+{
+	return renderObjects[currentRenderobjectID];
 }

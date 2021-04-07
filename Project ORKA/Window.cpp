@@ -1,32 +1,53 @@
 
-
 #include "Window.hpp"
 
 void windowThread(Window& window)
 {
-	window.initializeGraphicsAPI();
+	window.initializeGraphicsAPI(); //needs to be in this thread
 
-	window.renderLoop();
+	window.renderer.create();
+	window.updateFramebuffers();
+
+	glfwShowWindow(window.apiWindow);
+	if (window.fullScreen) {
+		window.setFullscreen();
+	}
+	else {
+		window.setWindowed();
+	}
+
+	while (window.thread.keepThreadRunning) {
+		if (window.isShown) {
+
+			window.processCameraMovement();
+
+			window.renderer.begin();
+
+			window.layer.render();
+
+			window.renderer.renderFramebuffer();
+
+			window.renderer.end();
+
+			window.pushFrame();
+		}
+	}
 }
 
 void Window::create()
 {
 	createAPIWindow();
-
 	center();
+	thread.start(windowThread, *this);
 }
 void Window::center() {
 	Rect<Int> workableArea;
 	getWorkableArea(workableArea);
 	setPosition(workableArea.center() - Vec2(Float(windowContentWidth) / 2, Float(windowContentHeight)/2));
 }
-void Window::reload() {
-#ifdef WINDOW_API_GLFW
-	destroyAPIWindow();
-	createAPIWindow();
-#endif // WINDOW_API_GLFW
-}
 void Window::destroy() {
+	thread.stop();
+	renderer.destroy();
 	destroyAPIWindow();
 }
 void Window::pushFrame()
@@ -35,52 +56,11 @@ void Window::pushFrame()
 	glfwSwapBuffers(apiWindow);
 #endif // WINDOW_API_GLFW
 }
-void Window::renderLoop() {
-
-	renderer.create();
-
-	glfwShowWindow(apiWindow);
-
-	if (fullScreen) {
-		setFullscreen();
-	}
-	else {
-		setWindowed();
-	}
-
-	while (keepThreadRunning) {
-		if (isShown) {
-
-			processCameraMovement();
-
-			renderer.render();
-
-			pushFrame();
-		}
-	}
-
-	renderer.destroy();
-}
-void Window::stopThread()
-{
-	keepThreadRunning = false;
-	if (thread.joinable()) {
-		thread.join();
-	}
-	else {
-		logError("WindowThread is not joinable!");
-	}
-}
 bool Window::shouldClose()
 {
 #ifdef WINDOW_API_GLFW
 	return glfwWindowShouldClose(apiWindow);
 #endif // WINDOW_API_GLFW
-}
-void Window::startThread()
-{
-	keepThreadRunning = true;
-	thread = Thread(windowThread, std::ref(*this));
 }
 void Window::setWindowed()
 {
@@ -91,6 +71,8 @@ void Window::setWindowed()
 	}
 	center();
 	fullScreen = false;
+
+	updateFramebuffers();
 }
 void Window::processInput() {
 	processCameraMovement();
@@ -101,14 +83,13 @@ void Window::captureCursor()
 		glfwGetCursorPos(apiWindow, &cursorPosition.x, &cursorPosition.y);
 		glfwSetInputMode(apiWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 		glfwSetCursorPos(apiWindow, 0, 0);
-		capturingCursor = true;
+		isCapturingCursor = true;
 	}
 }
 void Window::setFullscreen() {
 
 	if (borderlessFullScreen) {
 		glfwSetWindowAttrib(apiWindow, GLFW_DECORATED, GLFW_FALSE);
-
 		glfwMaximizeWindow(apiWindow);
 	}
 	else {
@@ -117,6 +98,8 @@ void Window::setFullscreen() {
 		const GLFWvidmode* videoMode = glfwGetVideoMode(monitor);
 		glfwSetWindowMonitor(apiWindow, monitor, 0, 0, videoMode->width, videoMode->height, GLFW_DONT_CARE);
 	}
+	//help glfw recognize frambuffer change
+	updateFramebuffers();
 	fullScreen = true;
 }
 void Window::updatePosition()
@@ -124,6 +107,13 @@ void Window::updatePosition()
 #ifdef WINDOW_API_GLFW
 	glfwSetWindowPos(apiWindow, windowPosition.x, windowPosition.y);
 #endif // WINDOW_API_GLFW
+}
+void Window::uncaptureCursor() {
+	if (glfwGetInputMode(apiWindow, GLFW_CURSOR) != GLFW_CURSOR_NORMAL) {
+		glfwSetInputMode(apiWindow, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+		glfwSetCursorPos(apiWindow, cursorPosition.x, cursorPosition.y);
+		isCapturingCursor = false;
+	}
 }
 void Window::createAPIWindow() {
 	if (!apiWindow) {
@@ -144,8 +134,8 @@ void Window::createAPIWindow() {
 		glfwWindowHint(GLFW_CONTEXT_CREATION_API, GLFW_NATIVE_CONTEXT_API);
 		glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 		
-		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-		//glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_COMPAT_PROFILE);
+		//glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_COMPAT_PROFILE);
 		glfwWindowHint(GLFW_TRANSPARENT_FRAMEBUFFER, GL_TRUE);
 		glfwWindowHint(GLFW_CENTER_CURSOR, GLFW_TRUE);
 		if (!decorated) glfwWindowHint(GLFW_DECORATED, GL_FALSE);
@@ -160,13 +150,11 @@ void Window::createAPIWindow() {
 
 		glfwSetWindowUserPointer(apiWindow, this);
 
-		setIcon("icon.png");
+		setIcon("Data/textures/ORKA Logo.png");
 
 		if (glfwRawMouseMotionSupported()) glfwSetInputMode(apiWindow, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
 
 		updatePosition();
-
-		startThread();
 
 		//set window callbacks
 		glfwSetKeyCallback(apiWindow, whenButtonIsPressed);
@@ -176,25 +164,16 @@ void Window::createAPIWindow() {
 		glfwSetWindowPosCallback(apiWindow, whenWindowIsBeingMoved);
 		glfwSetWindowFocusCallback(apiWindow, whenWindowChangedFocus);
 		glfwSetWindowIconifyCallback(apiWindow, whenWindowWasMinimized);
+		glfwSetWindowMaximizeCallback(apiWindow, whenWindowWasMaximized);
 		glfwSetFramebufferSizeCallback(apiWindow, whenFramebufferIsResized);
 	}
 	else {
 		logError("Window already exists!");
 	}
 }
-void Window::uncaptureCursor() {
-	if (glfwGetInputMode(apiWindow, GLFW_CURSOR) != GLFW_CURSOR_NORMAL) {
-		glfwSetInputMode(apiWindow, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-		glfwSetCursorPos(apiWindow, cursorPosition.x, cursorPosition.y);
-		capturingCursor = false;
-	}
-}
 void Window::destroyAPIWindow() {
 
-	stopThread();
-
 	uncaptureCursor();
-
 	if (apiWindow) {
 
 #ifdef WINDOW_API_GLFW
@@ -207,9 +186,9 @@ void Window::destroyAPIWindow() {
 void Window::setIcon(Path path) {
 
 	CPUTexture cpuTexture;
-	invertOnLoad(false);
+	setInvertOnLoad(false);
 	cpuTexture.load(path, "Icon");
-	invertOnLoad(true);
+	setInvertOnLoad(true);
 
 	if (cpuTexture.bytePixels && cpuTexture.dataType == dataTypeByte) {
 		GLFWimage icon;
@@ -219,9 +198,16 @@ void Window::setIcon(Path path) {
 		glfwSetWindowIcon(apiWindow, 1, &icon);
 	}
 }
+void Window::updateFramebuffers()
+{
+	Int width;
+	Int height;
+	glfwGetFramebufferSize(apiWindow, &width, &height);
+	renderer.framebufferSystem.updateSizes(width, height);
+}
 void Window::processCameraMovement() {
 
-	Camera& camera = renderer.cameraSystem.current();
+	PlanetCamera& camera = renderer.cameraSystem.currentPlanetCamera();
 
 	if (glfwGetKey(apiWindow, GLFW_KEY_E) == GLFW_PRESS) camera.accelerationVector += camera.upVector;
 	if (glfwGetKey(apiWindow, GLFW_KEY_Q) == GLFW_PRESS) camera.accelerationVector -= camera.upVector;
@@ -233,20 +219,23 @@ void Window::processCameraMovement() {
 	if (glfwGetKey(apiWindow, GLFW_KEY_A) == GLFW_PRESS) camera.accelerationVector -= camera.rightVector;
 }
 void Window::initializeGraphicsAPI() {
-#ifdef GRAPHICS_API_OPENGL
+
 #ifdef WINDOW_API_GLFW
 	glfwMakeContextCurrent(apiWindow);
 #endif // WINDOW_API_GLFW
 	glewExperimental = true;
 	if (glewInit() == GLEW_OK) {
-		logDebug("GLEW successfully initialized!");
+		logEvent("GLEW successfully initialized!");
+	}
+	else {
+		logError("GLEW not initialized!");
 	}
 
 	glfwSwapInterval(0);
 
-	glEnable(GL_DEBUG_OUTPUT);
 	glDebugMessageCallback(DebugOutputCallback, 0);
-#endif // GRAPHICS_API_OPENGL
+	glEnable(GL_DEBUG_OUTPUT);
+	glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
 }
 void Window::setPosition(Vec2 position)
 {
@@ -268,7 +257,7 @@ void whenWindowChangedFocus(APIWindow window, Int focused) {
 
 	Window* parentWindowClass = static_cast<Window*>(glfwGetWindowUserPointer(window));
 	if (focused) {
-		if (parentWindowClass->capturingCursor) {
+		if (parentWindowClass->isCapturingCursor) {
 			glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 		}
 		else {
@@ -279,18 +268,33 @@ void whenWindowChangedFocus(APIWindow window, Int focused) {
 		parentWindowClass->uncaptureCursor();
 	}
 }
+void whenWindowWasMaximized(APIWindow window, Int maximized)
+{
+	//Window& parentWindowClass = *static_cast<Window*>(glfwGetWindowUserPointer(window));
+	//Int width;
+	//Int height;
+	//if (maximized)
+	//{
+	//	glfwGetFramebufferSize(window, &width, &height);
+	//	logDebug(width);
+	//	parentWindowClass.renderer.framebufferSystem.updateFramebufferSizes(width,height);
+	//}
+	//else
+	//{
+	//	parentWindowClass.isShown = true;
+	//}
+}
 void whenWindowWasMinimized(APIWindow window, Int minimized)
 {
-	logEvent("Window minimized!");
-	Window& parentWindowClass = *static_cast<Window*>(glfwGetWindowUserPointer(window));
-	if (minimized)
-	{
-		parentWindowClass.isShown = false;
-	}
-	else
-	{
-		parentWindowClass.isShown = true;
-	}
+	//Window& parentWindowClass = *static_cast<Window*>(glfwGetWindowUserPointer(window));
+	//if (minimized)
+	//{
+	//	parentWindowClass.isShown = false;
+	//}
+	//else
+	//{
+	//	parentWindowClass.isShown = true;
+	//}
 }
 void whenWindowIsBeingMoved(APIWindow window, int xpos, int ypos) {
 	Window* parentWindowClass = static_cast<Window*>(glfwGetWindowUserPointer(window));
@@ -300,11 +304,11 @@ void whenWindowIsBeingMoved(APIWindow window, int xpos, int ypos) {
 void whenMouseIsMoving(APIWindow apiWindow, Double xpos, Double ypos) {
 	Window& window = *static_cast<Window*>(glfwGetWindowUserPointer(apiWindow));
 	if (window.apiWindow) {
-		if (window.capturingCursor) {
+		if (window.isCapturingCursor) {
 			window.deltaX = xpos;
 			window.deltaY = ypos;
 			glfwSetCursorPos(window.apiWindow, 0, 0);
-			if (window.renderer.cameraSystem.cameras.size() > 0) window.renderer.cameraSystem.current().rotate(xpos, ypos);
+			window.renderer.cameraSystem.currentPlanetCamera().rotate(xpos * window.inputSystem.mouseSensitivity, ypos * window.inputSystem.mouseSensitivity);
 		}
 		else {
 			window.cursorPosition.x = xpos;
@@ -317,29 +321,28 @@ void whenFramebufferIsResized(APIWindow window, Int width, Int height) {
 
 	parentWindowClass.windowContentWidth = width;
 	parentWindowClass.windowContentHeight = height;
-	parentWindowClass.renderer.framebufferSystem.adaptiveResolution = Vec2(width, height);
-
-	parentWindowClass.renderer.sync();
+	parentWindowClass.updateFramebuffers();
+	parentWindowClass.renderer.waitForFinishedFrame();
 
 	if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
 		parentWindowClass.center();
 	}
 }
 void whenMouseIsScrolling(APIWindow window, Double xoffset, Double yoffset) {
-	static_cast<Window*>(glfwGetWindowUserPointer(window))->renderer.cameraSystem.current().speedMultiplier += yoffset;
+	static_cast<Window*>(glfwGetWindowUserPointer(window))->renderer.cameraSystem.currentPlanetCamera().speedMultiplier += yoffset;
 }
 void whenMouseIsPressed(APIWindow apiWindow, Int button, Int action, Int mods) {
 	Window& parentWindowClass = *static_cast<Window*>(glfwGetWindowUserPointer(apiWindow));
 	//LMB
 	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
-		if (!parentWindowClass.capturingCursor) {
+		if (!parentWindowClass.isCapturingCursor) {
 			parentWindowClass.captureCursor();
 		}
 	}
 
 	//RMB
 	if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS) {
-		if (parentWindowClass.capturingCursor) {
+		if (parentWindowClass.isCapturingCursor) {
 			parentWindowClass.uncaptureCursor();
 		}
 	}
@@ -359,13 +362,16 @@ void whenButtonIsPressed(APIWindow window, Int key, Int scancode, Int action, In
 		parentWindowClass->changeAntiAliasing(0);
 	}
 	if (key == GLFW_KEY_2 && action == GLFW_PRESS) {
-		parentWindowClass->changeAntiAliasing(2);
+		parentWindowClass->changeAntiAliasing(4);
 	}
 	if (key == GLFW_KEY_3 && action == GLFW_PRESS) {
-		parentWindowClass->changeAntiAliasing(16);
+		parentWindowClass->changeAntiAliasing(8);
 	}
 	if (key == GLFW_KEY_P && action == GLFW_PRESS) {
-		parentWindowClass->renderer.gameSimulation->gameTime.paused = !parentWindowClass->renderer.gameSimulation->gameTime.paused;
+		//Message message;
+		//message.type = 1;
+		//message.byteSize = 0;
+		//client.sendMessage(message);
 	}
 	if (key == GLFW_KEY_N && action == GLFW_PRESS) {
 		parentWindowClass->duplicateWindow = true;
@@ -386,31 +392,3 @@ void whenButtonIsPressed(APIWindow window, Int key, Int scancode, Int action, In
 		parentWindowClass->renderer.planetRenderSystem.chunkBorders = !parentWindowClass->renderer.planetRenderSystem.chunkBorders;
 	}
 }
-
-#ifdef GRAPHICS_API_OPENGL
-void __stdcall DebugOutputCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam) {
-	if (severity != GL_DEBUG_SEVERITY_NOTIFICATION) {
-		printf("OpenGL Debug Output message : ");
-
-		if (source == GL_DEBUG_SOURCE_API_ARB)					printf("Source : API; ");
-		else if (source == GL_DEBUG_SOURCE_WINDOW_SYSTEM_ARB)	printf("Source : WINDOW_SYSTEM; ");
-		else if (source == GL_DEBUG_SOURCE_SHADER_COMPILER_ARB)	printf("Source : SHADER_COMPILER; ");
-		else if (source == GL_DEBUG_SOURCE_THIRD_PARTY_ARB)		printf("Source : THIRD_PARTY; ");
-		else if (source == GL_DEBUG_SOURCE_APPLICATION_ARB)		printf("Source : APPLICATION; ");
-		else if (source == GL_DEBUG_SOURCE_OTHER_ARB)			printf("Source : OTHER; ");
-
-		if (type == GL_DEBUG_TYPE_ERROR_ARB)					printf("Type : ERROR; ");
-		else if (type == GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR_ARB)	printf("Type : DEPRECATED_BEHAVIOR; ");
-		else if (type == GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR_ARB)	printf("Type : UNDEFINED_BEHAVIOR; ");
-		else if (type == GL_DEBUG_TYPE_PORTABILITY_ARB)			printf("Type : PORTABILITY; ");
-		else if (type == GL_DEBUG_TYPE_PERFORMANCE_ARB)			printf("Type : PERFORMANCE; ");
-		else if (type == GL_DEBUG_TYPE_OTHER_ARB)				printf("Type : OTHER; ");
-
-		if (severity == GL_DEBUG_SEVERITY_HIGH_ARB)				printf("Severity : HIGH; ");
-		else if (severity == GL_DEBUG_SEVERITY_MEDIUM_ARB)		printf("Severity : MEDIUM; ");
-		else if (severity == GL_DEBUG_SEVERITY_LOW_ARB)			printf("Severity : LOW; ");
-		printf("Message : %s\n", message);
-		pause();
-	}
-}
-#endif // GRAPHICS_API_OPENGL
