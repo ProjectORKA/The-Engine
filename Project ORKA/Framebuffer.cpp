@@ -1,17 +1,10 @@
 
 #include "Framebuffer.hpp"
 
-//framebuffer
 void Framebuffer::use()
 {
 	glBindFramebuffer(GL_FRAMEBUFFER, framebufferID);
 	glNamedFramebufferDrawBuffer(framebufferID, GL_COLOR_ATTACHMENT0);
-}
-void Framebuffer::render()
-{
-	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-	glBindFramebuffer(GL_READ_FRAMEBUFFER, framebufferID);
-	glBlitFramebuffer(0, 0, width, height, 0, 0, width, height, GL_COLOR_BUFFER_BIT, GL_LINEAR);
 }
 void Framebuffer::create()
 {
@@ -20,7 +13,7 @@ void Framebuffer::create()
 
 	//generate color texture
 	CPUTexture color;
-	color.name = "postProcessTexture";
+	color.name = "postProcess";
 	color.width = width;
 	color.height = height;
 	color.channels = 4;
@@ -74,11 +67,18 @@ void Framebuffer::detachTextures() {
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE, 0, 0);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D_MULTISAMPLE, 0, 0);
 }
-void Framebuffer::resize(Vec2& resolution)
+void Framebuffer::blitFramebuffer()
 {
+	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+	glBindFramebuffer(GL_READ_FRAMEBUFFER, framebufferID);
+	glBlitFramebuffer(0, 0, width, height, 0, 0, width, height, GL_COLOR_BUFFER_BIT, GL_LINEAR);
+}
+void Framebuffer::resize(Vec2 resolution)
+{
+
 	//needs to be at least 1 x 1
-	resolution.x = max(1, resolution.x);
-	resolution.y = max(1, resolution.y);
+	resolution.x = max<Float>(1.0f, resolution.x);
+	resolution.y = max<Float>(1.0f, resolution.y);
 
 	//if size actually changed
 	if ((width != resolution.x) | (height != resolution.y)) {
@@ -86,6 +86,7 @@ void Framebuffer::resize(Vec2& resolution)
 		//apply size
 		width = resolution.x;
 		height = resolution.y;
+		aspectRatio = Float(width) / Float(height);
 
 		//update textures
 		colorTexture.resize(width, height);
@@ -103,7 +104,7 @@ void Framebuffer::attachTexture(GPUTexture& texture)
 
 	if (texture.channels < 5) {
 		//its a color texture
-		if (texture.multisampling > 0) {
+		if (texture.sampleCount > 0) {
 			glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, texture.textureID);
 			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE, texture.textureID, 0);
 		}
@@ -114,7 +115,7 @@ void Framebuffer::attachTexture(GPUTexture& texture)
 	}
 	else {
 		//its a depth texture
-		if (texture.multisampling > 0) {
+		if (texture.sampleCount > 0) {
 			glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, texture.textureID);
 			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D_MULTISAMPLE, texture.textureID, 0);
 		}
@@ -123,59 +124,4 @@ void Framebuffer::attachTexture(GPUTexture& texture)
 			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, texture.textureID, 0);
 		}
 	}
-}
-
-//FramebufferSystem
-void FramebufferSystem::create()
-{
-	framebuffers.clear();
-	add(adaptiveResolution, 0);
-	add(adaptiveResolution, 2);
-	add(adaptiveResolution, 4);
-	add(adaptiveResolution, 8);
-	add(adaptiveResolution, 16);
-}
-void FramebufferSystem::destroy()
-{
-	deselect();
-	for (Framebuffer& framebuffer : framebuffers) {
-		framebuffer.destroy();
-	}
-	framebuffers.clear();
-}
-void FramebufferSystem::deselect()
-{
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	glDrawBuffer(GL_BACK);
-}
-void FramebufferSystem::updateFramebufferSizes()
-{
-	for (Framebuffer& framebuffer : framebuffers) {
-		framebuffer.resize(adaptiveResolution);
-	}
-}
-void FramebufferSystem::select(Index framebufferIndex)
-{
-	if (framebufferIndex > (framebuffers.size() - 1)) {
-		logError(String("Invalid framebufferIndex! (").append(std::to_string(framebufferIndex)).append(")"));
-		return;
-	}
-	currentFramebufferIndex = framebufferIndex;
-	current().use();
-}
-void FramebufferSystem::add(Vec2 resolution, UShort samples)
-{
-	framebuffers.emplace_back();
-	framebuffers.back().samples = samples;
-	framebuffers.back().create();
-	framebuffers.back().resize(resolution);
-	select(framebuffers.size() - 1);
-}
-
-Framebuffer& FramebufferSystem::current()
-{
-	if ((currentFramebufferIndex > (framebuffers.size() - 1)) | (framebuffers.size() == 0)) {
-		logError(String("Invalid framebufferIndex! (").append(std::to_string(currentFramebufferIndex)).append(")"));
-	}
-	return framebuffers[currentFramebufferIndex];
 }

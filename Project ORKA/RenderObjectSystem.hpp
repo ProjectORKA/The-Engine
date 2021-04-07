@@ -6,21 +6,35 @@
 #include "TextureSystem.hpp"
 
 struct RenderObject {
-	Index meshID;
-	Index shaderID;
-	Index textureID;
+	Index meshID = 0;
+	Index shaderID = 0;
+	Index textureID = 0;
+};
+
+struct RenderObjectNames {
+	Name renderObjectName = "default";
+	Name meshName = "default";
+	Name shaderName = "default";
+	Name textureName = "default";
 };
 
 struct RenderObjectSystem {
-	MeshSystem meshSystem;
-	TextureSystem textureSystem;
-	ShaderSystem shaderSystem;
+	MeshSystem * meshSystemPtr;
+	TextureSystem * textureSystemPtr;
+	ShaderSystem * shaderSystemPtr;
 
-	Map<String, Index> nameToIndex;
+	Map<Name, Index> nameToIndex;
 	Vector<RenderObject> renderObjects;
+	Vector<RenderObjectNames> renderObjectNamesQueue;
 
-	void create();
-	void addRenderObject(String name, Name meshName, Name textureName, Name shaderName);
-	void render(String name);
+	Index currentRenderobjectID = 0;
+
 	void destroy();
+	void select(Name name);
+	void select(Index id);
+	void render(Name name);
+	void addRenderObject(String name, Name meshName, Name textureName, Name shaderName);
+	void create(MeshSystem & meshSystem, TextureSystem & textureSystem, ShaderSystem & shaderSystem);
+	
+	RenderObject & current();
 };

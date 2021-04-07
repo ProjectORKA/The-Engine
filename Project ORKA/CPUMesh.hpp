@@ -2,14 +2,14 @@
 
 #include "Basics.hpp"
 #include "Debug.hpp"
-#include "PrimitiveModes.hpp"
-#include "TerrainSystem.hpp"
-//assimp
+#include "GraphicsAPI.hpp"
+//assimp 
 #include <assimp/Importer.hpp>
 #include <assimp/postprocess.h>
 #include <assimp/scene.h>
 
 struct CPUMesh {
+
 	Name name = "empty";
 	PrimitiveMode primitiveMode = Triangles;
 	Vector<Vec3> vertices;
@@ -22,7 +22,7 @@ struct CPUMesh {
 	void loadFBX(Path path);
 	void loadMeshFile(Path path);
 	void autoLoadFromFile(Name name);
-	void generate2DTerrainMesh(Terrain& terrain);
+	void calculateSmoothNormals();
 };
 
 //struct MeshHeaderV1 {

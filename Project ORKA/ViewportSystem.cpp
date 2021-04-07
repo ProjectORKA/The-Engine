@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ViewportSystem.hpp"
+#include "Math.hpp"
 
 Viewport& ViewportSystem::current()
 {
@@ -23,9 +24,9 @@ void ViewportSystem::select(String name)
 	auto it = viewportNames.find(name);
 	if (it != viewportNames.end()) currentViewport = it->second;
 }
-void ViewportSystem::render(Int adaptiveWidth, Int adaptiveHeight)
+void ViewportSystem::render(Framebuffer & framebuffer)
 {
-	viewports[currentViewport].update(adaptiveWidth, adaptiveHeight);
+	viewports[currentViewport].update(framebuffer.width, framebuffer.height);
 	viewports[currentViewport].render();
 }
 void ViewportSystem::add(String name, Float x, Float y, Float w, Float h)
@@ -39,17 +40,15 @@ void ViewportSystem::add(String name, Float x, Float y, Float w, Float h)
 }
 
 void Viewport::render() {
-#ifdef GRAPHICS_API_OPENGL
 	glViewport(absoluteX, absoluteY, absoluteWidth, absoluteHeight);
-#endif // GRAPHICS_API_OPENGL
 }
 float Viewport::aspectRatio() {
 	return float(absoluteWidth) / float(absoluteHeight);
 };
-void Viewport::update(Int & adaptiveWidth, Int & adaptiveHeight)
+void Viewport::update(Int & framebufferWidth, Int & framebufferHeight)
 {
-	absoluteX		= adaptiveWidth * relativeX;
-	absoluteY		= adaptiveHeight * relativeY;
-	absoluteWidth	= max(1, adaptiveWidth * relativeWidth);
-	absoluteHeight	= max(1, adaptiveHeight * relativeHeight);
+	absoluteX		= framebufferWidth * relativeX;
+	absoluteY		= framebufferHeight * relativeY;
+	absoluteWidth	= max<int>(1, framebufferWidth * relativeWidth);
+	absoluteHeight	= max<int>(1, framebufferHeight * relativeHeight);
 }

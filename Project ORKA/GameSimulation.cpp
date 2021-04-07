@@ -1,38 +1,34 @@
 
 #include "GameSimulation.hpp"
 
-void GameSimulation::start()
-{
-	keepThreadRunning = true;
-	thread = Thread(GameSimulationThread, std::ref(*this));
-}
+GameSimulation gameSimulation;
 
-void GameSimulation::stop() {
-	keepThreadRunning = false;
-	thread.join();
+GameSimulation::GameSimulation()
+{
+	planetSystem.create();
+	thread.start(GameSimulationThread, *this);
+}
+GameSimulation::~GameSimulation() {
+	thread.stop();
+	planetSystem.destroy();
 }
 
 void GameSimulation::update() {
-
+	gameTime.update();
 	planetSystem.update();
-
 }
 
 void GameSimulationThread(GameSimulation& gameSimulation) {
-
 	gameSimulation.gameTime.reset();
 
 	TimePoint t;
 
-	while (gameSimulation.keepThreadRunning) {
+	while (gameSimulation.thread.keepThreadRunning) {
 
-		t = std::chrono::steady_clock::now() + std::chrono::milliseconds(16); //game simulation running at 60 Hz
-
-		gameSimulation.gameTime.update();
+		t = Clock::now() + Milliseconds(16);
 
 		gameSimulation.update();
 
-		//wait for next tick
-		std::this_thread::sleep_until(t);
+		sleepUntil(t);
 	}
 }

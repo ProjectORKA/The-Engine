@@ -1,12 +1,6 @@
 
 #include "Math.hpp"
 
-float max(Float a, Float b) {
-	return (a < b) ? b : a;
-}
-float min(Float a, Float b) {
-	return !(b < a) ? a : b;
-}
 Float lerp(Float from, Float to, Float t)
 {
 	return (from * (1 - t)) + (to * t);
@@ -14,11 +8,6 @@ Float lerp(Float from, Float to, Float t)
 float randomFloat()
 {
 	return randomFloat(0, 1);
-}
-float clamp(Float a, Float min, Float max) {
-	if (a >= max) return max;
-	if (a <= min) return min;
-	return a;
 }
 float randomFloat(Float low, Float high)
 {
@@ -58,4 +47,12 @@ Rotation getRotationBetweenVectors(Vec3 start, Vec3 dest) { //copy of opengl tut
 		rotationAxis.y * invs,
 		rotationAxis.z * invs
 	);
+}
+
+
+UInt nextPowerOfTwo(UInt& value)
+{
+	UInt powerOfTwo = 1;
+	while (powerOfTwo < value) powerOfTwo <<= 1;
+	return powerOfTwo;
 }

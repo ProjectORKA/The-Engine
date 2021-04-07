@@ -22,6 +22,8 @@ void Uniforms::create()
 	
 	matrices["mMatrix"] = Matrix(1);
 	matrices["vpMatrix"] = Matrix(1);
+
+	sampler2Ds["texture0"] = 0;
 }
 void Uniforms::destroy()
 {

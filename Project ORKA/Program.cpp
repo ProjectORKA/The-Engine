@@ -1,17 +1,10 @@
 
 #include "Program.hpp"
 
-void Program::start()
+void Program::run()
 {
-	gameSimulation.start();
-
-	windowSystem.start();
-	
-	windowSystem.addWindow(gameSimulation);
-
-	windowSystem.processLoop(gameSimulation);
-
-	windowSystem.stop();
-
-	gameSimulation.stop();
+	windowSystem.addWindow();
+	windowSystem.processLoop();
 }
+
+Program program;

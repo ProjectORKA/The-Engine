@@ -3,7 +3,6 @@
 #include <iostream>
 
 Name::Name() {
-	std::cout << "Hello!\n";
 	memset(&data[0], 0, NAME_SIZE);
 }
 Name::Name(const char* name) {

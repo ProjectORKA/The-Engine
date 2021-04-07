@@ -1,40 +1,18 @@
 #include "Renderer.hpp"
 
-void Renderer::sync()
+void Renderer::end()
 {
-	mutex.lock();
+	pollGraphicsAPIError();
 	mutex.unlock();
 }
-void Renderer::create()
-{
-	renderTime.reset();
-	cameraSystem.create();
-	viewportSystem.create();
-	renderObjectSystem.create();
-	framebufferSystem.create();
-	planetRenderSystem.create();
-
-	glClipControl(GL_LOWER_LEFT, GL_ZERO_TO_ONE);
-
-	//cameraSystem.current().speedMultiplier = 1;
-}
-void Renderer::render()
+void Renderer::begin()
 {
 	mutex.lock();
 	renderTime.update();
-	dynamicallyAdjustValue(*this, planetRenderSystem.renderDistance);
-
-	//logDebug(planetRenderSystem.renderDistance);
-
-	////////////////////////////////////////////////////////////////////////
-
-	planetRenderSystem.update(gameSimulation->planetSystem.chunk, currentCamera());
-
-	//camera transform is immediate and handled by render client for best performance
-	currentCamera().update(renderTime);
-
-	//resizes all framebuffers if necessary
-	framebufferSystem.updateFramebufferSizes();
+	framebufferSystem.update();
+	
+	clearColor();
+	clearDepth();
 
 	switch (multisampleCount) {
 	case 0:  framebufferSystem.select(0); break;
@@ -45,56 +23,47 @@ void Renderer::render()
 	default: framebufferSystem.select(0);
 	}
 
-	clearColor(Color(0, 0, 0, 0.75));
-
-	//enables or disables wireframe mode
-	updateWireframeMode(wireframeMode);
-
-	viewportSystem.select("full");
-	viewportSystem.render(framebufferSystem.adaptiveResolution.x, framebufferSystem.adaptiveResolution.y);
-
-
-	//render sky
-	culling(false);
-	depthTest(false);
-	resetModelMatrix();
-	uniforms().setVec3("chunkOffsetVector", Vec3(0));
-	uniforms().setVec3("cameraVector", cameraSystem.current().forwardVector);
-	uniforms().setMatrix("vpMatrix", cameraSystem.current().projectionMatrix(viewportSystem.current().aspectRatio()) * cameraSystem.current().viewMatrixOnlyRot());
-	uniforms().setMatrix("mMatrix", Matrix(1));
-	renderObjectSystem.render("sky");
-
-	//setup actual scene
-	culling(true);
+	clearColor();
 	clearDepth();
-	depthTest(true);
+}
+void Renderer::create()
+{
+	renderTime.reset();
+	cameraSystem.create();
+	viewportSystem.create();
+	framebufferSystem.create();
+	meshSystem.create();
+	textureSystem.create();
+	shaderSystem.create();
 
-	currentCamera().render(*this);
+	//advanced systems
+	renderObjectSystem.create(meshSystem,textureSystem,shaderSystem);
+	//textRenderSystem.create(textureSystem);
+	//sprite renderer
+	//particle system
+	//instanced renderer
 
-	//render planet
-	currentCamera().render(*this);
-	planetRenderSystem.render(uniforms(), renderObjectSystem);
-
-	//put rendered image in main framebuffer
-	currentFramebuffer().render();
-
-	//////////////////////////////////////////////////////////////////
-	glFinish();
-
-	pollGraphicsAPIError();
-
-	mutex.unlock();
+	glClipControl(GL_LOWER_LEFT, GL_ZERO_TO_ONE);
 }
 void Renderer::destroy()
 {
-	viewportSystem.destroy();
-	cameraSystem.destroy();
+	planetRenderSystem.destroy();
 	renderObjectSystem.destroy();
+
+	meshSystem.destroy();
+	shaderSystem.destroy();
+	textureSystem.destroy();
+
+	cameraSystem.destroy();
+	viewportSystem.destroy();
+	framebufferSystem.destroy();
 }
 void Renderer::clearDepth() {
-#ifdef GRAPHICS_API_OPENGL
 	glClear(GL_DEPTH_BUFFER_BIT);
-#endif // GRAPHICS_API_OPENGL
+}
+void Renderer::clearColor()
+{
+	glClear(GL_COLOR_BUFFER_BIT);
 }
 void Renderer::updateUniforms() {
 	uniforms().setMatrix("mMatrix", Matrix(1));
@@ -103,20 +72,85 @@ void Renderer::resetModelMatrix()
 {
 	uniforms().setMatrix("mMatrix", Matrix(1));
 }
+void Renderer::renderFramebuffer()
+{
+	framebufferSystem.deselect();
+	setWireframeMode(false);
+	uniforms().setInt("sampleCount", Int(currentFramebuffer().colorTexture.sampleCount));
+	shaderSystem.use("postProcess");
+	currentFramebuffer().colorTexture.use();
+	meshSystem.renderMesh("fullScreenQuad");
+}
+void Renderer::pollGraphicsAPIError() {
+	GLenum error = glGetError();
+	if (error) {
+		std::cout << "OpenGl Error: " << error << "\n";
+	}
+}
+void Renderer::waitForFinishedFrame()
+{
+	mutex.lock();
+	mutex.unlock();
+}
 void Renderer::clearColor(Color color) {
-#ifdef GRAPHICS_API_OPENGL
 	glClearColor(color.r, color.g, color.b, color.a);
 	glClear(GL_COLOR_BUFFER_BIT);
-#endif // GRAPHICS_API_OPENGL
+}
+void Renderer::setCulling(Bool isCulling) {
+	if (isCulling) {
+
+		glEnable(GL_CULL_FACE);
+		glCullFace(GL_BACK);
+	}
+	else {
+		glDisable(GL_CULL_FACE);
+	}
+}
+void Renderer::setDepthClamp(Bool depthClamp)
+{
+	if (depthClamp) {
+		glEnable(GL_DEPTH_CLAMP);
+	}
+	else {
+		glDisable(GL_DEPTH_CLAMP);
+	}
+}
+void Renderer::setAlphaBlending(Bool blending)
+{
+	if (blending) {
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		//glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA, GL_DST_ALPHA);
+		glBlendEquationSeparate(GL_FUNC_ADD, GL_MAX);
+	}
+	else glDisable(GL_BLEND);
+}
+void Renderer::setDepthTest(Bool isUsingDepth) {
+	if (isUsingDepth) {
+		glEnable(GL_DEPTH_TEST);
+		glDepthFunc(GL_LEQUAL);
+	}
+	else {
+		glDisable(GL_DEPTH_TEST);
+	}
+}
+void Renderer::setWireframeMode(Bool wireframeMode) {
+	if (wireframeMode) {
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		//glPolygonMode(GL_FRONT_AND_BACK, GL_POINT);
+	}
+	else {
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	}
 }
 
+Float& Renderer::aspectRatio()
+{
+	return framebufferSystem.current().aspectRatio;
+}
 Uniforms& Renderer::uniforms()
 {
-	return renderObjectSystem.shaderSystem.uniforms;
-}
-Camera& Renderer::currentCamera()
-{
-	return cameraSystem.current();
+	return shaderSystem.uniforms;
 }
 Viewport& Renderer::currentViewport()
 {
@@ -125,92 +159,4 @@ Viewport& Renderer::currentViewport()
 Framebuffer& Renderer::currentFramebuffer()
 {
 	return framebufferSystem.current();
-}
-
-void culling(bool isCulling) {
-	if (isCulling) {
-#ifdef GRAPHICS_API_OPENGL
-		glEnable(GL_CULL_FACE);
-		glCullFace(GL_BACK);
-#endif // GRAPHICS_API_OPENGL
-	}
-	else {
-#ifdef GRAPHICS_API_OPENGL
-		glDisable(GL_CULL_FACE);
-#endif // GRAPHICS_API_OPENGL
-	}
-}
-void depthTest(bool isUsingDepth) {
-	if (isUsingDepth) {
-#ifdef GRAPHICS_API_OPENGL
-		glEnable(GL_DEPTH_TEST);
-		glDepthFunc(GL_LEQUAL);
-#endif // GRAPHICS_API_OPENGL
-	}
-	else {
-#ifdef GRAPHICS_API_OPENGL
-		glDisable(GL_DEPTH_TEST);
-#endif // GRAPHICS_API_OPENGL
-	}
-}
-void updateWireframeMode(bool wireframeMode) {
-	if (wireframeMode) {
-#ifdef GRAPHICS_API_OPENGL
-		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-#endif // GRAPHICS_API_OPENGL
-	}
-	else {
-#ifdef GRAPHICS_API_OPENGL
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-#endif // GRAPHICS_API_OPENGL
-	}
-}
-
-void pollGraphicsAPIError() {
-#ifdef GRAPHICS_API_OPENGL
-	GLenum error = glGetError();
-	if (error) {
-		std::cout << "OpenGl Error: " << error << "\n";
-	}
-#endif
-}
-void dynamicallyAdjustValue(Renderer& renderer, Float& value) {
-	if (renderer.adjustRenderVariables) {
-		//average fps, to avoid loopback
-		static float averageDelta = 0.16;
-
-		bool smoothing = false;
-
-		if (smoothing) {
-			float oldToNewRatio = 2 * renderer.renderTime.delta / averageDelta; // >1 means framerate dropped
-			//the code below gradually introduces the new values
-			averageDelta += oldToNewRatio * renderer.renderTime.delta;
-			averageDelta /= (1 + oldToNewRatio);
-		}
-		else {
-			averageDelta = renderer.renderTime.delta;
-		}
-
-		logDebug(1.0f / averageDelta);
-		logDebug(value);
-		//get current fps relative to target
-		//>1 means too low fps <1 means too high
-		static float timePerFrameRatio = 1;
-		timePerFrameRatio = averageDelta * renderer.targetFrameRate;
-
-		if ((timePerFrameRatio > 1.1) | (timePerFrameRatio < 0.9)) {
-			float lerpFactor = renderer.renderTime.delta / 2;
-			value += lerpFactor * (value / timePerFrameRatio);
-			value /= 1 + lerpFactor;
-		}
-
-		value = max(1.41421356237, value);
-	}
-}
-void renderSpaceShip(Renderer& renderer, SpaceShip& spaceShip)
-{
-	spaceShip.rotation = getRotationBetweenVectors(Vec3(0, 0, 1), spaceShip.velocity);
-	renderer.uniforms().setMatrix("mMatrix", glm::translate(Matrix(1), spaceShip.location) * glm::toMat4(spaceShip.rotation) * glm::scale(Matrix(1), Vec3(2)));
-	//renderer.renderObjectSystem.render("spaceShip");
-	renderer.renderObjectSystem.render("spaceShipLOD");
 }

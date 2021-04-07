@@ -1,25 +1,25 @@
 #include "WindowSystem.hpp"
 
-void WindowSystem::start()
+WindowSystem windowSystem;
+
+WindowSystem::WindowSystem()
 {
 	assert(glfwInit() == GLFW_TRUE);
 	glfwSetErrorCallback(whenWindowAPIThrowsError);
 }
 
-void WindowSystem::addWindow(GameSimulation & gameSimulation) {
-	windows.emplace_back();
-	windows.back().renderer.gameSimulation = &gameSimulation;
-	windows.back().create();
+WindowSystem::~WindowSystem()
+{
+	windows.clear();
+	glfwTerminate();
 }
-
-void WindowSystem::processLoop(GameSimulation & gameSimulation) {
+void WindowSystem::processLoop() {
 	while (windows.size() > 0) {
-
 		glfwWaitEvents();
-
 		for (auto it = windows.begin(); it != windows.end(); it++) {
+
 			if (it->duplicateWindow) {
-				addWindow(gameSimulation);
+				addWindow();
 				it->duplicateWindow = false;
 			}
 			if (it->shouldClose()) {
@@ -30,16 +30,12 @@ void WindowSystem::processLoop(GameSimulation & gameSimulation) {
 		}
 	}
 }
-
-void WindowSystem::stop()
-{
-	windows.clear();
-	glfwTerminate();
+void WindowSystem::addWindow() {
+	windows.emplace_back();
+	windows.back().create();
 }
 
 void whenWindowAPIThrowsError(Int error, const char* description)
 {
-	std::cout << "Error: " << description << "\n";
-	std::getchar();
-	exit(EXIT_FAILURE);
+	logError(description);
 }

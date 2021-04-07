@@ -1,35 +1,19 @@
-
 #pragma once
 
-#include "GraphicsAPI.hpp"
-#include "Basics.hpp"
 #include "PlanetSystem.hpp"
-#include "Uniforms.hpp"
-#include "Camera.hpp"
-#include "RenderObjectSystem.hpp"
-#include "TerrainRenderSystem.hpp"
-
-
-struct ChunkRenderInfo {
-	Vec3 chunkOffset;
-	ULLVec3 chunkLocation;
-	UShort level;
-
-	void create(WorldChunk& chunk, Vec3 chunkOffset, TerrainRenderSystem & terrainRenderSystem);
-	void render(Uniforms & uniforms, RenderObjectSystem & renderObjectSystem, Bool chunkBorders);
-};
+#include "QuadtreeSystemRenderer.hpp"
+#include "OctreeSystemRenderer.hpp"
+#include "Time.hpp"
 
 struct PlanetRenderSystem {
 	Bool chunkBorders = false;
 	Bool worldDistortion = true;
-	Float renderDistance = 3.0f;
+	Float drawDistance = 2.0f;
 
-	Vector<Vector<ChunkRenderInfo>> chunkLevels;
-	TerrainRenderSystem terrainRenderSystem;
+	OctreeNodeRenderData octreeNodeRenderData;
+	QuadtreeNodeRenderData quadtreeNodeRenderData;
 
-
-	void create();
-	void update(WorldChunk & chunk, Camera & camera);
-	void count();
-	void render(Uniforms& uniforms, RenderObjectSystem& renderObjectSystem);
+	void destroy();
+	void render(PlanetSystem& planetSystem, Renderer& renderer);
+	void dynamicallyUpdateDrawDistance(Float targetFrameRate, Time& rendererTime);
 };

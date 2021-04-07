@@ -3,7 +3,8 @@
 #include "Debug.hpp"
 #include "VertexArrayObject.hpp"
 
-struct GPUMesh {
+struct GPUMesh
+{
 	Bool loaded = false;
 	UInt primitiveMode = Triangles;
 

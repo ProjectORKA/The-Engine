@@ -1,65 +1,66 @@
 #pragma once
 
-#include "GameSimulation.hpp"
-#include "Framebuffer.hpp"
-#include "RenderObjectSystem.hpp"
+#include "Settings.hpp"
+#include "Time.hpp"
+//sub systems
+#include "CameraSystem.hpp"
 #include "ViewportSystem.hpp"
-#include "Math.hpp"
-#include "UserInterface.hpp"
-#include "Debug.hpp"
+#include "TextRenderSystem.hpp"
+#include "FramebufferSystem.hpp"
+#include "MeshSystem.hpp"
+#include "ShaderSystem.hpp"
+#include "RenderObjectSystem.hpp"
 #include "PlanetRenderSystem.hpp"
 
-#define TARGETFRAMERATE 60
+struct Renderer{
+	Time renderTime;
 
-struct Renderer {
+	//settings
 	Bool wireframeMode = false;
 	Bool adjustRenderVariables = true;
-	//Bool pauseWorldDataCollection = false;
 	Short multisampleCount = 0;
 
-	Time renderTime;
-	GameSimulation* gameSimulation = nullptr;
-	//UserInterface ui;
-
 	//framerate
-	Float targetFrameRate = 75;
+	Float targetFrameRate = TARGETFRAMERATE;
 
 	//render data
-	FramebufferSystem framebufferSystem;
-	ViewportSystem viewportSystem;
 	CameraSystem cameraSystem;
+	ViewportSystem viewportSystem;
+	//TextRenderSystem textRenderSystem;
+	FramebufferSystem framebufferSystem;
+	MeshSystem meshSystem;
+	TextureSystem textureSystem;
+	ShaderSystem shaderSystem;
 	RenderObjectSystem renderObjectSystem;
 	PlanetRenderSystem planetRenderSystem;
 
-	//synchronization
 	Mutex mutex;
-	void sync();
-	
-	//(de)initialization
+	void waitForFinishedFrame();
+
 	void create();
 	void destroy();
 
-	//main render function
-	void render();
+	void begin();
+	void end();
 
-	//RENDERING
-	//generic framebuffer operations
 	void clearDepth();
+	void clearColor();
+	void renderFramebuffer();
 	void clearColor(Color color);
+
+	void setCulling(Bool isCulling);
+	void setDepthClamp(Bool depthClamp);
+	void setDepthTest(Bool isUsingDepth);
+	void setAlphaBlending(Bool blending);
+	void setWireframeMode(Bool isWireframeMode);
+
 	void updateUniforms();
 	void resetModelMatrix();
 	
-	Camera& currentCamera();
+	void pollGraphicsAPIError();
+	
+	Float& aspectRatio();
 	Uniforms& uniforms();
 	Viewport& currentViewport();
 	Framebuffer& currentFramebuffer();
 };
-
-void culling(bool isCulling);
-void depthTest(bool isUsingDepth);
-void updateWireframeMode(bool wireframeMode);
-void dynamicallyAdjustValue(Renderer& renderer, Float& value);
-
-void renderSpaceShip(Renderer & renderer, SpaceShip & spaceShip);
-
-void pollGraphicsAPIError();

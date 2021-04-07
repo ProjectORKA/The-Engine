@@ -16,12 +16,22 @@ using ULLInt = unsigned long long;
 using Float = float;
 
 using Double = double;
+using LDouble = long double;
 
 using Short = short;
 using UShort = unsigned short;
 
 using Char = char;
 using Byte = unsigned char;
+
+//pointers
+#include <memory>
+template <typename T>
+using UniquePointer = std::unique_ptr<T>;
+
+template<typename T>
+using SharedPointer = std::shared_ptr<T>;
+
 
 #include <string>
 using String = std::string;
@@ -30,7 +40,7 @@ using String = std::string;
 
 #pragma warning(disable : 4996) //disables unsecure warning
 
-#define NAME_SIZE 100
+#define NAME_SIZE 64
 
 struct Name {
 	char data[NAME_SIZE] = {};
@@ -50,6 +60,7 @@ bool operator<(const Name& l, const Name& r);
 #include "glm/gtc/matrix_transform.hpp"
 using Vec2 = glm::vec2;
 using DVec2 = glm::dvec2;
+using DVec3 = glm::dvec3;
 
 using Vec3 = glm::vec3;
 using Location = glm::vec3;
@@ -57,6 +68,7 @@ using Location = glm::vec3;
 using Vec4 = glm::vec4;
 using Color = glm::vec4;
 
+using ULLVec2 = glm::u64vec2;
 using ULLVec3 = glm::u64vec3;
 
 using Matrix = glm::mat4;
@@ -72,11 +84,6 @@ using Rotation = glm::quat;
 #include <sstream>
 #include <filesystem>
 using Path = std::filesystem::path;
-
-
-//tread
-#include <thread>
-using Thread = std::thread;
 
 #include <shared_mutex>
 using Mutex = std::shared_mutex;
@@ -99,3 +106,5 @@ template<typename T, typename K>
 using Map = std::map<T, K>;
 
 #include <bitset>
+template <size_t _Bits>
+using BitSet = std::bitset<_Bits>;

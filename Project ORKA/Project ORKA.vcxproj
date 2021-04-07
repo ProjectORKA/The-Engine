@@ -22,75 +22,122 @@
     <ResourceCompile Include="icon.rc" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AITEst.cpp" />
     <ClCompile Include="Basics.cpp" />
-    <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="CameraSystem.cpp" />
+    <ClCompile Include="JobSystem.cpp" />
+    <ClCompile Include="OctreeSystemRenderer.cpp" />
+    <ClCompile Include="PlanetCamera.cpp" />
+    <ClCompile Include="Client.cpp" />
     <ClCompile Include="CPUMesh.cpp" />
     <ClCompile Include="CPUTexture.cpp" />
     <ClCompile Include="Debug.cpp" />
     <ClCompile Include="Entity.cpp" />
     <ClCompile Include="FileSystem.cpp" />
     <ClCompile Include="Framebuffer.cpp" />
+    <ClCompile Include="FramebufferSystem.cpp" />
     <ClCompile Include="GameSimulation.cpp" />
     <ClCompile Include="GPUMesh.cpp" />
+    <ClCompile Include="GPUTexture.cpp" />
+    <ClCompile Include="GraphicsAPI.cpp" />
     <ClCompile Include="IndexBufferObject.cpp" />
+    <ClCompile Include="Layer.cpp" />
     <ClCompile Include="Math.cpp" />
     <ClCompile Include="MeshSystem.cpp" />
+    <ClCompile Include="Networking.cpp" />
     <ClCompile Include="PlanetRenderSystem.cpp" />
+    <ClCompile Include="PlanetSystem.cpp" />
+    <ClCompile Include="QuadtreeSystemRenderer.cpp" />
+    <ClCompile Include="RelativeChunkOffset.cpp" />
+    <ClCompile Include="Server.cpp" />
+    <ClCompile Include="Shader.cpp" />
+    <ClCompile Include="SimpleCamera.cpp" />
+    <ClCompile Include="TerrainRendering.cpp" />
+    <ClCompile Include="TerrainSystem.cpp" />
+    <ClCompile Include="ULLUtil.cpp" />
     <ClCompile Include="ProceduralMeshes.cpp" />
     <ClCompile Include="Program.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Random.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="RenderObjectSystem.cpp" />
     <ClCompile Include="ShaderSystem.cpp" />
     <ClCompile Include="stb_image.cpp" />
-    <ClCompile Include="Terrain.cpp" />
-    <ClCompile Include="TerrainRenderSystem.cpp" />
-    <ClCompile Include="TerrainSystem.cpp" />
+    <ClCompile Include="QuadtreeSystem.cpp" />
+    <ClCompile Include="TextRenderSystem.cpp" />
     <ClCompile Include="TextureSystem.cpp" />
+    <ClCompile Include="Threading.cpp" />
     <ClCompile Include="Time.cpp" />
+    <ClCompile Include="Timer.cpp" />
     <ClCompile Include="Uniforms.cpp" />
-    <ClCompile Include="UserInterface.cpp" />
     <ClCompile Include="VertexArrayObject.cpp" />
     <ClCompile Include="VertexBufferObject.cpp" />
     <ClCompile Include="ViewportSystem.cpp" />
     <ClCompile Include="Window.cpp" />
     <ClCompile Include="WindowSystem.cpp" />
-    <ClCompile Include="PlanetSystem.cpp" />
+    <ClCompile Include="OctreeSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\External Libraries\stb-master\stb_truetype.h" />
+    <ClInclude Include="AIPlayground.hpp" />
+    <ClInclude Include="AITest.hpp" />
+    <ClInclude Include="Application.hpp" />
     <ClInclude Include="Basics.hpp" />
-    <ClInclude Include="Camera.hpp" />
+    <ClInclude Include="InputSystem.hpp" />
+    <ClInclude Include="JobSystem.hpp" />
+    <ClInclude Include="OctreeData.hpp" />
+    <ClInclude Include="OctreeID.hpp" />
+    <ClInclude Include="OctreeSystemRenderer.hpp" />
+    <ClInclude Include="PlanetCamera.hpp" />
+    <ClInclude Include="CameraSystem.hpp" />
+    <ClInclude Include="Client.hpp" />
     <ClInclude Include="CPUMesh.hpp" />
     <ClInclude Include="CPUTexture.hpp" />
     <ClInclude Include="Debug.hpp" />
     <ClInclude Include="Entity.hpp" />
     <ClInclude Include="FileSystem.hpp" />
     <ClInclude Include="Framebuffer.hpp" />
+    <ClInclude Include="FramebufferSystem.hpp" />
     <ClInclude Include="GameSimulation.hpp" />
     <ClInclude Include="GPUMesh.hpp" />
+    <ClInclude Include="GPUTexture.hpp" />
     <ClInclude Include="GraphicsAPI.hpp" />
+    <ClInclude Include="Heightmap.hpp" />
     <ClInclude Include="IndexBufferObject.hpp" />
+    <ClInclude Include="Layer.hpp" />
     <ClInclude Include="Math.hpp" />
     <ClInclude Include="MeshSystem.hpp" />
+    <ClInclude Include="Message.hpp" />
+    <ClInclude Include="Networking.hpp" />
     <ClInclude Include="PlanetRenderSystem.hpp" />
-    <ClInclude Include="PrimitiveModes.hpp" />
+    <ClInclude Include="PlanetSystem.hpp" />
+    <ClInclude Include="QuadtreeID.hpp" />
+    <ClInclude Include="QuadtreeSystemRenderer.hpp" />
+    <ClInclude Include="RelativeChunkOffset.hpp" />
+    <ClInclude Include="Server.hpp" />
+    <ClInclude Include="Settings.hpp" />
+    <ClInclude Include="Shader.hpp" />
+    <ClInclude Include="SimpleCamera.hpp" />
+    <ClInclude Include="TerrainRendering.hpp" />
+    <ClInclude Include="TerrainSystem.hpp" />
+    <ClInclude Include="ULLUtil.hpp" />
     <ClInclude Include="ProceduralMeshes.hpp" />
     <ClInclude Include="Program.hpp" />
+    <ClInclude Include="Random.hpp" />
     <ClInclude Include="Rectangle.hpp" />
     <ClInclude Include="Renderer.hpp" />
     <ClInclude Include="RenderObjectSystem.hpp" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="ShaderSystem.hpp" />
+    <ClInclude Include="Shapes.hpp" />
     <ClInclude Include="stb_image.h" />
-    <ClInclude Include="TaskSystem.hpp" />
-    <ClInclude Include="Terrain.hpp" />
-    <ClInclude Include="TerrainRenderSystem.hpp" />
-    <ClInclude Include="TerrainSystem.hpp" />
+    <ClInclude Include="QuadtreeSystem.hpp" />
+    <ClInclude Include="TextRenderSystem.hpp" />
     <ClInclude Include="TextureSystem.hpp" />
-    <ClInclude Include="TictacToe.hpp" />
+    <ClInclude Include="Threading.hpp" />
     <ClInclude Include="Time.hpp" />
+    <ClInclude Include="Timer.hpp" />
     <ClInclude Include="Uniforms.hpp" />
-    <ClInclude Include="UserInterface.hpp" />
     <ClInclude Include="VertexArrayObject.hpp" />
     <ClInclude Include="VertexBufferObject.hpp" />
     <ClInclude Include="ViewportSystem.hpp" />
@@ -98,9 +145,10 @@
     <ClInclude Include="WindowAPI.hpp" />
     <ClInclude Include="WindowsEntry.hpp" />
     <ClInclude Include="WindowSystem.hpp" />
-    <ClInclude Include="PlanetSystem.hpp" />
+    <ClInclude Include="OctreeSystem.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="computeTest.comp" />
     <None Include="Data\shaders\debug.frag" />
     <None Include="Data\shaders\debug.vert" />
     <None Include="Data\shaders\postProcess.frag" />
@@ -109,8 +157,10 @@
     <None Include="Data\shaders\primitive.vert" />
     <None Include="Data\shaders\sky.frag" />
     <None Include="Data\shaders\sky.vert" />
-    <None Include="Data\shaders\spaceShip.frag" />
-    <None Include="Data\shaders\spaceShip.vert" />
+    <None Include="Data\shaders\terrain.frag" />
+    <None Include="Data\shaders\terrain.vert" />
+    <None Include="Data\shaders\unlit.frag" />
+    <None Include="Data\shaders\unlit.vert" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
@@ -166,27 +216,34 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>
     </LinkIncremental>
+    <IncludePath>G:\Daten\PROJEKTE\ORKA\CONCEPT\ENGINE\Project ORKA\External Libraries\asio-1.18.0\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <IncludePath>G:\Daten\PROJEKTE\ORKA\CONCEPT\ENGINE\Project ORKA\External Libraries\asio-1.18.0\include;$(IncludePath)</IncludePath>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>
     </LinkIncremental>
+    <IncludePath>G:\Daten\PROJEKTE\ORKA\CONCEPT\ENGINE\Project ORKA\External Libraries\asio-1.18.0\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <IncludePath>G:\Daten\PROJEKTE\ORKA\CONCEPT\ENGINE\Project ORKA\External Libraries\asio-1.18.0\include;$(IncludePath)</IncludePath>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)\External Libraries\STB IMAGE;$(SolutionDir)\External Libraries\ASSIMP\include;$(SolutionDir)\External Libraries\GLM;$(SolutionDir)\External Libraries\GLEW\include;$(SolutionDir)\External Libraries\GLFW 32 bit\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\External Libraries\BOOST;$(SolutionDir)\External Libraries\Asynchronous-Socket-Class-C-Windows-master\include;$(SolutionDir)\External Libraries\freetype-2.10.4\include;$(SolutionDir)\External Libraries\boost_asio_1_18_0;$(SolutionDir)\External Libraries\STB IMAGE;$(SolutionDir)\External Libraries\ASSIMP\include;$(SolutionDir)\External Libraries\GLM;$(SolutionDir)\External Libraries\GLEW\include;$(SolutionDir)\External Libraries\GLFW 32 bit\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <EnableModules>false</EnableModules>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>opengl32.lib;assimp-vc141-mtd.lib;glfw3.lib;glew32s.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)\External Libraries\ASSIMP\lib\lib 32\debug;$(SolutionDir)\External Libraries\GLFW 32 bit\lib-vc2015;$(SolutionDir)\External Libraries\GLEW\lib\Release\Win32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>opengl32.lib;freetype32.lib;assimp-vc141-mtd.lib;glfw3.lib;glew32s.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)\External Libraries\BOOST\libs;$(SolutionDir)\External Libraries\freetype-2.10.4\build;$(SolutionDir)\External Libraries\ASSIMP\lib\lib 32\debug;$(SolutionDir)\External Libraries\GLFW 32 bit\lib-vc2015;$(SolutionDir)\External Libraries\GLEW\lib\Release\Win32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>
       </IgnoreSpecificDefaultLibraries>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
@@ -205,18 +262,19 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)\External Libraries\STB IMAGE;$(SolutionDir)\External Libraries\ASSIMP\include;$(SolutionDir)\External Libraries\GLM;$(SolutionDir)\External Libraries\GLEW\include;$(SolutionDir)\External Libraries\GLFW 64 bit\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\External Libraries\BOOST;$(SolutionDir)\External Libraries\Asynchronous-Socket-Class-C-Windows-master\include;$(SolutionDir)\External Libraries\freetype-2.10.4\include;$(SolutionDir)\External Libraries\boost_asio_1_18_0;$(SolutionDir)\External Libraries\STB IMAGE;$(SolutionDir)\External Libraries\ASSIMP\include;$(SolutionDir)\External Libraries\GLM;$(SolutionDir)\External Libraries\GLEW\include;$(SolutionDir)\External Libraries\GLFW 64 bit\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <SupportJustMyCode>true</SupportJustMyCode>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <EnableModules>false</EnableModules>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>$(SolutionDir)\External Libraries\ASSIMP\lib\lib 64\debug;$(SolutionDir)\External Libraries\GLFW 64 bit\lib-vc2015;$(SolutionDir)\External Libraries\GLEW\lib\Release\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)\External Libraries\BOOST\lib;$(SolutionDir)\External Libraries\freetype-2.10.4\build;$(SolutionDir)\External Libraries\ASSIMP\lib\lib 64\debug;$(SolutionDir)\External Libraries\GLFW 64 bit\lib-vc2015;$(SolutionDir)\External Libraries\GLEW\lib\Release\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
-      <AdditionalDependencies>opengl32.lib;assimp-vc141-mtd.lib;glfw3.lib;glew32s.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>opengl32.lib;freetype64.lib;assimp-vc141-mtd.lib;glfw3.lib;glew32s.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>
       </IgnoreSpecificDefaultLibraries>
       <SubSystem>Console</SubSystem>
@@ -236,18 +294,19 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)\External Libraries\STB IMAGE;$(SolutionDir)\External Libraries\ASSIMP\include;$(SolutionDir)\External Libraries\GLM;$(SolutionDir)\External Libraries\GLEW\include;$(SolutionDir)\External Libraries\GLFW 32 bit\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\External Libraries\BOOST;$(SolutionDir)\External Libraries\Asynchronous-Socket-Class-C-Windows-master\include;$(SolutionDir)\External Libraries\freetype-2.10.4\include;$(SolutionDir)\External Libraries\boost_asio_1_18_0;$(SolutionDir)\External Libraries\STB IMAGE;$(SolutionDir)\External Libraries\ASSIMP\include;$(SolutionDir)\External Libraries\GLM;$(SolutionDir)\External Libraries\GLEW\include;$(SolutionDir)\External Libraries\GLFW 32 bit\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <FloatingPointModel>Fast</FloatingPointModel>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <EnableModules>false</EnableModules>
       <PreprocessorDefinitions>_MBCS;%(PreprocessorDefinitions);%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>opengl32.lib;assimp-vc141-mt.lib;glfw3.lib;glew32s.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)\External Libraries\ASSIMP\lib\lib 32\release;$(SolutionDir)\External Libraries\GLFW 32 bit\lib-vc2015;$(SolutionDir)\External Libraries\GLEW\lib\Release\Win32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>opengl32.lib;freetype32.lib;assimp-vc141-mt.lib;glfw3.lib;glew32s.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)\External Libraries\BOOST\libs;$(SolutionDir)\External Libraries\freetype-2.10.4\build;$(SolutionDir)\External Libraries\ASSIMP\lib\lib 32\release;$(SolutionDir)\External Libraries\GLFW 32 bit\lib-vc2015;$(SolutionDir)\External Libraries\GLEW\lib\Release\Win32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>
       </IgnoreSpecificDefaultLibraries>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
@@ -265,19 +324,19 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)\External Libraries\STB IMAGE;$(SolutionDir)\External Libraries\ASSIMP\include;$(SolutionDir)\External Libraries\GLM;$(SolutionDir)\External Libraries\GLEW\include;$(SolutionDir)\External Libraries\GLFW 64 bit\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\External Libraries\BOOST;$(SolutionDir)\External Libraries\Asynchronous-Socket-Class-C-Windows-master\include;$(SolutionDir)\External Libraries\freetype-2.10.4\include;$(SolutionDir)\External Libraries\boost_asio_1_18_0;$(SolutionDir)\External Libraries\STB IMAGE;$(SolutionDir)\External Libraries\ASSIMP\include;$(SolutionDir)\External Libraries\GLM;$(SolutionDir)\External Libraries\GLEW\include;$(SolutionDir)\External Libraries\GLFW 64 bit\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <FloatingPointModel>Fast</FloatingPointModel>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <EnableModules>false</EnableModules>
-      <LanguageStandard_C>Default</LanguageStandard_C>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>opengl32.lib;assimp-vc141-mt.lib;glfw3.lib;glew32s.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)\External Libraries\ASSIMP\lib\lib 64\release;$(SolutionDir)\External Libraries\GLFW 64 bit\lib-vc2015;$(SolutionDir)\External Libraries\GLEW\lib\Release\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>opengl32.lib;freetype64.lib;assimp-vc141-mt.lib;glfw3.lib;glew32s.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)\External Libraries\BOOST\lib;$(SolutionDir)\External Libraries\freetype-2.10.4\build;$(SolutionDir)\External Libraries\ASSIMP\lib\lib 64\release;$(SolutionDir)\External Libraries\GLFW 64 bit\lib-vc2015;$(SolutionDir)\External Libraries\GLEW\lib\Release\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <IgnoreSpecificDefaultLibraries>
       </IgnoreSpecificDefaultLibraries>

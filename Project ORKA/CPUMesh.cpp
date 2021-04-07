@@ -1,6 +1,40 @@
 
 #include "CPUMesh.hpp"
 
+void CPUMesh::saveMeshFile()
+{
+	Path path = String("Data/meshes/").append(name.data).append(".mesh");
+
+	logEvent(String("Saving mesh: (").append(name.data).append(") from(").append(path.string()).append(")"));
+
+	MeshHeaderV2 header;
+	header.meshName = name;
+	header.primitiveMode = Triangles;
+	header.vertexCount = vertices.size();
+	header.uvCount = uvs.size();
+	header.normalCount = normals.size();
+	header.indexCount = indices.size();
+
+
+
+	while (!std::filesystem::exists(path.parent_path())) {
+		logDebug(String("The directory (").append(path.parent_path().string()).append(") does not exist and will be created!"));
+		std::filesystem::create_directory(path.parent_path());
+	}
+
+	std::ofstream file(path, std::ios::trunc | std::ios::binary | std::ios::out);
+	if (file.is_open()) {
+		file.write((char*)&header, sizeof(MeshHeaderV2));
+		file.write((char*)&vertices[0], vertices.size() * sizeof(Vec3));
+		file.write((char*)&uvs[0], uvs.size() * sizeof(Vec2));
+		file.write((char*)&normals[0], normals.size() * sizeof(Vec3));
+		file.write((char*)&indices[0], indices.size() * sizeof(Index));
+		file.close();
+	}
+	else {
+		logDebug("The mesh binary file could not be opened!");
+	}
+}
 void CPUMesh::loadFBX(Path path) {
 
 	//check if file is valid
@@ -15,11 +49,11 @@ void CPUMesh::loadFBX(Path path) {
 		primitiveMode = Triangles;
 		Assimp::Importer Importer;
 		const aiScene* scene = Importer.ReadFile(path.string(),
-												 aiProcess_CalcTangentSpace |
-												 aiProcess_GenSmoothNormals |
-												 aiProcess_JoinIdenticalVertices |
-												 aiProcess_SortByPType |
-												 aiProcess_Triangulate
+			aiProcess_CalcTangentSpace |
+			aiProcess_GenSmoothNormals |
+			aiProcess_JoinIdenticalVertices |
+			aiProcess_SortByPType |
+			aiProcess_Triangulate
 		);
 
 		if (scene) {
@@ -36,7 +70,7 @@ void CPUMesh::loadFBX(Path path) {
 						texCoord.x = scene->mMeshes[0]->mTextureCoords[0][i].x;
 						texCoord.y = scene->mMeshes[0]->mTextureCoords[0][i].y;
 						uvs.push_back(texCoord);
-						
+
 						glm::vec3 normal;
 						normal.x = scene->mMeshes[0]->mNormals[i].x;
 						normal.y = scene->mMeshes[0]->mNormals[i].y;
@@ -75,127 +109,6 @@ void CPUMesh::loadFBX(Path path) {
 		saveMeshFile();
 	}
 }
-
-void CPUMesh::generate2DTerrainMesh(Terrain& terrain)
-{
-	readyForUpload = false;
-	name = "terrain";
-	primitiveMode = Triangles;
-
-	vertices.clear();
-	indices.clear();
-	normals.clear();
-	uvs.clear();
-
-	//for (int y = 0; y < TERRAIN_DETAIL+1; y++) {
-	//	for (int x = 0; x < TERRAIN_DETAIL+1; x++) {
-	//		Vec3 tmp = Vec3(Float(x) / Float(TERRAIN_DETAIL+1), Float(y) / Float(TERRAIN_DETAIL+1), terrain.heightmap[x][y]);
-
-	//		mesh.vertices.push_back(tmp);
-	//		mesh.normals.push_back(Vec3(0, 0, 1));
-	//		mesh.uvs.push_back(Vec2(tmp.x, tmp.y));
-
-	//		if ((x < TERRAIN_DETAIL) & (y < TERRAIN_DETAIL)) {
-	//			//first triangle
-	//			mesh.indices.push_back(y * TERRAIN_DETAIL + x);
-	//			mesh.indices.push_back(y * TERRAIN_DETAIL + x + 1);
-	//			mesh.indices.push_back((y + 1) * TERRAIN_DETAIL + x);
-	//			
-	//			//second triangle
-	//			mesh.indices.push_back((y + 1) * TERRAIN_DETAIL + x);
-	//			mesh.indices.push_back(y * TERRAIN_DETAIL + x + 1);
-	//			mesh.indices.push_back((y + 1) * TERRAIN_DETAIL + x + 1);
-	//		}
-	//	}
-	//}
-
-	vertices.push_back(Vec3(0, 0, 0));
-	vertices.push_back(Vec3(0, 1, 0));
-	vertices.push_back(Vec3(1, 0, 0));
-	vertices.push_back(Vec3(1, 1, 0));
-	normals.push_back(Vec3(0, 0, 1));
-	normals.push_back(Vec3(0, 0, 1));
-	normals.push_back(Vec3(0, 0, 1));
-	normals.push_back(Vec3(0, 0, 1));
-	uvs.push_back(Vec2(0, 0));
-	uvs.push_back(Vec2(0, 1));
-	uvs.push_back(Vec2(1, 0));
-	uvs.push_back(Vec2(1, 1));
-	indices.push_back(0);
-	indices.push_back(2);
-	indices.push_back(1);
-	indices.push_back(1);
-	indices.push_back(2);
-	indices.push_back(3);
-
-
-	readyForUpload = true;
-}
-
-void CPUMesh::autoLoadFromFile(Name name)
-{
-	Path meshPath = String("Data/meshes/").append(name.data).append(".mesh");
-	Path fbxPath = String("Data/objects/").append(name.data).append(".fbx");
-
-	Bool f1, f2;
-	f1 = std::filesystem::exists(meshPath);
-	f2 = std::filesystem::exists(fbxPath);
-
-	if (f1) {
-		if (f2) {
-			auto t1 = std::filesystem::last_write_time(meshPath);
-			auto t2 = std::filesystem::last_write_time(fbxPath);
-			if (t1 > t2)
-				loadMeshFile(meshPath);
-			else
-				loadFBX(fbxPath);
-		}
-		else
-			loadMeshFile(meshPath);
-	}
-	else {
-		if (f2)
-			loadFBX(fbxPath);
-		else
-			logDebug(String("Can not find mesh with name: (").append(name.data).append(")"));
-	}
-}
-
-void CPUMesh::saveMeshFile()
-{
-	Path path = String("Data/meshes/").append(name.data).append(".mesh");
-
-	logEvent(String("Saving mesh: (").append(name.data).append(") from(").append(path.string()).append(")"));
-
-	MeshHeaderV2 header;
-	header.meshName = name;
-	header.primitiveMode = Triangles;
-	header.vertexCount = vertices.size();
-	header.uvCount = uvs.size();
-	header.normalCount = normals.size();
-	header.indexCount = indices.size();
-
-
-
-	while (!std::filesystem::exists(path.parent_path())) {
-		logDebug(String("The directory (").append(path.parent_path().string()).append(") does not exist and will be created!"));
-		std::filesystem::create_directory(path.parent_path());
-	}
-
-	std::ofstream file(path, std::ios::trunc | std::ios::binary | std::ios::out);
-	if (file.is_open()) {
-		file.write((char*)&header, sizeof(MeshHeaderV2));
-		file.write((char*)&vertices[0], vertices.size() * sizeof(Vec3));
-		file.write((char*)&uvs[0], uvs.size() * sizeof(Vec2));
-		file.write((char*)&normals[0], normals.size() * sizeof(Vec3));
-		file.write((char*)&indices[0], indices.size() * sizeof(Index));
-		file.close();
-	}
-	else {
-		logDebug("The mesh binary file could not be opened!");
-	}
-}
-
 void CPUMesh::loadMeshFile(Path path) {
 	bool error = false;
 
@@ -258,3 +171,67 @@ void CPUMesh::loadMeshFile(Path path) {
 	}
 
 };
+void CPUMesh::calculateSmoothNormals()
+{
+	if (primitiveMode == Triangles) {
+		normals.resize(vertices.size());
+
+		for (Vec3& normal : normals) {
+			normal = Vec3(0);
+		}
+
+		for (int f = 0; f < (indices.size() / 3); f++) {
+			Index indexA = indices[f * 3	];
+			Index indexB = indices[f * 3 + 1];
+			Index indexC = indices[f * 3 + 2];
+			
+			//get vertex position for each face
+			Vec3 vertexA = vertices[indexA];
+			Vec3 vertexB = vertices[indexB];
+			Vec3 vertexC = vertices[indexC];
+
+			//get face normal
+			Vec3 faceNormal = glm::normalize(glm::cross(vertexB - vertexA, vertexC - vertexA));
+
+			//add face normal to every vertex
+			normals[indexA] += faceNormal;
+			normals[indexB] += faceNormal;
+			normals[indexC] += faceNormal;
+		}
+
+		for (Vec3& normal : normals) {
+			normal = glm::normalize(normal);
+		}
+	}
+	else {
+		logError("Cant compute normals for this mesh! Primitive type not supported!");
+	}
+}
+void CPUMesh::autoLoadFromFile(Name name)
+{
+	Path meshPath = String("Data/meshes/").append(name.data).append(".mesh");
+	Path fbxPath = String("Data/objects/").append(name.data).append(".fbx");
+
+	Bool f1, f2;
+	f1 = std::filesystem::exists(meshPath);
+	f2 = std::filesystem::exists(fbxPath);
+
+	if (f1) {
+		if (f2) {
+			auto t1 = std::filesystem::last_write_time(meshPath);
+			auto t2 = std::filesystem::last_write_time(fbxPath);
+			if (t1 > t2)
+				loadMeshFile(meshPath);
+			else
+				loadFBX(fbxPath);
+		}
+		else
+			loadMeshFile(meshPath);
+	}
+	else {
+		if (f2)
+			loadFBX(fbxPath);
+		else
+			logDebug(String("Can not find mesh with name: (").append(name.data).append(")"));
+	}
+}
