@@ -6,7 +6,7 @@ CPUMesh createTerrainMesh(HeightmapForNormals& heightmapForNormals)
 	//heightmap
 	mesh.readyForUpload = false;
 	mesh.name = "terrain";
-	mesh.primitiveMode = Triangles;
+	mesh.primitiveMode = PrimitiveMode::Triangles;
 
 	mesh.vertices.clear();
 	mesh.indices.clear();
@@ -15,17 +15,17 @@ CPUMesh createTerrainMesh(HeightmapForNormals& heightmapForNormals)
 
 	Vector<Vector<Vec3>> positions;
 
-	for (int y = 0; y < HEIGHTMAP_FOR_NORMALS_SIZE; y++) {
+	for (Int y = 0; y < HEIGHTMAP_FOR_NORMALS_SIZE; y++) {
 		Vector<Vec3> positionsX;
-		for (int x = 0; x < HEIGHTMAP_FOR_NORMALS_SIZE; x++) {
+		for (Int x = 0; x < HEIGHTMAP_FOR_NORMALS_SIZE; x++) {
 			Vec3 tmp = Vec3(Float(x - 1) / Float(HEIGHTMAP_SIZE - 1), Float(y - 1) / Float(HEIGHTMAP_SIZE - 1), heightmapForNormals[y][x]);
 			positionsX.push_back(tmp);
 		}
 		positions.push_back(positionsX);
 	}
 
-	for (int y = 0; y < HEIGHTMAP_SIZE; y++) {
-		for (int x = 0; x < HEIGHTMAP_SIZE; x++) {
+	for (Int y = 0; y < HEIGHTMAP_SIZE; y++) {
+		for (Int x = 0; x < HEIGHTMAP_SIZE; x++) {
 
 			//vertices
 			mesh.vertices.push_back(positions[x + 1][y + 1]);
@@ -53,7 +53,6 @@ CPUMesh createTerrainMesh(HeightmapForNormals& heightmapForNormals)
 		}
 	}
 
-
 	mesh.readyForUpload = true;
 	return mesh;
 }
@@ -63,19 +62,18 @@ CPUTexture createHeightmapTexture(HeightmapForNormals& heightmapForNormals)
 	//heightmap
 	texture.channels = 1;
 	texture.dataType = dataTypeFloat;
-	texture.filter = linear;
+	texture.nearFilter = Filter::linear;
+	texture.farFilter = Filter::linearMM;
 	texture.height = HEIGHTMAP_SIZE;
-	texture.multisampling = 0;
 	texture.name = "heightmap";
 	texture.width = HEIGHTMAP_SIZE;
 	texture.wrapping = clamped;
 	texture.loaded = false;
-
 	texture.floatPixels = new Float[HEIGHTMAP_SIZE * HEIGHTMAP_SIZE];
 
 	for (int y = 0; y < HEIGHTMAP_SIZE; y++) {
 		for (int x = 0; x < HEIGHTMAP_SIZE; x++) {
-			texture.floatPixels[y * HEIGHTMAP_SIZE + x] = heightmapForNormals[x + 1][y + 1];
+			texture.floatPixels[x * HEIGHTMAP_SIZE + y] = heightmapForNormals[x + 1][y + 1];
 		}
 	}
 

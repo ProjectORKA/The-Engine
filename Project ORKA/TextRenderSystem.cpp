@@ -1,97 +1,88 @@
+
 #include "TextRenderSystem.hpp"
+#include "Renderer.hpp"
 
-//CPUFont
-void CPUFont::create(Path path)
-{
-	//check file extension
-	if (path.extension() != ".ttf") logError("Attempting to load non ttf font!");
-
-
+void TextRenderSystem::destroy() {
+	gpuText.unload();
+	textTexture.unload();
 }
-void CPUFont::destroy()
-{
+void TextRenderSystem::create(Renderer & renderer) {
+	
+	rendererPtr = &renderer;
+	
+	CPUTexture cpuTextTexture;
+	cpuTextTexture.load("font");
+	textTexture.load(cpuTextTexture);
+	renderer.shaderSystem.add("text");
 }
+void TextRenderSystem::render(String text, Float xPos, Float yPos, Float size) {
 
-//GPUFont
-void GPUFont::destroy() {
-	gpuTextureIDs.clear();
-}
-void GPUFont::render(String text, Float x, Float y)
-{
-}
-void GPUFont::create(CPUFont cpuFont, TextureSystem & textureSystem, UInt height) {
+	UInt length = text.size();
 
-	//FT_Set_Char_Size(cpuFont.freeTypeFace, height * 64, height * 64, 96, 96);
+	cpuText.name = "text";
+	cpuText.vertices.clear();
+	cpuText.uvs.clear();
+	cpuText.indices.clear();
+	cpuText.drawMode = MeshDrawMode::dynamicMode;
+	gpuText.unload();
 
-	//this->height = height;
+	for (UInt i = 0; i < length; i++) {
 
-	//gpuTextureIDs.clear();
-	//
-	//CPUTexture cpuTexture;
-	//cpuTexture.channels = 2;
-	//cpuTexture.dataType = dataTypeByte;
-	//cpuTexture.filter = nearest;//[TODO] check if okay
-	//cpuTexture.wrapping = repeat;
-	//cpuTexture.multisampling = 0;
+		Float up = yPos;
+		Float left = xPos + Float(i) * size;
+		Float down = up + size;
+		Float right = left + size;
 
-	//for (int i = 0; i < 128; i++) {
+		Int character = text[i]+16;
+		Float uvUp = (Float((character) / 16) / -16.0f); //[TODO] there is an error, the y coordinate is inverted, maybe fix this, maybe not
+		Float uvLeft = Float(character % 16) / 16.0f;
+		Float uvDown = uvUp + 0.0625;
+		Float uvRight = uvLeft + 0.0625;
 
-	//	FT_BitmapGlyph bitmapGlyph = generateBitmapForFace(cpuFont.freeTypeFace, i);
-	//	FT_Bitmap& bitmap = bitmapGlyph->bitmap;
-
-	//	cpuTexture.name = "fontCharacter";
-	//	cpuTexture.height = nextPowerOfTwo(bitmap.rows);
-	//	cpuTexture.width = nextPowerOfTwo(bitmap.width);
-	//	cpuTexture.bytePixels = bitmap.buffer;
+		cpuText.vertices.push_back(Vec3(left,up,0));
+		cpuText.vertices.push_back(Vec3(left,down,0));
+		cpuText.vertices.push_back(Vec3(right,up,0));
+		cpuText.vertices.push_back(Vec3(left,down,0));
+		cpuText.vertices.push_back(Vec3(right,down,0));
+		cpuText.vertices.push_back(Vec3(right,up,0));
 
 
-	//	textureSystem.add(cpuTexture);
-	//	gpuTextureIDs.push_back(textureSystem.currentTextureID);
-	//}
+		cpuText.uvs.push_back(Vec2(uvLeft, uvUp));
+		cpuText.uvs.push_back(Vec2(uvLeft, uvDown));
+		cpuText.uvs.push_back(Vec2(uvRight, uvUp));
+		cpuText.uvs.push_back(Vec2(uvLeft, uvDown));
+		cpuText.uvs.push_back(Vec2(uvRight,uvDown));
+		cpuText.uvs.push_back(Vec2(uvRight,uvUp));
 
+		cpuText.normals.push_back(Vec3(0, 0, 1));
+		cpuText.normals.push_back(Vec3(0, 0, 1));
+		cpuText.normals.push_back(Vec3(0, 0, 1));
+		cpuText.normals.push_back(Vec3(0, 0, 1));
+		cpuText.normals.push_back(Vec3(0, 0, 1));
+		cpuText.normals.push_back(Vec3(0, 0, 1));
 
-	//for (unsigned char i = 0; i < 128; i++) {
-	//	make_dlist(cpuFont.freeTypeFace, i, list_base, &textureIDs.front());
-	//}
-
-
-}
-
-//TextRenderSystem
-void TextRenderSystem::destroy()
-{
-	for (GPUFont f : fonts) {
-		f.destroy();
+		cpuText.indices.push_back(i * 6);
+		cpuText.indices.push_back(i * 6 + 1);
+		cpuText.indices.push_back(i * 6 + 2);
+		cpuText.indices.push_back(i * 6 + 3);
+		cpuText.indices.push_back(i * 6 + 4);
+		cpuText.indices.push_back(i * 6 + 5);
 	}
-	textureSystem = nullptr;
-}
-void TextRenderSystem::create(TextureSystem& textureSystem)
-{
-	this->textureSystem = &textureSystem;
 
-	fonts.emplace_back();
-	CPUFont cpuFont;
-	cpuFont.create("Data/fonts/nasalization-rg.ttf");
-	fonts.back().create(cpuFont, textureSystem, 32);
-}
-void TextRenderSystem::render(String text, Float x, Float y)
-{
-	Vector<Char> characters(text.begin(), text.end());
-	for (Char c : characters) {
-		textureSystem->use(currentFont().gpuTextureIDs[c]);
-	}
-}
-GPUFont& TextRenderSystem::currentFont()
-{
-	return fonts[currentFontID];
-}
+	cpuText.readyForUpload = true;
 
-void TextRenderSystem::select(Index fontID)
-{
-	if (fonts.size() > fontID) {
-		currentFontID = fontID;
-	}
-	else {
-		logError("Requesting font that doesn't exist!");
-	}
+	gpuText.upload(cpuText);
+
+	rendererPtr->shaderSystem.use("text");
+	textTexture.use(0);
+
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	rendererPtr->shaderSystem.uniforms.data.vpMatrix = scale(translate(Matrix(1),Vec3(-1,-1,0)), Vec3(1)/Vec3(rendererPtr->renderRegion.region.size, 1));
+
+	rendererPtr->shaderSystem.uniforms.data.mMatrix = scale(Matrix(1),Vec3(1000));
+	rendererPtr->shaderSystem.uniforms.update();
+
+	glDisable(GL_CULL_FACE);
+	gpuText.render();
 }

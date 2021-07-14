@@ -4,49 +4,45 @@ void Renderer::end()
 {
 	pollGraphicsAPIError();
 	mutex.unlock();
+	frameCount++;
+}
+void Renderer::sync()
+{
+	mutex.lock();
+	mutex.unlock();
 }
 void Renderer::begin()
 {
 	mutex.lock();
 	renderTime.update();
 	framebufferSystem.update();
-	
-	clearColor();
-	clearDepth();
-
-	switch (multisampleCount) {
-	case 0:  framebufferSystem.select(0); break;
-	case 2:  framebufferSystem.select(1); break;
-	case 4:  framebufferSystem.select(2); break;
-	case 8:  framebufferSystem.select(3); break;
-	case 16: framebufferSystem.select(4); break;
-	default: framebufferSystem.select(0);
-	}
+	framebufferSystem.select(0);
 
 	clearColor();
 	clearDepth();
 }
 void Renderer::create()
 {
+	//basic systems
 	renderTime.reset();
 	cameraSystem.create();
-	viewportSystem.create();
 	framebufferSystem.create();
-	meshSystem.create();
 	textureSystem.create();
+	meshSystem.create();
 	shaderSystem.create();
 
 	//advanced systems
-	renderObjectSystem.create(meshSystem,textureSystem,shaderSystem);
-	//textRenderSystem.create(textureSystem);
-	//sprite renderer
-	//particle system
-	//instanced renderer
+	textRenderSystem.create(*this);
+	planetRenderSystem.create(*this);
+
+	renderObjectSystem.create(*this);
 
 	glClipControl(GL_LOWER_LEFT, GL_ZERO_TO_ONE);
+	glEnable(GL_SCISSOR_TEST);
 }
 void Renderer::destroy()
 {
+	textRenderSystem.destroy();
 	planetRenderSystem.destroy();
 	renderObjectSystem.destroy();
 
@@ -55,7 +51,6 @@ void Renderer::destroy()
 	textureSystem.destroy();
 
 	cameraSystem.destroy();
-	viewportSystem.destroy();
 	framebufferSystem.destroy();
 }
 void Renderer::clearDepth() {
@@ -65,32 +60,24 @@ void Renderer::clearColor()
 {
 	glClear(GL_COLOR_BUFFER_BIT);
 }
-void Renderer::updateUniforms() {
-	uniforms().setMatrix("mMatrix", Matrix(1));
-}
-void Renderer::resetModelMatrix()
+void Renderer::createBlurTexture(Framebuffer & from, Framebuffer & to)
 {
-	uniforms().setMatrix("mMatrix", Matrix(1));
-}
-void Renderer::renderFramebuffer()
-{
-	framebufferSystem.deselect();
-	setWireframeMode(false);
-	uniforms().setInt("sampleCount", Int(currentFramebuffer().colorTexture.sampleCount));
-	shaderSystem.use("postProcess");
-	currentFramebuffer().colorTexture.use();
+	//this function renders a blurred version of a framebuffer to another framebuffer
+	Index originalFramebufferID = framebufferSystem.currentFramebufferIndex;
+	
+	shaderSystem.use("blur");
+	from.colorTexture.use(0);
+	to.use();
 	meshSystem.renderMesh("fullScreenQuad");
+
+	framebufferSystem.select(originalFramebufferID);
 }
+
 void Renderer::pollGraphicsAPIError() {
 	GLenum error = glGetError();
 	if (error) {
-		std::cout << "OpenGl Error: " << error << "\n";
+		logError(String("Opengl Error: ").append(std::to_string(error)));
 	}
-}
-void Renderer::waitForFinishedFrame()
-{
-	mutex.lock();
-	mutex.unlock();
 }
 void Renderer::clearColor(Color color) {
 	glClearColor(color.r, color.g, color.b, color.a);
@@ -98,7 +85,6 @@ void Renderer::clearColor(Color color) {
 }
 void Renderer::setCulling(Bool isCulling) {
 	if (isCulling) {
-
 		glEnable(GL_CULL_FACE);
 		glCullFace(GL_BACK);
 	}
@@ -120,7 +106,7 @@ void Renderer::setAlphaBlending(Bool blending)
 	if (blending) {
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		//glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA, GL_DST_ALPHA);
+		glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA, GL_DST_ALPHA);
 		glBlendEquationSeparate(GL_FUNC_ADD, GL_MAX);
 	}
 	else glDisable(GL_BLEND);
@@ -143,6 +129,10 @@ void Renderer::setWireframeMode(Bool wireframeMode) {
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	}
 }
+void Renderer::addRenderObject(RenderObjectNames renderObjectNames)
+{
+	renderObjectSystem.addRenderObject(renderObjectNames);
+}
 
 Float& Renderer::aspectRatio()
 {
@@ -152,11 +142,7 @@ Uniforms& Renderer::uniforms()
 {
 	return shaderSystem.uniforms;
 }
-Viewport& Renderer::currentViewport()
-{
-	return viewportSystem.current();
-}
-Framebuffer& Renderer::currentFramebuffer()
-{
-	return framebufferSystem.current();
+
+void loadPrimitives(Renderer& renderer) {
+	renderer.renderObjectSystem.addRenderObject("circle", "circle", "default", "basicColor");
 }

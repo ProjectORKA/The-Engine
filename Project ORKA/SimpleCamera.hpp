@@ -2,24 +2,27 @@
 
 #include "Basics.hpp"
 #include "Math.hpp"
+#include "Uniforms.hpp"
+#include "Time.hpp"
 
 struct SimpleCamera {
 	Float fieldOfView = 80.0;
-	Float nearClipValue = 0.01f;
-	Float farClipValue = 10000.0f;
-	Float mouseSensitivity = 0.0015f;
+	Float nearClipValue = 0.001f;
+	Float farClipValue = 1000.0f;
 	Vec3 accelerationVector = Vec3(0);
+
+	Vec3 location = Vec3(0);
+	Float rotationX = 0;
+	Float rotationZ = 0;
 
 	Vec3 forwardVector = { 0.0f, 1.0f, 0.0f };
 	Vec3 rightVector = { 1.0f, 0.0f, 0.0f };
 	Vec3 upVector = { 0.0f, 0.0f, 1.0f };
 
-	void setLocation(Vec3 location);
-	void rotate(Float rotationX, Float rotationZ);
-	Matrix viewMatrix();
-	Matrix projectionMatrix(float aspectRatio);
-private:
-	Vec3 location = Vec3(0);
-	Float rotationX = 0;
-	Float rotationZ = 0;
+	virtual void rotate(Vec2 rotation);
+	virtual void update(Time& time);
+	virtual void render(Uniforms& uniforms, Float aspectRatio);
+
+	Matrix viewMatrix();;
+	Matrix projectionMatrix(Float aspectRatio);
 };

@@ -1,5 +1,15 @@
 
 #include "RenderObjectSystem.hpp"
+#include "Renderer.hpp"
+
+RenderObjectNames::RenderObjectNames(){}
+RenderObjectNames::RenderObjectNames(String name, String mesh, String texture, String shader)
+{
+	renderObjectName = name;
+	meshName = mesh;
+	shaderName = texture;
+	textureName = shader;
+}
 
 void RenderObjectSystem::destroy()
 {
@@ -16,6 +26,10 @@ void RenderObjectSystem::render(Name name) {
 	shaderSystemPtr->use(current().shaderID);
 	textureSystemPtr->use(current().textureID);
 	meshSystemPtr->renderMesh(current().meshID);
+}
+void RenderObjectSystem::addRenderObject(RenderObjectNames renderobject)
+{
+	addRenderObject(renderobject.renderObjectName, renderobject.meshName, renderobject.textureName, renderobject.shaderName);
 }
 void RenderObjectSystem::select(Name name)
 {
@@ -57,7 +71,7 @@ void RenderObjectSystem::select(Name name)
 		logError(String("RenderObject With this name doesent exist. (").append(name.data).append(")"));
 	}
 }
-void RenderObjectSystem::addRenderObject(String name, Name meshName, Name textureName, Name shaderName) {
+void RenderObjectSystem::addRenderObject(Name name, Name meshName, Name textureName, Name shaderName) {
 	RenderObjectNames renderObjectNames;
 	renderObjectNames.renderObjectName = name;
 	renderObjectNames.meshName = meshName;
@@ -66,11 +80,11 @@ void RenderObjectSystem::addRenderObject(String name, Name meshName, Name textur
 	
 	renderObjectNamesQueue.push_back(renderObjectNames);
 }
-void RenderObjectSystem::create(MeshSystem& meshSystem, TextureSystem& textureSystem, ShaderSystem& shaderSystem)
+void RenderObjectSystem::create(Renderer & renderer)
 {
-	meshSystemPtr = &meshSystem;
-	textureSystemPtr = &textureSystem;
-	shaderSystemPtr = &shaderSystem;
+	meshSystemPtr = &renderer.meshSystem;
+	textureSystemPtr = &renderer.textureSystem;
+	shaderSystemPtr = &renderer.shaderSystem;
 }
 
 RenderObject& RenderObjectSystem::current()

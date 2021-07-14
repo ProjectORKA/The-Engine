@@ -1,19 +1,29 @@
 #include "FramebufferSystem.hpp"
 
+Framebuffer& FramebufferSystem::current()
+{
+	return framebuffers[currentFramebufferIndex];
+}
+
+void FramebufferSystem::add()
+{
+	framebuffers.emplace_back();
+	framebuffers.back().create();
+	select(framebuffers.size() - 1);
+}
 void FramebufferSystem::create()
 {
 	framebuffers.clear();
-	add(0);
-	add(2);
-	add(4);
-	add(8);
-	add(16);
+	add();	//0 main framebuffer
+	add();	//1 blur result
+	add();	//2 mask
+	add();	//3 drop shadow
 }
 void FramebufferSystem::update()
 {
 	if (needsUpdate) {
 		for (Framebuffer& framebuffer : framebuffers) {
-			framebuffer.resize(Vec2(windowWidth, windowHeight));
+			framebuffer.resize(currentFramebufferSize);
 		}
 		needsUpdate = false;
 	}
@@ -31,12 +41,15 @@ void FramebufferSystem::deselect()
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glDrawBuffer(GL_BACK);
 }
-void FramebufferSystem::add(UShort samples)
+void FramebufferSystem::updateSizes(Area area)
 {
-	framebuffers.emplace_back();
-	framebuffers.back().samples = samples;
-	framebuffers.back().create();
-	select(framebuffers.size() - 1);
+	area.x = max(area.x, 1);
+	area.y = max(area.y, 1);
+
+	if (currentFramebufferSize != area) {
+		currentFramebufferSize = area;
+		needsUpdate = true;
+	}
 }
 void FramebufferSystem::select(Index framebufferIndex)
 {
@@ -46,20 +59,4 @@ void FramebufferSystem::select(Index framebufferIndex)
 	}
 	currentFramebufferIndex = framebufferIndex;
 	current().use();
-}
-void FramebufferSystem::updateSizes(UInt width, UInt height)
-{
-	if (windowWidth != width) {
-		windowWidth = width;
-		needsUpdate = true;
-	}
-	if (windowHeight != height) {
-		windowHeight = height;
-		needsUpdate = true;
-	}
-}
-
-Framebuffer& FramebufferSystem::current()
-{
-	return framebuffers[currentFramebufferIndex];
 }

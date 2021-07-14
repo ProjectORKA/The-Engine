@@ -4,7 +4,7 @@
 void Program::run()
 {
 	windowSystem.addWindow();
-	windowSystem.processLoop();
+	windowSystem.startMainLoop();
 }
 
 Program program;

@@ -1,11 +1,11 @@
 
 #include "TerrainSystem.hpp"
 
-Double terrainGenerationFunction(Double x, Double y) {
+Double terrainGenerationFunction(LDouble x, LDouble y) {
 	static PerlinNoise noise(TERRAIN_GENERATION_SEED);
-	Double height = SEA_LEVEL;
-	height += pow(noise.octaveNoise0_1(6 * x, 6 * y, 16), 2) * LDouble(LLONG_MAX / 128);
-	return height;
+	LDouble noiseSize = pow(2, 5);
+
+	return pow(noise.octaveNoise0_1(noiseSize * x, noiseSize * y, 16), 3) * LDouble(pow(2,56));
 };
 
 void Terrain::create(QuadtreeID id)
@@ -25,8 +25,8 @@ void Terrain::create(QuadtreeID id)
 			xLocation += LDouble(location.x) / pow(2, 64 - id.level);
 			yLocation += LDouble(location.y) / pow(2, 64 - id.level);
 
-			xLocation /= pow(2, id.level - 3);
-			yLocation /= pow(2, id.level - 3);
+			xLocation /= pow(2, id.level);
+			yLocation /= pow(2, id.level);
 
 			LDouble height = terrainGenerationFunction(xLocation, yLocation);
 

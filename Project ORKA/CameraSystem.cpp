@@ -7,7 +7,7 @@ void CameraSystem::create()
 
 	addPlanetCamera();
 	selectPlanetCamera(0);
-	currentPlanetCamera().rotate(0, 0);
+	currentPlanetCamera().rotate(Vec2(0));
 }
 void CameraSystem::destroy()
 {
@@ -25,9 +25,9 @@ void CameraSystem::selectPlanetCamera(Index cameraID)
 {
 	currentPlanetCameraID = cameraID;
 }
-void CameraSystem::renderPlanetCamera(Uniforms & uniforms, Viewport & currentViewport)
+void CameraSystem::renderPlanetCamera(Uniforms & uniforms, Float aspectRatio)
 {
-	currentPlanetCamera().render(uniforms, currentViewport);
+	currentPlanetCamera().render(uniforms, aspectRatio);
 }
 PlanetCamera& CameraSystem::currentPlanetCamera()
 {

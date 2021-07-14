@@ -6,7 +6,8 @@
 struct GPUMesh
 {
 	Bool loaded = false;
-	UInt primitiveMode = Triangles;
+	PrimitiveMode primitiveMode = PrimitiveMode::Triangles;
+	MeshDrawMode drawMode = MeshDrawMode::staticMode;
 
 	VertexArrayObject vao;
 

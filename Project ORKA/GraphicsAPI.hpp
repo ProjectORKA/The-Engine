@@ -6,13 +6,20 @@
 #include "GL/glew.h"
 #include "Debug.hpp"
 
-enum {
-	StaticBufferUsage = GL_STATIC_DRAW,
-	DynamicBufferUsage = GL_DYNAMIC_DRAW
+enum class ShaderType {
+	vertex = GL_VERTEX_SHADER,
+	compute = GL_COMPUTE_SHADER,
+	geometry = GL_GEOMETRY_SHADER,
+	fragment = GL_FRAGMENT_SHADER,
+	tessellationControl = GL_TESS_CONTROL_SHADER,
+	tessellationEvaluation = GL_TESS_EVALUATION_SHADER
 };
-
-using PrimitiveMode = unsigned short;
-enum PrimitiveModes
+enum class MeshDrawMode {
+	staticMode = GL_STATIC_DRAW,
+	dynamicMode = GL_DYNAMIC_DRAW,
+	streamMode = GL_STREAM_DRAW,
+};
+enum class PrimitiveMode
 {
 	Lines = GL_LINES,
 	Points = GL_POINTS,

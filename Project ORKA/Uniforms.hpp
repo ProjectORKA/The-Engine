@@ -1,39 +1,35 @@
 #pragma once
 
 #include "Basics.hpp"
+#include "GraphicsAPI.hpp"
 
-enum UniformType {
-	UniformBoolType,
-	UniformIntType,
-	UniformFloatType,
-	UniformVec3Type,
-	UniformVec4Type,
-	UniformMatrixType
+struct GlobalUniformData {
+	//values have to be layed out in blocks of 16 bytes in memory
+	Matrix  mMatrix;			//16 * 4
+	Matrix vpMatrix;			//16 * 4
+	Vec4 worldOffset;			//16
+	Vec4 cameraVector;			//16
+	Vec4 chunkOffsetVector;		//16
+	Vec4 customColor;
+	float time;					//16
+	float custom1;
+	float custom2;
+	float custom3;
+	Int distortion;				//16
+	float placeholder1;
+	float placeholder2;
+	float placeholder3;
 };
 
 struct Uniforms {
-	void create();
-	void destroy();
-	void setBool(Name name, Bool value);
-	void setInt(Name name, Int value);
-	void setFloat(Name name, Float value);
-	void setVec3(Name name, Vec3 value);
-	void setVec4(Name name, Vec4 value);
-	void setMatrix(Name name, Matrix value);
+	Index id = -1;
+	GlobalUniformData data;
 
-	Map<Name, Bool> bools;
-	Map<Name, Int> ints;
-	Map<Name, Float> floats;
-	Map<Name, Vec3> vec3s;
-	Map<Name, Vec4> vec4s;
-	Map<Name, Matrix> matrices;
-	//
+	void create();
+	void reset();
+	void update();
+	void destroy();
+
 	Map<Name, Index> sampler2Ds;
 	Map<Name, Index> sampler2DMS;
-};
-
-struct Uniform {
-	Index uniformID;
-	Name name;
-	UInt type;
 };

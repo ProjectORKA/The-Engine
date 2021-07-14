@@ -31,5 +31,7 @@ void __stdcall DebugOutputCallback(GLenum source, GLenum type, GLuint id, GLenum
 		if (severity == GL_DEBUG_SEVERITY_HIGH_ARB)				logError(outputMessage);
 		else if (severity == GL_DEBUG_SEVERITY_MEDIUM_ARB)		logWarning(outputMessage);
 		else if (severity == GL_DEBUG_SEVERITY_LOW_ARB)			logDebug(outputMessage);
+
+		logError("OpenGL error generated!");
 	}
 }

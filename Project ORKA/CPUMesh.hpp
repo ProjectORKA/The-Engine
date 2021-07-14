@@ -9,19 +9,20 @@
 #include <assimp/scene.h>
 
 struct CPUMesh {
-
 	Name name = "empty";
-	PrimitiveMode primitiveMode = Triangles;
+	PrimitiveMode primitiveMode = PrimitiveMode::Triangles;
 	Vector<Vec3> vertices;
 	Vector<Vec2> uvs;
 	Vector<Vec3> normals;
 	Vector<Index> indices;
+	MeshDrawMode drawMode = MeshDrawMode::staticMode;
+	
 	Bool readyForUpload = false;
 	
 	void saveMeshFile();
+	void load(Name name);
 	void loadFBX(Path path);
 	void loadMeshFile(Path path);
-	void autoLoadFromFile(Name name);
 	void calculateSmoothNormals();
 };
 
@@ -37,7 +38,7 @@ struct CPUMesh {
 struct MeshHeaderV2 {
 	const unsigned int version = 2;
 	Name meshName = "";
-	PrimitiveMode primitiveMode = Triangles;
+	PrimitiveMode primitiveMode = PrimitiveMode::Triangles;
 	unsigned int vertexCount = 0;
 	unsigned int uvCount = 0;
 	unsigned int normalCount = 0;

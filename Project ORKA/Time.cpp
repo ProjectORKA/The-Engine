@@ -3,8 +3,8 @@
 
 void Time::reset(){
 	currentTime = lastTime = std::chrono::steady_clock::now();
-	deltaDuration = std::chrono::seconds::zero();
-	totalDuration = std::chrono::seconds::zero();
+	deltaDuration = Duration(0);
+	totalDuration = Duration(0);//std::chrono::seconds::zero();
 	delta = 0.0f;
 	total = 0.0f;
 }

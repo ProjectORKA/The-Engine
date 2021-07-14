@@ -25,6 +25,15 @@
     <ClCompile Include="AITEst.cpp" />
     <ClCompile Include="Basics.cpp" />
     <ClCompile Include="CameraSystem.cpp" />
+    <ClCompile Include="QuadtreeNode.cpp" />
+    <ClCompile Include="UIText.cpp" />
+    <ClCompile Include="MindMap.cpp" />
+    <ClCompile Include="ORKAGame.cpp" />
+    <ClCompile Include="RenderRegion.cpp" />
+    <ClCompile Include="ShaderProgram.cpp" />
+    <ClCompile Include="SimpleTextRendering.cpp" />
+    <ClCompile Include="TiledMath.cpp" />
+    <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="JobSystem.cpp" />
     <ClCompile Include="OctreeSystemRenderer.cpp" />
     <ClCompile Include="PlanetCamera.cpp" />
@@ -41,7 +50,6 @@
     <ClCompile Include="GPUTexture.cpp" />
     <ClCompile Include="GraphicsAPI.cpp" />
     <ClCompile Include="IndexBufferObject.cpp" />
-    <ClCompile Include="Layer.cpp" />
     <ClCompile Include="Math.cpp" />
     <ClCompile Include="MeshSystem.cpp" />
     <ClCompile Include="Networking.cpp" />
@@ -54,6 +62,10 @@
     <ClCompile Include="SimpleCamera.cpp" />
     <ClCompile Include="TerrainRendering.cpp" />
     <ClCompile Include="TerrainSystem.cpp" />
+    <ClCompile Include="UIElement.cpp" />
+    <ClCompile Include="UIFlatPanel.cpp" />
+    <ClCompile Include="UIGameView.cpp" />
+    <ClCompile Include="UISplit.cpp" />
     <ClCompile Include="ULLUtil.cpp" />
     <ClCompile Include="ProceduralMeshes.cpp" />
     <ClCompile Include="Program.cpp" />
@@ -69,25 +81,32 @@
     <ClCompile Include="Threading.cpp" />
     <ClCompile Include="Time.cpp" />
     <ClCompile Include="Timer.cpp" />
+    <ClCompile Include="UniformBuffer.cpp" />
     <ClCompile Include="Uniforms.cpp" />
     <ClCompile Include="VertexArrayObject.cpp" />
     <ClCompile Include="VertexBufferObject.cpp" />
-    <ClCompile Include="ViewportSystem.cpp" />
     <ClCompile Include="Window.cpp" />
+    <ClCompile Include="WindowAPI.cpp" />
     <ClCompile Include="WindowSystem.cpp" />
     <ClCompile Include="OctreeSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\External Libraries\stb-master\stb_truetype.h" />
-    <ClInclude Include="AIPlayground.hpp" />
     <ClInclude Include="AITest.hpp" />
-    <ClInclude Include="Application.hpp" />
     <ClInclude Include="Basics.hpp" />
-    <ClInclude Include="InputSystem.hpp" />
+    <ClInclude Include="CameraControllers.hpp" />
+    <ClInclude Include="Engine.hpp" />
+    <ClInclude Include="Functor.hpp" />
+    <ClInclude Include="InputManager.hpp" />
     <ClInclude Include="JobSystem.hpp" />
+    <ClInclude Include="KeyMap.hpp" />
+    <ClInclude Include="MindMap.hpp" />
     <ClInclude Include="OctreeData.hpp" />
     <ClInclude Include="OctreeID.hpp" />
     <ClInclude Include="OctreeSystemRenderer.hpp" />
+    <ClInclude Include="Organizer.hpp" />
+    <ClInclude Include="ORKAGame.hpp" />
+    <ClInclude Include="Pixel.hpp" />
     <ClInclude Include="PlanetCamera.hpp" />
     <ClInclude Include="CameraSystem.hpp" />
     <ClInclude Include="Client.hpp" />
@@ -104,27 +123,37 @@
     <ClInclude Include="GraphicsAPI.hpp" />
     <ClInclude Include="Heightmap.hpp" />
     <ClInclude Include="IndexBufferObject.hpp" />
-    <ClInclude Include="Layer.hpp" />
     <ClInclude Include="Math.hpp" />
     <ClInclude Include="MeshSystem.hpp" />
     <ClInclude Include="Message.hpp" />
     <ClInclude Include="Networking.hpp" />
     <ClInclude Include="PlanetRenderSystem.hpp" />
     <ClInclude Include="PlanetSystem.hpp" />
+    <ClInclude Include="QuadtreeData.hpp" />
     <ClInclude Include="QuadtreeID.hpp" />
+    <ClInclude Include="QuadtreeNode.hpp" />
     <ClInclude Include="QuadtreeSystemRenderer.hpp" />
     <ClInclude Include="RelativeChunkOffset.hpp" />
+    <ClInclude Include="RenderRegion.hpp" />
     <ClInclude Include="Server.hpp" />
     <ClInclude Include="Settings.hpp" />
     <ClInclude Include="Shader.hpp" />
+    <ClInclude Include="ShaderProgram.hpp" />
     <ClInclude Include="SimpleCamera.hpp" />
+    <ClInclude Include="SimplePlanetRenderer.hpp" />
     <ClInclude Include="TerrainRendering.hpp" />
     <ClInclude Include="TerrainSystem.hpp" />
+    <ClInclude Include="UIConstraints.hpp" />
+    <ClInclude Include="UIElement.hpp" />
+    <ClInclude Include="UIFlatPanel.hpp" />
+    <ClInclude Include="UIGameView.hpp" />
+    <ClInclude Include="UISplit.hpp" />
+    <ClInclude Include="UIText.hpp" />
     <ClInclude Include="ULLUtil.hpp" />
     <ClInclude Include="ProceduralMeshes.hpp" />
     <ClInclude Include="Program.hpp" />
     <ClInclude Include="Random.hpp" />
-    <ClInclude Include="Rectangle.hpp" />
+    <ClInclude Include="TiledMath.hpp" />
     <ClInclude Include="Renderer.hpp" />
     <ClInclude Include="RenderObjectSystem.hpp" />
     <ClInclude Include="resource.h" />
@@ -137,10 +166,12 @@
     <ClInclude Include="Threading.hpp" />
     <ClInclude Include="Time.hpp" />
     <ClInclude Include="Timer.hpp" />
+    <ClInclude Include="UniformBuffer.hpp" />
     <ClInclude Include="Uniforms.hpp" />
+    <ClInclude Include="UserInterface.hpp" />
+    <ClInclude Include="Util.hpp" />
     <ClInclude Include="VertexArrayObject.hpp" />
     <ClInclude Include="VertexBufferObject.hpp" />
-    <ClInclude Include="ViewportSystem.hpp" />
     <ClInclude Include="Window.hpp" />
     <ClInclude Include="WindowAPI.hpp" />
     <ClInclude Include="WindowsEntry.hpp" />
@@ -148,17 +179,22 @@
     <ClInclude Include="OctreeSystem.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="computeTest.comp" />
+    <None Include="Data\shaders\blur.frag" />
+    <None Include="Data\shaders\blur.vert" />
+    <None Include="Data\shaders\blurredUI.frag" />
+    <None Include="Data\shaders\blurredUI.vert" />
     <None Include="Data\shaders\debug.frag" />
     <None Include="Data\shaders\debug.vert" />
     <None Include="Data\shaders\postProcess.frag" />
     <None Include="Data\shaders\postProcess.vert" />
     <None Include="Data\shaders\primitive.frag" />
     <None Include="Data\shaders\primitive.vert" />
-    <None Include="Data\shaders\sky.frag" />
-    <None Include="Data\shaders\sky.vert" />
     <None Include="Data\shaders\terrain.frag" />
     <None Include="Data\shaders\terrain.vert" />
+    <None Include="Data\shaders\text.frag" />
+    <None Include="Data\shaders\text.vert" />
+    <None Include="Data\shaders\ui.frag" />
+    <None Include="Data\shaders\ui.vert" />
     <None Include="Data\shaders\unlit.frag" />
     <None Include="Data\shaders\unlit.vert" />
   </ItemGroup>
@@ -242,8 +278,8 @@
       <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>opengl32.lib;freetype32.lib;assimp-vc141-mtd.lib;glfw3.lib;glew32s.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)\External Libraries\BOOST\libs;$(SolutionDir)\External Libraries\freetype-2.10.4\build;$(SolutionDir)\External Libraries\ASSIMP\lib\lib 32\debug;$(SolutionDir)\External Libraries\GLFW 32 bit\lib-vc2015;$(SolutionDir)\External Libraries\GLEW\lib\Release\Win32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>opengl32.lib;assimp-vc141-mtd.lib;glfw3.lib;glew32s.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)\External Libraries\ASSIMP\lib\lib 32\debug;$(SolutionDir)\External Libraries\GLFW 32 bit\lib-vc2015;$(SolutionDir)\External Libraries\GLEW\lib\Release\Win32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>
       </IgnoreSpecificDefaultLibraries>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
@@ -272,9 +308,9 @@
       <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>$(SolutionDir)\External Libraries\BOOST\lib;$(SolutionDir)\External Libraries\freetype-2.10.4\build;$(SolutionDir)\External Libraries\ASSIMP\lib\lib 64\debug;$(SolutionDir)\External Libraries\GLFW 64 bit\lib-vc2015;$(SolutionDir)\External Libraries\GLEW\lib\Release\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)\External Libraries\ASSIMP\lib\lib 64\debug;$(SolutionDir)\External Libraries\GLFW 64 bit\lib-vc2015;$(SolutionDir)\External Libraries\GLEW\lib\Release\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
-      <AdditionalDependencies>opengl32.lib;freetype64.lib;assimp-vc141-mtd.lib;glfw3.lib;glew32s.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>opengl32.lib;assimp-vc141-mtd.lib;glfw3.lib;glew32s.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>
       </IgnoreSpecificDefaultLibraries>
       <SubSystem>Console</SubSystem>
@@ -305,8 +341,8 @@
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>opengl32.lib;freetype32.lib;assimp-vc141-mt.lib;glfw3.lib;glew32s.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)\External Libraries\BOOST\libs;$(SolutionDir)\External Libraries\freetype-2.10.4\build;$(SolutionDir)\External Libraries\ASSIMP\lib\lib 32\release;$(SolutionDir)\External Libraries\GLFW 32 bit\lib-vc2015;$(SolutionDir)\External Libraries\GLEW\lib\Release\Win32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>opengl32.lib;assimp-vc141-mt.lib;glfw3.lib;glew32s.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)\External Libraries\ASSIMP\lib\lib 32\release;$(SolutionDir)\External Libraries\GLFW 32 bit\lib-vc2015;$(SolutionDir)\External Libraries\GLEW\lib\Release\Win32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>
       </IgnoreSpecificDefaultLibraries>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
@@ -335,8 +371,8 @@
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>opengl32.lib;freetype64.lib;assimp-vc141-mt.lib;glfw3.lib;glew32s.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)\External Libraries\BOOST\lib;$(SolutionDir)\External Libraries\freetype-2.10.4\build;$(SolutionDir)\External Libraries\ASSIMP\lib\lib 64\release;$(SolutionDir)\External Libraries\GLFW 64 bit\lib-vc2015;$(SolutionDir)\External Libraries\GLEW\lib\Release\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>opengl32.lib;assimp-vc141-mt.lib;glfw3.lib;glew32s.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)\External Libraries\ASSIMP\lib\lib 64\release;$(SolutionDir)\External Libraries\GLFW 64 bit\lib-vc2015;$(SolutionDir)\External Libraries\GLEW\lib\Release\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <IgnoreSpecificDefaultLibraries>
       </IgnoreSpecificDefaultLibraries>

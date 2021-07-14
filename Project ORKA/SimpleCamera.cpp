@@ -1,9 +1,8 @@
 #include "SimpleCamera.hpp"
 
-void SimpleCamera::rotate(Float mouseDeltaX, Float mouseDeltaY)
-{
-	rotationX -= mouseDeltaY;
-	rotationZ += mouseDeltaX;
+void SimpleCamera::rotate(Vec2 rotation) {
+	rotationX = -rotation.y;
+	rotationZ = rotation.x;
 
 	//prevent looking upside down
 	Float cap = PI / 2;
@@ -30,6 +29,16 @@ void SimpleCamera::rotate(Float mouseDeltaX, Float mouseDeltaY)
 
 	upVector = glm::cross(rightVector, forwardVector);
 }
+void SimpleCamera::update(Time& time) {
+	accelerationVector *= time.delta;
+	location += accelerationVector;
+	accelerationVector = { 0,0,0 };
+}
+void SimpleCamera::render(Uniforms& uniforms, Float aspectRatio) {
+	uniforms.data.cameraVector = Vec4(forwardVector, 1);
+	uniforms.data.vpMatrix = projectionMatrix(aspectRatio) * viewMatrix();
+	uniforms.update();
+}
 Matrix SimpleCamera::viewMatrix() {
 	return glm::lookAt(
 		location,
@@ -37,15 +46,10 @@ Matrix SimpleCamera::viewMatrix() {
 		upVector
 	);
 }
-Matrix SimpleCamera::projectionMatrix(float aspectRatio)
-{
+Matrix SimpleCamera::projectionMatrix(Float aspectRatio) {
 	return glm::perspective(
 		glm::radians(fieldOfView),
 		aspectRatio,
 		nearClipValue,
-		farClipValue
-	);
-}
-void SimpleCamera::setLocation(Vec3 location) {
-	this->location = location;
+		farClipValue);
 }

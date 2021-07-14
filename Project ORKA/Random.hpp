@@ -1,14 +1,9 @@
 
-#include "Basics.hpp"
-#include "Threading.hpp"
-
 #pragma once
 
-struct RandomNumberGenerator {
-	unsigned short a = 0;
-	unsigned short b = 0;
-	unsigned short c = 0;
+#include "Basics.hpp"
+#include <iostream>
+#include <random>
+#include <limits>
 
-	ULL randomULL();
-	RandomNumberGenerator();
-};
+ULL random(ULL size);

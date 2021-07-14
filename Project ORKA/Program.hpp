@@ -1,7 +1,6 @@
 # pragma once
-#include "Networking.hpp"
-#include "WindowSystem.hpp"
-#include "GameSimulation.hpp"
+
+#include "ORKAGame.hpp"
 
 struct Program {
 	void run();

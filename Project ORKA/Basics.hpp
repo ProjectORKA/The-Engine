@@ -10,9 +10,9 @@ using Integer = int;
 using LL = long long;
 using Index = unsigned int;
 using UInt = unsigned int;
+using ULong = unsigned long;
 using ULL = unsigned long long;
 using ULLInt = unsigned long long;
-
 using Float = float;
 
 using Double = double;
@@ -32,6 +32,8 @@ using UniquePointer = std::unique_ptr<T>;
 template<typename T>
 using SharedPointer = std::shared_ptr<T>;
 
+template<typename T>
+using WeakPointer = std::weak_ptr<T>;
 
 #include <string>
 using String = std::string;
@@ -58,6 +60,9 @@ bool operator<(const Name& l, const Name& r);
 #include "glm/glm.hpp"
 #include <glm/gtc/type_ptr.hpp>
 #include "glm/gtc/matrix_transform.hpp"
+
+using IVec2 = glm::ivec2;
+using IVec3 = glm::ivec3;
 using Vec2 = glm::vec2;
 using DVec2 = glm::dvec2;
 using DVec3 = glm::dvec3;

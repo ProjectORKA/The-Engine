@@ -16,7 +16,7 @@ enum Wrapping
 	clamped = GL_CLAMP_TO_EDGE,
 	border = GL_CLAMP_TO_BORDER
 };
-enum Filter {
+enum class Filter {
 	nearest = GL_NEAREST,
 	nearestMM = GL_NEAREST_MIPMAP_NEAREST,
 	linear = GL_LINEAR,
@@ -34,13 +34,14 @@ struct CPUTexture {
 		Byte* bytePixels;
 		Float* floatPixels;
 	};
-	Int filter = linearMM;
+	Filter nearFilter = Filter::linear;
+	Filter farFilter = Filter::linearMM;
 	Int wrapping = repeat;
-	Short multisampling = 0;
 	Bool loaded = false;
 
 	void unload();
 	void load(Path path, Name name);
+	void load(Name name);;
 
 	~CPUTexture();
 };

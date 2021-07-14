@@ -17,3 +17,5 @@ struct Terrain {
 	Mutex mutex;
 	void create(QuadtreeID id);
 };
+
+Double terrainGenerationFunction(LDouble x, LDouble y);
