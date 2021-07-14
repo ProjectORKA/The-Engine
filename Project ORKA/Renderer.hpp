@@ -4,29 +4,29 @@
 #include "Time.hpp"
 //sub systems
 #include "CameraSystem.hpp"
-#include "ViewportSystem.hpp"
 #include "TextRenderSystem.hpp"
 #include "FramebufferSystem.hpp"
 #include "MeshSystem.hpp"
 #include "ShaderSystem.hpp"
 #include "RenderObjectSystem.hpp"
 #include "PlanetRenderSystem.hpp"
+#include "RenderRegion.hpp"
 
 struct Renderer{
 	Time renderTime;
-
 	//settings
 	Bool wireframeMode = false;
 	Bool adjustRenderVariables = true;
-	Short multisampleCount = 0;
 
 	//framerate
 	Float targetFrameRate = TARGETFRAMERATE;
+	ULL frameCount = 0;
 
 	//render data
 	CameraSystem cameraSystem;
-	ViewportSystem viewportSystem;
-	//TextRenderSystem textRenderSystem;
+	RenderRegion renderRegion;
+	
+	TextRenderSystem textRenderSystem;
 	FramebufferSystem framebufferSystem;
 	MeshSystem meshSystem;
 	TextureSystem textureSystem;
@@ -34,8 +34,9 @@ struct Renderer{
 	RenderObjectSystem renderObjectSystem;
 	PlanetRenderSystem planetRenderSystem;
 
+
 	Mutex mutex;
-	void waitForFinishedFrame();
+	void sync(); //makes non renderer threads wait for the finished frame
 
 	void create();
 	void destroy();
@@ -45,22 +46,19 @@ struct Renderer{
 
 	void clearDepth();
 	void clearColor();
-	void renderFramebuffer();
 	void clearColor(Color color);
 
+	void pollGraphicsAPIError();
 	void setCulling(Bool isCulling);
 	void setDepthClamp(Bool depthClamp);
 	void setDepthTest(Bool isUsingDepth);
 	void setAlphaBlending(Bool blending);
 	void setWireframeMode(Bool isWireframeMode);
-
-	void updateUniforms();
-	void resetModelMatrix();
-	
-	void pollGraphicsAPIError();
+	void addRenderObject(RenderObjectNames renderObjectNames);
+	void createBlurTexture(Framebuffer& from, Framebuffer& to);
 	
 	Float& aspectRatio();
 	Uniforms& uniforms();
-	Viewport& currentViewport();
-	Framebuffer& currentFramebuffer();
 };
+
+void loadPrimitives(Renderer& renderer);

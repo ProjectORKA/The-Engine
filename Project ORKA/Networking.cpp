@@ -10,7 +10,7 @@ void Server::create()
 
 void Server::connect()
 {
-	socket.connect(endpoint);
+	/*socket.connect(endpoint);*/
 }
 
 void Server::send()
@@ -31,9 +31,9 @@ void Server::send()
 	message.body[10] = 'd';
 	message.body[11] = '!';
 
-	ASIOBuffer buffer(&message, message.bodyByteSize + 8);
+	//ASIOBuffer buffer(&message, message.bodyByteSize + 8);
 
-	if (socket.is_open()) {
-		socket.send(buffer);
-	}
+	//if (socket.is_open()) {
+	//	socket.send(buffer);
+	//}
 }

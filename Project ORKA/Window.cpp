@@ -1,119 +1,147 @@
 
 #include "Window.hpp"
 
+//window thread
 void windowThread(Window& window)
 {
+	logEvent("Started Window Thread!");
 	window.initializeGraphicsAPI(); //needs to be in this thread
+	window.renderer.create();		//also needs to be in this thread
 
-	window.renderer.create();
-	window.updateFramebuffers();
-
-	glfwShowWindow(window.apiWindow);
+	window.show();
+	
 	if (window.fullScreen) {
-		window.setFullscreen();
+		window.setExclusiveFullscreen();
 	}
 	else {
 		window.setWindowed();
 	}
 
+	window.setCallbacks();
+
+	//main render loop for the window
 	while (window.thread.keepThreadRunning) {
 		if (window.isShown) {
 
-			window.processCameraMovement();
+			window.renderer.begin(); //resets and syncronizes the renderer
 
-			window.renderer.begin();
+			TiledRectangle windowArea;
+			windowArea.size = window.getFramebufferSize();
 
-			window.layer.render();
+			window.renderer.framebufferSystem.updateSizes(windowArea.size);
 
-			window.renderer.renderFramebuffer();
+			//for (UIElement* element : window.contents) {
+			//	element->render(window, windowArea);
+			//}
 
-			window.renderer.end();
+			window.contents[0]->render(window, windowArea);
 
-			window.pushFrame();
+			Float topbarHeight = 100;
+
+			TiledRectangle topBar = windowArea;
+			topBar.size.y = topbarHeight;
+			topBar.position.y = windowArea.size.y - topbarHeight;
+
+			window.contents[1]->render(window, topBar);
+
+			window.renderer.renderRegion.setRenderRegion(windowArea);
+
+			window.renderer.framebufferSystem.current().setAsTexture();
+			window.renderer.framebufferSystem.deselect();
+
+			window.renderer.clearColor(Color(0, 0, 0, 0.75));
+
+			window.renderer.setWireframeMode(false);
+			window.renderer.shaderSystem.use("postProcess");
+			window.renderer.meshSystem.renderMesh("fullScreenQuad");
+
+			window.renderer.end(); //checks errors and unlocks renderer
+
+			apiWindowSwapBuffers(window.apiWindow);
 		}
 	}
+
+	for (UIElement* element : window.contents) {
+		element->destroy(window);
+		delete element;
+	}
+	window.contents.clear();
+
+	window.destroyAPIWindow();
 }
 
-void Window::create()
-{
-	createAPIWindow();
-	center();
-	thread.start(windowThread, *this);
-}
-void Window::center() {
-	Rect<Int> workableArea;
-	getWorkableArea(workableArea);
-	setPosition(workableArea.center() - Vec2(Float(windowContentWidth) / 2, Float(windowContentHeight)/2));
-}
+//window member functions
 void Window::destroy() {
 	thread.stop();
-	renderer.destroy();
-	destroyAPIWindow();
 }
-void Window::pushFrame()
+void Window::show()
 {
-#ifdef WINDOW_API_GLFW
-	glfwSwapBuffers(apiWindow);
-#endif // WINDOW_API_GLFW
+	apiWindowSetVisibility(apiWindow, false);
 }
-bool Window::shouldClose()
+void Window::hide()
 {
-#ifdef WINDOW_API_GLFW
-	return glfwWindowShouldClose(apiWindow);
-#endif // WINDOW_API_GLFW
+	apiWindowSetVisibility(apiWindow, false);
+}
+void Window::create()
+{
+	createAPIWindow(); //needs to be in this thread
+	
+	framebufferSize = apiWindowGetFramebufferSize(apiWindow);
+	centerWindow();
+
+	contents.push_back(new UIORKAGame());
+	contents.push_back(new UIFlatPanel());
+
+	for (UIElement* element : contents) {
+		element->create(*this);
+	}
+
+	contents.back()->create(*this);
+
+	thread.start(windowThread, *this);
+	logEvent("Created Window in Main Thread!");
 }
 void Window::setWindowed()
 {
-	glfwSetWindowMonitor(apiWindow, nullptr, 0, 0, windowContentWidth, windowContentHeight, GLFW_DONT_CARE);
-	glfwRestoreWindow(apiWindow);
+	TiledRectangle windowArea;
+	windowArea.size = getFramebufferSize();
+	apiWindowSetWindowedMode(apiWindow, windowArea);
+	restoreWindow();
 	if (decorated) {
-		glfwSetWindowAttrib(apiWindow, GLFW_DECORATED, GLFW_TRUE);
-	}
-	center();
-	fullScreen = false;
-
-	updateFramebuffers();
-}
-void Window::processInput() {
-	processCameraMovement();
-}
-void Window::captureCursor()
-{
-	if (glfwGetInputMode(apiWindow, GLFW_CURSOR) != GLFW_CURSOR_DISABLED) {
-		glfwGetCursorPos(apiWindow, &cursorPosition.x, &cursorPosition.y);
-		glfwSetInputMode(apiWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-		glfwSetCursorPos(apiWindow, 0, 0);
-		isCapturingCursor = true;
-	}
-}
-void Window::setFullscreen() {
-
-	if (borderlessFullScreen) {
-		glfwSetWindowAttrib(apiWindow, GLFW_DECORATED, GLFW_FALSE);
-		glfwMaximizeWindow(apiWindow);
+		decorateWindow();
 	}
 	else {
-		glfwMaximizeWindow(apiWindow);
-		GLFWmonitor* monitor = glfwGetPrimaryMonitor();
-		const GLFWvidmode* videoMode = glfwGetVideoMode(monitor);
-		glfwSetWindowMonitor(apiWindow, monitor, 0, 0, videoMode->width, videoMode->height, GLFW_DONT_CARE);
+		undecorateWindow();
 	}
-	//help glfw recognize frambuffer change
-	updateFramebuffers();
-	fullScreen = true;
+	centerWindow();
+	fullScreen = false;
+}
+void Window::setCallbacks()
+{
+	glfwSetKeyCallback(apiWindow, whenButtonIsPressed);
+	glfwSetCursorPosCallback(apiWindow, whenMouseIsMoving);
+	glfwSetScrollCallback(apiWindow, whenMouseIsScrolling);
+	glfwSetMouseButtonCallback(apiWindow, whenMouseIsPressed);
+	glfwSetWindowFocusCallback(apiWindow, whenWindowChangedFocus);
+	glfwSetWindowIconifyCallback(apiWindow, whenWindowWasMinimized);
+	glfwSetWindowMaximizeCallback(apiWindow, whenWindowWasMaximized);
+	glfwSetFramebufferSizeCallback(apiWindow, whenFramebufferIsResized);
+}
+void Window::centerWindow() {
+	TiledRectangle workableArea = apiWindowGetWorkableArea(apiWindow);
+	setPosition(workableArea.center() - center(getWindowFrameSize()));
+}
+void Window::restoreWindow()
+{
+	apiWindowRestore(apiWindow);
+}
+void Window::decorateWindow()
+{
+	apiWindowDecorate(apiWindow);
 }
 void Window::updatePosition()
 {
-#ifdef WINDOW_API_GLFW
 	glfwSetWindowPos(apiWindow, windowPosition.x, windowPosition.y);
-#endif // WINDOW_API_GLFW
-}
-void Window::uncaptureCursor() {
-	if (glfwGetInputMode(apiWindow, GLFW_CURSOR) != GLFW_CURSOR_NORMAL) {
-		glfwSetInputMode(apiWindow, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-		glfwSetCursorPos(apiWindow, cursorPosition.x, cursorPosition.y);
-		isCapturingCursor = false;
-	}
 }
 void Window::createAPIWindow() {
 	if (!apiWindow) {
@@ -133,18 +161,19 @@ void Window::createAPIWindow() {
 		glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_API);
 		glfwWindowHint(GLFW_CONTEXT_CREATION_API, GLFW_NATIVE_CONTEXT_API);
 		glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-		
+
 		//glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_COMPAT_PROFILE);
 		glfwWindowHint(GLFW_TRANSPARENT_FRAMEBUFFER, GL_TRUE);
 		glfwWindowHint(GLFW_CENTER_CURSOR, GLFW_TRUE);
-		if (!decorated) glfwWindowHint(GLFW_DECORATED, GL_FALSE);
+		//if (!decorated)
+		glfwWindowHint(GLFW_DECORATED, GL_FALSE);
 
 #ifdef DEBUG
 		glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
 #endif
 
-		apiWindow = glfwCreateWindow(windowContentWidth, windowContentHeight, title.c_str(), NULL, NULL);
+		apiWindow = glfwCreateWindow(DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT, title.c_str(), NULL, NULL);
 
 		assert(apiWindow);
 
@@ -155,30 +184,20 @@ void Window::createAPIWindow() {
 		if (glfwRawMouseMotionSupported()) glfwSetInputMode(apiWindow, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
 
 		updatePosition();
-
-		//set window callbacks
-		glfwSetKeyCallback(apiWindow, whenButtonIsPressed);
-		glfwSetCursorPosCallback(apiWindow, whenMouseIsMoving);
-		glfwSetScrollCallback(apiWindow, whenMouseIsScrolling);
-		glfwSetMouseButtonCallback(apiWindow, whenMouseIsPressed);
-		glfwSetWindowPosCallback(apiWindow, whenWindowIsBeingMoved);
-		glfwSetWindowFocusCallback(apiWindow, whenWindowChangedFocus);
-		glfwSetWindowIconifyCallback(apiWindow, whenWindowWasMinimized);
-		glfwSetWindowMaximizeCallback(apiWindow, whenWindowWasMaximized);
-		glfwSetFramebufferSizeCallback(apiWindow, whenFramebufferIsResized);
 	}
 	else {
 		logError("Window already exists!");
 	}
 }
+void Window::undecorateWindow()
+{
+	apiWindowUndecorate(apiWindow);
+}
 void Window::destroyAPIWindow() {
 
-	uncaptureCursor();
+	inputManager.uncaptureCursor(*this);
 	if (apiWindow) {
-
-#ifdef WINDOW_API_GLFW
 		glfwDestroyWindow(apiWindow);
-#endif // WINDOW_API_GLFW
 		apiWindow = nullptr;
 	}
 	logEvent("API Window destroyed!");
@@ -198,31 +217,8 @@ void Window::setIcon(Path path) {
 		glfwSetWindowIcon(apiWindow, 1, &icon);
 	}
 }
-void Window::updateFramebuffers()
-{
-	Int width;
-	Int height;
-	glfwGetFramebufferSize(apiWindow, &width, &height);
-	renderer.framebufferSystem.updateSizes(width, height);
-}
-void Window::processCameraMovement() {
-
-	PlanetCamera& camera = renderer.cameraSystem.currentPlanetCamera();
-
-	if (glfwGetKey(apiWindow, GLFW_KEY_E) == GLFW_PRESS) camera.accelerationVector += camera.upVector;
-	if (glfwGetKey(apiWindow, GLFW_KEY_Q) == GLFW_PRESS) camera.accelerationVector -= camera.upVector;
-
-	if (glfwGetKey(apiWindow, GLFW_KEY_W) == GLFW_PRESS) camera.accelerationVector += camera.forwardVector;
-	if (glfwGetKey(apiWindow, GLFW_KEY_S) == GLFW_PRESS) camera.accelerationVector -= camera.forwardVector;
-
-	if (glfwGetKey(apiWindow, GLFW_KEY_D) == GLFW_PRESS) camera.accelerationVector += camera.rightVector;
-	if (glfwGetKey(apiWindow, GLFW_KEY_A) == GLFW_PRESS) camera.accelerationVector -= camera.rightVector;
-}
 void Window::initializeGraphicsAPI() {
-
-#ifdef WINDOW_API_GLFW
 	glfwMakeContextCurrent(apiWindow);
-#endif // WINDOW_API_GLFW
 	glewExperimental = true;
 	if (glewInit() == GLEW_OK) {
 		logEvent("GLEW successfully initialized!");
@@ -237,158 +233,107 @@ void Window::initializeGraphicsAPI() {
 	glEnable(GL_DEBUG_OUTPUT);
 	glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
 }
-void Window::setPosition(Vec2 position)
+void Window::setExclusiveFullscreen() {
+
+	glfwMaximizeWindow(apiWindow);
+	if (borderlessFullScreen) {
+		undecorateWindow();
+	}
+	else {
+		glfwSetWindowMonitor(apiWindow, glfwGetPrimaryMonitor(), 0, 0, glfwGetVideoMode(glfwGetPrimaryMonitor())->width, glfwGetVideoMode(glfwGetPrimaryMonitor())->height, GLFW_DONT_CARE);
+	}
+	//help glfw recognize frambuffer change
+	//updateFramebuffers();
+	fullScreen = true;
+}
+void Window::setPosition(IVec2 position)
 {
 	windowPosition = position;
 	updatePosition();
 }
-void Window::getWorkableArea(Rect<Int>& rect)
+
+//window getters
+Bool Window::shouldClose()
 {
-#ifdef WINDOW_API_GLFW
-	glfwGetMonitorWorkarea(glfwGetPrimaryMonitor(), &rect.x, &rect.y, &rect.width, &rect.height);
-#endif // WINDOW_API_GLFW
+	return glfwWindowShouldClose(apiWindow);
 }
-void Window::changeAntiAliasing(UShort antiAliasing) {
-	logDebug(String("Changing AA Samples (").append(std::to_string(renderer.multisampleCount)).append(")."));
-	renderer.multisampleCount = antiAliasing;
-}
-
-void whenWindowChangedFocus(APIWindow window, Int focused) {
-
-	Window* parentWindowClass = static_cast<Window*>(glfwGetWindowUserPointer(window));
-	if (focused) {
-		if (parentWindowClass->isCapturingCursor) {
-			glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-		}
-		else {
-			glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-		}
-	}
-	else {
-		parentWindowClass->uncaptureCursor();
-	}
-}
-void whenWindowWasMaximized(APIWindow window, Int maximized)
+Bool Window::isFullScreen()
 {
-	//Window& parentWindowClass = *static_cast<Window*>(glfwGetWindowUserPointer(window));
-	//Int width;
-	//Int height;
-	//if (maximized)
-	//{
-	//	glfwGetFramebufferSize(window, &width, &height);
-	//	logDebug(width);
-	//	parentWindowClass.renderer.framebufferSystem.updateFramebufferSizes(width,height);
-	//}
-	//else
-	//{
-	//	parentWindowClass.isShown = true;
-	//}
+	return apiWindowIsFullscreen(apiWindow);
 }
-void whenWindowWasMinimized(APIWindow window, Int minimized)
+Area Window::getWindowFrameSize()
 {
-	//Window& parentWindowClass = *static_cast<Window*>(glfwGetWindowUserPointer(window));
-	//if (minimized)
-	//{
-	//	parentWindowClass.isShown = false;
-	//}
-	//else
-	//{
-	//	parentWindowClass.isShown = true;
-	//}
+	return apiWindowGetWindowFrameSize(apiWindow);
 }
-void whenWindowIsBeingMoved(APIWindow window, int xpos, int ypos) {
-	Window* parentWindowClass = static_cast<Window*>(glfwGetWindowUserPointer(window));
+Area Window::getFramebufferSize()
+{
+	return framebufferSize;
+}
 
-	parentWindowClass->windowPosition = Vec2(xpos, ypos);
-};
-void whenMouseIsMoving(APIWindow apiWindow, Double xpos, Double ypos) {
-	Window& window = *static_cast<Window*>(glfwGetWindowUserPointer(apiWindow));
-	if (window.apiWindow) {
-		if (window.isCapturingCursor) {
-			window.deltaX = xpos;
-			window.deltaY = ypos;
-			glfwSetCursorPos(window.apiWindow, 0, 0);
-			window.renderer.cameraSystem.currentPlanetCamera().rotate(xpos * window.inputSystem.mouseSensitivity, ypos * window.inputSystem.mouseSensitivity);
-		}
-		else {
-			window.cursorPosition.x = xpos;
-			window.cursorPosition.y = ypos;
-		}
+//window callbacks
+void whenWindowChangedFocus(APIWindow apiWindow, Int focused) {
+	Window& parentWindowClass = *static_cast<Window*>(glfwGetWindowUserPointer(apiWindow));
+	inputManager.windowChangedFocus(parentWindowClass,focused);
+}
+void whenWindowWasMaximized(APIWindow apiWindow, Int maximized)
+{
+	Window& parentWindowClass = *static_cast<Window*>(glfwGetWindowUserPointer(apiWindow));
+}
+void whenWindowWasMinimized(APIWindow apiWindow, Int minimized)
+{
+	Window& parentWindowClass = *static_cast<Window*>(glfwGetWindowUserPointer(apiWindow));
+}
+void whenFramebufferIsResized(APIWindow apiWindow, Int width, Int height) {
+	Window& parentWindowClass = *static_cast<Window*>(glfwGetWindowUserPointer(apiWindow));
+
+	ULL current = parentWindowClass.renderer.frameCount;
+
+	parentWindowClass.framebufferSize.x = width;
+	parentWindowClass.framebufferSize.y = height;
+
+	if (apiWindowKeyIsPressed(apiWindow, KeySHIFT)) {
+		parentWindowClass.centerWindow();
 	}
-}
-void whenFramebufferIsResized(APIWindow window, Int width, Int height) {
-	Window& parentWindowClass = *static_cast<Window*>(glfwGetWindowUserPointer(window));
 
-	parentWindowClass.windowContentWidth = width;
-	parentWindowClass.windowContentHeight = height;
-	parentWindowClass.updateFramebuffers();
-	parentWindowClass.renderer.waitForFinishedFrame();
+	while (current == parentWindowClass.renderer.frameCount) {
+		sleep(1);
+	};
 
-	if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
-		parentWindowClass.center();
-	}
 }
-void whenMouseIsScrolling(APIWindow window, Double xoffset, Double yoffset) {
-	static_cast<Window*>(glfwGetWindowUserPointer(window))->renderer.cameraSystem.currentPlanetCamera().speedMultiplier += yoffset;
+void whenMouseIsScrolling(APIWindow apiWindow, Double xAxis, Double yAxis) {
+	Window& parentWindowClass = *static_cast<Window*>(glfwGetWindowUserPointer(apiWindow));
+
+	inputManager.mouseWheelIsScrolled(parentWindowClass, xAxis, yAxis);
 }
 void whenMouseIsPressed(APIWindow apiWindow, Int button, Int action, Int mods) {
 	Window& parentWindowClass = *static_cast<Window*>(glfwGetWindowUserPointer(apiWindow));
+
 	//LMB
 	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
-		if (!parentWindowClass.isCapturingCursor) {
-			parentWindowClass.captureCursor();
+		if (!inputManager.isCapturing(parentWindowClass)) {
+			inputManager.captureCursor(parentWindowClass);
 		}
 	}
 
 	//RMB
 	if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS) {
-		if (parentWindowClass.isCapturingCursor) {
-			parentWindowClass.uncaptureCursor();
+		if (inputManager.isCapturing(parentWindowClass)) {
+			inputManager.uncaptureCursor(parentWindowClass);
 		}
 	}
 }
-void whenButtonIsPressed(APIWindow window, Int key, Int scancode, Int action, Int mods)
+void whenMouseIsMoving(APIWindow apiWindow, Double xPosition, Double yPosition) {
+	Window& parentWindowClass = *static_cast<Window*>(glfwGetWindowUserPointer(apiWindow));
+	inputManager.mouseIsMoving(parentWindowClass,Vec2(xPosition, yPosition));
+}
+void whenButtonIsPressed(APIWindow apiWindow, Int key, Int scancode, Int action, Int modifiers)
 {
-	Window* parentWindowClass = static_cast<Window*>(glfwGetWindowUserPointer(window));
+	Window& parentWindowClass = *static_cast<Window*>(glfwGetWindowUserPointer(apiWindow));
 
-	if (key == GLFW_KEY_ENTER && action == GLFW_PRESS && mods == GLFW_MOD_ALT) {
-		if (parentWindowClass->fullScreen) parentWindowClass->setWindowed();
-		else parentWindowClass->setFullscreen();
-	}
-	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
-		glfwSetWindowShouldClose(parentWindowClass->apiWindow, GLFW_TRUE);
-	}
-	if (key == GLFW_KEY_1 && action == GLFW_PRESS) {
-		parentWindowClass->changeAntiAliasing(0);
-	}
-	if (key == GLFW_KEY_2 && action == GLFW_PRESS) {
-		parentWindowClass->changeAntiAliasing(4);
-	}
-	if (key == GLFW_KEY_3 && action == GLFW_PRESS) {
-		parentWindowClass->changeAntiAliasing(8);
-	}
-	if (key == GLFW_KEY_P && action == GLFW_PRESS) {
-		//Message message;
-		//message.type = 1;
-		//message.byteSize = 0;
-		//client.sendMessage(message);
-	}
-	if (key == GLFW_KEY_N && action == GLFW_PRESS) {
-		parentWindowClass->duplicateWindow = true;
-	}
-	if (key == GLFW_KEY_B && action == GLFW_PRESS) {
-		parentWindowClass->borderlessFullScreen = !parentWindowClass->borderlessFullScreen;
-	}
-	if (key == GLFW_KEY_F && action == GLFW_PRESS) {
-		parentWindowClass->renderer.wireframeMode = !parentWindowClass->renderer.wireframeMode;
-	}
-	if (key == GLFW_KEY_J && action == GLFW_PRESS) {
-		parentWindowClass->renderer.adjustRenderVariables = !parentWindowClass->renderer.adjustRenderVariables;
-	}
-	if (key == GLFW_KEY_K && action == GLFW_PRESS) {
-		parentWindowClass->renderer.planetRenderSystem.worldDistortion = !parentWindowClass->renderer.planetRenderSystem.worldDistortion;
-	}
-	if (key == GLFW_KEY_G && action == GLFW_PRESS) {
-		parentWindowClass->renderer.planetRenderSystem.chunkBorders = !parentWindowClass->renderer.planetRenderSystem.chunkBorders;
+	inputManager.buttonIsPressed(parentWindowClass,key, action, modifiers);
+
+	if (key == GLFW_KEY_ENTER && action == GLFW_PRESS && modifiers == GLFW_MOD_ALT) {
+		if (parentWindowClass.isFullScreen()) parentWindowClass.setWindowed();
+		else parentWindowClass.setExclusiveFullscreen();
 	}
 }

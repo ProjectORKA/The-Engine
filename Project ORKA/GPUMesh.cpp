@@ -7,7 +7,7 @@ void GPUMesh::render() {
 		vao.render();
 		//render vertex data
 		glDrawElements(
-			primitiveMode,
+			enumClassAsInt(primitiveMode),
 			vao.indexBuffer.indexCount,
 			GL_UNSIGNED_INT,
 			(void*)0

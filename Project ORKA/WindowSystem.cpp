@@ -7,13 +7,16 @@ WindowSystem::WindowSystem()
 	assert(glfwInit() == GLFW_TRUE);
 	glfwSetErrorCallback(whenWindowAPIThrowsError);
 }
-
 WindowSystem::~WindowSystem()
 {
+	for (Window& window : windows) {
+		window.destroy();
+	}
 	windows.clear();
 	glfwTerminate();
 }
-void WindowSystem::processLoop() {
+
+void WindowSystem::startMainLoop() {
 	while (windows.size() > 0) {
 		glfwWaitEvents();
 		for (auto it = windows.begin(); it != windows.end(); it++) {
@@ -30,12 +33,8 @@ void WindowSystem::processLoop() {
 		}
 	}
 }
-void WindowSystem::addWindow() {
+Window & WindowSystem::addWindow() {
 	windows.emplace_back();
 	windows.back().create();
-}
-
-void whenWindowAPIThrowsError(Int error, const char* description)
-{
-	logError(description);
+	return windows.back();
 }

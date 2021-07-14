@@ -12,7 +12,7 @@
 struct Renderer;
 
 struct OctreeNodeRenderData {
-	OctreeNode* parentNode;
+	OctreeNode* equivalentOctreeNode = nullptr;
 	//data
 	Vec3 chunkOffset = Vec3(0);
 
@@ -27,6 +27,7 @@ struct OctreeNodeRenderData {
 	OctreeNodeRenderData* c110 = nullptr;
 	OctreeNodeRenderData* c111 = nullptr;
 
+	void count();
 	void destroy();
 	void subdivide();
 	void unsubdivide();
@@ -35,4 +36,14 @@ struct OctreeNodeRenderData {
 	void render(Bool chunkBorders, MeshSystem& meshSystem, TextureSystem& textureSystem, ShaderSystem& shaderSystem);
 	void renderAll(Bool chunkBorders, MeshSystem& meshSystem, TextureSystem& textureSystem, ShaderSystem& shaderSystem);
 	void renderLevel(UShort level, Bool chunkBorders, MeshSystem& meshSystem, TextureSystem& textureSystem, ShaderSystem& shaderSystem);
+};
+
+struct OctreeRenderSystem {
+	OctreeNodeRenderData root;
+
+	void count();
+
+	void destroy() {
+		root.destroy();
+	}
 };

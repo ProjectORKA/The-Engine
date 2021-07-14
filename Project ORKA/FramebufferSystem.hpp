@@ -4,20 +4,17 @@
 #include "Framebuffer.hpp"
 
 struct FramebufferSystem {
+	Bool needsUpdate = true;
 	Vector<Framebuffer> framebuffers;
 	Index currentFramebufferIndex = 0;
+	Area currentFramebufferSize = Area(DEFAULT_WINDOW_WIDTH,DEFAULT_WINDOW_HEIGHT);
 
-	UInt windowWidth = DEFAULT_WINDOW_WIDTH;
-	UInt windowHeight = DEFAULT_WINDOW_HEIGHT;
-	Bool needsUpdate = true;
-
+	void add();
 	void create();
 	void update();
 	void destroy();
 	void deselect();
-	void add(UShort samples);
+	void updateSizes(Area area);
 	void select(Index framebufferIndex);
-	void updateSizes(UInt width, UInt height);
-
 	Framebuffer& current();
 };

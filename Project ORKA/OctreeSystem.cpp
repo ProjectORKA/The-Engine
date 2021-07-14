@@ -30,58 +30,17 @@ void OctreeNode::count()
 	}
 }
 void OctreeNode::update() {
-	if (!subdivided & users) {
+	
+	if ((!subdivided) & users) {
 		subdivide();
 		return;
-	}
-
-	if (subdivided) {
-		if (users == 0) {
-			unsubdivide();
-		} else {
-			c000->update();
-			c001->update();
-			c010->update();
-			c011->update();
-			c100->update();
-			c101->update();
-			c110->update();
-			c111->update();
-		}
 	}
 };
 void OctreeNode::destroy()
 {
 	if (subdivided)unsubdivide();
 }
-void OctreeNode::subdivide()
-{
-	if ((!subdivided) && (users) && (id.level < MAX_CHUNK_LEVEL-1)) {
-		mutex.lock();
-		quadtreeEquivalent->incrementUsers();
 
-		c000 = new OctreeNode;
-		c001 = new OctreeNode;
-		c010 = new OctreeNode;
-		c011 = new OctreeNode;
-		c100 = new OctreeNode;
-		c101 = new OctreeNode;
-		c110 = new OctreeNode;
-		c111 = new OctreeNode;
-
-		c000->createChildNode(this, 0, 0, 0);
-		c001->createChildNode(this, 0, 0, 1);
-		c010->createChildNode(this, 0, 1, 0);
-		c011->createChildNode(this, 0, 1, 1);
-		c100->createChildNode(this, 1, 0, 0);
-		c101->createChildNode(this, 1, 0, 1);
-		c110->createChildNode(this, 1, 1, 0);
-		c111->createChildNode(this, 1, 1, 1);
-
-		subdivided = true;
-		mutex.unlock();
-	}
-}
 void OctreeNode::unsubdivide()
 {
 	if (subdivided) {
@@ -126,11 +85,11 @@ void OctreeNode::decrementUser()
 		logError("User mismatch found!");
 	}
 }
-void OctreeNode::createRootNode(std::shared_ptr<QuadtreeNode> quadTreeRoot) {
+void OctreeNode::createRootNode(QuadtreeNode & quadTreeRoot) {
 	id.level = 0;
 	id.location = ULLVec3(0);
 
-	quadtreeEquivalent = quadTreeRoot;
+	quadtreeEquivalent = &quadTreeRoot;
 
 	ULL chunkHeight = getLocation().z;
 
@@ -140,11 +99,11 @@ void OctreeNode::createRootNode(std::shared_ptr<QuadtreeNode> quadTreeRoot) {
 
 	isValid = true;
 };
-void OctreeNode::createChildNode(OctreeNode* parent, Bool x, Bool y, Bool z)
+void OctreeNode::createChildNode(OctreeNode & parent, Bool x, Bool y, Bool z)
 {
-	this->parentNode = parent;
-	this->id.level = parent->id.level + 1;
-	ULLVec3 tmp = parent->id.location;
+	this->parent = &parent;
+	this->id.level = parent.id.level + 1;
+	ULLVec3 tmp = parent.id.location;
 
 	this->id.location.x = tmp.x += ULL(x) << 64 - id.level;
 	this->id.location.y = tmp.y += ULL(y) << 64 - id.level;
@@ -152,18 +111,18 @@ void OctreeNode::createChildNode(OctreeNode* parent, Bool x, Bool y, Bool z)
 
 	if (x) {
 		if (y) {
-			quadtreeEquivalent = parentNode->quadtreeEquivalent->c11;
+			quadtreeEquivalent = parent.quadtreeEquivalent->c11;
 		}
 		else {
-			quadtreeEquivalent = parentNode->quadtreeEquivalent->c10;
+			quadtreeEquivalent = parent.quadtreeEquivalent->c10;
 		}
 	}
 	else {
 		if (y) {
-			quadtreeEquivalent = parentNode->quadtreeEquivalent->c01;
+			quadtreeEquivalent = parent.quadtreeEquivalent->c01;
 		}
 		else {
-			quadtreeEquivalent = parentNode->quadtreeEquivalent->c00;
+			quadtreeEquivalent = parent.quadtreeEquivalent->c00;
 		}
 	}
 
@@ -173,12 +132,54 @@ void OctreeNode::createChildNode(OctreeNode* parent, Bool x, Bool y, Bool z)
 	data.isTerrain = chunkHeight >= quadtreeEquivalent->data.terrain.lowerLimit & chunkHeight <= quadtreeEquivalent->data.terrain.upperLimit;
 
 	//propagate "hasContent upwards"
+	OctreeNode * currentParentNode = &parent;
 
-	OctreeNode* currentParentNode = parent;
 	while ((currentParentNode != nullptr) & data.hasContent) {
 		currentParentNode->data.hasContent |= data.hasContent;
-		currentParentNode = currentParentNode->parentNode;
+		currentParentNode = currentParentNode->parent;
 	}
 
 	isValid = true;
+}
+
+void OctreeNode::subdivide()
+{
+	if ((!subdivided) && (id.level < MAX_CHUNK_LEVEL - 1)) {
+		mutex.lock();
+		quadtreeEquivalent->incrementUsers();
+
+		c000 = new OctreeNode();
+		c001 = new OctreeNode();
+		c010 = new OctreeNode();
+		c011 = new OctreeNode();
+		c100 = new OctreeNode();
+		c101 = new OctreeNode();
+		c110 = new OctreeNode();
+		c111 = new OctreeNode();
+
+		c000->createChildNode(*this, 0, 0, 0);
+		c001->createChildNode(*this, 0, 0, 1);
+		c010->createChildNode(*this, 0, 1, 0);
+		c011->createChildNode(*this, 0, 1, 1);
+		c100->createChildNode(*this, 1, 0, 0);
+		c101->createChildNode(*this, 1, 0, 1);
+		c110->createChildNode(*this, 1, 1, 0);
+		c111->createChildNode(*this, 1, 1, 1);
+
+		subdivided = true;
+		mutex.unlock();
+	}
+}
+
+void OctreeSystem::count() {
+	root.count();
+}
+void OctreeSystem::create(QuadtreeSystem& quadtreeSystem) {
+	root.createRootNode(quadtreeSystem.root);
+}
+void OctreeSystem::destroy() {
+	root.destroy();
+}
+void OctreeSystem::update() {
+	root.update();
 }

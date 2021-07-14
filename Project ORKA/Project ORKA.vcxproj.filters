@@ -8,15 +8,6 @@
     <Filter Include="Program">
       <UniqueIdentifier>{23ae75d0-990b-4171-994e-7dc2a31c13cf}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Program\Networking">
-      <UniqueIdentifier>{9f7e75f3-5863-4398-a6f5-94c9f89fe662}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Program\Util">
-      <UniqueIdentifier>{4684f843-1ee9-4813-bd3f-ed28cefdc038}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Program\GameSimulation">
-      <UniqueIdentifier>{e9634dc3-942c-49f4-9b33-c43f93332bc3}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Resources">
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
@@ -30,167 +21,248 @@
     <Filter Include="Shaders\primitive">
       <UniqueIdentifier>{b4447bb9-dc42-4638-87e1-88d2e0781b1b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Shaders\sky">
-      <UniqueIdentifier>{355914a4-8b20-4f42-84d8-3e0e164c10c3}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Shaders\postProcess">
       <UniqueIdentifier>{4db6f633-ae60-4a54-8c18-7603ecd0774d}</UniqueIdentifier>
     </Filter>
     <Filter Include="Shaders\terrain">
       <UniqueIdentifier>{77b10299-6395-4395-909b-016b3fc2f0c0}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Program\Util\Threading">
-      <UniqueIdentifier>{e54cf082-0377-43d0-926e-993f59bf0ba1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Program\Util\Basic">
-      <UniqueIdentifier>{695af8fd-29cb-4f4b-a742-893b031d0a4b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Program\Util\Debug">
-      <UniqueIdentifier>{42ff64d9-fea1-4a31-b5fd-e759905a5be0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Program\Util\FileSystem">
-      <UniqueIdentifier>{dbb0fa04-5b33-4e99-b1e6-ed0ba194247b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Program\Util\Math">
-      <UniqueIdentifier>{83b44308-8a81-4d09-8e5e-2d0e360d85c6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Program\GameSimulation\PlanetSystem">
-      <UniqueIdentifier>{604777cb-5920-4900-813b-be0c315a86fc}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Program\GameSimulation\PlanetSystem\OctreeSystem">
-      <UniqueIdentifier>{29891783-4580-46ff-a5bb-d0759f151e76}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Program\GameSimulation\PlanetSystem\QuadtreeSystem">
-      <UniqueIdentifier>{e5531201-fe1e-4a87-9551-3113374eda98}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Program\GameSimulation\PlanetSystem\Heightmap">
-      <UniqueIdentifier>{2f42e84e-7aa2-4972-bea8-b849c08c6b15}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Program\Util\Time">
-      <UniqueIdentifier>{6fb63ff6-d7db-4b15-981a-b2c04228363d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Program\GameSimulation\PlanetSystem\Util">
-      <UniqueIdentifier>{6ed910bb-6133-44bf-a110-ddd23522025a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Program\Networking\Server">
-      <UniqueIdentifier>{f077cec4-2d58-4743-a7a9-81e4cc05eee5}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Program\Networking\Message">
-      <UniqueIdentifier>{693dd4f0-7d19-404e-be2a-7f7c7018d3bf}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Program\Networking\Client">
-      <UniqueIdentifier>{ae0d96c7-c76a-4577-a9d8-dae250a8a931}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Shaders\unlit">
       <UniqueIdentifier>{c99157e3-d897-499f-ace0-1f9ae0e36505}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Program\WindowSystem">
-      <UniqueIdentifier>{5c13c41c-17df-4f45-b7fa-504918bd03e7}</UniqueIdentifier>
+    <Filter Include="Shaders\uiShader">
+      <UniqueIdentifier>{acdd694b-8c13-437d-a8d9-6d5640d73f8a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Program\WindowSystem\Widow">
-      <UniqueIdentifier>{d9c81761-f981-426b-a2d3-1d9ada3ee465}</UniqueIdentifier>
+    <Filter Include="Program\Games">
+      <UniqueIdentifier>{8362c317-faa6-4f7f-8f14-21cf8d4d3a6b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Program\WindowSystem\Widow\Layer">
-      <UniqueIdentifier>{beb791ec-f351-4143-9838-7d2464f037eb}</UniqueIdentifier>
+    <Filter Include="Program\Games\Mind Map">
+      <UniqueIdentifier>{69c19ffb-5d50-409e-9f14-e4ebf9863392}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Program\GameSimulation\PlanetSystem\OctreeSystem\OctreeID">
-      <UniqueIdentifier>{4bdc795e-e4b2-4b93-be86-8990c9eba501}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Program\GameSimulation\PlanetSystem\OctreeSystem\OctreeData">
-      <UniqueIdentifier>{e76046f6-c940-4910-9e70-7c61cfc28410}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Program\WindowSystem\Widow\InputSystem">
-      <UniqueIdentifier>{46085f21-4e03-45cf-9577-f472ac3fe485}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Program\JobSystem">
-      <UniqueIdentifier>{734ac2b6-bbed-4e5d-9f39-aac6b536e3e6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Program\GameSimulation\PlanetSystem\QuadtreeSystem\TerrainSystem">
-      <UniqueIdentifier>{ef6cbb06-4831-4093-a235-241cc5130c14}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Program\GameSimulation\PlanetSystem\QuadtreeSystem\QuadtreeID">
-      <UniqueIdentifier>{84045d38-c2e5-4710-a5cb-65234acec582}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Program\Renderer">
-      <UniqueIdentifier>{8983aea4-6e5e-4a1d-b227-3a1ad3157f11}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Program\Renderer\FramebufferSystem">
-      <UniqueIdentifier>{ddcde9e2-34dc-41c5-b145-75388667f7e1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Program\Renderer\FramebufferSystem\Framebuffer">
-      <UniqueIdentifier>{83389054-f4b6-4c15-91a9-47cd01e77add}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Program\Renderer\RenderObjectSystem">
-      <UniqueIdentifier>{461edde2-4db7-4a4e-9e3f-24912649b9ee}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Program\Renderer\PlanetRenderSystem">
-      <UniqueIdentifier>{edf5df30-b6df-4df3-8656-ed098c6e68da}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Program\Renderer\PlanetRenderSystem\QuadtreeSystemRenderer">
-      <UniqueIdentifier>{e9d6fa29-4101-4d6f-a38d-7e25ba6fced1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Program\Renderer\PlanetRenderSystem\OctreeSystemRenderer">
-      <UniqueIdentifier>{8edeb171-3391-43e2-9ab1-27c3c69cd8ae}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Program\Renderer\PlanetRenderSystem\TerrainRendering">
-      <UniqueIdentifier>{f9f8954f-c57d-49b7-9183-baf6d1162ecd}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Program\Renderer\PlanetRenderSystem\RelativeChunkOffset">
-      <UniqueIdentifier>{48654fe3-8b1f-4b0a-b3b2-dd8d6330ae51}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Program\Renderer\ViewportSystem">
-      <UniqueIdentifier>{62eda2c8-90eb-45b1-bba1-71020f2ec684}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Program\Renderer\TextRenderSystem">
-      <UniqueIdentifier>{deb23d9e-84f6-441d-b65d-2e11a755d244}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Program\Renderer\MeshSystem">
-      <UniqueIdentifier>{fe7d1840-f4e9-4212-bd63-094c59350e7a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Program\Renderer\MeshSystem\IndexedBufferObject">
-      <UniqueIdentifier>{dd4fa99f-7a02-4c26-a434-ab0f93ab8d37}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Program\Renderer\MeshSystem\CPUMesh">
-      <UniqueIdentifier>{5f425866-fcf7-4a80-a6fb-99daf74feee6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Program\Renderer\MeshSystem\GPUMesh">
-      <UniqueIdentifier>{a55d4651-4649-432b-80b6-2184d953e3a1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Program\Renderer\ShaderSystem">
-      <UniqueIdentifier>{c9eaa8a5-3a6a-4110-a206-751a74dafb6b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Program\Renderer\ShaderSystem\Shader">
-      <UniqueIdentifier>{134ecb17-76b6-4d79-9737-c4a0c66957b0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Program\Renderer\TextureSystem">
-      <UniqueIdentifier>{6185e155-1bba-482a-adea-515da0616a59}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Program\Renderer\TextureSystem\CPUTexture">
-      <UniqueIdentifier>{ffc88abb-f496-4d8e-a45a-4caa86e5e963}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Program\Renderer\TextureSystem\GPUTexture">
-      <UniqueIdentifier>{f23fb907-ec4b-4c91-a45a-6e80a722b9c6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Program\Renderer\CameraSystem">
-      <UniqueIdentifier>{920b6a6f-e90c-41f6-9f39-d391cfd9ded4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Program\Renderer\CameraSystem\PlanetCamera">
-      <UniqueIdentifier>{c344e3ab-b1e9-4ab0-9d9a-e53658cf77ce}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Program\Renderer\CameraSystem\SimpleCamera">
-      <UniqueIdentifier>{cde7c062-fb5f-4bce-96f4-c51e70575524}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Program\AITest">
+    <Filter Include="Program\Games\AITest">
       <UniqueIdentifier>{bd903ea8-cf67-4516-b3b3-501e4ccf696f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Program\GameSimulation\AiPlayground">
-      <UniqueIdentifier>{5af581fc-7fa1-4a03-a58a-8f535c29606b}</UniqueIdentifier>
+    <Filter Include="Program\Games\ORKA">
+      <UniqueIdentifier>{eb3f5b7f-7c03-4eec-b331-db9300fb0f02}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Shaders\computeTest">
-      <UniqueIdentifier>{be8754e4-de35-4087-8137-e27a940b7fee}</UniqueIdentifier>
+    <Filter Include="Program\Games\ORKA\PlanetSystem">
+      <UniqueIdentifier>{604777cb-5920-4900-813b-be0c315a86fc}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Program\Application">
-      <UniqueIdentifier>{2d4bed72-95c1-437a-b4ee-dd0932e3a2e3}</UniqueIdentifier>
+    <Filter Include="Program\Games\ORKA\PlanetSystem\OctreeSystem">
+      <UniqueIdentifier>{29891783-4580-46ff-a5bb-d0759f151e76}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\Games\ORKA\PlanetSystem\OctreeSystem\OctreeID">
+      <UniqueIdentifier>{4bdc795e-e4b2-4b93-be86-8990c9eba501}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\Games\ORKA\PlanetSystem\OctreeSystem\OctreeData">
+      <UniqueIdentifier>{e76046f6-c940-4910-9e70-7c61cfc28410}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\Games\ORKA\PlanetSystem\QuadtreeSystem">
+      <UniqueIdentifier>{e5531201-fe1e-4a87-9551-3113374eda98}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\Games\ORKA\PlanetSystem\QuadtreeSystem\TerrainSystem">
+      <UniqueIdentifier>{ef6cbb06-4831-4093-a235-241cc5130c14}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\Games\ORKA\PlanetSystem\QuadtreeSystem\QuadtreeID">
+      <UniqueIdentifier>{84045d38-c2e5-4710-a5cb-65234acec582}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\Games\ORKA\PlanetSystem\Heightmap">
+      <UniqueIdentifier>{2f42e84e-7aa2-4972-bea8-b849c08c6b15}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\Games\ORKA\PlanetSystem\Util">
+      <UniqueIdentifier>{6ed910bb-6133-44bf-a110-ddd23522025a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\Common">
+      <UniqueIdentifier>{4684f843-1ee9-4813-bd3f-ed28cefdc038}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\Common\Threading">
+      <UniqueIdentifier>{e54cf082-0377-43d0-926e-993f59bf0ba1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\Common\Basic">
+      <UniqueIdentifier>{695af8fd-29cb-4f4b-a742-893b031d0a4b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\Common\Debug">
+      <UniqueIdentifier>{42ff64d9-fea1-4a31-b5fd-e759905a5be0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\Common\FileSystem">
+      <UniqueIdentifier>{dbb0fa04-5b33-4e99-b1e6-ed0ba194247b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\Common\Math">
+      <UniqueIdentifier>{83b44308-8a81-4d09-8e5e-2d0e360d85c6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\Common\Time">
+      <UniqueIdentifier>{6fb63ff6-d7db-4b15-981a-b2c04228363d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\Common\Advanced">
+      <UniqueIdentifier>{fb34d34b-e422-480e-b241-b3cb59619355}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\Common\Util">
+      <UniqueIdentifier>{1b3c6c0e-a78c-42a3-9248-9f270de8adbf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders\text">
+      <UniqueIdentifier>{56899af3-0746-4888-b31e-af4cd7ae04d2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\Games\ORKA\UI">
+      <UniqueIdentifier>{a78cd6db-5d21-4d2e-b248-28a422c9f5ef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\Common\Pixel">
+      <UniqueIdentifier>{3e661aca-ecf5-491d-bfb6-b7ffb576b1d8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders\blurredUI">
+      <UniqueIdentifier>{8a0a36c0-ffbc-4263-9732-cd6bb57a17bc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders\blur">
+      <UniqueIdentifier>{2084c430-e18d-4031-a6ce-58f2931af800}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\Engine">
+      <UniqueIdentifier>{1b27f742-3b68-461a-8a95-ed051c254b47}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\Games\Organizer">
+      <UniqueIdentifier>{7bdb92d9-9125-4a12-ab78-d4789253feb6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\Engine\GameSimulation">
+      <UniqueIdentifier>{e9634dc3-942c-49f4-9b33-c43f93332bc3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\Engine\Renderer">
+      <UniqueIdentifier>{8983aea4-6e5e-4a1d-b227-3a1ad3157f11}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\Engine\Renderer\FramebufferSystem">
+      <UniqueIdentifier>{ddcde9e2-34dc-41c5-b145-75388667f7e1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\Engine\Renderer\FramebufferSystem\Framebuffer">
+      <UniqueIdentifier>{83389054-f4b6-4c15-91a9-47cd01e77add}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\Engine\Renderer\RenderObjectSystem">
+      <UniqueIdentifier>{461edde2-4db7-4a4e-9e3f-24912649b9ee}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\Engine\Renderer\PlanetRenderSystem">
+      <UniqueIdentifier>{edf5df30-b6df-4df3-8656-ed098c6e68da}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\Engine\Renderer\PlanetRenderSystem\QuadtreeSystemRenderer">
+      <UniqueIdentifier>{e9d6fa29-4101-4d6f-a38d-7e25ba6fced1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\Engine\Renderer\PlanetRenderSystem\OctreeSystemRenderer">
+      <UniqueIdentifier>{8edeb171-3391-43e2-9ab1-27c3c69cd8ae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\Engine\Renderer\PlanetRenderSystem\TerrainRendering">
+      <UniqueIdentifier>{f9f8954f-c57d-49b7-9183-baf6d1162ecd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\Engine\Renderer\PlanetRenderSystem\RelativeChunkOffset">
+      <UniqueIdentifier>{48654fe3-8b1f-4b0a-b3b2-dd8d6330ae51}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\Engine\Renderer\TextRenderSystem">
+      <UniqueIdentifier>{deb23d9e-84f6-441d-b65d-2e11a755d244}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\Engine\Renderer\MeshSystem">
+      <UniqueIdentifier>{fe7d1840-f4e9-4212-bd63-094c59350e7a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\Engine\Renderer\MeshSystem\IndexedBufferObject">
+      <UniqueIdentifier>{dd4fa99f-7a02-4c26-a434-ab0f93ab8d37}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\Engine\Renderer\MeshSystem\CPUMesh">
+      <UniqueIdentifier>{5f425866-fcf7-4a80-a6fb-99daf74feee6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\Engine\Renderer\MeshSystem\GPUMesh">
+      <UniqueIdentifier>{a55d4651-4649-432b-80b6-2184d953e3a1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\Engine\Renderer\ShaderSystem">
+      <UniqueIdentifier>{c9eaa8a5-3a6a-4110-a206-751a74dafb6b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\Engine\Renderer\ShaderSystem\Shader">
+      <UniqueIdentifier>{134ecb17-76b6-4d79-9737-c4a0c66957b0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\Engine\Renderer\ShaderSystem\Uniforms">
+      <UniqueIdentifier>{7ea2baf7-11ca-4aa1-b3e4-c8f48e892530}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\Engine\Renderer\ShaderSystem\Uniforms\UniformBuffer">
+      <UniqueIdentifier>{c04daa80-a0c4-44bc-be2e-1b529d41451d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\Engine\Renderer\ShaderSystem\ShaderProgram">
+      <UniqueIdentifier>{acff2f26-9942-4dca-980f-20d2171bbc33}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\Engine\Renderer\TextureSystem">
+      <UniqueIdentifier>{6185e155-1bba-482a-adea-515da0616a59}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\Engine\Renderer\TextureSystem\CPUTexture">
+      <UniqueIdentifier>{ffc88abb-f496-4d8e-a45a-4caa86e5e963}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\Engine\Renderer\TextureSystem\GPUTexture">
+      <UniqueIdentifier>{f23fb907-ec4b-4c91-a45a-6e80a722b9c6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\Engine\Renderer\CameraSystem">
+      <UniqueIdentifier>{920b6a6f-e90c-41f6-9f39-d391cfd9ded4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\Engine\Renderer\CameraSystem\PlanetCamera">
+      <UniqueIdentifier>{c344e3ab-b1e9-4ab0-9d9a-e53658cf77ce}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\Engine\Renderer\CameraSystem\SimpleCamera">
+      <UniqueIdentifier>{cde7c062-fb5f-4bce-96f4-c51e70575524}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\Engine\Renderer\RenderRegion">
+      <UniqueIdentifier>{7b63c268-1039-4db4-b027-f461a72b02e9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\Engine\WindowSystem">
+      <UniqueIdentifier>{5c13c41c-17df-4f45-b7fa-504918bd03e7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\Engine\WindowSystem\Window">
+      <UniqueIdentifier>{d9c81761-f981-426b-a2d3-1d9ada3ee465}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\Engine\WindowSystem\Window\WindowAPI">
+      <UniqueIdentifier>{8f8db753-4351-4346-9556-1086cbf2bd9f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\Engine\WindowSystem\Window\InputManager">
+      <UniqueIdentifier>{7a9588e2-a35a-4c16-98a6-7d8e16544223}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\Engine\WindowSystem\Window\InputManager\CameraController">
+      <UniqueIdentifier>{ea07d26c-4f4c-466d-addc-882a8a7843fe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\Engine\UserInterface">
+      <UniqueIdentifier>{0794c978-10eb-433d-82f6-f90232ea1746}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\Engine\UserInterface\UIElements">
+      <UniqueIdentifier>{5a5c1d5e-9102-401b-9d35-8f005d4d4a5c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\Engine\UserInterface\UIElements\UIGameView">
+      <UniqueIdentifier>{f3e25cb4-4197-4a9f-932f-1a38a8b60253}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\Engine\UserInterface\UIElements\UIFlatPanel">
+      <UniqueIdentifier>{24951454-5368-4cc9-9675-f66324be07d7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\Engine\UserInterface\UIElements\UISplit">
+      <UniqueIdentifier>{1a8b28ba-9c20-4e67-b574-22bb23bcf4fc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\Engine\UserInterface\UIConstraints">
+      <UniqueIdentifier>{53831a67-93d6-41f9-b733-dc2b663d2485}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\Engine\UserInterface\UIElements\UIText">
+      <UniqueIdentifier>{8d747190-44ed-464a-ac3c-bc36786866d9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\Engine\Networking">
+      <UniqueIdentifier>{9f7e75f3-5863-4398-a6f5-94c9f89fe662}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\Engine\Networking\Server">
+      <UniqueIdentifier>{f077cec4-2d58-4743-a7a9-81e4cc05eee5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\Engine\Networking\Message">
+      <UniqueIdentifier>{693dd4f0-7d19-404e-be2a-7f7c7018d3bf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\Engine\Networking\Client">
+      <UniqueIdentifier>{ae0d96c7-c76a-4577-a9d8-dae250a8a931}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\Engine\JobSystem">
+      <UniqueIdentifier>{734ac2b6-bbed-4e5d-9f39-aac6b536e3e6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\Games\ORKA\NewFilter1">
+      <UniqueIdentifier>{b9b1c0a3-5dac-4d9e-ad2a-01dc6a96b464}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\Engine\Renderer\SimplePlanetRenderer">
+      <UniqueIdentifier>{3349c4bf-e1b3-4efd-b05f-c7994399bac5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\Games\ORKA\PlanetSystem\QuadtreeSystem\QuadtreeData">
+      <UniqueIdentifier>{ec965802-82ea-4efb-b292-18203ee16490}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\Games\ORKA\PlanetSystem\QuadtreeSystem\QuadtreeNode">
+      <UniqueIdentifier>{9cb62e2b-16bf-4876-bbfa-e971d74c65a8}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -199,160 +271,199 @@
       <Filter>Program</Filter>
     </ClCompile>
     <ClCompile Include="MeshSystem.cpp">
-      <Filter>Program\Renderer\MeshSystem</Filter>
+      <Filter>Program\Engine\Renderer\MeshSystem</Filter>
     </ClCompile>
     <ClCompile Include="TextureSystem.cpp">
-      <Filter>Program\Renderer\TextureSystem</Filter>
+      <Filter>Program\Engine\Renderer\TextureSystem</Filter>
     </ClCompile>
     <ClCompile Include="Entity.cpp">
-      <Filter>Program\GameSimulation</Filter>
+      <Filter>Program\Engine\GameSimulation</Filter>
     </ClCompile>
     <ClCompile Include="GameSimulation.cpp">
-      <Filter>Program\GameSimulation</Filter>
+      <Filter>Program\Engine\GameSimulation</Filter>
     </ClCompile>
     <ClCompile Include="ProceduralMeshes.cpp">
-      <Filter>Program\Renderer\MeshSystem</Filter>
+      <Filter>Program\Engine\Renderer\MeshSystem</Filter>
     </ClCompile>
     <ClCompile Include="Renderer.cpp">
-      <Filter>Program\Renderer</Filter>
+      <Filter>Program\Engine\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="stb_image.cpp">
-      <Filter>Program\Renderer\TextureSystem</Filter>
+      <Filter>Program\Engine\Renderer\TextureSystem</Filter>
     </ClCompile>
     <ClCompile Include="WindowSystem.cpp">
-      <Filter>Program\WindowSystem</Filter>
+      <Filter>Program\Engine\WindowSystem</Filter>
     </ClCompile>
     <ClCompile Include="IndexBufferObject.cpp">
-      <Filter>Program\Renderer\MeshSystem\IndexedBufferObject</Filter>
+      <Filter>Program\Engine\Renderer\MeshSystem\IndexedBufferObject</Filter>
     </ClCompile>
     <ClCompile Include="RenderObjectSystem.cpp">
-      <Filter>Program\Renderer\RenderObjectSystem</Filter>
+      <Filter>Program\Engine\Renderer\RenderObjectSystem</Filter>
     </ClCompile>
     <ClCompile Include="ShaderSystem.cpp">
-      <Filter>Program\Renderer\ShaderSystem</Filter>
+      <Filter>Program\Engine\Renderer\ShaderSystem</Filter>
     </ClCompile>
     <ClCompile Include="PlanetRenderSystem.cpp">
-      <Filter>Program\Renderer\PlanetRenderSystem</Filter>
+      <Filter>Program\Engine\Renderer\PlanetRenderSystem</Filter>
     </ClCompile>
     <ClCompile Include="VertexArrayObject.cpp">
-      <Filter>Program\Renderer\MeshSystem</Filter>
+      <Filter>Program\Engine\Renderer\MeshSystem</Filter>
     </ClCompile>
     <ClCompile Include="VertexBufferObject.cpp">
-      <Filter>Program\Renderer\MeshSystem</Filter>
-    </ClCompile>
-    <ClCompile Include="Uniforms.cpp">
-      <Filter>Program\Renderer\ShaderSystem</Filter>
-    </ClCompile>
-    <ClCompile Include="ViewportSystem.cpp">
-      <Filter>Program\Renderer\ViewportSystem</Filter>
+      <Filter>Program\Engine\Renderer\MeshSystem</Filter>
     </ClCompile>
     <ClCompile Include="CPUMesh.cpp">
-      <Filter>Program\Renderer\MeshSystem\CPUMesh</Filter>
+      <Filter>Program\Engine\Renderer\MeshSystem\CPUMesh</Filter>
     </ClCompile>
     <ClCompile Include="GPUMesh.cpp">
-      <Filter>Program\Renderer\MeshSystem\GPUMesh</Filter>
+      <Filter>Program\Engine\Renderer\MeshSystem\GPUMesh</Filter>
     </ClCompile>
     <ClCompile Include="Networking.cpp">
-      <Filter>Program\Networking</Filter>
+      <Filter>Program\Engine\Networking</Filter>
     </ClCompile>
     <ClCompile Include="TextRenderSystem.cpp">
-      <Filter>Program\Renderer\TextRenderSystem</Filter>
+      <Filter>Program\Engine\Renderer\TextRenderSystem</Filter>
     </ClCompile>
     <ClCompile Include="GraphicsAPI.cpp">
-      <Filter>Program\Renderer</Filter>
+      <Filter>Program\Engine\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="Basics.cpp">
-      <Filter>Program\Util\Basic</Filter>
+      <Filter>Program\Common\Basic</Filter>
     </ClCompile>
     <ClCompile Include="Debug.cpp">
-      <Filter>Program\Util\Debug</Filter>
+      <Filter>Program\Common\Debug</Filter>
     </ClCompile>
     <ClCompile Include="FileSystem.cpp">
-      <Filter>Program\Util\FileSystem</Filter>
+      <Filter>Program\Common\FileSystem</Filter>
     </ClCompile>
     <ClCompile Include="Math.cpp">
-      <Filter>Program\Util\Math</Filter>
+      <Filter>Program\Common\Math</Filter>
     </ClCompile>
     <ClCompile Include="Threading.cpp">
-      <Filter>Program\Util\Threading</Filter>
+      <Filter>Program\Common\Threading</Filter>
     </ClCompile>
     <ClCompile Include="OctreeSystem.cpp">
-      <Filter>Program\GameSimulation\PlanetSystem\OctreeSystem</Filter>
+      <Filter>Program\Games\ORKA\PlanetSystem\OctreeSystem</Filter>
     </ClCompile>
     <ClCompile Include="PlanetSystem.cpp">
-      <Filter>Program\GameSimulation\PlanetSystem</Filter>
+      <Filter>Program\Games\ORKA\PlanetSystem</Filter>
     </ClCompile>
     <ClCompile Include="QuadtreeSystem.cpp">
-      <Filter>Program\GameSimulation\PlanetSystem\QuadtreeSystem</Filter>
+      <Filter>Program\Games\ORKA\PlanetSystem\QuadtreeSystem</Filter>
     </ClCompile>
     <ClCompile Include="Time.cpp">
-      <Filter>Program\Util\Time</Filter>
+      <Filter>Program\Common\Time</Filter>
     </ClCompile>
     <ClCompile Include="Timer.cpp">
-      <Filter>Program\Util\Time</Filter>
+      <Filter>Program\Common\Time</Filter>
     </ClCompile>
     <ClCompile Include="Random.cpp">
-      <Filter>Program\Util\Math</Filter>
+      <Filter>Program\Common\Math</Filter>
     </ClCompile>
     <ClCompile Include="ULLUtil.cpp">
-      <Filter>Program\GameSimulation\PlanetSystem\Util</Filter>
+      <Filter>Program\Games\ORKA\PlanetSystem\Util</Filter>
     </ClCompile>
     <ClCompile Include="Server.cpp">
-      <Filter>Program\Networking\Server</Filter>
+      <Filter>Program\Engine\Networking\Server</Filter>
     </ClCompile>
     <ClCompile Include="Client.cpp">
-      <Filter>Program\Networking\Client</Filter>
-    </ClCompile>
-    <ClCompile Include="Layer.cpp">
-      <Filter>Program\WindowSystem\Widow\Layer</Filter>
+      <Filter>Program\Engine\Networking\Client</Filter>
     </ClCompile>
     <ClCompile Include="CPUTexture.cpp">
-      <Filter>Program\Renderer\TextureSystem\CPUTexture</Filter>
+      <Filter>Program\Engine\Renderer\TextureSystem\CPUTexture</Filter>
     </ClCompile>
     <ClCompile Include="GPUTexture.cpp">
-      <Filter>Program\Renderer\TextureSystem\GPUTexture</Filter>
+      <Filter>Program\Engine\Renderer\TextureSystem\GPUTexture</Filter>
     </ClCompile>
     <ClCompile Include="Framebuffer.cpp">
-      <Filter>Program\Renderer\FramebufferSystem\Framebuffer</Filter>
+      <Filter>Program\Engine\Renderer\FramebufferSystem\Framebuffer</Filter>
     </ClCompile>
     <ClCompile Include="Window.cpp">
-      <Filter>Program\WindowSystem\Widow</Filter>
+      <Filter>Program\Engine\WindowSystem\Window</Filter>
     </ClCompile>
     <ClCompile Include="FramebufferSystem.cpp">
-      <Filter>Program\Renderer\FramebufferSystem</Filter>
+      <Filter>Program\Engine\Renderer\FramebufferSystem</Filter>
     </ClCompile>
     <ClCompile Include="Shader.cpp">
-      <Filter>Program\Renderer\ShaderSystem\Shader</Filter>
+      <Filter>Program\Engine\Renderer\ShaderSystem\Shader</Filter>
     </ClCompile>
     <ClCompile Include="QuadtreeSystemRenderer.cpp">
-      <Filter>Program\Renderer\PlanetRenderSystem\QuadtreeSystemRenderer</Filter>
+      <Filter>Program\Engine\Renderer\PlanetRenderSystem\QuadtreeSystemRenderer</Filter>
     </ClCompile>
     <ClCompile Include="TerrainRendering.cpp">
-      <Filter>Program\Renderer\PlanetRenderSystem\TerrainRendering</Filter>
+      <Filter>Program\Engine\Renderer\PlanetRenderSystem\TerrainRendering</Filter>
     </ClCompile>
     <ClCompile Include="CameraSystem.cpp">
-      <Filter>Program\Renderer\CameraSystem</Filter>
+      <Filter>Program\Engine\Renderer\CameraSystem</Filter>
     </ClCompile>
     <ClCompile Include="PlanetCamera.cpp">
-      <Filter>Program\Renderer\CameraSystem\PlanetCamera</Filter>
+      <Filter>Program\Engine\Renderer\CameraSystem\PlanetCamera</Filter>
     </ClCompile>
     <ClCompile Include="SimpleCamera.cpp">
-      <Filter>Program\Renderer\CameraSystem\SimpleCamera</Filter>
+      <Filter>Program\Engine\Renderer\CameraSystem\SimpleCamera</Filter>
     </ClCompile>
     <ClCompile Include="OctreeSystemRenderer.cpp">
-      <Filter>Program\Renderer\PlanetRenderSystem\OctreeSystemRenderer</Filter>
+      <Filter>Program\Engine\Renderer\PlanetRenderSystem\OctreeSystemRenderer</Filter>
     </ClCompile>
     <ClCompile Include="JobSystem.cpp">
-      <Filter>Program\JobSystem</Filter>
+      <Filter>Program\Engine\JobSystem</Filter>
     </ClCompile>
     <ClCompile Include="RelativeChunkOffset.cpp">
-      <Filter>Program\Renderer\PlanetRenderSystem\RelativeChunkOffset</Filter>
+      <Filter>Program\Engine\Renderer\PlanetRenderSystem\RelativeChunkOffset</Filter>
     </ClCompile>
     <ClCompile Include="TerrainSystem.cpp">
-      <Filter>Program\GameSimulation\PlanetSystem\QuadtreeSystem\TerrainSystem</Filter>
+      <Filter>Program\Games\ORKA\PlanetSystem\QuadtreeSystem\TerrainSystem</Filter>
     </ClCompile>
     <ClCompile Include="AITEst.cpp">
-      <Filter>Program\AITest</Filter>
+      <Filter>Program\Games\AITest</Filter>
+    </ClCompile>
+    <ClCompile Include="WindowAPI.cpp">
+      <Filter>Program\Engine\WindowSystem\Window\WindowAPI</Filter>
+    </ClCompile>
+    <ClCompile Include="InputManager.cpp">
+      <Filter>Program\Engine\WindowSystem\Window\InputManager</Filter>
+    </ClCompile>
+    <ClCompile Include="TiledMath.cpp">
+      <Filter>Program\Common\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="MindMap.cpp">
+      <Filter>Program\Games\Mind Map</Filter>
+    </ClCompile>
+    <ClCompile Include="Uniforms.cpp">
+      <Filter>Program\Engine\Renderer\ShaderSystem\Uniforms</Filter>
+    </ClCompile>
+    <ClCompile Include="UniformBuffer.cpp">
+      <Filter>Program\Engine\Renderer\ShaderSystem\Uniforms\UniformBuffer</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderRegion.cpp">
+      <Filter>Program\Engine\Renderer\RenderRegion</Filter>
+    </ClCompile>
+    <ClCompile Include="UIElement.cpp">
+      <Filter>Program\Engine\UserInterface\UIElements</Filter>
+    </ClCompile>
+    <ClCompile Include="UIGameView.cpp">
+      <Filter>Program\Engine\UserInterface\UIElements\UIGameView</Filter>
+    </ClCompile>
+    <ClCompile Include="SimpleTextRendering.cpp">
+      <Filter>Program\Engine\Renderer\TextRenderSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="ShaderProgram.cpp">
+      <Filter>Program\Engine\Renderer\ShaderSystem\ShaderProgram</Filter>
+    </ClCompile>
+    <ClCompile Include="UISplit.cpp">
+      <Filter>Program\Engine\UserInterface\UIElements\UISplit</Filter>
+    </ClCompile>
+    <ClCompile Include="UIFlatPanel.cpp">
+      <Filter>Program\Engine\UserInterface\UIElements\UIFlatPanel</Filter>
+    </ClCompile>
+    <ClCompile Include="ORKAGame.cpp">
+      <Filter>Program\Games\ORKA</Filter>
+    </ClCompile>
+    <ClCompile Include="UIText.cpp">
+      <Filter>Program\Engine\UserInterface\UIElements\UIText</Filter>
+    </ClCompile>
+    <ClCompile Include="QuadtreeNode.cpp">
+      <Filter>Program\Games\ORKA\PlanetSystem\QuadtreeSystem\QuadtreeNode</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -366,202 +477,256 @@
     </ClInclude>
     <ClInclude Include="WindowsEntry.hpp" />
     <ClInclude Include="MeshSystem.hpp">
-      <Filter>Program\Renderer\MeshSystem</Filter>
+      <Filter>Program\Engine\Renderer\MeshSystem</Filter>
     </ClInclude>
     <ClInclude Include="TextureSystem.hpp">
-      <Filter>Program\Renderer\TextureSystem</Filter>
+      <Filter>Program\Engine\Renderer\TextureSystem</Filter>
     </ClInclude>
     <ClInclude Include="Entity.hpp">
-      <Filter>Program\GameSimulation</Filter>
+      <Filter>Program\Engine\GameSimulation</Filter>
     </ClInclude>
     <ClInclude Include="GameSimulation.hpp">
-      <Filter>Program\GameSimulation</Filter>
+      <Filter>Program\Engine\GameSimulation</Filter>
     </ClInclude>
     <ClInclude Include="GraphicsAPI.hpp">
-      <Filter>Program\Renderer</Filter>
+      <Filter>Program\Engine\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="ProceduralMeshes.hpp">
-      <Filter>Program\Renderer\MeshSystem</Filter>
-    </ClInclude>
-    <ClInclude Include="Rectangle.hpp">
-      <Filter>Program\Util</Filter>
+      <Filter>Program\Engine\Renderer\MeshSystem</Filter>
     </ClInclude>
     <ClInclude Include="Renderer.hpp">
-      <Filter>Program\Renderer</Filter>
+      <Filter>Program\Engine\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="resource.h">
       <Filter>Resources</Filter>
     </ClInclude>
     <ClInclude Include="stb_image.h">
-      <Filter>Program\Renderer\TextureSystem</Filter>
+      <Filter>Program\Engine\Renderer\TextureSystem</Filter>
     </ClInclude>
     <ClInclude Include="WindowSystem.hpp">
-      <Filter>Program\WindowSystem</Filter>
-    </ClInclude>
-    <ClInclude Include="WindowAPI.hpp">
-      <Filter>Program\WindowSystem</Filter>
+      <Filter>Program\Engine\WindowSystem</Filter>
     </ClInclude>
     <ClInclude Include="IndexBufferObject.hpp">
-      <Filter>Program\Renderer\MeshSystem\IndexedBufferObject</Filter>
+      <Filter>Program\Engine\Renderer\MeshSystem\IndexedBufferObject</Filter>
     </ClInclude>
     <ClInclude Include="RenderObjectSystem.hpp">
-      <Filter>Program\Renderer\RenderObjectSystem</Filter>
+      <Filter>Program\Engine\Renderer\RenderObjectSystem</Filter>
     </ClInclude>
     <ClInclude Include="ShaderSystem.hpp">
-      <Filter>Program\Renderer\ShaderSystem</Filter>
+      <Filter>Program\Engine\Renderer\ShaderSystem</Filter>
     </ClInclude>
     <ClInclude Include="PlanetRenderSystem.hpp">
-      <Filter>Program\Renderer\PlanetRenderSystem</Filter>
+      <Filter>Program\Engine\Renderer\PlanetRenderSystem</Filter>
     </ClInclude>
     <ClInclude Include="VertexArrayObject.hpp">
-      <Filter>Program\Renderer\MeshSystem</Filter>
+      <Filter>Program\Engine\Renderer\MeshSystem</Filter>
     </ClInclude>
     <ClInclude Include="VertexBufferObject.hpp">
-      <Filter>Program\Renderer\MeshSystem</Filter>
-    </ClInclude>
-    <ClInclude Include="Uniforms.hpp">
-      <Filter>Program\Renderer\ShaderSystem</Filter>
-    </ClInclude>
-    <ClInclude Include="ViewportSystem.hpp">
-      <Filter>Program\Renderer\ViewportSystem</Filter>
+      <Filter>Program\Engine\Renderer\MeshSystem</Filter>
     </ClInclude>
     <ClInclude Include="CPUMesh.hpp">
-      <Filter>Program\Renderer\MeshSystem\CPUMesh</Filter>
+      <Filter>Program\Engine\Renderer\MeshSystem\CPUMesh</Filter>
     </ClInclude>
     <ClInclude Include="GPUMesh.hpp">
-      <Filter>Program\Renderer\MeshSystem\GPUMesh</Filter>
+      <Filter>Program\Engine\Renderer\MeshSystem\GPUMesh</Filter>
     </ClInclude>
     <ClInclude Include="Networking.hpp">
-      <Filter>Program\Networking</Filter>
+      <Filter>Program\Engine\Networking</Filter>
     </ClInclude>
     <ClInclude Include="TextRenderSystem.hpp">
-      <Filter>Program\Renderer\TextRenderSystem</Filter>
+      <Filter>Program\Engine\Renderer\TextRenderSystem</Filter>
     </ClInclude>
     <ClInclude Include="Basics.hpp">
-      <Filter>Program\Util\Basic</Filter>
+      <Filter>Program\Common\Basic</Filter>
     </ClInclude>
     <ClInclude Include="Debug.hpp">
-      <Filter>Program\Util\Debug</Filter>
+      <Filter>Program\Common\Debug</Filter>
     </ClInclude>
     <ClInclude Include="FileSystem.hpp">
-      <Filter>Program\Util\FileSystem</Filter>
+      <Filter>Program\Common\FileSystem</Filter>
     </ClInclude>
     <ClInclude Include="Math.hpp">
-      <Filter>Program\Util\Math</Filter>
+      <Filter>Program\Common\Math</Filter>
     </ClInclude>
     <ClInclude Include="Threading.hpp">
-      <Filter>Program\Util\Threading</Filter>
+      <Filter>Program\Common\Threading</Filter>
     </ClInclude>
     <ClInclude Include="Heightmap.hpp">
-      <Filter>Program\GameSimulation\PlanetSystem\Heightmap</Filter>
+      <Filter>Program\Games\ORKA\PlanetSystem\Heightmap</Filter>
     </ClInclude>
     <ClInclude Include="Shapes.hpp">
-      <Filter>Program\Util\Math</Filter>
+      <Filter>Program\Common\Math</Filter>
     </ClInclude>
     <ClInclude Include="OctreeSystem.hpp">
-      <Filter>Program\GameSimulation\PlanetSystem\OctreeSystem</Filter>
+      <Filter>Program\Games\ORKA\PlanetSystem\OctreeSystem</Filter>
     </ClInclude>
     <ClInclude Include="PlanetSystem.hpp">
-      <Filter>Program\GameSimulation\PlanetSystem</Filter>
+      <Filter>Program\Games\ORKA\PlanetSystem</Filter>
     </ClInclude>
     <ClInclude Include="QuadtreeSystem.hpp">
-      <Filter>Program\GameSimulation\PlanetSystem\QuadtreeSystem</Filter>
+      <Filter>Program\Games\ORKA\PlanetSystem\QuadtreeSystem</Filter>
     </ClInclude>
     <ClInclude Include="Random.hpp">
-      <Filter>Program\Util\Math</Filter>
+      <Filter>Program\Common\Math</Filter>
     </ClInclude>
     <ClInclude Include="Time.hpp">
-      <Filter>Program\Util\Time</Filter>
+      <Filter>Program\Common\Time</Filter>
     </ClInclude>
     <ClInclude Include="Timer.hpp">
-      <Filter>Program\Util\Time</Filter>
+      <Filter>Program\Common\Time</Filter>
     </ClInclude>
     <ClInclude Include="ULLUtil.hpp">
-      <Filter>Program\GameSimulation\PlanetSystem\Util</Filter>
+      <Filter>Program\Games\ORKA\PlanetSystem\Util</Filter>
     </ClInclude>
     <ClInclude Include="Server.hpp">
-      <Filter>Program\Networking\Server</Filter>
+      <Filter>Program\Engine\Networking\Server</Filter>
     </ClInclude>
     <ClInclude Include="Message.hpp">
-      <Filter>Program\Networking\Message</Filter>
+      <Filter>Program\Engine\Networking\Message</Filter>
     </ClInclude>
     <ClInclude Include="Client.hpp">
-      <Filter>Program\Networking\Client</Filter>
-    </ClInclude>
-    <ClInclude Include="Layer.hpp">
-      <Filter>Program\WindowSystem\Widow\Layer</Filter>
+      <Filter>Program\Engine\Networking\Client</Filter>
     </ClInclude>
     <ClInclude Include="CPUTexture.hpp">
-      <Filter>Program\Renderer\TextureSystem\CPUTexture</Filter>
+      <Filter>Program\Engine\Renderer\TextureSystem\CPUTexture</Filter>
     </ClInclude>
     <ClInclude Include="GPUTexture.hpp">
-      <Filter>Program\Renderer\TextureSystem\GPUTexture</Filter>
+      <Filter>Program\Engine\Renderer\TextureSystem\GPUTexture</Filter>
     </ClInclude>
     <ClInclude Include="Framebuffer.hpp">
-      <Filter>Program\Renderer\FramebufferSystem\Framebuffer</Filter>
+      <Filter>Program\Engine\Renderer\FramebufferSystem\Framebuffer</Filter>
     </ClInclude>
     <ClInclude Include="FramebufferSystem.hpp">
-      <Filter>Program\Renderer\FramebufferSystem</Filter>
+      <Filter>Program\Engine\Renderer\FramebufferSystem</Filter>
     </ClInclude>
     <ClInclude Include="Window.hpp">
-      <Filter>Program\WindowSystem\Widow</Filter>
+      <Filter>Program\Engine\WindowSystem\Window</Filter>
     </ClInclude>
     <ClInclude Include="Shader.hpp">
-      <Filter>Program\Renderer\ShaderSystem\Shader</Filter>
+      <Filter>Program\Engine\Renderer\ShaderSystem\Shader</Filter>
     </ClInclude>
     <ClInclude Include="QuadtreeSystemRenderer.hpp">
-      <Filter>Program\Renderer\PlanetRenderSystem\QuadtreeSystemRenderer</Filter>
+      <Filter>Program\Engine\Renderer\PlanetRenderSystem\QuadtreeSystemRenderer</Filter>
     </ClInclude>
     <ClInclude Include="TerrainRendering.hpp">
-      <Filter>Program\Renderer\PlanetRenderSystem\TerrainRendering</Filter>
+      <Filter>Program\Engine\Renderer\PlanetRenderSystem\TerrainRendering</Filter>
     </ClInclude>
     <ClInclude Include="CameraSystem.hpp">
-      <Filter>Program\Renderer\CameraSystem</Filter>
+      <Filter>Program\Engine\Renderer\CameraSystem</Filter>
     </ClInclude>
     <ClInclude Include="OctreeID.hpp">
-      <Filter>Program\GameSimulation\PlanetSystem\OctreeSystem\OctreeID</Filter>
+      <Filter>Program\Games\ORKA\PlanetSystem\OctreeSystem\OctreeID</Filter>
     </ClInclude>
     <ClInclude Include="OctreeData.hpp">
-      <Filter>Program\GameSimulation\PlanetSystem\OctreeSystem\OctreeData</Filter>
-    </ClInclude>
-    <ClInclude Include="InputSystem.hpp">
-      <Filter>Program\WindowSystem\Widow\InputSystem</Filter>
+      <Filter>Program\Games\ORKA\PlanetSystem\OctreeSystem\OctreeData</Filter>
     </ClInclude>
     <ClInclude Include="PlanetCamera.hpp">
-      <Filter>Program\Renderer\CameraSystem\PlanetCamera</Filter>
+      <Filter>Program\Engine\Renderer\CameraSystem\PlanetCamera</Filter>
     </ClInclude>
     <ClInclude Include="SimpleCamera.hpp">
-      <Filter>Program\Renderer\CameraSystem\SimpleCamera</Filter>
+      <Filter>Program\Engine\Renderer\CameraSystem\SimpleCamera</Filter>
     </ClInclude>
     <ClInclude Include="OctreeSystemRenderer.hpp">
-      <Filter>Program\Renderer\PlanetRenderSystem\OctreeSystemRenderer</Filter>
-    </ClInclude>
-    <ClInclude Include="Settings.hpp">
-      <Filter>Program</Filter>
+      <Filter>Program\Engine\Renderer\PlanetRenderSystem\OctreeSystemRenderer</Filter>
     </ClInclude>
     <ClInclude Include="JobSystem.hpp">
-      <Filter>Program\JobSystem</Filter>
+      <Filter>Program\Engine\JobSystem</Filter>
     </ClInclude>
     <ClInclude Include="RelativeChunkOffset.hpp">
-      <Filter>Program\Renderer\PlanetRenderSystem\RelativeChunkOffset</Filter>
+      <Filter>Program\Engine\Renderer\PlanetRenderSystem\RelativeChunkOffset</Filter>
     </ClInclude>
     <ClInclude Include="TerrainSystem.hpp">
-      <Filter>Program\GameSimulation\PlanetSystem\QuadtreeSystem\TerrainSystem</Filter>
+      <Filter>Program\Games\ORKA\PlanetSystem\QuadtreeSystem\TerrainSystem</Filter>
     </ClInclude>
     <ClInclude Include="QuadtreeID.hpp">
-      <Filter>Program\GameSimulation\PlanetSystem\QuadtreeSystem\QuadtreeID</Filter>
+      <Filter>Program\Games\ORKA\PlanetSystem\QuadtreeSystem\QuadtreeID</Filter>
     </ClInclude>
     <ClInclude Include="AITest.hpp">
-      <Filter>Program\AITest</Filter>
-    </ClInclude>
-    <ClInclude Include="AIPlayground.hpp">
-      <Filter>Program\GameSimulation\AiPlayground</Filter>
+      <Filter>Program\Games\AITest</Filter>
     </ClInclude>
     <ClInclude Include="..\External Libraries\stb-master\stb_truetype.h">
-      <Filter>Program\Renderer\TextRenderSystem</Filter>
+      <Filter>Program\Engine\Renderer\TextRenderSystem</Filter>
     </ClInclude>
-    <ClInclude Include="Application.hpp">
-      <Filter>Program\Application</Filter>
+    <ClInclude Include="WindowAPI.hpp">
+      <Filter>Program\Engine\WindowSystem\Window\WindowAPI</Filter>
+    </ClInclude>
+    <ClInclude Include="Organizer.hpp">
+      <Filter>Program\Games\Organizer</Filter>
+    </ClInclude>
+    <ClInclude Include="InputManager.hpp">
+      <Filter>Program\Engine\WindowSystem\Window\InputManager</Filter>
+    </ClInclude>
+    <ClInclude Include="TiledMath.hpp">
+      <Filter>Program\Common\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="MindMap.hpp">
+      <Filter>Program\Games\Mind Map</Filter>
+    </ClInclude>
+    <ClInclude Include="CameraControllers.hpp">
+      <Filter>Program\Engine\WindowSystem\Window\InputManager\CameraController</Filter>
+    </ClInclude>
+    <ClInclude Include="Uniforms.hpp">
+      <Filter>Program\Engine\Renderer\ShaderSystem\Uniforms</Filter>
+    </ClInclude>
+    <ClInclude Include="UniformBuffer.hpp">
+      <Filter>Program\Engine\Renderer\ShaderSystem\Uniforms\UniformBuffer</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderRegion.hpp">
+      <Filter>Program\Engine\Renderer\RenderRegion</Filter>
+    </ClInclude>
+    <ClInclude Include="UIElement.hpp">
+      <Filter>Program\Engine\UserInterface\UIElements</Filter>
+    </ClInclude>
+    <ClInclude Include="Functor.hpp">
+      <Filter>Program\Common\Advanced</Filter>
+    </ClInclude>
+    <ClInclude Include="UIGameView.hpp">
+      <Filter>Program\Engine\UserInterface\UIElements\UIGameView</Filter>
+    </ClInclude>
+    <ClInclude Include="Util.hpp">
+      <Filter>Program\Common\Util</Filter>
+    </ClInclude>
+    <ClInclude Include="Pixel.hpp">
+      <Filter>Program\Common\Pixel</Filter>
+    </ClInclude>
+    <ClInclude Include="ShaderProgram.hpp">
+      <Filter>Program\Engine\Renderer\ShaderSystem\ShaderProgram</Filter>
+    </ClInclude>
+    <ClInclude Include="UIConstraints.hpp">
+      <Filter>Program\Engine\UserInterface\UIConstraints</Filter>
+    </ClInclude>
+    <ClInclude Include="UIFlatPanel.hpp">
+      <Filter>Program\Engine\UserInterface\UIElements\UIFlatPanel</Filter>
+    </ClInclude>
+    <ClInclude Include="UISplit.hpp">
+      <Filter>Program\Engine\UserInterface\UIElements\UISplit</Filter>
+    </ClInclude>
+    <ClInclude Include="ORKAGame.hpp">
+      <Filter>Program\Games\ORKA</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine.hpp">
+      <Filter>Program\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="UserInterface.hpp">
+      <Filter>Program\Engine\UserInterface</Filter>
+    </ClInclude>
+    <ClInclude Include="UIText.hpp">
+      <Filter>Program\Engine\UserInterface\UIElements\UIText</Filter>
+    </ClInclude>
+    <ClInclude Include="KeyMap.hpp">
+      <Filter>Program\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Settings.hpp">
+      <Filter>Program\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="SimplePlanetRenderer.hpp">
+      <Filter>Program\Engine\Renderer\SimplePlanetRenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="QuadtreeData.hpp">
+      <Filter>Program\Games\ORKA\PlanetSystem\QuadtreeSystem\QuadtreeData</Filter>
+    </ClInclude>
+    <ClInclude Include="QuadtreeNode.hpp">
+      <Filter>Program\Games\ORKA\PlanetSystem\QuadtreeSystem\QuadtreeNode</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -576,12 +741,6 @@
     </None>
     <None Include="Data\shaders\primitive.vert">
       <Filter>Shaders\primitive</Filter>
-    </None>
-    <None Include="Data\shaders\sky.frag">
-      <Filter>Shaders\sky</Filter>
-    </None>
-    <None Include="Data\shaders\sky.vert">
-      <Filter>Shaders\sky</Filter>
     </None>
     <None Include="Data\shaders\postProcess.frag">
       <Filter>Shaders\postProcess</Filter>
@@ -601,8 +760,29 @@
     <None Include="Data\shaders\unlit.vert">
       <Filter>Shaders\unlit</Filter>
     </None>
-    <None Include="computeTest.comp">
-      <Filter>Shaders\computeTest</Filter>
+    <None Include="Data\shaders\ui.vert">
+      <Filter>Shaders\uiShader</Filter>
+    </None>
+    <None Include="Data\shaders\ui.frag">
+      <Filter>Shaders\uiShader</Filter>
+    </None>
+    <None Include="Data\shaders\text.frag">
+      <Filter>Shaders\text</Filter>
+    </None>
+    <None Include="Data\shaders\text.vert">
+      <Filter>Shaders\text</Filter>
+    </None>
+    <None Include="Data\shaders\blurredUI.frag">
+      <Filter>Shaders\blurredUI</Filter>
+    </None>
+    <None Include="Data\shaders\blurredUI.vert">
+      <Filter>Shaders\blurredUI</Filter>
+    </None>
+    <None Include="Data\shaders\blur.frag">
+      <Filter>Shaders\blur</Filter>
+    </None>
+    <None Include="Data\shaders\blur.vert">
+      <Filter>Shaders\blur</Filter>
     </None>
   </ItemGroup>
 </Project>

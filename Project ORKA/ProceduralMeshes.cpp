@@ -2,7 +2,7 @@
 
 void proceduralWireframeAxisLines(CPUMesh& cpuMesh)
 {
-	cpuMesh.primitiveMode = Lines;
+	cpuMesh.primitiveMode = PrimitiveMode::Lines;
 
 	cpuMesh.vertices = {
 		Vec3(0,0,0),
@@ -64,7 +64,7 @@ void proceduralPlaneMesh(CPUMesh& cpuMesh, Float width, Float height) {
 };
 void proceduralWireframeCubeMesh(CPUMesh& cpuMesh, Float size, Float size2)
 {
-	cpuMesh.primitiveMode = Lines;
+	cpuMesh.primitiveMode = PrimitiveMode::Lines;
 
 	cpuMesh.vertices = {
 		Vec3(size,size,1),

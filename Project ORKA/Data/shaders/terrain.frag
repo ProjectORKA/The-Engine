@@ -1,7 +1,5 @@
 #version 450
-
 layout(location = 0) out vec4 fragmentColor;
-
 in vec4 vertexColor;
 in vec3 vertexPosition;
 in vec2 textureCoordinate;
@@ -10,11 +8,26 @@ in float depth;
 in vec3 worldCoordinate;
 in float slope;
 
-uniform vec3 cameraVector;
-uniform vec4 worldOffset;
+layout(std140, binding = 0) uniform GlobalUniforms
+{
+	mat4 mMatrix;
+	mat4 vpMatrix;
+	
+	vec4 worldOffset;
+	vec4 cameraVector;		 //its vec3 but treated as vec4 in memory
+	vec4 chunkOffsetVector;	 //its vec3 but treated as vec4 in memory
+	vec4 customColor;
+
+	float time;
+	float custom1;
+	float custom2;
+	float custom3;
+
+	bool distortion;
+};
 
 uniform sampler2D texture0;
-
+uniform sampler2D texture1;
 
 ////////////////////////////////////////////
 const vec2 zOffset = vec2(37.0,17.0);
@@ -64,12 +77,11 @@ vec4 textureBicubic(sampler2D inputTexture, vec2 texCoords){
     , sy);
 }
 
-vec4 noise( in vec2 uv )
-{
+vec4 noise( in vec2 uv ){
 	return textureBicubic(texture0,uv);
 }
 
-vec4 fractalNoise(in vec2 uv){
+vec4 fractalNoise(in vec2 uv) {
 	vec4 f;
 	float impact = 1;
 
@@ -91,37 +103,24 @@ void main(){
 	vec3 sunDir = normalize(vec3(1,1,1));
 	vec3 reflection = normalize(reflect(fragmentViewVector,customNormal));
 
-
-
 	float diffuse = clamp(dot(normalize(customNormal),sunDir),0,1);
 	float specular = clamp(pow(0.25*dot(reflection, sunDir), 2.0f),0,1);
 	float fresnel = clamp(0.1f * (1-dot(-fragmentViewVector,normalize(customNormal))),0,1);
 	float ambient = 0.05f;
 
-
 	float coloredLight = fresnel + ambient + diffuse;
 	float externalLight = specular;
 	
-
-	vec3 color;
-	//map colors
-	float h = worldCoordinate.z*250;// + 1677721600000.0)/pow(2,64);
-	color =  
-    h<0.20 ? vec3(0.30,0.50,0.98):
-    h<0.30 ? vec3(0.40,0.60,0.99):
-    h<0.40 ? vec3(0.50,0.70,0.90):
-    h<0.50 ? vec3(0.70,0.80,0.90):
-    h<0.60 ? vec3(0.86,0.90,0.68):
-    h<0.70 ? vec3(0.80,0.90,0.70):
-    h<0.80 ? vec3(0.60,0.80,0.40):
-    h<0.90 ? vec3(0.80,0.80,0.80):
-	h<1.00 ? vec3(0.95,0.95,0.95):
-	vec3(1,1,1);
 	//color = pow(slope,16) > 0.2 ? color : vec3(0.8,0.8,0.8);
+	
+	int uvLevel = 16;
 
-	//vec3 color = (worldCoordinate + texture(texture0, textureCoordinate).rgb)/2;
+	vec2 newtextureCorrdinate = mod((textureCoordinate / pow(2,worldOffset.w-uvLevel)) + worldOffset.xy / pow(2,64-uvLevel),1);
+	//vec2 newtextureCorrdinate = vec2(worldOffset.x / pow(2,64-uvLevel));//vec2(mod(worldOffset.x,16),mod(worldOffset.y,16));
+
+	vec3 color = texture(texture0, newtextureCorrdinate).rgb;
 	//fragmentColor = texture(texture0, textureCoordinate).rgba;
-	//vec3 color = vec3(textureCoordinate,1);
+	//vec3 color = vec3(newtextureCorrdinate,0);
 
 	//draw phong lighting
 	fragmentColor = vec4(color * vec3(coloredLight) + vec3(externalLight),1);
@@ -155,4 +154,7 @@ void main(){
 	
 	//draw depth
 	//fragmentColor = vec4(vec3(depth/pow(2,worldOffset.w)),1);
+	
+	//draw texture
+	//fragmentColor = texture(texture1,textureCoordinate);
 };

@@ -14,7 +14,7 @@
 struct GameSimulation {
 	Time gameTime;
 	PlanetSystem planetSystem;
-	Renderer renderer;
+	//Renderer renderer;
 
 	Thread thread;
 

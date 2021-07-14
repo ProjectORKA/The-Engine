@@ -19,10 +19,10 @@ void Framebuffer::create()
 	color.channels = 4;
 	color.dataType = dataTypeByte;
 	color.pixels = nullptr;
-	color.filter = nearest;
+	color.nearFilter = Filter::nearest;
+	color.farFilter = Filter::nearest;
 	color.wrapping = clamped;
 	color.loaded = true;
-	color.multisampling = samples;
 
 	//upload to GPU
 	colorTexture.load(color);
@@ -38,10 +38,10 @@ void Framebuffer::create()
 	depth.channels = 5;
 	depth.dataType = dataTypeFloat;
 	depth.pixels = nullptr;
-	depth.filter = nearest;
-	depth.wrapping = clamped;
+	color.nearFilter = Filter::nearest;
+	color.farFilter = Filter::nearest;
+	depth.wrapping = border;
 	depth.loaded = true;
-	depth.multisampling = samples;
 
 	//upload to GPU
 	depthTexture.load(depth);
@@ -60,6 +60,10 @@ void Framebuffer::destroy()
 	glDeleteFramebuffers(1, &framebufferID); //doesent work. ask Nvidia
 	colorTexture.unload();
 	depthTexture.unload();
+}
+void Framebuffer::setAsTexture()
+{
+	colorTexture.use(0);
 }
 void Framebuffer::detachTextures() {
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, 0, 0);
@@ -93,35 +97,18 @@ void Framebuffer::resize(Vec2 resolution)
 		depthTexture.resize(width, height);
 	}
 }
-void Framebuffer::changeSamples(UShort samples) {
-	destroy();
-	this->samples = samples;
-	create();
-}
 void Framebuffer::attachTexture(GPUTexture& texture)
 {
 	glBindFramebuffer(GL_FRAMEBUFFER, framebufferID);
 
 	if (texture.channels < 5) {
 		//its a color texture
-		if (texture.sampleCount > 0) {
-			glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, texture.textureID);
-			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE, texture.textureID, 0);
-		}
-		else {
-			glBindTexture(GL_TEXTURE_2D, texture.textureID);
-			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture.textureID, 0);
-		}
+		glBindTexture(GL_TEXTURE_2D, texture.textureID);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture.textureID, 0);
 	}
 	else {
 		//its a depth texture
-		if (texture.sampleCount > 0) {
-			glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, texture.textureID);
-			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D_MULTISAMPLE, texture.textureID, 0);
-		}
-		else {
-			glBindTexture(GL_TEXTURE_2D, texture.textureID);
-			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, texture.textureID, 0);
-		}
+		glBindTexture(GL_TEXTURE_2D, texture.textureID);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, texture.textureID, 0);
 	}
 }

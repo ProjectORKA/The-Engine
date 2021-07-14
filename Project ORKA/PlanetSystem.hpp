@@ -6,8 +6,8 @@
 
 struct PlanetSystem {
 
-	OctreeNode octreeRoot;
-	SharedPointer<QuadtreeNode> quadtreeRoot;
+	OctreeSystem octreeSystem;
+	QuadtreeSystem quadtreeSystem;
 
 	void count();
 	void create();

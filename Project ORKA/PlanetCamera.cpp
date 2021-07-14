@@ -1,5 +1,6 @@
 
 #include "PlanetCamera.hpp"
+#include "TerrainSystem.hpp"
 
 void PlanetCamera::update(Time& renderTime)
 {
@@ -64,63 +65,40 @@ void PlanetCamera::update(Time& renderTime)
 	}
 
 	accelerationVector = { 0,0,0 };
-}
-void PlanetCamera::rotate(float x, float y) {
-	cameraRotationX -= y;
-	cameraRotationZ += x;
 
-	//prevent looking upside down
-	Float cap = PI / 2;
+	if (CAMERA_TERRAIN_LIMIT) {
+		LDouble oldCamHeight = chunkLocation.z + location.z;
 
-	if (cameraRotationX < -cap) {
-		cameraRotationX = -cap;
+		LDouble xLocation = location.x;
+		LDouble yLocation = location.y;
+
+		xLocation += LDouble(chunkLocation.x) / pow(2, 64);
+		yLocation += LDouble(chunkLocation.y) / pow(2, 64);
+
+		//xLocation /= pow(2, -3);
+		//yLocation /= pow(2, -3);
+
+		LDouble newCamHeight = pow(2, 64-17) + terrainGenerationFunction(xLocation, yLocation);
+
+		if (newCamHeight > oldCamHeight) {
+			ULL chunkheight = newCamHeight;
+			newCamHeight -= chunkheight;
+			chunkLocation.z = chunkheight;
+			location.z = newCamHeight;
+		}
 	}
-	if (cameraRotationX > +cap) {
-		cameraRotationX = +cap;
-	}
-
-	//calculate directional vectors
-	forwardVector = Vec3(
-		cos(cameraRotationX) * sin(cameraRotationZ),
-		cos(cameraRotationX) * cos(cameraRotationZ),
-		sin(cameraRotationX)
-	);
-
-	rightVector = Vec3(
-		-sin(cameraRotationZ - PI / 2),
-		-cos(cameraRotationZ - PI / 2),
-		0
-	);
-
-	upVector = glm::cross(rightVector, forwardVector);
 }
-void PlanetCamera::render(Uniforms & uniforms, Viewport & currentViewport) {
+void PlanetCamera::render(Uniforms& uniforms, Float aspectRatio) {
 	Float cameraHeight = chunkLocation.z + location.z;
-	uniforms.setFloat("cameraHeight", cameraHeight);
-	uniforms.setVec3("cameraVector", forwardVector);
-	uniforms.setMatrix("vpMatrix", projectionMatrix(currentViewport.aspectRatio()) * viewMatrixOnlyRot());
-}
-
-Matrix PlanetCamera::viewMatrix() {
-	return glm::lookAt(
-		location,
-		location + forwardVector,
-		upVector
-	);
+	uniforms.data.custom1 = cameraHeight;
+	uniforms.data.cameraVector = Vec4(forwardVector, 1);
+	uniforms.data.vpMatrix = projectionMatrix(aspectRatio) * viewMatrixOnlyRot();
+	//uniforms.update();
 }
 Matrix PlanetCamera::viewMatrixOnlyRot() {
 	return glm::lookAt(
 		Vec3(0),
 		forwardVector,
 		upVector
-	);
-}
-Matrix PlanetCamera::projectionMatrix(float aspectRatio)
-{
-	return glm::perspective(
-		glm::radians(fieldOfView),
-		aspectRatio,
-		nearClipValue,
-		farClipValue
 	);
 }

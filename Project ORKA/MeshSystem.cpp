@@ -13,7 +13,7 @@ void MeshSystem::create() {
 	addMesh(boundingBox);
 
 	CPUMesh fullScreenQuad;
-	fullScreenQuad.autoLoadFromFile("fullScreenQuad");
+	fullScreenQuad.load("fullScreenQuad");
 	addMesh(fullScreenQuad);
 }
 void MeshSystem::destroy()
@@ -48,7 +48,7 @@ void MeshSystem::use(Name meshName)
 void MeshSystem::loadMesh(Name name)
 {
 	CPUMesh mesh;
-	mesh.autoLoadFromFile(name);
+	mesh.load(name);
 
 	if (mesh.readyForUpload) {
 		addMesh(mesh);

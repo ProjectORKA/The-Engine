@@ -1,18 +1,10 @@
+
 #include "Random.hpp"
 
-ULL RandomNumberGenerator::randomULL()
-{
-	c += c << 1;
-	c += c >> 1;
-	//c += a + b;
-	//a = b;
-	//b = c++;
-	c += a;
-	a = c++;
-	return c;
-}
+ULL random(ULL size) {
+	std::random_device seed;
+	std::mt19937_64 randomizer(seed());
+	std::uniform_int_distribution<unsigned long long> distribution;
 
-RandomNumberGenerator::RandomNumberGenerator()
-{
-	for (int i = 0; i < 64; i++) randomULL();
+	return distribution(randomizer) / (ULLONG_MAX / size);
 }

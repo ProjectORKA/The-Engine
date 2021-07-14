@@ -9,7 +9,7 @@ void CPUMesh::saveMeshFile()
 
 	MeshHeaderV2 header;
 	header.meshName = name;
-	header.primitiveMode = Triangles;
+	header.primitiveMode = PrimitiveMode::Triangles;
 	header.vertexCount = vertices.size();
 	header.uvCount = uvs.size();
 	header.normalCount = normals.size();
@@ -46,7 +46,7 @@ void CPUMesh::loadFBX(Path path) {
 
 		//create the mesh
 		name = path.filename().replace_extension().string();
-		primitiveMode = Triangles;
+		primitiveMode = PrimitiveMode::Triangles;
 		Assimp::Importer Importer;
 		const aiScene* scene = Importer.ReadFile(path.string(),
 			aiProcess_CalcTangentSpace |
@@ -173,7 +173,7 @@ void CPUMesh::loadMeshFile(Path path) {
 };
 void CPUMesh::calculateSmoothNormals()
 {
-	if (primitiveMode == Triangles) {
+	if (primitiveMode == PrimitiveMode::Triangles) {
 		normals.resize(vertices.size());
 
 		for (Vec3& normal : normals) {
@@ -207,7 +207,7 @@ void CPUMesh::calculateSmoothNormals()
 		logError("Cant compute normals for this mesh! Primitive type not supported!");
 	}
 }
-void CPUMesh::autoLoadFromFile(Name name)
+void CPUMesh::load(Name name)
 {
 	Path meshPath = String("Data/meshes/").append(name.data).append(".mesh");
 	Path fbxPath = String("Data/objects/").append(name.data).append(".fbx");

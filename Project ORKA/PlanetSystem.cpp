@@ -4,23 +4,22 @@
 //planetSystem
 void PlanetSystem::count()
 {
-	octreeRoot.count();
-	quadtreeRoot->count();
+	octreeSystem.count();
+	quadtreeSystem.count();
 }
 void PlanetSystem::create()
 {
-	quadtreeRoot = std::make_shared<QuadtreeNode>();
-	quadtreeRoot->createRootNode();
-	octreeRoot.createRootNode(quadtreeRoot);
+	quadtreeSystem.create();
+	octreeSystem.create(quadtreeSystem);
 }
 void PlanetSystem::destroy()
 {
-	octreeRoot.destroy();
-	quadtreeRoot.reset();
+	octreeSystem.destroy();
+	quadtreeSystem.destroy();
 }
-
 void PlanetSystem::update()
 {
-	quadtreeRoot->update();
-	octreeRoot.update();
+	quadtreeSystem.update();
+	//quadtreeSystem.count();
+	octreeSystem.update();
 }
