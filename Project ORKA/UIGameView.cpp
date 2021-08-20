@@ -2,7 +2,8 @@
 #include "UIGameView.hpp"
 #include "Window.hpp"
 
-PlanetCamera camera;
+Map<Index, PlanetCamera> planetCameras;
+Map<Index, SimpleCamera> cameras;
 
 void createUIORKALogo(UIElement* element, Window& window) {
 	window.renderer.renderObjectSystem.addRenderObject("logo", "ProjectORKALogo", "ProjectORKABakedLogo", "unlit");
@@ -11,7 +12,7 @@ void createUIORKALogo(UIElement* element, Window& window) {
 void renderUIORKALogo(UIElement* element, Window& window, TiledRectangle screenArea) {
 	Renderer & renderer = window.renderer;
 
-	renderer.renderRegion.setRenderRegion(screenArea);
+	renderer.renderRegion.set(screenArea);
 
 	//renderer.time.update();
 	renderer.clearColor(Color(0));
@@ -52,104 +53,38 @@ void renderUIORKALogo(UIElement* element, Window& window, TiledRectangle screenA
 }
 
 void createUIORKAGame(UIElement* element, Window& window) {
-		camera.location = Vec3(LLONG_MAX, LLONG_MAX, 0);
-
-		RenderObjectSystem& ros = window.renderer.renderObjectSystem;
-
-		ros.addRenderObject("sky", "sky", "sky", "unlit");
-		ros.addRenderObject("plane", "plane", "default", "primitive");
-		ros.addRenderObject("monkey", "monkey", "default", "primitive");
-		ros.addRenderObject("default", "default", "default", "primitive");
-		ros.addRenderObject("wireBox", "wireMeshBox", "default", "primitive");
-		ros.addRenderObject("boundingBox", "boundingBox", "default", "primitive");
-
-		element->createChildren(window);
-}
-void renderUIORKAGame(UIElement* element, Window& window, TiledRectangle screenArea) {
-
-	Renderer& renderer = window.renderer;
-
-	if (inputManager.capturing)camera.rotate(Vec2(inputManager.cursorPosition) * inputManager.mouseSensitivity);
-
-	camera.speedMultiplier = inputManager.scrollAxisYTotal;
-
-
-	if (inputManager.forward.isPressed)	camera.accelerationVector += camera.forwardVector;
-	if (inputManager.backward.isPressed) camera.accelerationVector -= camera.forwardVector;
-	if (inputManager.up.isPressed) camera.accelerationVector += camera.upVector;
-	if (inputManager.down.isPressed) camera.accelerationVector -= camera.upVector;
-	if (inputManager.right.isPressed) camera.accelerationVector += camera.rightVector;
-	if (inputManager.left.isPressed) camera.accelerationVector -= camera.rightVector;
-	camera.update(renderer.renderTime);
-
-
-	renderer.clearColor(Color(0, 0, 0, 0.75));
-
-	//enables or disables wireframe mode
-	renderer.setWireframeMode(renderer.wireframeMode);
-
-	//render sky
-	renderer.setCulling(false);
-	renderer.setDepthTest(false);
-	renderer.shaderSystem.uniforms.data.mMatrix = Matrix(1);
-	renderer.shaderSystem.uniforms.data.customColor = Vec4(1);
-	renderer.shaderSystem.uniforms.data.chunkOffsetVector = Vec4(0);
-	renderer.shaderSystem.uniforms.data.distortion = renderer.planetRenderSystem.quadtreeRenderSystem.worldDistortion;
-	renderer.shaderSystem.uniforms.data.cameraVector = Vec4(renderer.cameraSystem.currentPlanetCamera().forwardVector, 0);
-	renderer.shaderSystem.uniforms.data.vpMatrix = camera.projectionMatrix(renderer.renderRegion.getAspectRatio()) * camera.viewMatrixOnlyRot();
-	renderer.shaderSystem.uniforms.update();
-	renderer.renderObjectSystem.render("sky");
-
-	//render planet
-	renderer.planetRenderSystem.render(gameSimulation.planetSystem, renderer, camera);
-
-	//render text
-	renderer.setDepthTest(false);
-	renderer.shaderSystem.uniforms.data.mMatrix = Matrix(1);
-	renderer.shaderSystem.uniforms.data.customColor = Color(1);
-
-	String s = std::to_string(camera.speedMultiplier);
-	renderer.textRenderSystem.render(s, 0, 0, 1);
-
-
-	//render other UI
-	TiledRectangle childArea = screenArea;
-	Int cutaWay = 50;
-	childArea.position.y += childArea.position.y + childArea.size.y - cutaWay;
-	childArea.size.y = cutaWay;
-
-	for (UIElement* childElement : element->content) {
-		childElement->render(window, childArea);
-	}
-}
-
-void createUIORKA3DPlayground(UIElement* element, Window& window) {
+	PlanetCamera& camera = planetCameras[element->id];
+	
 	camera.location = Vec3(LLONG_MAX, LLONG_MAX, 0);
-
+	
 	RenderObjectSystem& ros = window.renderer.renderObjectSystem;
-
-	//
+	
+	//ros.addRenderObject("sky", "sky", "sky", "sky");
+	ros.addRenderObject("plane", "plane", "default", "primitive");
+	ros.addRenderObject("monkey", "monkey", "default", "primitive");
+	ros.addRenderObject("default", "default", "default", "primitive");
+	ros.addRenderObject("wireBox", "wireMeshBox", "default", "primitive");
+	ros.addRenderObject("boundingBox", "boundingBox", "default", "primitive");
 
 	element->createChildren(window);
 }
-void renderUIORKA3DPlayground(UIElement* element, Window& window, TiledRectangle screenArea) {
+void renderUIORKAGame(UIElement* element, Window& window, TiledRectangle screenArea) {
 
-	Renderer& renderer = window.renderer;
+	Renderer& renderer = window.renderer;				//get actual renderer
+	PlanetCamera& planetCamera = planetCameras[0];	//get camera
+	//SimpleCamera& camera = cameras[0];
+	if (inputManager.capturing)planetCamera.rotate(Vec2(inputManager.cursorPosition) * inputManager.mouseSensitivity);
 
-	if (inputManager.capturing)camera.rotate(Vec2(inputManager.cursorPosition) * inputManager.mouseSensitivity);
-
-	camera.speedMultiplier = inputManager.scrollAxisYTotal;
-
-	if (inputManager.forward.isPressed)	camera.accelerationVector += camera.forwardVector;
-	if (inputManager.backward.isPressed) camera.accelerationVector -= camera.forwardVector;
-	if (inputManager.up.isPressed) camera.accelerationVector += camera.upVector;
-	if (inputManager.down.isPressed) camera.accelerationVector -= camera.upVector;
-	if (inputManager.right.isPressed) camera.accelerationVector += camera.rightVector;
-	if (inputManager.left.isPressed) camera.accelerationVector -= camera.rightVector;
-	camera.update(renderer.renderTime);
-
-
-	renderer.clearColor(Color(0, 0, 0, 0.75));
+	planetCamera.speedMultiplier = inputManager.scrollAxisYTotal;
+	if (inputManager.forward.isPressed)	planetCamera.accelerationVector += planetCamera.forwardVector;
+	if (inputManager.backward.isPressed) planetCamera.accelerationVector -= planetCamera.forwardVector;
+	if (inputManager.up.isPressed) planetCamera.accelerationVector += planetCamera.upVector;
+	if (inputManager.down.isPressed) planetCamera.accelerationVector -= planetCamera.upVector;
+	if (inputManager.right.isPressed) planetCamera.accelerationVector += planetCamera.rightVector;
+	if (inputManager.left.isPressed) planetCamera.accelerationVector -= planetCamera.rightVector;
+	
+	//camera.accelerationVector *= pow(CAMERA_SPEED_MULTIPLIER, inputManager.scrollAxisYTotal);
+	planetCamera.update(renderer.renderTime.delta);
 
 	//enables or disables wireframe mode
 	renderer.setWireframeMode(renderer.wireframeMode);
@@ -157,30 +92,34 @@ void renderUIORKA3DPlayground(UIElement* element, Window& window, TiledRectangle
 	//render sky
 	renderer.setCulling(false);
 	renderer.setDepthTest(false);
-	renderer.shaderSystem.uniforms.data.mMatrix = Matrix(1);
-	renderer.shaderSystem.uniforms.data.customColor = Vec4(1);
-	renderer.shaderSystem.uniforms.data.chunkOffsetVector = Vec4(0);
-	renderer.shaderSystem.uniforms.data.distortion = renderer.planetRenderSystem.quadtreeRenderSystem.worldDistortion;
-	renderer.shaderSystem.uniforms.data.cameraVector = Vec4(renderer.cameraSystem.currentPlanetCamera().forwardVector, 0);
-	renderer.shaderSystem.uniforms.data.vpMatrix = camera.projectionMatrix(renderer.renderRegion.getAspectRatio()) * camera.viewMatrixOnlyRot();
+
+	renderer.shaderSystem.uniforms.data.vpMatrix = planetCamera.projectionMatrix(renderer.renderRegion.getAspectRatio()) * planetCamera.viewMatrixOnlyRot();
 	renderer.shaderSystem.uniforms.update();
-	renderer.renderObjectSystem.render("sky");
+
+	renderer.shaderSystem.use("sky");
+	renderer.textureSystem.use("sky");
+	renderer.meshSystem.render("sky");
 
 	//render planet
-	renderer.planetRenderSystem.render(gameSimulation.planetSystem, renderer, camera);
+	
+	renderer.planetRenderSystem.render(gameSimulation.planetSystem, renderer, planetCamera);
+	//
+	//renderer.clearDepth();
 
-	//render text
-	renderer.setDepthTest(false);
-	renderer.shaderSystem.uniforms.data.mMatrix = Matrix(1);
-	renderer.shaderSystem.uniforms.data.customColor = Color(1);
+	//renderer.shaderSystem.uniforms.data.chunkOffsetVector = Vec4((Vec3(planetCamera.chunkLocation) + planetCamera.location) / Vec3(ULLONG_MAX) ,1);
+	//renderer.shaderSystem.uniforms.update();
+	//renderer.sdfTerrainRenderSystem.render(renderer);
 
-	//render other UI
-	TiledRectangle childArea = screenArea;
-	Int cutaWay = 50;
-	childArea.position.y += childArea.position.y + childArea.size.y - cutaWay;
-	childArea.size.y = cutaWay;
+	//for (UIElement* childElement : element->content) {
+	//	childElement->render(window, childArea);
+	//}
+}
 
-	element->renderChildren(window, screenArea);
+void createUI2DTerrainSim() {
+	
+}
+void renderUI2DTerrainSim() {
+	
 }
 
 UIORKALogo::UIORKALogo() {
@@ -194,7 +133,4 @@ UIORKAGame::UIORKAGame() {
 	updateFunction = updateUIElement;
 	renderFunction = renderUIORKAGame;
 	destroyFunction = destroyUIElement;
-}
-UIORKA3DPlayground::UIORKA3DPlayground() {
-	
 }

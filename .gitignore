@@ -263,3 +263,5 @@ paket-files/
 __pycache__/
 *.pyc
 /External Libraries/Noise Lib/include/noise
+/Project ORKA/Data/textures/terrain.png
+/Project ORKA/Data/textures/terrainColor.png

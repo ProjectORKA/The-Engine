@@ -13,19 +13,17 @@ void Renderer::sync()
 }
 void Renderer::begin()
 {
-	mutex.lock();
-	renderTime.update();
-	framebufferSystem.update();
-	framebufferSystem.select(0);
-
-	clearColor();
+	mutex.lock();											//used for syncronizing other threads
+	renderTime.update();									//advances the time
+	shaderSystem.uniforms.data.time = renderTime.total;		//makes time available to shaders
+	framebufferSystem.deselect();							//selects the backbuffer of the window
+	clearColor(Color(Vec3(0), 0.0));						//and clears its contents
 	clearDepth();
 }
 void Renderer::create()
 {
 	//basic systems
 	renderTime.reset();
-	cameraSystem.create();
 	framebufferSystem.create();
 	textureSystem.create();
 	meshSystem.create();
@@ -33,12 +31,11 @@ void Renderer::create()
 
 	//advanced systems
 	textRenderSystem.create(*this);
+	renderObjectSystem.create(*this);
 	planetRenderSystem.create(*this);
 
-	renderObjectSystem.create(*this);
-
-	glClipControl(GL_LOWER_LEFT, GL_ZERO_TO_ONE);
-	glEnable(GL_SCISSOR_TEST);
+	apiClipControl(GL_LOWER_LEFT, GL_ZERO_TO_ONE);
+	apiEnable(GL_SCISSOR_TEST);
 }
 void Renderer::destroy()
 {
@@ -50,84 +47,92 @@ void Renderer::destroy()
 	shaderSystem.destroy();
 	textureSystem.destroy();
 
-	cameraSystem.destroy();
 	framebufferSystem.destroy();
 }
 void Renderer::clearDepth() {
-	glClear(GL_DEPTH_BUFFER_BIT);
+	apiClearDepth();
 }
 void Renderer::clearColor()
 {
-	glClear(GL_COLOR_BUFFER_BIT);
+	apiClearColor();
 }
-void Renderer::createBlurTexture(Framebuffer & from, Framebuffer & to)
-{
-	//this function renders a blurred version of a framebuffer to another framebuffer
-	Index originalFramebufferID = framebufferSystem.currentFramebufferIndex;
-	
-	shaderSystem.use("blur");
-	from.colorTexture.use(0);
-	to.use();
-	meshSystem.renderMesh("fullScreenQuad");
-
-	framebufferSystem.select(originalFramebufferID);
+void Renderer::screenSpace() {
+	Float width = renderRegion.region.size.x, height = renderRegion.region.size.y;
+	Matrix matrix = Matrix(1);
+	matrix = glm::translate(matrix, Vec3(-1, -1, 0));
+	matrix = glm::scale(matrix, Vec3(2, 2, 0));
+	matrix = glm::scale(matrix, Vec3(1.0 / width, 1.0 / height, 0));
+	uniforms().data.vpMatrix = matrix;
 }
-
+void Renderer::normalizedSpace() {
+	uniforms().data.vpMatrix = Matrix(1);
+}
 void Renderer::pollGraphicsAPIError() {
-	GLenum error = glGetError();
+	Int error = apiGetError();
 	if (error) {
 		logError(String("Opengl Error: ").append(std::to_string(error)));
 	}
 }
 void Renderer::clearColor(Color color) {
-	glClearColor(color.r, color.g, color.b, color.a);
-	glClear(GL_COLOR_BUFFER_BIT);
+	apiSetClearColor(color);
+	apiClearColor();
 }
 void Renderer::setCulling(Bool isCulling) {
 	if (isCulling) {
-		glEnable(GL_CULL_FACE);
-		glCullFace(GL_BACK);
+		apiEnable(GL_CULL_FACE);
+		apiCullFace(GL_BACK);
 	}
 	else {
-		glDisable(GL_CULL_FACE);
+		apiDisable(GL_CULL_FACE);
 	}
 }
 void Renderer::setDepthClamp(Bool depthClamp)
 {
 	if (depthClamp) {
-		glEnable(GL_DEPTH_CLAMP);
+		apiEnable(GL_DEPTH_CLAMP);
 	}
 	else {
-		glDisable(GL_DEPTH_CLAMP);
+		apiDisable(GL_DEPTH_CLAMP);
 	}
 }
 void Renderer::setAlphaBlending(Bool blending)
 {
 	if (blending) {
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA, GL_DST_ALPHA);
-		glBlendEquationSeparate(GL_FUNC_ADD, GL_MAX);
+		apiEnable(GL_BLEND);
+		apiBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		apiBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA, GL_DST_ALPHA);
+		apiBlendEquationSeparate(GL_FUNC_ADD, GL_MAX);
 	}
-	else glDisable(GL_BLEND);
+	else apiDisable(GL_BLEND);
 }
 void Renderer::setDepthTest(Bool isUsingDepth) {
 	if (isUsingDepth) {
-		glEnable(GL_DEPTH_TEST);
-		glDepthFunc(GL_LEQUAL);
+		apiEnable(GL_DEPTH_TEST);
+		apiDepthFunc(GL_LEQUAL);
 	}
 	else {
-		glDisable(GL_DEPTH_TEST);
+		apiDisable(GL_DEPTH_TEST);
 	}
 }
 void Renderer::setWireframeMode(Bool wireframeMode) {
 	if (wireframeMode) {
-		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-		//glPolygonMode(GL_FRONT_AND_BACK, GL_POINT);
+		apiPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	}
 	else {
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		apiPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	}
+}
+void Renderer::createBlurTexture(Index from, Index to)
+{
+	//this function renders a blurred version of a framebuffer to another framebuffer
+	Index originalFramebufferID = framebufferSystem.currentFramebufferIndex;
+	
+	shaderSystem.use("blur");
+	framebufferSystem.framebuffers[from].colorTexture.use(0);
+	framebufferSystem.use(to);
+	meshSystem.render("fullScreenQuad");
+
+	framebufferSystem.use(originalFramebufferID);
 }
 void Renderer::addRenderObject(RenderObjectNames renderObjectNames)
 {

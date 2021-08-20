@@ -25,7 +25,7 @@ Bool apiWindowIsCapturing(APIWindow apiWindow);
 Bool apiWindowIsDecorated(APIWindow apiWindow);
 Bool apiWindowIsFullscreen(APIWindow apiWindow);
 Bool apiWindowCursorIsCaptured(APIWindow apiWindow);
-Bool apiWindowKeyIsPressed(APIWindow apiWindow, KeyID keyID);
+Bool apiWindowKeyIsPressed(APIWindow apiWindow, Key key);
 
 //get integer
 Int apiWindowGetFramebufferWidth(APIWindow apiWindow);

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "GPUMesh.hpp"
-#include "OctreeSystem.hpp"
+#include "PlanetSystem.hpp"
 #include "TerrainRendering.hpp"
 #include "MeshSystem.hpp"
 #include "TextureSystem.hpp"
@@ -15,6 +15,7 @@ struct OctreeNodeRenderData {
 	OctreeNode* equivalentOctreeNode = nullptr;
 	//data
 	Vec3 chunkOffset = Vec3(0);
+	Bool inDrawDistance = false;
 
 	Bool subdivided = false;
 	//[TODO] turn into shared pointer
@@ -31,19 +32,24 @@ struct OctreeNodeRenderData {
 	void destroy();
 	void subdivide();
 	void unsubdivide();
+	void render(Renderer & renderer);
+	void update(PlanetCamera& camera);
 	void create(OctreeNode & octreeNode);
-	void update(PlanetCamera& camera, Float& renderDistance);
-	void render(Bool chunkBorders, MeshSystem& meshSystem, TextureSystem& textureSystem, ShaderSystem& shaderSystem);
-	void renderAll(Bool chunkBorders, MeshSystem& meshSystem, TextureSystem& textureSystem, ShaderSystem& shaderSystem);
-	void renderLevel(UShort level, Bool chunkBorders, MeshSystem& meshSystem, TextureSystem& textureSystem, ShaderSystem& shaderSystem);
+	void renderLevel(UShort level, Renderer & renderer);
+	void updateWithoutSubdivision(PlanetCamera & camera);
+	//
+	void renderWater(Renderer & renderer);
+	void renderWaterLevel(UShort level, Renderer& renderer);
 };
 
 struct OctreeRenderSystem {
 	OctreeNodeRenderData root;
 
-	void count();
+	Index waterTextureID = 0;
 
-	void destroy() {
-		root.destroy();
-	}
+	void count();
+	void destroy();
+	void create(Renderer& renderer);
+	void update(PlanetCamera& camera);
+	void renderLevel(UShort level, Renderer& renderer);
 };

@@ -16,43 +16,44 @@ void renderUIFlatPanel(UIElement* element, Window& window, TiledRectangle screen
 	//render settings
 	renderer.setCulling(false);
 	renderer.setDepthTest(false);
+
 	renderer.shaderSystem.uniforms.data.mMatrix = Matrix(1);
 	renderer.shaderSystem.uniforms.data.vpMatrix = Matrix(1);
 	renderer.shaderSystem.uniforms.data.customColor = Vec4(0, 0, 0, 1);
 	renderer.shaderSystem.uniforms.data.custom1 = 0.01;
 	renderer.shaderSystem.uniforms.update();
 
-	Framebuffer& image = renderer.framebufferSystem.framebuffers[0];
-	Framebuffer& blur = renderer.framebufferSystem.framebuffers[1];
-	Framebuffer& mask = renderer.framebufferSystem.framebuffers[2];
-	Framebuffer& dropShadow = renderer.framebufferSystem.framebuffers[3];
+	Index imageID = 0;
+	Index blurID = 1;
+	Index maskID = 2;
+	Index dropShadowID = 3;
 
 	RenderRegion wholeArea = renderer.renderRegion;
 
 	//create mask
-	mask.use();
+	renderer.renderRegion.set(wholeArea.region);
+	renderer.framebufferSystem.use(maskID);
 	renderer.clearColor(Color(1));
-	renderer.renderRegion.setRenderRegion(screenArea);
+	renderer.renderRegion.set(screenArea);
 	renderer.shaderSystem.use("unlit");
-	renderer.meshSystem.renderMesh("fullScreenQuad");
+	renderer.meshSystem.render("fullScreenQuad");
 
 	//create drop shadow
-	renderer.renderRegion.setRenderRegion(wholeArea.region);
-	renderer.createBlurTexture(mask, dropShadow);
-
+	renderer.renderRegion.set(wholeArea.region);
+	renderer.createBlurTexture(maskID, dropShadowID);
 
 	//create blur texture
-	renderer.createBlurTexture(image, blur);
+	renderer.createBlurTexture(imageID, blurID);
 
 	//render ui
-	renderer.framebufferSystem.select(0);
-	image.colorTexture.use(0);
-	mask.colorTexture.use(1);
-	dropShadow.colorTexture.use(2);
-	blur.colorTexture.use(3);
+	renderer.framebufferSystem.use(0);
+	renderer.framebufferSystem.framebuffers[imageID].colorTexture.use(0);
+	renderer.framebufferSystem.framebuffers[maskID].colorTexture.use(1);
+	renderer.framebufferSystem.framebuffers[dropShadowID].colorTexture.use(2);
+	renderer.framebufferSystem.framebuffers[blurID].colorTexture.use(3);
 	renderer.textureSystem.use("noise", 4);
 	renderer.shaderSystem.use("blurredUI");
-	renderer.meshSystem.renderMesh("fullScreenQuad");
+	renderer.meshSystem.render("fullScreenQuad");
 
 	//advance rendering
 	element->renderChildren(window, screenArea);

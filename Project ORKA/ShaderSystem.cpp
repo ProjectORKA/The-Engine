@@ -1,6 +1,12 @@
 
 #include "ShaderSystem.hpp"
 
+void ShaderSystem::rebuild()
+{
+	for (ShaderProgram& shaderProgram : shaderPrograms) {
+		shaderProgram.rebuild();
+	}
+}
 void ShaderSystem::create() {
 	uniforms.create();
 	loadDefaultShader();
@@ -8,7 +14,7 @@ void ShaderSystem::create() {
 void ShaderSystem::destroy() {
 
 	for (ShaderProgram& shaderProgram : shaderPrograms) {
-		shaderProgram.unload();
+		shaderProgram.destroy();
 	}
 	shaderPrograms.clear();
 	shaderNames.clear();
@@ -18,7 +24,7 @@ void ShaderSystem::destroy() {
 void ShaderSystem::add(Name name)
 {
 	shaderPrograms.emplace_back();
-	shaderPrograms.back().load(name, uniforms);
+	shaderPrograms.back().create(name, uniforms);
 	currentShaderProgramID = shaderPrograms.size() - 1;
 	shaderNames[name] = currentShaderProgramID;
 }
@@ -127,7 +133,7 @@ ShaderProgram& ShaderSystem::currentShaderProgram()
 void ShaderSystem::add(Shader& vertexShader, Shader& fragmentShader, Name name)
 {
 	shaderPrograms.emplace_back();
-	shaderPrograms.back().load(vertexShader, fragmentShader, uniforms);
+	shaderPrograms.back().create(vertexShader, fragmentShader, uniforms);
 	currentShaderProgramID = shaderPrograms.size() - 1;
 	shaderNames[name] = currentShaderProgramID;
 }

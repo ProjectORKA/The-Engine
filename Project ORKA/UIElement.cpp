@@ -42,6 +42,10 @@ void UIElement::destroyChildren(Window& window)
 }
 
 UIElement::UIElement() {
+	static Index idCounter = 0;
+	idCounter++;
+	id = idCounter;
+
 	destroyFunction = destroyUIElement;
 	updateFunction = updateUIElement;
 	createFunction = createUIElement;

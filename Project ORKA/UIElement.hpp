@@ -10,6 +10,7 @@
 struct Window;
 
 struct UIElement {
+	Index id = 0;
 	UIElement* parent = nullptr;
 	Vector<UIElement *> content;
 	Vector<UIConstraint> constraints;

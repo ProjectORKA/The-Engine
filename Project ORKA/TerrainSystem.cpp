@@ -16,8 +16,8 @@ void Terrain::create(QuadtreeID id)
 
 	lowerLimit = ULLONG_MAX;
 
-	for (Int x = 0; x < HEIGHTMAP_FOR_NORMALS_SIZE; x++) {
-		for (Int y = 0; y < HEIGHTMAP_FOR_NORMALS_SIZE; y++) {
+	for (Int y = 0; y < HEIGHTMAP_FOR_NORMALS_SIZE; y++) {
+		for (Int x = 0; x < HEIGHTMAP_FOR_NORMALS_SIZE; x++) {
 
 			xLocation = LDouble(x - 1) / LDouble(HEIGHTMAP_FOR_NORMALS_SIZE - 3);
 			yLocation = LDouble(y - 1) / LDouble(HEIGHTMAP_FOR_NORMALS_SIZE - 3);
@@ -33,14 +33,14 @@ void Terrain::create(QuadtreeID id)
 			if (height > upperLimit) upperLimit = ceil(height);
 			if (height < lowerLimit) lowerLimit = floor(height);
 
-			heightmapForNormals[y][x] = height;
+			heightmapForNormals[x][y] = height;
 		}
 	}
 
-	for (UInt x = 0; x < HEIGHTMAP_FOR_NORMALS_SIZE; x++) {
-		for (UInt y = 0; y < HEIGHTMAP_FOR_NORMALS_SIZE; y++) {
-			heightmapForNormals[y][x] -= Double(lowerLimit);
-			heightmapForNormals[y][x] /= pow(2, 64 - id.level);
+	for (UInt y = 0; y < HEIGHTMAP_FOR_NORMALS_SIZE; y++) {
+		for (UInt x = 0; x < HEIGHTMAP_FOR_NORMALS_SIZE; x++) {
+			heightmapForNormals[x][y] -= Double(lowerLimit);
+			heightmapForNormals[x][y] /= pow(2, 64 - id.level);
 		}
 	}
 }

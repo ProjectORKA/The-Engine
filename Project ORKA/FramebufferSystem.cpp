@@ -9,7 +9,7 @@ void FramebufferSystem::add()
 {
 	framebuffers.emplace_back();
 	framebuffers.back().create();
-	select(framebuffers.size() - 1);
+	use(framebuffers.size() - 1);
 }
 void FramebufferSystem::create()
 {
@@ -18,15 +18,6 @@ void FramebufferSystem::create()
 	add();	//1 blur result
 	add();	//2 mask
 	add();	//3 drop shadow
-}
-void FramebufferSystem::update()
-{
-	if (needsUpdate) {
-		for (Framebuffer& framebuffer : framebuffers) {
-			framebuffer.resize(currentFramebufferSize);
-		}
-		needsUpdate = false;
-	}
 }
 void FramebufferSystem::destroy()
 {
@@ -38,20 +29,22 @@ void FramebufferSystem::destroy()
 }
 void FramebufferSystem::deselect()
 {
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	glDrawBuffer(GL_BACK);
+	apiBindFramebuffer(GL_FRAMEBUFFER, 0);
+	//apiDrawBuffer(GL_BACK); //[TODO] check if unnecessary
 }
-void FramebufferSystem::updateSizes(Area area)
+void FramebufferSystem::update(Area area)
 {
-	area.x = max(area.x, 1);
-	area.y = max(area.y, 1);
+	area.clamp(1);
 
-	if (currentFramebufferSize != area) {
-		currentFramebufferSize = area;
-		needsUpdate = true;
+	if (framebufferSize != area) {
+		framebufferSize = area;
+
+		for (Framebuffer& framebuffer : framebuffers) {
+			framebuffer.resize(framebufferSize);
+		}
 	}
 }
-void FramebufferSystem::select(Index framebufferIndex)
+void FramebufferSystem::use(Index framebufferIndex)
 {
 	if (framebufferIndex > (framebuffers.size() - 1)) {
 		logError(String("Invalid framebufferIndex! (").append(std::to_string(framebufferIndex)).append(")"));

@@ -3,11 +3,9 @@
 
 void GPUMesh::render() {
 	if (loaded) {
-		//bind vertex data
 		vao.render();
-		//render vertex data
-		glDrawElements(
-			enumClassAsInt(primitiveMode),
+		apiDrawElements(
+		enumClassAsInt(primitiveMode),
 			vao.indexBuffer.indexCount,
 			GL_UNSIGNED_INT,
 			(void*)0
@@ -42,3 +40,20 @@ void GPUMesh::upload(CPUMesh& cpuMesh) {
 		logError("GPUMesh already loaded!");
 	}
 }
+//void GPUMesh::update(CPUMesh& cpuMesh)
+//{
+//	if (loaded) {
+//
+//		if (cpuMesh.readyForUpload) {
+//			primitiveMode = cpuMesh.primitiveMode;
+//			vao.update(cpuMesh);
+//			loaded = true;
+//		}
+//		else {
+//			logError("CPUMesh not loaded! Cant upload!");
+//		}
+//	}
+//	else {
+//		upload(cpuMesh);
+//	}
+//}

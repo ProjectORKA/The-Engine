@@ -2,10 +2,11 @@
 
 #include "Uniforms.hpp"
 #include "Shader.hpp"
+#include "AutoConstruct.hpp"
 
-struct ShaderProgram {
+struct ShaderProgram : public AutoConstruct{
 
-	Uniforms* uniformsPtr = nullptr;
+	//Uniforms* uniformsPtr = nullptr;
 
 	Bool isValid = false;
 
@@ -14,7 +15,10 @@ struct ShaderProgram {
 	Index uniformBlockID = 0;
 
 	void select();
-	void unload();
-	void load(Shader& vertexShader, Shader& fragmentShader, Uniforms& uniforms);
-	void load(Name name, Uniforms& uniforms);
+	void rebuild() {
+		
+	};
+	void destroy();
+	void create(Name name, Uniforms& uniforms);
+	void create(Shader& vertexShader, Shader& fragmentShader, Uniforms& uniforms);
 };

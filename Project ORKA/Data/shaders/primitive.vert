@@ -14,7 +14,7 @@ layout(std140, binding = 0) uniform GlobalUniforms
 	vec4 customColor;
 
 	float time;
-	float custom1;
+	float custom1;			//should equal cameraHeight [TODO] double check
 	float custom2;
 	float custom3;
 
@@ -43,7 +43,7 @@ void main() {
 			
 			float height = cameraRelativePosition.z;
 
-			float relativeCameraHeight = cameraHeight / pow(2, 64 - worldOffset.w);
+			float relativeCameraHeight = custom1 / pow(2, 64 - worldOffset.w);
 
 			float dist = length(vec2(cameraRelativePosition.xy));
 

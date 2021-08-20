@@ -3,10 +3,12 @@
 #include <chrono>
 #include "Basics.hpp"
 
-using Clock = std::chrono::steady_clock;
+using Clock = std::chrono::system_clock;
 using Milliseconds = std::chrono::milliseconds;
-using TimePoint = std::chrono::steady_clock::time_point;
+using TimePoint = Clock::time_point;
 using Duration = std::chrono::duration<Double, std::ratio< 1 / 1 >>;
+using FHours = std::chrono::duration<float, std::chrono::hours::period>;
+TimePoint now();
 
 struct Time {
 	Bool paused = false;

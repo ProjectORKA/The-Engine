@@ -18,4 +18,10 @@ struct Terrain {
 	void create(QuadtreeID id);
 };
 
+struct TerrainSystem {
+	Map<QuadtreeID, Terrain> terrain;
+};
+
+extern TerrainSystem terrainSystem;
+
 Double terrainGenerationFunction(LDouble x, LDouble y);

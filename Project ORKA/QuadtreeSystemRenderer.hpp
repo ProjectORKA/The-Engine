@@ -23,7 +23,6 @@ struct QuadtreeNodeRenderData {
 	Bool inDrawDistance = false;
 	ULL renderedHeight = 0;
 
-	//quadtree stuff
 	QuadtreeNode * equivalentQuadtreeNode = nullptr;
 	Bool subdivided = false;
 	QuadtreeNodeRenderData * c00 = nullptr;
@@ -36,26 +35,24 @@ struct QuadtreeNodeRenderData {
 	void subdivide();
 	void unsubdivide();
 	void update(PlanetCamera & camera);
-	void render(ShaderSystem& shaderSystem, MeshSystem & meshSystem);
-	void updateWithoutSubdivision(PlanetCamera& camera);
+	void renderTerrain(Renderer& renderer);
 	void create(QuadtreeNode & quadtreeNode);
-	void renderLevel(UShort level, ShaderSystem& shaderSystem, MeshSystem& meshsystem);
+	void updateWithoutSubdivision(PlanetCamera& camera);
+	void renderTerrainLevel(UShort level, Renderer &renderer);
 };
 
 struct QuadtreeRenderSystem {
-
-	Bool chunkBorders = false;
-	Bool worldDistortion = true;
-	Float drawDistance = 2.0f;
-
-	//temporary data
 	Index grassTextureID = 0;
 	Index terrainShaderID = 0;
+	Index waterTextureID = 0;
 
 	QuadtreeNodeRenderData root;
+
+	QuadtreeNodeRenderData renderData[MAX_CHUNK_LEVEL][3][3];
 	
 	void count();
 	void destroy();
+	void update(PlanetCamera& camera);
+	void renderLevel(UShort level, Renderer& renderer);
 	void create(Renderer & renderer);
-	void render(PlanetSystem& planetSystem, Renderer& renderer, PlanetCamera& planetCamera);
 };

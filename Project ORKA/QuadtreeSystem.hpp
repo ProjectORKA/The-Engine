@@ -4,9 +4,7 @@
 
 struct QuadtreeSystem {
 	QuadtreeNode root;
-
 	void count();
-	void create();
-	void destroy();
 	void update();
+	ULLVec3 rayTrace(Ray ray);
 };

@@ -10,6 +10,7 @@ struct ShaderSystem {
 
 	void create();
 	void destroy();
+	void rebuild();
 	void add(Name name);
 	void use(Name name);
 	void loadDefaultShader();

@@ -24,7 +24,7 @@ layout(std140, binding = 0) uniform GlobalUniforms
 uniform sampler2D texture0;
 
 void main(){
-	if(texture(texture0,textureCoordinate).a != 1) discard;
+	//if(texture(texture0,textureCoordinate).a != 1) discard;
 
 	color = vec4(texture(texture0,textureCoordinate).xyz,1.0);
 

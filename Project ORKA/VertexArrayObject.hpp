@@ -9,11 +9,12 @@
 #include "Util.hpp"
 
 struct VertexArrayObject {
-	Index arrayObjectID;
+	Index arrayObjectID = 0;
 	Vector<VertexBufferObject> buffers;
 	IndexBufferObject indexBuffer;
 
 	void create(CPUMesh& mesh);
+	//void update(CPUMesh & mesh);
 	void add(Index location, float* data, UInt byteSize, UInt usage, Index components);
 	void render();
 	void unload();

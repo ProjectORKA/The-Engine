@@ -57,7 +57,7 @@ void MeshSystem::loadMesh(Name name)
 		logDebug("Mesh could not be loaded from file!");
 	}
 }
-void MeshSystem::renderMesh(Index meshID) {
+void MeshSystem::render(Index meshID) {
 	use(meshID);
 	currentMesh().render();
 }
@@ -67,7 +67,7 @@ void MeshSystem::addMesh(CPUMesh& cpuMesh) {
 	currentMesh().upload(cpuMesh);
 	meshNames[cpuMesh.name] = currentMeshID;
 }
-void MeshSystem::renderMesh(Name meshName) {
+void MeshSystem::render(Name meshName) {
 	use(meshName);
 	currentMesh().render();
 }

@@ -5,14 +5,6 @@ Float lerp(Float from, Float to, Float t)
 {
 	return (from * (1 - t)) + (to * t);
 }
-float randomFloat()
-{
-	return randomFloat(0, 1);
-}
-float randomFloat(Float low, Float high)
-{
-	return low + static_cast <Float> (rand()) / (static_cast <Float> (RAND_MAX / (high - low)));
-}
 bool isFloatNearOther(Float a, Float b, Float error) {
 	return fabsf(a - b) < error;
 }

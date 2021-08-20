@@ -10,7 +10,6 @@ Bool InputManager::isCapturing(Window& window)
 }
 void InputManager::captureCursor(Window& window)
 {
-	logDebug("capturing!");
 	if (!capturing) {
 		captureReleasePosition = cursorPosition;
 		apiWindowDisableCursor(window.apiWindow);
@@ -19,9 +18,12 @@ void InputManager::captureCursor(Window& window)
 		capturing = true;
 	}
 }
+void InputManager::windowInFocus(Window& window)
+{
+	captureCursor(window);
+}
 void InputManager::uncaptureCursor(Window& window)
 {
-	logDebug("release!");
 	if (capturing) {
 		//[TODO]
 		apiWindowEnableCursor(window.apiWindow);
@@ -31,24 +33,17 @@ void InputManager::uncaptureCursor(Window& window)
 		capturing = false;
 	}
 }
-
-void InputManager::windowInFocus(Window& window)
-{
-	uncaptureCursor(window);
-}
 void InputManager::windowOutOfFocus(Window& window)
 {
-	//captureCursor(window);
+	//uncaptureCursor(window);
 }
-
-//callbacks
 void InputManager::mouseIsMoving(Window& window, IVec2 position)
 {
 	cursorPosition = position;
 }
 void InputManager::windowChangedFocus(Window& window, Bool isInFocus)
 {
-	if (capturing)uncaptureCursor(window);
+	if (isInFocus)windowInFocus(window); else windowOutOfFocus(window);
 }
 void InputManager::mouseWheelIsScrolled(Window& window, Double xAxis, Double yAxis)
 {
@@ -69,9 +64,15 @@ void InputManager::buttonIsPressed(Window& window, Int keyID, Int action, Int mo
 			break;
 		case GLFW_KEY_J: window.renderer.adjustRenderVariables = !window.renderer.adjustRenderVariables;
 			break;
-		case GLFW_KEY_K: window.renderer.planetRenderSystem.quadtreeRenderSystem.worldDistortion = !window.renderer.planetRenderSystem.quadtreeRenderSystem.worldDistortion;
+		case GLFW_KEY_K: window.renderer.planetRenderSystem.worldDistortion = !window.renderer.planetRenderSystem.worldDistortion;
 			break;
-		case GLFW_KEY_G: window.renderer.planetRenderSystem.quadtreeRenderSystem.chunkBorders = !window.renderer.planetRenderSystem.quadtreeRenderSystem.chunkBorders;
+		case GLFW_KEY_G: window.renderer.planetRenderSystem.chunkBorders = !window.renderer.planetRenderSystem.chunkBorders;
+			break;
+		case GLFW_KEY_T: {
+			window.renderer.mutex.lock();
+			//window.renderer.shaderSystem.clear();
+			window.renderer.mutex.unlock();
+		}
 			break;
 		case GLFW_KEY_W: forward.isPressed = true;
 			break;

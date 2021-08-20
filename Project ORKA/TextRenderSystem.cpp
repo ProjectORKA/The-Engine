@@ -11,11 +11,11 @@ void TextRenderSystem::create(Renderer & renderer) {
 	rendererPtr = &renderer;
 	
 	CPUTexture cpuTextTexture;
-	cpuTextTexture.load("font");
+	cpuTextTexture.load("fontSDF");
 	textTexture.load(cpuTextTexture);
 	renderer.shaderSystem.add("text");
 }
-void TextRenderSystem::render(String text, Float xPos, Float yPos, Float size) {
+void TextRenderSystem::render(String text, Float x, Float y, FontStyle style) {
 
 	UInt length = text.size();
 
@@ -23,21 +23,28 @@ void TextRenderSystem::render(String text, Float xPos, Float yPos, Float size) {
 	cpuText.vertices.clear();
 	cpuText.uvs.clear();
 	cpuText.indices.clear();
+	cpuText.normals.clear();
 	cpuText.drawMode = MeshDrawMode::dynamicMode;
 	gpuText.unload();
 
 	for (UInt i = 0; i < length; i++) {
 
-		Float up = yPos;
-		Float left = xPos + Float(i) * size;
-		Float down = up + size;
-		Float right = left + size;
+		//Float up = yPos;
+		//Float left = xPos + Float(i) * size;
+		//Float down = up + size;
+		//Float right = left + size;
 
-		Int character = text[i]+16;
-		Float uvUp = (Float((character) / 16) / -16.0f); //[TODO] there is an error, the y coordinate is inverted, maybe fix this, maybe not
-		Float uvLeft = Float(character % 16) / 16.0f;
-		Float uvDown = uvUp + 0.0625;
-		Float uvRight = uvLeft + 0.0625;
+		Float up = 1.0;
+		Float left = Float(i) * style.letterSpacing;
+		Float down = 0.0;
+		Float right = left + 1.0;
+
+		Int character = text[i];
+		
+		Float uvUp = 1 - Float(character / 16) / 16.0;
+		Float uvLeft = Float(character % 16) / 16.0;
+		Float uvRight = uvLeft + 1.0 / 16.0;
+		Float uvDown = uvUp - 1.0 / 16.0;
 
 		cpuText.vertices.push_back(Vec3(left,up,0));
 		cpuText.vertices.push_back(Vec3(left,down,0));
@@ -71,18 +78,20 @@ void TextRenderSystem::render(String text, Float xPos, Float yPos, Float size) {
 
 	cpuText.readyForUpload = true;
 
+	gpuText.unload();
 	gpuText.upload(cpuText);
+	//gpuText.update(cpuText);
 
 	rendererPtr->shaderSystem.use("text");
 	textTexture.use(0);
 
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	rendererPtr->shaderSystem.uniforms.data.vpMatrix = scale(translate(Matrix(1),Vec3(-1,-1,0)), Vec3(1)/Vec3(rendererPtr->renderRegion.region.size, 1));
+	apiEnable(GL_BLEND);
+	apiBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	rendererPtr->shaderSystem.uniforms.data.mMatrix = scale(Matrix(1),Vec3(1000));
+	rendererPtr->screenSpace();
+	rendererPtr->shaderSystem.uniforms.data.mMatrix = scale(translate(Matrix(1), Vec3(x, y, 0)),Vec3(style.size));
 	rendererPtr->shaderSystem.uniforms.update();
 
-	glDisable(GL_CULL_FACE);
+	apiDisable(GL_CULL_FACE);
 	gpuText.render();
 }

@@ -7,7 +7,8 @@
 struct IndexBufferObject {
 	Index bufferID;
 	UInt indexCount;
-	void create(Index* data, UInt byteSize, UInt usage);
+	void create(Index* data, UInt indexCount, UInt usage);
+	void update(Index* data, UInt indexCount, UInt usage);
 	void unload();
 };
 

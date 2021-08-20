@@ -1,5 +1,6 @@
 
 #include "WindowAPI.hpp"
+#include "Util.hpp"
 
 void apiWindowRestore(APIWindow apiWindow)
 {
@@ -62,9 +63,9 @@ Bool apiWindowCursorIsCaptured(APIWindow apiWindow)
 {
 	return glfwGetInputMode(apiWindow, GLFW_CURSOR) == GLFW_CURSOR_DISABLED;
 }
-Bool apiWindowKeyIsPressed(APIWindow apiWindow, KeyID keyID)
+Bool apiWindowKeyIsPressed(APIWindow apiWindow, Key key)
 {
-	return glfwGetKey(apiWindow, keyID) == GLFW_PRESS;
+	return glfwGetKey(apiWindow, enumClassAsInt(key)) == GLFW_PRESS;
 }
 
 Int apiWindowGetFramebufferWidth(APIWindow apiWindow)
@@ -88,7 +89,7 @@ DVec2 apiWindowGetCursorPosition(APIWindow apiWindow)
 }
 Area apiWindowGetFramebufferSize(APIWindow apiWindow)
 {
-	IVec2 size;
+	Area size;
 	glfwGetFramebufferSize(apiWindow, &size.x, &size.y);
 	return size;
 }

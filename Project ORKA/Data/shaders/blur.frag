@@ -76,7 +76,7 @@ void main()
 {
 	int samples = 48;
 	vec2 resolution = textureSize(texture0,0).xy;
-	float radius = min(resolution.x, resolution.y)*custom1;
+	float radius = 0;//min(resolution.x, resolution.y)*custom1;
 	vec2 pos = vec2(0);
 	vec4 blurredColor = vec4(0);
 	
