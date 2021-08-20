@@ -8,5 +8,8 @@ UIText::UIText() {
 }
 
 void renderUIText(UIElement* element, Window& window, TiledRectangle screenArea) {
-	window.renderer.textRenderSystem.render(reinterpret_cast<UIText* >(element)->text.c_str(), element->posX, element->posY, element->sizeY);
+	FontStyle style;
+	style.size = 128;
+	style.letterSpacing = 0.5;
+	window.renderer.textRenderSystem.render(reinterpret_cast<UIText* >(element)->text.c_str(), element->posX, element->posY, style);
 }

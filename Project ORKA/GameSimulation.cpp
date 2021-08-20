@@ -15,6 +15,7 @@ GameSimulation::~GameSimulation() {
 
 void GameSimulation::update() {
 	gameTime.update();
+
 	planetSystem.update();
 }
 

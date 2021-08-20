@@ -6,6 +6,9 @@
 
 struct Window;
 
+extern Map<Index, PlanetCamera> planetCameras;
+extern Map<Index, SimpleCamera> cameras;
+
 void createUIORKALogo(UIElement* element, Window& window);
 void renderUIORKALogo(UIElement* element, Window& window, TiledRectangle screenArea);
 
@@ -18,11 +21,4 @@ void renderUIORKAGame(UIElement* element, Window& window, TiledRectangle screenA
 
 struct UIORKAGame : public UIElement {
 	UIORKAGame();
-};
-
-void createUIORKA3DPlayground(UIElement* element, Window& window);
-void renderUIORKA3DPlayground(UIElement* element, Window& window, TiledRectangle screenArea);
-
-struct UIORKA3DPlayground : public UIElement {
-	UIORKA3DPlayground();
 };

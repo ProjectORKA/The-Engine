@@ -2,12 +2,13 @@
 
 #include "GLFW/glfw3.h"
 
-enum KeyID {
-	KeySHIFT = GLFW_KEY_LEFT_SHIFT,
-	KeyW = GLFW_KEY_W,
-	KeyA = GLFW_KEY_A,
-	KeyS = GLFW_KEY_S,
-	KeyD = GLFW_KEY_D,
-	KeyQ = GLFW_KEY_Q,
-	KeyE = GLFW_KEY_E
+enum class Key {
+	SHIFT = GLFW_KEY_LEFT_SHIFT,
+	W = GLFW_KEY_W,
+	A = GLFW_KEY_A,
+	S = GLFW_KEY_S,
+	D = GLFW_KEY_D,
+	Q = GLFW_KEY_Q,
+	E = GLFW_KEY_E,
+	F = GLFW_KEY_F
 };

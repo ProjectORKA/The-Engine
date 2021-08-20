@@ -24,7 +24,7 @@ layout(std140, binding = 0) uniform GlobalUniforms
 uniform sampler2D texture0;
 
 //output
-out vec2 textureCoordinate; 
+out vec2 textureCoordinate;
 
 void main(){
 	vec4 worldPosition = mMatrix * vec4(vertex, 1);

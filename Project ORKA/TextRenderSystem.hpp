@@ -8,6 +8,11 @@
 
 struct Renderer;
 
+struct FontStyle {
+	Float size = 20;
+	Float letterSpacing = 0.5;
+};
+
 struct TextRenderSystem {
 	GPUMesh gpuText;
 	CPUMesh cpuText;
@@ -17,5 +22,5 @@ struct TextRenderSystem {
 
 	void destroy();
 	void create(Renderer & renderer);
-	void render(String text, Float xPos, Float yPos, Float size);
+	void render(String text, Float xPos, Float yPos, FontStyle style);
 };

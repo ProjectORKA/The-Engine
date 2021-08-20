@@ -9,7 +9,6 @@
 struct RenderRegion {
 	TiledRectangle region;
 
-	void setRenderRegion(TiledRectangle region);;
-
+	void set(TiledRectangle region);;
 	Float getAspectRatio();
 };

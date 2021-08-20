@@ -3,7 +3,14 @@
 
 #include "Basics.hpp"
 
-using Area = IVec2;
+struct Area : public IVec2 {
+	Area() {};
+	Area(Int a);
+	Area(Int x, Int y);
+	Area center();
+	void clamp(Area minimumSize);
+	void clamp(Int a);;
+};
 
 struct TiledRectangle {
 	IVec2 position = IVec2(0);
@@ -12,5 +19,3 @@ struct TiledRectangle {
 	IVec2 center();
 	Bool positionInsideArea(IVec2 position);
 };
-
-Area center(Area area);

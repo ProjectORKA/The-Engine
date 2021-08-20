@@ -4,6 +4,7 @@
 #include "Basics.hpp"
 #include "CPUTexture.hpp"
 #include "GraphicsAPI.hpp"
+#include "TiledMath.hpp"
 
 struct GPUTexture {
 	Index textureID = 0;
@@ -16,7 +17,10 @@ struct GPUTexture {
 	UInt height = 1;
 	Bool loaded = false;
 	void unload();
+	void resize(Area size);
 	void use(Index textireID);
 	void load(CPUTexture& cpuTexture);
-	void resize(Int width, Int height);
+	void load(UInt width, UInt height) {
+		
+	};
 };

@@ -1,6 +1,14 @@
 
 #include "CPUMesh.hpp"
 
+CPUMesh::CPUMesh()
+{
+}
+CPUMesh::CPUMesh(Name name)
+{
+	load(name);
+}
+
 void CPUMesh::saveMeshFile()
 {
 	Path path = String("Data/meshes/").append(name.data).append(".mesh");
@@ -33,6 +41,34 @@ void CPUMesh::saveMeshFile()
 	}
 	else {
 		logDebug("The mesh binary file could not be opened!");
+	}
+}
+void CPUMesh::load(Name name)
+{
+	Path meshPath = String("Data/meshes/").append(name.data).append(".mesh");
+	Path fbxPath = String("Data/objects/").append(name.data).append(".fbx");
+
+	Bool f1, f2;
+	f1 = std::filesystem::exists(meshPath);
+	f2 = std::filesystem::exists(fbxPath);
+
+	if (f1) {
+		if (f2) {
+			auto t1 = std::filesystem::last_write_time(meshPath);
+			auto t2 = std::filesystem::last_write_time(fbxPath);
+			if (t1 > t2)
+				loadMeshFile(meshPath);
+			else
+				loadFBX(fbxPath);
+		}
+		else
+			loadMeshFile(meshPath);
+	}
+	else {
+		if (f2)
+			loadFBX(fbxPath);
+		else
+			logDebug(String("Can not find mesh with name: (").append(name.data).append(")"));
 	}
 }
 void CPUMesh::loadFBX(Path path) {
@@ -205,33 +241,5 @@ void CPUMesh::calculateSmoothNormals()
 	}
 	else {
 		logError("Cant compute normals for this mesh! Primitive type not supported!");
-	}
-}
-void CPUMesh::load(Name name)
-{
-	Path meshPath = String("Data/meshes/").append(name.data).append(".mesh");
-	Path fbxPath = String("Data/objects/").append(name.data).append(".fbx");
-
-	Bool f1, f2;
-	f1 = std::filesystem::exists(meshPath);
-	f2 = std::filesystem::exists(fbxPath);
-
-	if (f1) {
-		if (f2) {
-			auto t1 = std::filesystem::last_write_time(meshPath);
-			auto t2 = std::filesystem::last_write_time(fbxPath);
-			if (t1 > t2)
-				loadMeshFile(meshPath);
-			else
-				loadFBX(fbxPath);
-		}
-		else
-			loadMeshFile(meshPath);
-	}
-	else {
-		if (f2)
-			loadFBX(fbxPath);
-		else
-			logDebug(String("Can not find mesh with name: (").append(name.data).append(")"));
 	}
 }

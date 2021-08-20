@@ -4,7 +4,7 @@
 
 void Shader::unload() {
 	isValid = false;
-	glDeleteShader(shaderID);
+	apiDeleteShader(shaderID);
 }
 void Shader::load(ShaderType shaderType, Name name)
 {
@@ -26,21 +26,17 @@ void Shader::load(ShaderType shaderType, Path path) {
 }
 void Shader::loadShaderCode(ShaderType shaderType, String shaderCode)
 {
-	shaderID = glCreateShader(enumClassAsInt(shaderType));
+	shaderID = apiCreateShader(enumClassAsInt(shaderType));
 
 	char const* SourcePointer = shaderCode.c_str();
-	glShaderSource(shaderID, 1, &SourcePointer, NULL);
-	glCompileShader(shaderID);
+	apiShaderSource(shaderID, 1, &SourcePointer, NULL);
+	apiCompileShader(shaderID);
 
-	GLint result = GL_FALSE;
-	GLint infoLogLength = 0;
+	Int result = apiGetShaderiv(shaderID, GL_COMPILE_STATUS);
+	Int infoLogLength = apiGetShaderiv(shaderID, GL_INFO_LOG_LENGTH);
 
-	glGetShaderiv(shaderID, GL_COMPILE_STATUS, &result);
-	glGetShaderiv(shaderID, GL_INFO_LOG_LENGTH, &infoLogLength);
 	if (infoLogLength > 0) {
-		Vector<char> shaderErrorMessage(infoLogLength++);
-		glGetShaderInfoLog(shaderID, infoLogLength, NULL, &shaderErrorMessage[0]);
-		logError(&shaderErrorMessage[0]);
+		logError(apiGetShaderInfoLog(shaderID,infoLogLength));
 		isValid = false;
 	}
 	else {

@@ -19,10 +19,14 @@ struct SimpleCamera {
 	Vec3 rightVector = { 1.0f, 0.0f, 0.0f };
 	Vec3 upVector = { 0.0f, 0.0f, 1.0f };
 
+	virtual void update(Float delta);
 	virtual void rotate(Vec2 rotation);
-	virtual void update(Time& time);
 	virtual void render(Uniforms& uniforms, Float aspectRatio);
+	//virtual void renderOnlyRotation(Uniforms& uniforms, Float aspectRatio);
 
-	Matrix viewMatrix();;
+	//SimpleCamera();
+
+	Matrix viewMatrix();
+	Matrix viewMatrixOnlyRot();
 	Matrix projectionMatrix(Float aspectRatio);
 };

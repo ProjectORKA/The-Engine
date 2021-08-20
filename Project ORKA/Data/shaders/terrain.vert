@@ -23,8 +23,9 @@ layout(std140, binding = 0) uniform GlobalUniforms
 	bool distortion;
 };
 
-uniform sampler2D texture0;
-uniform sampler2D texture1;
+//uniform sampler2D texture0;
+//uniform sampler2D texture1;
+//uniform sampler2D texture2;
 
 //output
 out vec3 normal;
@@ -37,11 +38,13 @@ out vec2 textureCoordinate;
 
 void main(){
 
-	vec3 positionInChunk = (mMatrix * vec4(vertex, 1)).xyz;
+	vec3 position = vertex + vec3(0,0,0);//texture(texture1,uvs));
+
+	vec3 positionInChunk = (mMatrix * vec4(position, 1)).xyz;
 	vec3 cameraRelativePosition = chunkOffsetVector.xyz + positionInChunk;
 	vec3 customNormal = normals;
 
-	slope = normals.z;
+	slope = customNormal.z;
 
 	if(distortion){
 		if(worldOffset.w < 15){
@@ -66,17 +69,16 @@ void main(){
 			vec3 newZ = normalize(vec3(direction * sin(planetDist),cos(planetDist)));
 			vec3 newX = normalize(cross(vec3(0,1,0),newZ));
 			vec3 newY = normalize(cross(newZ,newX));
-			customNormal = (normals.x * newX) + (normals.y * newY) + (normals.z * newZ);
+			customNormal = (customNormal.x * newX) + (customNormal.y * newY) + (customNormal.z * newZ);
 			
 			cameraRelativePosition.z = (terrainHeightfromCenter) * cos(planetDist)-leveledCameraHeightFromCenter;
 		}
 	}
 
-	vec3 worldColor = ((vertex) + vec3(0.5,0.5,0.0) + worldOffset.xyz)/vec3(pow(2,worldOffset.w),pow(2,worldOffset.w),pow(2,worldOffset.w-1));
+	vec3 worldColor = ((position) + vec3(0.5,0.5,0.0) + worldOffset.xyz)/vec3(pow(2,worldOffset.w),pow(2,worldOffset.w),pow(2,worldOffset.w-1));
 
-	//outputs
 	vec4 screenSpacePosition = vpMatrix * vec4(cameraRelativePosition.xyz,1);
-	worldCoordinate = ((vertex.xyz*pow(2,64-worldOffset.w)) + worldOffset.xyz) / pow(2,64);
+	worldCoordinate = ((position.xyz*pow(2,64-worldOffset.w)) + worldOffset.xyz) / pow(2,64);
 	gl_Position  = screenSpacePosition;
 
 	vertexPosition = cameraRelativePosition.xyz;

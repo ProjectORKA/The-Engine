@@ -26,10 +26,7 @@ layout(std140, binding = 0) uniform GlobalUniforms
 uniform sampler2D texture0;
 
 void main() {
-
-	vec3 positionInChunk = (mMatrix * vec4(vertex, 1)).xyz;
-
-	gl_Position  = vpMatrix * vec4(positionInChunk,1);
+	gl_Position  = vpMatrix * vec4(vertex, 1);
 	textureCoordinate = uvs;
 	normal = normals;
 };

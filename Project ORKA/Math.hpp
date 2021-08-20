@@ -23,8 +23,6 @@ T clamp(T a, T min, T max) {
 }
 
 Float lerp(Float a, Float b, Float alpha);
-Float randomFloat();
-Float randomFloat(Float low, Float high);
 bool isFloatNearOther(Float a, Float b, Float error);
 Rotation getRotationBetweenVectors(Vec3 start, Vec3 dest);
 

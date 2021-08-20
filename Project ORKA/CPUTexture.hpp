@@ -43,7 +43,12 @@ struct CPUTexture {
 	void load(Path path, Name name);
 	void load(Name name);;
 
+	CPUTexture() {};
 	~CPUTexture();
+	CPUTexture(CPUTexture&&) = delete;
+	CPUTexture(const CPUTexture&) = delete;
+	CPUTexture& operator=(CPUTexture&&) = delete;
+	CPUTexture& operator=(const CPUTexture&) = delete;
 };
 
 void setInvertOnLoad(Bool invert);

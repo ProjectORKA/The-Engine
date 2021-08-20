@@ -58,6 +58,8 @@
 
 #include "Random.hpp"
 
+//#define TESTING
+
 Int main(Int  argc, Char* argv[]) {
 	srand(static_cast <unsigned> (time(0)));
 #ifndef TESTING
@@ -66,8 +68,6 @@ Int main(Int  argc, Char* argv[]) {
 	//testing code
 	/////////////////////////////////////////////////////////////////////////////////////////////////
 	//if (compileFromSource(" C:\\Users\\Blendurian\\Desktop\\main.cpp"))logDebug("Okay!"); else logDebug("NotOkay!");
-
-	while(true) logDebug(random(15));
 
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////

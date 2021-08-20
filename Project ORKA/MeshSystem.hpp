@@ -19,9 +19,9 @@ struct MeshSystem {
 	void use(Name name);
 	void use(Index meshID);
 	void loadMesh(Name name);
-	void renderMesh(Index meshID);
+	void render(Index meshID);
+	void render(Name meshName);
 	void addMesh(CPUMesh& cpuMesh);
-	void renderMesh(Name meshName);
 
 	GPUMesh& currentMesh();
 };

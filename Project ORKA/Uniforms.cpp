@@ -4,22 +4,22 @@
 void Uniforms::create()
 {
 	reset();
-	glGenBuffers(1, &id);
-	glBindBuffer(GL_UNIFORM_BUFFER, id);
-	glBufferData(GL_UNIFORM_BUFFER, sizeof(GlobalUniformData), &data, GL_DYNAMIC_DRAW);
+	apiGenBuffer(id);
+	apiBindBuffer(GL_UNIFORM_BUFFER, id);
+	apiBufferData(GL_UNIFORM_BUFFER, sizeof(GlobalUniformData), &data, GL_DYNAMIC_DRAW);
 	//create binding
-	glBindBufferBase(GL_UNIFORM_BUFFER, 0, id);
+	apiBindBufferBase(GL_UNIFORM_BUFFER, 0, id);
 	
 }
 void Uniforms::update()
 {
-	glBindBuffer(GL_UNIFORM_BUFFER, id);
-	glBufferData(GL_UNIFORM_BUFFER, sizeof(GlobalUniformData), &data, GL_DYNAMIC_DRAW);
+	apiBindBuffer(GL_UNIFORM_BUFFER, id);
+	apiBufferData(GL_UNIFORM_BUFFER, sizeof(GlobalUniformData), &data, GL_DYNAMIC_DRAW);
 	//[TODO] use bindSubdata to avoid uploading entire buffer, thx
 }
 void Uniforms::destroy()
 {
-	glDeleteBuffers(1, &id);
+	apiDeleteBuffer(id);
 }
 void Uniforms::reset()
 {
@@ -28,15 +28,15 @@ void Uniforms::reset()
 	data.worldOffset = Vec4(0, 0, 0, 0);
 	data.cameraVector = Vec4(0, 0, 0, 0);
 	data.chunkOffsetVector = Vec4(0, 0, 0, 0);
-	data.customColor = Color(1, 1, 1, 1);
-	data.time = 0;
-	data.custom1 = 0;
-	data.custom2 = 0;
-	data.custom3 = 0;
+	data.customColor = Vec4(1, 1, 1, 1);
+	//data.time = 0.0f;		
+	data.custom1 = 0.0f;
+	data.custom2 = 0.0f;
+	data.custom3 = 0.0f;
 	data.distortion = 0;
-	data.placeholder1 = 0;
-	data.placeholder2 = 0;
-	data.placeholder3 = 0;
+	data.placeholder1 = 0.0f;
+	data.placeholder2 = 0.0f;
+	data.placeholder3 = 0.0f;
 
 	sampler2Ds["texture0"] = 0;
 }

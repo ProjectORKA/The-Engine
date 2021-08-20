@@ -10,10 +10,10 @@ struct TextureSystem {
 	void create();
 	void destroy();
 	void use(Name name);
+	void resize(Area size);
 	void use(Index textureID);
 	void use(Name name, Index slot);
 	void add(CPUTexture& cpuTexture);
-	void resize(Int width, Int height);
 
 	Index getTextureID(Name name);
 	GPUTexture& currentTexture();

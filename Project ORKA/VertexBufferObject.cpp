@@ -8,21 +8,35 @@ void VertexBufferObject::create(UInt location, float* data, UInt byteSize, UInt 
 		this->location = location;
 		this->components = components;
 		this->byteSize = byteSize;
-		glGenBuffers(1, &bufferID);
-		glBindBuffer(GL_ARRAY_BUFFER, bufferID);
-		glBufferData(GL_ARRAY_BUFFER, byteSize, data, usage);
-		glEnableVertexAttribArray(location);
-		glVertexAttribPointer(location, components, GL_FLOAT, GL_FALSE, 0, (void*)0);
+		apiGenBuffer(bufferID);
+		apiBindBuffer(GL_ARRAY_BUFFER, bufferID);
+		apiBufferData(GL_ARRAY_BUFFER, byteSize, data, usage);
+		apiEnableVertexAttribArray(location);
+		apiVertexAttribPointer(location, components, GL_FLOAT, GL_FALSE, 0, (void*)0);
 		loaded = true;
 	}
-
+	else {
+		logError("VBO alredy loaded");
+	}
 }
+
+//void VertexBufferObject::update(UInt location, float* data, UInt byteSize, UInt usage, Index components)
+//{
+//	this->location = location;
+//	this->components = components;
+//	this->byteSize = byteSize;
+//	apiBindBuffer(GL_ARRAY_BUFFER, bufferID);
+//	apiBufferData(GL_ARRAY_BUFFER, byteSize, data, usage);
+//	apiEnableVertexAttribArray(location);
+//	apiVertexAttribPointer(location, components, GL_FLOAT, GL_FALSE, 0, (void*)0);
+//	loaded = true;
+//}
 
 void VertexBufferObject::unload()
 {
 	if (loaded) {
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
-		glDeleteBuffers(1, &bufferID);
+		apiBindBuffer(GL_ARRAY_BUFFER, 0);
+		apiDeleteBuffer(bufferID);
 		loaded = false;
 	}
 }

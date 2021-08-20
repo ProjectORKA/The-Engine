@@ -1,5 +1,10 @@
 #include "SimpleCamera.hpp"
 
+void SimpleCamera::update(Float delta) {
+	accelerationVector *= delta;
+	location += accelerationVector;
+	accelerationVector = { 0,0,0 };
+}
 void SimpleCamera::rotate(Vec2 rotation) {
 	rotationX = -rotation.y;
 	rotationZ = rotation.x;
@@ -29,20 +34,35 @@ void SimpleCamera::rotate(Vec2 rotation) {
 
 	upVector = glm::cross(rightVector, forwardVector);
 }
-void SimpleCamera::update(Time& time) {
-	accelerationVector *= time.delta;
-	location += accelerationVector;
-	accelerationVector = { 0,0,0 };
-}
 void SimpleCamera::render(Uniforms& uniforms, Float aspectRatio) {
 	uniforms.data.cameraVector = Vec4(forwardVector, 1);
 	uniforms.data.vpMatrix = projectionMatrix(aspectRatio) * viewMatrix();
 	uniforms.update();
 }
+//void SimpleCamera::renderOnlyRotation(Uniforms& uniforms, Float aspectRatio)
+//{
+//	uniforms.data.cameraVector = Vec4(forwardVector, 1);
+//	uniforms.data.vpMatrix = projectionMatrix(aspectRatio) * viewMatrixOnlyRot();
+//	uniforms.update();
+//}
+
+//SimpleCamera::SimpleCamera() {
+//	rotate(Vec2(0, 0));
+//	//Time time;
+//	//update(time);
+//}
+
 Matrix SimpleCamera::viewMatrix() {
 	return glm::lookAt(
 		location,
 		location + forwardVector,
+		upVector
+	);
+}
+Matrix SimpleCamera::viewMatrixOnlyRot() {
+	return glm::lookAt(
+		Vec3(0),
+		forwardVector,
 		upVector
 	);
 }

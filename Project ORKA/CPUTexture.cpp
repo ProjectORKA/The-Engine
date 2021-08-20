@@ -5,7 +5,7 @@ void CPUTexture::unload()
 {
 	logEvent("Unloading CPUTexture!");
 	if (loaded) {
-		if (pixels)free(bytePixels);
+		if (pixels)free(pixels);
 		pixels = nullptr;
 	}
 }
@@ -24,7 +24,7 @@ void CPUTexture::load(Path path, Name name)
 {
 	logEvent(String("Loading texture: (").append(name.data).append(" | ").append(path.string()).append(")"));
 	this->name = name;
-	pixels = stbi_load(path.string().c_str(), &width, &height, &channels, 0);
+	bytePixels = stbi_load(path.string().c_str(), &width, &height, &channels, 0);
 	if (pixels) loaded = true; else logEvent("Texture not loaded! Searching for different file format...");
 }
 

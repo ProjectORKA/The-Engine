@@ -1,4 +1,5 @@
 #include "OctreeSystemrenderer.hpp"
+#include "Renderer.hpp"
 
 void OctreeNodeRenderData::count()
 {
@@ -19,42 +20,12 @@ void OctreeNodeRenderData::count()
 	}
 
 	if (equivalentOctreeNode->id.level == 0) {
-		logDebug(String("OctreeNodeCount  : ").append(std::to_string(nodeCount)));
+		logDebug(String("OctreeNodeRenderDataCount: ").append(std::to_string(nodeCount)));
 	}
 }
-
 void OctreeNodeRenderData::destroy()
 {
-	if (subdivided) {
-
-		c000->destroy();
-		c001->destroy();
-		c010->destroy();
-		c011->destroy();
-		c100->destroy();
-		c101->destroy();
-		c110->destroy();
-		c111->destroy();
-
-		delete c000;
-		delete c001;
-		delete c010;
-		delete c011;
-		delete c100;
-		delete c101;
-		delete c110;
-		delete c111;
-
-		c000 = nullptr;
-		c001 = nullptr;
-		c010 = nullptr;
-		c011 = nullptr;
-		c100 = nullptr;
-		c101 = nullptr;
-		c110 = nullptr;
-		c111 = nullptr;
-	}
-
+	unsubdivide();
 	equivalentOctreeNode->decrementUser();
 }
 void OctreeNodeRenderData::subdivide()
@@ -114,82 +85,95 @@ void OctreeNodeRenderData::unsubdivide()
 		subdivided = false;
 	}
 }
+void OctreeNodeRenderData::renderWater(Renderer &renderer){
+	
+	renderer.shaderSystem.uniforms.data.chunkOffsetVector = Vec4(chunkOffset, 1);
+	renderer.shaderSystem.uniforms.data.worldOffset = Vec4(equivalentOctreeNode->id.location.x, equivalentOctreeNode->id.location.y, equivalentOctreeNode->id.location.z, equivalentOctreeNode->id.level);
+	renderer.shaderSystem.uniforms.update();
+
+	renderer.meshSystem.render("waterPlane");
+}
+void OctreeNodeRenderData::update(PlanetCamera& camera)
+{
+	updateWithoutSubdivision(camera);
+
+	if (equivalentOctreeNode->subdivided && !subdivided && inDrawDistance) {
+		subdivide();
+		c000->updateWithoutSubdivision(camera);
+		c001->updateWithoutSubdivision(camera);
+		c010->updateWithoutSubdivision(camera);
+		c011->updateWithoutSubdivision(camera);
+		c100->updateWithoutSubdivision(camera);
+		c101->updateWithoutSubdivision(camera);
+		c110->updateWithoutSubdivision(camera);
+		c111->updateWithoutSubdivision(camera);
+	}
+}
 void OctreeNodeRenderData::create(OctreeNode& octreeNode)
 {
 	equivalentOctreeNode = &octreeNode;
 	octreeNode.incrementUser();
 }
-void OctreeNodeRenderData::update(PlanetCamera& camera, Float& renderDistance)
+void OctreeNodeRenderData::render(Renderer & renderer)
 {
+	renderer.shaderSystem.uniforms.data.chunkOffsetVector = Vec4(chunkOffset,1);
+	renderer.shaderSystem.uniforms.data.worldOffset = Vec4(equivalentOctreeNode->id.location.x, equivalentOctreeNode->id.location.y, equivalentOctreeNode->id.location.z, equivalentOctreeNode->id.level);
+	renderer.shaderSystem.uniforms.update();
+
+	if(renderer.planetRenderSystem.chunkBorders)renderer.meshSystem.render("gizmo");
+}
+
+void OctreeNodeRenderData::renderLevel(UShort level, Renderer &renderer)
+{
+	if (subdivided) {
+		c000->renderLevel(level, renderer);
+		c001->renderLevel(level, renderer);
+		c010->renderLevel(level, renderer);
+		c011->renderLevel(level, renderer);
+		c100->renderLevel(level, renderer);
+		c101->renderLevel(level, renderer);
+		c110->renderLevel(level, renderer);
+		c111->renderLevel(level, renderer);
+	} else {
+		if (equivalentOctreeNode->id.level == level) {
+			render(renderer);
+		}
+	}
+}
+void OctreeNodeRenderData::updateWithoutSubdivision(PlanetCamera& camera)
+{
+	//get camera relative location
 	chunkOffset = cameraRelativeLocationOfChunk(equivalentOctreeNode->id, camera);
 
-	Bool inDrawDistance = glm::length(chunkOffset + Vec3(0.5)) < renderDistance;
+	inDrawDistance = glm::length(chunkOffset + Vec3(0.5, 0.5, 0)) < drawDistance;
 
 	if (!inDrawDistance) unsubdivide();
 
 	if (subdivided) {
-		c000->update(camera, renderDistance);
-		c001->update(camera, renderDistance);
-		c010->update(camera, renderDistance);
-		c011->update(camera, renderDistance);
-		c100->update(camera, renderDistance);
-		c101->update(camera, renderDistance);
-		c110->update(camera, renderDistance);
-		c111->update(camera, renderDistance);
-	}
 
-	if (equivalentOctreeNode->subdivided & !subdivided & inDrawDistance & equivalentOctreeNode->data.hasContent) {
-		subdivide();
-		Float fakeDistance = 0; //<-updates the new chunks but prevents them from subdividing in the same frame
-		c000->update(camera, fakeDistance);
-		c001->update(camera, fakeDistance);
-		c010->update(camera, fakeDistance);
-		c011->update(camera, fakeDistance);
-		c100->update(camera, fakeDistance);
-		c101->update(camera, fakeDistance);
-		c110->update(camera, fakeDistance);
-		c111->update(camera, fakeDistance);
+		c000->update(camera);
+		c001->update(camera);
+		c010->update(camera);
+		c011->update(camera);
+		c100->update(camera);
+		c101->update(camera);
+		c110->update(camera);
+		c111->update(camera);
 	}
 }
-void OctreeNodeRenderData::render(Bool chunkBorders, MeshSystem& meshSystem, TextureSystem& textureSystem, ShaderSystem& shaderSystem)
-{
-	shaderSystem.uniforms.data.chunkOffsetVector = Vec4(chunkOffset,1);
-	shaderSystem.uniforms.data.worldOffset = Vec4(equivalentOctreeNode->id.location.x, equivalentOctreeNode->id.location.y, equivalentOctreeNode->id.location.z, equivalentOctreeNode->id.level);
-	shaderSystem.uniforms.update();
-
-	if(chunkBorders)meshSystem.renderMesh("boundingBox");
-}
-void OctreeNodeRenderData::renderAll(Bool chunkBorders, MeshSystem& meshSystem, TextureSystem& textureSystem, ShaderSystem& shaderSystem)
-{
+void OctreeNodeRenderData::renderWaterLevel(UShort level, Renderer & renderer){
 	if (subdivided) {
-		c000->renderAll(chunkBorders, meshSystem, textureSystem, shaderSystem);
-		c001->renderAll(chunkBorders, meshSystem, textureSystem, shaderSystem);
-		c010->renderAll(chunkBorders, meshSystem, textureSystem, shaderSystem);
-		c011->renderAll(chunkBorders, meshSystem, textureSystem, shaderSystem);
-		c100->renderAll(chunkBorders, meshSystem, textureSystem, shaderSystem);
-		c101->renderAll(chunkBorders, meshSystem, textureSystem, shaderSystem);
-		c110->renderAll(chunkBorders, meshSystem, textureSystem, shaderSystem);
-		c111->renderAll(chunkBorders, meshSystem, textureSystem, shaderSystem);
-	}
-	else {
-		render(chunkBorders, meshSystem, textureSystem, shaderSystem);
-	}
-}
-void OctreeNodeRenderData::renderLevel(UShort level, Bool chunkBorders, MeshSystem& meshSystem, TextureSystem& textureSystem, ShaderSystem& shaderSystem)
-{
-	if (subdivided) {
-		c000->renderLevel(level, chunkBorders, meshSystem, textureSystem, shaderSystem);
-		c001->renderLevel(level, chunkBorders, meshSystem, textureSystem, shaderSystem);
-		c010->renderLevel(level, chunkBorders, meshSystem, textureSystem, shaderSystem);
-		c011->renderLevel(level, chunkBorders, meshSystem, textureSystem, shaderSystem);
-		c100->renderLevel(level, chunkBorders, meshSystem, textureSystem, shaderSystem);
-		c101->renderLevel(level, chunkBorders, meshSystem, textureSystem, shaderSystem);
-		c110->renderLevel(level, chunkBorders, meshSystem, textureSystem, shaderSystem);
-		c111->renderLevel(level, chunkBorders, meshSystem, textureSystem, shaderSystem);
-	}
-	else {
+		c000->renderWaterLevel(level, renderer);
+		c001->renderWaterLevel(level, renderer);
+		c010->renderWaterLevel(level, renderer);
+		c011->renderWaterLevel(level, renderer);
+		c100->renderWaterLevel(level, renderer);
+		c101->renderWaterLevel(level, renderer);
+		c110->renderWaterLevel(level, renderer);
+		c111->renderWaterLevel(level, renderer);
+	} else {
 		if (equivalentOctreeNode->id.level == level) {
-			render(chunkBorders, meshSystem, textureSystem, shaderSystem);
+			renderWater(renderer);
 		}
 	}
 }
@@ -197,4 +181,16 @@ void OctreeNodeRenderData::renderLevel(UShort level, Bool chunkBorders, MeshSyst
 void OctreeRenderSystem::count()
 {
 	root.count();
+}
+void OctreeRenderSystem::destroy() {
+	root.destroy();
+}
+void OctreeRenderSystem::create(Renderer& renderer) {
+	waterTextureID = renderer.textureSystem.getTextureID("water");
+}
+void OctreeRenderSystem::update(PlanetCamera& camera) {
+	root.update(camera);
+}
+void OctreeRenderSystem::renderLevel(UShort level, Renderer& renderer) {
+	root.renderLevel(level, renderer);
 }

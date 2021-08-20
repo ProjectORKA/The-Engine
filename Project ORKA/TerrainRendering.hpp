@@ -4,4 +4,5 @@
 #include "Heightmap.hpp"
 
 CPUMesh createTerrainMesh(HeightmapForNormals& heightmapForNormals);
-//CPUTexture createHeightmapTexture(HeightmapForNormals& heightmapForNormals);
+//void createHeightmapTexture(CPUTexture& texture, HeightmapForNormals& heightmapForNormals);
+//void createNormalMapTexture(CPUTexture& texture, HeightmapForNormals& heightmapForNormals);

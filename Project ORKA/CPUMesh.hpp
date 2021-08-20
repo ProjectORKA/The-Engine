@@ -19,6 +19,10 @@ struct CPUMesh {
 	
 	Bool readyForUpload = false;
 	
+	CPUMesh();
+	CPUMesh(Name name);
+	~CPUMesh(){};
+
 	void saveMeshFile();
 	void load(Name name);
 	void loadFBX(Path path);

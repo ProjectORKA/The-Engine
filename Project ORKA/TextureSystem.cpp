@@ -42,7 +42,6 @@ void TextureSystem::create()
 
 	add(defaultTexture);
 }
-
 void TextureSystem::destroy()
 {
 	for (GPUTexture& gpuTexture : gpuTextures) {
@@ -51,6 +50,19 @@ void TextureSystem::destroy()
 	gpuTextures.clear();
 
 	textureNames.clear();
+}
+void TextureSystem::use(Name name)
+{
+	use(name,0);
+}
+void TextureSystem::resize(Area size)
+{
+	currentTexture().resize(size);
+}
+void TextureSystem::use(Index textureIndex)
+{
+	currentTextureID = textureIndex;
+	currentTexture().use(0);
 }
 void TextureSystem::use(Name name, Index slot) {
 	auto it = textureNames.find(name);
@@ -73,25 +85,12 @@ void TextureSystem::use(Name name, Index slot) {
 		}
 	}
 }
-void TextureSystem::use(Index textureIndex)
-{
-	currentTextureID = textureIndex;
-	currentTexture().use(0);
-}
-void TextureSystem::use(Name name)
-{
-	use(name,0);
-}
 void TextureSystem::add(CPUTexture & cpuTexture)
 {
 	gpuTextures.emplace_back();
 	gpuTextures.back().load(cpuTexture);
 	currentTextureID = gpuTextures.size() - 1;
 	textureNames[cpuTexture.name] = currentTextureID;
-}
-void TextureSystem::resize(Int width, Int height)
-{
-	currentTexture().resize(width, height);
 }
 
 Index TextureSystem::getTextureID(Name name) {

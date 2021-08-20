@@ -9,7 +9,7 @@ struct Window {
 	Bool isShown = true;
 	IVec2 windowPosition;
 	Bool decorated = true;
-	Bool fullScreen = false;
+	Bool fullScreen = true;
 	Bool duplicateWindow = false;
 	String title = "Project ORKA";
 	APIWindow apiWindow = nullptr;
@@ -17,10 +17,10 @@ struct Window {
 	
 	Renderer renderer;
 
+	Area windowedModeSize = Area(1);
+
 	//window contents
 	Vector<UIElement*> contents;
-
-	Area framebufferSize; //stored for speed, may cause bugs
 
 	//thread
 	Thread thread;
@@ -45,7 +45,7 @@ struct Window {
 	Bool shouldClose();
 	Bool isFullScreen();
 
-	Area getFramebufferSize();
+	Area getWindowContentSize();
 	Area getWindowFrameSize();
 };
 

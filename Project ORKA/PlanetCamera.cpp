@@ -2,10 +2,10 @@
 #include "PlanetCamera.hpp"
 #include "TerrainSystem.hpp"
 
-void PlanetCamera::update(Time& renderTime)
+void PlanetCamera::update(Float delta)
 {
 	cameraSpeed = pow(CAMERA_SPEED_MULTIPLIER, speedMultiplier);
-	accelerationVector *= cameraSpeed * renderTime.delta;
+	accelerationVector *= cameraSpeed * delta;
 
 	location += accelerationVector;
 
@@ -75,10 +75,7 @@ void PlanetCamera::update(Time& renderTime)
 		xLocation += LDouble(chunkLocation.x) / pow(2, 64);
 		yLocation += LDouble(chunkLocation.y) / pow(2, 64);
 
-		//xLocation /= pow(2, -3);
-		//yLocation /= pow(2, -3);
-
-		LDouble newCamHeight = pow(2, 64-17) + terrainGenerationFunction(xLocation, yLocation);
+		LDouble newCamHeight = pow(2, 64-20) + terrainGenerationFunction(xLocation, yLocation);
 
 		if (newCamHeight > oldCamHeight) {
 			ULL chunkheight = newCamHeight;
@@ -94,11 +91,4 @@ void PlanetCamera::render(Uniforms& uniforms, Float aspectRatio) {
 	uniforms.data.cameraVector = Vec4(forwardVector, 1);
 	uniforms.data.vpMatrix = projectionMatrix(aspectRatio) * viewMatrixOnlyRot();
 	//uniforms.update();
-}
-Matrix PlanetCamera::viewMatrixOnlyRot() {
-	return glm::lookAt(
-		Vec3(0),
-		forwardVector,
-		upVector
-	);
 }

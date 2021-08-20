@@ -7,3 +7,5 @@
 #include <limits>
 
 ULL random(ULL size);
+Float randomFloat();
+Float randomFloat(Float low, Float high);

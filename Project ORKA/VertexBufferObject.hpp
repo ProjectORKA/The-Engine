@@ -13,5 +13,6 @@ struct VertexBufferObject {
 
 
 	void create(UInt location, float* data, UInt byteSize, UInt usage, Index components);
+	//void update(UInt location, float* data, UInt byteSize, UInt usage, Index components);
 	void unload();
 };
