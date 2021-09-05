@@ -92,8 +92,6 @@ void QuadtreeNodeRenderData::create(QuadtreeNode & quadtreeNode)
 	
 	quadtreeNode.incrementUsers();
 }
-
-
 void QuadtreeNodeRenderData::updateWithoutSubdivision(PlanetCamera& camera)
 {
 	//create 3d chunk id
@@ -104,7 +102,7 @@ void QuadtreeNodeRenderData::updateWithoutSubdivision(PlanetCamera& camera)
 	tmp.location.z = equivalentQuadtreeNode->data.terrain.lowerLimit;
 
 	//get camera relative location
-	chunkOffset = cameraRelativeLocationOfChunk(tmp, camera);
+	chunkOffset = cameraRelativeLocationOfChunk(tmp, camera.chunkLocation, camera.location);
 
 	inDrawDistance = glm::length(chunkOffset + Vec3(0.5,0.5,0)) < drawDistance;
 
@@ -139,13 +137,13 @@ void QuadtreeRenderSystem::count()
 void QuadtreeRenderSystem::destroy() {
 	root.destroy();
 }
+void QuadtreeRenderSystem::create(Renderer& renderer){
+	grassTextureID = renderer.textureSystem.getTextureID("grass");
+	terrainShaderID = renderer.shaderSystem.getShaderID("terrain");
+}
 void QuadtreeRenderSystem::update(PlanetCamera& camera) {
 	root.update(camera);
 }
 void QuadtreeRenderSystem::renderLevel(UShort level, Renderer& renderer) {
 	root.renderTerrainLevel(level, renderer);
-}
-void QuadtreeRenderSystem::create(Renderer& renderer){
-	grassTextureID = renderer.textureSystem.getTextureID("grass");
-	terrainShaderID = renderer.shaderSystem.getShaderID("terrain");
 }

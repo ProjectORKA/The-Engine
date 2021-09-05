@@ -39,3 +39,8 @@ void Area::clamp(Int a) {
 	x = max<Int>(x, a);
 	y = max<Int>(y, a);
 }
+
+void logDebug(Area t)
+{
+	std::cout << "(" << t.x << "|" << t.y << ")" << "\n";
+}

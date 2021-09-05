@@ -22,9 +22,6 @@ struct SimpleCamera {
 	virtual void update(Float delta);
 	virtual void rotate(Vec2 rotation);
 	virtual void render(Uniforms& uniforms, Float aspectRatio);
-	//virtual void renderOnlyRotation(Uniforms& uniforms, Float aspectRatio);
-
-	//SimpleCamera();
 
 	Matrix viewMatrix();
 	Matrix viewMatrixOnlyRot();

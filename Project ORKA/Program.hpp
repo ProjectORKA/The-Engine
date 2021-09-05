@@ -1,5 +1,6 @@
 # pragma once
 
+#include "GameSystem.hpp"
 #include "Engine.hpp"
 
 struct Program {

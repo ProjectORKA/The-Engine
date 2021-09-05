@@ -5,11 +5,7 @@
 
 struct Window;
 
-struct State {
-	void changeState();
-};
-
-struct Button : public State {
+struct Button{
 	Bool isPressed;
 };
 
@@ -27,9 +23,12 @@ struct InputManager {
 	Double scrollAxisYTotal = 200;
 
 	Bool capturing = false;
-	IVec2 cursorDelta = IVec2(0, 0);
+
+	//IVec2 cursorDelta = IVec2(0, 0);
 	IVec2 cursorPosition = IVec2(0,0);
-	IVec2 captureReleasePosition = IVec2(0);
+	
+	IVec2 capturePosition = IVec2(0);
+
 	Float mouseSensitivity = 0.0015f;
 	
 	//these functions will be called by the window/windowAPI

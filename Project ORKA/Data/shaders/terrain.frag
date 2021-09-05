@@ -1,4 +1,7 @@
 #version 450
+#extension GL_ARB_shading_language_include : require
+#include "/uniforms.glsl" //! #include "uniforms.glsl" 
+
 layout(location = 0) out vec4 fragmentColor;
 in vec4 vertexColor;
 in vec3 vertexPosition;
@@ -7,28 +10,6 @@ in vec3 normal;
 in float depth;
 in vec3 worldCoordinate;
 in float slope;
-
-layout(std140, binding = 0) uniform GlobalUniforms
-{
-	mat4 mMatrix;
-	mat4 vpMatrix;
-	
-	vec4 worldOffset;
-	vec4 cameraVector;		 //its vec3 but treated as vec4 in memory
-	vec4 chunkOffsetVector;	 //its vec3 but treated as vec4 in memory
-	vec4 customColor;
-
-	float time;
-	float custom1;
-	float custom2;
-	float custom3;
-
-	bool distortion;
-};
-
-uniform sampler2D texture0;
-uniform sampler2D texture1;
-uniform sampler2D texture2;
 
 ////////////////////////////////////////////
 const vec2 zOffset = vec2(37.0,17.0);
@@ -41,6 +22,10 @@ vec2 uvCoordsAtLevel(uint level){
 	return (textureCoordinate / pow(2,worldOffset.w - level)) + mod(worldOffset.xy/pow(2,64 - level),1);;
 }
 
+
+vec3 mix(vec3 a, vec3 b, float alpha){
+	return a * (1- alpha) + b * alpha;
+}
 
 void main(){
 
@@ -56,13 +41,13 @@ void main(){
 	float coloredLight = fresnel + ambient + diffuse;
 	float externalLight = specular;
 	
-	//color = pow(slope,16) > 0.2 ? color : vec3(0.8,0.8,0.8);
 	
 
 	//vec2 newtextureCorrdinate = mod((textureCoordinate / pow(2,worldOffset.w-uvLevel)) + worldOffset.xy / pow(2,64-uvLevel),1);
 	//vec2 newtextureCorrdinate = vec2(worldOffset.x / pow(2,64-uvLevel));//vec2(mod(worldOffset.x,16),mod(worldOffset.y,16));
 
 	vec3 color = texture(texture0, uvCoordsAtLevel(0)).rgb +
+
 	texture(texture0, uvCoordsAtLevel(4)).rgb +
 	texture(texture0, uvCoordsAtLevel(8)).rgb +
 	texture(texture0, uvCoordsAtLevel(12)).rgb +
@@ -74,6 +59,12 @@ void main(){
 	color.r = pow(color.r,2.0);
 	color.g = pow(color.g,2.0);
 	color.b = pow(color.b,2.0);
+
+	float slopeImpact = clamp(pow((1.01 - slope)*20,1),0,1);
+
+	color = mix(color,vec3(0.1), slopeImpact);
+	
+	if(worldCoordinate.z < 0.0000001) color = vec3(1,0,0);
 
 	//	if(distortion) color = texture(texture2, textureCoordinate).xyz;
 	//	else color = normal;

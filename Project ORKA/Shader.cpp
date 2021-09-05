@@ -1,9 +1,8 @@
 #include "Shader.hpp"
 #include "Util.hpp"
-#include "FileSystem.hpp"
 
 void Shader::unload() {
-	isValid = false;
+	isLoaded = false;
 	apiDeleteShader(shaderID);
 }
 void Shader::load(ShaderType shaderType, Name name)
@@ -20,8 +19,7 @@ void Shader::load(ShaderType shaderType, Name name)
 	}
 }
 void Shader::load(ShaderType shaderType, Path path) {
-	String shaderCode;
-	loadString(shaderCode, path);
+	String shaderCode = loadString(path);
 	loadShaderCode(shaderType, shaderCode);
 }
 void Shader::loadShaderCode(ShaderType shaderType, String shaderCode)
@@ -37,9 +35,9 @@ void Shader::loadShaderCode(ShaderType shaderType, String shaderCode)
 
 	if (infoLogLength > 0) {
 		logError(apiGetShaderInfoLog(shaderID,infoLogLength));
-		isValid = false;
+		isLoaded = false;
 	}
 	else {
-		isValid = true;
+		isLoaded = true;
 	}
 }

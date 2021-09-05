@@ -2,37 +2,51 @@
 
 #include "Basics.hpp"
 #include "Time.hpp"
+#include "Game.hpp"
 
 
+struct Task {
+	Name name = "empty";
+	TimePoint lastExecution = now();
+	Duration preferredTimeBetweenExecutions = FHours(24);
+	Float priority = 0.0;
 
-namespace ORGANIZER {
-
-	struct Organizer {
-		TimePriorityManager timePriorityManager;
+	void create(Name name, Float repetitionTimeInHours) {
+		this->name = name;
+		preferredTimeBetweenExecutions = FHours(repetitionTimeInHours);
 	};
 
-	struct Task {
-		Name name = "empty";
-		TimePoint lastExecution = std::chrono::steady_clock::now();
-		Duration preferredTimeBetweenExecutions = FHours(24);
-		Float priority = 0.0;
+	void update() {
+		FHours h = lastExecution - now();
+		priority = h / preferredTimeBetweenExecutions;
+	};
 
-		void create(Name name, Float repetitionTimeInHours) {
-			this->name = name;
-			preferredTimeBetweenExecutions = FHours(repetitionTimeInHours);
-		};
+	void print() {
+		std::cout << priority << "\n";
+	}
+};
 
-		void update() {
-			FHours h = lastExecution - std::chrono::steady_clock::now();
-			priority = h / preferredTimeBetweenExecutions;
-		};
+struct Organizer {
+	Vector<Task> tasks;
 
-		void print() {
-			std::cout << priority << "\n";
+	void update() {
+		for (Task& t : tasks) {
+			t.update();
 		}
 	};
+};
 
-	struct TimePriorityManager {
-		Vector<Task> tasks;
+struct Nizer : public Game {
+	using Game::Game;
+
+	Organizer organizer;
+
+	void create() override {
 	};
-}
+	void update() override {
+		organizer.update();
+	};
+	void render() override {
+
+	};
+};

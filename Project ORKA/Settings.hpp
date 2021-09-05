@@ -3,7 +3,7 @@
 #include "Basics.hpp"
 
 #define MAX_CHUNK_LEVEL 32			//52 is milimeter precision
-#define HEIGHTMAP_SIZE 64
+#define HEIGHTMAP_SIZE 26			//24
 #define TARGETFRAMERATE 144
 #define DEFAULT_WINDOW_WIDTH 1920
 #define DEFAULT_WINDOW_HEIGHT 1080

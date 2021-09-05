@@ -38,7 +38,6 @@ void FramebufferSystem::update(Area area)
 
 	if (framebufferSize != area) {
 		framebufferSize = area;
-
 		for (Framebuffer& framebuffer : framebuffers) {
 			framebuffer.resize(framebufferSize);
 		}

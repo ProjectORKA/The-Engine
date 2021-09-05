@@ -5,7 +5,6 @@
 #include "QuadtreeSystem.hpp"
 
 struct PlanetSystem {
-
 	OctreeSystem octreeSystem;
 	QuadtreeSystem quadtreeSystem;
 

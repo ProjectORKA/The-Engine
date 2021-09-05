@@ -2,23 +2,41 @@
 
 #include "Basics.hpp"
 #include "UIElement.hpp"
-#include "Renderer.hpp"
+#include "Game.hpp"
+
+//
+//extern Map<Index, PlanetCamera> planetCameras;
+//extern Map<Index, SimpleCamera> cameras;
+//
+//void createUIORKALogo(UIElement* element, Window& window);
+//void renderUIORKALogo(UIElement* element, Window& window, TiledRectangle screenArea);
+//
+//struct UIORKALogo : public UIElement {
+//	UIORKALogo();
+//};
+//
+//void createUIORKAGame(UIElement* element, Window& window);
+//void renderUIORKAGame(UIElement* element, Window& window, TiledRectangle screenArea);
+//
+//struct UIORKAGame : public UIElement {
+//	UIORKAGame();
+//};
 
 struct Window;
 
-extern Map<Index, PlanetCamera> planetCameras;
-extern Map<Index, SimpleCamera> cameras;
+void renderUIGameView(UIElement* element, Window& window, TiledRectangle screenArea);
+void updateUIGameView(UIElement* element, Window& window);
 
-void createUIORKALogo(UIElement* element, Window& window);
-void renderUIORKALogo(UIElement* element, Window& window, TiledRectangle screenArea);
+struct UIGameView : public UIElement {
+	PlanetCamera planetCamera;
+	SimpleCamera camera;
+	Game * game = nullptr;
 
-struct UIORKALogo : public UIElement {
-	UIORKALogo();
-};
 
-void createUIORKAGame(UIElement* element, Window& window);
-void renderUIORKAGame(UIElement* element, Window& window, TiledRectangle screenArea);
+	UIGameView(Game* game, Window & window) {
+		this->game = game;
 
-struct UIORKAGame : public UIElement {
-	UIORKAGame();
+		renderFunction = &renderUIGameView;
+		updateFunction = &updateUIGameView;
+	}
 };

@@ -41,7 +41,6 @@ void PlanetRenderSystem::render(PlanetSystem& planetSystem, Renderer& renderer, 
 		//renderer.shaderSystem.uniforms.update();
 		//renderer.meshSystem.render("fullScreenQuad");
 
-
 		renderer.setDepthTest(true);
 		renderer.setCulling(true);
 
@@ -50,12 +49,22 @@ void PlanetRenderSystem::render(PlanetSystem& planetSystem, Renderer& renderer, 
 		renderer.textureSystem.use(quadtreeRenderSystem.grassTextureID);
 		quadtreeRenderSystem.renderLevel(level, renderer);
 		
-		//render water
-		//renderer.textureSystem.use(quadtreeRenderSystem.waterTextureID);
-		//octreeRenderSystem.root.renderWaterLevel(level, renderer);
+		//renderer.shaderSystem.use("primitive");
+		//renderer.textureSystem.use("default");
+		//octreeRenderSystem.renderLevel(level, renderer);
 
-		renderer.shaderSystem.use("primitive");
-		renderer.textureSystem.use("default");
-		octreeRenderSystem.renderLevel(level, renderer);
+		//render water
+		//renderer.setDepthTest(false);
+		//glDepthMask(GL_FALSE);
+		//renderer.setCulling(false);
+		//renderer.shaderSystem.use("water");
+		//
+		//renderer.uniforms().data.chunkOffsetVector = Vec4((Vec3(planetCamera.chunkLocation) + planetCamera.location) / Vec3(ULLONG_MAX) ,1);
+		//renderer.uniforms().data.mMatrix = Matrix(1);
+		//renderer.framebufferSystem.current().depthTexture.use(0);
+		//renderer.uniforms().update();
+		//renderer.meshSystem.render("centeredCube");
+
+		//glDepthMask(GL_TRUE);
 	}
 }

@@ -80,7 +80,6 @@ void TextRenderSystem::render(String text, Float x, Float y, FontStyle style) {
 
 	gpuText.unload();
 	gpuText.upload(cpuText);
-	//gpuText.update(cpuText);
 
 	rendererPtr->shaderSystem.use("text");
 	textTexture.use(0);
@@ -89,7 +88,7 @@ void TextRenderSystem::render(String text, Float x, Float y, FontStyle style) {
 	apiBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	rendererPtr->screenSpace();
-	rendererPtr->shaderSystem.uniforms.data.mMatrix = scale(translate(Matrix(1), Vec3(x, y, 0)),Vec3(style.size));
+	rendererPtr->shaderSystem.uniforms.data.mMatrix = scale(translate(Matrix(1), Vec3(x, y, 0)),Vec3(style.absoluteSize));
 	rendererPtr->shaderSystem.uniforms.update();
 
 	apiDisable(GL_CULL_FACE);

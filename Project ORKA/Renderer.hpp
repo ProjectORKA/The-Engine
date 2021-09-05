@@ -6,6 +6,7 @@
 #include "TextRenderSystem.hpp"
 #include "FramebufferSystem.hpp"
 #include "MeshSystem.hpp"
+#include "MatrixSystem.hpp"
 #include "ShaderSystem.hpp"
 #include "RenderObjectSystem.hpp"
 #include "PlanetRenderSystem.hpp"
@@ -27,6 +28,7 @@ struct Renderer{
 	//render systems
 	MeshSystem meshSystem;
 	ShaderSystem shaderSystem;
+	MatrixSystem matrixSystem;
 	TextureSystem textureSystem;
 	TextRenderSystem textRenderSystem;
 	FramebufferSystem framebufferSystem;
@@ -52,6 +54,22 @@ struct Renderer{
 	//spaces
 	void screenSpace();
 	void normalizedSpace();
+	
+	//meshes
+	void renderMesh(Name name);
+
+	//textures
+	void useTexture(Name name) {
+		textureSystem.use(name);
+	}
+	void useTexture(Name name, Index location) {
+		textureSystem.use(name, location);
+	}
+
+	//shaders
+	void useShader(Name name) {
+		shaderSystem.use(name);
+	}
 
 	void pollGraphicsAPIError();
 	void setCulling(Bool isCulling);

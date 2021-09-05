@@ -4,11 +4,11 @@
 #include "Shader.hpp"
 #include "AutoConstruct.hpp"
 
-struct ShaderProgram : public AutoConstruct{
+struct ShaderProgram {//: public AutoConstruct{
 
 	//Uniforms* uniformsPtr = nullptr;
 
-	Bool isValid = false;
+	Bool isLoaded = false;
 
 	Index programID = 0;
 
@@ -16,7 +16,7 @@ struct ShaderProgram : public AutoConstruct{
 
 	void select();
 	void rebuild() {
-		
+		//[TODO]
 	};
 	void destroy();
 	void create(Name name, Uniforms& uniforms);

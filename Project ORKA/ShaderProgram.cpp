@@ -2,7 +2,7 @@
 #include "ShaderProgram.hpp"
 
 void ShaderProgram::select() {
-	if (isValid) {
+	if (isLoaded) {
 		apiUseProgram(programID);
 	}
 	else {
@@ -12,7 +12,7 @@ void ShaderProgram::select() {
 void ShaderProgram::destroy()
 {
 	logDebug("Unloading Shader!");
-	if (isValid) {
+	if (isLoaded) {
 		apiDeleteProgram(programID);
 	}
 	else {
@@ -35,7 +35,7 @@ void ShaderProgram::create(Shader& vertexShader, Shader& fragmentShader, Uniform
 	//set pointer to allow the shader to update uniforms by itself
 	//uniformsPtr = &uniforms;
 
-	if (isValid) {
+	if (isLoaded) {
 		logError("ShaderProgram already loaded!");
 	}
 	else {
@@ -76,7 +76,7 @@ void ShaderProgram::create(Shader& vertexShader, Shader& fragmentShader, Uniform
 		//create binding to uniform buffer
 		apiUniformBlockBinding(programID, apiGetUniformBlockIndex(programID, "GlobalUniforms"), 0);
 
-		isValid = true;
+		isLoaded = true;
 	}
 
 	logDebug("Created Shader!");

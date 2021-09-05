@@ -22,12 +22,19 @@
     <ResourceCompile Include="icon.rc" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="AITEst.cpp" />
+    <ClCompile Include="AIPlayground.cpp" />
     <ClCompile Include="Basics.cpp" />
+    <ClCompile Include="Fonts.cpp" />
+    <ClCompile Include="Game.cpp" />
+    <ClCompile Include="GameSystem.cpp" />
+    <ClCompile Include="Intro.cpp" />
+    <ClCompile Include="MatrixSystem.cpp" />
+    <ClCompile Include="Mooncrash.cpp" />
     <ClCompile Include="OctreeNode.cpp" />
     <ClCompile Include="QuadtreeNode.cpp" />
     <ClCompile Include="SDFTerrainRenderSystem.cpp" />
     <ClCompile Include="Settings.cpp" />
+    <ClCompile Include="TransformationStack.cpp" />
     <ClCompile Include="UIText.cpp" />
     <ClCompile Include="MindMap.cpp" />
     <ClCompile Include="RenderRegion.cpp" />
@@ -92,15 +99,21 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\External Libraries\stb-master\stb_truetype.h" />
-    <ClInclude Include="AITest.hpp" />
+    <ClInclude Include="AIPlayground.hpp" />
     <ClInclude Include="AutoConstruct.hpp" />
     <ClInclude Include="Basics.hpp" />
     <ClInclude Include="CameraControllers.hpp" />
     <ClInclude Include="Engine.hpp" />
+    <ClInclude Include="Fonts.hpp" />
     <ClInclude Include="Functor.hpp" />
+    <ClInclude Include="Game.hpp" />
+    <ClInclude Include="GameSystem.hpp" />
     <ClInclude Include="InputManager.hpp" />
+    <ClInclude Include="Intro.hpp" />
     <ClInclude Include="KeyMap.hpp" />
+    <ClInclude Include="MatrixSystem.hpp" />
     <ClInclude Include="MindMap.hpp" />
+    <ClInclude Include="Mooncrash.hpp" />
     <ClInclude Include="OctreeData.hpp" />
     <ClInclude Include="OctreeID.hpp" />
     <ClInclude Include="OctreeNode.hpp" />
@@ -143,8 +156,10 @@
     <ClInclude Include="ShaderProgram.hpp" />
     <ClInclude Include="SimpleCamera.hpp" />
     <ClInclude Include="SimplePlanetRenderer.hpp" />
+    <ClInclude Include="String.hpp" />
     <ClInclude Include="TerrainRendering.hpp" />
     <ClInclude Include="TerrainSystem.hpp" />
+    <ClInclude Include="TransformationStack.hpp" />
     <ClInclude Include="TreeSystem.hpp" />
     <ClInclude Include="UIConstraints.hpp" />
     <ClInclude Include="UIElement.hpp" />
@@ -204,8 +219,11 @@
     <None Include="Data\shaders\text.vert" />
     <None Include="Data\shaders\ui.frag" />
     <None Include="Data\shaders\ui.vert" />
+    <None Include="Data\shaders\uniforms.glsl" />
     <None Include="Data\shaders\unlit.frag" />
     <None Include="Data\shaders\unlit.vert" />
+    <None Include="Data\shaders\water.frag" />
+    <None Include="Data\shaders\water.vert" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
@@ -285,6 +303,7 @@
       <LanguageStandard>stdcpp17</LanguageStandard>
       <EnableModules>false</EnableModules>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
+      <BasicRuntimeChecks>UninitializedLocalUsageCheck</BasicRuntimeChecks>
     </ClCompile>
     <Link>
       <AdditionalDependencies>opengl32.lib;assimp-vc141-mtd.lib;glfw3.lib;glew32s.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -315,6 +334,7 @@
       <LanguageStandard>stdcpp17</LanguageStandard>
       <EnableModules>false</EnableModules>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
+      <BasicRuntimeChecks>UninitializedLocalUsageCheck</BasicRuntimeChecks>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>$(SolutionDir)\External Libraries\ASSIMP\lib\lib 64\debug;$(SolutionDir)\External Libraries\GLFW 64 bit\lib-vc2015;$(SolutionDir)\External Libraries\GLEW\lib\Release\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>

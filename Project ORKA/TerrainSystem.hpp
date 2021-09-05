@@ -5,7 +5,7 @@
 #include "Heightmap.hpp"
 #include "QuadtreeID.hpp"
 
-#define SEA_LEVEL 1677721600000
+#define SEALEVEL ULLONG_MAX/3 //1677721600000
 #define TERRAIN_GENERATION_SEED 645123587412588622
 
 struct Terrain {

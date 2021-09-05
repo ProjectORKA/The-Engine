@@ -8,7 +8,7 @@
 struct PlanetRenderSystem {
 
 	Bool chunkBorders = true;
-	Bool worldDistortion = false;
+	Bool worldDistortion = true;
 
 	OctreeRenderSystem octreeRenderSystem;
 	QuadtreeRenderSystem quadtreeRenderSystem;
