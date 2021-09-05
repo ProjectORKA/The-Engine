@@ -5,13 +5,9 @@
 #include "GraphicsAPI.hpp"
 #include "GPUTexture.hpp"
 #include "GPUMesh.hpp"
+#include "Fonts.hpp"
 
 struct Renderer;
-
-struct FontStyle {
-	Float size = 20;
-	Float letterSpacing = 0.5;
-};
 
 struct TextRenderSystem {
 	GPUMesh gpuText;

@@ -1,6 +1,6 @@
-
-
 #include "Debug.hpp"
+
+Map<std::thread::id, DebugSystem> debugSystems;
 
 bool showEvents = true;
 bool showDebug = true;
@@ -23,7 +23,6 @@ void logWarning(String message) {
 #ifdef DEBUG
 	if (showWarning) std::cout << "Warning: " << message << "\n";
 	beep();
-	pause();
 #endif // DEBUG
 }
 void logError(String message)
@@ -83,6 +82,12 @@ void logDebug(Short t)
 	std::cout << t << "\n";
 #endif // DEBUG
 }
+void logDebug(IVec3 t) {
+	std::cout << "(" << t.x << "|" << t.y << "|" << t.z << ")" << "\n";
+}
+void logDebug(IVec2 t) {
+	std::cout << "(" << t.x << "|" << t.y << ")" << "\n";
+}
 void logDebug(ULLVec2 t)
 {
 #ifdef DEBUG
@@ -106,4 +111,26 @@ void logDebug(glm::highp_dvec3 t) {
 #ifdef DEBUG
 	std::cout << "(" << t.x << "|" << t.y << "|" << t.z << ")" << "\n";
 #endif // DEBUG
+}
+
+void printDebugLog() {
+	debugSystems[std::this_thread::get_id()].flush();
+}
+
+DebugTracker::DebugTracker(String functionName) {
+	DebugSystem& ds = debugSystems[std::this_thread::get_id()]; 
+	for (int i = 0; i < ds.level; i++) {
+		ds.log.append("-");
+	}
+	ds.level++;
+	ds.log.append(functionName).append(" (");
+}
+
+DebugTracker::~DebugTracker() {
+	DebugSystem& ds = debugSystems[std::this_thread::get_id()];
+	for (int i = 0; i < ds.level; i++) {
+		ds.log.append("-");
+	}
+	ds.log.append(")\n");
+	ds.level--;
 }

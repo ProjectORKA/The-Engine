@@ -20,7 +20,7 @@ struct Window {
 	Area windowedModeSize = Area(1);
 
 	//window contents
-	Vector<UIElement*> contents;
+	List<UIElement*> contents;
 
 	//thread
 	Thread thread;

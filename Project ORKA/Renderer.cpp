@@ -67,10 +67,14 @@ void Renderer::screenSpace() {
 void Renderer::normalizedSpace() {
 	uniforms().data.vpMatrix = Matrix(1);
 }
+void Renderer::renderMesh(Name name) {
+	uniforms().update();
+	meshSystem.render(name);
+}
 void Renderer::pollGraphicsAPIError() {
 	Int error = apiGetError();
 	if (error) {
-		logError(String("Opengl Error: ").append(std::to_string(error)));
+		logError(String("Opengl Error: ").append(toString(error)));
 	}
 }
 void Renderer::clearColor(Color color) {
@@ -127,10 +131,10 @@ void Renderer::createBlurTexture(Index from, Index to)
 	//this function renders a blurred version of a framebuffer to another framebuffer
 	Index originalFramebufferID = framebufferSystem.currentFramebufferIndex;
 	
-	shaderSystem.use("blur");
+	useShader("blur");
 	framebufferSystem.framebuffers[from].colorTexture.use(0);
 	framebufferSystem.use(to);
-	meshSystem.render("fullScreenQuad");
+	renderMesh("fullScreenQuad");
 
 	framebufferSystem.use(originalFramebufferID);
 }

@@ -2,6 +2,7 @@
 #pragma once
 
 #include "Basics.hpp"
+#include "Debug.hpp"
 
 struct Area : public IVec2 {
 	Area() {};
@@ -9,8 +10,10 @@ struct Area : public IVec2 {
 	Area(Int x, Int y);
 	Area center();
 	void clamp(Area minimumSize);
-	void clamp(Int a);;
+	void clamp(Int a);
 };
+
+void logDebug(Area t);
 
 struct TiledRectangle {
 	IVec2 position = IVec2(0);

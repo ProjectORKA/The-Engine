@@ -1,25 +1,38 @@
 
 #include "ShaderSystem.hpp"
 
-void ShaderSystem::rebuild()
-{
-	for (ShaderProgram& shaderProgram : shaderPrograms) {
-		shaderProgram.rebuild();
-	}
+String uniformName = "/uniforms.glsl";
+
+void loadCommon() {
+	String code = loadString("data/shaders/uniforms.glsl");
+	logDebug(code);
+	apiNamedStringARB(uniformName, code);
+
 }
+void unloadCommon() {
+	apiDeleteNamedStringARB(uniformName);
+}
+
 void ShaderSystem::create() {
 	uniforms.create();
 	loadDefaultShader();
+
+	loadCommon();
+}
+void ShaderSystem::rebuild()
+{
+	for (auto & name : shaderNames) {
+		shaderPrograms[name.second].destroy();
+	}
+	shaderNames.clear();
 }
 void ShaderSystem::destroy() {
-
 	for (ShaderProgram& shaderProgram : shaderPrograms) {
 		shaderProgram.destroy();
 	}
 	shaderPrograms.clear();
 	shaderNames.clear();
 	uniforms.destroy();
-
 }
 void ShaderSystem::add(Name name)
 {

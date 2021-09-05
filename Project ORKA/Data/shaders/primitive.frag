@@ -1,30 +1,13 @@
 #version 450
+#extension GL_ARB_shading_language_include : require
+#include "/uniforms.glsl" //! #include "uniforms.glsl" 
+
 layout(location = 0) out vec4 fragmentColor;
 in vec3 vertexPosition;
 in vec2 textureCoordinate;
 in vec3 normal;
 in float depth;
 in vec3 worldCoordinate;
-
-layout(std140, binding = 0) uniform GlobalUniforms
-{
-	mat4 mMatrix;
-	mat4 vpMatrix;
-	
-	vec4 worldOffset;
-	vec4 cameraVector;		 //its vec3 but treated as vec4 in memory
-	vec4 chunkOffsetVector;	 //its vec3 but treated as vec4 in memory
-	vec4 customColor;
-
-	float time;
-	float custom1;
-	float custom2;
-	float custom3;
-
-	bool distortion;
-};
-
-uniform sampler2D texture0;
 
 void main(){
 	if(texture(texture0,textureCoordinate).a != 1) discard;
@@ -33,8 +16,6 @@ void main(){
 	vec3 fragmentViewVector = normalize(vertexPosition);
 	vec3 sunDir = normalize(vec3(1,1,1));
 	vec3 reflection = normalize(reflect(fragmentViewVector,normal));
-
-
 
 	float diffuse = clamp(dot(normalize(normal),sunDir),0,1);
 	float specular = clamp(1 * pow(max(dot(reflection, sunDir), 0.0f), 8.0f),0,1);

@@ -48,7 +48,7 @@ void RenderObjectSystem::select(Name name)
 				textureSystemPtr->use(renderObjectNamesQueue[i].textureName);
 				meshSystemPtr->use(renderObjectNamesQueue[i].meshName);
 
-				if (shaderSystemPtr->currentShaderProgram().isValid && textureSystemPtr->currentTexture().loaded && meshSystemPtr->currentMesh().loaded) {
+				if (shaderSystemPtr->currentShaderProgram().isLoaded && textureSystemPtr->currentTexture().loaded && meshSystemPtr->currentMesh().loaded) {
 
 					RenderObject renderObject;
 					renderObject.shaderID = shaderSystemPtr->currentShaderProgramID;

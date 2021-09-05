@@ -6,7 +6,7 @@ void SimpleCamera::update(Float delta) {
 	accelerationVector = { 0,0,0 };
 }
 void SimpleCamera::rotate(Vec2 rotation) {
-	rotationX = -rotation.y;
+	rotationX = rotation.y;
 	rotationZ = rotation.x;
 
 	//prevent looking upside down
@@ -39,18 +39,6 @@ void SimpleCamera::render(Uniforms& uniforms, Float aspectRatio) {
 	uniforms.data.vpMatrix = projectionMatrix(aspectRatio) * viewMatrix();
 	uniforms.update();
 }
-//void SimpleCamera::renderOnlyRotation(Uniforms& uniforms, Float aspectRatio)
-//{
-//	uniforms.data.cameraVector = Vec4(forwardVector, 1);
-//	uniforms.data.vpMatrix = projectionMatrix(aspectRatio) * viewMatrixOnlyRot();
-//	uniforms.update();
-//}
-
-//SimpleCamera::SimpleCamera() {
-//	rotate(Vec2(0, 0));
-//	//Time time;
-//	//update(time);
-//}
 
 Matrix SimpleCamera::viewMatrix() {
 	return glm::lookAt(

@@ -1,5 +1,5 @@
-
 #pragma once
+
 
 //standard
 using Bool = bool;
@@ -35,12 +35,7 @@ using SharedPointer = std::shared_ptr<T>;
 template<typename T>
 using WeakPointer = std::weak_ptr<T>;
 
-#include <string>
-using String = std::string;
-
-#include <cstring>
-
-#pragma warning(disable : 4996) //disables unsecure warning
+#include "String.hpp"
 
 #define NAME_SIZE 64
 

@@ -1,10 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
-    </Filter>
     <Filter Include="Program">
       <UniqueIdentifier>{23ae75d0-990b-4171-994e-7dc2a31c13cf}</UniqueIdentifier>
     </Filter>
@@ -38,9 +34,6 @@
     </Filter>
     <Filter Include="Program\Games\Mind Map">
       <UniqueIdentifier>{69c19ffb-5d50-409e-9f14-e4ebf9863392}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Program\Games\AITest">
-      <UniqueIdentifier>{bd903ea8-cf67-4516-b3b3-501e4ccf696f}</UniqueIdentifier>
     </Filter>
     <Filter Include="Program\Common">
       <UniqueIdentifier>{4684f843-1ee9-4813-bd3f-ed28cefdc038}</UniqueIdentifier>
@@ -83,9 +76,6 @@
     </Filter>
     <Filter Include="Program\Engine">
       <UniqueIdentifier>{1b27f742-3b68-461a-8a95-ed051c254b47}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Program\Games\Organizer">
-      <UniqueIdentifier>{7bdb92d9-9125-4a12-ab78-d4789253feb6}</UniqueIdentifier>
     </Filter>
     <Filter Include="Program\Engine\GameSimulation">
       <UniqueIdentifier>{e9634dc3-942c-49f4-9b33-c43f93332bc3}</UniqueIdentifier>
@@ -285,6 +275,42 @@
     <Filter Include="Program\Engine\InputManager\CameraController">
       <UniqueIdentifier>{ea07d26c-4f4c-466d-addc-882a8a7843fe}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Program\Engine\WindowSystem\Renderer\MatrixSystem">
+      <UniqueIdentifier>{07d6ea81-b53f-48a9-aa87-fe5a3a4a8747}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\Engine\WindowSystem\Renderer\MatrixSystem\Transformation Stack">
+      <UniqueIdentifier>{ee4ebd29-c373-49fd-bf17-c1c24e6de507}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders\UNIFORMS">
+      <UniqueIdentifier>{c1a0b859-426d-4ac9-930a-87b1597d13a8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders\water">
+      <UniqueIdentifier>{b18d0530-1a91-4d0e-b400-80aeafdff6b3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\Common\String">
+      <UniqueIdentifier>{85adeb92-e448-4335-92b7-522288bdf312}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\Game">
+      <UniqueIdentifier>{77ee8e15-caee-44fc-98f4-532ae95e6107}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\Game\Organizer">
+      <UniqueIdentifier>{7bdb92d9-9125-4a12-ab78-d4789253feb6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\Game\Mooncrash">
+      <UniqueIdentifier>{44fec228-bc21-4a76-9d83-8bb1a57c1ca3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\Engine\GameSystem">
+      <UniqueIdentifier>{9f9d8d8e-0ffc-4c47-98dc-881a58beae89}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\Game\Intro">
+      <UniqueIdentifier>{d2a99038-0c1d-4150-8f73-9cf1bc603d29}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\Game\AIplayground">
+      <UniqueIdentifier>{bd903ea8-cf67-4516-b3b3-501e4ccf696f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\Engine\WindowSystem\Renderer\TextRenderSystem\Fonts">
+      <UniqueIdentifier>{f7cb8862-b9d3-4178-85b5-44650d4b0d60}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -426,9 +452,6 @@
     <ClCompile Include="TerrainSystem.cpp">
       <Filter>Program\Engine\GameSimulation\TerrainSystem</Filter>
     </ClCompile>
-    <ClCompile Include="AITEst.cpp">
-      <Filter>Program\Games\AITest</Filter>
-    </ClCompile>
     <ClCompile Include="WindowAPI.cpp">
       <Filter>Program\Engine\WindowSystem\Window\WindowAPI</Filter>
     </ClCompile>
@@ -485,6 +508,30 @@
     </ClCompile>
     <ClCompile Include="UIGameView.cpp">
       <Filter>Program\Engine\WindowSystem\UserInterface\UIGameView</Filter>
+    </ClCompile>
+    <ClCompile Include="TransformationStack.cpp">
+      <Filter>Program\Engine\WindowSystem\Renderer\MatrixSystem\Transformation Stack</Filter>
+    </ClCompile>
+    <ClCompile Include="MatrixSystem.cpp">
+      <Filter>Program\Engine\WindowSystem\Renderer\MatrixSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="Game.cpp">
+      <Filter>Program\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="GameSystem.cpp">
+      <Filter>Program\Engine\GameSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="Intro.cpp">
+      <Filter>Program\Game\Intro</Filter>
+    </ClCompile>
+    <ClCompile Include="Mooncrash.cpp">
+      <Filter>Program\Game\Mooncrash</Filter>
+    </ClCompile>
+    <ClCompile Include="AIPlayground.cpp">
+      <Filter>Program\Game\AIplayground</Filter>
+    </ClCompile>
+    <ClCompile Include="Fonts.cpp">
+      <Filter>Program\Engine\WindowSystem\Renderer\TextRenderSystem\Fonts</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -653,9 +700,6 @@
     <ClInclude Include="QuadtreeID.hpp">
       <Filter>Program\Engine\GameSimulation\PlanetSystem\QuadtreeSystem\QuadtreeID</Filter>
     </ClInclude>
-    <ClInclude Include="AITest.hpp">
-      <Filter>Program\Games\AITest</Filter>
-    </ClInclude>
     <ClInclude Include="..\External Libraries\stb-master\stb_truetype.h">
       <Filter>Program\Engine\WindowSystem\Renderer\TextRenderSystem</Filter>
     </ClInclude>
@@ -663,7 +707,7 @@
       <Filter>Program\Engine\WindowSystem\Window\WindowAPI</Filter>
     </ClInclude>
     <ClInclude Include="Organizer.hpp">
-      <Filter>Program\Games\Organizer</Filter>
+      <Filter>Program\Game\Organizer</Filter>
     </ClInclude>
     <ClInclude Include="InputManager.hpp">
       <Filter>Program\Engine\InputManager</Filter>
@@ -758,6 +802,33 @@
     <ClInclude Include="AutoConstruct.hpp">
       <Filter>Program\Common\Advanced</Filter>
     </ClInclude>
+    <ClInclude Include="TransformationStack.hpp">
+      <Filter>Program\Engine\WindowSystem\Renderer\MatrixSystem\Transformation Stack</Filter>
+    </ClInclude>
+    <ClInclude Include="MatrixSystem.hpp">
+      <Filter>Program\Engine\WindowSystem\Renderer\MatrixSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="String.hpp">
+      <Filter>Program\Common\String</Filter>
+    </ClInclude>
+    <ClInclude Include="Game.hpp">
+      <Filter>Program\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Mooncrash.hpp">
+      <Filter>Program\Game\Mooncrash</Filter>
+    </ClInclude>
+    <ClInclude Include="GameSystem.hpp">
+      <Filter>Program\Engine\GameSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="Intro.hpp">
+      <Filter>Program\Game\Intro</Filter>
+    </ClInclude>
+    <ClInclude Include="AIPlayground.hpp">
+      <Filter>Program\Game\AIplayground</Filter>
+    </ClInclude>
+    <ClInclude Include="Fonts.hpp">
+      <Filter>Program\Engine\WindowSystem\Renderer\TextRenderSystem\Fonts</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Data\shaders\debug.frag">
@@ -831,6 +902,15 @@
     </None>
     <None Include="Data\shaders\sdfTerrain.vert">
       <Filter>Shaders\sdfTerrain</Filter>
+    </None>
+    <None Include="Data\shaders\uniforms.glsl">
+      <Filter>Shaders\UNIFORMS</Filter>
+    </None>
+    <None Include="Data\shaders\water.frag">
+      <Filter>Shaders\water</Filter>
+    </None>
+    <None Include="Data\shaders\water.vert">
+      <Filter>Shaders\water</Filter>
     </None>
   </ItemGroup>
 </Project>

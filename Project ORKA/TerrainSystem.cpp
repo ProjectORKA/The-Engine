@@ -3,9 +3,9 @@
 
 Double terrainGenerationFunction(LDouble x, LDouble y) {
 	static PerlinNoise noise(TERRAIN_GENERATION_SEED);
-	LDouble noiseSize = pow(2, 5);
+	LDouble noiseSize = pow(2, 10);
 
-	return pow(noise.octaveNoise0_1(noiseSize * x, noiseSize * y, 16), 3) * LDouble(pow(2,56));
+	return pow(noise.octaveNoise0_1(noiseSize * x, noiseSize * y, 18), 3) * LDouble(pow(2,62)) / noiseSize;
 };
 
 void Terrain::create(QuadtreeID id)
@@ -28,7 +28,7 @@ void Terrain::create(QuadtreeID id)
 			xLocation /= pow(2, id.level);
 			yLocation /= pow(2, id.level);
 
-			LDouble height = terrainGenerationFunction(xLocation, yLocation);
+			LDouble height = SEALEVEL + terrainGenerationFunction(xLocation, yLocation);
 
 			if (height > upperLimit) upperLimit = ceil(height);
 			if (height < lowerLimit) lowerLimit = floor(height);

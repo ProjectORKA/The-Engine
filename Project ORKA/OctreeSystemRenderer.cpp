@@ -91,7 +91,7 @@ void OctreeNodeRenderData::renderWater(Renderer &renderer){
 	renderer.shaderSystem.uniforms.data.worldOffset = Vec4(equivalentOctreeNode->id.location.x, equivalentOctreeNode->id.location.y, equivalentOctreeNode->id.location.z, equivalentOctreeNode->id.level);
 	renderer.shaderSystem.uniforms.update();
 
-	renderer.meshSystem.render("waterPlane");
+	renderer.renderMesh("waterPlane");
 }
 void OctreeNodeRenderData::update(PlanetCamera& camera)
 {
@@ -120,7 +120,7 @@ void OctreeNodeRenderData::render(Renderer & renderer)
 	renderer.shaderSystem.uniforms.data.worldOffset = Vec4(equivalentOctreeNode->id.location.x, equivalentOctreeNode->id.location.y, equivalentOctreeNode->id.location.z, equivalentOctreeNode->id.level);
 	renderer.shaderSystem.uniforms.update();
 
-	if(renderer.planetRenderSystem.chunkBorders)renderer.meshSystem.render("gizmo");
+	if(renderer.planetRenderSystem.chunkBorders)renderer.renderMesh("gizmo");
 }
 
 void OctreeNodeRenderData::renderLevel(UShort level, Renderer &renderer)
@@ -143,9 +143,9 @@ void OctreeNodeRenderData::renderLevel(UShort level, Renderer &renderer)
 void OctreeNodeRenderData::updateWithoutSubdivision(PlanetCamera& camera)
 {
 	//get camera relative location
-	chunkOffset = cameraRelativeLocationOfChunk(equivalentOctreeNode->id, camera);
+	chunkOffset = cameraRelativeLocationOfChunk(equivalentOctreeNode->id, camera.chunkLocation, camera.location);
 
-	inDrawDistance = glm::length(chunkOffset + Vec3(0.5, 0.5, 0)) < drawDistance;
+	inDrawDistance = glm::length(chunkOffset + Vec3(0.5, 0.5, 0)) < 0.0f;// drawDistance; //[TODO]
 
 	if (!inDrawDistance) unsubdivide();
 

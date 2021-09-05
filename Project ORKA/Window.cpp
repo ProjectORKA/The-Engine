@@ -4,9 +4,9 @@
 //window thread
 void windowThread(Window& window)
 {
+
 	Renderer& renderer = window.renderer;
 
-	logEvent("Started Window Thread!");
 	window.initializeGraphicsAPI(); //needs to be in this thread
 	renderer.create();		//also needs to be in this thread
 
@@ -34,60 +34,22 @@ void windowThread(Window& window)
 			renderer.renderRegion.set(windowArea);
 
 			renderer.framebufferSystem.use(0);
-			renderer.clearColor(Color(Vec3(0),0.75));
+			renderer.clearColor(Color(Vec3(0),0.0));
 			renderer.clearDepth();
 
-			PlanetCamera& camera = planetCameras[0];
-
-			if (inputManager.capturing)camera.rotate(Vec2(inputManager.cursorPosition) * inputManager.mouseSensitivity);
 			renderer.setWireframeMode(renderer.wireframeMode);
 
-			//render sky
-			//renderer.setCulling(false);
-			//renderer.setDepthTest(false);
-			//renderer.shaderSystem.uniforms.data.vpMatrix = camera.projectionMatrix(renderer.renderRegion.getAspectRatio()) * camera.viewMatrixOnlyRot();
-			//renderer.shaderSystem.uniforms.update();
-			//renderer.shaderSystem.use("sky");
-			//renderer.textureSystem.use("stars");
-			//renderer.meshSystem.render("sky");
-
-			window.contents[0]->render(window, windowArea);
-			
-			//text rendering
-			renderer.setWireframeMode(false);
-			FontStyle style;
-			style.size = 64;
-			style.letterSpacing = 0.8;
-			
-			String s = String("FrameTime: ").append(std::to_string(renderer.renderTime.delta));
-			renderer.textRenderSystem.render(s, 0, 0, style);
-			
-			s = String("FPS: ").append(std::to_string(1.0f / renderer.renderTime.delta));
-			renderer.textRenderSystem.render(s, 0, style.size, style);
-			
-			s = String("Speed: ").append(std::to_string(inputManager.scrollAxisYTotal));
-			renderer.textRenderSystem.render(s, 0, 2*style.size, style);
-
-			s = String("Camera height: ").append(std::to_string(
-				(Float(planetCameras[0].chunkLocation.z) + planetCameras[0].location.z) / Float(ULLONG_MAX)
-			));
-			renderer.textRenderSystem.render(s, 0, 3 * style.size, style);
-
-			s = String("Camera Location X: ").append(std::to_string(
-				(Float(planetCameras[0].chunkLocation.x) + planetCameras[0].location.x) / Float(ULLONG_MAX)
-			));
-			renderer.textRenderSystem.render(s, 0, 4 * style.size, style);
-
-			//renderer.shaderSystem.use("depthCutter");
-			//renderer.framebufferSystem.current().depthTexture.use(0);
-			//renderer.shaderSystem.uniforms.update();
-			//renderer.meshSystem.render("fullScreenQuad");
+			if (window.contents.size() > 0) {
+				window.contents.front()->update(window);
+				window.contents.front()->render(window, windowArea);
+			}
 
 			/// ////////////////////////////////////////////////////////////////////////////
 			renderer.framebufferSystem.current().blitFramebuffer();
 			renderer.end(); //checks errors and unlocks renderer
 			apiWindowSwapBuffers(window.apiWindow);
 		}
+		printDebugLog();
 	}
 
 	for (UIElement* element : window.contents) {
@@ -113,14 +75,7 @@ void Window::create()
 	createAPIWindow(); //needs to be in this thread
 	centerWindow();
 
-	contents.push_back(new UIORKAGame());
-	contents.push_back(new UIFlatPanel());
 
-	for (UIElement* element : contents) {
-		element->create(*this);
-	}
-
-	contents.back()->create(*this);
 
 	thread.start(windowThread, *this);
 	logEvent("Created Window in Main Thread!");

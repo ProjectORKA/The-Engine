@@ -16,7 +16,6 @@
 struct Renderer;
 
 struct QuadtreeNodeRenderData {
-	
 	GPUMesh terrainMesh;
 
 	Vec3 chunkOffset;

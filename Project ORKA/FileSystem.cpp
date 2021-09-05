@@ -1,11 +1,13 @@
 
 #include "FileSystem.hpp"
 
-void loadString(String& string, Path path) {
+String loadString(Path path) {
+	String s;
 	std::ifstream stream(path, std::ios::in);
 	if(!stream.is_open()) logError("String Cant be read!");
 	std::stringstream sstr;
 	sstr << stream.rdbuf();
-	string = sstr.str();
+	s = sstr.str();
 	stream.close();
+	return s;
 }

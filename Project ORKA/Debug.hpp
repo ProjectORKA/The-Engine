@@ -26,10 +26,12 @@ void logDebug(ULL t);
 void logDebug(Vec2 t);
 void logDebug(Vec3 t);
 void logDebug(Short t);
+void logDebug(IVec2 t);
+void logDebug(IVec3 t);
+void logDebug(Matrix t);
 void logDebug(ULLVec2 t);
 void logDebug(ULLVec3 t);
 void logDebug(glm::highp_dvec3 t);
-void logDebug(Matrix t);
 
 template <typename T>
 void logDebug(T t) {
@@ -37,3 +39,23 @@ void logDebug(T t) {
 	std::cout << t << "\n";
 #endif // DEBUG
 }
+
+struct DebugSystem {
+	String log = "";
+	UInt level = 0;
+
+	void flush() {
+		std::cout << log;
+		log.clear();
+		level = 0;
+	}
+};
+
+extern Map<std::thread::id, DebugSystem> debugSystems;
+
+struct DebugTracker { //doesnt work
+	DebugTracker(String functionName);
+	~DebugTracker();
+};
+
+void printDebugLog();

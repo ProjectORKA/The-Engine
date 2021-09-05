@@ -11,10 +11,8 @@ Bool InputManager::isCapturing(Window& window)
 void InputManager::captureCursor(Window& window)
 {
 	if (!capturing) {
-		captureReleasePosition = cursorPosition;
+		capturePosition = cursorPosition;
 		apiWindowDisableCursor(window.apiWindow);
-		apiWindowSetCursorPosition(window.apiWindow, Vec2(0, 0));
-		cursorPosition = Vec2(0, 0);
 		capturing = true;
 	}
 }
@@ -27,9 +25,8 @@ void InputManager::uncaptureCursor(Window& window)
 	if (capturing) {
 		//[TODO]
 		apiWindowEnableCursor(window.apiWindow);
-		glfwSetCursorPos(window.apiWindow, captureReleasePosition.x, captureReleasePosition.y);
-		cursorPosition = captureReleasePosition;
-		cursorDelta = IVec2(0);
+		glfwSetCursorPos(window.apiWindow, cursorPosition.x, Int(window.getWindowContentSize().y) - cursorPosition.y);
+		//cursorPosition = capturePosition;
 		capturing = false;
 	}
 }
@@ -39,7 +36,12 @@ void InputManager::windowOutOfFocus(Window& window)
 }
 void InputManager::mouseIsMoving(Window& window, IVec2 position)
 {
-	cursorPosition = position;
+	IVec2 normalizedPosition;
+	normalizedPosition.x = position.x;
+	normalizedPosition.y = window.getWindowContentSize().y - position.y;
+
+	//cursorDelta = cursorPosition - normalizedPosition;
+	cursorPosition = normalizedPosition;
 }
 void InputManager::windowChangedFocus(Window& window, Bool isInFocus)
 {
@@ -70,7 +72,7 @@ void InputManager::buttonIsPressed(Window& window, Int keyID, Int action, Int mo
 			break;
 		case GLFW_KEY_T: {
 			window.renderer.mutex.lock();
-			//window.renderer.shaderSystem.clear();
+			window.renderer.shaderSystem.rebuild();
 			window.renderer.mutex.unlock();
 		}
 			break;

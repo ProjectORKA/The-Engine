@@ -1,13 +1,13 @@
 
 #include "RelativeChunkOffset.hpp"
 
-Vec3 cameraRelativeLocationOfChunk(OctreeID id, PlanetCamera& camera) {
+Vec3 cameraRelativeLocationOfChunk(OctreeID id, ULLVec3 chunkLocation, Vec3 location) {
 
 	Vec3 chunkOffset;
 
-	ULL cx = camera.chunkLocation.x;
-	ULL cy = camera.chunkLocation.y;
-	ULL cz = camera.chunkLocation.z;
+	ULL cx = chunkLocation.x;
+	ULL cy = chunkLocation.y;
+	ULL cz = chunkLocation.z;
 
 	LL  lx = id.location.x - cx;
 	LL  ly = id.location.y - cy;
@@ -25,7 +25,7 @@ Vec3 cameraRelativeLocationOfChunk(OctreeID id, PlanetCamera& camera) {
 		chunkOffset.z = -chunkOffset.z;
 	};
 
-	chunkOffset -= camera.location;
+	chunkOffset -= location;
 
 	if (chunkOffset.x + pow(2, 63 - id.level) > +pow(2, 63)) chunkOffset.x -= pow(2, 64);
 	if (chunkOffset.x + pow(2, 63 - id.level) < -pow(2, 63)) chunkOffset.x += pow(2, 64);

@@ -1,7 +1,7 @@
 
 #include "GameSimulation.hpp"
 
-GameSimulation gameSimulation;
+//GameSimulation gameSimulation;
 
 GameSimulation::GameSimulation()
 {
@@ -14,13 +14,13 @@ GameSimulation::~GameSimulation() {
 }
 
 void GameSimulation::update() {
-	gameTime.update();
+	time.update();
 
 	planetSystem.update();
 }
 
 void GameSimulationThread(GameSimulation& gameSimulation) {
-	gameSimulation.gameTime.reset();
+	gameSimulation.time.reset();
 
 	TimePoint t;
 

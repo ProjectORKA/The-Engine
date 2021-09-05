@@ -90,5 +90,4 @@ void PlanetCamera::render(Uniforms& uniforms, Float aspectRatio) {
 	uniforms.data.custom1 = cameraHeight;
 	uniforms.data.cameraVector = Vec4(forwardVector, 1);
 	uniforms.data.vpMatrix = projectionMatrix(aspectRatio) * viewMatrixOnlyRot();
-	//uniforms.update();
 }

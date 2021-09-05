@@ -1,0 +1,49 @@
+#include "Intro.hpp"
+
+#include "GameSystem.hpp"
+
+void Intro::update()
+{
+}
+
+void Intro::render(Window & window)
+{
+	Renderer& renderer = window.renderer;
+
+	//renderer.time.update();
+	renderer.clearColor(Color(0));
+	renderer.clearDepth();
+
+	renderer.setCulling(true);
+	renderer.setDepthTest(true);
+	//renderer.setAlphaBlending(false);
+	renderer.setWireframeMode(false);
+
+	//camera stuff
+	SimpleCamera c;
+	c.location = Vec3(0, -15, 0);
+	renderer.uniforms().data.vpMatrix = c.projectionMatrix(renderer.aspectRatio()) * c.viewMatrix();
+
+	//logo stuff
+	Float animationLength = 1.1;
+	Float size = min(pow(1 + 1 / pow(animationLength, 5), pow(renderer.renderTime.total - 2 * animationLength, 5)), 100.0);
+	Float tint = max(2 - size, 0.0f);
+	renderer.uniforms().data.customColor = Color(tint, tint, tint, 1);
+	Matrix modelMatrix = glm::scale(Matrix(1), Vec3(size, 1, size));
+	modelMatrix = glm::rotate(modelMatrix, 20 / (pow(renderer.renderTime.total, 4.0f) + 1), Vec3(0, 0, 1));
+	renderer.uniforms().data.mMatrix = modelMatrix;
+
+	renderer.useShader("unlit");
+	renderer.useTexture("ProjectORKABakedLogo");
+	renderer.renderMesh("ProjectORKALogo");
+
+	if (renderer.renderTime.paused) { //actually starts the animation by unpausing the timer
+		renderer.renderTime.reset();
+		renderer.renderTime.unpause();
+	}
+
+	if (renderer.renderTime.total > 5) {
+		gameSystem.add(new Mooncrash(window));
+		window.contents.pop_front();
+	}
+}

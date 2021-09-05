@@ -8,13 +8,13 @@
 #include "PlanetSystem.hpp"
 #include "Renderer.hpp"
 
-//the GameSimulation simulates the non visual parts of the game world
-//ideally it doesent know what and where the players are
+//the GameSimulation simulates complex non-visual parts of a Game
+//it starts its own thread upon creation
+//it can be used without a renderer, to act as a server
 
 struct GameSimulation {
-	Time gameTime;
+	Time time;
 	PlanetSystem planetSystem;
-	//Renderer renderer;
 
 	Thread thread;
 
@@ -22,7 +22,5 @@ struct GameSimulation {
 	~GameSimulation();
 	void update();
 };
-
-extern GameSimulation gameSimulation;
 
 void GameSimulationThread(GameSimulation& gameSimulation);
