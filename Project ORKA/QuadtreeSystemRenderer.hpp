@@ -1,12 +1,5 @@
 #pragma once
 
-//#include "GPUMesh.hpp"
-//#include "GPUTexture.hpp"
-//#include "ShaderSystem.hpp"
-//#include "QuadtreeSystem.hpp"
-//#include "TerrainRendering.hpp"
-//#include "RelativeChunkOffset.hpp"
-
 #include "TextureSystem.hpp"
 #include "ShaderSystem.hpp"
 #include "PlanetCamera.hpp"
@@ -19,7 +12,8 @@ struct QuadtreeNodeRenderData {
 	GPUMesh terrainMesh;
 
 	Vec3 chunkOffset;
-	Bool inDrawDistance = false;
+	Bool drawn = false;
+	Float nodeDrawDistance = 0.0;
 	ULL renderedHeight = 0;
 
 	QuadtreeNode * equivalentQuadtreeNode = nullptr;
@@ -33,6 +27,7 @@ struct QuadtreeNodeRenderData {
 	void destroy();
 	void subdivide();
 	void unsubdivide();
+	void loadTerrainMesh();
 	void update(PlanetCamera & camera);
 	void renderTerrain(Renderer& renderer);
 	void create(QuadtreeNode & quadtreeNode);
@@ -46,8 +41,6 @@ struct QuadtreeRenderSystem {
 	Index waterTextureID = 0;
 
 	QuadtreeNodeRenderData root;
-
-	QuadtreeNodeRenderData renderData[MAX_CHUNK_LEVEL][3][3];
 	
 	void count();
 	void destroy();

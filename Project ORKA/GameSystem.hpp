@@ -2,6 +2,7 @@
 
 #include "Game.hpp"
 
+#include "Pong.hpp"
 #include "Intro.hpp"
 #include "Mooncrash.hpp"
 #include "AIPlayground.hpp"

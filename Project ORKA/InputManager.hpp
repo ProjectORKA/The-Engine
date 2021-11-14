@@ -5,32 +5,19 @@
 
 struct Window;
 
-struct Button{
-	Bool isPressed;
-};
-
 struct InputManager {
-	//states
-	Button forward;
-	Button backward;
-	Button left;
-	Button right;
-	Button up;
-	Button down;
-	Button faster;
-	Button slower;
 
 	Double scrollAxisYTotal = 200;
 
 	Bool capturing = false;
 
 	//IVec2 cursorDelta = IVec2(0, 0);
-	IVec2 cursorPosition = IVec2(0,0);
-	
+	IVec2 cursorPosition = IVec2(0, 0);
+
 	IVec2 capturePosition = IVec2(0);
 
 	Float mouseSensitivity = 0.0015f;
-	
+
 	//these functions will be called by the window/windowAPI
 	Bool isCapturing(Window& window);
 	void captureCursor(Window& window);
@@ -48,3 +35,4 @@ struct InputManager {
 };
 
 extern InputManager inputManager;
+

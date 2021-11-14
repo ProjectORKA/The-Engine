@@ -5,7 +5,7 @@
 void Program::run()
 {
 	windowSystem.addWindow();
-	gameSystem.add(new AIPlayground(windowSystem.windows.back()));
+	gameSystem.add(new Intro(windowSystem.windows.back()));
 	windowSystem.startMainLoop();
 }
 

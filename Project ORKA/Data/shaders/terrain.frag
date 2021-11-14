@@ -62,9 +62,9 @@ void main(){
 
 	float slopeImpact = clamp(pow((1.01 - slope)*20,1),0,1);
 
-	color = mix(color,vec3(0.1), slopeImpact);
+	color = mix(color,vec3(0.333), slopeImpact);
 	
-	if(worldCoordinate.z < 0.0000001) color = vec3(1,0,0);
+	if(worldCoordinate.z < 0.0003) color = mix(color,vec3(0,0.3,0.5),0.75);
 
 	//	if(distortion) color = texture(texture2, textureCoordinate).xyz;
 	//	else color = normal;

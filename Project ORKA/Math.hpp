@@ -142,9 +142,9 @@ public:
 
 	Double noise(Double x, Double y, Double z) const
 	{
-		const std::int32_t X = static_cast<std::int32_t>(std::floor(x)) & 255;
-		const std::int32_t Y = static_cast<std::int32_t>(std::floor(y)) & 255;
-		const std::int32_t Z = static_cast<std::int32_t>(std::floor(z)) & 255;
+		LL X = static_cast<LL>(std::floor(x)) & 255;
+		LL Y = static_cast<LL>(std::floor(y)) & 255;
+		LL Z = static_cast<LL>(std::floor(z)) & 255;
 
 		x -= std::floor(x);
 		y -= std::floor(y);
@@ -154,8 +154,8 @@ public:
 		const Double v = Fade(y);
 		const Double w = Fade(z);
 
-		const std::int32_t A = p[X] + Y, AA = p[A] + Z, AB = p[A + 1] + Z;
-		const std::int32_t B = p[X + 1] + Y, BA = p[B] + Z, BB = p[B + 1] + Z;
+		LL A = p[X] + Y, AA = p[A] + Z, AB = p[A + 1] + Z;
+		LL B = p[X + 1] + Y, BA = p[B] + Z, BB = p[B + 1] + Z;
 
 		return Lerp(w, Lerp(v, Lerp(u, Grad(p[AA], x, y, z),
 									Grad(p[BA], x - 1, y, z)),
@@ -186,13 +186,13 @@ public:
 	{
 		Double result = 0.0;
 		Double amp = 1.0;
-
+		Double roughness = 1.749;
 		for (std::int32_t i = 0; i < octaves; ++i)
 		{
 			result += noise(x, y) * amp;
-			x *= 2.0;
-			y *= 2.0;
-			amp *= 0.5;
+			x *= roughness;
+			y *= roughness;
+			amp *= 1 / roughness;
 		}
 
 		return result;

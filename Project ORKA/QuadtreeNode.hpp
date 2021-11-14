@@ -1,6 +1,7 @@
 
 #pragma once
 
+#include "QuadtreeID.hpp"
 #include "QuadtreeData.hpp"
 #include "Ray.hpp"
 
@@ -18,9 +19,9 @@ struct QuadtreeNode {
 	QuadtreeNode* c10 = nullptr;
 	QuadtreeNode* c11 = nullptr;
 
-	~QuadtreeNode();
-	QuadtreeNode();
-	QuadtreeNode(QuadtreeNode* parent, Bool x, Bool y);
+	void create();
+	void destroy();
+	void create(QuadtreeNode* parent, Bool x, Bool y);
 
 	void count();
 	void update();
@@ -28,4 +29,5 @@ struct QuadtreeNode {
 	void unsubdivide();
 	void decrementUsers();
 	void incrementUsers();
+	QuadtreeNode & get(QuadtreeID id);
 };

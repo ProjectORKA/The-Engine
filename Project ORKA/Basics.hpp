@@ -24,6 +24,8 @@ using UShort = unsigned short;
 using Char = char;
 using Byte = unsigned char;
 
+using SizeT = unsigned __int64;//std::size_t;
+
 //pointers
 #include <memory>
 template <typename T>
@@ -106,5 +108,13 @@ template<typename T, typename K>
 using Map = std::map<T, K>;
 
 #include <bitset>
-template <size_t _Bits>
-using BitSet = std::bitset<_Bits>;
+template <std::size_t T>
+using BitSet = std::bitset<T>;
+
+//#include <queue>
+//template<typename T>
+//using Queue = std::queue<T>;
+
+#include <deque>
+template<typename T>
+using Deque = std::deque<T>;

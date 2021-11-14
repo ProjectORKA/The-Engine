@@ -1,14 +1,15 @@
 
 #include "TerrainSystem.hpp"
+#include "QuadtreeSystem.hpp"
 
 Double terrainGenerationFunction(LDouble x, LDouble y) {
 	static PerlinNoise noise(TERRAIN_GENERATION_SEED);
-	LDouble noiseSize = pow(2, 10);
+	LDouble noiseSize = pow(2, 3);
 
-	return pow(noise.octaveNoise0_1(noiseSize * x, noiseSize * y, 18), 3) * LDouble(pow(2,62)) / noiseSize;
+	return pow(noise.octaveNoise0_1(noiseSize * x, noiseSize * y, 32), 3) * LDouble(pow(2,60)) / noiseSize;
 };
 
-void Terrain::create(QuadtreeID id)
+Terrain::Terrain(QuadtreeID id)
 {
 	ULLVec2 location = id.location;
 	LDouble xLocation = 0;
