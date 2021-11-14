@@ -6,7 +6,7 @@
 #include "KeyMap.hpp"
 
 using APIWindow = GLFWwindow*;
-using APIMmonitor = GLFWmonitor*;
+using APIMonitor = GLFWmonitor*;
 
 void apiWindowRestore(APIWindow apiWindow);
 void apiWindowDecorate(APIWindow apiWindow);

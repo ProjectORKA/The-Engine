@@ -2,6 +2,8 @@
 #include "QuadtreeSystemRenderer.hpp"
 #include "Renderer.hpp"
 
+QuadtreeNodeRenderData* needsSubdiv = nullptr;
+
 void QuadtreeNodeRenderData::count()
 {
 	static Int nodeCount = 0;
@@ -62,60 +64,91 @@ void QuadtreeNodeRenderData::unsubdivide()
 		subdivided = false;
 	}
 }
+void QuadtreeNodeRenderData::loadTerrainMesh() {
+	if (!terrainMesh.loaded && equivalentQuadtreeNode->data.terrain) {
+		CPUMesh cpuMesh;
+		cpuMesh = createTerrainMesh(equivalentQuadtreeNode->data.terrain->heightmapForNormals);
+		terrainMesh.upload(cpuMesh);
+	}
+}
 void QuadtreeNodeRenderData::update(PlanetCamera& camera)
 {
 	updateWithoutSubdivision(camera);
+}
+void QuadtreeNodeRenderData::renderTerrain(Renderer& renderer)
+{
+	if (equivalentQuadtreeNode->id.level < 4) { //for the higher level chunks we duplicated them 
+		for (Int x = -1; x < 2; x++) {
+			for (Int y = -1; y < 2; y++) {
 
-	if (equivalentQuadtreeNode->subdivided && !subdivided && inDrawDistance) {
-		subdivide();
-		c00->updateWithoutSubdivision(camera);
-		c01->updateWithoutSubdivision(camera);
-		c10->updateWithoutSubdivision(camera);
-		c11->updateWithoutSubdivision(camera);
+				loadTerrainMesh();
+
+				renderer.uniforms().data.chunkOffsetVector = Vec4(chunkOffset + Vec3(x * pow(2, equivalentQuadtreeNode->id.level), y * pow(2, equivalentQuadtreeNode->id.level), 0), 1);
+				renderer.uniforms().data.worldOffset = Vec4(equivalentQuadtreeNode->id.location.x, equivalentQuadtreeNode->id.location.y, equivalentQuadtreeNode->data.terrain->lowerLimit, equivalentQuadtreeNode->id.level);
+				renderer.uniforms().update();
+				
+				terrainMesh.render();
+			}
+		}
+	}
+	else {
+		loadTerrainMesh();
+		
+		renderer.shaderSystem.uniforms.data.chunkOffsetVector = Vec4(chunkOffset, 1);
+		renderer.shaderSystem.uniforms.data.worldOffset = Vec4(equivalentQuadtreeNode->id.location.x, equivalentQuadtreeNode->id.location.y, equivalentQuadtreeNode->data.terrain->lowerLimit, equivalentQuadtreeNode->id.level);
+		renderer.shaderSystem.uniforms.update();
+		terrainMesh.render();
 	}
 }
-void QuadtreeNodeRenderData::renderTerrain(Renderer & renderer)
-{
-	renderer.shaderSystem.uniforms.data.chunkOffsetVector = Vec4(chunkOffset,1);
-	renderer.shaderSystem.uniforms.data.worldOffset = Vec4(equivalentQuadtreeNode->id.location.x, equivalentQuadtreeNode->id.location.y, equivalentQuadtreeNode->data.terrain.lowerLimit, equivalentQuadtreeNode->id.level);
-	renderer.shaderSystem.uniforms.update();
-
-	terrainMesh.render();
-}
-void QuadtreeNodeRenderData::create(QuadtreeNode & quadtreeNode)
+void QuadtreeNodeRenderData::create(QuadtreeNode& quadtreeNode)
 {
 	equivalentQuadtreeNode = &quadtreeNode;
 
-	CPUMesh cpuMesh;
-	cpuMesh = createTerrainMesh(quadtreeNode.data.terrain.heightmapForNormals);
-	terrainMesh.upload(cpuMesh);
-	
 	quadtreeNode.incrementUsers();
 }
 void QuadtreeNodeRenderData::updateWithoutSubdivision(PlanetCamera& camera)
 {
 	//create 3d chunk id
 	OctreeID tmp;
-	tmp.level = equivalentQuadtreeNode->id.level;
-	tmp.location.x = equivalentQuadtreeNode->id.location.x;
-	tmp.location.y = equivalentQuadtreeNode->id.location.y;
-	tmp.location.z = equivalentQuadtreeNode->data.terrain.lowerLimit;
+
+	QuadtreeNode& eq = *equivalentQuadtreeNode;
+
+	tmp.level = eq.id.level;
+	tmp.location.x = eq.id.location.x;
+	tmp.location.y = eq.id.location.y;
+
+	if (eq.data.terrain)tmp.location.z = eq.data.terrain->lowerLimit;
+	else tmp.location.z = 0;
 
 	//get camera relative location
 	chunkOffset = cameraRelativeLocationOfChunk(tmp, camera.chunkLocation, camera.location);
 
-	inDrawDistance = glm::length(chunkOffset + Vec3(0.5,0.5,0)) < drawDistance;
+	nodeDrawDistance = glm::length(chunkOffset + Vec3(0.5, 0.5, 0));
+	Bool inDrawDistance = nodeDrawDistance < drawDistance;
+	Bool notCulled = (dot(normalize(chunkOffset + Vec3(0.5, 0.5, 0)), camera.forwardVector) > 0.1) || (nodeDrawDistance < 1.5);
 
-	if (!inDrawDistance) unsubdivide();
+	drawn = inDrawDistance & notCulled;
+
+	if (!drawn) unsubdivide();
 
 	if (subdivided) {
-		c00->update(camera);
-		c01->update(camera);
-		c10->update(camera);
-		c11->update(camera);
+		c00->updateWithoutSubdivision(camera);
+		c01->updateWithoutSubdivision(camera);
+		c10->updateWithoutSubdivision(camera);
+		c11->updateWithoutSubdivision(camera);
+	}
+	else {
+		if (equivalentQuadtreeNode->subdivided && !subdivided && drawn) {
+			if (needsSubdiv) {
+				if (needsSubdiv->nodeDrawDistance > nodeDrawDistance) needsSubdiv = this;
+			}
+			else {
+				needsSubdiv = this;
+			}
+		}
 	}
 }
-void QuadtreeNodeRenderData::renderTerrainLevel(UShort level, Renderer & renderer)
+void QuadtreeNodeRenderData::renderTerrainLevel(UShort level, Renderer& renderer)
 {
 	if (subdivided) {
 		c00->renderTerrainLevel(level, renderer);
@@ -137,11 +170,17 @@ void QuadtreeRenderSystem::count()
 void QuadtreeRenderSystem::destroy() {
 	root.destroy();
 }
-void QuadtreeRenderSystem::create(Renderer& renderer){
+void QuadtreeRenderSystem::create(Renderer& renderer) {
 	grassTextureID = renderer.textureSystem.getTextureID("grass");
 	terrainShaderID = renderer.shaderSystem.getShaderID("terrain");
 }
 void QuadtreeRenderSystem::update(PlanetCamera& camera) {
+	
+	if (needsSubdiv) {
+		needsSubdiv->subdivide();
+		needsSubdiv = nullptr;
+	}
+	
 	root.update(camera);
 }
 void QuadtreeRenderSystem::renderLevel(UShort level, Renderer& renderer) {

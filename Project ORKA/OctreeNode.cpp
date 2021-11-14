@@ -16,9 +16,9 @@ OctreeNode::OctreeNode(QuadtreeNode& quadTreeRoot) {
 
 	ULL chunkHeight = getLocation().z;
 
-	data.hasContent = 1;
+	//data.hasContent = 1;
 
-	data.isTerrain = (chunkHeight >= quadtreeEquivalent->data.terrain.lowerLimit) && (chunkHeight <= quadtreeEquivalent->data.terrain.upperLimit);
+	//data.isTerrain = (chunkHeight >= quadtreeEquivalent->data.terrain->lowerLimit) && (chunkHeight <= quadtreeEquivalent->data.terrain->upperLimit);
 
 	quadtreeEquivalent->incrementUsers();
 	isValid = true;
@@ -52,26 +52,25 @@ OctreeNode::OctreeNode(OctreeNode& parent, Bool x, Bool y, Bool z)
 
 	ULL chunkHeight = getLocation().z;
 
-	data.hasContent = (chunkHeight <= quadtreeEquivalent->data.terrain.upperLimit) && (chunkHeight >= quadtreeEquivalent->data.terrain.lowerLimit);
-	data.isTerrain = (chunkHeight >= quadtreeEquivalent->data.terrain.lowerLimit) && (chunkHeight <= quadtreeEquivalent->data.terrain.upperLimit);
+	//data.hasContent = (chunkHeight <= quadtreeEquivalent->data.terrain->upperLimit) && (chunkHeight >= quadtreeEquivalent->data.terrain->lowerLimit);
+	//data.isTerrain = (chunkHeight >= quadtreeEquivalent->data.terrain->lowerLimit) && (chunkHeight <= quadtreeEquivalent->data.terrain->upperLimit);
 
-	if (data.isTerrain) {
-		for (Int i = 0; i < 1000; i++) {
-			Vec3 sample = Vec3(randomFloat(),randomFloat(),randomFloat());
-			ULLVec3 wpSample = DVec3(sample) * DVec3(id.size()) + DVec3(id.location);
-			if(terrainGenerationFunction(wpSample.x, wpSample.y) > wpSample.z ) data.TerrainPoints.push_back(sample);
-		}
+	//if (data.isTerrain) {
+	//	for (Int i = 0; i < 1000; i++) {
+	//		Vec3 sample = Vec3(randomFloat(),randomFloat(),randomFloat());
+	//		ULLVec3 wpSample = DVec3(sample) * DVec3(id.size()) + DVec3(id.location);
+	//		if(terrainGenerationFunction(wpSample.x, wpSample.y) > wpSample.z ) data.TerrainPoints.push_back(sample);
+	//	}
 
-		logDebug(data.TerrainPoints.size());
-	}
+	//	logDebug(data.TerrainPoints.size());
+	//}
 
 	//propagate "hasContent upwards"
-	OctreeNode* currentParentNode = &parent;
-
-	while ((currentParentNode != nullptr) && data.hasContent) {
-		currentParentNode->data.hasContent |= data.hasContent;
-		currentParentNode = currentParentNode->parent;
-	}
+	//OctreeNode* currentParentNode = &parent;
+	//while ((currentParentNode != nullptr) && data.hasContent) {
+	//	currentParentNode->data.hasContent |= data.hasContent;
+	//	currentParentNode = currentParentNode->parent;
+	//}
 
 	quadtreeEquivalent->incrementUsers();
 	isValid = true;

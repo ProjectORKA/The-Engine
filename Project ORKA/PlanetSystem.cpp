@@ -9,11 +9,13 @@ void PlanetSystem::count()
 }
 void PlanetSystem::create()
 {
+	quadtreeSystem.create();
 	octreeSystem.create(quadtreeSystem);
 }
 void PlanetSystem::destroy()
 {
 	octreeSystem.destroy();
+	quadtreeSystem.destroy();
 }
 void PlanetSystem::update()
 {

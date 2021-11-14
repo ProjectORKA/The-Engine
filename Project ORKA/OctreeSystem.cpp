@@ -13,5 +13,5 @@ void OctreeSystem::destroy()
 	root = nullptr;
 }
 void OctreeSystem::create(QuadtreeSystem& quadtreeSystem) {
-	root = new OctreeNode(quadtreeSystem.root);
+	root = new OctreeNode(*quadtreeSystem.root);
 }

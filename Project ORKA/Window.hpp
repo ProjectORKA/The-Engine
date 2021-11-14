@@ -13,17 +13,15 @@ struct Window {
 	Bool duplicateWindow = false;
 	String title = "Project ORKA";
 	APIWindow apiWindow = nullptr;
+	Area windowedModeSize = Area(1);
 	Bool borderlessFullScreen = false;
 	
 	Renderer renderer;
-
-	Area windowedModeSize = Area(1);
-
-	//window contents
-	List<UIElement*> contents;
+	UserInterface userInterface;
 
 	//thread
 	Thread thread;
+
 	void show();
 	void hide();
 	void create();
@@ -47,19 +45,25 @@ struct Window {
 
 	Area getWindowContentSize();
 	Area getWindowFrameSize();
+
 };
 
 void windowThread(Window& window);
 
-//callbacks
-	//window
-void whenWindowChangedFocus(APIWindow window, Int focused);
-void whenWindowWasMaximized(APIWindow window, Int maximized);
-void whenWindowWasMinimized(APIWindow window, Int minimized);
-void whenFramebufferIsResized(APIWindow window, Int width, Int height);
-	//mouse
-void whenMouseIsMoving(APIWindow window, Double xpos, Double ypos);
-void whenMouseIsScrolling(APIWindow window, Double xoffset, Double yoffset);
+//window callbacks
+void whenWindowCloseRequest(APIWindow apiWindow);
+void whenWindowDamagedOrRefreshed(APIWindow apiWindow);
+void whenMonitorChanged(APIMonitor monitor, Int event);
+void whenCharIsTyped(APIWindow apiWindow, UInt character);
+void whenMouseEnterWindow(APIWindow apiWindow, Int entered);
+void whenWindowChangedFocus(APIWindow apiWindow, Int focused);
+void whenWindowWasMaximized(APIWindow apiWindow, Int maximized);
+void whenWindowWasMinimized(APIWindow apiWindow, Int minimized);
+void whenWindowResized(APIWindow apiWindow, Int width, Int height);
+void whenFramebufferIsResized(APIWindow apiWindow, Int width, Int height);
+void whenMouseIsScrolling(APIWindow apiWindow, Double xAxis, Double yAxis);
 void whenMouseIsPressed(APIWindow apiWindow, Int button, Int action, Int mods);
-	//keyboard
-void whenButtonIsPressed(APIWindow window, Int key, Int scancode, Int action, Int mods);
+void whenMouseIsMoving(APIWindow apiWindow, Double xPosition, Double yPosition);
+void whenFileDroppedOnWindow(APIWindow apiWindow, Int count, const Char** paths);
+void whenWindowContentScaleChanged(APIWindow apiWindow, Float xScale, Float yScale);
+void whenButtonIsPressed(APIWindow apiWindow, Int key, Int scancode, Int action, Int modifiers);

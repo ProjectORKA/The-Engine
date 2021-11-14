@@ -6,6 +6,8 @@ WindowSystem::WindowSystem()
 {
 	assert(glfwInit() == GLFW_TRUE);
 	glfwSetErrorCallback(whenWindowAPIThrowsError);
+	glfwSetMonitorCallback(whenMonitorChanged);
+
 }
 WindowSystem::~WindowSystem()
 {

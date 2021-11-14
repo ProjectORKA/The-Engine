@@ -1,10 +1,9 @@
 #pragma once
 
-#include "Basics.hpp"
-#include "CameraSystem.hpp"
-#include "KeyMap.hpp"
+#include "InputManager.hpp"
+#include "SimpleCamera.hpp"
+#include "PlanetCamera.hpp"
 
-struct CameraController {
-	void mouseIsMoving(Int deltaX, Int deltaY);
-	void buttonIsPressed(KeyID keyID);
-};
+void planetCameraController(InputManager & input, PlanetCamera & camera) {
+	
+}

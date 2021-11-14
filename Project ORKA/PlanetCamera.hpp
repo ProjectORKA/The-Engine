@@ -20,5 +20,5 @@ struct PlanetCamera : public SimpleCamera{
 	Float cameraSpeed = pow(CAMERA_SPEED_MULTIPLIER, INITIAL_CAMERA_SPEED);
 
 	void update(Float delta)override;
-	void render(Uniforms& uniforms, Float aspectRatio);
+	void use(Uniforms& uniforms, Float aspectRatio);
 };

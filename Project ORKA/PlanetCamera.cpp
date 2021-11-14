@@ -85,7 +85,7 @@ void PlanetCamera::update(Float delta)
 		}
 	}
 }
-void PlanetCamera::render(Uniforms& uniforms, Float aspectRatio) {
+void PlanetCamera::use(Uniforms& uniforms, Float aspectRatio) {
 	Float cameraHeight = chunkLocation.z + location.z;
 	uniforms.data.custom1 = cameraHeight;
 	uniforms.data.cameraVector = Vec4(forwardVector, 1);

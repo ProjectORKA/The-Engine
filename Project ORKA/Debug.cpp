@@ -31,7 +31,6 @@ void logError(String message)
 	if(showError) std::cout <<	"Error: " << message << "\n";
 	beep();
 	pause();
-	exit(EXIT_FAILURE);
 #endif // DEBUG
 }
 
@@ -50,7 +49,7 @@ void pause() {
 
 void logDebug(ULL t) {
 #ifdef DEBUG
-	std::cout << " (" << std::bitset<64>(t) << ")" << t << "\n";
+	std::cout << "Debug: (" << std::bitset<64>(t) << ")" << t << "\n";
 #endif // DEBUG
 }
 void logDebug(Int t)

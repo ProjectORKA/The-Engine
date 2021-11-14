@@ -39,10 +39,7 @@ void windowThread(Window& window)
 
 			renderer.setWireframeMode(renderer.wireframeMode);
 
-			if (window.contents.size() > 0) {
-				window.contents.front()->update(window);
-				window.contents.front()->render(window, windowArea);
-			}
+			window.userInterface.render(window);
 
 			/// ////////////////////////////////////////////////////////////////////////////
 			renderer.framebufferSystem.current().blitFramebuffer();
@@ -52,11 +49,7 @@ void windowThread(Window& window)
 		printDebugLog();
 	}
 
-	for (UIElement* element : window.contents) {
-		element->destroy(window);
-		delete element;
-	}
-	window.contents.clear();
+	window.userInterface.destroy(window);
 
 	window.destroyAPIWindow();
 }
@@ -74,8 +67,6 @@ void Window::create()
 {
 	createAPIWindow(); //needs to be in this thread
 	centerWindow();
-
-
 
 	thread.start(windowThread, *this);
 	logEvent("Created Window in Main Thread!");
@@ -100,14 +91,21 @@ void Window::setWindowed()
 }
 void Window::setCallbacks()
 {
+	glfwSetCharCallback(apiWindow, whenCharIsTyped);
 	glfwSetKeyCallback(apiWindow, whenButtonIsPressed);
 	glfwSetCursorPosCallback(apiWindow, whenMouseIsMoving);
 	glfwSetScrollCallback(apiWindow, whenMouseIsScrolling);
+	glfwSetDropCallback(apiWindow, whenFileDroppedOnWindow);
+	glfwSetWindowSizeCallback(apiWindow, whenWindowResized);
 	glfwSetMouseButtonCallback(apiWindow, whenMouseIsPressed);
+	glfwSetCursorEnterCallback(apiWindow, whenMouseEnterWindow);
 	glfwSetWindowFocusCallback(apiWindow, whenWindowChangedFocus);
+	glfwSetWindowCloseCallback(apiWindow, whenWindowCloseRequest);
 	glfwSetWindowIconifyCallback(apiWindow, whenWindowWasMinimized);
 	glfwSetWindowMaximizeCallback(apiWindow, whenWindowWasMaximized);
 	glfwSetFramebufferSizeCallback(apiWindow, whenFramebufferIsResized);
+	glfwSetWindowRefreshCallback(apiWindow, whenWindowDamagedOrRefreshed);
+	glfwSetWindowContentScaleCallback(apiWindow, whenWindowContentScaleChanged);
 }
 void Window::centerWindow() {
 	TiledRectangle workableArea = apiWindowGetWorkableArea(apiWindow);
@@ -253,6 +251,29 @@ Area Window::getWindowFrameSize()
 }
 
 //window callbacks
+void whenWindowCloseRequest(APIWindow apiWindow) {
+	logDebug("Window requested to close");
+	//if (!true) glfwSetWindowShouldClose(apiWindow, false);
+}
+void whenWindowDamagedOrRefreshed(APIWindow apiWindow) {
+}
+void whenMonitorChanged(APIMonitor monitor, Int event)
+{
+	if (event == GLFW_CONNECTED)
+	{
+		// The monitor was connected
+	}
+	else if (event == GLFW_DISCONNECTED)
+	{
+		// The monitor was disconnected
+	}
+}
+void whenCharIsTyped(APIWindow apiWindow, UInt character)
+{
+}
+void whenMouseEnterWindow(APIWindow apiWindow, Int entered) {
+
+};
 void whenWindowChangedFocus(APIWindow apiWindow, Int focused) {
 	Window& window = *static_cast<Window*>(glfwGetWindowUserPointer(apiWindow));
 	inputManager.windowChangedFocus(window, focused);
@@ -264,6 +285,9 @@ void whenWindowWasMaximized(APIWindow apiWindow, Int maximized)
 void whenWindowWasMinimized(APIWindow apiWindow, Int minimized)
 {
 	Window& window = *static_cast<Window*>(glfwGetWindowUserPointer(apiWindow));
+}
+void whenWindowResized(APIWindow apiWindow, Int width, Int height)
+{
 }
 void whenFramebufferIsResized(APIWindow apiWindow, Int width, Int height) {
 	Window& window = *static_cast<Window*>(glfwGetWindowUserPointer(apiWindow));
@@ -304,14 +328,19 @@ void whenMouseIsMoving(APIWindow apiWindow, Double xPosition, Double yPosition) 
 	Window& window = *static_cast<Window*>(glfwGetWindowUserPointer(apiWindow));
 	inputManager.mouseIsMoving(window, Vec2(xPosition, yPosition));
 }
+void whenFileDroppedOnWindow(APIWindow apiWindow, Int count, const Char** paths)
+{
+	for (Int i = 0; i < count; i++) {
+		logDebug(String("File dropped: ").append(paths[i]));
+	}
+}
+void whenWindowContentScaleChanged(APIWindow apiWindow, Float xScale, Float yScale)
+{
+}
 void whenButtonIsPressed(APIWindow apiWindow, Int key, Int scancode, Int action, Int modifiers)
 {
 	Window& window = *static_cast<Window*>(glfwGetWindowUserPointer(apiWindow));
 
 	inputManager.buttonIsPressed(window, key, action, modifiers);
 
-	if (key == GLFW_KEY_ENTER && action == GLFW_PRESS && modifiers == GLFW_MOD_ALT) {
-		if (window.isFullScreen()) window.setWindowed();
-		else window.setExclusiveFullscreen();
-	}
 }

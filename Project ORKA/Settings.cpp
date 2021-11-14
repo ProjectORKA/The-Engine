@@ -1,4 +1,4 @@
 
 #include "Settings.hpp"
 
-Float drawDistance = 5.5;
+Float drawDistance = 4.0; // 5.4

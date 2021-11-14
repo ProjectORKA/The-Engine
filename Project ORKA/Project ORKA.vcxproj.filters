@@ -29,12 +29,6 @@
     <Filter Include="Shaders\uiShader">
       <UniqueIdentifier>{acdd694b-8c13-437d-a8d9-6d5640d73f8a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Program\Games">
-      <UniqueIdentifier>{8362c317-faa6-4f7f-8f14-21cf8d4d3a6b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Program\Games\Mind Map">
-      <UniqueIdentifier>{69c19ffb-5d50-409e-9f14-e4ebf9863392}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Program\Common">
       <UniqueIdentifier>{4684f843-1ee9-4813-bd3f-ed28cefdc038}</UniqueIdentifier>
     </Filter>
@@ -91,15 +85,6 @@
     </Filter>
     <Filter Include="Program\Engine\Networking">
       <UniqueIdentifier>{9f7e75f3-5863-4398-a6f5-94c9f89fe662}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Program\Engine\Networking\Server">
-      <UniqueIdentifier>{f077cec4-2d58-4743-a7a9-81e4cc05eee5}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Program\Engine\Networking\Message">
-      <UniqueIdentifier>{693dd4f0-7d19-404e-be2a-7f7c7018d3bf}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Program\Engine\Networking\Client">
-      <UniqueIdentifier>{ae0d96c7-c76a-4577-a9d8-dae250a8a931}</UniqueIdentifier>
     </Filter>
     <Filter Include="Program\Common\Override">
       <UniqueIdentifier>{9521e601-8dbe-4398-a4b8-098914582ac7}</UniqueIdentifier>
@@ -311,6 +296,24 @@
     <Filter Include="Program\Engine\WindowSystem\Renderer\TextRenderSystem\Fonts">
       <UniqueIdentifier>{f7cb8862-b9d3-4178-85b5-44650d4b0d60}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Program\Common\Queue">
+      <UniqueIdentifier>{c390a4fe-1ca5-45d3-b928-f6e84d18483a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\Game\MindMap">
+      <UniqueIdentifier>{d1272b2a-7353-4bab-bfda-cfefbc220d55}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\Engine\Compiler">
+      <UniqueIdentifier>{023fa743-45eb-43fa-97cf-f88703d81630}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\Engine\Debug Console">
+      <UniqueIdentifier>{74ee1686-d3ff-42a5-a4ed-0a9609b8c8ea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\Game\Pong">
+      <UniqueIdentifier>{af08b023-4f5a-42ca-8781-515946c403c5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders\white">
+      <UniqueIdentifier>{362d56af-d719-4a07-b04f-b39fffdf50b5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -407,12 +410,6 @@
     <ClCompile Include="ULLUtil.cpp">
       <Filter>Program\Engine\GameSimulation\PlanetSystem\Util</Filter>
     </ClCompile>
-    <ClCompile Include="Server.cpp">
-      <Filter>Program\Engine\Networking\Server</Filter>
-    </ClCompile>
-    <ClCompile Include="Client.cpp">
-      <Filter>Program\Engine\Networking\Client</Filter>
-    </ClCompile>
     <ClCompile Include="CPUTexture.cpp">
       <Filter>Program\Engine\WindowSystem\Renderer\TextureSystem\CPUTexture</Filter>
     </ClCompile>
@@ -460,9 +457,6 @@
     </ClCompile>
     <ClCompile Include="TiledMath.cpp">
       <Filter>Program\Common\Math</Filter>
-    </ClCompile>
-    <ClCompile Include="MindMap.cpp">
-      <Filter>Program\Games\Mind Map</Filter>
     </ClCompile>
     <ClCompile Include="Uniforms.cpp">
       <Filter>Program\Engine\WindowSystem\Renderer\ShaderSystem\Uniforms</Filter>
@@ -532,6 +526,21 @@
     </ClCompile>
     <ClCompile Include="Fonts.cpp">
       <Filter>Program\Engine\WindowSystem\Renderer\TextRenderSystem\Fonts</Filter>
+    </ClCompile>
+    <ClCompile Include="QuadtreeID.cpp">
+      <Filter>Program\Engine\GameSimulation\PlanetSystem\QuadtreeSystem\QuadtreeID</Filter>
+    </ClCompile>
+    <ClCompile Include="MindMap.cpp">
+      <Filter>Program\Game\MindMap</Filter>
+    </ClCompile>
+    <ClCompile Include="DebugConsole.cpp">
+      <Filter>Program\Engine\Debug Console</Filter>
+    </ClCompile>
+    <ClCompile Include="Pong.cpp">
+      <Filter>Program\Game\Pong</Filter>
+    </ClCompile>
+    <ClCompile Include="UserInterface.cpp">
+      <Filter>Program\Engine\WindowSystem\UserInterface</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -643,15 +652,6 @@
     <ClInclude Include="ULLUtil.hpp">
       <Filter>Program\Engine\GameSimulation\PlanetSystem\Util</Filter>
     </ClInclude>
-    <ClInclude Include="Server.hpp">
-      <Filter>Program\Engine\Networking\Server</Filter>
-    </ClInclude>
-    <ClInclude Include="Message.hpp">
-      <Filter>Program\Engine\Networking\Message</Filter>
-    </ClInclude>
-    <ClInclude Include="Client.hpp">
-      <Filter>Program\Engine\Networking\Client</Filter>
-    </ClInclude>
     <ClInclude Include="CPUTexture.hpp">
       <Filter>Program\Engine\WindowSystem\Renderer\TextureSystem\CPUTexture</Filter>
     </ClInclude>
@@ -714,9 +714,6 @@
     </ClInclude>
     <ClInclude Include="TiledMath.hpp">
       <Filter>Program\Common\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="MindMap.hpp">
-      <Filter>Program\Games\Mind Map</Filter>
     </ClInclude>
     <ClInclude Include="CameraControllers.hpp">
       <Filter>Program\Engine\InputManager\CameraController</Filter>
@@ -829,6 +826,21 @@
     <ClInclude Include="Fonts.hpp">
       <Filter>Program\Engine\WindowSystem\Renderer\TextRenderSystem\Fonts</Filter>
     </ClInclude>
+    <ClInclude Include="Queue.hpp">
+      <Filter>Program\Common\Queue</Filter>
+    </ClInclude>
+    <ClInclude Include="MindMap.hpp">
+      <Filter>Program\Game\MindMap</Filter>
+    </ClInclude>
+    <ClInclude Include="Compiler.hpp">
+      <Filter>Program\Engine\Compiler</Filter>
+    </ClInclude>
+    <ClInclude Include="DebugConsole.hpp">
+      <Filter>Program\Engine\Debug Console</Filter>
+    </ClInclude>
+    <ClInclude Include="Pong.hpp">
+      <Filter>Program\Game\Pong</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Data\shaders\debug.frag">
@@ -911,6 +923,12 @@
     </None>
     <None Include="Data\shaders\water.vert">
       <Filter>Shaders\water</Filter>
+    </None>
+    <None Include="Data\shaders\white.frag">
+      <Filter>Shaders\white</Filter>
+    </None>
+    <None Include="Data\shaders\white.vert">
+      <Filter>Shaders\white</Filter>
     </None>
   </ItemGroup>
 </Project>

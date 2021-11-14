@@ -36,7 +36,7 @@ void logDebug(glm::highp_dvec3 t);
 template <typename T>
 void logDebug(T t) {
 #ifdef DEBUG
-	std::cout << t << "\n";
+	std::cout << "Debug: " << t << "\n";
 #endif // DEBUG
 }
 

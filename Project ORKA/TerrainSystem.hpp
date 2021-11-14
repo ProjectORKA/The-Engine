@@ -3,10 +3,14 @@
 #include "Math.hpp"
 #include "ULLUtil.hpp"
 #include "Heightmap.hpp"
-#include "QuadtreeID.hpp"
+#include "Queue.hpp"
 
-#define SEALEVEL ULLONG_MAX/3 //1677721600000
+#define SEALEVEL 1677721600000
 #define TERRAIN_GENERATION_SEED 645123587412588622
+
+struct QuadtreeSystem;
+struct QuadtreeNode;
+struct QuadtreeID;
 
 struct Terrain {
 	HeightmapForNormals heightmapForNormals;
@@ -14,14 +18,8 @@ struct Terrain {
 	ULL upperLimit = 0;
 	ULL lowerLimit = 0;
 
-	Mutex mutex;
-	void create(QuadtreeID id);
+	//Mutex mutex;
+	Terrain(QuadtreeID id);
 };
-
-struct TerrainSystem {
-	Map<QuadtreeID, Terrain> terrain;
-};
-
-extern TerrainSystem terrainSystem;
 
 Double terrainGenerationFunction(LDouble x, LDouble y);

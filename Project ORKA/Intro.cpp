@@ -43,7 +43,7 @@ void Intro::render(Window & window)
 	}
 
 	if (renderer.renderTime.total > 5) {
-		gameSystem.add(new Mooncrash(window));
-		window.contents.pop_front();
+		gameSystem.add(new Pong(window));
+		window.userInterface.contents.pop_front();
 	}
 }

@@ -1,54 +1,41 @@
 
 #pragma once
 
-#include "Debug.hpp"
 #include "Basics.hpp"
-#include "Threading.hpp"
-#include "GameSimulation.hpp"
-
-//#include <boost/asio.hpp>
-//#include <boost/bind.hpp>
-//#include <boost/asio/buffer.hpp>
-//#include <boost/thread/thread.hpp>
-
-#define PORT_NUMBER 12297
-#define PACKET_SIZE_IN_BYTES 1024
+#include "DebugConsole.hpp"
 
 #ifdef _WIN32
 #define _WIN32_WINNT 0x0A00
 #endif
 
-//using ASIOContext = boost::asio::io_context;
-//using ASIOTimer = boost::asio::steady_timer;
-//using ASIOThread = boost::thread;
-//using ASIOEndpoint = boost::asio::ip::udp::endpoint;
-//using ASIOSocket = boost::asio::ip::udp::socket;
-//using ASIOBuffer = boost::asio::mutable_buffer;
+#define ASIO_STANDALONE
+#include "asio.hpp"
+#include "asio/ts/buffer.hpp"
+#include "asio/ts/internet.hpp"
 
-struct Server
-{
-    //networking stuff
-    //ASIOContext context;
-    //ASIOEndpoint endpoint = ASIOEndpoint(boost::asio::ip::make_address("127.0.0.1"), 80);
-    //ASIOSocket socket = ASIOSocket(context);
+#define PORT_NUMBER 12297
+#define PACKET_SIZE_IN_BYTES 1024
 
-    //game simulation
-    GameSimulation gameSimulation;
+using ASIOContext = asio::io_context;
+using ASIOTimer = asio::steady_timer;
+using ASIOThread = asio::thread;
+//udp
+using ASIOUDPEndpoint = asio::ip::udp::endpoint;
+using ASIOUDPSocket = asio::ip::udp::socket;
+//tcp
+using ASIOTCPEndpoint = asio::ip::tcp::endpoint;
+using ASIOTCPSocket = asio::ip::tcp::socket;
+using ASIOBuffer = asio::mutable_buffer;
+using ASIOErrorCode = asio::error_code;
+using ASIOTCPResolver = asio::ip::tcp::resolver;
 
-    void create();
-    void connect();
-    void send();
-};
+#include <cstdlib>
+#include <thread>
+#include <utility>
+#include <cstring>
+#include <iostream>
 
-struct Message {
-    Index messageID = 0;
-    UInt bodyByteSize = 0;
-    Byte body[PACKET_SIZE_IN_BYTES];
-};
+enum { maxPacketSize = 1024 };
 
-struct Client {
-
-};
-
-extern Server server;
-extern Client client;
+void runServer();
+void runClient();

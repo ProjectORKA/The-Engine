@@ -18,10 +18,6 @@ void apiWindowSwapBuffers(APIWindow apiWindow)
 {
 	glfwSwapBuffers(apiWindow);
 }
-Bool apiWindowIsFullscreen(APIWindow apiWindow)
-{
-	return glfwGetWindowMonitor(apiWindow) != NULL;
-}
 void apiWindowEnableCursor(APIWindow apiWindow)
 {
 	glfwSetInputMode(apiWindow, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
@@ -58,6 +54,10 @@ Bool apiWindowIsCapturing(APIWindow apiWindow)
 Bool apiWindowIsDecorated(APIWindow apiWindow)
 {
 	return glfwGetWindowAttrib(apiWindow, GLFW_DECORATED);
+}
+Bool apiWindowIsFullscreen(APIWindow apiWindow)
+{
+	return glfwGetWindowMonitor(apiWindow) != NULL;
 }
 Bool apiWindowCursorIsCaptured(APIWindow apiWindow)
 {
@@ -106,7 +106,7 @@ TiledRectangle apiWindowGetWorkableArea(APIWindow apiWindow)
 	return rect;
 }
 
-void whenWindowAPIThrowsError(Int error, const char* description)
+void whenWindowAPIThrowsError(Int error, const Char* description)
 {
 	logError(description);
 }

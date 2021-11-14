@@ -24,6 +24,7 @@
   <ItemGroup>
     <ClCompile Include="AIPlayground.cpp" />
     <ClCompile Include="Basics.cpp" />
+    <ClCompile Include="DebugConsole.cpp" />
     <ClCompile Include="Fonts.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameSystem.cpp" />
@@ -31,6 +32,8 @@
     <ClCompile Include="MatrixSystem.cpp" />
     <ClCompile Include="Mooncrash.cpp" />
     <ClCompile Include="OctreeNode.cpp" />
+    <ClCompile Include="Pong.cpp" />
+    <ClCompile Include="QuadtreeID.cpp" />
     <ClCompile Include="QuadtreeNode.cpp" />
     <ClCompile Include="SDFTerrainRenderSystem.cpp" />
     <ClCompile Include="Settings.cpp" />
@@ -44,7 +47,6 @@
     <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="OctreeSystemRenderer.cpp" />
     <ClCompile Include="PlanetCamera.cpp" />
-    <ClCompile Include="Client.cpp" />
     <ClCompile Include="CPUMesh.cpp" />
     <ClCompile Include="CPUTexture.cpp" />
     <ClCompile Include="Debug.cpp" />
@@ -64,7 +66,6 @@
     <ClCompile Include="PlanetSystem.cpp" />
     <ClCompile Include="QuadtreeSystemRenderer.cpp" />
     <ClCompile Include="RelativeChunkOffset.cpp" />
-    <ClCompile Include="Server.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="SimpleCamera.cpp" />
     <ClCompile Include="TerrainRendering.cpp" />
@@ -90,6 +91,7 @@
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="UniformBuffer.cpp" />
     <ClCompile Include="Uniforms.cpp" />
+    <ClCompile Include="UserInterface.cpp" />
     <ClCompile Include="VertexArrayObject.cpp" />
     <ClCompile Include="VertexBufferObject.cpp" />
     <ClCompile Include="Window.cpp" />
@@ -103,6 +105,8 @@
     <ClInclude Include="AutoConstruct.hpp" />
     <ClInclude Include="Basics.hpp" />
     <ClInclude Include="CameraControllers.hpp" />
+    <ClInclude Include="Compiler.hpp" />
+    <ClInclude Include="DebugConsole.hpp" />
     <ClInclude Include="Engine.hpp" />
     <ClInclude Include="Fonts.hpp" />
     <ClInclude Include="Functor.hpp" />
@@ -111,6 +115,8 @@
     <ClInclude Include="InputManager.hpp" />
     <ClInclude Include="Intro.hpp" />
     <ClInclude Include="KeyMap.hpp" />
+    <ClInclude Include="Pong.hpp" />
+    <ClInclude Include="Queue.hpp" />
     <ClInclude Include="MatrixSystem.hpp" />
     <ClInclude Include="MindMap.hpp" />
     <ClInclude Include="Mooncrash.hpp" />
@@ -122,7 +128,6 @@
     <ClInclude Include="Override.hpp" />
     <ClInclude Include="Pixel.hpp" />
     <ClInclude Include="PlanetCamera.hpp" />
-    <ClInclude Include="Client.hpp" />
     <ClInclude Include="CPUMesh.hpp" />
     <ClInclude Include="CPUTexture.hpp" />
     <ClInclude Include="Debug.hpp" />
@@ -138,7 +143,6 @@
     <ClInclude Include="IndexBufferObject.hpp" />
     <ClInclude Include="Math.hpp" />
     <ClInclude Include="MeshSystem.hpp" />
-    <ClInclude Include="Message.hpp" />
     <ClInclude Include="Networking.hpp" />
     <ClInclude Include="PlanetRenderSystem.hpp" />
     <ClInclude Include="PlanetSystem.hpp" />
@@ -150,7 +154,6 @@
     <ClInclude Include="RelativeChunkOffset.hpp" />
     <ClInclude Include="RenderRegion.hpp" />
     <ClInclude Include="SDFTerrainRenderSystem.hpp" />
-    <ClInclude Include="Server.hpp" />
     <ClInclude Include="Settings.hpp" />
     <ClInclude Include="Shader.hpp" />
     <ClInclude Include="ShaderProgram.hpp" />
@@ -224,6 +227,8 @@
     <None Include="Data\shaders\unlit.vert" />
     <None Include="Data\shaders\water.frag" />
     <None Include="Data\shaders\water.vert" />
+    <None Include="Data\shaders\white.frag" />
+    <None Include="Data\shaders\white.vert" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
@@ -298,7 +303,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)\External Libraries\BOOST;$(SolutionDir)\External Libraries\Asynchronous-Socket-Class-C-Windows-master\include;$(SolutionDir)\External Libraries\freetype-2.10.4\include;$(SolutionDir)\External Libraries\boost_asio_1_18_0;$(SolutionDir)\External Libraries\STB IMAGE;$(SolutionDir)\External Libraries\ASSIMP\include;$(SolutionDir)\External Libraries\GLM;$(SolutionDir)\External Libraries\GLEW\include;$(SolutionDir)\External Libraries\GLFW 32 bit\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>G:\DATA\PROJEKTE\ORKA\GAME ENGINE\SOURCE CODE\External Libraries\ASIO\asio-1.18.1\include;$(SolutionDir)\External Libraries\freetype-2.10.4\include;$(SolutionDir)\External Libraries\STB IMAGE;$(SolutionDir)\External Libraries\ASSIMP\include;$(SolutionDir)\External Libraries\GLM;$(SolutionDir)\External Libraries\GLEW\include;$(SolutionDir)\External Libraries\GLFW 32 bit\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <EnableModules>false</EnableModules>
@@ -326,7 +331,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)\External Libraries\BOOST;$(SolutionDir)\External Libraries\Asynchronous-Socket-Class-C-Windows-master\include;$(SolutionDir)\External Libraries\freetype-2.10.4\include;$(SolutionDir)\External Libraries\boost_asio_1_18_0;$(SolutionDir)\External Libraries\STB IMAGE;$(SolutionDir)\External Libraries\ASSIMP\include;$(SolutionDir)\External Libraries\GLM;$(SolutionDir)\External Libraries\GLEW\include;$(SolutionDir)\External Libraries\GLFW 64 bit\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>G:\DATA\PROJEKTE\ORKA\GAME ENGINE\SOURCE CODE\External Libraries\ASIO\asio-1.18.1\include;$(SolutionDir)\External Libraries\freetype-2.10.4\include;$(SolutionDir)\External Libraries\STB IMAGE;$(SolutionDir)\External Libraries\ASSIMP\include;$(SolutionDir)\External Libraries\GLM;$(SolutionDir)\External Libraries\GLEW\include;$(SolutionDir)\External Libraries\GLFW 64 bit\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <SupportJustMyCode>true</SupportJustMyCode>
@@ -359,7 +364,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)\External Libraries\BOOST;$(SolutionDir)\External Libraries\Asynchronous-Socket-Class-C-Windows-master\include;$(SolutionDir)\External Libraries\freetype-2.10.4\include;$(SolutionDir)\External Libraries\boost_asio_1_18_0;$(SolutionDir)\External Libraries\STB IMAGE;$(SolutionDir)\External Libraries\ASSIMP\include;$(SolutionDir)\External Libraries\GLM;$(SolutionDir)\External Libraries\GLEW\include;$(SolutionDir)\External Libraries\GLFW 32 bit\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>G:\DATA\PROJEKTE\ORKA\GAME ENGINE\SOURCE CODE\External Libraries\ASIO\asio-1.18.1\include;$(SolutionDir)\External Libraries\freetype-2.10.4\include;$(SolutionDir)\External Libraries\STB IMAGE;$(SolutionDir)\External Libraries\ASSIMP\include;$(SolutionDir)\External Libraries\GLM;$(SolutionDir)\External Libraries\GLEW\include;$(SolutionDir)\External Libraries\GLFW 32 bit\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <FloatingPointModel>Fast</FloatingPointModel>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LanguageStandard>stdcpp17</LanguageStandard>
@@ -389,7 +394,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)\External Libraries\BOOST;$(SolutionDir)\External Libraries\Asynchronous-Socket-Class-C-Windows-master\include;$(SolutionDir)\External Libraries\freetype-2.10.4\include;$(SolutionDir)\External Libraries\boost_asio_1_18_0;$(SolutionDir)\External Libraries\STB IMAGE;$(SolutionDir)\External Libraries\ASSIMP\include;$(SolutionDir)\External Libraries\GLM;$(SolutionDir)\External Libraries\GLEW\include;$(SolutionDir)\External Libraries\GLFW 64 bit\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>G:\DATA\PROJEKTE\ORKA\GAME ENGINE\SOURCE CODE\External Libraries\ASIO\asio-1.18.1\include;$(SolutionDir)\External Libraries\freetype-2.10.4\include;$(SolutionDir)\External Libraries\STB IMAGE;$(SolutionDir)\External Libraries\ASSIMP\include;$(SolutionDir)\External Libraries\GLM;$(SolutionDir)\External Libraries\GLEW\include;$(SolutionDir)\External Libraries\GLFW 64 bit\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <FloatingPointModel>Fast</FloatingPointModel>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);%(PreprocessorDefinitions)</PreprocessorDefinitions>

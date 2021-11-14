@@ -13,6 +13,6 @@ struct WindowSystem {
 	Window & addWindow();
 };
 
-void whenWindowAPIThrowsError(Int error, const char* description);
+void whenWindowAPIThrowsError(Int error, const Char* description);
 
 extern WindowSystem windowSystem;
