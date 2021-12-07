@@ -3,79 +3,64 @@
 
 #include "Game.hpp"
 #include "Window.hpp"
+#include "Math.hpp"
+#include "Networking.hpp"
+
+
+
+struct Ball;
+
+struct Player {
+	ULL score = 0;
+	Vec2 position = Vec2(0,0);
+
+	//actions
+	Bool shoot = false;
+	Bool moveUp = false;
+	Bool moveDown = false;
+
+	//ai stuff
+	Float target = 0.0f;
+	Float velocity = 0.0f;
+	Float difficulty = 7.0f;
+
+	void keyboardInput(Float deltaTime);
+
+	void mouseInput(Vec3 cursorWorldPosition);
+
+	void ballLocationInput(Vector<Ball>& balls);
+
+	void aiInput(Vector<Ball>& balls, Float deltaTime);
+};
+
+struct Ball {
+	//ball
+	Vec2 position = Vec2(0);
+	Vec2 velocity = Vec2(1, 0);
+	Float speed = 2;
+	Bool stuckToPaddle = true;
+	Bool stuckToPaddle1 = true;
+
+	void render(Renderer& renderer);
+	void update(Float deltaTime, Player players[2]);
+
+};
 
 struct Pong : public Game {
 	using Game::Game;
 
-	UInt player1Score = 0;
-	UInt player2Score = 0;
+	//Server server;
+	//Client client;
 
-	Float paddle1Location = 0;
-	Float paddle2Location = 0;
+	//players
+	Player players[2];
 
-	Vec2 ballPosition = Vec2(0);
-	Vec2 ballVelocity = Vec2(1, 0);
+	Vector<Ball> balls;
 
-	Bool player1MoveUp;
-	Bool player1MoveDown;
+	void buttonIsPressed(Window& window, Int keyID, Int action, Int modifiers) override;;
+	void mouseIsPressed(Window& window, Int button, Int action, Int modifiers) override;;
 
-	void buttonIsPressed(Window& window, Int keyID, Int action, Int modifiers) override {
-		
-		if (keyID == GLFW_KEY_W) {
-			player1MoveUp = (action == GLFW_PRESS);
-		}
-
-		if (keyID == GLFW_KEY_S) {
-			player1MoveDown = (action == GLFW_PRESS);
-		}
-		
-	};
-
-	void update() override {
-
-		//update ball
-		ballPosition += ballVelocity;
-		ballVelocity = normalize(ballVelocity) * Vec2(0.01);
-
-		//update players
-		if (player1MoveUp) paddle1Location += 0.01;
-		if (player1MoveDown) paddle1Location -= 0.01;
-
-		//paddles
-		if (ballPosition.x > +1 & ballVelocity.x > 0) {
-			ballVelocity.x = -ballVelocity.x;
-		}
-		if (ballPosition.x < -1 & ballVelocity.x < 0) {
-			ballVelocity.x = -ballVelocity.x;
-		}
-		
-		//walls
-		if (ballPosition.y > +1 & ballVelocity.y > 0) {
-			ballVelocity.y = -ballVelocity.y;
-		}
-		if (ballPosition.y < -1 & ballVelocity.y < 0) {
-			ballVelocity.y = -ballVelocity.y;
-		}
-
-		logDebug(ballPosition);
-
-	}
-
-	void render(Window& window) override {
-
-		window.renderer.clearColor(Color(0));
-
-		window.renderer.normalizedSpace();
-
-		//paddle 1
-		window.renderer.uniforms().data.mMatrix = 
-		scale(translate(Matrix(1),Vec3(-0.9, paddle1Location,0)),Vec3(0.01, 0.2, 0.5));
-		
-		
-		
-		
-		window.renderer.useShader("white");
-		window.renderer.renderMesh("cube");
-
-	}
+	void render(Renderer& renderer) override;
 };
+
+Ball* getClosestBall(Player& player, Vector<Ball>& balls);

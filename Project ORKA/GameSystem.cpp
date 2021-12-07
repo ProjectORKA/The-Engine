@@ -2,14 +2,33 @@
 
 GameSystem gameSystem;
 
-void GameSystem::add(Game* game) {
-	games.push_back(game);
+GameSystem::GameSystem() {
+	thread.start(gameSimulationThread, thread, *this);
 }
-
 GameSystem::~GameSystem() {
+	thread.stop();
 	for (Game* game : games) {
 		game->destroy();
 		delete game;
 	}
 	games.clear();
+}
+Game * GameSystem::add(Game* game) {
+	games.push_back(game);
+	return games.back();
+}
+void gameSimulationThread(Thread& thread, GameSystem & gameSystem) {
+
+	TimePoint t;
+
+	while (thread.keepThreadRunning) {
+
+		t = Clock::now() + Milliseconds(Int(1.0f / 60.0f));
+
+		for (Game* game : gameSystem.games) {
+			game->update();
+		}
+
+		sleepUntil(t);
+	}
 }

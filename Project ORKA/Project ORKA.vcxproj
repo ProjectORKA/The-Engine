@@ -24,13 +24,16 @@
   <ItemGroup>
     <ClCompile Include="AIPlayground.cpp" />
     <ClCompile Include="Basics.cpp" />
+    <ClCompile Include="BitmapTextRenderSystem.cpp" />
     <ClCompile Include="DebugConsole.cpp" />
     <ClCompile Include="Fonts.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameSystem.cpp" />
     <ClCompile Include="Intro.cpp" />
+    <ClCompile Include="MathDNA.cpp" />
     <ClCompile Include="MatrixSystem.cpp" />
     <ClCompile Include="Mooncrash.cpp" />
+    <ClCompile Include="NeuralNetwork.cpp" />
     <ClCompile Include="OctreeNode.cpp" />
     <ClCompile Include="Pong.cpp" />
     <ClCompile Include="QuadtreeID.cpp" />
@@ -38,11 +41,9 @@
     <ClCompile Include="SDFTerrainRenderSystem.cpp" />
     <ClCompile Include="Settings.cpp" />
     <ClCompile Include="TransformationStack.cpp" />
-    <ClCompile Include="UIText.cpp" />
     <ClCompile Include="MindMap.cpp" />
     <ClCompile Include="RenderRegion.cpp" />
     <ClCompile Include="ShaderProgram.cpp" />
-    <ClCompile Include="SimpleTextRendering.cpp" />
     <ClCompile Include="TiledMath.cpp" />
     <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="OctreeSystemRenderer.cpp" />
@@ -54,7 +55,6 @@
     <ClCompile Include="FileSystem.cpp" />
     <ClCompile Include="Framebuffer.cpp" />
     <ClCompile Include="FramebufferSystem.cpp" />
-    <ClCompile Include="GameSimulation.cpp" />
     <ClCompile Include="GPUMesh.cpp" />
     <ClCompile Include="GPUTexture.cpp" />
     <ClCompile Include="GraphicsAPI.cpp" />
@@ -70,19 +70,14 @@
     <ClCompile Include="SimpleCamera.cpp" />
     <ClCompile Include="TerrainRendering.cpp" />
     <ClCompile Include="TerrainSystem.cpp" />
-    <ClCompile Include="UIElement.cpp" />
     <ClCompile Include="UIFlatPanel.cpp" />
-    <ClCompile Include="UIGameView.cpp" />
-    <ClCompile Include="UISplit.cpp" />
     <ClCompile Include="ULLUtil.cpp" />
     <ClCompile Include="ProceduralMeshes.cpp" />
-    <ClCompile Include="Program.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Random.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="RenderObjectSystem.cpp" />
     <ClCompile Include="ShaderSystem.cpp" />
-    <ClCompile Include="stb_image.cpp" />
     <ClCompile Include="QuadtreeSystem.cpp" />
     <ClCompile Include="TextRenderSystem.cpp" />
     <ClCompile Include="TextureSystem.cpp" />
@@ -96,18 +91,22 @@
     <ClCompile Include="VertexBufferObject.cpp" />
     <ClCompile Include="Window.cpp" />
     <ClCompile Include="WindowAPI.cpp" />
-    <ClCompile Include="WindowSystem.cpp" />
     <ClCompile Include="OctreeSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\External Libraries\stb-master\stb_truetype.h" />
+    <ClInclude Include="GlyphTextRenderSystem.hpp" />
+    <ClInclude Include="Image.hpp" />
+    <ClInclude Include="MathDNA.hpp" />
+    <ClInclude Include="NeuralNetwork.hpp" />
+    <ClInclude Include="Sandbox.hpp" />
     <ClInclude Include="AIPlayground.hpp" />
+    <ClInclude Include="ASIONetworking.hpp" />
     <ClInclude Include="AutoConstruct.hpp" />
     <ClInclude Include="Basics.hpp" />
+    <ClInclude Include="BitmapTextRenderSystem.hpp" />
     <ClInclude Include="CameraControllers.hpp" />
     <ClInclude Include="Compiler.hpp" />
     <ClInclude Include="DebugConsole.hpp" />
-    <ClInclude Include="Engine.hpp" />
     <ClInclude Include="Fonts.hpp" />
     <ClInclude Include="Functor.hpp" />
     <ClInclude Include="Game.hpp" />
@@ -135,7 +134,6 @@
     <ClInclude Include="FileSystem.hpp" />
     <ClInclude Include="Framebuffer.hpp" />
     <ClInclude Include="FramebufferSystem.hpp" />
-    <ClInclude Include="GameSimulation.hpp" />
     <ClInclude Include="GPUMesh.hpp" />
     <ClInclude Include="GPUTexture.hpp" />
     <ClInclude Include="GraphicsAPI.hpp" />
@@ -165,14 +163,9 @@
     <ClInclude Include="TransformationStack.hpp" />
     <ClInclude Include="TreeSystem.hpp" />
     <ClInclude Include="UIConstraints.hpp" />
-    <ClInclude Include="UIElement.hpp" />
     <ClInclude Include="UIFlatPanel.hpp" />
-    <ClInclude Include="UIGameView.hpp" />
-    <ClInclude Include="UISplit.hpp" />
-    <ClInclude Include="UIText.hpp" />
     <ClInclude Include="ULLUtil.hpp" />
     <ClInclude Include="ProceduralMeshes.hpp" />
-    <ClInclude Include="Program.hpp" />
     <ClInclude Include="Random.hpp" />
     <ClInclude Include="TiledMath.hpp" />
     <ClInclude Include="Renderer.hpp" />
@@ -180,7 +173,6 @@
     <ClInclude Include="resource.h" />
     <ClInclude Include="ShaderSystem.hpp" />
     <ClInclude Include="Shapes.hpp" />
-    <ClInclude Include="stb_image.h" />
     <ClInclude Include="QuadtreeSystem.hpp" />
     <ClInclude Include="TextRenderSystem.hpp" />
     <ClInclude Include="TextureSystem.hpp" />
@@ -196,7 +188,6 @@
     <ClInclude Include="Window.hpp" />
     <ClInclude Include="WindowAPI.hpp" />
     <ClInclude Include="WindowsEntry.hpp" />
-    <ClInclude Include="WindowSystem.hpp" />
     <ClInclude Include="OctreeSystem.hpp" />
   </ItemGroup>
   <ItemGroup>
@@ -227,8 +218,8 @@
     <None Include="Data\shaders\unlit.vert" />
     <None Include="Data\shaders\water.frag" />
     <None Include="Data\shaders\water.vert" />
-    <None Include="Data\shaders\white.frag" />
-    <None Include="Data\shaders\white.vert" />
+    <None Include="Data\shaders\color.frag" />
+    <None Include="Data\shaders\color.vert" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
@@ -303,7 +294,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>G:\DATA\PROJEKTE\ORKA\GAME ENGINE\SOURCE CODE\External Libraries\ASIO\asio-1.18.1\include;$(SolutionDir)\External Libraries\freetype-2.10.4\include;$(SolutionDir)\External Libraries\STB IMAGE;$(SolutionDir)\External Libraries\ASSIMP\include;$(SolutionDir)\External Libraries\GLM;$(SolutionDir)\External Libraries\GLEW\include;$(SolutionDir)\External Libraries\GLFW 32 bit\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>G:\DATA\PROJEKTE\ORKA\GAME ENGINE\SOURCE CODE\External Libraries\STBIMAGE;G:\DATA\PROJEKTE\ORKA\GAME ENGINE\SOURCE CODE\External Libraries\FREETYPE\include;G:\DATA\PROJEKTE\ORKA\GAME ENGINE\SOURCE CODE\External Libraries\ASIO\asio-1.18.1\include;$(SolutionDir)\External Libraries\freetype-2.10.4\include;$(SolutionDir)\External Libraries\STB IMAGE;$(SolutionDir)\External Libraries\ASSIMP\include;$(SolutionDir)\External Libraries\GLM;$(SolutionDir)\External Libraries\GLEW\include;$(SolutionDir)\External Libraries\GLFW 32 bit\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <EnableModules>false</EnableModules>
@@ -331,7 +322,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>G:\DATA\PROJEKTE\ORKA\GAME ENGINE\SOURCE CODE\External Libraries\ASIO\asio-1.18.1\include;$(SolutionDir)\External Libraries\freetype-2.10.4\include;$(SolutionDir)\External Libraries\STB IMAGE;$(SolutionDir)\External Libraries\ASSIMP\include;$(SolutionDir)\External Libraries\GLM;$(SolutionDir)\External Libraries\GLEW\include;$(SolutionDir)\External Libraries\GLFW 64 bit\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>G:\DATA\PROJEKTE\ORKA\GAME ENGINE\SOURCE CODE\External Libraries\STBIMAGE;G:\DATA\PROJEKTE\ORKA\GAME ENGINE\SOURCE CODE\External Libraries\FREETYPE\include;G:\DATA\PROJEKTE\ORKA\GAME ENGINE\SOURCE CODE\External Libraries\ASIO\asio-1.18.1\include;$(SolutionDir)\External Libraries\freetype-2.10.4\include;$(SolutionDir)\External Libraries\STB IMAGE;$(SolutionDir)\External Libraries\ASSIMP\include;$(SolutionDir)\External Libraries\GLM;$(SolutionDir)\External Libraries\GLEW\include;$(SolutionDir)\External Libraries\GLFW 64 bit\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <SupportJustMyCode>true</SupportJustMyCode>
@@ -364,7 +355,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>G:\DATA\PROJEKTE\ORKA\GAME ENGINE\SOURCE CODE\External Libraries\ASIO\asio-1.18.1\include;$(SolutionDir)\External Libraries\freetype-2.10.4\include;$(SolutionDir)\External Libraries\STB IMAGE;$(SolutionDir)\External Libraries\ASSIMP\include;$(SolutionDir)\External Libraries\GLM;$(SolutionDir)\External Libraries\GLEW\include;$(SolutionDir)\External Libraries\GLFW 32 bit\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>G:\DATA\PROJEKTE\ORKA\GAME ENGINE\SOURCE CODE\External Libraries\STBIMAGE;G:\DATA\PROJEKTE\ORKA\GAME ENGINE\SOURCE CODE\External Libraries\FREETYPE\include;G:\DATA\PROJEKTE\ORKA\GAME ENGINE\SOURCE CODE\External Libraries\ASIO\asio-1.18.1\include;$(SolutionDir)\External Libraries\freetype-2.10.4\include;$(SolutionDir)\External Libraries\STB IMAGE;$(SolutionDir)\External Libraries\ASSIMP\include;$(SolutionDir)\External Libraries\GLM;$(SolutionDir)\External Libraries\GLEW\include;$(SolutionDir)\External Libraries\GLFW 32 bit\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <FloatingPointModel>Fast</FloatingPointModel>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LanguageStandard>stdcpp17</LanguageStandard>
@@ -394,7 +385,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>G:\DATA\PROJEKTE\ORKA\GAME ENGINE\SOURCE CODE\External Libraries\ASIO\asio-1.18.1\include;$(SolutionDir)\External Libraries\freetype-2.10.4\include;$(SolutionDir)\External Libraries\STB IMAGE;$(SolutionDir)\External Libraries\ASSIMP\include;$(SolutionDir)\External Libraries\GLM;$(SolutionDir)\External Libraries\GLEW\include;$(SolutionDir)\External Libraries\GLFW 64 bit\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>G:\DATA\PROJEKTE\ORKA\GAME ENGINE\SOURCE CODE\External Libraries\STBIMAGE;G:\DATA\PROJEKTE\ORKA\GAME ENGINE\SOURCE CODE\External Libraries\FREETYPE\include;G:\DATA\PROJEKTE\ORKA\GAME ENGINE\SOURCE CODE\External Libraries\ASIO\asio-1.18.1\include;$(SolutionDir)\External Libraries\freetype-2.10.4\include;$(SolutionDir)\External Libraries\STB IMAGE;$(SolutionDir)\External Libraries\ASSIMP\include;$(SolutionDir)\External Libraries\GLM;$(SolutionDir)\External Libraries\GLEW\include;$(SolutionDir)\External Libraries\GLFW 64 bit\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <FloatingPointModel>Fast</FloatingPointModel>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);%(PreprocessorDefinitions)</PreprocessorDefinitions>

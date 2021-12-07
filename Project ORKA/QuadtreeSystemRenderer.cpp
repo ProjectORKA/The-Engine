@@ -170,10 +170,6 @@ void QuadtreeRenderSystem::count()
 void QuadtreeRenderSystem::destroy() {
 	root.destroy();
 }
-void QuadtreeRenderSystem::create(Renderer& renderer) {
-	grassTextureID = renderer.textureSystem.getTextureID("grass");
-	terrainShaderID = renderer.shaderSystem.getShaderID("terrain");
-}
 void QuadtreeRenderSystem::update(PlanetCamera& camera) {
 	
 	if (needsSubdiv) {

@@ -1,5 +1,5 @@
-//?#version 450
 
+#version 450
 layout(std140, binding = 0) uniform GlobalUniforms
 {
 	mat4 mMatrix;

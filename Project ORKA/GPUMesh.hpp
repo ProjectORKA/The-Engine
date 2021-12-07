@@ -11,8 +11,13 @@ struct GPUMesh
 
 	VertexArrayObject vao;
 
+
+	GPUMesh() {};
+	~GPUMesh();
+	GPUMesh(CPUMesh cpuMesh);
+
+
 	void render();
 	void unload();
 	void upload(CPUMesh& cpuMesh);
-	//void update(CPUMesh& cpuMesh);
 };

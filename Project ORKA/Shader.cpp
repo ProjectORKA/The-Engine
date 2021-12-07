@@ -1,29 +1,32 @@
 #include "Shader.hpp"
 #include "Util.hpp"
 
-void Shader::unload() {
+void Shader::destroy() {
 	isLoaded = false;
 	apiDeleteShader(shaderID);
 }
-void Shader::load(ShaderType shaderType, Name name)
+void Shader::create(ShaderType shaderType, Name name, String uniformBlock)
 {
 	switch (shaderType) {
-	case ShaderType::vertex: load(shaderType, String("Data/shaders/").append(name.data).append(".vert")); break;
-	case ShaderType::compute: load(shaderType, String("Data/shaders/").append(name.data).append(".comp")); break;
-	case ShaderType::geometry: load(shaderType, String("Data/shaders/").append(name.data).append(".geom")); break;
-	case ShaderType::fragment: load(shaderType, String("Data/shaders/").append(name.data).append(".frag")); break;
-	case ShaderType::tessellationControl: load(shaderType, String("Data/shaders/").append(name.data).append(".tesc")); break;
-	case ShaderType::tessellationEvaluation: load(shaderType, String("Data/shaders/").append(name.data).append(".tese")); break;
+	case ShaderType::vertex: create(shaderType, String("Data/shaders/").append(name.data).append(".vert"), uniformBlock); break;
+	case ShaderType::compute: create(shaderType, String("Data/shaders/").append(name.data).append(".comp"), uniformBlock); break;
+	case ShaderType::geometry: create(shaderType, String("Data/shaders/").append(name.data).append(".geom"), uniformBlock); break;
+	case ShaderType::fragment: create(shaderType, String("Data/shaders/").append(name.data).append(".frag"), uniformBlock); break;
+	case ShaderType::tessellationControl: create(shaderType, String("Data/shaders/").append(name.data).append(".tesc"), uniformBlock); break;
+	case ShaderType::tessellationEvaluation: create(shaderType, String("Data/shaders/").append(name.data).append(".tese"), uniformBlock); break;
 		//etc
 	default: logError("Unknown shaderType!");
 	}
 }
-void Shader::load(ShaderType shaderType, Path path) {
-	String shaderCode = loadString(path);
+void Shader::create(ShaderType shaderType, Path path, String uniformBlock) {
+	String shaderCode = uniformBlock;
+	shaderCode.append(loadString(path));
 	loadShaderCode(shaderType, shaderCode);
 }
 void Shader::loadShaderCode(ShaderType shaderType, String shaderCode)
 {
+	logDebug(String("\n\Loading Shader:--------------------------------------------------------").append(shaderCode).append("\n\---------------------------------------------------------------------- "));
+
 	shaderID = apiCreateShader(enumClassAsInt(shaderType));
 
 	char const* SourcePointer = shaderCode.c_str();
@@ -34,7 +37,7 @@ void Shader::loadShaderCode(ShaderType shaderType, String shaderCode)
 	Int infoLogLength = apiGetShaderiv(shaderID, GL_INFO_LOG_LENGTH);
 
 	if (infoLogLength > 0) {
-		logError(apiGetShaderInfoLog(shaderID,infoLogLength));
+		logError(apiGetShaderInfoLog(shaderID, infoLogLength));
 		isLoaded = false;
 	}
 	else {

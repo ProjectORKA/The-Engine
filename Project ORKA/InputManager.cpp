@@ -1,5 +1,5 @@
 #include "InputManager.hpp"
-#include "WindowSystem.hpp"
+#include "UserInterface.hpp"
 
 InputManager inputManager;
 
@@ -10,21 +10,23 @@ Bool InputManager::isCapturing(Window& window)
 void InputManager::captureCursor(Window& window)
 {
 	if (!capturing) {
-		capturePosition = cursorPosition;
+		capturePosition = apiWindowGetCursorPosition(window.apiWindow);
+		apiWindowSetCursorPosition(window.apiWindow, Vec2(0));
+		cursorPosition = Vec2(0);
 		apiWindowDisableCursor(window.apiWindow);
 		capturing = true;
 	}
 }
 void InputManager::windowInFocus(Window& window)
 {
-	captureCursor(window);
+	//captureCursor(window);
 }
 void InputManager::uncaptureCursor(Window& window)
 {
 	if (capturing) {
 		//[TODO]
 		apiWindowEnableCursor(window.apiWindow);
-		glfwSetCursorPos(window.apiWindow, cursorPosition.x, Int(window.getWindowContentSize().y) - cursorPosition.y);
+		glfwSetCursorPos(window.apiWindow, capturePosition.x, capturePosition.y);
 		//cursorPosition = capturePosition;
 		capturing = false;
 	}
@@ -35,12 +37,20 @@ void InputManager::windowOutOfFocus(Window& window)
 }
 void InputManager::mouseIsMoving(Window& window, IVec2 position)
 {
-	IVec2 normalizedPosition;
-	normalizedPosition.x = position.x;
-	normalizedPosition.y = window.getWindowContentSize().y - position.y;
+	if (apiWindowCursorIsCaptured(window.apiWindow)) {
+		cursorPosition.x = position.x;
+		cursorPosition.y = -position.y;
+		apiWindowSetCursorPosition(window.apiWindow,Vec2(0));
+	}
+	else {
+		//
+		IVec2 normalizedPosition;
+		normalizedPosition.x = position.x;
+		normalizedPosition.y = window.getWindowContentSize().y - position.y;
+		cursorPosition = normalizedPosition;
+	}
 
-	//cursorDelta = cursorPosition - normalizedPosition;
-	cursorPosition = normalizedPosition;
+	if(ui.currentlyActive) ui.currentlyActive->mouseIsMoving(window, position);
 }
 void InputManager::windowChangedFocus(Window& window, Bool isInFocus)
 {
@@ -52,23 +62,27 @@ void InputManager::mouseWheelIsScrolled(Window& window, Double xAxis, Double yAx
 }
 void InputManager::buttonIsPressed(Window& window, Int keyID, Int action, Int modifiers)
 {
-	switch (keyID) {
-	case GLFW_KEY_ENTER:
-		if (action == GLFW_PRESS && modifiers == GLFW_MOD_ALT) {
-			if (window.isFullScreen()) window.setWindowed();
-			else window.setExclusiveFullscreen();
+	if (action == GLFW_PRESS) {
+		switch (keyID) {
+		case GLFW_KEY_ENTER:
+			if (action == GLFW_PRESS && modifiers == GLFW_MOD_ALT) {
+				if (window.isFullScreen()) window.setWindowed();
+				else window.setExclusiveFullscreen();
+			}
+			break;
+		case GLFW_KEY_ESCAPE: glfwSetWindowShouldClose(window.apiWindow, GLFW_TRUE);
+			break;
+		case GLFW_KEY_B: window.borderlessFullScreen = !window.borderlessFullScreen;
+			break;
+		default:
+			break;
 		}
-		break;
-	case GLFW_KEY_ESCAPE: glfwSetWindowShouldClose(window.apiWindow, GLFW_TRUE);
-		break;
-	case GLFW_KEY_N: window.duplicateWindow = true;
-		break;
-	case GLFW_KEY_B: window.borderlessFullScreen = !window.borderlessFullScreen;
-		break;
-	default:
-		break;
 	}
+	
+	if(window.content)window.content->buttonIsPressed(window, keyID, action, modifiers);
+}
 
-	window.userInterface.buttonIsPressed(window, keyID, action, modifiers);
+void InputManager::mouseIsPressed(Window& window, Int button, Int action, Int modifiers) {
+	if(window.content)window.content->mouseIsPressed(window, button, action, modifiers);
 }
 

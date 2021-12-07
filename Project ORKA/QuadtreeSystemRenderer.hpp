@@ -36,15 +36,10 @@ struct QuadtreeNodeRenderData {
 };
 
 struct QuadtreeRenderSystem {
-	Index grassTextureID = 0;
-	Index terrainShaderID = 0;
-	Index waterTextureID = 0;
-
 	QuadtreeNodeRenderData root;
 	
 	void count();
 	void destroy();
 	void update(PlanetCamera& camera);
 	void renderLevel(UShort level, Renderer& renderer);
-	void create(Renderer & renderer);
 };

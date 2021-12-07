@@ -3,25 +3,14 @@
 
 String uniformName = "/uniforms.glsl";
 
-void loadCommon() {
-	String code = loadString("data/shaders/uniforms.glsl");
-	logDebug(code);
-	apiNamedStringARB(uniformName, code);
-
-}
-void unloadCommon() {
-	apiDeleteNamedStringARB(uniformName);
-}
-
 void ShaderSystem::create() {
 	uniforms.create();
-	loadDefaultShader();
 
-	loadCommon();
+	loadDefaultShader();
 }
 void ShaderSystem::rebuild()
 {
-	for (auto & name : shaderNames) {
+	for (auto& name : shaderNames) {
 		shaderPrograms[name.second].destroy();
 	}
 	shaderNames.clear();
@@ -63,72 +52,43 @@ void ShaderSystem::use(Name name)
 void ShaderSystem::loadDefaultShader()
 {
 	//create default vertex shader
+	String defaultvertexShaderCode = uniforms.uniformBlockShaderCode;
+	defaultvertexShaderCode.append(
+		"\n\
+\n\
+in vec3 vertex; \n\
+in vec2 uvs; \n\
+\n\
+out vec2 textureCoordinate; \n\
+void main()\n\
+{\n\
+	gl_Position = vpMatrix * mMatrix * vec4(vertex, 1); \n\
+	textureCoordinate = uvs; \n\
+}"
+);
+
 	Shader vertexShader;
-	vertexShader.loadShaderCode(ShaderType::vertex, String(
-		"#version 450\n\
-		in vec3 vertex; \n\
-		in vec2 uvs; \n\
-		layout(std140, binding = 0) uniform GlobalUniforms\n\
-		{\n\
-			mat4 mMatrix;\n\
-			mat4 vpMatrix;\n\
-		\n\
-		vec4 worldOffset; \n\
-		vec4 cameraVector;\n\
-		vec4 chunkOffsetVector;\n\
-		\n\
-		float tint; \n\
-		float fade;\n\
-		float time;\n\
-		float cameraHeight;\n\
-		\n\
-		bool distortion;\n\
-		};\n\
-		\n\
-		uniform sampler2D texture0;\n\
-		\n\
-		out vec2 textureCoordinate; \n\
-		void main()\n\
-		{\n\
-			gl_Position = vpMatrix * mMatrix * vec4(vertex, 1); \n\
-			textureCoordinate = uvs; \n\
-		}"
-	));
+	vertexShader.loadShaderCode(ShaderType::vertex, defaultvertexShaderCode);
 
 	//create default fragment shader
+	String defaultFragmentShaderCode = uniforms.uniformBlockShaderCode;
+	defaultFragmentShaderCode.append(
+		"\n\
+\n\
+in vec2 textureCoordinate; \n\
+out vec4 color;\n\
+\n\
+void main()\n\
+{\n\
+	color = vec4(texture(texture0, textureCoordinate).rgb,1.0f);\n\
+	//color = vec4(UV,0.0f,1.0f);\n\
+}");
 	Shader fragmentShader;
-	fragmentShader.loadShaderCode(ShaderType::fragment, String(
-		"#version 450\n\
-	in vec2 textureCoordinate; \n\
-	out vec4 color;;\n\
-	layout(std140, binding = 0) uniform GlobalUniforms\n\
-	{\n\
-		mat4 mMatrix;\n\
-		mat4 vpMatrix;\n\
-		\n\
-		vec4 worldOffset; \n\
-		vec4 cameraVector;\n\
-		vec4 chunkOffsetVector;\n\
-		\n\
-		float tint; \n\
-		float fade;\n\
-		float time;\n\
-		float cameraHeight;\n\
-		\n\
-		bool distortion;\n\
-	};\n\
-	\n\
-	uniform sampler2D texture0;\n\
-	void main()\n\
-	{\n\
-	  color = vec4(texture(texture0, textureCoordinate).rgb,1.0f);\n\
-	  //color = vec4(UV,0.0f,1.0f);\n\
-	}"
-	));
+	fragmentShader.loadShaderCode(ShaderType::fragment, defaultFragmentShaderCode);
 
 	add(vertexShader, fragmentShader, "default");
-	vertexShader.unload();
-	fragmentShader.unload();
+	vertexShader.destroy();
+	fragmentShader.destroy();
 }
 Index ShaderSystem::getShaderID(Name name) {
 	use(name);

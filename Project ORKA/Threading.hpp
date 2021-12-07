@@ -13,7 +13,7 @@ struct Thread {
 	void start(Function&& f, Args && ...args)
 	{
 		keepThreadRunning = true;
-		thread = std::thread(f, std::ref(args...));
+		thread = std::thread(f, std::ref(args)...);
 	};
 
 	void stop();

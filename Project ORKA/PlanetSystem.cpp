@@ -1,21 +1,22 @@
 
 #include "PlanetSystem.hpp"
 
+PlanetSystem::PlanetSystem()
+{
+	quadtreeSystem.create();
+	octreeSystem.create(quadtreeSystem);
+}
+
+PlanetSystem::~PlanetSystem() {
+	octreeSystem.destroy();
+	quadtreeSystem.destroy();
+}
+
 //planetSystem
 void PlanetSystem::count()
 {
 	octreeSystem.count();
 	quadtreeSystem.count();
-}
-void PlanetSystem::create()
-{
-	quadtreeSystem.create();
-	octreeSystem.create(quadtreeSystem);
-}
-void PlanetSystem::destroy()
-{
-	octreeSystem.destroy();
-	quadtreeSystem.destroy();
 }
 void PlanetSystem::update()
 {

@@ -1,14 +1,17 @@
 
 #include "Time.hpp"
+#include "Debug.hpp"
 
 TimePoint now() {
 	return Clock::now();
 }
 
 void Time::reset(){
-	currentTime = lastTime = now();
+
+	currentTime = now();
+	lastTime = now();
 	deltaDuration = Duration(0);
-	totalDuration = Duration(0);//std::chrono::seconds::zero();
+	totalDuration = Duration(0);
 	delta = 0.0f;
 	total = 0.0f;
 }

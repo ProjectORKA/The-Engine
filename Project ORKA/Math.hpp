@@ -4,6 +4,10 @@
 
 #define PI 3.14159265359f
 
+template<typename T>
+T sq(T a) {
+	return (a * a);
+}
 
 template<typename T>
 T max(T a, T b) {
@@ -22,11 +26,29 @@ T clamp(T a, T min, T max) {
 	return a;
 }
 
+Float distance(Float a, Float b);
+
+Float distance(Vec2 a, Vec2 b);
+
 Float lerp(Float a, Float b, Float alpha);
 bool isFloatNearOther(Float a, Float b, Float error);
 Rotation getRotationBetweenVectors(Vec3 start, Vec3 dest);
 
 UInt nextPowerOfTwo(UInt& value);
+
+
+struct Graph {
+	Vector<Float> points;
+
+	void add(Float value);
+};
+
+struct Plot {
+	Vector<Vec2> points;
+	void add(Vec2 value);
+	void add(Float a, Float b);
+};
+
 
 //perlin noise by Ryo Suzuki
 //----------------------------------------------------------------------------------------

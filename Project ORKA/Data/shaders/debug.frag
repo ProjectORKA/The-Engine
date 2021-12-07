@@ -1,6 +1,5 @@
-#version 450
-#extension GL_ARB_shading_language_include : require
-#include "/uniforms.glsl" //! #include "uniforms.glsl" 
+
+//! #include "uniforms.glsl"
 
 in vec4 vertexColor;
 in vec2 textureCoordinate; 

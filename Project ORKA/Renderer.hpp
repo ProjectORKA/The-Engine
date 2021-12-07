@@ -54,6 +54,7 @@ struct Renderer{
 	//spaces
 	void screenSpace();
 	void normalizedSpace();
+	void apectCorrectNormalizedSpace();
 	
 	//meshes
 	void renderMesh(Name name);
@@ -70,6 +71,66 @@ struct Renderer{
 	void useShader(Name name) {
 		shaderSystem.use(name);
 	}
+
+	//primitives
+	void line2D(Vec2 start, Vec2 end, Float width) {
+		
+		Vec2 dir = normalize(start - end);
+		Vec2 extend = cross(Vec3(dir, 0),Vec3(0,0,1));
+		
+		CPUMesh line;
+		line.drawMode = MeshDrawMode::dynamicMode;
+		line.indices.push_back(0);
+		line.indices.push_back(1);
+		line.indices.push_back(2);
+		line.indices.push_back(3);
+		line.name = "line";
+		line.normals.push_back(Vec3(0, 0, 1));
+		line.normals.push_back(Vec3(0, 0, 1));
+		line.normals.push_back(Vec3(0, 0, 1));
+		line.normals.push_back(Vec3(0, 0, 1));
+		line.primitiveMode = PrimitiveMode::TriangleStrip;
+		line.uvs.push_back(Vec2(0, 1));
+		line.uvs.push_back(Vec2(0, 0));
+		line.uvs.push_back(Vec2(1, 0));
+		line.uvs.push_back(Vec2(1, 1));
+		line.vertices.push_back(Vec3(start + extend * width, 0));
+		line.vertices.push_back(Vec3(start - extend * width, 0));
+		line.vertices.push_back(Vec3(end + extend * width, 0));
+		line.vertices.push_back(Vec3(end - extend * width, 0));
+		line.readyForUpload = true;
+
+		GPUMesh(line).render();
+	};
+	void arrow2D(Vec2 start, Vec2 end, Float width) {
+
+		Vec2 dir = normalize(start - end);
+		Vec2 extend = cross(Vec3(dir, 0), Vec3(0, 0, 1));
+
+		CPUMesh arrow;
+		arrow.drawMode = MeshDrawMode::dynamicMode;
+		arrow.indices.push_back(0);
+		arrow.indices.push_back(1);
+		arrow.indices.push_back(2);
+		arrow.indices.push_back(3);
+		arrow.name = "arrow";
+		arrow.normals.push_back(Vec3(0, 0, 1));
+		arrow.normals.push_back(Vec3(0, 0, 1));
+		arrow.normals.push_back(Vec3(0, 0, 1));
+		arrow.normals.push_back(Vec3(0, 0, 1));
+		arrow.primitiveMode = PrimitiveMode::TriangleStrip;
+		arrow.uvs.push_back(Vec2(0, 1));
+		arrow.uvs.push_back(Vec2(0, 0));
+		arrow.uvs.push_back(Vec2(1, 0));
+		arrow.uvs.push_back(Vec2(1, 1));
+		arrow.vertices.push_back(Vec3(start + extend * width, 0));
+		arrow.vertices.push_back(Vec3(start - extend * width, 0));
+		arrow.vertices.push_back(Vec3(end, 0));
+		arrow.vertices.push_back(Vec3(end, 0));
+		arrow.readyForUpload = true;
+
+		GPUMesh(arrow).render();
+	};
 
 	void pollGraphicsAPIError();
 	void setCulling(Bool isCulling);

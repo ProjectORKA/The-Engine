@@ -3,28 +3,33 @@
 #include "Threading.hpp"
 #include "Renderer.hpp"
 #include "WindowAPI.hpp" //needs to be below the rendering stuff, e.g. "Renderer.hpp"
-#include "UserInterface.hpp"
+
+struct UIElement;
 
 struct Window {
+
+	UShort id = 0;
+
 	Bool isShown = true;
 	IVec2 windowPosition;
 	Bool decorated = true;
 	Bool fullScreen = true;
-	Bool duplicateWindow = false;
-	String title = "Project ORKA";
+	
 	APIWindow apiWindow = nullptr;
 	Area windowedModeSize = Area(1);
 	Bool borderlessFullScreen = false;
 	
 	Renderer renderer;
-	UserInterface userInterface;
 
 	//thread
 	Thread thread;
 
+	UIElement * content = nullptr;
+
+	void render();
+
 	void show();
 	void hide();
-	void create();
 	void destroy();
 	void setWindowed();
 	void setCallbacks();
@@ -32,20 +37,20 @@ struct Window {
 	void restoreWindow();
 	void decorateWindow();
 	void updatePosition();
-	void createAPIWindow();
 	void undecorateWindow();
 	void destroyAPIWindow();
 	void setIcon(Path path);
 	void initializeGraphicsAPI();
 	void setExclusiveFullscreen();
 	void setPosition(IVec2 position);
+	void createAPIWindow(String title);
+	void create(String title, UIElement * element);
 	
 	Bool shouldClose();
 	Bool isFullScreen();
 
-	Area getWindowContentSize();
 	Area getWindowFrameSize();
-
+	Area getWindowContentSize();
 };
 
 void windowThread(Window& window);
