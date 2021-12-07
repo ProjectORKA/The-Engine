@@ -26,6 +26,7 @@ enum class PrimitiveMode
 	Lines = GL_LINES,
 	Points = GL_POINTS,
 	Triangles = GL_TRIANGLES,
+	LineStrip = GL_LINE_STRIP,
 	TriangleStrip = GL_TRIANGLE_STRIP
 };
 
@@ -55,7 +56,6 @@ void apiDeleteTexture(UInt textureID);
 void apiBindVertexArray(UInt arrayID);
 void apiDeleteProgram(UInt programID);
 void apiDeleteVertexArray(UInt arrayID);
-void apiDeleteNamedStringARB(String name);
 void apiPolygonMode(Enum face, Enum mode);
 void apiUniform1i(Int location, Int value);
 void apiGenFramebuffer(UInt& framebufferID);
@@ -65,7 +65,6 @@ void apiBlendFunc(Enum sfactor, Enum dfactor);
 void apiDeleteFramebuffer(UInt framebufferID);
 void apiBindBuffer(Enum target, UInt bufferID);
 void apiScissor(Int x, Int y, SizeI w, SizeI h);
-void apiNamedStringARB(String name, String code);
 void apiBindTexture(Enum target, UInt textureID);
 void apiViewport(Int x, Int y, SizeI w, SizeI h);
 void apiAttachShader(UInt programID, UInt shaderID);

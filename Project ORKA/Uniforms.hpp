@@ -2,6 +2,7 @@
 
 #include "Basics.hpp"
 #include "GraphicsAPI.hpp"
+#include "FileSystem.hpp"
 
 struct GlobalUniformData {
 	//values have to be layed out in blocks of 16 bytes in memory
@@ -25,6 +26,7 @@ struct GlobalUniformData {
 struct Uniforms {
 	Index id = -1;
 	GlobalUniformData data;
+	String uniformBlockShaderCode;
 
 	void create();
 	void reset();

@@ -21,19 +21,18 @@ void ShaderProgram::destroy()
 	logDebug("Unloaded Shader!");
 }
 void ShaderProgram::create(Name name, Uniforms& uniforms) {
+	
 	Shader vertexShader;
+	vertexShader.create(ShaderType::vertex, name, uniforms.uniformBlockShaderCode);
+
 	Shader fragmentShader;
-	vertexShader.load(ShaderType::vertex, name);
-	fragmentShader.load(ShaderType::fragment, name);
+	fragmentShader.create(ShaderType::fragment, name, uniforms.uniformBlockShaderCode);
 
 	create(vertexShader, fragmentShader, uniforms);
 }
 void ShaderProgram::create(Shader& vertexShader, Shader& fragmentShader, Uniforms& uniforms) {
 
 	logDebug("Creating Shader!");
-
-	//set pointer to allow the shader to update uniforms by itself
-	//uniformsPtr = &uniforms;
 
 	if (isLoaded) {
 		logError("ShaderProgram already loaded!");

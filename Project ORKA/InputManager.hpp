@@ -16,8 +16,6 @@ struct InputManager {
 
 	IVec2 capturePosition = IVec2(0);
 
-	Float mouseSensitivity = 0.0015f;
-
 	//these functions will be called by the window/windowAPI
 	Bool isCapturing(Window& window);
 	void captureCursor(Window& window);
@@ -32,7 +30,7 @@ struct InputManager {
 	void windowChangedFocus(Window& window, Bool isInFocus);
 	void mouseWheelIsScrolled(Window& window, Double xAxis, Double yAxis);
 	void buttonIsPressed(Window& window, Int keyID, Int action, Int modifiers);
+	void mouseIsPressed(Window& window, Int button, Int action, Int modifiers);
 };
 
 extern InputManager inputManager;
-

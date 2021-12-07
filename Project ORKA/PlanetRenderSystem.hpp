@@ -6,7 +6,6 @@
 #include "Time.hpp"
 
 struct PlanetRenderSystem {
-
 	Bool chunkBorders = true;
 	Bool worldDistortion = true;
 
@@ -14,6 +13,6 @@ struct PlanetRenderSystem {
 	QuadtreeRenderSystem quadtreeRenderSystem;
 
 	void destroy();
-	void create(Renderer & renderer);
+	void create(Renderer& renderer);
 	void render(PlanetSystem& planetSystem, Renderer& renderer, PlanetCamera& planetCamera);
 };

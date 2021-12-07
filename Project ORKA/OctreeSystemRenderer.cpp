@@ -145,7 +145,7 @@ void OctreeNodeRenderData::updateWithoutSubdivision(PlanetCamera& camera)
 	//get camera relative location
 	chunkOffset = cameraRelativeLocationOfChunk(equivalentOctreeNode->id, camera.chunkLocation, camera.location);
 
-	inDrawDistance = glm::length(chunkOffset + Vec3(0.5, 0.5, 0)) < 0.0f;// drawDistance; //[TODO]
+	inDrawDistance = glm::length(chunkOffset + Vec3(0.5, 0.5, 0)) < drawDistance;
 
 	if (!inDrawDistance) unsubdivide();
 
@@ -186,7 +186,8 @@ void OctreeRenderSystem::destroy() {
 	root.destroy();
 }
 void OctreeRenderSystem::create(Renderer& renderer) {
-	waterTextureID = renderer.textureSystem.getTextureID("water");
+	//[TODO]
+	//waterTextureID = renderer.textureSystem.getTextureID("water");
 }
 void OctreeRenderSystem::update(PlanetCamera& camera) {
 	root.update(camera);

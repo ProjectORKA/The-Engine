@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Basics.hpp"
-#include "Time.hpp"
 #include "Game.hpp"
 
 
@@ -26,27 +25,12 @@ struct Task {
 	}
 };
 
-struct Organizer {
+struct Organizer : public Game{
 	Vector<Task> tasks;
 
-	void update() {
+	void render(Renderer & renderer) override{
 		for (Task& t : tasks) {
 			t.update();
 		}
-	};
-};
-
-struct Nizer : public Game {
-	using Game::Game;
-
-	Organizer organizer;
-
-	void create() override {
-	};
-	void update() override {
-		organizer.update();
-	};
-	void render() override {
-
 	};
 };

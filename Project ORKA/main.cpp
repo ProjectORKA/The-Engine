@@ -26,21 +26,27 @@
 //	+Z = up
 
 //program includes
-#include "Program.hpp"
-#include "Networking.hpp"
+#include "GameSystem.hpp"
+#include "UserInterface.hpp"
 #include "WindowsEntry.hpp"
 
 //#define TESTING
+//#define MEMORY_LEAK_DETECTION
+
 
 Int main(Int  argc, Char* argv[]) {
 	srand(static_cast <unsigned> (time(0)));
 #ifndef TESTING
-	program.run();		//<-- starts the Program
+	
+	gameSystem.add(new Intro(new Pong()));
+
+	window("ORKA",&gameView(0));
+
+	ui.run();
 #else
 	//testing code
 	/////////////////////////////////////////////////////////////////////////////////////////////////
 
-	while (true) {}
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////
 	pause();

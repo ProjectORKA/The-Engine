@@ -6,10 +6,8 @@ void Intro::update()
 {
 }
 
-void Intro::render(Window & window)
+void Intro::render(Renderer& renderer)
 {
-	Renderer& renderer = window.renderer;
-
 	//renderer.time.update();
 	renderer.clearColor(Color(0));
 	renderer.clearDepth();
@@ -37,13 +35,14 @@ void Intro::render(Window & window)
 	renderer.useTexture("ProjectORKABakedLogo");
 	renderer.renderMesh("ProjectORKALogo");
 
-	if (renderer.renderTime.paused) { //actually starts the animation by unpausing the timer
+	static Bool f = true;
+	if (f) {
 		renderer.renderTime.reset();
-		renderer.renderTime.unpause();
+		f = false;
 	}
 
-	if (renderer.renderTime.total > 5) {
-		gameSystem.add(new Pong(window));
-		window.userInterface.contents.pop_front();
+
+	if ((renderer.renderTime.total > 5) && (!selfReplace)) {
+		selfReplace = gameStartingAfterIntro;
 	}
 }

@@ -2,7 +2,6 @@
 
 #include "Basics.hpp"
 #include "Debug.hpp"
-#include "stb_image.h"
 #include "GraphicsAPI.hpp"
 
 enum DataType {
@@ -50,5 +49,3 @@ struct CPUTexture {
 	CPUTexture& operator=(CPUTexture&&) = delete;
 	CPUTexture& operator=(const CPUTexture&) = delete;
 };
-
-void setInvertOnLoad(Bool invert);

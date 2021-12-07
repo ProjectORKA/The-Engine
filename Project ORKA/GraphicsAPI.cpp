@@ -80,9 +80,6 @@ void apiDeleteProgram(UInt programID) {
 void apiDeleteVertexArray(UInt arrayID) {
 	glDeleteVertexArrays(1, &arrayID);
 }
-void apiDeleteNamedStringARB(String name) {
-	glDeleteNamedStringARB(name.size(), name.c_str());
-}
 void apiPolygonMode(Enum face, Enum mode) {
 	glPolygonMode(face, mode);
 }
@@ -116,9 +113,6 @@ void apiScissor(Int x, Int y, SizeI w, SizeI h) {
 	scissorY = y;
 	scissorW = w;
 	scissorH = h;
-}
-void apiNamedStringARB(String name, String code) {
-	glNamedStringARB(GL_SHADER_INCLUDE_ARB, name.size(), name.c_str(), code.size(), code.c_str());
 }
 void apiViewport(Int x, Int y, SizeI w, SizeI h) {
 	if(	(viewportX != x)|

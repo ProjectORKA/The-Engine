@@ -6,8 +6,8 @@ void SimpleCamera::update(Float delta) {
 	accelerationVector = { 0,0,0 };
 }
 void SimpleCamera::rotate(Vec2 rotation) {
-	rotationX = rotation.y;
-	rotationZ = rotation.x;
+	rotationX -= rotation.y;
+	rotationZ += rotation.x;
 
 	//prevent looking upside down
 	Float cap = PI / 2;

@@ -67,6 +67,11 @@ void Renderer::screenSpace() {
 void Renderer::normalizedSpace() {
 	uniforms().data.vpMatrix = Matrix(1);
 }
+void Renderer::apectCorrectNormalizedSpace() {
+	Float aspect = aspectRatio();
+	if (aspect > 1) uniforms().data.vpMatrix = scale(Matrix(1), Vec3(1 / aspectRatio(), 1, 1));
+	else uniforms().data.vpMatrix = scale(Matrix(1), Vec3(1, aspectRatio(), 1));
+}
 void Renderer::renderMesh(Name name) {
 	uniforms().update();
 	meshSystem.render(name);

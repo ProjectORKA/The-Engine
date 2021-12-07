@@ -9,18 +9,17 @@ void PlanetRenderSystem::destroy()
 }
 void PlanetRenderSystem::create(Renderer & renderer)
 {
-	quadtreeRenderSystem.create(renderer);
-	octreeRenderSystem.create(renderer);
+	//octreeRenderSystem.create(renderer);
 }
 void PlanetRenderSystem::render(PlanetSystem& planetSystem, Renderer& renderer, PlanetCamera & planetCamera)
 {
 	//create if necessary
-	if (octreeRenderSystem.root.equivalentOctreeNode == nullptr) octreeRenderSystem.root.create(*planetSystem.octreeSystem.root);
-	//if (quadtreeRenderSystem.root.equivalentQuadtreeNode == nullptr) quadtreeRenderSystem.root.create(*planetSystem.quadtreeSystem.root);
+	//if (octreeRenderSystem.root.equivalentOctreeNode == nullptr) octreeRenderSystem.root.create(*planetSystem.octreeSystem.root);
+	if (quadtreeRenderSystem.root.equivalentQuadtreeNode == nullptr) quadtreeRenderSystem.root.create(*planetSystem.quadtreeSystem.root);
 	
 	//update before rendering
-	octreeRenderSystem.update(planetCamera);
-	//quadtreeRenderSystem.update(planetCamera);
+	//octreeRenderSystem.update(planetCamera);
+	quadtreeRenderSystem.update(planetCamera);
 
 	//set uniforms
 	planetCamera.use(renderer.uniforms(), renderer.renderRegion.getAspectRatio());
@@ -34,11 +33,11 @@ void PlanetRenderSystem::render(PlanetSystem& planetSystem, Renderer& renderer, 
 
 		renderer.clearDepth();
 
-		octreeRenderSystem.renderLevel(level, renderer);
+		//octreeRenderSystem.renderLevel(level, renderer);
 
 		//render terrain
-		//renderer.shaderSystem.use(quadtreeRenderSystem.terrainShaderID);
-		//renderer.textureSystem.use(quadtreeRenderSystem.grassTextureID);
-		//quadtreeRenderSystem.renderLevel(level, renderer);
+		renderer.shaderSystem.use("terrain");
+		renderer.textureSystem.use("grass");
+		quadtreeRenderSystem.renderLevel(level, renderer);
 	}
 }

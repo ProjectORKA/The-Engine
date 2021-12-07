@@ -20,4 +20,4 @@ struct DebugConsole {
 	DebugConsole();
 };
 
-extern DebugConsole debugConsole;
+//extern DebugConsole debugConsole;

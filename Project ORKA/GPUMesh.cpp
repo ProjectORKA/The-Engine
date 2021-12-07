@@ -1,6 +1,14 @@
 
 #include "GPUMesh.hpp"
 
+GPUMesh::GPUMesh(CPUMesh cpuMesh) {
+	upload(cpuMesh);
+}
+
+GPUMesh::~GPUMesh() {
+	unload();
+}
+
 void GPUMesh::render() {
 	if (loaded) {
 		vao.render();

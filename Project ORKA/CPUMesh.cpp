@@ -4,9 +4,46 @@
 CPUMesh::CPUMesh()
 {
 }
+CPUMesh::CPUMesh(Graph& graph) {
+	drawMode = MeshDrawMode::dynamicMode;
+	name = "graph";
+	primitiveMode = PrimitiveMode::LineStrip;
+
+	for (UInt index = 0; index < graph.points.size(); index++) {
+		Vec2 pointPos = Vec2( Float(index) / Float(graph.points.size()), graph.points[index]);
+
+		vertices.push_back(Vec3(pointPos, 0));
+		uvs.push_back(pointPos);
+		normals.push_back(Vec3(0, 0, 1));
+
+		indices.push_back(index);
+	}
+
+	readyForUpload = true;
+}
 CPUMesh::CPUMesh(Name name)
 {
 	load(name);
+}
+
+CPUMesh::CPUMesh(Plot& plot)
+{
+	drawMode = MeshDrawMode::dynamicMode;
+	name = "plot";
+	primitiveMode = PrimitiveMode::LineStrip;
+
+	for (UInt index = 0; index < plot.points.size(); index++) {
+		Vec2 pointPos = plot.points[index];
+
+		vertices.push_back(Vec3(pointPos, 0));
+		uvs.push_back(pointPos);
+		normals.push_back(Vec3(0, 0, 1));
+
+		indices.push_back(index);
+	}
+
+	readyForUpload = true;
+
 }
 
 void CPUMesh::saveMeshFile()
@@ -32,11 +69,11 @@ void CPUMesh::saveMeshFile()
 
 	std::ofstream file(path, std::ios::trunc | std::ios::binary | std::ios::out);
 	if (file.is_open()) {
-		file.write((char*)&header, sizeof(MeshHeaderV2));
-		file.write((char*)&vertices[0], vertices.size() * sizeof(Vec3));
-		file.write((char*)&uvs[0], uvs.size() * sizeof(Vec2));
-		file.write((char*)&normals[0], normals.size() * sizeof(Vec3));
-		file.write((char*)&indices[0], indices.size() * sizeof(Index));
+		file.write((Char*)&header, sizeof(MeshHeaderV2));
+		file.write((Char*)&vertices[0], vertices.size() * sizeof(Vec3));
+		file.write((Char*)&uvs[0], uvs.size() * sizeof(Vec2));
+		file.write((Char*)&normals[0], normals.size() * sizeof(Vec3));
+		file.write((Char*)&indices[0], indices.size() * sizeof(Index));
 		file.close();
 	}
 	else {
@@ -74,7 +111,7 @@ void CPUMesh::load(Name name)
 void CPUMesh::loadFBX(Path path) {
 
 	//check if file is valid
-	bool error = false;
+	String errorMessage = "";
 
 	if (std::filesystem::exists(path.parent_path())) {
 
@@ -95,7 +132,7 @@ void CPUMesh::loadFBX(Path path) {
 		if (scene) {
 			if (scene->HasMeshes()) {
 				if (scene->mMeshes[0]->HasPositions()) {
-					for (unsigned int i = 0; i < scene->mMeshes[0]->mNumVertices; i++) {
+					for (UInt i = 0; i < scene->mMeshes[0]->mNumVertices; i++) {
 						glm::vec3 vertex;
 						vertex.x = scene->mMeshes[0]->mVertices[i].x;
 						vertex.y = scene->mMeshes[0]->mVertices[i].y;
@@ -121,21 +158,21 @@ void CPUMesh::loadFBX(Path path) {
 							}
 						}
 					}
-					else error = true;
+					else errorMessage = "Mesh does not have faces!";
 				}
-				else error = true;
+				else errorMessage = "Mesh does not have positions stored!";
 			}
-			else error = true;
+			else errorMessage = "No meshes in fbx scene!";
 		}
-		else error = true;
+		else errorMessage = "No Scene in fbx file!";
 	}
 	else {
-		error = true;
-		logError(path.parent_path().string().append(" does not exist!"));
+		errorMessage = path.parent_path().string().append(" does not exist!");
 	}
 
-	if (error) {
-		logDebug(String("The model (").append(name.data).append(") could not be loaded! (").append(path.string()).append(")"));
+	if (errorMessage.size()) {
+
+		logDebug(String("The model (").append(name.data).append(") could not be loaded! (").append(path.string()).append(")").append(" Error: ").append(errorMessage));
 		readyForUpload = false;
 		return;
 	}

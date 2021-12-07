@@ -1,6 +1,5 @@
-#version 450
-#extension GL_ARB_shading_language_include : require
-#include "/uniforms.glsl" //! #include "uniforms.glsl" 
+
+//! #include "uniforms.glsl"
 
 #define PI 3.14159265359
 
@@ -60,8 +59,6 @@ mat2x3 calculateDistortion2(vec3 location, vec3 normal){
 }
 
 void main(){
-
-	
 
 	vec3 position = vertex + vec3(0,0,0);//texture(texture1,uvs));
 

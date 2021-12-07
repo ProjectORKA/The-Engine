@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Basics.hpp"
+#include "Math.hpp"
 #include "Debug.hpp"
 #include "GraphicsAPI.hpp"
 //assimp 
@@ -20,8 +21,11 @@ struct CPUMesh {
 	Bool readyForUpload = false;
 	
 	CPUMesh();
-	CPUMesh(Name name);
 	~CPUMesh(){};
+	CPUMesh(Name name);
+	CPUMesh(Plot& plot);
+	CPUMesh(Graph& graph);
+
 
 	void saveMeshFile();
 	void load(Name name);

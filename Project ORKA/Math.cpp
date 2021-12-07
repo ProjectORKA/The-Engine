@@ -1,6 +1,14 @@
 
 #include "Math.hpp"
 
+Float distance(Float a, Float b) {
+	return abs(a - b);
+}
+
+Float distance(Vec2 a, Vec2 b) {
+	return glm::distance(a, b);
+}
+
 Float lerp(Float from, Float to, Float t)
 {
 	return (from * (1 - t)) + (to * t);
@@ -47,4 +55,16 @@ UInt nextPowerOfTwo(UInt& value)
 	UInt powerOfTwo = 1;
 	while (powerOfTwo < value) powerOfTwo <<= 1;
 	return powerOfTwo;
+}
+
+void Graph::add(Float value) {
+	points.push_back(value);
+}
+
+void Plot::add(Vec2 value) {
+	points.push_back(value);
+}
+
+void Plot::add(Float a, Float b) {
+	add(Vec2(a, b));
 }

@@ -1,5 +1,9 @@
 
 #include "Window.hpp"
+#include "InputManager.hpp"
+#include "UserInterface.hpp"
+
+UShort nextWindowID = 0;
 
 //window thread
 void windowThread(Window& window)
@@ -39,7 +43,8 @@ void windowThread(Window& window)
 
 			renderer.setWireframeMode(renderer.wireframeMode);
 
-			window.userInterface.render(window);
+			if (window.content) window.content->render(window.renderer);
+
 
 			/// ////////////////////////////////////////////////////////////////////////////
 			renderer.framebufferSystem.current().blitFramebuffer();
@@ -49,7 +54,7 @@ void windowThread(Window& window)
 		printDebugLog();
 	}
 
-	window.userInterface.destroy(window);
+	//window.userInterface.destroy(window);
 
 	window.destroyAPIWindow();
 }
@@ -63,13 +68,8 @@ void Window::hide()
 {
 	apiWindowSetVisibility(apiWindow, false);
 }
-void Window::create()
-{
-	createAPIWindow(); //needs to be in this thread
-	centerWindow();
-
-	thread.start(windowThread, *this);
-	logEvent("Created Window in Main Thread!");
+void Window::render() {
+	if(content)content->render(renderer);
 }
 void Window::destroy() {
 	thread.stop();
@@ -123,7 +123,82 @@ void Window::updatePosition()
 {
 	glfwSetWindowPos(apiWindow, windowPosition.x, windowPosition.y);
 }
-void Window::createAPIWindow() {
+void Window::undecorateWindow()
+{
+	apiWindowUndecorate(apiWindow);
+}
+void Window::destroyAPIWindow() {
+
+	inputManager.uncaptureCursor(*this);
+	if (apiWindow) {
+		glfwDestroyWindow(apiWindow);
+		apiWindow = nullptr;
+	}
+	logEvent("API Window destroyed!");
+}
+void Window::setIcon(Path path) {
+
+	Image logo = loadImage(path, 8, false);
+
+	if (logo.pixels && logo.channels == 4) {
+		GLFWimage icon;
+		icon.pixels = logo.pixels;
+		icon.width = logo.width;
+		icon.height = logo.height;
+		glfwSetWindowIcon(apiWindow, 1, &icon);
+	}
+	else {
+		logError("Logo could not be Loaded!");
+	}
+}
+void Window::create(String title, UIElement * element)
+{
+	id = nextWindowID++;
+
+	createAPIWindow(title); //needs to be in this thread
+	centerWindow();
+
+	if(element)	content = element;
+	ui.currentlyActive = element;
+
+	thread.start(windowThread, *this);
+	logEvent("Created Window in Main Thread!");
+}
+void Window::initializeGraphicsAPI() {
+	glfwMakeContextCurrent(apiWindow);
+	glewExperimental = true;
+	if (glewInit() == GLEW_OK) {
+		logEvent("GLEW successfully initialized!");
+	}
+	else {
+		logError("GLEW not initialized!");
+	}
+
+	glfwSwapInterval(0);
+
+	apiDebugMessageCallback(DebugOutputCallback, 0);
+	apiEnable(GL_DEBUG_OUTPUT);
+	apiEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+}
+void Window::setExclusiveFullscreen() {
+
+	glfwMaximizeWindow(apiWindow);
+	if (borderlessFullScreen) {
+		undecorateWindow();
+	}
+	else {
+		glfwSetWindowMonitor(apiWindow, glfwGetPrimaryMonitor(), 0, 0, glfwGetVideoMode(glfwGetPrimaryMonitor())->width, glfwGetVideoMode(glfwGetPrimaryMonitor())->height, GLFW_DONT_CARE);
+	}
+	//help glfw recognize frambuffer change
+	//updateFramebuffers();
+	fullScreen = true;
+}
+void Window::setPosition(IVec2 position)
+{
+	windowPosition = position;
+	updatePosition();
+}
+void Window::createAPIWindow(String title) {
 	if (!apiWindow) {
 		//video mode
 		const GLFWvidmode* videoMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
@@ -169,68 +244,6 @@ void Window::createAPIWindow() {
 		logError("Window already exists!");
 	}
 }
-void Window::undecorateWindow()
-{
-	apiWindowUndecorate(apiWindow);
-}
-void Window::destroyAPIWindow() {
-
-	inputManager.uncaptureCursor(*this);
-	if (apiWindow) {
-		glfwDestroyWindow(apiWindow);
-		apiWindow = nullptr;
-	}
-	logEvent("API Window destroyed!");
-}
-void Window::setIcon(Path path) {
-
-	CPUTexture cpuTexture;
-	setInvertOnLoad(false);
-	cpuTexture.load(path, "Icon");
-	setInvertOnLoad(true);
-
-	if (cpuTexture.bytePixels && cpuTexture.dataType == dataTypeByte) {
-		GLFWimage icon;
-		icon.pixels = cpuTexture.bytePixels;
-		icon.width = cpuTexture.width;
-		icon.height = cpuTexture.height;
-		glfwSetWindowIcon(apiWindow, 1, &icon);
-	}
-}
-void Window::initializeGraphicsAPI() {
-	glfwMakeContextCurrent(apiWindow);
-	glewExperimental = true;
-	if (glewInit() == GLEW_OK) {
-		logEvent("GLEW successfully initialized!");
-	}
-	else {
-		logError("GLEW not initialized!");
-	}
-
-	glfwSwapInterval(0);
-
-	apiDebugMessageCallback(DebugOutputCallback, 0);
-	apiEnable(GL_DEBUG_OUTPUT);
-	apiEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
-}
-void Window::setExclusiveFullscreen() {
-
-	glfwMaximizeWindow(apiWindow);
-	if (borderlessFullScreen) {
-		undecorateWindow();
-	}
-	else {
-		glfwSetWindowMonitor(apiWindow, glfwGetPrimaryMonitor(), 0, 0, glfwGetVideoMode(glfwGetPrimaryMonitor())->width, glfwGetVideoMode(glfwGetPrimaryMonitor())->height, GLFW_DONT_CARE);
-	}
-	//help glfw recognize frambuffer change
-	//updateFramebuffers();
-	fullScreen = true;
-}
-void Window::setPosition(IVec2 position)
-{
-	windowPosition = position;
-	updatePosition();
-}
 
 //window getters
 Bool Window::shouldClose()
@@ -241,13 +254,13 @@ Bool Window::isFullScreen()
 {
 	return apiWindowIsFullscreen(apiWindow);
 }
-Area Window::getWindowContentSize()
-{
-	return apiWindowGetFramebufferSize(apiWindow);
-}
 Area Window::getWindowFrameSize()
 {
 	return apiWindowGetWindowFrameSize(apiWindow);
+}
+Area Window::getWindowContentSize()
+{
+	return apiWindowGetFramebufferSize(apiWindow);
 }
 
 //window callbacks
@@ -309,20 +322,7 @@ void whenMouseIsScrolling(APIWindow apiWindow, Double xAxis, Double yAxis) {
 }
 void whenMouseIsPressed(APIWindow apiWindow, Int button, Int action, Int mods) {
 	Window& window = *static_cast<Window*>(glfwGetWindowUserPointer(apiWindow));
-
-	//LMB
-	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
-		if (!inputManager.isCapturing(window)) {
-			inputManager.captureCursor(window);
-		}
-	}
-
-	//RMB
-	if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS) {
-		if (inputManager.isCapturing(window)) {
-			inputManager.uncaptureCursor(window);
-		}
-	}
+	inputManager.mouseIsPressed(window, button, action, mods);
 }
 void whenMouseIsMoving(APIWindow apiWindow, Double xPosition, Double yPosition) {
 	Window& window = *static_cast<Window*>(glfwGetWindowUserPointer(apiWindow));

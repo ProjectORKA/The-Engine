@@ -1,15 +1,13 @@
 #pragma once
 
 #include "Game.hpp"
-#include "WindowSystem.hpp"
+#include "WindowAPI.hpp"
 
 struct Action {
 	Bool pressed = false;
 };
 
 struct Mooncrash : public Game {
-	using Game::Game;//workaround to use the base constructor
-
 	Action	forward;
 	Action	backward;
 	Action	left;
@@ -19,9 +17,20 @@ struct Mooncrash : public Game {
 	Action	jump;
 	Action	wireframe;
 
+	Float mouseSensitivity = 0.0015f;
+
 	PlanetCamera camera;
 
+	Time time;
+	PlanetSystem planetSystem;
+	PlanetRenderSystem planetRenderSystem;
+
 	void update() override;
-	void render(Window& window) override;
+	void render(Renderer & renderer) override;
+	
+	//input
+	void mouseIsMoving(Window& window, IVec2 position) override;
 	void buttonIsPressed(Window& window, Int keyID, Int action, Int modifiers) override;
+	void mouseIsPressed(Window& window, Int button, Int action, Int modifiers) override;;
+
 };

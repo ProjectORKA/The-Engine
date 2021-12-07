@@ -4,6 +4,9 @@
 void Uniforms::create()
 {
 	reset();
+
+	uniformBlockShaderCode = loadString("data/shaders/uniforms.glsl");
+
 	apiGenBuffer(id);
 	apiBindBuffer(GL_UNIFORM_BUFFER, id);
 	apiBufferData(GL_UNIFORM_BUFFER, sizeof(GlobalUniformData), &data, GL_DYNAMIC_DRAW);

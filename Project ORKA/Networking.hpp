@@ -3,39 +3,98 @@
 
 #include "Basics.hpp"
 #include "DebugConsole.hpp"
+#include "ASIONetworking.hpp"
 
-#ifdef _WIN32
-#define _WIN32_WINNT 0x0A00
-#endif
 
-#define ASIO_STANDALONE
-#include "asio.hpp"
-#include "asio/ts/buffer.hpp"
-#include "asio/ts/internet.hpp"
+//#include <cstdlib>
+//#include <thread>
+//#include <utility>
+//#include <cstring>
+//#include <iostream>
+
 
 #define PORT_NUMBER 12297
 #define PACKET_SIZE_IN_BYTES 1024
-
-using ASIOContext = asio::io_context;
-using ASIOTimer = asio::steady_timer;
-using ASIOThread = asio::thread;
-//udp
-using ASIOUDPEndpoint = asio::ip::udp::endpoint;
-using ASIOUDPSocket = asio::ip::udp::socket;
-//tcp
-using ASIOTCPEndpoint = asio::ip::tcp::endpoint;
-using ASIOTCPSocket = asio::ip::tcp::socket;
-using ASIOBuffer = asio::mutable_buffer;
-using ASIOErrorCode = asio::error_code;
-using ASIOTCPResolver = asio::ip::tcp::resolver;
-
-#include <cstdlib>
-#include <thread>
-#include <utility>
-#include <cstring>
-#include <iostream>
-
 enum { maxPacketSize = 1024 };
 
-void runServer();
-void runClient();
+struct Server {
+	ASIOContext context;
+	ASIOTCPSocket socket = ASIOTCPSocket(context);
+
+	String readMessage(){
+		Char data[maxPacketSize];
+		
+		ASIOErrorCode error;
+		size_t length = socket.read_some(asio::buffer(data), error);
+
+		//if (error == asio::error::eof)
+		//	break;
+		//else if (error)
+		//	throw asio::system_error(error);
+	};
+
+	void getError() {
+	}
+
+	void writeMessage(String message) {
+		Char data[maxPacketSize];
+
+		std::strcpy(data, message.c_str());
+		asio::write(socket, ASIOBuffer(data, maxPacketSize));
+	};
+
+	Server() {
+		try {
+			asio::ip::tcp::acceptor a(context, ASIOTCPEndpoint(asio::ip::tcp::v4(), PORT_NUMBER));
+			socket = a.accept();
+
+			{
+
+			}
+		}
+		catch (std::exception& e)
+		{
+			std::cerr << "Exception: " << e.what() << "\n";
+		}
+	}
+};
+
+struct Client {
+	ASIOContext context;
+	ASIOTCPSocket socket = ASIOTCPSocket(context);
+
+	Client() {
+		std::cout << "Enter IP: \n";
+		String s;
+		std::cin >> s;
+
+		try
+		{
+			ASIOTCPResolver resolver = ASIOTCPResolver(context);
+
+			auto t = resolver.resolve(s, std::to_string(PORT_NUMBER));
+
+			asio::connect(socket, t);
+		}
+		catch (std::exception& e)
+		{
+			std::cerr << "Exception: " << e.what() << "\n";
+		}
+	}
+
+	String readMessage() {
+		Char reply[maxPacketSize];
+		size_t replyLength = socket.read_some(ASIOBuffer(reply, maxPacketSize));
+		return String(reply);
+	};
+
+	void sendMessage(String message) {
+		Char request[maxPacketSize];
+		std::strcpy(request, message.c_str());
+		size_t requestLength = std::strlen(request);
+		socket.write_some(asio::buffer(request, requestLength));
+	};
+};
+
+extern Vector<Server> servers;
+extern Vector<Client> clients;
