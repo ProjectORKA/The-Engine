@@ -10,7 +10,7 @@ out vec2 textureCoordinate;
 void main() {
 
 	vec3 positionInChunk = (mMatrix * vec4(vertex, 1)).xyz;
-	vec3 cameraRelativePosition = chunkOffsetVector.xyz + positionInChunk;
+	vec3 cameraRelativePosition = positionInChunk -cameraPosition.xyz;
 
 	//planet curvature
 
@@ -41,7 +41,7 @@ void main() {
 	vec3 levelColor = vec3(mod(worldOffset.w / 5.0f,0.9) + 0.1);
 	vec3 worldColor = ((vertex) + worldOffset.xyz)/vec3(pow(2,worldOffset.w));
 	//outputs
-	gl_Position  = vpMatrix * vec4(cameraRelativePosition.xyz,1);
+	gl_Position  = pMatrix * vMatrix * vec4(cameraRelativePosition.xyz,1);
 
 	vertexColor = vec4(vec3((worldColor+0.5*vec3(uvs,1))/1.5),1.0f);
 	textureCoordinate = uvs;

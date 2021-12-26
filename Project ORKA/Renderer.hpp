@@ -1,3 +1,4 @@
+
 #pragma once
 
 #include "Settings.hpp"
@@ -68,8 +69,8 @@ struct Renderer{
 	}
 
 	//shaders
-	void useShader(Name name) {
-		shaderSystem.use(name);
+	Index useShader(Name name) {
+		return shaderSystem.use(name);
 	}
 
 	//primitives
@@ -98,9 +99,12 @@ struct Renderer{
 		line.vertices.push_back(Vec3(start - extend * width, 0));
 		line.vertices.push_back(Vec3(end + extend * width, 0));
 		line.vertices.push_back(Vec3(end - extend * width, 0));
-		line.readyForUpload = true;
+		line.checkIntegrity();
 
-		GPUMesh(line).render();
+		GPUMesh gpuMesh;
+		gpuMesh.upload(line);
+		gpuMesh.render();
+		gpuMesh.unload();
 	};
 	void arrow2D(Vec2 start, Vec2 end, Float width) {
 
@@ -127,11 +131,16 @@ struct Renderer{
 		arrow.vertices.push_back(Vec3(start - extend * width, 0));
 		arrow.vertices.push_back(Vec3(end, 0));
 		arrow.vertices.push_back(Vec3(end, 0));
-		arrow.readyForUpload = true;
+		arrow.checkIntegrity();
 
-		GPUMesh(arrow).render();
+		GPUMesh gpuMesh;
+		gpuMesh.upload(arrow);
+		gpuMesh.render();
+		gpuMesh.unload();
 	};
 
+	Bool getCulling();
+	void setWireframeMode();
 	void pollGraphicsAPIError();
 	void setCulling(Bool isCulling);
 	void setDepthClamp(Bool depthClamp);

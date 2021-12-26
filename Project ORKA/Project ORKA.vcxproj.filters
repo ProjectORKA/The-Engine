@@ -137,9 +137,6 @@
     <Filter Include="Program\Engine\InputManager\CameraController">
       <UniqueIdentifier>{ea07d26c-4f4c-466d-addc-882a8a7843fe}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Shaders\UNIFORMS">
-      <UniqueIdentifier>{c1a0b859-426d-4ac9-930a-87b1597d13a8}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Shaders\water">
       <UniqueIdentifier>{b18d0530-1a91-4d0e-b400-80aeafdff6b3}</UniqueIdentifier>
     </Filter>
@@ -184,12 +181,6 @@
     </Filter>
     <Filter Include="Program\Engine\UserInterface">
       <UniqueIdentifier>{0794c978-10eb-433d-82f6-f90232ea1746}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Program\Engine\UserInterface\UIElements">
-      <UniqueIdentifier>{5a5c1d5e-9102-401b-9d35-8f005d4d4a5c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Program\Engine\UserInterface\UIElements\UIFlatPanel">
-      <UniqueIdentifier>{24951454-5368-4cc9-9675-f66324be07d7}</UniqueIdentifier>
     </Filter>
     <Filter Include="Program\Engine\UserInterface\UIConstraints">
       <UniqueIdentifier>{53831a67-93d6-41f9-b733-dc2b663d2485}</UniqueIdentifier>
@@ -287,9 +278,6 @@
     <Filter Include="Program\Engine\UserInterface\Window\Renderer\Cameras\PlanetCamera">
       <UniqueIdentifier>{c344e3ab-b1e9-4ab0-9d9a-e53658cf77ce}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Program\Engine\UserInterface\Window\Renderer\Cameras\SimpleCamera">
-      <UniqueIdentifier>{cde7c062-fb5f-4bce-96f4-c51e70575524}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Program\Engine\UserInterface\Window\Renderer\GraphicsAPI">
       <UniqueIdentifier>{28d1cefc-e722-44de-bd5a-bdb01854a711}</UniqueIdentifier>
     </Filter>
@@ -319,6 +307,69 @@
     </Filter>
     <Filter Include="Program\Common\Image">
       <UniqueIdentifier>{675e9636-2792-4863-b643-0a95ef799b38}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\GameSystem\Game\Sortr">
+      <UniqueIdentifier>{25b41ab4-2945-409c-9e4d-7e3934d99041}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\GameSystem\Game\Dungeons And Discord">
+      <UniqueIdentifier>{7d652147-ce9f-48f0-910e-1e0c4cc15c7f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\Engine\AudioSystem">
+      <UniqueIdentifier>{bd09fb8e-2b3b-4b16-b698-9cfa7d6f9165}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders\DND UberShader">
+      <UniqueIdentifier>{65921f46-4a03-49fd-a802-0a005ff943a9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\GameSystem\Player">
+      <UniqueIdentifier>{54c364f4-3158-4116-a532-8f40093cc24a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\Engine\UserInterface\Window\Renderer\Cameras\Camera">
+      <UniqueIdentifier>{cde7c062-fb5f-4bce-96f4-c51e70575524}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\GameSystem\Player\PlanetSystemPlayer">
+      <UniqueIdentifier>{60037d5c-4d83-4520-803b-2c4c5b7240f3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\Common\Plot">
+      <UniqueIdentifier>{d4ddd7cf-4a20-4ac1-bb0e-0557cdf9b27e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\Common\Noise">
+      <UniqueIdentifier>{eea46552-5c50-4bcc-bb73-3df9d341ed85}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\Common\Noise\PerlinNoise">
+      <UniqueIdentifier>{170d8259-f4d9-4457-9472-2bb787e51315}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\Common\Math\Random">
+      <UniqueIdentifier>{f1107c86-6841-4b7a-8d45-17545f509716}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\Common\Algorithm">
+      <UniqueIdentifier>{471eef3e-2937-4356-b928-296f2ec62715}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\Common\Renderable Data">
+      <UniqueIdentifier>{5ad23739-b200-4d6e-8192-1320d59c088a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\Common\Renderable Data\PointCloud">
+      <UniqueIdentifier>{bb1eb5eb-f929-4684-ad50-c90421db11f0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\Common\Renderable Data\BranchStructure">
+      <UniqueIdentifier>{a0bb16dd-5911-4c68-acb6-c6596bf549f1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\GameSystem\Game\Mooncrash\TreeSystem">
+      <UniqueIdentifier>{91410674-aa18-402a-a348-52c68b1b5987}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\Common\Transform">
+      <UniqueIdentifier>{fbb46c57-1c41-44c1-aa83-59bc1ff113c3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\Engine\UserInterface\UIElement">
+      <UniqueIdentifier>{5a5c1d5e-9102-401b-9d35-8f005d4d4a5c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\Engine\UserInterface\UIElement\UIFlatPanel">
+      <UniqueIdentifier>{24951454-5368-4cc9-9675-f66324be07d7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders\atmosphere">
+      <UniqueIdentifier>{fdbcc838-eb48-4a79-b555-771b81c17957}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders\COMMON">
+      <UniqueIdentifier>{794d5e1b-92ef-448d-8b61-a2c654d1b00a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -398,9 +449,6 @@
     <ClCompile Include="Timer.cpp">
       <Filter>Program\Common\Time</Filter>
     </ClCompile>
-    <ClCompile Include="Random.cpp">
-      <Filter>Program\Common\Math</Filter>
-    </ClCompile>
     <ClCompile Include="ULLUtil.cpp">
       <Filter>Program\Engine\GameSimulation\PlanetSystem\Util</Filter>
     </ClCompile>
@@ -431,8 +479,8 @@
     <ClCompile Include="PlanetCamera.cpp">
       <Filter>Program\Engine\UserInterface\Window\Renderer\Cameras\PlanetCamera</Filter>
     </ClCompile>
-    <ClCompile Include="SimpleCamera.cpp">
-      <Filter>Program\Engine\UserInterface\Window\Renderer\Cameras\SimpleCamera</Filter>
+    <ClCompile Include="Camera.cpp">
+      <Filter>Program\Engine\UserInterface\Window\Renderer\Cameras\Camera</Filter>
     </ClCompile>
     <ClCompile Include="OctreeSystemRenderer.cpp">
       <Filter>Program\Engine\UserInterface\Window\Renderer\PlanetRenderSystem\OctreeSystemRenderer</Filter>
@@ -465,7 +513,7 @@
       <Filter>Program\Engine\UserInterface\Window\Renderer\ShaderSystem\ShaderProgram</Filter>
     </ClCompile>
     <ClCompile Include="UIFlatPanel.cpp">
-      <Filter>Program\Engine\UserInterface\UIElements\UIFlatPanel</Filter>
+      <Filter>Program\Engine\UserInterface\UIElement\UIFlatPanel</Filter>
     </ClCompile>
     <ClCompile Include="QuadtreeNode.cpp">
       <Filter>Program\Engine\GameSimulation\PlanetSystem\QuadtreeSystem\QuadtreeNode</Filter>
@@ -530,6 +578,43 @@
     <ClCompile Include="MathDNA.cpp">
       <Filter>Program\GameSystem\Game\Math DNA</Filter>
     </ClCompile>
+    <ClCompile Include="Sortr.cpp">
+      <Filter>Program\GameSystem\Game\Sortr</Filter>
+    </ClCompile>
+    <ClCompile Include="DungeonsAndDiscord.cpp">
+      <Filter>Program\GameSystem\Game\Dungeons And Discord</Filter>
+    </ClCompile>
+    <ClCompile Include="Player.cpp">
+      <Filter>Program\GameSystem\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="PlanetSystemPlayer.cpp">
+      <Filter>Program\GameSystem\Player\PlanetSystemPlayer</Filter>
+    </ClCompile>
+    <ClCompile Include="Sandbox.cpp">
+      <Filter>Program\GameSystem\Game\Sandbox</Filter>
+    </ClCompile>
+    <ClCompile Include="Plot.cpp">
+      <Filter>Program\Common\Plot</Filter>
+    </ClCompile>
+    <ClCompile Include="PerlinNoise.cpp">
+      <Filter>Program\Common\Noise\PerlinNoise</Filter>
+    </ClCompile>
+    <ClCompile Include="Random.cpp">
+      <Filter>Program\Common\Math\Random</Filter>
+    </ClCompile>
+    <ClCompile Include="Algorithm.cpp">
+      <Filter>Program\Common\Algorithm</Filter>
+    </ClCompile>
+    <ClCompile Include="TreeSystem.cpp">
+      <Filter>Program\Engine\GameSimulation\TreeSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="Transform.cpp">
+      <Filter>Program\Common\Transform</Filter>
+    </ClCompile>
+    <ClCompile Include="UIElement.cpp">
+      <Filter>Program\Engine\UserInterface\UIElement</Filter>
+    </ClCompile>
+    <ClCompile Include="Atmosphere.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="icon.rc">
@@ -616,9 +701,6 @@
     <ClInclude Include="QuadtreeSystem.hpp">
       <Filter>Program\Engine\GameSimulation\PlanetSystem\QuadtreeSystem</Filter>
     </ClInclude>
-    <ClInclude Include="Random.hpp">
-      <Filter>Program\Common\Math</Filter>
-    </ClInclude>
     <ClInclude Include="Time.hpp">
       <Filter>Program\Common\Time</Filter>
     </ClInclude>
@@ -661,8 +743,8 @@
     <ClInclude Include="PlanetCamera.hpp">
       <Filter>Program\Engine\UserInterface\Window\Renderer\Cameras\PlanetCamera</Filter>
     </ClInclude>
-    <ClInclude Include="SimpleCamera.hpp">
-      <Filter>Program\Engine\UserInterface\Window\Renderer\Cameras\SimpleCamera</Filter>
+    <ClInclude Include="Camera.hpp">
+      <Filter>Program\Engine\UserInterface\Window\Renderer\Cameras\Camera</Filter>
     </ClInclude>
     <ClInclude Include="OctreeSystemRenderer.hpp">
       <Filter>Program\Engine\UserInterface\Window\Renderer\PlanetRenderSystem\OctreeSystemRenderer</Filter>
@@ -716,7 +798,7 @@
       <Filter>Program\Engine\UserInterface\UIConstraints</Filter>
     </ClInclude>
     <ClInclude Include="UIFlatPanel.hpp">
-      <Filter>Program\Engine\UserInterface\UIElements\UIFlatPanel</Filter>
+      <Filter>Program\Engine\UserInterface\UIElement\UIFlatPanel</Filter>
     </ClInclude>
     <ClInclude Include="UserInterface.hpp">
       <Filter>Program\Engine\UserInterface</Filter>
@@ -820,6 +902,46 @@
     <ClInclude Include="Image.hpp">
       <Filter>Program\Common\Image</Filter>
     </ClInclude>
+    <ClInclude Include="Sortr.hpp">
+      <Filter>Program\GameSystem\Game\Sortr</Filter>
+    </ClInclude>
+    <ClInclude Include="DungeonsAndDiscord.hpp">
+      <Filter>Program\GameSystem\Game\Dungeons And Discord</Filter>
+    </ClInclude>
+    <ClInclude Include="AudioSystem.hpp">
+      <Filter>Program\Engine\AudioSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="Player.hpp">
+      <Filter>Program\GameSystem\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="PlanetSystemPlayer.hpp">
+      <Filter>Program\GameSystem\Player\PlanetSystemPlayer</Filter>
+    </ClInclude>
+    <ClInclude Include="PointCloud.hpp">
+      <Filter>Program\Common\Renderable Data\PointCloud</Filter>
+    </ClInclude>
+    <ClInclude Include="Plot.hpp">
+      <Filter>Program\Common\Plot</Filter>
+    </ClInclude>
+    <ClInclude Include="PerlinNoise.hpp">
+      <Filter>Program\Common\Noise\PerlinNoise</Filter>
+    </ClInclude>
+    <ClInclude Include="Random.hpp">
+      <Filter>Program\Common\Math\Random</Filter>
+    </ClInclude>
+    <ClInclude Include="Algorithm.hpp">
+      <Filter>Program\Common\Algorithm</Filter>
+    </ClInclude>
+    <ClInclude Include="BranchStructure.hpp">
+      <Filter>Program\Common\Renderable Data\BranchStructure</Filter>
+    </ClInclude>
+    <ClInclude Include="Transform.hpp">
+      <Filter>Program\Common\Transform</Filter>
+    </ClInclude>
+    <ClInclude Include="UIElement.hpp">
+      <Filter>Program\Engine\UserInterface\UIElement</Filter>
+    </ClInclude>
+    <ClInclude Include="Atmosphere.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Data\shaders\debug.frag">
@@ -894,9 +1016,6 @@
     <None Include="Data\shaders\sdfTerrain.vert">
       <Filter>Shaders\sdfTerrain</Filter>
     </None>
-    <None Include="Data\shaders\uniforms.glsl">
-      <Filter>Shaders\UNIFORMS</Filter>
-    </None>
     <None Include="Data\shaders\water.frag">
       <Filter>Shaders\water</Filter>
     </None>
@@ -908,6 +1027,21 @@
     </None>
     <None Include="Data\shaders\color.vert">
       <Filter>Shaders\color</Filter>
+    </None>
+    <None Include="Data\shaders\dndUberShader.vert">
+      <Filter>Shaders\DND UberShader</Filter>
+    </None>
+    <None Include="Data\shaders\dndUberShader.frag">
+      <Filter>Shaders\DND UberShader</Filter>
+    </None>
+    <None Include="Data\shaders\atmosphere.frag">
+      <Filter>Shaders\atmosphere</Filter>
+    </None>
+    <None Include="Data\shaders\atmosphere.vert">
+      <Filter>Shaders\atmosphere</Filter>
+    </None>
+    <None Include="Data\shaders\uniforms.glsl">
+      <Filter>Shaders\COMMON</Filter>
     </None>
   </ItemGroup>
 </Project>

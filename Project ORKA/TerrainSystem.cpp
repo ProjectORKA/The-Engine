@@ -1,6 +1,7 @@
 
 #include "TerrainSystem.hpp"
 #include "QuadtreeSystem.hpp"
+#include "PerlinNoise.hpp"
 
 Double terrainGenerationFunction(LDouble x, LDouble y) {
 	static PerlinNoise noise(TERRAIN_GENERATION_SEED);

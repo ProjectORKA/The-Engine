@@ -49,7 +49,6 @@ Rotation getRotationBetweenVectors(Vec3 start, Vec3 dest) { //copy of opengl tut
 	);
 }
 
-
 UInt nextPowerOfTwo(UInt& value)
 {
 	UInt powerOfTwo = 1;
@@ -57,14 +56,15 @@ UInt nextPowerOfTwo(UInt& value)
 	return powerOfTwo;
 }
 
+
+
+Vec3 projectToCube(Vec3 vec) {
+	Float max = abs(vec.x);
+	if (abs(vec.y) > max) max = abs(vec.y);
+	if (abs(vec.z) > max) max = abs(vec.z);
+	return vec / Vec3(max);
+}
+
 void Graph::add(Float value) {
 	points.push_back(value);
-}
-
-void Plot::add(Vec2 value) {
-	points.push_back(value);
-}
-
-void Plot::add(Float a, Float b) {
-	add(Vec2(a, b));
 }

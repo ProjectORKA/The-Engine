@@ -23,9 +23,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AIPlayground.cpp" />
+    <ClCompile Include="Algorithm.cpp" />
+    <ClCompile Include="Atmosphere.cpp" />
     <ClCompile Include="Basics.cpp" />
     <ClCompile Include="BitmapTextRenderSystem.cpp" />
     <ClCompile Include="DebugConsole.cpp" />
+    <ClCompile Include="DungeonsAndDiscord.cpp" />
     <ClCompile Include="Fonts.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameSystem.cpp" />
@@ -35,11 +38,18 @@
     <ClCompile Include="Mooncrash.cpp" />
     <ClCompile Include="NeuralNetwork.cpp" />
     <ClCompile Include="OctreeNode.cpp" />
+    <ClCompile Include="PerlinNoise.cpp" />
+    <ClCompile Include="PlanetSystemPlayer.cpp" />
+    <ClCompile Include="Player.cpp" />
+    <ClCompile Include="Plot.cpp" />
     <ClCompile Include="Pong.cpp" />
     <ClCompile Include="QuadtreeID.cpp" />
     <ClCompile Include="QuadtreeNode.cpp" />
+    <ClCompile Include="Sandbox.cpp" />
     <ClCompile Include="SDFTerrainRenderSystem.cpp" />
     <ClCompile Include="Settings.cpp" />
+    <ClCompile Include="Sortr.cpp" />
+    <ClCompile Include="Transform.cpp" />
     <ClCompile Include="TransformationStack.cpp" />
     <ClCompile Include="MindMap.cpp" />
     <ClCompile Include="RenderRegion.cpp" />
@@ -67,9 +77,11 @@
     <ClCompile Include="QuadtreeSystemRenderer.cpp" />
     <ClCompile Include="RelativeChunkOffset.cpp" />
     <ClCompile Include="Shader.cpp" />
-    <ClCompile Include="SimpleCamera.cpp" />
+    <ClCompile Include="Camera.cpp" />
     <ClCompile Include="TerrainRendering.cpp" />
     <ClCompile Include="TerrainSystem.cpp" />
+    <ClCompile Include="TreeSystem.cpp" />
+    <ClCompile Include="UIElement.cpp" />
     <ClCompile Include="UIFlatPanel.cpp" />
     <ClCompile Include="ULLUtil.cpp" />
     <ClCompile Include="ProceduralMeshes.cpp" />
@@ -94,10 +106,19 @@
     <ClCompile Include="OctreeSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Atmosphere.hpp" />
+    <ClInclude Include="AudioSystem.hpp" />
+    <ClInclude Include="BranchStructure.hpp" />
+    <ClInclude Include="DungeonsAndDiscord.hpp" />
     <ClInclude Include="GlyphTextRenderSystem.hpp" />
     <ClInclude Include="Image.hpp" />
     <ClInclude Include="MathDNA.hpp" />
     <ClInclude Include="NeuralNetwork.hpp" />
+    <ClInclude Include="PerlinNoise.hpp" />
+    <ClInclude Include="PlanetSystemPlayer.hpp" />
+    <ClInclude Include="Player.hpp" />
+    <ClInclude Include="Plot.hpp" />
+    <ClInclude Include="PointCloud.hpp" />
     <ClInclude Include="Sandbox.hpp" />
     <ClInclude Include="AIPlayground.hpp" />
     <ClInclude Include="ASIONetworking.hpp" />
@@ -155,14 +176,18 @@
     <ClInclude Include="Settings.hpp" />
     <ClInclude Include="Shader.hpp" />
     <ClInclude Include="ShaderProgram.hpp" />
-    <ClInclude Include="SimpleCamera.hpp" />
+    <ClInclude Include="Camera.hpp" />
     <ClInclude Include="SimplePlanetRenderer.hpp" />
+    <ClInclude Include="Sortr.hpp" />
+    <ClInclude Include="Algorithm.hpp" />
     <ClInclude Include="String.hpp" />
     <ClInclude Include="TerrainRendering.hpp" />
     <ClInclude Include="TerrainSystem.hpp" />
+    <ClInclude Include="Transform.hpp" />
     <ClInclude Include="TransformationStack.hpp" />
     <ClInclude Include="TreeSystem.hpp" />
     <ClInclude Include="UIConstraints.hpp" />
+    <ClInclude Include="UIElement.hpp" />
     <ClInclude Include="UIFlatPanel.hpp" />
     <ClInclude Include="ULLUtil.hpp" />
     <ClInclude Include="ProceduralMeshes.hpp" />
@@ -191,6 +216,8 @@
     <ClInclude Include="OctreeSystem.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Data\shaders\atmosphere.frag" />
+    <None Include="Data\shaders\atmosphere.vert" />
     <None Include="Data\shaders\blur.frag" />
     <None Include="Data\shaders\blur.vert" />
     <None Include="Data\shaders\blurredUI.frag" />
@@ -199,6 +226,8 @@
     <None Include="Data\shaders\debug.vert" />
     <None Include="Data\shaders\depthCutter.frag" />
     <None Include="Data\shaders\depthCutter.vert" />
+    <None Include="Data\shaders\dndUberShader.frag" />
+    <None Include="Data\shaders\dndUberShader.vert" />
     <None Include="Data\shaders\postProcess.frag" />
     <None Include="Data\shaders\postProcess.vert" />
     <None Include="Data\shaders\primitive.frag" />
@@ -302,8 +331,8 @@
       <BasicRuntimeChecks>UninitializedLocalUsageCheck</BasicRuntimeChecks>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>opengl32.lib;assimp-vc141-mtd.lib;glfw3.lib;glew32s.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)\External Libraries\ASSIMP\lib\lib 32\debug;$(SolutionDir)\External Libraries\GLFW 32 bit\lib-vc2015;$(SolutionDir)\External Libraries\GLEW\lib\Release\Win32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>opengl32.lib;freetype.lib;assimp-vc141-mtd.lib;glfw3.lib;glew32s.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>G:\DATA\PROJEKTE\ORKA\GAME ENGINE\SOURCE CODE\External Libraries\FREETYPE\release static\vs2015-2022\win32;$(SolutionDir)\External Libraries\ASSIMP\lib\lib 32\debug;$(SolutionDir)\External Libraries\GLFW 32 bit\lib-vc2015;$(SolutionDir)\External Libraries\GLEW\lib\Release\Win32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>
       </IgnoreSpecificDefaultLibraries>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
@@ -333,9 +362,9 @@
       <BasicRuntimeChecks>UninitializedLocalUsageCheck</BasicRuntimeChecks>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>$(SolutionDir)\External Libraries\ASSIMP\lib\lib 64\debug;$(SolutionDir)\External Libraries\GLFW 64 bit\lib-vc2015;$(SolutionDir)\External Libraries\GLEW\lib\Release\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>G:\DATA\PROJEKTE\ORKA\GAME ENGINE\SOURCE CODE\External Libraries\FREETYPE\release static\vs2015-2022\win64;$(SolutionDir)\External Libraries\ASSIMP\lib\lib 64\debug;$(SolutionDir)\External Libraries\GLFW 64 bit\lib-vc2015;$(SolutionDir)\External Libraries\GLEW\lib\Release\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
-      <AdditionalDependencies>opengl32.lib;assimp-vc141-mtd.lib;glfw3.lib;glew32s.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>opengl32.lib;freetype.lib;assimp-vc141-mtd.lib;glfw3.lib;glew32s.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>
       </IgnoreSpecificDefaultLibraries>
       <SubSystem>Console</SubSystem>
@@ -366,8 +395,8 @@
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>opengl32.lib;assimp-vc141-mt.lib;glfw3.lib;glew32s.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)\External Libraries\ASSIMP\lib\lib 32\release;$(SolutionDir)\External Libraries\GLFW 32 bit\lib-vc2015;$(SolutionDir)\External Libraries\GLEW\lib\Release\Win32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>opengl32.lib;freetype.lib;assimp-vc141-mt.lib;glfw3.lib;glew32s.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>G:\DATA\PROJEKTE\ORKA\GAME ENGINE\SOURCE CODE\External Libraries\FREETYPE\release static\vs2015-2022\win32;$(SolutionDir)\External Libraries\ASSIMP\lib\lib 32\release;$(SolutionDir)\External Libraries\GLFW 32 bit\lib-vc2015;$(SolutionDir)\External Libraries\GLEW\lib\Release\Win32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>
       </IgnoreSpecificDefaultLibraries>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
@@ -396,8 +425,8 @@
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>opengl32.lib;assimp-vc141-mt.lib;glfw3.lib;glew32s.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)\External Libraries\ASSIMP\lib\lib 64\release;$(SolutionDir)\External Libraries\GLFW 64 bit\lib-vc2015;$(SolutionDir)\External Libraries\GLEW\lib\Release\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>opengl32.lib;freetype.lib;assimp-vc141-mt.lib;glfw3.lib;glew32s.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>G:\DATA\PROJEKTE\ORKA\GAME ENGINE\SOURCE CODE\External Libraries\FREETYPE\release static\vs2015-2022\win64;$(SolutionDir)\External Libraries\ASSIMP\lib\lib 64\release;$(SolutionDir)\External Libraries\GLFW 64 bit\lib-vc2015;$(SolutionDir)\External Libraries\GLEW\lib\Release\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <IgnoreSpecificDefaultLibraries>
       </IgnoreSpecificDefaultLibraries>

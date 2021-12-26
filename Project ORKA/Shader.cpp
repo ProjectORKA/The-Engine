@@ -7,6 +7,7 @@ void Shader::destroy() {
 }
 void Shader::create(ShaderType shaderType, Name name, String uniformBlock)
 {
+	logDebug(String("Loading ShaderProgram (").append(String(name.data)).append("):"));
 	switch (shaderType) {
 	case ShaderType::vertex: create(shaderType, String("Data/shaders/").append(name.data).append(".vert"), uniformBlock); break;
 	case ShaderType::compute: create(shaderType, String("Data/shaders/").append(name.data).append(".comp"), uniformBlock); break;

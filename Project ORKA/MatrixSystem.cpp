@@ -38,5 +38,6 @@ void MatrixSystem::setProjection(Matrix matrix) {
 }
 void MatrixSystem::applyToUniforms(Uniforms& uniforms) {
 	uniforms.data.mMatrix = getModel();
-	uniforms.data.vpMatrix = getVP();
+	uniforms.data.vMatrix = getView();
+	uniforms.data.pMatrix = getProjection();
 }

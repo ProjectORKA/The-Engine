@@ -1,6 +1,8 @@
 
 #include "PlanetRenderSystem.hpp"
 #include "Renderer.hpp"
+#include "PlanetSystem.hpp"
+#include "PlanetSystemPlayer.hpp"
 
 void PlanetRenderSystem::destroy()
 {
@@ -11,7 +13,7 @@ void PlanetRenderSystem::create(Renderer & renderer)
 {
 	//octreeRenderSystem.create(renderer);
 }
-void PlanetRenderSystem::render(PlanetSystem& planetSystem, Renderer& renderer, PlanetCamera & planetCamera)
+void PlanetRenderSystem::render(PlanetSystem& planetSystem, Renderer& renderer, PlanetSystemPlayer& player)
 {
 	//create if necessary
 	//if (octreeRenderSystem.root.equivalentOctreeNode == nullptr) octreeRenderSystem.root.create(*planetSystem.octreeSystem.root);
@@ -19,12 +21,12 @@ void PlanetRenderSystem::render(PlanetSystem& planetSystem, Renderer& renderer, 
 	
 	//update before rendering
 	//octreeRenderSystem.update(planetCamera);
-	quadtreeRenderSystem.update(planetCamera);
+	quadtreeRenderSystem.update(player);
 
 	//set uniforms
-	planetCamera.use(renderer.uniforms(), renderer.renderRegion.getAspectRatio());
 	renderer.uniforms().data.distortion = Int(renderer.planetRenderSystem.worldDistortion);
 	renderer.uniforms().data.mMatrix = Matrix(1);
+	player.camera.renderOnlyRot(renderer);
 
 	renderer.setDepthTest(true);
 	renderer.setCulling(true);

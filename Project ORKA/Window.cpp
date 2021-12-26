@@ -37,14 +37,13 @@ void windowThread(Window& window)
 
 			renderer.renderRegion.set(windowArea);
 
-			renderer.framebufferSystem.use(0);
+			renderer.framebufferSystem.use(renderer,0);
 			renderer.clearColor(Color(Vec3(0),0.0));
 			renderer.clearDepth();
 
 			renderer.setWireframeMode(renderer.wireframeMode);
 
 			if (window.content) window.content->render(window.renderer);
-
 
 			/// ////////////////////////////////////////////////////////////////////////////
 			renderer.framebufferSystem.current().blitFramebuffer();
@@ -95,8 +94,8 @@ void Window::setCallbacks()
 	glfwSetKeyCallback(apiWindow, whenButtonIsPressed);
 	glfwSetCursorPosCallback(apiWindow, whenMouseIsMoving);
 	glfwSetScrollCallback(apiWindow, whenMouseIsScrolling);
-	glfwSetDropCallback(apiWindow, whenFileDroppedOnWindow);
 	glfwSetWindowSizeCallback(apiWindow, whenWindowResized);
+	glfwSetDropCallback(apiWindow, whenFilesDroppedOnWindow);
 	glfwSetMouseButtonCallback(apiWindow, whenMouseIsPressed);
 	glfwSetCursorEnterCallback(apiWindow, whenMouseEnterWindow);
 	glfwSetWindowFocusCallback(apiWindow, whenWindowChangedFocus);
@@ -128,7 +127,6 @@ void Window::undecorateWindow()
 	apiWindowUndecorate(apiWindow);
 }
 void Window::destroyAPIWindow() {
-
 	inputManager.uncaptureCursor(*this);
 	if (apiWindow) {
 		glfwDestroyWindow(apiWindow);
@@ -150,19 +148,6 @@ void Window::setIcon(Path path) {
 	else {
 		logError("Logo could not be Loaded!");
 	}
-}
-void Window::create(String title, UIElement * element)
-{
-	id = nextWindowID++;
-
-	createAPIWindow(title); //needs to be in this thread
-	centerWindow();
-
-	if(element)	content = element;
-	ui.currentlyActive = element;
-
-	thread.start(windowThread, *this);
-	logEvent("Created Window in Main Thread!");
 }
 void Window::initializeGraphicsAPI() {
 	glfwMakeContextCurrent(apiWindow);
@@ -243,6 +228,19 @@ void Window::createAPIWindow(String title) {
 	else {
 		logError("Window already exists!");
 	}
+}
+void Window::create(String title, UIElement * element)
+{
+	id = nextWindowID++;
+
+	createAPIWindow(title); //needs to be in this thread
+	centerWindow();
+
+	if(element)	content = element;
+	ui.currentlyActive = element;
+
+	thread.start(windowThread, *this);
+	logEvent("Created Window in Main Thread!");
 }
 
 //window getters
@@ -328,11 +326,16 @@ void whenMouseIsMoving(APIWindow apiWindow, Double xPosition, Double yPosition) 
 	Window& window = *static_cast<Window*>(glfwGetWindowUserPointer(apiWindow));
 	inputManager.mouseIsMoving(window, Vec2(xPosition, yPosition));
 }
-void whenFileDroppedOnWindow(APIWindow apiWindow, Int count, const Char** paths)
+void whenFilesDroppedOnWindow(APIWindow apiWindow, Int count, const Char** droppedPaths)
 {
+	Window& window = *static_cast<Window*>(glfwGetWindowUserPointer(apiWindow));
+	Vector<Path> paths;
+	
 	for (Int i = 0; i < count; i++) {
-		logDebug(String("File dropped: ").append(paths[i]));
+		paths.push_back(droppedPaths[i]);
+		logDebug(String("File dropped: ").append(paths.back().string()));
 	}
+	inputManager.filesDropped(window, paths);
 }
 void whenWindowContentScaleChanged(APIWindow apiWindow, Float xScale, Float yScale)
 {

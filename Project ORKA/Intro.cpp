@@ -18,9 +18,9 @@ void Intro::render(Renderer& renderer)
 	renderer.setWireframeMode(false);
 
 	//camera stuff
-	SimpleCamera c;
+	Camera c;
 	c.location = Vec3(0, -15, 0);
-	renderer.uniforms().data.vpMatrix = c.projectionMatrix(renderer.aspectRatio()) * c.viewMatrix();
+	c.render(renderer);
 
 	//logo stuff
 	Float animationLength = 1.1;

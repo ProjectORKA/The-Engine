@@ -56,6 +56,8 @@ bool operator<(const Name& l, const Name& r);
 //glm
 #include "glm/glm.hpp"
 #include <glm/gtc/type_ptr.hpp>
+#include <glm/gtc/quaternion.hpp>
+#include <glm/gtx/quaternion.hpp>
 #include "glm/gtc/matrix_transform.hpp"
 
 using IVec2 = glm::ivec2;
@@ -74,6 +76,8 @@ using ULLVec2 = glm::u64vec2;
 using ULLVec3 = glm::u64vec3;
 
 using Matrix = glm::mat4;
+using Quat = glm::quat;
+using Quaternion = glm::quat;
 
 #include "glm/gtc/quaternion.hpp"
 #include "glm/gtx/quaternion.hpp"

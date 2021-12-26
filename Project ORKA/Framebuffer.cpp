@@ -1,10 +1,12 @@
 
 #include "Framebuffer.hpp"
+#include "Renderer.hpp"
 
-void Framebuffer::use()
+void Framebuffer::use(Renderer & renderer)
 {
 	apiBindFramebuffer(GL_FRAMEBUFFER, framebufferID);
-	//apiNamedFramebufferDrawBuffer(framebufferID); //[TODO] check if unnecessary
+	renderer.uniforms().data.width = size.x;
+	renderer.uniforms().data.height = size.y;
 }
 void Framebuffer::create()
 {

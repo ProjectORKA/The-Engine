@@ -1,13 +1,12 @@
 #pragma once
 
-#include "Debug.hpp"
 #include "Basics.hpp"
 
 struct Window;
 
 struct InputManager {
 
-	Double scrollAxisYTotal = 200;
+	Double scrollAxisYTotal = 215;
 
 	Bool capturing = false;
 
@@ -27,6 +26,7 @@ struct InputManager {
 
 	//void mouseIsScrolled(Window& window, Float position);
 	void mouseIsMoving(Window& window, IVec2 position);
+	void filesDropped(Window& window, Vector<Path> paths);
 	void windowChangedFocus(Window& window, Bool isInFocus);
 	void mouseWheelIsScrolled(Window& window, Double xAxis, Double yAxis);
 	void buttonIsPressed(Window& window, Int keyID, Int action, Int modifiers);

@@ -1,7 +1,8 @@
 #pragma once
 
 #include "OctreeNode.hpp"
-#include "QuadtreeSystem.hpp"
+
+struct QuadtreeSystem;
 
 struct OctreeSystem {
 	OctreeNode * root = nullptr;

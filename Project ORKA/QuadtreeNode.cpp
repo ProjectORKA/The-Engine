@@ -125,11 +125,4 @@ void QuadtreeNode::create(QuadtreeNode* parent, Bool x, Bool y)
 	id.location.y = parent->id.location.y | ULL(y) << 64 - id.level;
 
 	data.terrain = new Terrain(id);
-
-	//trees
-	if (id.level == 4) {
-		for (int i = 0; i < 1000; i++) {
-			data.trees.emplace_back();
-		}
-	}
 }

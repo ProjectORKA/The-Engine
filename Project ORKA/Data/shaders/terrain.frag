@@ -28,15 +28,15 @@ vec3 mix(vec3 a, vec3 b, float alpha){
 void main(){
 
 	vec3 fragmentViewVector = normalize(vertexPosition);
-	vec3 sunDir = normalize(vec3(1,1,1));
+	//vec3 sunDir = normalize(vec3(1,1,1));
 	vec3 reflection = normalize(reflect(fragmentViewVector,normal));
 
-	float diffuse = clamp(dot(normalize(normal),sunDir),0,1);
-	float specular = clamp(pow(0.25*dot(reflection, sunDir), 2.0f),0,1);
+	float diffuse = clamp(dot(normalize(normal),sunDir.xyz),0,1);
+	float specular = clamp(pow(0.25*dot(reflection, sunDir.xyz), 2.0f),0,1);
 	float fresnel = clamp(0.1f * (1-dot(-fragmentViewVector,normalize(normal))),0,1);
 	float ambient = 0.05f;
 
-	float coloredLight = fresnel + ambient + diffuse;
+	float coloredLight = diffuse * fresnel + diffuse * ambient + diffuse;
 	float externalLight = specular;
 	
 	
@@ -70,6 +70,8 @@ void main(){
 
 	//draw phong lighting
 	fragmentColor = vec4(color * vec3(coloredLight) + vec3(externalLight),1);
+
+	//fragmentColor = vec4(vec3(depth),1);
 
 	//noise
 	//fragmentColor = vec4(normalize(vec3(fractalNoise(worldCoordinate.xy))),1.0);

@@ -9,6 +9,7 @@ struct QuadtreeSystem {
 	void create();
 	void update();
 	void destroy();
+
 	//void getAllChunksInRelativeRange(ULLVec3 location, Float relativeRange) {
 	//	List<QuadtreeNode*> checkThis;
 	//	List<QuadtreeNode*> result;
@@ -19,7 +20,6 @@ struct QuadtreeSystem {
 	//		checkedNode->id.location 
 	//	}
 	//}
-
 
 	ULLVec3 rayTrace(Ray ray);
 	QuadtreeNode& get(QuadtreeID id);

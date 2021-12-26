@@ -74,7 +74,7 @@ void BitmapTextRenderSystem::render(String text, Float x, Float y, FontStyle sty
 		cpuText.indices.push_back(i * 6 + 5);
 	}
 
-	cpuText.readyForUpload = true;
+	cpuText.checkIntegrity();
 
 	gpuText.unload();
 	gpuText.upload(cpuText);

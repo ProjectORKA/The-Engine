@@ -2,6 +2,10 @@
 
 #include "GLFW/glfw3.h"
 
+struct Action {
+	Bool pressed = false;
+};
+
 enum class Key {
 	SHIFT = GLFW_KEY_LEFT_SHIFT,
 	W = GLFW_KEY_W,

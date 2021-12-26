@@ -15,7 +15,7 @@ out vec2 textureCoordinate;
 void main() {
 
 	vec3 positionInChunk = (mMatrix * vec4(vertex, 1)).xyz;
-	vec3 cameraRelativePosition = chunkOffsetVector.xyz + positionInChunk;
+	vec3 cameraRelativePosition = positionInChunk - cameraPosition.xyz;
 	vec3 customNormal = normals;
 
 	if(distortion){
@@ -46,7 +46,7 @@ void main() {
 	vec3 worldColor = ((vertex) + vec3(0.5,0.5,0.0) + worldOffset.xyz)/vec3(pow(2,worldOffset.w),pow(2,worldOffset.w),pow(2,worldOffset.w-1));
 
 	//outputs
-	gl_Position  = vpMatrix * vec4(cameraRelativePosition.xyz,1);
+	gl_Position  = pMatrix * vMatrix * vec4(cameraRelativePosition.xyz,1);
 
 	//gl_Position = vpMatrix * (vec4(chunkOffsetVector,0) + (mMatrix * vec4(vertex,1)));
 

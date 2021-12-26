@@ -2,9 +2,6 @@
 
 GameSystem gameSystem;
 
-GameSystem::GameSystem() {
-	thread.start(gameSimulationThread, thread, *this);
-}
 GameSystem::~GameSystem() {
 	thread.stop();
 	for (Game* game : games) {
@@ -16,6 +13,9 @@ GameSystem::~GameSystem() {
 Game * GameSystem::add(Game* game) {
 	games.push_back(game);
 	return games.back();
+}
+void GameSystem::run() {
+	thread.start(gameSimulationThread, thread, *this);
 }
 void gameSimulationThread(Thread& thread, GameSystem & gameSystem) {
 
