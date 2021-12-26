@@ -3,12 +3,15 @@
 layout(std140, binding = 0) uniform GlobalUniforms
 {
 	mat4 mMatrix;
-	mat4 vpMatrix;
-	
+	mat4 vMatrix;
+	mat4 pMatrix;
+
 	vec4 worldOffset;
 	vec4 cameraVector;
-	vec4 chunkOffsetVector;
+	vec4 cameraPosition;
 	vec4 customColor;
+	vec4 sunDir;
+	vec4 screenDimensions;
 
 	float time;
 	float f1;
@@ -16,9 +19,9 @@ layout(std140, binding = 0) uniform GlobalUniforms
 	float f3;
 
 	bool distortion;
+	int width;
+	int height;
 	int i1;
-	int i2;
-	int i3;
 };
 
 uniform sampler2D texture0;

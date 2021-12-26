@@ -1,10 +1,11 @@
 #pragma once
 
+#include "Basics.hpp"
+#include "TiledMath.hpp"
 #include "Threading.hpp"
 #include "Renderer.hpp"
 #include "WindowAPI.hpp" //needs to be below the rendering stuff, e.g. "Renderer.hpp"
-
-struct UIElement;
+#include "UIElement.hpp"
 
 struct Window {
 
@@ -13,7 +14,7 @@ struct Window {
 	Bool isShown = true;
 	IVec2 windowPosition;
 	Bool decorated = true;
-	Bool fullScreen = true;
+	Bool fullScreen = false;
 	
 	APIWindow apiWindow = nullptr;
 	Area windowedModeSize = Area(1);
@@ -69,6 +70,6 @@ void whenFramebufferIsResized(APIWindow apiWindow, Int width, Int height);
 void whenMouseIsScrolling(APIWindow apiWindow, Double xAxis, Double yAxis);
 void whenMouseIsPressed(APIWindow apiWindow, Int button, Int action, Int mods);
 void whenMouseIsMoving(APIWindow apiWindow, Double xPosition, Double yPosition);
-void whenFileDroppedOnWindow(APIWindow apiWindow, Int count, const Char** paths);
+void whenFilesDroppedOnWindow(APIWindow apiWindow, Int count, const Char** paths);
 void whenWindowContentScaleChanged(APIWindow apiWindow, Float xScale, Float yScale);
 void whenButtonIsPressed(APIWindow apiWindow, Int key, Int scancode, Int action, Int modifiers);

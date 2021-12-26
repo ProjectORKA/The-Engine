@@ -29,7 +29,7 @@ void proceduralWireframeAxisLines(CPUMesh& cpuMesh)
 		0, 1, 0, 2 , 0 , 3
 	};
 
-	cpuMesh.readyForUpload = true;
+	cpuMesh.checkIntegrity();
 }
 void proceduralPlaneMesh(CPUMesh& cpuMesh, Float width, Float height) {
 
@@ -60,7 +60,7 @@ void proceduralPlaneMesh(CPUMesh& cpuMesh, Float width, Float height) {
 		3, 1, 0
 	};
 
-	cpuMesh.readyForUpload = true;
+	cpuMesh.checkIntegrity();
 };
 void proceduralWireframeCubeMesh(CPUMesh& cpuMesh, Float size, Float size2)
 {
@@ -110,5 +110,5 @@ void proceduralWireframeCubeMesh(CPUMesh& cpuMesh, Float size, Float size2)
 	5, 4, 0
 	};
 
-	cpuMesh.readyForUpload = true;
+	cpuMesh.checkIntegrity();
 }

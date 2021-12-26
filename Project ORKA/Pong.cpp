@@ -1,5 +1,7 @@
 
 #include "Pong.hpp"
+#include "Window.hpp"
+#include "Random.hpp"
 
 Float ballSpeedReduction = 1.5;
 Float paddleSpeed = 2.5;
@@ -9,7 +11,7 @@ void Ball::render(Renderer& renderer) {
 		scale(translate(Matrix(1), Vec3(position, 0)), Vec3(0.01, 0.01, 0.5));
 	renderer.renderMesh("centeredCube");
 }
-void Ball::update(Float deltaTime, Player players[2]) {
+void Ball::update(Float deltaTime, PongPlayer players[2]) {
 	if (stuckToPaddle) {
 		if (stuckToPaddle1) {
 			position.x = -0.85;
@@ -89,18 +91,18 @@ void Ball::update(Float deltaTime, Player players[2]) {
 	}
 }
 
-void Player::keyboardInput(Float deltaTime) {
+void PongPlayer::keyboardInput(Float deltaTime) {
 	if (moveUp) position.y += paddleSpeed * deltaTime;
 	if (moveDown) position.y -= paddleSpeed * deltaTime;
 
 	position.y = clamp(position.y, -0.9f, 0.9f);
 }
-void Player::mouseInput(Vec3 cursorWorldPosition) {
+void PongPlayer::mouseInput(Vec3 cursorWorldPosition) {
 	position.y = cursorWorldPosition.y;
 
 	position.y = clamp(position.y, -0.9f, 0.9f);
 }
-void Player::ballLocationInput(Vector<Ball>& balls) {
+void PongPlayer::ballLocationInput(Vector<Ball>& balls) {
 	Ball * ball = getClosestBall(*this, balls);
 	if (ball) {
 		position.y = ball->position.y;
@@ -109,7 +111,7 @@ void Player::ballLocationInput(Vector<Ball>& balls) {
 		shoot = true;
 	}
 }
-void Player::aiInput(Vector<Ball>& balls, Float deltaTime) {
+void PongPlayer::aiInput(Vector<Ball>& balls, Float deltaTime) {
 
 	shoot = random(1000) < 1;
 
@@ -142,7 +144,7 @@ void Pong::render(Renderer& renderer) {
 
 	renderer.apectCorrectNormalizedSpace();
 	Vec2 normalizedCursorPosition = Vec2(2) * ((Vec2(inputManager.cursorPosition) / Vec2(renderer.framebufferSystem.framebufferSize)) - Vec2(0.5));
-	Vec3 cursorWorldPos = inverse(renderer.uniforms().data.vpMatrix) * Vec4(normalizedCursorPosition, 0, 1);
+	Vec3 cursorWorldPos = inverse(renderer.uniforms().data.pMatrix) * Vec4(normalizedCursorPosition, 0, 1);
 
 
 	//players[1].ballLocationInput(ball);
@@ -249,7 +251,7 @@ void Pong::mouseIsPressed(Window& window, Int button, Int action, Int modifiers)
 	players[0].shoot = (action == GLFW_PRESS || action == GLFW_REPEAT);
 }
 
-Ball * getClosestBall(Player& player, Vector<Ball>& balls) {
+Ball * getClosestBall(PongPlayer& player, Vector<Ball>& balls) {
 	Ball* closestBall = nullptr;
 
 	Float closestX = 100;

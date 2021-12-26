@@ -1,4 +1,5 @@
 #include "InputManager.hpp"
+#include "Window.hpp"
 #include "UserInterface.hpp"
 
 InputManager inputManager;
@@ -51,6 +52,9 @@ void InputManager::mouseIsMoving(Window& window, IVec2 position)
 	}
 
 	if(ui.currentlyActive) ui.currentlyActive->mouseIsMoving(window, position);
+}
+void InputManager::filesDropped(Window& window, Vector<Path> paths) {
+	window.content->filesDropped(window, paths);
 }
 void InputManager::windowChangedFocus(Window& window, Bool isInFocus)
 {

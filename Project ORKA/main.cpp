@@ -29,16 +29,17 @@
 #include "GameSystem.hpp"
 #include "UserInterface.hpp"
 #include "WindowsEntry.hpp"
+#include "Random.hpp"
 
 //#define TESTING
 //#define MEMORY_LEAK_DETECTION
 
-
 Int main(Int  argc, Char* argv[]) {
-	srand(static_cast <unsigned> (time(0)));
+	randomizeSeed();
 #ifndef TESTING
 	
-	gameSystem.add(new Intro(new Pong()));
+	gameSystem.add(new Mooncrash());
+	gameSystem.run();
 
 	window("ORKA",&gameView(0));
 
@@ -48,12 +49,12 @@ Int main(Int  argc, Char* argv[]) {
 	/////////////////////////////////////////////////////////////////////////////////////////////////
 
 
+
 	/////////////////////////////////////////////////////////////////////////////////////////////////
 	pause();
 #endif // TESTING
 #ifdef MEMORY_LEAK_DETECTION
 	_CrtDumpMemoryLeaks();
 #endif // MEMORY_LEAK_DETECTION
-
 	return 0;
 }

@@ -24,12 +24,12 @@ void Renderer::create()
 {
 	//basic systems
 	renderTime.reset();
-	framebufferSystem.create();
 	textureSystem.create();
 	meshSystem.create();
 	shaderSystem.create();
 
 	//advanced systems
+	framebufferSystem.create(*this);
 	textRenderSystem.create(*this);
 	renderObjectSystem.create(*this);
 	planetRenderSystem.create(*this);
@@ -62,15 +62,15 @@ void Renderer::screenSpace() {
 	matrix = glm::translate(matrix, Vec3(-1, -1, 0));
 	matrix = glm::scale(matrix, Vec3(2, 2, 0));
 	matrix = glm::scale(matrix, Vec3(1.0 / width, 1.0 / height, 0));
-	uniforms().data.vpMatrix = matrix;
+	uniforms().data.vMatrix = Matrix(1);
+	uniforms().data.pMatrix = matrix;
 }
 void Renderer::normalizedSpace() {
-	uniforms().data.vpMatrix = Matrix(1);
+	uniforms().data.vMatrix = Matrix(1);
+	uniforms().data.pMatrix = Matrix(1);
 }
-void Renderer::apectCorrectNormalizedSpace() {
-	Float aspect = aspectRatio();
-	if (aspect > 1) uniforms().data.vpMatrix = scale(Matrix(1), Vec3(1 / aspectRatio(), 1, 1));
-	else uniforms().data.vpMatrix = scale(Matrix(1), Vec3(1, aspectRatio(), 1));
+void Renderer::setWireframeMode() {
+	setWireframeMode(wireframeMode);
 }
 void Renderer::renderMesh(Name name) {
 	uniforms().update();
@@ -94,6 +94,12 @@ void Renderer::setCulling(Bool isCulling) {
 	else {
 		apiDisable(GL_CULL_FACE);
 	}
+}
+void Renderer::apectCorrectNormalizedSpace() {
+	Float aspect = aspectRatio();
+	uniforms().data.vMatrix = Matrix(1);
+	if (aspect > 1) uniforms().data.pMatrix = scale(Matrix(1), Vec3(1 / aspectRatio(), 1, 1));
+	else uniforms().data.pMatrix = scale(Matrix(1), Vec3(1, aspectRatio(), 1));
 }
 void Renderer::setDepthClamp(Bool depthClamp)
 {
@@ -138,14 +144,18 @@ void Renderer::createBlurTexture(Index from, Index to)
 	
 	useShader("blur");
 	framebufferSystem.framebuffers[from].colorTexture.use(0);
-	framebufferSystem.use(to);
+	framebufferSystem.use(*this, to);
 	renderMesh("fullScreenQuad");
 
-	framebufferSystem.use(originalFramebufferID);
+	framebufferSystem.use(*this, originalFramebufferID);
 }
 void Renderer::addRenderObject(RenderObjectNames renderObjectNames)
 {
 	renderObjectSystem.addRenderObject(renderObjectNames);
+}
+
+Bool Renderer::getCulling() {
+	return apiGetCullFace();
 }
 
 Float& Renderer::aspectRatio()

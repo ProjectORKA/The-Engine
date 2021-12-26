@@ -1,5 +1,6 @@
 
 #include "OctreeSystem.hpp"
+#include "QuadtreeSystem.hpp"
 
 void OctreeSystem::count() {
 	root->count();

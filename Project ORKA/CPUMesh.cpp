@@ -1,5 +1,6 @@
 
 #include "CPUMesh.hpp"
+#include "GPUMesh.hpp"
 
 CPUMesh::CPUMesh()
 {
@@ -19,31 +20,18 @@ CPUMesh::CPUMesh(Graph& graph) {
 		indices.push_back(index);
 	}
 
-	readyForUpload = true;
+	checkIntegrity();
 }
 CPUMesh::CPUMesh(Name name)
 {
 	load(name);
 }
 
-CPUMesh::CPUMesh(Plot& plot)
-{
-	drawMode = MeshDrawMode::dynamicMode;
-	name = "plot";
-	primitiveMode = PrimitiveMode::LineStrip;
-
-	for (UInt index = 0; index < plot.points.size(); index++) {
-		Vec2 pointPos = plot.points[index];
-
-		vertices.push_back(Vec3(pointPos, 0));
-		uvs.push_back(pointPos);
-		normals.push_back(Vec3(0, 0, 1));
-
-		indices.push_back(index);
-	}
-
-	readyForUpload = true;
-
+void CPUMesh::render() {
+	GPUMesh mesh;
+	mesh.upload(*this);
+	mesh.render();
+	mesh.unload();
 }
 
 void CPUMesh::saveMeshFile()
@@ -59,8 +47,6 @@ void CPUMesh::saveMeshFile()
 	header.uvCount = uvs.size();
 	header.normalCount = normals.size();
 	header.indexCount = indices.size();
-
-
 
 	while (!std::filesystem::exists(path.parent_path())) {
 		logDebug(String("The directory (").append(path.parent_path().string()).append(") does not exist and will be created!"));
@@ -177,7 +163,7 @@ void CPUMesh::loadFBX(Path path) {
 		return;
 	}
 	else {
-		readyForUpload = true;
+		checkIntegrity();
 
 		saveMeshFile();
 	}
@@ -232,15 +218,13 @@ void CPUMesh::loadMeshFile(Path path) {
 	}
 	else error = true;
 
-
-
 	if (error) {
 		logEvent(String("The model (").append(path.filename().replace_extension().string()).append(") could not be loaded! (").append(path.string()).append(")"));
 		readyForUpload = false;
 		return;
 	}
 	else {
-		readyForUpload = true;
+		checkIntegrity();
 	}
 
 };
@@ -279,4 +263,9 @@ void CPUMesh::calculateSmoothNormals()
 	else {
 		logError("Cant compute normals for this mesh! Primitive type not supported!");
 	}
+}
+
+void CPUMesh::checkIntegrity() {
+	if (uvs.size() == vertices.size() && normals.size() == vertices.size()) readyForUpload = true;
+	else readyForUpload = false;
 }

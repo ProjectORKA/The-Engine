@@ -2,9 +2,21 @@
 
 #include "Game.hpp"
 #include "WindowAPI.hpp"
+#include "PlanetSystemPlayer.hpp"
+#include "PlanetSystem.hpp"
+#include "Atmosphere.hpp"
 
-struct Action {
-	Bool pressed = false;
+#define INITIAL_CAMERA_SPEED 200				//1 as fast as a human 400 as fast as light
+#define CAMERA_SPEED_MULTIPLIER 1.2f			//controls the de/increase in speed by this amount when scrolling
+#define CAMERA_TERRAIN_LIMIT false
+
+struct MooncrashPlayer : public PlanetSystemPlayer {
+	Int speedMultiplier = INITIAL_CAMERA_SPEED;
+	void update(Float delta) override;
+};
+
+struct MooncrashAtmosphere : public Atmosphere {
+	void render(MooncrashPlayer player, Renderer& renderer);
 };
 
 struct Mooncrash : public Game {
@@ -19,11 +31,13 @@ struct Mooncrash : public Game {
 
 	Float mouseSensitivity = 0.0015f;
 
-	PlanetCamera camera;
+	MooncrashPlayer player;
 
 	Time time;
 	PlanetSystem planetSystem;
 	PlanetRenderSystem planetRenderSystem;
+
+	MooncrashAtmosphere atmos;
 
 	void update() override;
 	void render(Renderer & renderer) override;

@@ -1,3 +1,4 @@
+
 #pragma once
 
 #include "Basics.hpp"
@@ -34,10 +35,13 @@ struct RenderObjectSystem {
 	Index currentRenderobjectID = 0;
 
 	void destroy();
+	void renderCurrent();
 	void select(Index id);
-	void select(Name name);
+	void render(Index id);
 	void render(Name name);
+	void select(Name name);
 	void create(Renderer& renderer);
+	Index addRenderObject(RenderObject& renderObject);
 	void addRenderObject(RenderObjectNames renderobject);
 	void addRenderObject(Name name, Name meshName, Name textureName, Name shaderName);
 

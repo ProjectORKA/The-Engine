@@ -1,8 +1,9 @@
 
 #pragma once
 
-#include "Renderer.hpp"
+#include"Basics.hpp"
 
+struct Renderer;
 
 #define NEURON_COUNT 6
 
@@ -19,9 +20,6 @@ struct Connection {
 	void calculate(Vector<Neuron>& neurons);
 };
 
-
-Float activationFunction(Float a);
-
 struct NeuralNetwork {
 	
 	Vector<Neuron> neurons;
@@ -33,3 +31,5 @@ struct NeuralNetwork {
 	void render(Renderer& renderer);
 	void input(Vector<Float> input);
 };
+
+Float activationFunction(Float a);

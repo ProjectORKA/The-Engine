@@ -3,4 +3,4 @@
 #include "OctreeID.hpp"
 #include "PlanetCamera.hpp"
 
-Vec3 cameraRelativeLocationOfChunk(OctreeID id, ULLVec3 chunkLocation, Vec3 location);
+Vec3 relativeCameraPosition(OctreeID id, ULLVec3 chunkLocation, Vec3 location);

@@ -1,16 +1,11 @@
 
 #include "UserInterface.hpp"
+#include "Renderer.hpp"
 #include "Window.hpp"
-
-Index newUIelementID = 0;
+#include "FileSystem.hpp"
+#include "GameSystem.hpp"
 
 UserInterface ui;
-
-UIElement::~UIElement() {
-	if (ui.currentlyActive == this) {
-		ui.currentlyActive = nullptr;
-	}
-}
 
 //TextBox
 TextBox::TextBox(String& data) {
@@ -44,7 +39,7 @@ Container& Container::horizontal() {
 	vertical = false;
 	return *this;
 }
-void  Container::render(Renderer& renderer){
+void  Container::render(Renderer& renderer) {
 	std::cout << "Container(";
 
 	for (auto element : contents) {
@@ -75,6 +70,9 @@ void GameView::render(Renderer& renderer) {
 void GameView::mouseIsMoving(Window& window, IVec2 position) {
 	gameSystem.games[gameID]->mouseIsMoving(window, position);
 }
+void GameView::filesDropped(Window& window, Vector<Path> paths){
+	gameSystem.games[gameID]->filesDropped(window, paths);
+};
 void GameView::buttonIsPressed(Window& window, Int keyID, Int action, Int modifiers) {
 	gameSystem.games[gameID]->buttonIsPressed(window, keyID, action, modifiers);
 }
@@ -83,17 +81,22 @@ void GameView::mouseIsPressed(Window& window, Int button, Int action, Int modifi
 }
 
 //User Interface
-void UserInterface::run(){
+void UserInterface::run() {
+	if (windows.size() > 0) {
 
-	while (windows.size() > 0) {
-		glfwPollEvents();
-		for (auto it = windows.begin(); it != windows.end(); it++) {
-			if (it->shouldClose()) {
-				it->destroy();
-				windows.erase(it);
-				break;
+		while (windows.size() > 0) {
+			glfwPollEvents();
+			for (auto it = windows.begin(); it != windows.end(); it++) {
+				if (it->shouldClose()) {
+					it->destroy();
+					windows.erase(it);
+					break;
+				}
 			}
 		}
+	}
+	else {
+
 	}
 
 	for (Window& window : windows) {
@@ -120,7 +123,7 @@ Button& button(Bool& data) {
 	ui.buttons.emplace_back(data);
 	return ui.buttons.back();
 }
-Window& window(String title, UIElement * element) {
+Window& window(String title, UIElement* element) {
 	ui.windows.emplace_back();
 	ui.windows.back().create(title, element);
 	return ui.windows.back();
@@ -145,7 +148,7 @@ void exampleCode() {
 	Bool isEnabled = true;
 	Bool pressed = false;
 
-	window("Example",&container()
+	window("Example", &container()
 		.insert(
 			&button(pressed)
 			.insert(
@@ -157,6 +160,6 @@ void exampleCode() {
 		)
 		.horizontal()
 	);
-	
+
 	ui.run();
 }

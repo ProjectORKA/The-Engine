@@ -30,7 +30,7 @@ void ShaderSystem::add(Name name)
 	currentShaderProgramID = shaderPrograms.size() - 1;
 	shaderNames[name] = currentShaderProgramID;
 }
-void ShaderSystem::use(Name name)
+Index ShaderSystem::use(Name name)
 {
 
 	auto it = shaderNames.find(name);
@@ -48,6 +48,7 @@ void ShaderSystem::use(Name name)
 			logError("Shader could not be found!");
 		}
 	}
+	return currentShaderProgramID;
 }
 void ShaderSystem::loadDefaultShader()
 {
@@ -62,7 +63,7 @@ in vec2 uvs; \n\
 out vec2 textureCoordinate; \n\
 void main()\n\
 {\n\
-	gl_Position = vpMatrix * mMatrix * vec4(vertex, 1); \n\
+	gl_Position = pMatrix * vMatrix * mMatrix * vec4(vertex, 1); \n\
 	textureCoordinate = uvs; \n\
 }"
 );
@@ -94,10 +95,11 @@ Index ShaderSystem::getShaderID(Name name) {
 	use(name);
 	return currentShaderProgramID;
 }
-void ShaderSystem::use(Index shaderProgramID)
+Index ShaderSystem::use(Index shaderProgramID)
 {
 	currentShaderProgramID = shaderProgramID;
 	currentShaderProgram().select();
+	return currentShaderProgramID;
 }
 ShaderProgram& ShaderSystem::currentShaderProgram()
 {

@@ -51,9 +51,10 @@ void TextureSystem::destroy()
 
 	textureNames.clear();
 }
-void TextureSystem::use(Name name)
+Index TextureSystem::use(Name name)
 {
 	use(name,0);
+	return currentTextureID;
 }
 void TextureSystem::resize(Area size)
 {
@@ -93,10 +94,6 @@ void TextureSystem::add(CPUTexture & cpuTexture)
 	textureNames[cpuTexture.name] = currentTextureID;
 }
 
-Index TextureSystem::getTextureID(Name name) {
-	use(name);
-	return currentTextureID;
-}
 GPUTexture& TextureSystem::currentTexture()
 {
 	return gpuTextures[currentTextureID];

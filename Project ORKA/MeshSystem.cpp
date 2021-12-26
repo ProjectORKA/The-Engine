@@ -62,9 +62,14 @@ void MeshSystem::render(Index meshID) {
 	currentMesh().render();
 }
 void MeshSystem::addMesh(CPUMesh& cpuMesh) {
-	gpuMeshes.emplace_back();
+	//[TODO] check if it works
+	GPUMesh gpuMesh;
+	gpuMesh.upload(cpuMesh);
+	
+	gpuMeshes.push_back(gpuMesh);
+
 	use(gpuMeshes.size() - 1);
-	currentMesh().upload(cpuMesh);
+	//currentMesh().upload(cpuMesh);
 	meshNames[cpuMesh.name] = currentMeshID;
 }
 void MeshSystem::render(Name meshName) {

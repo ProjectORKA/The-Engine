@@ -28,6 +28,10 @@ void apiDisable(Enum cap) {
 void apiCullFace(Enum mode) {
 	glCullFace(mode);
 }
+Bool apiGetCullFace() {
+	return glIsEnabled(GL_CULL_FACE);
+}
+
 void apiDepthFunc(Enum func) {
 	glDepthFunc(func);
 }

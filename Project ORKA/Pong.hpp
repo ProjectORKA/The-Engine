@@ -2,15 +2,12 @@
 #pragma once
 
 #include "Game.hpp"
-#include "Window.hpp"
-#include "Math.hpp"
-#include "Networking.hpp"
-
-
 
 struct Ball;
+struct Renderer;
+struct Window;
 
-struct Player {
+struct PongPlayer {
 	ULL score = 0;
 	Vec2 position = Vec2(0,0);
 
@@ -25,11 +22,8 @@ struct Player {
 	Float difficulty = 7.0f;
 
 	void keyboardInput(Float deltaTime);
-
 	void mouseInput(Vec3 cursorWorldPosition);
-
 	void ballLocationInput(Vector<Ball>& balls);
-
 	void aiInput(Vector<Ball>& balls, Float deltaTime);
 };
 
@@ -42,25 +36,21 @@ struct Ball {
 	Bool stuckToPaddle1 = true;
 
 	void render(Renderer& renderer);
-	void update(Float deltaTime, Player players[2]);
+	void update(Float deltaTime, PongPlayer players[2]);
 
 };
 
 struct Pong : public Game {
 	using Game::Game;
 
-	//Server server;
-	//Client client;
-
 	//players
-	Player players[2];
+	PongPlayer players[2];
 
 	Vector<Ball> balls;
 
+	void render(Renderer& renderer) override;
 	void buttonIsPressed(Window& window, Int keyID, Int action, Int modifiers) override;;
 	void mouseIsPressed(Window& window, Int button, Int action, Int modifiers) override;;
-
-	void render(Renderer& renderer) override;
 };
 
-Ball* getClosestBall(Player& player, Vector<Ball>& balls);
+Ball* getClosestBall(PongPlayer& player, Vector<Ball>& balls);

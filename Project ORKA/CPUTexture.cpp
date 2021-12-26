@@ -4,7 +4,8 @@
 
 void CPUTexture::unload()
 {
-	logEvent("Unloading CPUTexture!");
+	logDebug(String("Unloading Texture: (").append(name.data).append(")"));
+	
 	if (loaded) {
 		if (pixels)free(pixels);
 		pixels = nullptr;
@@ -19,7 +20,7 @@ void CPUTexture::load(Name name) {
 }
 void CPUTexture::load(Path path, Name name)
 {
-	logEvent(String("Loading texture: (").append(name.data).append(" | ").append(path.string()).append(")"));
+	logDebug(String("Loading texture: (").append(name.data).append(" | ").append(path.string()).append(")"));
 
 	Image image = loadImage(path, 8, true);
 

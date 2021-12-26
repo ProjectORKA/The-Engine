@@ -1,7 +1,7 @@
 
 #include "RelativeChunkOffset.hpp"
 
-Vec3 cameraRelativeLocationOfChunk(OctreeID id, ULLVec3 chunkLocation, Vec3 location) {
+Vec3 relativeCameraPosition(OctreeID id, ULLVec3 chunkLocation, Vec3 location) {
 
 	Vec3 chunkOffset;
 
@@ -35,5 +35,5 @@ Vec3 cameraRelativeLocationOfChunk(OctreeID id, ULLVec3 chunkLocation, Vec3 loca
 
 	chunkOffset /= Vec3(pow(2, 64 - id.level));
 
-	return chunkOffset;
+	return -chunkOffset;
 };

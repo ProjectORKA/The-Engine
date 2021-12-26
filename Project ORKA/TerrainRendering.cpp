@@ -4,7 +4,6 @@
 CPUMesh createTerrainMesh(HeightmapForNormals& heightmapForNormals)
 {
 	CPUMesh mesh;
-	mesh.readyForUpload = false;
 	mesh.name = "terrain";
 	mesh.primitiveMode = PrimitiveMode::TriangleStrip;
 	mesh.vertices.clear();
@@ -54,6 +53,6 @@ CPUMesh createTerrainMesh(HeightmapForNormals& heightmapForNormals)
 			mesh.normals.push_back(normal);
 		}
 	}
-	mesh.readyForUpload = true;
+	mesh.checkIntegrity();
 	return mesh;
 }

@@ -13,5 +13,5 @@ out vec2 textureCoordinate;
 void main(){
 	position = vertex;
 	textureCoordinate = uvs;
-	gl_Position = vpMatrix * vec4(vertex,1);
+	gl_Position = pMatrix * vMatrix * vec4(vertex,1);
 };

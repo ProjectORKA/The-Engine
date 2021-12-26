@@ -1,17 +1,15 @@
 #pragma once
 
-#include "TextureSystem.hpp"
-#include "ShaderSystem.hpp"
-#include "PlanetCamera.hpp"
-#include "MeshSystem.hpp"
-#include "PlanetSystem.hpp"
+#include "GPUMesh.hpp"
+#include "QuadtreeNode.hpp"
 
 struct Renderer;
+struct PlanetSystemPlayer;
 
 struct QuadtreeNodeRenderData {
 	GPUMesh terrainMesh;
 
-	Vec3 chunkOffset;
+	Vec3 cameraPosition = Vec3(0);
 	Bool drawn = false;
 	Float nodeDrawDistance = 0.0;
 	ULL renderedHeight = 0;
@@ -28,10 +26,10 @@ struct QuadtreeNodeRenderData {
 	void subdivide();
 	void unsubdivide();
 	void loadTerrainMesh();
-	void update(PlanetCamera & camera);
 	void renderTerrain(Renderer& renderer);
+	void update(PlanetSystemPlayer & player);
 	void create(QuadtreeNode & quadtreeNode);
-	void updateWithoutSubdivision(PlanetCamera& camera);
+	void updateWithoutSubdivision(PlanetSystemPlayer& player);
 	void renderTerrainLevel(UShort level, Renderer &renderer);
 };
 
@@ -40,6 +38,6 @@ struct QuadtreeRenderSystem {
 	
 	void count();
 	void destroy();
-	void update(PlanetCamera& camera);
+	void update(PlanetSystemPlayer& player);
 	void renderLevel(UShort level, Renderer& renderer);
 };

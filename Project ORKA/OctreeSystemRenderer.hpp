@@ -1,20 +1,14 @@
 #pragma once
 
-#include "GPUMesh.hpp"
-#include "PlanetSystem.hpp"
-#include "TerrainRendering.hpp"
-#include "MeshSystem.hpp"
-#include "TextureSystem.hpp"
-#include "ShaderSystem.hpp"
-#include "PlanetCamera.hpp"
-#include "RelativeChunkOffset.hpp"
+#include "OctreeSystem.hpp"
 
 struct Renderer;
+struct PlanetSystemPlayer;
 
 struct OctreeNodeRenderData {
 	OctreeNode* equivalentOctreeNode = nullptr;
 	//data
-	Vec3 chunkOffset = Vec3(0);
+	Vec3 cameraPosition = Vec3(0);
 	Bool inDrawDistance = false;
 
 	Bool subdivided = false;
@@ -33,10 +27,10 @@ struct OctreeNodeRenderData {
 	void subdivide();
 	void unsubdivide();
 	void render(Renderer & renderer);
-	void update(PlanetCamera& camera);
 	void create(OctreeNode & octreeNode);
+	void update(PlanetSystemPlayer& player);
 	void renderLevel(UShort level, Renderer & renderer);
-	void updateWithoutSubdivision(PlanetCamera & camera);
+	void updateWithoutSubdivision(PlanetSystemPlayer & player);
 	//
 	void renderWater(Renderer & renderer);
 	void renderWaterLevel(UShort level, Renderer& renderer);
@@ -50,6 +44,6 @@ struct OctreeRenderSystem {
 	void count();
 	void destroy();
 	void create(Renderer& renderer);
-	void update(PlanetCamera& camera);
+	void update(PlanetSystemPlayer& player);
 	void renderLevel(UShort level, Renderer& renderer);
 };

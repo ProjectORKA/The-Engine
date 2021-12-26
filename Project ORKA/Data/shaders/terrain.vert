@@ -63,7 +63,7 @@ void main(){
 	vec3 position = vertex + vec3(0,0,0);//texture(texture1,uvs));
 
 	vec3 positionInChunk = (mMatrix * vec4(position, 1)).xyz;
-	vec3 cameraRelativePosition = chunkOffsetVector.xyz + positionInChunk;
+	vec3 cameraRelativePosition = positionInChunk - cameraPosition.xyz;
 	vec3 customNormal = normals;
 
 	slope = customNormal.z;
@@ -77,12 +77,13 @@ void main(){
 
 	vec3 worldColor = ((position) + vec3(0.5,0.5,0.0) + worldOffset.xyz)/vec3(pow(2,worldOffset.w),pow(2,worldOffset.w),pow(2,worldOffset.w-1));
 
-	vec4 screenSpacePosition = vpMatrix * vec4(cameraRelativePosition.xyz,1);
+	vec4 screenSpacePosition = pMatrix * vMatrix * vec4(cameraRelativePosition.xyz,1);
 	worldCoordinate = ((position.xyz*pow(2,64-worldOffset.w)) + worldOffset.xyz) / pow(2,64);
 	gl_Position  = screenSpacePosition;
 
+	depth = (screenSpacePosition.z / pow(2,worldOffset.w));
+
 	vertexPosition = cameraRelativePosition.xyz;
-	depth = screenSpacePosition.w;
 	normal = customNormal;
 	textureCoordinate = uvs;
 };

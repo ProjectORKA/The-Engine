@@ -1,23 +1,24 @@
 #include "FramebufferSystem.hpp"
+#include "Renderer.hpp"
 
 Framebuffer& FramebufferSystem::current()
 {
 	return framebuffers[currentFramebufferIndex];
 }
 
-void FramebufferSystem::add()
+void FramebufferSystem::add(Renderer & renderer)
 {
 	framebuffers.emplace_back();
 	framebuffers.back().create();
-	use(framebuffers.size() - 1);
+	use(renderer, framebuffers.size() - 1);
 }
-void FramebufferSystem::create()
+void FramebufferSystem::create(Renderer& renderer)
 {
 	framebuffers.clear();
-	add();	//0 main framebuffer
-	add();	//1 blur result
-	add();	//2 mask
-	add();	//3 drop shadow
+	add(renderer);	//0 main framebuffer
+	add(renderer);	//1 blur result
+	add(renderer);	//2 mask
+	add(renderer);	//3 drop shadow
 }
 void FramebufferSystem::destroy()
 {
@@ -43,12 +44,12 @@ void FramebufferSystem::update(Area area)
 		}
 	}
 }
-void FramebufferSystem::use(Index framebufferIndex)
+void FramebufferSystem::use(Renderer & renderer, Index framebufferIndex)
 {
 	if (framebufferIndex > (framebuffers.size() - 1)) {
 		logError(String("Invalid framebufferIndex! (").append(std::to_string(framebufferIndex)).append(")"));
 		return;
 	}
 	currentFramebufferIndex = framebufferIndex;
-	current().use();
+	current().use(renderer);
 }

@@ -17,31 +17,21 @@ struct CPUMesh {
 	Vector<Vec3> normals;
 	Vector<Index> indices;
 	MeshDrawMode drawMode = MeshDrawMode::staticMode;
-	
 	Bool readyForUpload = false;
-	
+		
 	CPUMesh();
 	~CPUMesh(){};
 	CPUMesh(Name name);
-	CPUMesh(Plot& plot);
 	CPUMesh(Graph& graph);
 
-
+	void render();
 	void saveMeshFile();
 	void load(Name name);
+	void checkIntegrity();
 	void loadFBX(Path path);
 	void loadMeshFile(Path path);
 	void calculateSmoothNormals();
 };
-
-//struct MeshHeaderV1 {
-//	const unsigned int version = 1;
-//	Name meshName = "";
-//	PrimitiveMode primitiveMode = Triangles;
-//	unsigned int vertexCount = 0;
-//	unsigned int uvCount = 0;
-//	unsigned int indexCount = 0;
-//};
 
 struct MeshHeaderV2 {
 	const unsigned int version = 2;
@@ -52,3 +42,12 @@ struct MeshHeaderV2 {
 	unsigned int normalCount = 0;
 	unsigned int indexCount = 0;
 };
+
+//struct MeshHeaderV1 {
+//	const unsigned int version = 1;
+//	Name meshName = "";
+//	PrimitiveMode primitiveMode = Triangles;
+//	unsigned int vertexCount = 0;
+//	unsigned int uvCount = 0;
+//	unsigned int indexCount = 0;
+//};

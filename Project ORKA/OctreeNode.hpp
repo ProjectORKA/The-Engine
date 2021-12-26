@@ -1,21 +1,18 @@
 
 #pragma once
 
-#include "Random.hpp"
 #include "OctreeData.hpp"
 #include "OctreeID.hpp"
+#include "Basics.hpp"
 #include "QuadtreeNode.hpp"
 
-struct OctreeSystem;
-
 struct OctreeNode {
-
 	OctreeNodeData data;
 	OctreeID id;
 	Bool isValid = false;
 	Mutex mutex;
 	UInt users = 0;
-	bool subdivided = false;
+	Bool subdivided = false;
 	//parent node
 	OctreeNode* parent = nullptr;
 	//child nodes

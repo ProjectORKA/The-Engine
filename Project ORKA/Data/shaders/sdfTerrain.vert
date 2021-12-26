@@ -11,10 +11,9 @@ out vec3 rayOrigin;
 out highp vec3 rayDirection;
 
 void main(){
-	rayOrigin = chunkOffsetVector.xyz;
+	rayOrigin = -cameraPosition.xyz;
 	rayDirection = normalize(vertex);
 
-	vec4 screenSpacePos = vpMatrix * vec4(vertex,1);
-
+	vec4 screenSpacePos = pMatrix* vMatrix * mMatrix * vec4(vertex, 1);
 	gl_Position = screenSpacePos;
 };

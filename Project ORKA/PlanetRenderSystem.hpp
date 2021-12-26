@@ -1,9 +1,12 @@
 #pragma once
 
-#include "PlanetSystem.hpp"
-#include "QuadtreeSystemRenderer.hpp"
+#include "Basics.hpp"
 #include "OctreeSystemRenderer.hpp"
-#include "Time.hpp"
+#include "QuadtreeSystemRenderer.hpp"
+
+struct Renderer;
+struct PlanetSystem;
+struct PlanetSystemPlayer;
 
 struct PlanetRenderSystem {
 	Bool chunkBorders = true;
@@ -14,5 +17,5 @@ struct PlanetRenderSystem {
 
 	void destroy();
 	void create(Renderer& renderer);
-	void render(PlanetSystem& planetSystem, Renderer& renderer, PlanetCamera& planetCamera);
+	void render(PlanetSystem& planetSystem, Renderer& renderer, PlanetSystemPlayer& player);
 };

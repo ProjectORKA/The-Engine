@@ -36,6 +36,7 @@ using SizeIPtr = __int64;
 
 void apiClearColor();
 void apiClearDepth();
+Bool apiGetCullFace();
 void apiEnable(Enum cap);
 void apiDisable(Enum cap);
 void apiCullFace(Enum mode);

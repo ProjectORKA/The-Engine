@@ -27,19 +27,22 @@ void Uniforms::destroy()
 void Uniforms::reset()
 {
 	data.mMatrix = Matrix(1);
-	data.vpMatrix = Matrix(1);
+	data.vMatrix = Matrix(1);
+	data.pMatrix = Matrix(1);
 	data.worldOffset = Vec4(0, 0, 0, 0);
 	data.cameraVector = Vec4(0, 0, 0, 0);
-	data.chunkOffsetVector = Vec4(0, 0, 0, 0);
+	data.cameraPosition = Vec4(0, 0, 0, 0);
 	data.customColor = Vec4(1, 1, 1, 1);
-	//data.time = 0.0f;		
+	//screenDimensions = Vec4(1, 1, 0, 0);
+	//data.sunDir = Vec4(0, 0, 1, 1);
+	//data.time = 0.0f;
 	data.custom1 = 0.0f;
 	data.custom2 = 0.0f;
 	data.custom3 = 0.0f;
 	data.distortion = 0;
-	data.placeholder1 = 0.0f;
-	data.placeholder2 = 0.0f;
-	data.placeholder3 = 0.0f;
+	//data.width = 1;
+	//data.height = 1;
+	data.placeholder1 = 0;
 
 	sampler2Ds["texture0"] = 0;
 }

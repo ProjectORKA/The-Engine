@@ -1,5 +1,11 @@
 #pragma once
 
+#ifdef DEBUG_TEXTURES
+#define DEBUG
+#else
+#undef DEBUG
+#endif
+
 #include "Basics.hpp"
 #include "Debug.hpp"
 #include "GraphicsAPI.hpp"

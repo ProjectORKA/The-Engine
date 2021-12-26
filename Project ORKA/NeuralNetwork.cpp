@@ -1,13 +1,20 @@
 
 #include "NeuralNetwork.hpp"
+#include "Renderer.hpp"
+#include "Random.hpp"
 
-Float activationFunction(Float a) {
-	//return 1.0f / (1.0f + pow(100.0f, (-a)));
-	//return max(a, 0.0f);
-	return clamp(a, 0.0f, 10.0f);
-	//return -2.0f / (pow(10.0f, a) + 1.0f) + 1.0f;
+void NeuralNetwork::calculate() {
+	Index currentNeuron = 0;
+	
+	for (Connection & c : connections) {
+		if (c.inputNeuron != currentNeuron) {
+			currentNeuron = c.inputNeuron;
+			neurons[currentNeuron].value = activationFunction(neurons[currentNeuron].value);
+		}
+
+		c.calculate(neurons);
+	}
 }
-
 void NeuralNetwork::initialize() {
 	neurons.clear();
 	connections.clear();
@@ -23,7 +30,16 @@ void NeuralNetwork::initialize() {
 		}
 	}
 }
-
+Float activationFunction(Float a) {
+	//return 1.0f / (1.0f + pow(100.0f, (-a)));
+	//return max(a, 0.0f);
+	return clamp(a, 0.0f, 10.0f);
+	//return -2.0f / (pow(10.0f, a) + 1.0f) + 1.0f;
+}
+Vec2 NeuralNetwork::IndexToPosition(Index id) {
+	Float posOnCircle = 2 * PI * Float(id) / Float(NEURON_COUNT);
+	return Vec2(0.9) * Vec2(-sin(posOnCircle), -cos(posOnCircle));
+}
 void NeuralNetwork::input(Vector<Float> input) {
 	for (Int i = 0; i < input.size(); i++) {
 		neurons[i].value = input[i];
@@ -33,25 +49,6 @@ void NeuralNetwork::input(Vector<Float> input) {
 		neurons[i].value = 0;
 	}
 }
-
-void NeuralNetwork::calculate() {
-	Index currentNeuron = 0;
-	
-	for (Connection & c : connections) {
-		if (c.inputNeuron != currentNeuron) {
-			currentNeuron = c.inputNeuron;
-			neurons[currentNeuron].value = activationFunction(neurons[currentNeuron].value);
-		}
-
-		c.calculate(neurons);
-	}
-}
-
-Vec2 NeuralNetwork::IndexToPosition(Index id) {
-	Float posOnCircle = 2 * PI * Float(id) / Float(NEURON_COUNT);
-	return Vec2(0.9) * Vec2(-sin(posOnCircle), -cos(posOnCircle));
-}
-
 void NeuralNetwork::render(Renderer& renderer) {
 
 	Float overallSize = 1.0f / NEURON_COUNT;
@@ -84,7 +81,6 @@ void NeuralNetwork::render(Renderer& renderer) {
 		}
 	}
 }
-
 void Connection::calculate(Vector<Neuron>& neurons) {
 	if (inputNeuron == outputNeuron) neurons[outputNeuron].value += 1 * weight;
 	else neurons[outputNeuron].value += neurons[inputNeuron].value * weight;

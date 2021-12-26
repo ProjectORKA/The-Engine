@@ -1,26 +1,16 @@
 
 #pragma once
 
-#include "Renderer.hpp"
-#include "GameSystem.hpp"
+#include "Basics.hpp"
+#include "GPUTexture.hpp"
+#include "Window.hpp"
+#include "UIElement.hpp"
 
-extern Index newUIelementID;
+struct Renderer;
+struct Window;
 
-struct UserInterface;
 
-extern UserInterface ui;
 
-struct UIElement {
-	Index id = newUIelementID++;
-	//TiledRectangle screenArea;
-
-	virtual void render(Renderer& renderer) {};
-	virtual void mouseIsMoving(Window& window, IVec2 position) {};
-	virtual void mouseIsPressed(Window& window, Int button, Int action, Int modifiers) {};
-	virtual void buttonIsPressed(Window& window, Int keyID, Int action, Int modifiers) {};
-
-	~UIElement();
-};
 struct UIImage : public UIElement {
 	GPUTexture* image;
 
@@ -58,7 +48,6 @@ struct Button : public UIElement {
 	UIElement* content = nullptr;
 
 	void render(Renderer& renderer);
-
 	Button(Bool& data) {
 		this->data = &data;
 	}
@@ -71,6 +60,7 @@ struct GameView : public UIElement {
 	Index gameID = 0;
 
 	void render(Renderer& renderer);
+	void filesDropped(Window& window, Vector<Path> paths) override;
 	void mouseIsMoving(Window& window, IVec2 position) override;
 	void mouseIsPressed(Window& window, Int button, Int action, Int modifiers) override;
 	void buttonIsPressed(Window& window, Int keyID, Int action, Int modifiers) override;
@@ -94,6 +84,8 @@ struct UserInterface {
 
 	UserInterface();
 };
+
+extern UserInterface ui;
 
 GameView& gameView();
 Container& container();
