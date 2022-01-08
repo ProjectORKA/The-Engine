@@ -47,7 +47,7 @@ Int main(Int  argc, Char* argv[]) {
 	randomizeSeed();
 #ifndef TESTING
 	
-	gameSystem.add(new Pong());
+	gameSystem.add(new Mooncrash());
 	gameSystem.run();
 
 	window("ORKA",&gameView(0));
