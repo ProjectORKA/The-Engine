@@ -4,13 +4,15 @@
 void renderUI(Renderer& renderer, MooncrashPlayer& player) {
 	renderer.setWireframeMode(false);
 
+	renderer.screenSpace();
+
 	String s = String("FrameTime: ").append(toString(renderer.renderTime.delta));
 	renderer.renderText(s, Vec2(0), fonts.debug);
 
 	s = String("FPS: ").append(toString(1.0f / renderer.renderTime.delta));
 	renderer.renderText(s, Vec2(0, fonts.debug.absoluteSize), fonts.debug);
 
-	s = String("Speed: ").append(toString(player.speedMultiplier));
+	s = String("Speed: ").append(toString(player.speedExponent));
 	renderer.renderText(s, Vec2(0, 2 * fonts.debug.absoluteSize), fonts.debug);
 
 	s = String("Camera height float: ").append(toString(player.camera.location.z));
@@ -150,7 +152,7 @@ void Mooncrash::render(Renderer& renderer) {
 
 	renderMooncrashAtmosphere(renderer,player, normalize(Vec3(1)));
 
-	//renderUI(renderer, player);
+	renderUI(renderer, player);
 }
 void Mooncrash::mouseIsMoving(Window& window, IVec2 position) {
 	if (inputManager.isCapturing(window))player.camera.rotate(Vec2(position) * Vec2(mouseSensitivity));
@@ -213,5 +215,5 @@ void Mooncrash::mouseIsPressed(Window& window, Int button, Int action, Int modif
 	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE) inputManager.uncaptureCursor(window);
 }
 void Mooncrash::mouseIsScrolled(Window& window, Double xAxis, Double yAxis) {
-	player.speedMultiplier += yAxis;
+	player.speedExponent += yAxis;
 }

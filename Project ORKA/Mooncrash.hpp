@@ -9,7 +9,6 @@
 #define CAMERA_TERRAIN_LIMIT false
 
 	struct MooncrashPlayer : public PlanetSystemPlayer {
-		Int speedMultiplier = INITIAL_CAMERA_SPEED;
 		void render(Renderer& renderer) override;
 	};
 
@@ -31,7 +30,7 @@
 		PlanetSystem planetSystem;
 
 		Mooncrash() {
-			player.speedMultiplier = 200;
+			player.speedExponent = 200;
 		}
 
 		void update() override;
