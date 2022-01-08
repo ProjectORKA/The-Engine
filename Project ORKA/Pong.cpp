@@ -7,7 +7,7 @@ Float ballSpeedReduction = 1.5;
 Float paddleSpeed = 2.5;
 
 void Ball::render(Renderer& renderer) {
-	renderer.uniforms().data.mMatrix =
+	renderer.uniforms().mMatrix() =
 		scale(translate(Matrix(1), Vec3(position, 0)), Vec3(0.01, 0.01, 0.5));
 	renderer.renderMesh("centeredCube");
 }
@@ -51,7 +51,7 @@ void Ball::update(Float deltaTime, PongPlayer players[2]) {
 				stuckToPaddle = true;
 				stuckToPaddle1 = true;
 				//ball will be attached to paddle 1
-				players[1].difficulty *= 1.1;
+				players[1].difficulty *= PONG_DIFFICULTY_MODIFIER;
 			}
 			else {
 				if (position.x > 0.895 && position.x < 0.95 && abs(position.y - players[1].position.y) < 0.1) {
@@ -71,7 +71,7 @@ void Ball::update(Float deltaTime, PongPlayer players[2]) {
 				stuckToPaddle = true;
 				stuckToPaddle1 = false;
 				//ball will be attached to paddle 2
-				players[1].difficulty /= 1.1;
+				players[1].difficulty /= PONG_DIFFICULTY_MODIFIER;
 			}
 			else {
 				if (position.x < -0.895 && position.x > -0.95 && abs(position.y - players[0].position.y) < 0.1) {
@@ -144,7 +144,7 @@ void Pong::render(Renderer& renderer) {
 
 	renderer.apectCorrectNormalizedSpace();
 	Vec2 normalizedCursorPosition = Vec2(2) * ((Vec2(inputManager.cursorPosition) / Vec2(renderer.framebufferSystem.framebufferSize)) - Vec2(0.5));
-	Vec3 cursorWorldPos = inverse(renderer.uniforms().data.pMatrix) * Vec4(normalizedCursorPosition, 0, 1);
+	Vec3 cursorWorldPos = inverse(renderer.uniforms().pMatrix()) * Vec4(normalizedCursorPosition, 0, 1);
 
 
 	//players[1].ballLocationInput(ball);
@@ -167,35 +167,30 @@ void Pong::render(Renderer& renderer) {
 
 	renderer.apectCorrectNormalizedSpace();
 	renderer.useShader("color");
-	renderer.uniforms().data.customColor = Vec4(1);
-	renderer.uniforms().update();
+	renderer.uniforms().customColor() = Vec4(1);
 
 	//paddle 1
-	renderer.uniforms().data.mMatrix =
+	renderer.uniforms().mMatrix() =
 		scale(translate(Matrix(1), Vec3(players[0].position, 0)), Vec3(0.01, 0.2, 0.5));
 	renderer.renderMesh("centeredCube");
 	//paddle 2
-	renderer.uniforms().data.mMatrix =
+	renderer.uniforms().mMatrix() =
 		scale(translate(Matrix(1), Vec3(players[1].position, 0)), Vec3(0.01, 0.2, 0.5));
 	renderer.renderMesh("centeredCube");
 	//ball
 	for (Ball& ball : balls)ball.render(renderer);
 
 	//walls
-	renderer.uniforms().data.mMatrix =
-		scale(translate(Matrix(1), Vec3(0, 1, 0)), Vec3(2, 0.01, 0.5));
+	renderer.uniforms().mMatrix() = scale(translate(Matrix(1), Vec3(0, 1, 0)), Vec3(2, 0.01, 0.5));
 	renderer.renderMesh("centeredCube");
 
-	renderer.uniforms().data.mMatrix =
-		scale(translate(Matrix(1), Vec3(0, -1, 0)), Vec3(2, 0.01, 0.5));
+	renderer.uniforms().mMatrix() = scale(translate(Matrix(1), Vec3(0, -1, 0)), Vec3(2, 0.01, 0.5));
 	renderer.renderMesh("centeredCube");
 
-	renderer.uniforms().data.mMatrix =
-		scale(translate(Matrix(1), Vec3(1, 0, 0)), Vec3(0.01, 2, 0.5));
+	renderer.uniforms().mMatrix() = scale(translate(Matrix(1), Vec3(1, 0, 0)), Vec3(0.01, 2, 0.5));
 	renderer.renderMesh("centeredCube");
 
-	renderer.uniforms().data.mMatrix =
-		scale(translate(Matrix(1), Vec3(-1, 0, 0)), Vec3(0.01, 2, 0.5));
+	renderer.uniforms().mMatrix() = scale(translate(Matrix(1), Vec3(-1, 0, 0)), Vec3(0.01, 2, 0.5));
 	renderer.renderMesh("centeredCube");
 
 	Float height = renderer.framebufferSystem.framebufferSize.y;
@@ -203,18 +198,15 @@ void Pong::render(Renderer& renderer) {
 
 	//text
 	FontStyle style;
-	style.absoluteSize = 100;
+	style.absoluteSize = 50;
 
 	renderer.screenSpace();
-
-	renderer.textRenderSystem.render(std::to_string(players[0].score), 10, height - 100, style);
-	renderer.textRenderSystem.render(std::to_string(players[1].score), width - 100, height - 100, style);
-
-	renderer.textRenderSystem.render(std::to_string(players[1].difficulty), 10, height - 200, style);
-	renderer.textRenderSystem.render(std::to_string(balls[0].speed), 10, height - 300, style);
-
-	renderer.textRenderSystem.render(std::to_string(1.0f / renderer.renderTime.delta), 10, 100, style);
-	renderer.textRenderSystem.render(std::to_string(balls[0].speed), 10, height - 300, style);
+	renderer.renderText(std::to_string(players[0].score),					Vec2(10, height - 100),			style);
+	renderer.renderText(std::to_string(players[1].score),					Vec2(width - 100,height - 100),	style);
+	renderer.renderText(std::to_string(players[1].difficulty),				Vec2(10, height - 200),			style);
+	renderer.renderText(std::to_string(balls[0].speed),						Vec2(10, height - 300),			style);
+	renderer.renderText(std::to_string(balls[0].speed),						Vec2(10, height - 300),			style);
+	renderer.renderText(std::to_string(1.0f / renderer.renderTime.delta),	Vec2(50, 50),					fonts.paragraph);
 }
 void Pong::buttonIsPressed(Window& window, Int keyID, Int action, Int modifiers) {
 

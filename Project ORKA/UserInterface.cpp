@@ -76,6 +76,9 @@ void GameView::filesDropped(Window& window, Vector<Path> paths){
 void GameView::buttonIsPressed(Window& window, Int keyID, Int action, Int modifiers) {
 	gameSystem.games[gameID]->buttonIsPressed(window, keyID, action, modifiers);
 }
+void GameView::mouseIsScrolled(Window& window, Double xAxis, Double yAxis) {
+	gameSystem.games[gameID]->mouseIsScrolled(window, xAxis, yAxis);
+}
 void GameView::mouseIsPressed(Window& window, Int button, Int action, Int modifiers) {
 	gameSystem.games[gameID]->mouseIsPressed(window, button, action, modifiers);
 }

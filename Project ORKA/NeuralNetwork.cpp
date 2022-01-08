@@ -36,9 +36,9 @@ Float activationFunction(Float a) {
 	return clamp(a, 0.0f, 10.0f);
 	//return -2.0f / (pow(10.0f, a) + 1.0f) + 1.0f;
 }
-Vec2 NeuralNetwork::IndexToPosition(Index id) {
+Vec3 NeuralNetwork::IndexToPosition(Index id) {
 	Float posOnCircle = 2 * PI * Float(id) / Float(NEURON_COUNT);
-	return Vec2(0.9) * Vec2(-sin(posOnCircle), -cos(posOnCircle));
+	return Vec3(Vec2(0.9) * Vec2(-sin(posOnCircle), -cos(posOnCircle)),0);
 }
 void NeuralNetwork::input(Vector<Float> input) {
 	for (Int i = 0; i < input.size(); i++) {
@@ -58,26 +58,22 @@ void NeuralNetwork::render(Renderer& renderer) {
 		//render circle
 		renderer.shaderSystem.use("color");
 
-		renderer.uniforms().data.customColor = Color(Vec3(neurons[i].value), 0.75);
+		renderer.uniforms().customColor() = Color(Vec3(neurons[i].value), 0.75);
 
-		renderer.uniforms().data.mMatrix = scale(translate(Matrix(1), Vec3(IndexToPosition(i), 0)), Vec3(overallSize));
-		renderer.uniforms().update();
+		renderer.uniforms().mMatrix() = scale(translate(Matrix(1), IndexToPosition(i)), Vec3(overallSize));
 		renderer.renderMesh("circle");
 
 		//render connections
-		renderer.uniforms().data.mMatrix = Matrix(1);
-		renderer.uniforms().update();
+		renderer.uniforms().mMatrix() = Matrix(1);
 		for (Connection & c : connections) {
 
 			if (c.weight >= 0) {
-				renderer.uniforms().data.customColor = Color(Vec3(0, neurons[i].value, 0), 0.75);
+				renderer.uniforms().customColor() = Color(Vec3(0, neurons[i].value, 0), 0.75);
 			}
 			else {
-				renderer.uniforms().data.customColor = Color(Vec3(neurons[i].value, 0, 0), 0.75);
+				renderer.uniforms().customColor() = Color(Vec3(neurons[i].value, 0, 0), 0.75);
 			}
-			renderer.uniforms().update();
-
-			renderer.arrow2D(IndexToPosition(c.inputNeuron), IndexToPosition(c.outputNeuron), abs(c.weight) * overallSize * 0.5);
+			renderer.arrow(IndexToPosition(c.inputNeuron), IndexToPosition(c.outputNeuron));// , abs(c.weight)* overallSize * 0.5);
 		}
 	}
 }

@@ -26,10 +26,10 @@ void Intro::render(Renderer& renderer)
 	Float animationLength = 1.1;
 	Float size = min(pow(1 + 1 / pow(animationLength, 5), pow(renderer.renderTime.total - 2 * animationLength, 5)), 100.0);
 	Float tint = max(2 - size, 0.0f);
-	renderer.uniforms().data.customColor = Color(tint, tint, tint, 1);
+	renderer.uniforms().customColor() = Color(tint, tint, tint, 1);
 	Matrix modelMatrix = glm::scale(Matrix(1), Vec3(size, 1, size));
 	modelMatrix = glm::rotate(modelMatrix, 20 / (pow(renderer.renderTime.total, 4.0f) + 1), Vec3(0, 0, 1));
-	renderer.uniforms().data.mMatrix = modelMatrix;
+	renderer.uniforms().mMatrix() = modelMatrix;
 
 	renderer.useShader("unlit");
 	renderer.useTexture("ProjectORKABakedLogo");

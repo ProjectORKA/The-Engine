@@ -16,15 +16,16 @@ struct Framebuffer {
 	Index framebufferID = 0;
 
 	GPUTexture colorTexture;
+	GPUTexture normalTexture;
+	GPUTexture positionTexture;
+	GPUTexture materialIDTexture;
+	GPUTexture objectIDTexture;
 	GPUTexture depthTexture;
-	//GPUTexture uiPicker;
 
 	void create();
 	void destroy();
 	void setAsTexture();
-	void detachTextures();
+	void blitFramebuffer(); //legacy
 	void resize(Area resolution);
 	void use(Renderer & renderer);
-	void attachTexture(GPUTexture& texture);
-	void blitFramebuffer(); //legacy
 };

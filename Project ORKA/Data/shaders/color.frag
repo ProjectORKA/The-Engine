@@ -2,9 +2,8 @@
 //! #include "uniforms.glsl"
 
 layout(location = 0) out vec4 color;
-in vec2 textureCoordinate;
-in vec3 normal;
+in vec4 col;
 
 void main(){
-	color = customColor;
+	color = col;
 };

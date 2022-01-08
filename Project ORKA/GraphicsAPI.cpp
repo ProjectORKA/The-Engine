@@ -145,8 +145,14 @@ void apiNamedFramebufferDrawBuffer(UInt framebufferID) {
 
 	glNamedFramebufferDrawBuffer(framebufferID, GL_COLOR_ATTACHMENT0);
 }
-void apiBindFramebuffer(Enum target, UInt framebufferID) {
-	glBindFramebuffer(target, framebufferID);
+void apiBindFramebuffer(UInt framebufferID) {
+	glBindFramebuffer(GL_FRAMEBUFFER, framebufferID);
+}
+void apiBindDrawFramebuffer(UInt framebufferID) {
+	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, framebufferID);
+}
+void apiBindReadFramebuffer(UInt framebufferID) {
+	glBindFramebuffer(GL_READ_FRAMEBUFFER, framebufferID);
 }
 void apiTexParameteri(Enum target, Enum name, Int param) {
 	glTexParameteri(target, name, param);

@@ -64,6 +64,7 @@ struct GameView : public UIElement {
 	void mouseIsMoving(Window& window, IVec2 position) override;
 	void mouseIsPressed(Window& window, Int button, Int action, Int modifiers) override;
 	void buttonIsPressed(Window& window, Int keyID, Int action, Int modifiers) override;
+	void mouseIsScrolled(Window& window, Double xAxis, Double yAxis) override;;
 
 	GameView(Index gameID);
 };

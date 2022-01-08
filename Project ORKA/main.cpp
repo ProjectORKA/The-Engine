@@ -31,6 +31,15 @@
 #include "WindowsEntry.hpp"
 #include "Random.hpp"
 
+//games
+#include "Pong.hpp"
+#include "Intro.hpp"
+#include "Sortr.hpp"
+#include "Sandbox.hpp"
+#include "Mooncrash.hpp"
+#include "AIPlayground.hpp"
+#include "DungeonsAndDiscord.hpp"
+
 //#define TESTING
 //#define MEMORY_LEAK_DETECTION
 
@@ -38,7 +47,7 @@ Int main(Int  argc, Char* argv[]) {
 	randomizeSeed();
 #ifndef TESTING
 	
-	gameSystem.add(new Mooncrash());
+	gameSystem.add(new Pong());
 	gameSystem.run();
 
 	window("ORKA",&gameView(0));
@@ -47,6 +56,7 @@ Int main(Int  argc, Char* argv[]) {
 #else
 	//testing code
 	/////////////////////////////////////////////////////////////////////////////////////////////////
+
 
 
 

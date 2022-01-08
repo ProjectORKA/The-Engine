@@ -4,6 +4,8 @@
 #include "BitmapTextRenderSystem.hpp"
 #include "GlyphTextRenderSystem.hpp"
 
+struct Renderer;
+
 struct TextRenderSystem {
 
 	BitmapTextRenderSystem bitmapTextRenderSystem;
@@ -12,5 +14,5 @@ struct TextRenderSystem {
 
 	void destroy();
 	void create(Renderer& renderer);
-	void render(String text, Float xPos, Float yPos, FontStyle style);
+	void render(Renderer& renderer, String text, Vec2 position, FontStyle style);
 };

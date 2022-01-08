@@ -15,27 +15,61 @@ struct GlobalUniformData {
 	Vec4 cameraPosition = Vec4(0, 0, 0, 0);			//16
 	Vec4 customColor = Vec4(0, 0, 0, 1);			//16
 	Vec4 sunDir = Vec4(0, 0, 1, 1);					//16
-	Vec4 screenDimensions = Vec4(1, 1, 0, 0);		//16
 	float time = 0.0f;								//16
 	float custom1 = 0.0f;
 	float custom2 = 0.0f;
 	float custom3 = 0.0f;
-	Int distortion = 0;								//16
-	Int width = 0;
+	Int width = 0;									//16
 	Int height = 0;
+	Int materialID = 0;
+	Int objectID = 0;
+	Int distortion = 0;								//16
 	Int placeholder1 = 0;
+	Int placeholder2 = 0;
+	Int placeholder3 = 0;
 };
 
 struct Uniforms {
 	Index id = -1;
-	GlobalUniformData data;
 	String uniformBlockShaderCode;
+
+	Bool update = true;
 
 	void create();
 	void reset();
-	void update();
+	void upload();
 	void destroy();
+
+	Int& width();
+	Int& width(Int value);
+	Int& height(Int value);
+	Int& distortion(Int value);
+	Float& custom1(Float value);
+	Float& time(Float value);
+	Vec4& customColor(Vec4 value);
+	Vec4& cameraPos(Vec4 value);
+	Vec4& cameraVec(Vec4 value);
+	Vec4& sunDir(Vec4 value);
+	Vec4& worldOffset(Vec4 value);
+	Matrix& mMatrix(Matrix value);
+	Matrix& vMatrix(Matrix value);
+	Matrix& pMatrix(Matrix value);
+	Int& height();
+	Int& distortion();
+	Float& custom1();
+	Float& time();
+	Vec4& customColor();
+	Vec4& cameraPos();
+	Vec4& cameraVec();
+	Vec4& sunDir();
+	Vec4& worldOffset();
+	Matrix& mMatrix();
+	Matrix& vMatrix();
+	Matrix& pMatrix();
+
 
 	Map<Name, Index> sampler2Ds;
 	Map<Name, Index> sampler2DMS;
+private:
+	GlobalUniformData data;
 };

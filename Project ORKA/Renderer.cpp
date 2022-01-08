@@ -1,5 +1,9 @@
 #include "Renderer.hpp"
 
+#include "Random.hpp"
+#include "Player.hpp"
+#include "Camera.hpp"
+
 void Renderer::end()
 {
 	pollGraphicsAPIError();
@@ -13,15 +17,16 @@ void Renderer::sync()
 }
 void Renderer::begin()
 {
-	mutex.lock();											//used for syncronizing other threads
-	renderTime.update();									//advances the time
-	shaderSystem.uniforms.data.time = renderTime.total;		//makes time available to shaders
-	framebufferSystem.deselect();							//selects the backbuffer of the window
-	clearColor(Color(Vec3(0), 0.0));						//and clears its contents
-	clearDepth();
+	mutex.lock();							//used for syncronizing other threads
+	renderTime.update();					//advances the time
+	uniforms().time() = renderTime.total;	//makes time available to shaders
+	framebufferSystem.deselect();			//selects the backbuffer of the window
+	clearColor(Color(Vec3(0), 0.0));		//and clears its contents
+	clearDepth();							//clears depth as to not accidentally hide geometry
 }
 void Renderer::create()
 {
+	randomizeSeed();
 	//basic systems
 	renderTime.reset();
 	textureSystem.create();
@@ -62,19 +67,24 @@ void Renderer::screenSpace() {
 	matrix = glm::translate(matrix, Vec3(-1, -1, 0));
 	matrix = glm::scale(matrix, Vec3(2, 2, 0));
 	matrix = glm::scale(matrix, Vec3(1.0 / width, 1.0 / height, 0));
-	uniforms().data.vMatrix = Matrix(1);
-	uniforms().data.pMatrix = matrix;
+	uniforms().vMatrix() = Matrix(1);
+	uniforms().pMatrix() = matrix;
+}
+void Renderer::fill(Vec4 color) {
+	uniforms().customColor(color);
 }
 void Renderer::normalizedSpace() {
-	uniforms().data.vMatrix = Matrix(1);
-	uniforms().data.pMatrix = Matrix(1);
+	uniforms().vMatrix() = Matrix(1);
+	uniforms().pMatrix() = Matrix(1);
 }
 void Renderer::setWireframeMode() {
 	setWireframeMode(wireframeMode);
 }
 void Renderer::renderMesh(Name name) {
-	uniforms().update();
-	meshSystem.render(name);
+	meshSystem.render(uniforms(),name);
+}
+void Renderer::useTexture(Name name) {
+	textureSystem.use(name);
 }
 void Renderer::pollGraphicsAPIError() {
 	Int error = apiGetError();
@@ -95,11 +105,62 @@ void Renderer::setCulling(Bool isCulling) {
 		apiDisable(GL_CULL_FACE);
 	}
 }
+void Renderer::arrow(Vec3 start, Vec3 end) {
+	useShader("color");
+	uniforms().customColor(Vec4(1, 0, 0, 1));
+
+	Float length = distance(start, end) / 20;
+	if (length >= 0.075) return;
+	Vec3 z = normalize(end - start);
+	Vec3 x = cross(normalize(z),Vec3(0,0,1));
+	Vec3 y = cross(normalize(z), x);
+
+	Matrix m;
+	m[0] = Vec4(length * x,0);
+	m[1] = Vec4(length * y,0);
+	m[2] = Vec4(length * z,0);
+	m[3] = Vec4(start,1);
+
+	uniforms().mMatrix() = m;
+	renderMesh("arrow");
+
+
+
+	//Vec3 dir = normalize(start - end);
+	//Vec3 extend = cross(dir, Vec3(0, 0, 1));
+
+	//CPUMesh arrow;
+	//arrow.drawMode = MeshDrawMode::dynamicMode;
+	//arrow.indices.push_back(0);
+	//arrow.indices.push_back(1);
+	//arrow.indices.push_back(2);
+	//arrow.indices.push_back(3);
+	//arrow.name = "arrow";
+	//arrow.normals.push_back(Vec3(0, 0, 1));
+	//arrow.normals.push_back(Vec3(0, 0, 1));
+	//arrow.normals.push_back(Vec3(0, 0, 1));
+	//arrow.normals.push_back(Vec3(0, 0, 1));
+	//arrow.primitiveMode = PrimitiveMode::TriangleStrip;
+	//arrow.uvs.push_back(Vec2(0, 1));
+	//arrow.uvs.push_back(Vec2(0, 0));
+	//arrow.uvs.push_back(Vec2(1, 0));
+	//arrow.uvs.push_back(Vec2(1, 1));
+	//arrow.vertices.push_back(start + extend * width);
+	//arrow.vertices.push_back(start - extend * width);
+	//arrow.vertices.push_back(end);
+	//arrow.vertices.push_back(end);
+	//arrow.checkIntegrity();
+
+	//GPUMesh gpuMesh;
+	//gpuMesh.upload(arrow);
+	//gpuMesh.render(uniforms());
+	//gpuMesh.unload();
+}
 void Renderer::apectCorrectNormalizedSpace() {
 	Float aspect = aspectRatio();
-	uniforms().data.vMatrix = Matrix(1);
-	if (aspect > 1) uniforms().data.pMatrix = scale(Matrix(1), Vec3(1 / aspectRatio(), 1, 1));
-	else uniforms().data.pMatrix = scale(Matrix(1), Vec3(1, aspectRatio(), 1));
+	uniforms().vMatrix() = Matrix(1);
+	if (aspect > 1) uniforms().pMatrix() = scale(Matrix(1), Vec3(1 / aspectRatio(), 1, 1));
+	else uniforms().pMatrix() = scale(Matrix(1), Vec3(1, aspectRatio(), 1));
 }
 void Renderer::setDepthClamp(Bool depthClamp)
 {
@@ -137,6 +198,41 @@ void Renderer::setWireframeMode(Bool wireframeMode) {
 		apiPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	}
 }
+void Renderer::useTexture(Name name, Index location) {
+	textureSystem.use(name, location);
+}
+void Renderer::line(Vec3 start, Vec3 end, Float width) {
+
+	Vec3 dir = normalize(start - end);
+	Vec3 extend = cross(dir, Vec3(0, 0, 1));
+
+	CPUMesh line;
+	line.drawMode = MeshDrawMode::dynamicMode;
+	line.indices.push_back(0);
+	line.indices.push_back(1);
+	line.indices.push_back(2);
+	line.indices.push_back(3);
+	line.name = "line";
+	line.normals.push_back(Vec3(0, 0, 1));
+	line.normals.push_back(Vec3(0, 0, 1));
+	line.normals.push_back(Vec3(0, 0, 1));
+	line.normals.push_back(Vec3(0, 0, 1));
+	line.primitiveMode = PrimitiveMode::TriangleStrip;
+	line.uvs.push_back(Vec2(0, 1));
+	line.uvs.push_back(Vec2(0, 0));
+	line.uvs.push_back(Vec2(1, 0));
+	line.uvs.push_back(Vec2(1, 1));
+	line.vertices.push_back(start + extend * width);
+	line.vertices.push_back(start - extend * width);
+	line.vertices.push_back(end + extend * width);
+	line.vertices.push_back(end - extend * width);
+	line.checkIntegrity();
+
+	GPUMesh gpuMesh;
+	gpuMesh.upload(line);
+	gpuMesh.render(uniforms());
+	gpuMesh.unload();
+}
 void Renderer::createBlurTexture(Index from, Index to)
 {
 	//this function renders a blurred version of a framebuffer to another framebuffer
@@ -149,15 +245,43 @@ void Renderer::createBlurTexture(Index from, Index to)
 
 	framebufferSystem.use(*this, originalFramebufferID);
 }
+
+//sky
+
+void Renderer::renderSky(Camera& camera) {
+	setCulling(false);
+	setDepthTest(false);
+	camera.renderOnlyRot(*this);
+	useShader("sky");
+	useTexture("sky");
+	renderMesh("sky");
+	setCulling(true);
+	setDepthTest(true);
+}
+void Renderer::renderAtmosphere(Player& player, Vec3 sunDirection) {
+	Bool culling = getCulling();
+	setDepthTest(false);
+	player.camera.renderOnlyRot(*this);
+	uniforms().cameraPos() = Vec4(Vec3(0), 1);
+	setCulling(false);
+	uniforms().sunDir() = Vec4(sunDirection, 1);
+	useShader("atmosphere");
+	framebufferSystem.current().colorTexture.use(0);
+	renderMesh("centeredCube");
+	setCulling(culling);
+	setDepthTest(true);
+}
 void Renderer::addRenderObject(RenderObjectNames renderObjectNames)
 {
 	renderObjectSystem.addRenderObject(renderObjectNames);
+}
+void Renderer::renderText(String text, Vec2 position, FontStyle font) {
+	textRenderSystem.render(*this, text, position, font);
 }
 
 Bool Renderer::getCulling() {
 	return apiGetCullFace();
 }
-
 Float& Renderer::aspectRatio()
 {
 	return framebufferSystem.current().aspectRatio;
@@ -166,7 +290,6 @@ Uniforms& Renderer::uniforms()
 {
 	return shaderSystem.uniforms;
 }
-
-void loadPrimitives(Renderer& renderer) {
-	renderer.renderObjectSystem.addRenderObject("circle", "circle", "default", "basicColor");
+Index Renderer::useShader(Name name) {
+	return shaderSystem.use(name);
 }

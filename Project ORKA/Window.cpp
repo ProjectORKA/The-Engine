@@ -46,7 +46,18 @@ void windowThread(Window& window)
 			if (window.content) window.content->render(window.renderer);
 
 			/// ////////////////////////////////////////////////////////////////////////////
-			renderer.framebufferSystem.current().blitFramebuffer();
+			
+			//renderer.framebufferSystem.current().blitFramebuffer();
+
+			renderer.setWireframeMode(false);
+
+			apiBindDrawFramebuffer(0);
+			renderer.framebufferSystem.current().positionTexture.use(0);
+			renderer.uniforms().reset();
+			renderer.useShader("texture");
+			renderer.renderMesh("plane");
+
+
 			renderer.end(); //checks errors and unlocks renderer
 			apiWindowSwapBuffers(window.apiWindow);
 		}

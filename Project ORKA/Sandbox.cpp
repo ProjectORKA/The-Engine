@@ -3,10 +3,13 @@
 
 #include "Window.hpp"
 
+#include "Random.hpp"
+
 void Sandbox::render(Renderer& renderer) {
 	mutex.lock();
 
-	player.speed = pow(1.2, inputManager.scrollAxisYTotal);
+	player.speed = pow(1.2, player.speedExponent);
+
 	if (forward.pressed)	player.accelerationVector += player.camera.forwardVector;
 	if (backward.pressed)	player.accelerationVector -= player.camera.forwardVector;
 	if (upward.pressed)		player.accelerationVector += player.camera.upVector;
@@ -14,7 +17,7 @@ void Sandbox::render(Renderer& renderer) {
 	if (right.pressed)		player.accelerationVector += player.camera.rightVector;
 	if (left.pressed)		player.accelerationVector -= player.camera.rightVector;
 
-	player.update(renderer.renderTime.delta);
+	player.render(renderer);
 
 	renderer.setWireframeMode();
 	renderer.setCulling(true);
@@ -22,20 +25,22 @@ void Sandbox::render(Renderer& renderer) {
 	renderer.clearDepth();
 
 	player.render(renderer);
-	renderer.uniforms().data.mMatrix = Matrix(1);
-	renderer.uniforms().update();
+	renderer.uniforms().mMatrix() = Matrix(1);
 	renderer.shaderSystem.use("debug");
-	
-	//if (player.camera.location == Vec3(0)) player.camera.location = Vec3(0, -1, 0.2);
 
 	//////////////////////////////////////////////////////////////////////////////
 
-	atmos.render(player,renderer);
+	tree.update(player.camera.location);
+	tree.render(renderer);
+
+	//dmt.update(player.camera);
+	//dmt.render(renderer);
+
+	renderer.screenSpace();
+	renderer.renderText(String(std::to_string(1.0f / renderer.renderTime.delta)), Vec2(50), fonts.paragraph);
 
 	////////////////////////
 
-
-	//colonies.render();
 
 	mutex.unlock();
 

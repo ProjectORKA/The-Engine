@@ -1,10 +1,11 @@
 
 #include "Plot.hpp"
+#include"Renderer.hpp"
 
-void Plot::render() {
+void Plot::render(Renderer & renderer) {
 	GPUMesh mesh;
 	mesh.upload(createMesh());
-	mesh.render();
+	mesh.render(renderer.uniforms());
 }
 void Plot::add(Vec2 value) {
 	points.push_back(value);

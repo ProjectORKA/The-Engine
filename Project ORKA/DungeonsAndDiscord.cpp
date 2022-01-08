@@ -38,8 +38,7 @@ void DungeonsAndDiscord::update() {
 }
 
 void DungeonsAndDiscord::render(Renderer& renderer) {
-
-	player.speed = pow(1.2,inputManager.scrollAxisYTotal);
+	//update camera right before rendering
 	if (forward.pressed)	player.accelerationVector += player.camera.forwardVector;
 	if (backward.pressed)	player.accelerationVector -= player.camera.forwardVector;
 	if (upward.pressed)		player.accelerationVector += player.camera.upVector;
@@ -47,13 +46,7 @@ void DungeonsAndDiscord::render(Renderer& renderer) {
 	if (right.pressed)		player.accelerationVector += player.camera.rightVector;
 	if (left.pressed)		player.accelerationVector -= player.camera.rightVector;
 
-	player.update(renderer.renderTime.delta);
-
-	renderer.setWireframeMode();
-	renderer.setCulling(true);
-	renderer.setDepthTest(true);
-	renderer.clearDepth();
-
+	//gpu upload
 	if (importObjects.size()) {
 		Path path = importObjects.front();
 
@@ -61,39 +54,35 @@ void DungeonsAndDiscord::render(Renderer& renderer) {
 		Name name = fileName.substr(0, fileName.size() - 4).c_str();
 		objects.emplace_back();
 		objects.back().meshName = name;
-
-
-		//if (path.filename().extension() == ".fbx") {
-
-		//	if (renderer.meshSystem.meshNames.find(name) == renderer.meshSystem.meshNames.end()) {
-		//		CPUMesh mesh;
-		//		mesh.name = name;
-		//		mesh.loadFBX(path);
-		//		renderer.meshSystem.addMesh(mesh);
-		//	};
-
-
-		//};
 		importObjects.pop_front();
 	}
 
+	//preprocess
+	renderer.setWireframeMode();
+	renderer.setCulling(true);
+	renderer.setDepthTest(true);
+	renderer.clearDepth();
+	renderer.renderSky(player.camera);
+
+	//postprocess
+	renderer.renderAtmosphere(player, normalize(Vec3(1)));
+
+	//scene
 	player.render(renderer);
-	renderer.uniforms().update();
-
 	renderer.useShader("dndUberShader");
-
 	for (Object& object : objects) {
 		object.render(renderer);
 	}
+	renderer.renderMesh("suzanne");
 
+	
+	//ui
 	renderer.screenSpace();
-
 	Int i = 0;
 	for (Object& object : objects) {
 		i++;
-		renderer.textRenderSystem.render(String(object.meshName.data), 0, i * 100, fonts.paragraph);
+		renderer.renderText(String(object.meshName.data), Vec2(0, i * 10), fonts.paragraph);
 	}
-	
 }
 void DungeonsAndDiscord::filesDropped(Window& window, Vector<Path> paths) {
 	for (Path& path : paths) {
@@ -141,6 +130,9 @@ void DungeonsAndDiscord::buttonIsPressed(Window& window, Int keyID, Int action, 
 		}
 	}
 }
+void DungeonsAndDiscord::mouseIsScrolled(Window& window, Double xAxis, Double yAxis) {
+	player.speedExponent += yAxis;
+}
 void DungeonsAndDiscord::mouseIsPressed(Window& window, Int button, Int action, Int modifiers) {
 	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) inputManager.captureCursor(window);
 	if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS) inputManager.uncaptureCursor(window);
@@ -152,9 +144,7 @@ void DungeonsAndDiscord::mouseIsMoving(Window& window, IVec2 position) {
 Int diceRoll(Int diceCount) {
 	return 1 + randomInt(diceCount);
 }
-
 void Object::render(Renderer& renderer) {
 	transform.render(renderer);
-	renderer.uniforms().update();
 	renderer.renderMesh(meshName);
 }

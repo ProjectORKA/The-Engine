@@ -80,18 +80,16 @@ void QuadtreeNodeRenderData::renderTerrain(Renderer& renderer)
 	if (equivalentQuadtreeNode->id.level < 4) { //for the higher level chunks we duplicated them 
 		for (Int x = -1; x < 2; x++) {
 			for (Int y = -1; y < 2; y++) {
-				renderer.uniforms().data.cameraPosition = Vec4(cameraPosition - Vec3(x * pow(2, equivalentQuadtreeNode->id.level), y * pow(2, equivalentQuadtreeNode->id.level), 0), 1);
-				renderer.uniforms().data.worldOffset = Vec4(equivalentQuadtreeNode->id.location.x, equivalentQuadtreeNode->id.location.y, equivalentQuadtreeNode->data.terrain->lowerLimit, equivalentQuadtreeNode->id.level);
-				renderer.uniforms().update();
-				terrainMesh.render();
+				renderer.uniforms().cameraPos() = Vec4(cameraPosition - Vec3(x * pow(2, equivalentQuadtreeNode->id.level), y * pow(2, equivalentQuadtreeNode->id.level), 0), 1);
+				renderer.uniforms().worldOffset() = Vec4(equivalentQuadtreeNode->id.location.x, equivalentQuadtreeNode->id.location.y, equivalentQuadtreeNode->data.terrain->lowerLimit, equivalentQuadtreeNode->id.level);
+				terrainMesh.render(renderer.uniforms());
 			}
 		}
 	}
 	else {
-		renderer.uniforms().data.cameraPosition = Vec4(cameraPosition, 1);
-		renderer.uniforms().data.worldOffset = Vec4(equivalentQuadtreeNode->id.location.x, equivalentQuadtreeNode->id.location.y, equivalentQuadtreeNode->data.terrain->lowerLimit, equivalentQuadtreeNode->id.level);
-		renderer.uniforms().update();
-		terrainMesh.render();
+		renderer.uniforms().cameraPos() = Vec4(cameraPosition, 1);
+		renderer.uniforms().worldOffset() = Vec4(equivalentQuadtreeNode->id.location.x, equivalentQuadtreeNode->id.location.y, equivalentQuadtreeNode->data.terrain->lowerLimit, equivalentQuadtreeNode->id.level);
+		terrainMesh.render(renderer.uniforms());
 	}
 
 }

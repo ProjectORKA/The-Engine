@@ -2,81 +2,55 @@
 #include "Framebuffer.hpp"
 #include "Renderer.hpp"
 
-void Framebuffer::use(Renderer & renderer)
-{
-	apiBindFramebuffer(GL_FRAMEBUFFER, framebufferID);
-	renderer.uniforms().data.width = size.x;
-	renderer.uniforms().data.height = size.y;
-}
 void Framebuffer::create()
 {
 	//generate framebuffer
 	apiGenFramebuffer(framebufferID);
+	apiBindFramebuffer(framebufferID);
 
-	//generate color texture
-	CPUTexture color;
-	color.name = "postProcess";
-	color.width = size.x;
-	color.height = size.y;
-	color.channels = 4;
-	color.dataType = dataTypeByte;
-	color.pixels = nullptr;
-	color.nearFilter = Filter::nearest;
-	color.farFilter = Filter::nearest;
-	color.wrapping = clamped;
-	color.loaded = true;
+	colorTexture.load(size, 4, dataTypeFloat);
+	colorTexture.attachTexture(0);
 
-	//upload to GPU
-	colorTexture.load(color);
+	normalTexture.load(size, 3, dataTypeFloat);
+	normalTexture.attachTexture(1);
 
-	//attach to Framebuffer
-	attachTexture(colorTexture);
+	positionTexture.load(size, 3, dataTypeByte);
+	positionTexture.attachTexture(2);
 
-	//generate depth texture
-	CPUTexture depth;
-	depth.name = "depthTexture";
-	depth.width = size.x;
-	depth.height = size.y;
-	depth.channels = 5;
-	depth.dataType = dataTypeFloat;
-	depth.pixels = nullptr;
-	color.nearFilter = Filter::nearest;
-	color.farFilter = Filter::nearest;
-	depth.wrapping = border;
-	depth.loaded = true;
+	materialIDTexture.load(size, 1, dataTypeUInt);
+	materialIDTexture.attachTexture(3);
 
-	//upload to GPU
-	depthTexture.load(depth);
+	objectIDTexture.load(size, 1, dataTypeUInt);
+	objectIDTexture.attachTexture(4);
 
-	attachTexture(depthTexture);
+	depthTexture.load(size, 5, dataTypeFloat);
+	depthTexture.attachTexture(0);
 
-	//apiNamedFramebufferDrawBuffer(framebufferID); //[TODO] check if unnecessary
+	UInt attachments[5] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2,GL_COLOR_ATTACHMENT3,GL_COLOR_ATTACHMENT4 };
+	glDrawBuffers(5, attachments);
 
 	//check if correct
 	if (apiCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) logError("Framebuffer is not complete!");
 }
 void Framebuffer::destroy()
 {
-	apiBindFramebuffer(GL_FRAMEBUFFER, 0);
-	//apiDrawBuffer(GL_BACK); //[TODO] check if unnecessary
+	apiBindFramebuffer(0);
 	apiDeleteFramebuffer(framebufferID); //doesent work. ask Nvidia
 	colorTexture.unload();
+	normalTexture.unload();
+	positionTexture.unload();
+	materialIDTexture.unload();
+	objectIDTexture.unload();
 	depthTexture.unload();
 }
 void Framebuffer::setAsTexture()
 {
 	colorTexture.use(0);
 }
-void Framebuffer::detachTextures() {
-	apiFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, 0, 0);
-	apiFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, 0, 0);
-	apiFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE, 0, 0);
-	apiFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D_MULTISAMPLE, 0, 0);
-}
 void Framebuffer::blitFramebuffer()
 {
-	apiBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-	apiBindFramebuffer(GL_READ_FRAMEBUFFER, framebufferID);
+	apiBindDrawFramebuffer(0);
+	apiBindReadFramebuffer(framebufferID);
 	apiBlitFramebuffer(size.x, size.y, GL_COLOR_BUFFER_BIT, GL_LINEAR);
 }
 void Framebuffer::resize(Area resolution)
@@ -87,20 +61,15 @@ void Framebuffer::resize(Area resolution)
 
 	//update textures
 	colorTexture.resize(size);
+	normalTexture.resize(size);
+	positionTexture.resize(size);
+	materialIDTexture.resize(size);
+	objectIDTexture.resize(size);
 	depthTexture.resize(size);
 }
-void Framebuffer::attachTexture(GPUTexture& texture)
+void Framebuffer::use(Renderer & renderer)
 {
-	apiBindFramebuffer(GL_FRAMEBUFFER, framebufferID);
-
-	if (texture.channels < 5) {
-		//its a color texture
-		apiBindTexture(GL_TEXTURE_2D, texture.textureID);
-		apiFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture.textureID, 0);
-	}
-	else {
-		//its a depth texture
-		apiBindTexture(GL_TEXTURE_2D, texture.textureID);
-		apiFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, texture.textureID, 0);
-	}
+	apiBindFramebuffer(framebufferID);
+	renderer.uniforms().width() = size.x;
+	renderer.uniforms().height() = size.y;
 }

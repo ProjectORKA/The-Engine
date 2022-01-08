@@ -1,16 +1,10 @@
 
 #include "GPUMesh.hpp"
+#include "Uniforms.hpp"
 
-//GPUMesh::GPUMesh(CPUMesh cpuMesh) {
-//	upload(cpuMesh);
-//}
-//
-//GPUMesh::~GPUMesh() {
-//	unload();
-//}
-
-void GPUMesh::render() {
+void GPUMesh::render(Uniforms & uniforms) {
 	if (loaded) {
+		uniforms.upload();
 		vao.render();
 		apiDrawElements(
 		enumClassAsInt(primitiveMode),
