@@ -371,6 +371,33 @@
     <Filter Include="Shaders\COMMON">
       <UniqueIdentifier>{794d5e1b-92ef-448d-8b61-a2c654d1b00a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Program\GameSystem\Systems">
+      <UniqueIdentifier>{d127c2a8-3917-4cb0-9aa9-14a1c6dc6601}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\GameSystem\Systems\DynaMesh">
+      <UniqueIdentifier>{eb7532c1-33e4-4de2-b084-a48370e46094}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\GameSystem\Systems\VoxelSystem">
+      <UniqueIdentifier>{066c9a7c-d376-470c-be5c-36eac774b9b5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders\sdfOctreeTerrainRender">
+      <UniqueIdentifier>{684767c4-9641-4625-ba35-f23e75a6c493}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\GameSystem\Systems\Neighbor Quadtree">
+      <UniqueIdentifier>{db6fabdc-a005-4d7b-918f-c9ae1472cf48}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders\normals">
+      <UniqueIdentifier>{78d0f300-e0e2-4ba1-8b77-9574b3641127}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\Engine\JobSystem">
+      <UniqueIdentifier>{8751d8d4-66c9-43a0-9a77-ca86359f4c0e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\GameSystem\Systems\Sky">
+      <UniqueIdentifier>{504a2795-c6b2-41e3-a86c-dc03c5a6c7cd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders\texture">
+      <UniqueIdentifier>{73da9f3a-d4f2-454d-bf5f-08a55ed88711}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -614,7 +641,33 @@
     <ClCompile Include="UIElement.cpp">
       <Filter>Program\Engine\UserInterface\UIElement</Filter>
     </ClCompile>
-    <ClCompile Include="Atmosphere.cpp" />
+    <ClCompile Include="Sky.cpp">
+      <Filter>Program\GameSystem\Systems\Sky</Filter>
+    </ClCompile>
+    <ClCompile Include="DynameshTerrain.cpp">
+      <Filter>Program\GameSystem\Systems\DynaMesh</Filter>
+    </ClCompile>
+    <ClCompile Include="VoxelSystem.cpp">
+      <Filter>Program\GameSystem\Systems\VoxelSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="PointCloud.cpp">
+      <Filter>Program\Common\Renderable Data\PointCloud</Filter>
+    </ClCompile>
+    <ClCompile Include="BranchStructure.cpp">
+      <Filter>Program\Common\Renderable Data\BranchStructure</Filter>
+    </ClCompile>
+    <ClCompile Include="NeighborQuadtree.cpp">
+      <Filter>Program\GameSystem\Systems\Neighbor Quadtree</Filter>
+    </ClCompile>
+    <ClCompile Include="Server.cpp">
+      <Filter>Program\Engine\Networking</Filter>
+    </ClCompile>
+    <ClCompile Include="Client.cpp">
+      <Filter>Program\Engine\Networking</Filter>
+    </ClCompile>
+    <ClCompile Include="JobSystem.cpp">
+      <Filter>Program\Engine\JobSystem</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="icon.rc">
@@ -941,7 +994,30 @@
     <ClInclude Include="UIElement.hpp">
       <Filter>Program\Engine\UserInterface\UIElement</Filter>
     </ClInclude>
-    <ClInclude Include="Atmosphere.hpp" />
+    <ClInclude Include="Sky.hpp">
+      <Filter>Program\GameSystem\Systems\Sky</Filter>
+    </ClInclude>
+    <ClInclude Include="DynameshTerrain.hpp">
+      <Filter>Program\GameSystem\Systems\DynaMesh</Filter>
+    </ClInclude>
+    <ClInclude Include="VoxelSystem.hpp">
+      <Filter>Program\GameSystem\Systems\VoxelSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="NeighborQuadtree.hpp">
+      <Filter>Program\GameSystem\Systems\Neighbor Quadtree</Filter>
+    </ClInclude>
+    <ClInclude Include="Server.hpp">
+      <Filter>Program\Engine\Networking</Filter>
+    </ClInclude>
+    <ClInclude Include="Client.hpp">
+      <Filter>Program\Engine\Networking</Filter>
+    </ClInclude>
+    <ClInclude Include="JobSystem.hpp">
+      <Filter>Program\Engine\JobSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="Message.hpp">
+      <Filter>Program\Engine\Networking</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Data\shaders\debug.frag">
@@ -1042,6 +1118,27 @@
     </None>
     <None Include="Data\shaders\uniforms.glsl">
       <Filter>Shaders\COMMON</Filter>
+    </None>
+    <None Include="Data\shaders\sdfOctreeTerrain.frag">
+      <Filter>Shaders\sdfOctreeTerrainRender</Filter>
+    </None>
+    <None Include="Data\shaders\sdfOctreeTerrain.vert">
+      <Filter>Shaders\sdfOctreeTerrainRender</Filter>
+    </None>
+    <None Include="Data\shaders\normals.frag">
+      <Filter>Shaders\normals</Filter>
+    </None>
+    <None Include="Data\shaders\normals.vert">
+      <Filter>Shaders\normals</Filter>
+    </None>
+    <None Include="Data\shaders\simplePlanetDistortion.glsl">
+      <Filter>Shaders\COMMON</Filter>
+    </None>
+    <None Include="Data\shaders\texture.frag">
+      <Filter>Shaders\texture</Filter>
+    </None>
+    <None Include="Data\shaders\texture.vert">
+      <Filter>Shaders\texture</Filter>
     </None>
   </ItemGroup>
 </Project>

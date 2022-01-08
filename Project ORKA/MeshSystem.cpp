@@ -1,5 +1,6 @@
 
 #include "MeshSystem.hpp"
+#include "Uniforms.hpp"
 
 void MeshSystem::create() {
 	CPUMesh standard;
@@ -57,11 +58,11 @@ void MeshSystem::loadMesh(Name name)
 		logDebug("Mesh could not be loaded from file!");
 	}
 }
-void MeshSystem::render(Index meshID) {
+void MeshSystem::render(Uniforms& uniforms, Index meshID) {
 	use(meshID);
-	currentMesh().render();
+	currentMesh().render(uniforms);
 }
-void MeshSystem::addMesh(CPUMesh& cpuMesh) {
+void MeshSystem::addMesh(CPUMesh cpuMesh) {
 	//[TODO] check if it works
 	GPUMesh gpuMesh;
 	gpuMesh.upload(cpuMesh);
@@ -72,9 +73,9 @@ void MeshSystem::addMesh(CPUMesh& cpuMesh) {
 	//currentMesh().upload(cpuMesh);
 	meshNames[cpuMesh.name] = currentMeshID;
 }
-void MeshSystem::render(Name meshName) {
+void MeshSystem::render(Uniforms & uniforms, Name meshName) {
 	use(meshName);
-	currentMesh().render();
+	currentMesh().render(uniforms);
 }
 
 GPUMesh& MeshSystem::currentMesh()

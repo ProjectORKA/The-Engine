@@ -62,7 +62,7 @@ void InputManager::windowChangedFocus(Window& window, Bool isInFocus)
 }
 void InputManager::mouseWheelIsScrolled(Window& window, Double xAxis, Double yAxis)
 {
-	scrollAxisYTotal += yAxis;
+	window.content->mouseIsScrolled(window, xAxis, yAxis);
 }
 void InputManager::buttonIsPressed(Window& window, Int keyID, Int action, Int modifiers)
 {
@@ -85,7 +85,6 @@ void InputManager::buttonIsPressed(Window& window, Int keyID, Int action, Int mo
 	
 	if(window.content)window.content->buttonIsPressed(window, keyID, action, modifiers);
 }
-
 void InputManager::mouseIsPressed(Window& window, Int button, Int action, Int modifiers) {
 	if(window.content)window.content->mouseIsPressed(window, button, action, modifiers);
 }

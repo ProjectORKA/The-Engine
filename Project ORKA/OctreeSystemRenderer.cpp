@@ -91,9 +91,8 @@ void OctreeNodeRenderData::unsubdivide()
 }
 void OctreeNodeRenderData::render(Renderer & renderer)
 {
-	renderer.shaderSystem.uniforms.data.cameraPosition = Vec4(cameraPosition,1);
-	renderer.shaderSystem.uniforms.data.worldOffset = Vec4(equivalentOctreeNode->id.location.x, equivalentOctreeNode->id.location.y, equivalentOctreeNode->id.location.z, equivalentOctreeNode->id.level);
-	renderer.shaderSystem.uniforms.update();
+	renderer.uniforms().cameraPos() = Vec4(cameraPosition, 1);
+	renderer.uniforms().worldOffset() = Vec4(equivalentOctreeNode->id.location.x, equivalentOctreeNode->id.location.y, equivalentOctreeNode->id.location.z, equivalentOctreeNode->id.level);
 
 	if(renderer.planetRenderSystem.chunkBorders)renderer.renderMesh("gizmo");
 }
@@ -104,10 +103,8 @@ void OctreeNodeRenderData::create(OctreeNode& octreeNode)
 }
 void OctreeNodeRenderData::renderWater(Renderer &renderer){
 	
-	renderer.shaderSystem.uniforms.data.cameraPosition = Vec4(cameraPosition, 1);
-	renderer.shaderSystem.uniforms.data.worldOffset = Vec4(equivalentOctreeNode->id.location.x, equivalentOctreeNode->id.location.y, equivalentOctreeNode->id.location.z, equivalentOctreeNode->id.level);
-	renderer.shaderSystem.uniforms.update();
-
+	renderer.uniforms().cameraPos() = Vec4(cameraPosition, 1);
+	renderer.uniforms().worldOffset() = Vec4(equivalentOctreeNode->id.location.x, equivalentOctreeNode->id.location.y, equivalentOctreeNode->id.location.z, equivalentOctreeNode->id.level);
 	renderer.renderMesh("waterPlane");
 }
 void OctreeNodeRenderData::update(PlanetSystemPlayer& player)

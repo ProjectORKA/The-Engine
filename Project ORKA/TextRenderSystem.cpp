@@ -11,6 +11,6 @@ void TextRenderSystem::create(Renderer& renderer) {
 	bitmapTextRenderSystem.create(renderer);
 }
 
-void TextRenderSystem::render(String text, Float xPos, Float yPos, FontStyle style) {
-	bitmapTextRenderSystem.render(text, xPos, yPos, style);
+void TextRenderSystem::render(Renderer & renderer, String text, Vec2 position, FontStyle style) {
+	bitmapTextRenderSystem.render(renderer, text, position, style);
 }

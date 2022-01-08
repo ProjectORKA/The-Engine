@@ -7,7 +7,7 @@ void SDFTerrainRenderSystem::render(Renderer& renderer) {
 	renderer.setCulling(false);
 	renderer.setDepthTest(false);
 
-	renderer.uniforms().data.mMatrix = Matrix(1);
+	renderer.uniforms().mMatrix() = Matrix(1);
 	renderer.useShader("sdfTerrain");
 	renderer.useTexture("altitudeColor");
 	renderer.useTexture("terrain",1);

@@ -31,19 +31,17 @@ void Camera::rotate(Vec2 rotation) {
 	upVector = glm::cross(rightVector, forwardVector);
 }
 void Camera::render(Renderer & renderer) {
-	renderer.uniforms().data.cameraVector = Vec4(forwardVector, 1);
-	renderer.uniforms().data.cameraPosition = Vec4(location,1);
-	renderer.uniforms().data.vMatrix = viewMatrix();
-	renderer.uniforms().data.pMatrix = projectionMatrix(renderer.aspectRatio());
-	renderer.uniforms().update();
+	renderer.uniforms().cameraVec() = Vec4(forwardVector, 1);
+	renderer.uniforms().cameraPos() = Vec4(location, 1);
+	renderer.uniforms().vMatrix() = viewMatrix();
+	renderer.uniforms().pMatrix() = projectionMatrix(renderer.aspectRatio());
 }
 void Camera::renderOnlyRot(Renderer& renderer)
 {
-	renderer.uniforms().data.cameraVector = Vec4(forwardVector, 1);
-	renderer.uniforms().data.cameraPosition = Vec4(location, 1);
-	renderer.uniforms().data.vMatrix = viewMatrixOnlyRot();
-	renderer.uniforms().data.pMatrix = projectionMatrix(renderer.aspectRatio());
-	renderer.uniforms().update();
+	renderer.uniforms().cameraVec() = Vec4(forwardVector, 1);
+	renderer.uniforms().cameraPos() = Vec4(location, 1);
+	renderer.uniforms().vMatrix() = viewMatrixOnlyRot();
+	renderer.uniforms().pMatrix() = projectionMatrix(renderer.aspectRatio());
 }
 
 Matrix Camera::viewMatrix() {

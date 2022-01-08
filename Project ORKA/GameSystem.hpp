@@ -3,14 +3,7 @@
 #include "Game.hpp"
 #include "Threading.hpp"
 
-//games
-#include "Pong.hpp"
-#include "Intro.hpp"
-#include "Sortr.hpp"
-#include "Sandbox.hpp"
-#include "Mooncrash.hpp"
-#include "AIPlayground.hpp"
-#include "DungeonsAndDiscord.hpp"
+
 
 //the gameSystem globally stores all game instances and processes them at a fixed time interval in a separate thread
 //this allows multiple windows and user interface elements to render the same game instance and achieve high framerates without being held down by the games processing

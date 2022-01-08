@@ -6,7 +6,7 @@ struct Window;
 
 struct InputManager {
 
-	Double scrollAxisYTotal = 215;
+	//Double scrollAxisYTotal = 0;
 
 	Bool capturing = false;
 

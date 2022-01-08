@@ -7,14 +7,13 @@ void BitmapTextRenderSystem::destroy() {
 	textTexture.unload();
 }
 void BitmapTextRenderSystem::create(Renderer& renderer) {
-	rendererPtr = &renderer;
 	CPUTexture cpuTextTexture;
 	cpuTextTexture.load("fontSDF");
 	textTexture.load(cpuTextTexture);
 	renderer.shaderSystem.add("text");
 }
-void BitmapTextRenderSystem::render(String text, Float x, Float y, FontStyle style) {
-
+void BitmapTextRenderSystem::render(Renderer & renderer, String text, Vec2 position, FontStyle style) {
+	
 	UInt length = text.size();
 
 	cpuText.name = "text";
@@ -23,15 +22,9 @@ void BitmapTextRenderSystem::render(String text, Float x, Float y, FontStyle sty
 	cpuText.indices.clear();
 	cpuText.normals.clear();
 	cpuText.drawMode = MeshDrawMode::dynamicMode;
-	gpuText.unload();
 
 	for (UInt i = 0; i < length; i++) {
-
-		//Float up = yPos;
-		//Float left = xPos + Float(i) * size;
-		//Float down = up + size;
-		//Float right = left + size;
-
+		//[TODO] use 4 vertex and index pushbacks instead of 6
 		Float up = 1.0;
 		Float left = Float(i) * style.letterSpacing;
 		Float down = 0.0;
@@ -79,16 +72,11 @@ void BitmapTextRenderSystem::render(String text, Float x, Float y, FontStyle sty
 	gpuText.unload();
 	gpuText.upload(cpuText);
 
-	rendererPtr->shaderSystem.use("text");
+	renderer.useShader("text");
 	textTexture.use(0);
 
-	apiEnable(GL_BLEND);
-	apiBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	renderer.setAlphaBlending(true);
 
-	rendererPtr->screenSpace();
-	rendererPtr->shaderSystem.uniforms.data.mMatrix = scale(translate(Matrix(1), Vec3(x, y, 0)), Vec3(style.absoluteSize));
-	rendererPtr->shaderSystem.uniforms.update();
-
-	apiDisable(GL_CULL_FACE);
-	gpuText.render();
+	renderer.uniforms().mMatrix(scale(translate(Matrix(1), Vec3(position, 0)), Vec3(style.absoluteSize)));
+	gpuText.render(renderer.uniforms());
 }

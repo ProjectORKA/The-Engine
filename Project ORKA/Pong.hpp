@@ -7,6 +7,8 @@ struct Ball;
 struct Renderer;
 struct Window;
 
+#define PONG_DIFFICULTY_MODIFIER 1.05
+
 struct PongPlayer {
 	ULL score = 0;
 	Vec2 position = Vec2(0,0);

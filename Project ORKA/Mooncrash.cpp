@@ -5,37 +5,28 @@ void renderUI(Renderer& renderer, MooncrashPlayer& player) {
 	renderer.setWireframeMode(false);
 
 	String s = String("FrameTime: ").append(toString(renderer.renderTime.delta));
-	renderer.textRenderSystem.render(s, 0, 0, fonts.debug);
+	renderer.renderText(s, Vec2(0), fonts.debug);
 
 	s = String("FPS: ").append(toString(1.0f / renderer.renderTime.delta));
-	renderer.textRenderSystem.render(s, 0, fonts.debug.absoluteSize, fonts.debug);
+	renderer.renderText(s, Vec2(0, fonts.debug.absoluteSize), fonts.debug);
 
-	s = String("Speed: ").append(toString(inputManager.scrollAxisYTotal));
-	renderer.textRenderSystem.render(s, 0, 2 * fonts.debug.absoluteSize, fonts.debug);
+	s = String("Speed: ").append(toString(player.speedMultiplier));
+	renderer.renderText(s, Vec2(0, 2 * fonts.debug.absoluteSize), fonts.debug);
 
 	s = String("Camera height float: ").append(toString(player.camera.location.z));
-	renderer.textRenderSystem.render(s, 0, 3 * fonts.debug.absoluteSize, fonts.debug);
+	renderer.renderText(s, Vec2(0, 3 * fonts.debug.absoluteSize), fonts.debug);
 
 	s = String("Camera height ULL: ").append(toString(player.chunkLocation.z));
-	renderer.textRenderSystem.render(s, 0, 4 * fonts.debug.absoluteSize, fonts.debug);
+	renderer.renderText(s, Vec2(0, 4 * fonts.debug.absoluteSize), fonts.debug);
 }
-void renderSky(Renderer& renderer, Camera & camera) {
-	renderer.setCulling(false);
-	renderer.setDepthTest(false);
 
-	camera.renderOnlyRot(renderer);
-
-	renderer.useShader("sky");
-	renderer.useTexture("stars2");
-	renderer.renderMesh("sky");
-}
-void renderPlanet(Renderer& renderer, PlanetSystem& planetSystem, PlanetSystemPlayer & player) {
+void renderPlanet(Renderer& renderer, PlanetSystem& planetSystem, PlanetSystemPlayer& player) {
 	renderer.planetRenderSystem.render(planetSystem, renderer, player);
 };
 
-void MooncrashPlayer::update(Float delta) {
-	speed = pow(CAMERA_SPEED_MULTIPLIER, speedMultiplier);
-	accelerationVector *= speed * delta;
+void MooncrashPlayer::render(Renderer& renderer) {
+	speed = pow(1.2f, speedExponent);
+	accelerationVector *= speed * renderer.renderTime.delta;
 
 	camera.location += accelerationVector;
 
@@ -111,16 +102,17 @@ void MooncrashPlayer::update(Float delta) {
 			camera.location.z = newCamHeight;
 		}
 	}
+
+	camera.render(renderer);
 }
 
-void MooncrashAtmosphere::render(MooncrashPlayer player, Renderer& renderer)
+void renderMooncrashAtmosphere(Renderer& renderer, MooncrashPlayer& player, Vec3 sunDirection)
 {
 	Bool culling = renderer.getCulling();
 	player.camera.renderOnlyRot(renderer);
-	renderer.uniforms().data.cameraPosition = Vec4(Vec3(0,0,(Float(player.chunkLocation.z) + player.camera.location.z)/Float(ULLONG_MAX)), 1);
+	renderer.uniforms().cameraPos() = Vec4(Vec3(0, 0, (Float(player.chunkLocation.z) + player.camera.location.z) / Float(ULLONG_MAX)), 1);
 	renderer.setCulling(false);
-	renderer.uniforms().data.sunDir = Vec4(normalize(Vec3(0, 1, 1 + sin(renderer.renderTime.total / 2))), 1);
-	renderer.uniforms().update();
+	renderer.uniforms().sunDir() = Vec4(normalize(Vec3(0, 1, 1)), 1);
 	renderer.useShader("atmosphere");
 
 	renderer.framebufferSystem.current().colorTexture.use(0);
@@ -141,8 +133,6 @@ void Mooncrash::update() {
 	planetSystem.update();
 }
 void Mooncrash::render(Renderer& renderer) {
-
-	player.speedMultiplier = inputManager.scrollAxisYTotal;
 	if (forward.pressed)	player.accelerationVector += player.camera.forwardVector;
 	if (backward.pressed)	player.accelerationVector -= player.camera.forwardVector;
 	if (upward.pressed)		player.accelerationVector += player.camera.upVector;
@@ -150,16 +140,15 @@ void Mooncrash::render(Renderer& renderer) {
 	if (right.pressed)		player.accelerationVector += player.camera.rightVector;
 	if (left.pressed)		player.accelerationVector -= player.camera.rightVector;
 
-	player.update(renderer.renderTime.delta);
+	player.render(renderer);
 
 	renderer.setWireframeMode(renderer.wireframeMode);
 
-	renderSky(renderer, player.camera);
-
+	renderer.renderSky(player.camera);
 
 	renderPlanet(renderer, planetSystem, player);
 
-	atmos.render(player, renderer);
+	renderMooncrashAtmosphere(renderer,player, normalize(Vec3(1)));
 
 	//renderUI(renderer, player);
 }
@@ -173,10 +162,10 @@ void Mooncrash::buttonIsPressed(Window& window, Int keyID, Int action, Int modif
 			break;
 		case GLFW_KEY_J: window.renderer.adjustRenderVariables = !window.renderer.adjustRenderVariables;
 			break;
-		//case GLFW_KEY_K: window.renderer.planetRenderSystem.worldDistortion = !window.renderer.planetRenderSystem.worldDistortion;
-		//	break;
-		//case GLFW_KEY_G: window.renderer.planetRenderSystem.chunkBorders = !window.renderer.planetRenderSystem.chunkBorders;
-		//	break;
+			//case GLFW_KEY_K: window.renderer.planetRenderSystem.worldDistortion = !window.renderer.planetRenderSystem.worldDistortion;
+			//	break;
+			//case GLFW_KEY_G: window.renderer.planetRenderSystem.chunkBorders = !window.renderer.planetRenderSystem.chunkBorders;
+			//	break;
 		case GLFW_KEY_T:
 			window.renderer.mutex.lock();
 			window.renderer.shaderSystem.rebuild();
@@ -222,4 +211,7 @@ void Mooncrash::mouseIsPressed(Window& window, Int button, Int action, Int modif
 	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) inputManager.captureCursor(window);
 
 	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE) inputManager.uncaptureCursor(window);
+}
+void Mooncrash::mouseIsScrolled(Window& window, Double xAxis, Double yAxis) {
+	player.speedMultiplier += yAxis;
 }

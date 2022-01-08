@@ -7,6 +7,8 @@
 #include "PointCloud.hpp"
 #include "BranchStructure.hpp"
 
+struct Renderer;
+
 void treeGeneration(Vector<Vec3>& leaves, Vector<Vec3>& branches, Vector<Index>& connections, Float segmentSize, Float killRadius, Float leafPull);
 
 struct TreeGenerator {
@@ -17,7 +19,7 @@ struct TreeGenerator {
 	BranchStructure tree;
 
 	void run();
-	void render();
+	void render(Renderer & renderer);
 };
 
 struct Tree {

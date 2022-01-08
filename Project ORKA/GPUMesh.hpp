@@ -3,6 +3,8 @@
 #include "Debug.hpp"
 #include "VertexArrayObject.hpp"
 
+struct Uniforms;
+
 struct GPUMesh
 {
 	Bool loaded = false;
@@ -11,7 +13,7 @@ struct GPUMesh
 
 	VertexArrayObject vao;
 
-	void render();
 	void unload();
 	void upload(CPUMesh cpuMesh);
+	void render(Uniforms& uniforms);
 };

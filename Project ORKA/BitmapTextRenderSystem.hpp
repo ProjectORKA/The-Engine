@@ -12,9 +12,7 @@ struct BitmapTextRenderSystem {
 	CPUMesh cpuText;
 	GPUTexture textTexture;
 
-	Renderer* rendererPtr = nullptr;
-
 	void destroy();
 	void create(Renderer& renderer);
-	void render(String text, Float xPos, Float yPos, FontStyle style);
+	void render(Renderer& renderer, String text, Vec2 position, FontStyle style);
 };

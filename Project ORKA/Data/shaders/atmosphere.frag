@@ -7,8 +7,8 @@ in vec3 position;
 
 #define SIZE_FACTOR 1.0
 
-#define PLANET_RADIUS 6371e3 * SIZE_FACTOR
-#define ATMOS_RADIUS 6471e3 * SIZE_FACTOR
+#define PLANET_RADIUS 6371000 * SIZE_FACTOR
+#define ATMOS_RADIUS 6471000 * SIZE_FACTOR
 #define PLANET_POS vec3(0.0,-PLANET_RADIUS, 0)
 
 // scattering coeffs
@@ -24,8 +24,8 @@ in vec3 position;
 #define ABSORPTION_FALLOFF 4e3 /* how much the absorption decreases the further away it gets from the maximum height */
 // and the steps (more looks better, but is slower)
 // the primary step has the most effect on looks
-#define PRIMARY_STEPS 32 /* primary steps, affects quality the most */
-#define LIGHT_STEPS 8 /* light steps, how much steps in the light direction are taken */
+#define PRIMARY_STEPS 16 /* primary steps, affects quality the most */
+#define LIGHT_STEPS 4 /* light steps, how much steps in the light direction are taken */
 
 vec3 calculate_scattering(
 	vec3 start, 				// the start of the ray (the camera position)

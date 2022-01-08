@@ -1,5 +1,6 @@
 
 #include "TreeSystem.hpp"
+#include "Renderer.hpp"
 
 void treeGeneration(Vector<Vec3>& leaves, Vector<Vec3>& branches, Vector<Index>& connections, Float segmentSize, Float killRadius, Float leafPull) {
 	if (leaves.size() == 0) return;
@@ -78,7 +79,7 @@ void TreeGenerator::run() {
 	treeGeneration(leaves.points, branches.points, tree.connections, 0.01, 0.04, 0.2);
 }
 
-void TreeGenerator::render() {
-	leaves.render();
-	tree.render(branches.points);
+void TreeGenerator::render(Renderer & renderer) {
+	leaves.render(renderer);
+	tree.render(renderer, branches.points);
 }

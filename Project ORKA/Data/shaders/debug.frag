@@ -9,19 +9,7 @@ void main(){
 
 	vec3 col = vertexColor.xyz;
 
-	if(col.x > col.y){
-		if(col.x > col.z){
-			col /= col.x;
-		}else{
-			col /= col.z;
-		}
-	} else{
-		if(col.y > col.z){
-			col /= col.y;
-		}else{
-			col /= col.z;
-		}
-	}
+	col = normalize(col);
 
 	color = vec4(col,1);
 };

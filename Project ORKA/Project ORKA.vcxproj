@@ -24,29 +24,36 @@
   <ItemGroup>
     <ClCompile Include="AIPlayground.cpp" />
     <ClCompile Include="Algorithm.cpp" />
-    <ClCompile Include="Atmosphere.cpp" />
+    <ClCompile Include="Sky.cpp" />
     <ClCompile Include="Basics.cpp" />
     <ClCompile Include="BitmapTextRenderSystem.cpp" />
+    <ClCompile Include="BranchStructure.cpp" />
+    <ClCompile Include="Client.cpp" />
     <ClCompile Include="DebugConsole.cpp" />
     <ClCompile Include="DungeonsAndDiscord.cpp" />
+    <ClCompile Include="DynameshTerrain.cpp" />
     <ClCompile Include="Fonts.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameSystem.cpp" />
     <ClCompile Include="Intro.cpp" />
+    <ClCompile Include="JobSystem.cpp" />
     <ClCompile Include="MathDNA.cpp" />
     <ClCompile Include="MatrixSystem.cpp" />
     <ClCompile Include="Mooncrash.cpp" />
+    <ClCompile Include="NeighborQuadtree.cpp" />
     <ClCompile Include="NeuralNetwork.cpp" />
     <ClCompile Include="OctreeNode.cpp" />
     <ClCompile Include="PerlinNoise.cpp" />
     <ClCompile Include="PlanetSystemPlayer.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Plot.cpp" />
+    <ClCompile Include="PointCloud.cpp" />
     <ClCompile Include="Pong.cpp" />
     <ClCompile Include="QuadtreeID.cpp" />
     <ClCompile Include="QuadtreeNode.cpp" />
     <ClCompile Include="Sandbox.cpp" />
     <ClCompile Include="SDFTerrainRenderSystem.cpp" />
+    <ClCompile Include="Server.cpp" />
     <ClCompile Include="Settings.cpp" />
     <ClCompile Include="Sortr.cpp" />
     <ClCompile Include="Transform.cpp" />
@@ -101,18 +108,24 @@
     <ClCompile Include="UserInterface.cpp" />
     <ClCompile Include="VertexArrayObject.cpp" />
     <ClCompile Include="VertexBufferObject.cpp" />
+    <ClCompile Include="VoxelSystem.cpp" />
     <ClCompile Include="Window.cpp" />
     <ClCompile Include="WindowAPI.cpp" />
     <ClCompile Include="OctreeSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Atmosphere.hpp" />
+    <ClInclude Include="Sky.hpp" />
     <ClInclude Include="AudioSystem.hpp" />
     <ClInclude Include="BranchStructure.hpp" />
+    <ClInclude Include="Client.hpp" />
     <ClInclude Include="DungeonsAndDiscord.hpp" />
+    <ClInclude Include="DynameshTerrain.hpp" />
     <ClInclude Include="GlyphTextRenderSystem.hpp" />
     <ClInclude Include="Image.hpp" />
+    <ClInclude Include="JobSystem.hpp" />
     <ClInclude Include="MathDNA.hpp" />
+    <ClInclude Include="Message.hpp" />
+    <ClInclude Include="NeighborQuadtree.hpp" />
     <ClInclude Include="NeuralNetwork.hpp" />
     <ClInclude Include="PerlinNoise.hpp" />
     <ClInclude Include="PlanetSystemPlayer.hpp" />
@@ -173,6 +186,7 @@
     <ClInclude Include="RelativeChunkOffset.hpp" />
     <ClInclude Include="RenderRegion.hpp" />
     <ClInclude Include="SDFTerrainRenderSystem.hpp" />
+    <ClInclude Include="Server.hpp" />
     <ClInclude Include="Settings.hpp" />
     <ClInclude Include="Shader.hpp" />
     <ClInclude Include="ShaderProgram.hpp" />
@@ -210,6 +224,7 @@
     <ClInclude Include="Util.hpp" />
     <ClInclude Include="VertexArrayObject.hpp" />
     <ClInclude Include="VertexBufferObject.hpp" />
+    <ClInclude Include="VoxelSystem.hpp" />
     <ClInclude Include="Window.hpp" />
     <ClInclude Include="WindowAPI.hpp" />
     <ClInclude Include="WindowsEntry.hpp" />
@@ -228,18 +243,25 @@
     <None Include="Data\shaders\depthCutter.vert" />
     <None Include="Data\shaders\dndUberShader.frag" />
     <None Include="Data\shaders\dndUberShader.vert" />
+    <None Include="Data\shaders\normals.frag" />
+    <None Include="Data\shaders\normals.vert" />
     <None Include="Data\shaders\postProcess.frag" />
     <None Include="Data\shaders\postProcess.vert" />
     <None Include="Data\shaders\primitive.frag" />
     <None Include="Data\shaders\primitive.vert" />
+    <None Include="Data\shaders\sdfOctreeTerrain.frag" />
+    <None Include="Data\shaders\sdfOctreeTerrain.vert" />
     <None Include="Data\shaders\sdfTerrain.frag" />
     <None Include="Data\shaders\sdfTerrain.vert" />
+    <None Include="Data\shaders\simplePlanetDistortion.glsl" />
     <None Include="Data\shaders\sky.frag" />
     <None Include="Data\shaders\sky.vert" />
     <None Include="Data\shaders\terrain.frag" />
     <None Include="Data\shaders\terrain.vert" />
     <None Include="Data\shaders\text.frag" />
     <None Include="Data\shaders\text.vert" />
+    <None Include="Data\shaders\texture.frag" />
+    <None Include="Data\shaders\texture.vert" />
     <None Include="Data\shaders\ui.frag" />
     <None Include="Data\shaders\ui.vert" />
     <None Include="Data\shaders\uniforms.glsl" />
@@ -260,26 +282,26 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>

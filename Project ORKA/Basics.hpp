@@ -23,6 +23,7 @@ using UShort = unsigned short;
 
 using Char = char;
 using Byte = unsigned char;
+using UChar = unsigned char;
 
 using SizeT = unsigned __int64;//std::size_t;
 

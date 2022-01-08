@@ -12,7 +12,8 @@
 
 enum DataType {
 	dataTypeByte = GL_UNSIGNED_BYTE,
-	dataTypeFloat = GL_FLOAT
+	dataTypeFloat = GL_FLOAT,
+	dataTypeUInt = GL_UNSIGNED_INT
 };
 enum Wrapping
 {
@@ -38,6 +39,7 @@ struct CPUTexture {
 		void* pixels = nullptr;
 		Byte* bytePixels;
 		Float* floatPixels;
+		UInt* uIntPixels;
 	};
 	Filter nearFilter = Filter::linear;
 	Filter farFilter = Filter::linearMM;

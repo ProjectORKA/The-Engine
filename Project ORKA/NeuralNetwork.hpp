@@ -5,7 +5,7 @@
 
 struct Renderer;
 
-#define NEURON_COUNT 6
+#define NEURON_COUNT 16
 
 struct Neuron {
 	Float value = 0;
@@ -21,13 +21,12 @@ struct Connection {
 };
 
 struct NeuralNetwork {
-	
 	Vector<Neuron> neurons;
 	Vector<Connection> connections;
 
 	void calculate();
 	void initialize();
-	Vec2 IndexToPosition(Index id);
+	Vec3 IndexToPosition(Index id);
 	void render(Renderer& renderer);
 	void input(Vector<Float> input);
 };

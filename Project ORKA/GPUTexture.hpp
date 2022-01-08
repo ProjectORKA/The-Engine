@@ -19,8 +19,7 @@ struct GPUTexture {
 	void unload();
 	void resize(Area size);
 	void use(Index textireID);
+	void attachTexture(Int slot);
 	void load(CPUTexture& cpuTexture);
-	void load(UInt width, UInt height) {
-		
-	};
+	void load(Vec2 size, Int channels, DataType type);
 };

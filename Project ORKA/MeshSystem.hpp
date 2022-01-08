@@ -6,6 +6,8 @@
 #include "GPUMesh.hpp"
 #include "ProceduralMeshes.hpp"
 
+struct Uniforms;
+
 struct MeshSystem {
 	Vector<GPUMesh>		gpuMeshes;	//uploaded meshes ready to be drawn
 	Map<Name, Index> meshNames;
@@ -19,9 +21,9 @@ struct MeshSystem {
 	void use(Name name);
 	void use(Index meshID);
 	void loadMesh(Name name);
-	void render(Index meshID);
-	void render(Name meshName);
-	void addMesh(CPUMesh& cpuMesh);
+	void render(Uniforms& uniforms, Index meshID);
+	void addMesh(CPUMesh cpuMesh);
+	void render(Uniforms& uniforms, Name meshName);
 
 	GPUMesh& currentMesh();
 };

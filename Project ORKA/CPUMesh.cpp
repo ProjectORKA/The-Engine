@@ -1,10 +1,12 @@
 
 #include "CPUMesh.hpp"
 #include "GPUMesh.hpp"
+#include "Renderer.hpp"
 
 CPUMesh::CPUMesh()
 {
 }
+CPUMesh::~CPUMesh() {}
 CPUMesh::CPUMesh(Graph& graph) {
 	drawMode = MeshDrawMode::dynamicMode;
 	name = "graph";
@@ -22,15 +24,25 @@ CPUMesh::CPUMesh(Graph& graph) {
 
 	checkIntegrity();
 }
+CPUMesh::CPUMesh(Name name, MeshDrawMode drawMode, PrimitiveMode primitiveMode) {
+	this->name = name;
+	this->drawMode = drawMode;
+	this->primitiveMode = primitiveMode;
+	indices.clear();
+	vertices.clear();
+	normals.clear();
+	uvs.clear();
+	readyForUpload = false;
+}
 CPUMesh::CPUMesh(Name name)
 {
 	load(name);
 }
 
-void CPUMesh::render() {
+void CPUMesh::render(Renderer & renderer) {
 	GPUMesh mesh;
 	mesh.upload(*this);
-	mesh.render();
+	mesh.render(renderer.uniforms());
 	mesh.unload();
 }
 
@@ -262,6 +274,26 @@ void CPUMesh::calculateSmoothNormals()
 	}
 	else {
 		logError("Cant compute normals for this mesh! Primitive type not supported!");
+	}
+}
+
+void CPUMesh::merge(CPUMesh source) {
+	for (Int i = 0; i < source.vertices.size(); i++) {
+		vertices.push_back(source.vertices[i]);
+		uvs.push_back(source.uvs[i]);
+		normals.push_back(source.normals[i]);
+	}
+
+	Int indexOffset = vertices.size();
+
+	for (Int i = 0; i < source.indices.size(); i++) {
+		indices.push_back(source.indices[i] + indexOffset);
+	}
+}
+
+void CPUMesh::move(Vec3 moveVector) {
+	for (Int i = 0; i < vertices.size(); i++) {
+		vertices[i] += moveVector;
 	}
 }
 

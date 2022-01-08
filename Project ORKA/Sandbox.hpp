@@ -6,11 +6,11 @@
 #include "KeyMap.hpp"
 #include "Player.hpp"
 
-//extra stuff
-#include "Atmosphere.hpp"
-
 struct Renderer;
 struct Window;
+
+#include "NeighborQuadtree.hpp"
+#include "DynameshTerrain.hpp"
 
 struct Sandbox : public Game {
 	
@@ -24,12 +24,18 @@ struct Sandbox : public Game {
 	Action	downward;
 	Float mouseSensitivity = 0.0015f;
 	Player player;
-	
-	/////////////////////////////////////////////
-	
-	Atmosphere atmos;
 
-	/////////////////////////////////////////////
+	NeighborQuadtree tree;
+	DynameshTerrain dmt;
+
+
+	Sandbox() {
+		//dmt.create();
+		tree.create();
+	}
+	~Sandbox() {
+		tree.destroy();
+	}
 
 	void render(Renderer& renderer) override;
 	void mouseIsMoving(Window& window, IVec2 position)  override;

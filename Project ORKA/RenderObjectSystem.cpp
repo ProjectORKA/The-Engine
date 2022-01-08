@@ -12,7 +12,7 @@ void RenderObjectSystem::destroy()
 void RenderObjectSystem::renderCurrent() {
 	shaderSystemPtr->use(current().shaderID);
 	textureSystemPtr->use(current().textureID);
-	meshSystemPtr->render(current().meshID);
+	meshSystemPtr->render(shaderSystemPtr->uniforms, current().meshID);
 }
 void RenderObjectSystem::select(Index id)
 {

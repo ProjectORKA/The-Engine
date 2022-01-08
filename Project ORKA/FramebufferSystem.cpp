@@ -30,8 +30,7 @@ void FramebufferSystem::destroy()
 }
 void FramebufferSystem::deselect()
 {
-	apiBindFramebuffer(GL_FRAMEBUFFER, 0);
-	//apiDrawBuffer(GL_BACK); //[TODO] check if unnecessary
+	apiBindFramebuffer(0);
 }
 void FramebufferSystem::update(Area area)
 {

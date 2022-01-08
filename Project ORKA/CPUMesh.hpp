@@ -9,6 +9,8 @@
 #include <assimp/postprocess.h>
 #include <assimp/scene.h>
 
+struct Renderer;
+
 struct CPUMesh {
 	Name name = "empty";
 	PrimitiveMode primitiveMode = PrimitiveMode::Triangles;
@@ -20,17 +22,20 @@ struct CPUMesh {
 	Bool readyForUpload = false;
 		
 	CPUMesh();
-	~CPUMesh(){};
+	~CPUMesh();
 	CPUMesh(Name name);
 	CPUMesh(Graph& graph);
+	CPUMesh(Name name, MeshDrawMode drawMode, PrimitiveMode primitiveMode);
 
-	void render();
 	void saveMeshFile();
 	void load(Name name);
 	void checkIntegrity();
 	void loadFBX(Path path);
+	void move(Vec3 moveVector);
+	void merge(CPUMesh source);
 	void loadMeshFile(Path path);
 	void calculateSmoothNormals();
+	void render(Renderer& renderer);
 };
 
 struct MeshHeaderV2 {
