@@ -345,7 +345,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>G:\DATA\PROJEKTE\ORKA\GAME ENGINE\SOURCE CODE\External Libraries\STBIMAGE;G:\DATA\PROJEKTE\ORKA\GAME ENGINE\SOURCE CODE\External Libraries\FREETYPE\include;G:\DATA\PROJEKTE\ORKA\GAME ENGINE\SOURCE CODE\External Libraries\ASIO\asio-1.18.1\include;$(SolutionDir)\External Libraries\freetype-2.10.4\include;$(SolutionDir)\External Libraries\STB IMAGE;$(SolutionDir)\External Libraries\ASSIMP\include;$(SolutionDir)\External Libraries\GLM;$(SolutionDir)\External Libraries\GLEW\include;$(SolutionDir)\External Libraries\GLFW 32 bit\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\External Libraries\STBIMAGE;$(SolutionDir)\External Libraries\FREETYPE\include;$(SolutionDir)\External Libraries\ASIO\asio-1.18.1\include;$(SolutionDir)\External Libraries\freetype-2.10.4\include;$(SolutionDir)\External Libraries\STB IMAGE;$(SolutionDir)\External Libraries\ASSIMP\include;$(SolutionDir)\External Libraries\GLM;$(SolutionDir)\External Libraries\GLEW\include;$(SolutionDir)\External Libraries\GLFW 32 bit\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <EnableModules>false</EnableModules>
@@ -373,7 +373,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>G:\DATA\PROJEKTE\ORKA\GAME ENGINE\SOURCE CODE\External Libraries\STBIMAGE;G:\DATA\PROJEKTE\ORKA\GAME ENGINE\SOURCE CODE\External Libraries\FREETYPE\include;G:\DATA\PROJEKTE\ORKA\GAME ENGINE\SOURCE CODE\External Libraries\ASIO\asio-1.18.1\include;$(SolutionDir)\External Libraries\freetype-2.10.4\include;$(SolutionDir)\External Libraries\STB IMAGE;$(SolutionDir)\External Libraries\ASSIMP\include;$(SolutionDir)\External Libraries\GLM;$(SolutionDir)\External Libraries\GLEW\include;$(SolutionDir)\External Libraries\GLFW 64 bit\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)External Libraries\STBIMAGE;$(SolutionDir)External Libraries\FREETYPE\include;$(SolutionDir)External Libraries\ASIO\asio-1.18.1\include;$(SolutionDir)External Libraries\freetype-2.10.4\include;$(SolutionDir)External Libraries\STB IMAGE;$(SolutionDir)External Libraries\ASSIMP\include;$(SolutionDir)External Libraries\GLM;$(SolutionDir)External Libraries\GLEW\include;$(SolutionDir)External Libraries\GLFW 64 bit\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <SupportJustMyCode>true</SupportJustMyCode>
@@ -406,7 +406,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>G:\DATA\PROJEKTE\ORKA\GAME ENGINE\SOURCE CODE\External Libraries\STBIMAGE;G:\DATA\PROJEKTE\ORKA\GAME ENGINE\SOURCE CODE\External Libraries\FREETYPE\include;G:\DATA\PROJEKTE\ORKA\GAME ENGINE\SOURCE CODE\External Libraries\ASIO\asio-1.18.1\include;$(SolutionDir)\External Libraries\freetype-2.10.4\include;$(SolutionDir)\External Libraries\STB IMAGE;$(SolutionDir)\External Libraries\ASSIMP\include;$(SolutionDir)\External Libraries\GLM;$(SolutionDir)\External Libraries\GLEW\include;$(SolutionDir)\External Libraries\GLFW 32 bit\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\External Libraries\STBIMAGE;$(SolutionDir)\External Libraries\FREETYPE\include;$(SolutionDir)\External Libraries\ASIO\asio-1.18.1\include;$(SolutionDir)\External Libraries\freetype-2.10.4\include;$(SolutionDir)\External Libraries\STB IMAGE;$(SolutionDir)\External Libraries\ASSIMP\include;$(SolutionDir)\External Libraries\GLM;$(SolutionDir)\External Libraries\GLEW\include;$(SolutionDir)\External Libraries\GLFW 32 bit\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <FloatingPointModel>Fast</FloatingPointModel>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LanguageStandard>stdcpp17</LanguageStandard>
@@ -436,7 +436,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>G:\DATA\PROJEKTE\ORKA\GAME ENGINE\SOURCE CODE\External Libraries\STBIMAGE;G:\DATA\PROJEKTE\ORKA\GAME ENGINE\SOURCE CODE\External Libraries\FREETYPE\include;G:\DATA\PROJEKTE\ORKA\GAME ENGINE\SOURCE CODE\External Libraries\ASIO\asio-1.18.1\include;$(SolutionDir)\External Libraries\freetype-2.10.4\include;$(SolutionDir)\External Libraries\STB IMAGE;$(SolutionDir)\External Libraries\ASSIMP\include;$(SolutionDir)\External Libraries\GLM;$(SolutionDir)\External Libraries\GLEW\include;$(SolutionDir)\External Libraries\GLFW 64 bit\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)External Libraries\STBIMAGE;$(SolutionDir)External Libraries\FREETYPE\include;$(SolutionDir)External Libraries\ASIO\asio-1.18.1\include;$(SolutionDir)External Libraries\freetype-2.10.4\include;$(SolutionDir)External Libraries\STB IMAGE;$(SolutionDir)External Libraries\ASSIMP\include;$(SolutionDir)External Libraries\GLM;$(SolutionDir)External Libraries\GLEW\include;$(SolutionDir)External Libraries\GLFW 64 bit\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <FloatingPointModel>Fast</FloatingPointModel>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);%(PreprocessorDefinitions)</PreprocessorDefinitions>
