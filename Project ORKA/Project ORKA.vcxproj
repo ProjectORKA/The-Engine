@@ -117,6 +117,7 @@
     <ClCompile Include="OctreeSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="GuessingGame.hpp" />
     <ClInclude Include="IndexFramebuffer.hpp" />
     <ClInclude Include="InteractiveObject.hpp" />
     <ClInclude Include="ParticleSystem.hpp" />

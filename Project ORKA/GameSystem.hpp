@@ -11,7 +11,7 @@ struct GameSystem {
 	Thread thread;			//processes all game instances in a separate thread
 	
 	void run();					//creates the gamesimulation thread which continually updates all games
-	~GameSystem();				//destroys all game instances
+	~GameSystem();			//destroys all game instances
 	Game* add(Game * game);		//adds a new game to the list of globally acessible games
 };
 

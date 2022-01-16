@@ -1,35 +1,35 @@
 #pragma once
 
-//author is mb
+//author: q80823
+//16.1.22
+
+//author: blendurian
+//16.1.22
 
 #include "Basics.hpp"
 #include "Random.hpp"
 
 void guessingGame() {
 	randomizeSeed();
+	Int maxNumber = 1000;
+	Int target = randomInt(maxNumber);
+	Int guess = 0;
+	String name;
+	Int guessCount = 0;
 
-	Int Randomvariable = randomInt(1000);
-	Int Somevariable;
-	String Leaderboardname;
-	Int GuessNumber = 0;
+	std::cout << "Welcome to the number guessing game, whats your name?\n";
+	std::cin >> name;
 
-	std::cout << "Welcome to the number guessing game, please type your name:" << std::endl;
-	std::cin >> Leaderboardname;
+	std::cout << "We have generated a random number between 0 and "<< maxNumber << ". Try and guess the number." << std::endl;
+	std::cin >> guess;
 
-	std::cout << "Try and guess the number" << std::endl;
-	std::cin >> Somevariable;
-
-	while (Randomvariable != Somevariable) {
-
-		if (Randomvariable < Somevariable) std::cout << "Smaller" << std::endl;
-		if (Randomvariable > Somevariable) std::cout << "Larger" << std::endl;
-		GuessNumber++;
-
-		std::cin >> Somevariable;
-
+	while (target != guess) {
+		if (target < guess) std::cout << "Its smaller than that.\n";
+		if (target > guess) std::cout << "Its larger than that.\n";
+		guessCount++;
+		std::cin >> guess;
 	}
 
-	if (Randomvariable == Somevariable) std::cout << "You guessed correctly, " << Leaderboardname << "!" << std::endl;
-	std::cout << Leaderboardname << "'s Score:" << "-" << GuessNumber << std::endl;
-
+	if (target == guess) std::cout << "Congratulations " << name << ", you guessed correctly!\n";
+	std::cout << "Your score:" << guessCount << std::endl;
 }
