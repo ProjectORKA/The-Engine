@@ -13,5 +13,6 @@ struct Player {
 	Float speed = 1;
 	Int speedExponent = 0;
 
+	virtual void update() {};
 	virtual void render(Renderer& renderer);
 };

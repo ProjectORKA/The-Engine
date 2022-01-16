@@ -24,7 +24,8 @@ void Uniforms::reset()
 	//data.width = 1;
 	//data.height = 1;
 	data.placeholder1 = 0;
-
+	data.objectID = -1;
+	data.materialID = -1;
 	sampler2Ds["texture0"] = 0;
 }
 void Uniforms::create()
@@ -88,6 +89,10 @@ Matrix& Uniforms::vMatrix() {
 Matrix& Uniforms::pMatrix() {
 	update = true;
 	return data.pMatrix;
+}
+Int& Uniforms::objectID() {
+	update = true;
+	return data.objectID;
 }
 Vec4& Uniforms::worldOffset() {
 	update = true;

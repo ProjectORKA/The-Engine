@@ -11,7 +11,7 @@ struct GPUTexture {
 	Filter nearFilter = Filter::linear;
 	Filter farFilter = Filter::linearMM;
 	Int wrapping = repeat;
-	Int dataType = dataTypeByte;
+	DataType dataType = dataTypeByte;
 	Short channels = 4;
 	UInt width = 1;
 	UInt height = 1;

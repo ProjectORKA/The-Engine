@@ -38,16 +38,18 @@
 #include "Sandbox.hpp"
 #include "Mooncrash.hpp"
 #include "AIPlayground.hpp"
+#include "ProjectMelon.hpp"
 #include "DungeonsAndDiscord.hpp"
+
 
 //#define TESTING
 //#define MEMORY_LEAK_DETECTION
 
 Int main(Int  argc, Char* argv[]) {
-	randomizeSeed();
 #ifndef TESTING
+	randomizeSeed();
 	
-	gameSystem.add(new Pong());
+	gameSystem.add(new ProjectMelonGame());
 	gameSystem.run();
 
 	window("ORKA",&gameView(0));
@@ -57,14 +59,11 @@ Int main(Int  argc, Char* argv[]) {
 	//testing code
 	/////////////////////////////////////////////////////////////////////////////////////////////////
 
-
-
-
 	/////////////////////////////////////////////////////////////////////////////////////////////////
 	pause();
 #endif // TESTING
-#ifdef MEMORY_LEAK_DETECTION
-	_CrtDumpMemoryLeaks();
-#endif // MEMORY_LEAK_DETECTION
+//#ifdef MEMORY_LEAK_DETECTION
+//	_CrtDumpMemoryLeaks();
+//#endif // MEMORY_LEAK_DETECTION
 	return 0;
 }

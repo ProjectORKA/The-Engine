@@ -5,5 +5,9 @@
 #include "Debug.hpp"
 #include "Image.hpp"
 
+
+
 String loadString(Path path);
 Image loadImage(Path path, Int bitcount, Bool inverted);
+
+void copyFile(Path source, Path destination);

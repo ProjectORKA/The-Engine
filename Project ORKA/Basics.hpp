@@ -85,7 +85,6 @@ using Quaternion = glm::quat;
 
 using Rotation = glm::quat;
 
-//input output
 #include <iostream>
 #include <fstream>
 #include <sstream>

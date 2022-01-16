@@ -22,7 +22,6 @@ void logDebug(String message)
 void logWarning(String message) {
 #ifdef DEBUG
 	if (showWarning) std::cout << "Warning: " << message << "\n";
-	beep();
 #endif // DEBUG
 }
 void logError(String message)

@@ -5,7 +5,6 @@
 #include "Game.hpp"
 #include "KeyMap.hpp"
 #include "Player.hpp"
-#include "FileSystem.hpp"
 
 struct Renderer;
 struct Window;
@@ -13,11 +12,10 @@ struct Window;
 struct Object {
 	Transform transform;
 	Name meshName = "";
-	void render(Renderer& renderer);;
+	void render(Renderer& renderer);
 };
 
 struct DungeonsAndDiscord : public Game {
-	
 	//Input
 	Action	forward;
 	Action	backward;

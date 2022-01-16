@@ -7,6 +7,7 @@
 #endif
 
 #include "Basics.hpp"
+#include "FileSystem.hpp"
 #include "Debug.hpp"
 #include "GraphicsAPI.hpp"
 
@@ -34,21 +35,21 @@ struct CPUTexture {
 	Int width = 0;
 	Int height = 0;
 	Int channels = 0;
-	Int dataType = dataTypeByte;
+	DataType dataType = dataTypeByte;
 	union {
 		void* pixels = nullptr;
 		Byte* bytePixels;
 		Float* floatPixels;
 		UInt* uIntPixels;
 	};
-	Filter nearFilter = Filter::linear;
-	Filter farFilter = Filter::linearMM;
+	Filter nearFilter = Filter::nearest;
+	Filter farFilter = Filter::nearestMM;
 	Int wrapping = repeat;
 	Bool loaded = false;
 
 	void unload();
+	void load(Name name);
 	void load(Path path, Name name);
-	void load(Name name);;
 
 	CPUTexture() {};
 	~CPUTexture();
