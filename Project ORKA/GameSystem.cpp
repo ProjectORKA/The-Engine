@@ -3,7 +3,7 @@
 GameSystem gameSystem;
 
 GameSystem::~GameSystem() {
-	thread.stop();
+	//thread.stop();
 	for (Game* game : games) {
 		game->destroy();
 		delete game;
