@@ -17,14 +17,14 @@ void Sandbox::render(Renderer& renderer) {
 	if (right.pressed)		player.accelerationVector += player.camera.rightVector;
 	if (left.pressed)		player.accelerationVector -= player.camera.rightVector;
 
-	player.render(renderer);
+	player.render(renderer); //[TODO] get rid of this vvvvvvvv
 
 	renderer.setWireframeMode();
 	renderer.setCulling(true);
 	renderer.setDepthTest(true);
 	renderer.clearDepth();
 
-	player.render(renderer);
+	player.render(renderer); //[TODO] or this
 	renderer.uniforms().mMatrix() = Matrix(1);
 	renderer.shaderSystem.use("debug");
 

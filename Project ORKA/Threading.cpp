@@ -2,6 +2,8 @@
 
 void Thread::stop()
 {
-	keepThreadRunning = false;
-	thread.join();
+	if (keepThreadRunning) {
+		keepThreadRunning = false;
+	}
+	if(thread.joinable())thread.join();
 }

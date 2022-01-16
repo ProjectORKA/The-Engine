@@ -26,7 +26,7 @@ void Shader::create(ShaderType shaderType, Path path, String uniformBlock) {
 }
 void Shader::loadShaderCode(ShaderType shaderType, String shaderCode)
 {
-	logDebug(String("\n\Loading Shader:--------------------------------------------------------").append(shaderCode).append("\n\---------------------------------------------------------------------- "));
+	//logDebug(String("\n\Loading Shader:--------------------------------------------------------").append(shaderCode).append("\n\---------------------------------------------------------------------- "));
 
 	shaderID = apiCreateShader(enumClassAsInt(shaderType));
 

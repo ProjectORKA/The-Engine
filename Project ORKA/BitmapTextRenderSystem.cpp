@@ -11,6 +11,7 @@ void BitmapTextRenderSystem::create(Renderer& renderer) {
 	cpuTextTexture.load("fontSDF");
 	textTexture.load(cpuTextTexture);
 	renderer.shaderSystem.add("text");
+
 }
 void BitmapTextRenderSystem::render(Renderer & renderer, String text, Vec2 position, FontStyle style) {
 	

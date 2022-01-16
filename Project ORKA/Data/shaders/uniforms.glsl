@@ -20,13 +20,16 @@ layout(std140, binding = 0) uniform GlobalUniforms
 
 	uint width;
 	uint height;
+	uint posX;
+	uint posY;
+
 	uint materialID;
 	uint objectID;
-
 	bool distortion;
 	int i1;
-	int i2;
-	int i3;
+	
+	//int i2;
+	//int i3;
 };
 
 uniform sampler2D texture0;

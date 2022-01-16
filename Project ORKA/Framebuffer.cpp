@@ -2,9 +2,12 @@
 #include "Framebuffer.hpp"
 #include "Renderer.hpp"
 
+Float Framebuffer::aspectRatio() {
+	return Float(size.x) / Float(size.y);
+}
+
 void Framebuffer::create()
 {
-	//generate framebuffer
 	apiGenFramebuffer(framebufferID);
 	apiBindFramebuffer(framebufferID);
 
@@ -20,16 +23,13 @@ void Framebuffer::create()
 	materialIDTexture.load(size, 1, dataTypeUInt);
 	materialIDTexture.attachTexture(3);
 
-	objectIDTexture.load(size, 1, dataTypeUInt);
-	objectIDTexture.attachTexture(4);
-
 	depthTexture.load(size, 5, dataTypeFloat);
 	depthTexture.attachTexture(0);
 
-	UInt attachments[5] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2,GL_COLOR_ATTACHMENT3,GL_COLOR_ATTACHMENT4 };
-	glDrawBuffers(5, attachments);
+	UInt attachments[4] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2,GL_COLOR_ATTACHMENT3 };
+	glDrawBuffers(4, attachments);
+	glReadBuffer(GL_NONE); // apparently fixes problems on older gpus
 
-	//check if correct
 	if (apiCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) logError("Framebuffer is not complete!");
 }
 void Framebuffer::destroy()
@@ -40,7 +40,6 @@ void Framebuffer::destroy()
 	normalTexture.unload();
 	positionTexture.unload();
 	materialIDTexture.unload();
-	objectIDTexture.unload();
 	depthTexture.unload();
 }
 void Framebuffer::setAsTexture()
@@ -57,19 +56,15 @@ void Framebuffer::resize(Area resolution)
 {
 	//apply size
 	size = resolution;
-	aspectRatio = Float(size.x) / Float(size.y);
 
 	//update textures
 	colorTexture.resize(size);
+	depthTexture.resize(size);
 	normalTexture.resize(size);
 	positionTexture.resize(size);
 	materialIDTexture.resize(size);
-	objectIDTexture.resize(size);
-	depthTexture.resize(size);
 }
-void Framebuffer::use(Renderer & renderer)
+void Framebuffer::use()
 {
 	apiBindFramebuffer(framebufferID);
-	renderer.uniforms().width() = size.x;
-	renderer.uniforms().height() = size.y;
 }

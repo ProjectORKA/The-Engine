@@ -32,7 +32,6 @@ void ShaderSystem::add(Name name)
 }
 Index ShaderSystem::use(Name name)
 {
-
 	auto it = shaderNames.find(name);
 	if (it != shaderNames.end()) {
 		use(it->second);

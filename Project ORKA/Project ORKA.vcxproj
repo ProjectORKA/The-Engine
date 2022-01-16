@@ -24,6 +24,9 @@
   <ItemGroup>
     <ClCompile Include="AIPlayground.cpp" />
     <ClCompile Include="Algorithm.cpp" />
+    <ClCompile Include="IndexFramebuffer.cpp" />
+    <ClCompile Include="ParticleSystem.cpp" />
+    <ClCompile Include="ProjectMelon.cpp" />
     <ClCompile Include="Sky.cpp" />
     <ClCompile Include="Basics.cpp" />
     <ClCompile Include="BitmapTextRenderSystem.cpp" />
@@ -114,6 +117,10 @@
     <ClCompile Include="OctreeSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="IndexFramebuffer.hpp" />
+    <ClInclude Include="InteractiveObject.hpp" />
+    <ClInclude Include="ParticleSystem.hpp" />
+    <ClInclude Include="ProjectMelon.hpp" />
     <ClInclude Include="Sky.hpp" />
     <ClInclude Include="AudioSystem.hpp" />
     <ClInclude Include="BranchStructure.hpp" />
@@ -243,6 +250,8 @@
     <None Include="Data\shaders\depthCutter.vert" />
     <None Include="Data\shaders\dndUberShader.frag" />
     <None Include="Data\shaders\dndUberShader.vert" />
+    <None Include="Data\shaders\MelonUberShader.frag" />
+    <None Include="Data\shaders\MelonUberShader.vert" />
     <None Include="Data\shaders\normals.frag" />
     <None Include="Data\shaders\normals.vert" />
     <None Include="Data\shaders\postProcess.frag" />
@@ -271,6 +280,8 @@
     <None Include="Data\shaders\water.vert" />
     <None Include="Data\shaders\color.frag" />
     <None Include="Data\shaders\color.vert" />
+    <None Include="G:\DATA\PROJEKTE\ORKA\GAME ENGINE\SOURCE CODE\Project ORKA\Data\shaders\idShader.frag" />
+    <None Include="G:\DATA\PROJEKTE\ORKA\GAME ENGINE\SOURCE CODE\Project ORKA\Data\shaders\idShader.vert" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
@@ -455,7 +466,7 @@
       <SubSystem>Console</SubSystem>
     </Link>
     <PostBuildEvent>
-      <Command>XCOPY "$(SolutionDir)\Project ORKA\Data" "$(TargetDir)\Data" /S /Y /I</Command>
+      <Command>XCOPY "$(SolutionDir)Project ORKA\Data" "$(TargetDir)Data" /S /Y /I</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

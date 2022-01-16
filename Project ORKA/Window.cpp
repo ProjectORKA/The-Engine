@@ -37,9 +37,20 @@ void windowThread(Window& window)
 
 			renderer.renderRegion.set(windowArea);
 
-			renderer.framebufferSystem.use(renderer,0);
-			renderer.clearColor(Color(Vec3(0),0.0));
+			//glClearTexImage(renderer.framebufferSystem.idFramebuffer.idTexture.textureID, 0, GL_RGB32UI, GL_UNSIGNED_INT, 0);
+
+			renderer.framebufferSystem.idFramebuffer.use();
+
+			renderer.clearColor(Color(Vec3(0), 1));
 			renderer.clearDepth();
+
+			renderer.framebufferSystem.use(renderer,0);
+			renderer.clearColor(Color(Vec3(0), 0.0));
+			renderer.clearDepth();
+
+			//gpu needs frameSize
+			renderer.uniforms().width(renderer.framebufferSystem.current().size.x);
+			renderer.uniforms().height(renderer.framebufferSystem.current().size.y);
 
 			renderer.setWireframeMode(renderer.wireframeMode);
 
@@ -49,14 +60,17 @@ void windowThread(Window& window)
 			
 			renderer.framebufferSystem.current().blitFramebuffer();
 
-			//renderer.setWireframeMode(false);
+			renderer.setWireframeMode(false);
+			renderer.setAlphaBlending(false);
 
-			//apiBindDrawFramebuffer(0);
-			//renderer.framebufferSystem.current().positionTexture.use(0);
-			//renderer.uniforms().reset();
-			//renderer.useShader("texture");
-			//renderer.renderMesh("plane");
+			apiBindDrawFramebuffer(0);
 
+			renderer.useShader("texture");
+			//Int tex = glGetUniformLocation(renderer.shaderSystem.currentShaderProgram().programID, "utexture0");
+			renderer.framebufferSystem.current().colorTexture.use(0);
+			//renderer.framebufferSystem.idFramebuffer.idTexture.use(tex);
+			renderer.uniforms().reset();
+			renderer.renderMesh("plane");
 
 			renderer.end(); //checks errors and unlocks renderer
 			apiWindowSwapBuffers(window.apiWindow);
