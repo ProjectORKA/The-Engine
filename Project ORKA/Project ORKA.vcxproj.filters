@@ -413,6 +413,9 @@
     <Filter Include="Program\GameSystem\Systems\ParticleSystem">
       <UniqueIdentifier>{ae20cd96-66ca-4152-9d71-d573d411b6da}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Program\GameSystem\Game\GuessingGame">
+      <UniqueIdentifier>{8a92ec1b-0a80-44aa-95d7-5cd4814b9e38}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -1053,6 +1056,9 @@
     </ClInclude>
     <ClInclude Include="ParticleSystem.hpp">
       <Filter>Program\GameSystem\Systems\ParticleSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="GuessingGame.hpp">
+      <Filter>Program\GameSystem\Game\GuessingGame</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
