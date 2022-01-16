@@ -22,6 +22,8 @@
 #[Rr]eleases/
 #x64/
 #x86/
+Debug/
+Release/
 bld/
 [Bb]in/
 [Oo]bj/

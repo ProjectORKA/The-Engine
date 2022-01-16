@@ -97,6 +97,6 @@ struct Renderer{
 	void createBlurTexture(Index from, Index to);
 	void addRenderObject(RenderObjectNames renderObjectNames);
 	
-	Float& aspectRatio();
+	Float aspectRatio();
 	Uniforms& uniforms();
 };

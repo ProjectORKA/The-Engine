@@ -1,7 +1,10 @@
 
 //! #include "uniforms.glsl"
 
-layout(location = 0) out vec4 color;
+layout(location = 0) out vec4 gBufferColor;
+layout (location = 1) out vec3 gBufferNormal;
+layout (location = 2) out vec3 gBufferPosition;
+layout (location = 3) out uint gBufferMaterialID;
 
 in vec3 position;
 
@@ -326,5 +329,8 @@ void main() {
 
     //col = texture(texture1,gl_FragCoord.xy / vec2(width,height)).xyz;
 
-    color = vec4(col, 1.0);
+    gBufferColor = vec4(col, 1.0);
+    gBufferPosition = position;
+    gBufferNormal = position;
+    gBufferMaterialID = 0;
 }
