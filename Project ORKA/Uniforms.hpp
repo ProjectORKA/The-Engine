@@ -10,23 +10,30 @@ struct GlobalUniformData {
 	Matrix mMatrix = Matrix(1);						//16 * 4
 	Matrix vMatrix = Matrix(1);						//16 * 4
 	Matrix pMatrix = Matrix(1);						//16 * 4
+	
 	Vec4 worldOffset = Vec4(0, 0, 0, 0);			//16
 	Vec4 cameraVector = Vec4(0, 0, 0, 0);			//16
 	Vec4 cameraPosition = Vec4(0, 0, 0, 0);			//16
 	Vec4 customColor = Vec4(0, 0, 0, 1);			//16
 	Vec4 sunDir = Vec4(0, 0, 1, 1);					//16
+	
 	float time = 0.0f;								//16
 	float custom1 = 0.0f;
 	float custom2 = 0.0f;
 	float custom3 = 0.0f;
+	
 	Int width = 0;									//16
 	Int height = 0;
-	Int materialID = 0;
+	Int posX = 0;
+	Int posY = 0;
+	
+	Int materialID = 0;								//16
 	Int objectID = 0;
-	Int distortion = 0;								//16
+	Int distortion = 0;
 	Int placeholder1 = 0;
-	Int placeholder2 = 0;
-	Int placeholder3 = 0;
+	
+	//Int placeholder2 = 0;
+	//Int placeholder3 = 0;
 };
 
 struct Uniforms {
@@ -66,7 +73,7 @@ struct Uniforms {
 	Matrix& mMatrix();
 	Matrix& vMatrix();
 	Matrix& pMatrix();
-
+	Int& objectID();
 
 	Map<Name, Index> sampler2Ds;
 	Map<Name, Index> sampler2DMS;

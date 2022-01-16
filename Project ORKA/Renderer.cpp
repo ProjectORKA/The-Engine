@@ -123,38 +123,6 @@ void Renderer::arrow(Vec3 start, Vec3 end) {
 
 	uniforms().mMatrix() = m;
 	renderMesh("arrow");
-
-
-
-	//Vec3 dir = normalize(start - end);
-	//Vec3 extend = cross(dir, Vec3(0, 0, 1));
-
-	//CPUMesh arrow;
-	//arrow.drawMode = MeshDrawMode::dynamicMode;
-	//arrow.indices.push_back(0);
-	//arrow.indices.push_back(1);
-	//arrow.indices.push_back(2);
-	//arrow.indices.push_back(3);
-	//arrow.name = "arrow";
-	//arrow.normals.push_back(Vec3(0, 0, 1));
-	//arrow.normals.push_back(Vec3(0, 0, 1));
-	//arrow.normals.push_back(Vec3(0, 0, 1));
-	//arrow.normals.push_back(Vec3(0, 0, 1));
-	//arrow.primitiveMode = PrimitiveMode::TriangleStrip;
-	//arrow.uvs.push_back(Vec2(0, 1));
-	//arrow.uvs.push_back(Vec2(0, 0));
-	//arrow.uvs.push_back(Vec2(1, 0));
-	//arrow.uvs.push_back(Vec2(1, 1));
-	//arrow.vertices.push_back(start + extend * width);
-	//arrow.vertices.push_back(start - extend * width);
-	//arrow.vertices.push_back(end);
-	//arrow.vertices.push_back(end);
-	//arrow.checkIntegrity();
-
-	//GPUMesh gpuMesh;
-	//gpuMesh.upload(arrow);
-	//gpuMesh.render(uniforms());
-	//gpuMesh.unload();
 }
 void Renderer::apectCorrectNormalizedSpace() {
 	Float aspect = aspectRatio();
@@ -246,8 +214,6 @@ void Renderer::createBlurTexture(Index from, Index to)
 	framebufferSystem.use(*this, originalFramebufferID);
 }
 
-//sky
-
 void Renderer::renderSky(Camera& camera) {
 	setCulling(false);
 	setDepthTest(false);
@@ -282,9 +248,9 @@ void Renderer::renderText(String text, Vec2 position, FontStyle font) {
 Bool Renderer::getCulling() {
 	return apiGetCullFace();
 }
-Float& Renderer::aspectRatio()
+Float Renderer::aspectRatio()
 {
-	return framebufferSystem.current().aspectRatio;
+	return framebufferSystem.current().aspectRatio();
 }
 Uniforms& Renderer::uniforms()
 {

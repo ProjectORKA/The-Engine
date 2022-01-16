@@ -2,6 +2,7 @@
 #pragma once
 
 #include "Basics.hpp"
+#include "FileSystem.hpp"
 
 extern Index newUIelementID;
 

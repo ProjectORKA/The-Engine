@@ -14,7 +14,7 @@ struct Thread {
 	{
 		keepThreadRunning = true;
 		thread = std::thread(f, std::ref(args)...);
-	};
-
+	}
 	void stop();
 };
+

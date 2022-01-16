@@ -15,10 +15,8 @@ void FramebufferSystem::add(Renderer & renderer)
 void FramebufferSystem::create(Renderer& renderer)
 {
 	framebuffers.clear();
-	add(renderer);	//0 main framebuffer
-	add(renderer);	//1 blur result
-	add(renderer);	//2 mask
-	add(renderer);	//3 drop shadow
+	idFramebuffer.create();
+	add(renderer);	//main framebuffer
 }
 void FramebufferSystem::destroy()
 {
@@ -27,6 +25,7 @@ void FramebufferSystem::destroy()
 		framebuffer.destroy();
 	}
 	framebuffers.clear();
+	idFramebuffer.destroy();
 }
 void FramebufferSystem::deselect()
 {
@@ -41,6 +40,7 @@ void FramebufferSystem::update(Area area)
 		for (Framebuffer& framebuffer : framebuffers) {
 			framebuffer.resize(framebufferSize);
 		}
+		idFramebuffer.resize(framebufferSize);
 	}
 }
 void FramebufferSystem::use(Renderer & renderer, Index framebufferIndex)
@@ -50,5 +50,5 @@ void FramebufferSystem::use(Renderer & renderer, Index framebufferIndex)
 		return;
 	}
 	currentFramebufferIndex = framebufferIndex;
-	current().use(renderer);
+	current().use();
 }

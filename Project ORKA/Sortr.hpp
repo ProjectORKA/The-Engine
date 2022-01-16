@@ -2,6 +2,7 @@
 #pragma once
 
 #include "Game.hpp"
+#include "FileSystem.hpp"
 
 struct Sortr : public Game {
 	Path unsortedFolder;
@@ -18,10 +19,5 @@ struct Sortr : public Game {
 	};
 };
 
-#include <filesystem>
-#include <fstream>
-#include <iostream>
-
 void removeDoubleQuotes(String& s);
-
 void sortr();

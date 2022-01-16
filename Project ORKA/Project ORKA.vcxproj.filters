@@ -398,6 +398,21 @@
     <Filter Include="Shaders\texture">
       <UniqueIdentifier>{73da9f3a-d4f2-454d-bf5f-08a55ed88711}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Shaders\idShader">
+      <UniqueIdentifier>{751d381e-bdac-4037-baac-92fbc1e291ac}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\Engine\UserInterface\Window\Renderer\FramebufferSystem\IndexFramebuffer">
+      <UniqueIdentifier>{93bc3aea-f518-4c08-89e0-411d437ee918}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\Engine\InputManager\InteractiveObject">
+      <UniqueIdentifier>{626c1a05-351a-4e14-a438-205e550f28f7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\GameSystem\Game\Project Melon">
+      <UniqueIdentifier>{aff48ae1-dc10-45e9-9224-7e3e581c8423}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\GameSystem\Systems\ParticleSystem">
+      <UniqueIdentifier>{ae20cd96-66ca-4152-9d71-d573d411b6da}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -667,6 +682,15 @@
     </ClCompile>
     <ClCompile Include="JobSystem.cpp">
       <Filter>Program\Engine\JobSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="IndexFramebuffer.cpp">
+      <Filter>Program\Engine\UserInterface\Window\Renderer\FramebufferSystem\IndexFramebuffer</Filter>
+    </ClCompile>
+    <ClCompile Include="ParticleSystem.cpp">
+      <Filter>Program\GameSystem\Systems\ParticleSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="ProjectMelon.cpp">
+      <Filter>Program\GameSystem\Game\Project Melon</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1018,6 +1042,18 @@
     <ClInclude Include="Message.hpp">
       <Filter>Program\Engine\Networking</Filter>
     </ClInclude>
+    <ClInclude Include="IndexFramebuffer.hpp">
+      <Filter>Program\Engine\UserInterface\Window\Renderer\FramebufferSystem\IndexFramebuffer</Filter>
+    </ClInclude>
+    <ClInclude Include="InteractiveObject.hpp">
+      <Filter>Program\Engine\InputManager\InteractiveObject</Filter>
+    </ClInclude>
+    <ClInclude Include="ProjectMelon.hpp">
+      <Filter>Program\GameSystem\Game\Project Melon</Filter>
+    </ClInclude>
+    <ClInclude Include="ParticleSystem.hpp">
+      <Filter>Program\GameSystem\Systems\ParticleSystem</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Data\shaders\debug.frag">
@@ -1139,6 +1175,18 @@
     </None>
     <None Include="Data\shaders\texture.vert">
       <Filter>Shaders\texture</Filter>
+    </None>
+    <None Include="G:\DATA\PROJEKTE\ORKA\GAME ENGINE\SOURCE CODE\Project ORKA\Data\shaders\idShader.frag">
+      <Filter>Shaders\idShader</Filter>
+    </None>
+    <None Include="G:\DATA\PROJEKTE\ORKA\GAME ENGINE\SOURCE CODE\Project ORKA\Data\shaders\idShader.vert">
+      <Filter>Shaders\idShader</Filter>
+    </None>
+    <None Include="Data\shaders\MelonUberShader.vert">
+      <Filter>Program\GameSystem\Game\Project Melon</Filter>
+    </None>
+    <None Include="Data\shaders\MelonUberShader.frag">
+      <Filter>Program\GameSystem\Game\Project Melon</Filter>
     </None>
   </ItemGroup>
 </Project>

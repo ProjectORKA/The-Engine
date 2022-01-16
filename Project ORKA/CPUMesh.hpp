@@ -3,6 +3,7 @@
 #include "Basics.hpp"
 #include "Math.hpp"
 #include "Debug.hpp"
+#include "FileSystem.hpp"
 #include "GraphicsAPI.hpp"
 //assimp 
 #include <assimp/Importer.hpp>
