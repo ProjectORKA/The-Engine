@@ -9,13 +9,15 @@
 struct Renderer;
 struct Window;
 
-struct Object {
-	Transform transform;
-	Name meshName = "";
-	void render(Renderer& renderer);
-};
+namespace DND {
 
-struct DungeonsAndDiscord : public Game {
+	struct Object {
+		Transform transform;
+		Name meshName = "";
+		void render(Renderer& renderer);
+	};
+
+	struct DungeonsAndDiscord : public Game {
 	//Input
 	Action	forward;
 	Action	backward;
@@ -44,4 +46,5 @@ struct DungeonsAndDiscord : public Game {
 	void buttonIsPressed(Window& window, Int keyID, Int action, Int modifiers) override;
 };
 
-Int diceRoll(Int diceCount);
+	Int diceRoll(Int diceCount);
+}

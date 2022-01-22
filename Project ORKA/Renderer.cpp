@@ -18,8 +18,8 @@ void Renderer::sync()
 void Renderer::begin()
 {
 	mutex.lock();							//used for syncronizing other threads
-	renderTime.update();					//advances the time
-	uniforms().time() = renderTime.total;	//makes time available to shaders
+	time.update();					//advances the time
+	uniforms().time() = time.total;	//makes time available to shaders
 	framebufferSystem.deselect();			//selects the backbuffer of the window
 	clearColor(Color(Vec3(0), 0.0));		//and clears its contents
 	clearDepth();							//clears depth as to not accidentally hide geometry
@@ -28,7 +28,7 @@ void Renderer::create()
 {
 	randomizeSeed();
 	//basic systems
-	renderTime.reset();
+	time.reset();
 	textureSystem.create();
 	meshSystem.create();
 	shaderSystem.create();
@@ -70,12 +70,20 @@ void Renderer::screenSpace() {
 	uniforms().vMatrix() = Matrix(1);
 	uniforms().pMatrix() = matrix;
 }
+void Renderer::rerenderMesh() {
+	//simply renders the previous mesh again (saves performance)
+	meshSystem.currentMesh().render(uniforms());
+}
 void Renderer::fill(Vec4 color) {
 	uniforms().customColor(color);
 }
 void Renderer::normalizedSpace() {
 	uniforms().vMatrix() = Matrix(1);
 	uniforms().pMatrix() = Matrix(1);
+}
+void Renderer::useMesh(Name name) {
+	//selects a mesh to be rendered but doesent render it
+	meshSystem.use(name);
 }
 void Renderer::setWireframeMode() {
 	setWireframeMode(wireframeMode);
@@ -96,6 +104,16 @@ void Renderer::clearColor(Color color) {
 	apiSetClearColor(color);
 	apiClearColor();
 }
+void Renderer::renderSky(Camera& camera) {
+	setCulling(false);
+	setDepthTest(false);
+	camera.renderOnlyRot(*this);
+	useShader("sky");
+	useTexture("sky");
+	renderMesh("sky");
+	setCulling(true);
+	setDepthTest(true);
+}
 void Renderer::setCulling(Bool isCulling) {
 	if (isCulling) {
 		apiEnable(GL_CULL_FACE);
@@ -108,20 +126,11 @@ void Renderer::setCulling(Bool isCulling) {
 void Renderer::arrow(Vec3 start, Vec3 end) {
 	useShader("color");
 	uniforms().customColor(Vec4(1, 0, 0, 1));
-
 	Float length = distance(start, end) / 20;
-	if (length >= 0.075) return;
-	Vec3 z = normalize(end - start);
-	Vec3 x = cross(normalize(z),Vec3(0,0,1));
-	Vec3 y = cross(normalize(z), x);
-
-	Matrix m;
-	m[0] = Vec4(length * x,0);
-	m[1] = Vec4(length * y,0);
-	m[2] = Vec4(length * z,0);
-	m[3] = Vec4(start,1);
-
-	uniforms().mMatrix() = m;
+	//if (length >= 0.075) return; //[TODO] erase this
+	Vec3 direction = end - start;
+	Orientation o(direction, Vec3(0, 0, 1));
+	uniforms().mMatrix() = matrixFromOrientation(o,start,length);
 	renderMesh("arrow");
 }
 void Renderer::apectCorrectNormalizedSpace() {
@@ -152,7 +161,7 @@ void Renderer::setAlphaBlending(Bool blending)
 void Renderer::setDepthTest(Bool isUsingDepth) {
 	if (isUsingDepth) {
 		apiEnable(GL_DEPTH_TEST);
-		apiDepthFunc(GL_LEQUAL);
+		apiDepthFunc(GL_LESS);
 	}
 	else {
 		apiDisable(GL_DEPTH_TEST);
@@ -213,17 +222,6 @@ void Renderer::createBlurTexture(Index from, Index to)
 
 	framebufferSystem.use(*this, originalFramebufferID);
 }
-
-void Renderer::renderSky(Camera& camera) {
-	setCulling(false);
-	setDepthTest(false);
-	camera.renderOnlyRot(*this);
-	useShader("sky");
-	useTexture("sky");
-	renderMesh("sky");
-	setCulling(true);
-	setDepthTest(true);
-}
 void Renderer::renderAtmosphere(Player& player, Vec3 sunDirection) {
 	Bool culling = getCulling();
 	setDepthTest(false);
@@ -243,6 +241,10 @@ void Renderer::addRenderObject(RenderObjectNames renderObjectNames)
 }
 void Renderer::renderText(String text, Vec2 position, FontStyle font) {
 	textRenderSystem.render(*this, text, position, font);
+}
+void Renderer::renderMeshInstanced(Name name, Vector<Vec4>& transformations)
+{
+	if(transformations.size()) meshSystem.renderInstanced(uniforms(), name, transformations);
 }
 
 Bool Renderer::getCulling() {

@@ -24,7 +24,7 @@ void OctreeNodeRenderData::count()
 	}
 
 	if (equivalentOctreeNode->id.level == 0) {
-		logDebug(String("OctreeNodeRenderDataCount: ").append(std::to_string(nodeCount)));
+		logDebug(String("OctreeNodeRenderDataCount: ").append(toString(nodeCount)));
 	}
 }
 void OctreeNodeRenderData::destroy()

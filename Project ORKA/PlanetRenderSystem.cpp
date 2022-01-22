@@ -24,7 +24,7 @@ void PlanetRenderSystem::render(PlanetSystem& planetSystem, Renderer& renderer, 
 	quadtreeRenderSystem.update(player);
 
 	//set uniforms
-	renderer.uniforms().distortion() = Int(renderer.planetRenderSystem.worldDistortion);
+	renderer.uniforms().customInt1() = Int(renderer.planetRenderSystem.worldDistortion);
 	renderer.uniforms().mMatrix() = Matrix(1);
 	player.camera.renderOnlyRot(renderer);
 

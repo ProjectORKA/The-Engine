@@ -6,6 +6,9 @@
 Vec3 randomVec3() {
 	return Vec3(randomFloat(), randomFloat(), randomFloat());
 }
+Vec2 randomVec2() {
+	return Vec2(randomFloat(), randomFloat());
+}
 Float randomFloat()
 {
 	return randomFloat(0, 1);
@@ -31,6 +34,12 @@ Int randomInt(Int max) {
 Vec3 randomVec3(Vec3 high) {
 	return Vec3(randomFloat(high.x), randomFloat(high.y), randomFloat(high.z));
 }
+Vec2 randomVec2(Float high) {
+	return Vec2(randomFloat(high), randomFloat(high));
+}
+Vec3 randomVec3(Float high) {
+	return Vec3(randomFloat(high), randomFloat(high), randomFloat(high));
+}
 Float randomFloat(Float high) {
 	return randomFloat(0, high);
 }
@@ -41,10 +50,23 @@ Vec3 randomPointInSphere(Float radius) {
 	} while (length(v) > radius);
 	return v;
 };
+Vec3 randomPointOnSphere(Float radius) {
+	return normalize(randomPointInSphere(1)) * radius;
+}
 Vec3 randomVec3(Float low, Float high) {
 	return Vec3(randomFloat(low, high), randomFloat(low, high), randomFloat(low, high));
+}
+Vec2 randomVec2(Float low, Float high) {
+	return Vec2(randomFloat(low, high), randomFloat(low, high));
 }
 Float randomFloat(Float low, Float high)
 {
 	return low + static_cast <Float> (rand()) / (static_cast <Float> (RAND_MAX / (high - low)));
+}
+Vec3 randomPointOnSphereAtLocation(Float radius, Vec3 location) {
+	return randomPointOnSphere(radius) + location;
+}
+
+Vec3 randomPointOnSphereAtLocation(Vec4 sphere) {
+	return randomPointOnSphere(sphere.w) + Vec3(sphere);
 }

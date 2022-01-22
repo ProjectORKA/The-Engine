@@ -3,11 +3,6 @@
 
 #define PI 3.14159265359
 
-//input
-layout(location = 0) in vec3 vertex;
-layout(location = 1) in vec2 uvs;
-layout(location = 2) in vec3 normals;
-
 //output
 out vec3 normal;
 out float depth;
@@ -16,6 +11,24 @@ out vec4 vertexColor;
 out vec3 vertexPosition;
 out vec3 worldCoordinate;
 out vec2 textureCoordinate; 
+
+//void calculateDistortion(inout vec3 location, inout vec3 normal) {
+//
+//	float radius = 256;
+//
+//	float dist = length(vec2(location.xy)) / radius;
+//	if (dist > 1) {
+//		location.xy = normalize(location.xy) * radius;
+//		dist = 1;
+//	}
+//
+//	float func = sqrt(pow((location.z / radius + 1), 2) - pow(clamp(dist, 0, 1), 2));
+//	vec3 newZ = normalize(vec3(location.xy * 2 / radius, func));
+//	vec3 newX = normalize(cross(vec3(0, 1, 0), newZ));
+//	vec3 newY = normalize(cross(newZ, newX));
+//	normal = (normal.x * newX) + (normal.y * newY) + (normal.z * newZ);
+//	location.z = func * radius;
+//}
 
 mat2x3 calculateDistortion1(vec3 location, vec3 normal){
 	if(worldOffset.w < 15){
