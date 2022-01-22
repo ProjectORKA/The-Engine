@@ -13,9 +13,8 @@ struct VertexArrayObject {
 	Vector<VertexBufferObject> buffers;
 	IndexBufferObject indexBuffer;
 
-	void create(CPUMesh& mesh);
-	//void update(CPUMesh & mesh);
-	void add(Index location, float* data, UInt byteSize, UInt usage, Index components);
-	void render();
+	void select();
 	void unload();
+	void create(CPUMesh& mesh);
+	void add(Index location, float* data, UInt byteSize, UInt usage, Index components);
 };

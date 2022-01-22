@@ -16,8 +16,10 @@ void apiWindowEnableCursor(APIWindow apiWindow);
 void apiWindowDisableCursor(APIWindow apiWindow);
 void apiWindowSetExclusiveFullscreen(APIWindow apiWindow);
 void apiWindowSetVisibility(APIWindow apiWindow, Bool visible);
+void apiWindowResize(APIWindow apiWindow, Int width, Int height);
 void apiWindowSetCursorPosition(APIWindow apiWindow, Vec2 position);
 void apiWindowSetWindowedMode(APIWindow apiWindow, TiledRectangle monitorArea);
+
 
 //get boolean
 Bool apiWindowShouldClose(APIWindow apiWindow);

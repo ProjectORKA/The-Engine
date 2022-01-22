@@ -45,6 +45,7 @@ struct Window {
 	void setExclusiveFullscreen();
 	void setPosition(IVec2 position);
 	void createAPIWindow(String title);
+	void resize(Int width, Int height);
 	void create(String title, UIElement * element);
 	
 	Bool shouldClose();

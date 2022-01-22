@@ -29,11 +29,8 @@ struct GlobalUniformData {
 	
 	Int materialID = 0;								//16
 	Int objectID = 0;
-	Int distortion = 0;
-	Int placeholder1 = 0;
-	
-	//Int placeholder2 = 0;
-	//Int placeholder3 = 0;
+	Int instanced = 0;
+	Int customInt1 = 0;
 };
 
 struct Uniforms {
@@ -48,32 +45,35 @@ struct Uniforms {
 	void destroy();
 
 	Int& width();
+	Int& height();
+	Float& time();
+	Vec4& sunDir();
+	Int& objectID();
+	Int& instanced();
+	Float& custom1();
+	Int& customInt1();
+	Vec4& cameraPos();
+	Vec4& cameraVec();
+	Matrix& mMatrix();
+	Matrix& vMatrix();
+	Matrix& pMatrix();
+	Vec4& customColor();
+	Vec4& worldOffset();
+
 	Int& width(Int value);
 	Int& height(Int value);
-	Int& distortion(Int value);
-	Float& custom1(Float value);
 	Float& time(Float value);
-	Vec4& customColor(Vec4 value);
+	Vec4& sunDir(Vec4 value);
+	Int& instanced(Int value);
+	Int& customInt1(Int value);
+	Float& custom1(Float value);
 	Vec4& cameraPos(Vec4 value);
 	Vec4& cameraVec(Vec4 value);
-	Vec4& sunDir(Vec4 value);
+	Vec4& customColor(Vec4 value);
 	Vec4& worldOffset(Vec4 value);
 	Matrix& mMatrix(Matrix value);
 	Matrix& vMatrix(Matrix value);
 	Matrix& pMatrix(Matrix value);
-	Int& height();
-	Int& distortion();
-	Float& custom1();
-	Float& time();
-	Vec4& customColor();
-	Vec4& cameraPos();
-	Vec4& cameraVec();
-	Vec4& sunDir();
-	Vec4& worldOffset();
-	Matrix& mMatrix();
-	Matrix& vMatrix();
-	Matrix& pMatrix();
-	Int& objectID();
 
 	Map<Name, Index> sampler2Ds;
 	Map<Name, Index> sampler2DMS;

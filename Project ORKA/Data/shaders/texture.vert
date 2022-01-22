@@ -1,9 +1,6 @@
 
 //! #include "uniforms.glsl"
 
-layout(location = 0) in vec3 vertex;
-layout(location = 1) in vec2 uvs;
-
 //output
 out vec2 textureCoordinate; 
 

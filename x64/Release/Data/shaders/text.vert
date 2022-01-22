@@ -1,14 +1,18 @@
 
 //! #include "uniforms.glsl"
 
-layout(location = 0) in vec3 vertex;
-layout(location = 1) in vec2 uvs;
-
 //output
 out vec2 textureCoordinate;
 
 void main(){
-	vec4 worldPosition = mMatrix * vec4(vertex, 1);
-	gl_Position  = pMatrix * vMatrix *  worldPosition;
+	vec3 worldPosition;
+	
+	if(instanced){
+		worldPosition = transform.xyz + transform.w * vertex;
+	} else {
+		worldPosition = (mMatrix * vec4(vertex, 1)).xyz;
+	}
+
+	gl_Position  = pMatrix * vMatrix * vec4(worldPosition,1);
 	textureCoordinate = uvs;
 };

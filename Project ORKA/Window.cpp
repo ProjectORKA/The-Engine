@@ -58,7 +58,7 @@ void windowThread(Window& window)
 
 			/// ////////////////////////////////////////////////////////////////////////////
 			
-			renderer.framebufferSystem.current().blitFramebuffer();
+			//renderer.framebufferSystem.current().blitFramebuffer();
 
 			renderer.setWireframeMode(false);
 			renderer.setAlphaBlending(false);
@@ -70,7 +70,12 @@ void windowThread(Window& window)
 			renderer.framebufferSystem.current().colorTexture.use(0);
 			//renderer.framebufferSystem.idFramebuffer.idTexture.use(tex);
 			renderer.uniforms().reset();
+
+			apiEnable(GL_FRAMEBUFFER_SRGB);
+
 			renderer.renderMesh("plane");
+
+			apiDisable(GL_FRAMEBUFFER_SRGB);
 
 			renderer.end(); //checks errors and unlocks renderer
 			apiWindowSwapBuffers(window.apiWindow);
@@ -208,6 +213,9 @@ void Window::setPosition(IVec2 position)
 	windowPosition = position;
 	updatePosition();
 }
+void Window::resize(Int width, Int height) {
+	apiWindowResize(apiWindow, width, height);
+}
 void Window::createAPIWindow(String title) {
 	if (!apiWindow) {
 		//video mode
@@ -267,6 +275,8 @@ void Window::create(String title, UIElement * element)
 	thread.start(windowThread, *this);
 	logEvent("Created Window in Main Thread!");
 }
+
+
 
 //window getters
 Bool Window::shouldClose()

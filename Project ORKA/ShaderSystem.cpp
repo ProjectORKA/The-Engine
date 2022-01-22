@@ -54,18 +54,12 @@ void ShaderSystem::loadDefaultShader()
 	//create default vertex shader
 	String defaultvertexShaderCode = uniforms.uniformBlockShaderCode;
 	defaultvertexShaderCode.append(
-		"\n\
-\n\
-in vec3 vertex; \n\
-in vec2 uvs; \n\
-\n\
-out vec2 textureCoordinate; \n\
+"\n\
 void main()\n\
 {\n\
 	gl_Position = pMatrix * vMatrix * mMatrix * vec4(vertex, 1); \n\
-	textureCoordinate = uvs; \n\
 }"
-);
+	);
 
 	Shader vertexShader;
 	vertexShader.loadShaderCode(ShaderType::vertex, defaultvertexShaderCode);
@@ -75,14 +69,13 @@ void main()\n\
 	defaultFragmentShaderCode.append(
 		"\n\
 \n\
-in vec2 textureCoordinate; \n\
 out vec4 color;\n\
 \n\
 void main()\n\
 {\n\
-	color = vec4(texture(texture0, textureCoordinate).rgb,1.0f);\n\
-	//color = vec4(UV,0.0f,1.0f);\n\
-}");
+	//color = vec4(1.0f,0.0f,1.0f,1.0f);\n\
+}"
+	);
 	Shader fragmentShader;
 	fragmentShader.loadShaderCode(ShaderType::fragment, defaultFragmentShaderCode);
 

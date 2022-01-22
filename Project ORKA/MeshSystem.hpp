@@ -21,9 +21,10 @@ struct MeshSystem {
 	void use(Name name);
 	void use(Index meshID);
 	void loadMesh(Name name);
-	void render(Uniforms& uniforms, Index meshID);
 	void addMesh(CPUMesh cpuMesh);
+	void render(Uniforms& uniforms, Index meshID);
 	void render(Uniforms& uniforms, Name meshName);
+	void renderInstanced(Uniforms& uniforms, Name meshName, Vector<Vec4>& transformations);
 
 	GPUMesh& currentMesh();
 };

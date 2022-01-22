@@ -6,5 +6,5 @@
 struct Renderer;
 
 struct SDFTerrainRenderSystem {
-	void render(Renderer& renderer);;
+	void render(Renderer& renderer);
 };
