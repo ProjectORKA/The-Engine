@@ -58,10 +58,6 @@ void MeshSystem::loadMesh(Name name)
 		logDebug("Mesh could not be loaded from file!");
 	}
 }
-void MeshSystem::render(Uniforms& uniforms, Index meshID) {
-	use(meshID);
-	currentMesh().render(uniforms);
-}
 void MeshSystem::addMesh(CPUMesh cpuMesh) {
 	//[TODO] check if it works
 	GPUMesh gpuMesh;
@@ -73,9 +69,17 @@ void MeshSystem::addMesh(CPUMesh cpuMesh) {
 	//currentMesh().upload(cpuMesh);
 	meshNames[cpuMesh.name] = currentMeshID;
 }
+void MeshSystem::render(Uniforms& uniforms, Index meshID) {
+	use(meshID);
+	currentMesh().render(uniforms);
+}
 void MeshSystem::render(Uniforms & uniforms, Name meshName) {
 	use(meshName);
 	currentMesh().render(uniforms);
+}
+void MeshSystem::renderInstanced(Uniforms& uniforms, Name meshName, Vector<Vec4>& transformations) {
+	use(meshName);
+	currentMesh().renderInstances(uniforms,transformations);
 }
 
 GPUMesh& MeshSystem::currentMesh()

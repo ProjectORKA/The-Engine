@@ -24,11 +24,11 @@ void Intro::render(Renderer& renderer)
 
 	//logo stuff
 	Float animationLength = 1.1;
-	Float size = min(pow(1 + 1 / pow(animationLength, 5), pow(renderer.renderTime.total - 2 * animationLength, 5)), 100.0);
+	Float size = min(pow(1 + 1 / pow(animationLength, 5), pow(renderer.time.total - 2 * animationLength, 5)), 100.0);
 	Float tint = max(2 - size, 0.0f);
 	renderer.uniforms().customColor() = Color(tint, tint, tint, 1);
 	Matrix modelMatrix = glm::scale(Matrix(1), Vec3(size, 1, size));
-	modelMatrix = glm::rotate(modelMatrix, 20 / (pow(renderer.renderTime.total, 4.0f) + 1), Vec3(0, 0, 1));
+	modelMatrix = glm::rotate(modelMatrix, 20 / (pow(renderer.time.total, 4.0f) + 1), Vec3(0, 0, 1));
 	renderer.uniforms().mMatrix() = modelMatrix;
 
 	renderer.useShader("unlit");
@@ -37,12 +37,12 @@ void Intro::render(Renderer& renderer)
 
 	static Bool f = true;
 	if (f) {
-		renderer.renderTime.reset();
+		renderer.time.reset();
 		f = false;
 	}
 
 
-	if ((renderer.renderTime.total > 5) && (!selfReplace)) {
+	if ((renderer.time.total > 5) && (!selfReplace)) {
 		selfReplace = gameStartingAfterIntro;
 	}
 }

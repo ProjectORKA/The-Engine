@@ -12,7 +12,7 @@
 //	beep();
 //}
 //void windowCountCommand(String s) {
-//	logDebug(String("Window count: ").append(std::to_string(ui.windows.size())));
+//	logDebug(String("Window count: ").append(toString(ui.windows.size())));
 //}
 //
 //Command::Command(String command, String description, void(*function)(String))

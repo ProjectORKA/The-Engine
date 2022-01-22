@@ -12,6 +12,78 @@ struct Window;
 #include "NeighborQuadtree.hpp"
 #include "DynameshTerrain.hpp"
 
+
+#include "Random.hpp"
+#include "Algorithm.hpp"
+#include "PointCloud.hpp"
+
+using Face = Index[3];
+
+struct Mesh {
+	Vector<Vec3> positions;
+	Vector<Face> faces;
+};
+
+struct SphereMeshing {
+
+	Bool loaded = false;
+	Vector<Vec3> terrain;
+	Vector<Vec3> air;
+	Vector<Vec4> spheres;
+
+	void render(Renderer & renderer) {
+		renderer.useShader("debug");
+		renderer.renderMeshInstanced("sphereLowPoly", spheres);
+	};
+
+	void rebuildMesh() {
+		spheres.clear();
+		for (auto t : terrain) {
+			Float size = getDistanceToClosestPoint(t, air);
+			spheres.push_back(Vec4(t, size));
+		}
+	};
+
+	void update() {
+		if (!loaded) {
+
+			UInt gridSize = 64;
+
+			for (int x = 0; x < gridSize; x++) {
+				for (int y = 0; y < gridSize; y++) {
+					for (int z = 0; z < gridSize; z++) {
+						Vec3 point = Vec3(x, y, z) / Vec3(gridSize);
+						if (point.z > sin(point.x) * sin(point.y)) air.push_back(point);
+						else terrain.push_back(point);
+					}
+				}
+			}
+
+			if (terrain.size() && air.size()) rebuildMesh();
+			loaded = true;
+		}
+
+		//for(int i = 0; i < 100; i++) generatePoint();
+	};
+
+	void generatePoint() {
+		Vec3 point = randomVec3(1);
+
+		if (point.z > 0.5) {
+			air.push_back(point);
+
+			for (auto s : spheres) {
+				s.w = min(s.w, distance(Vec3(s), point));
+			}
+		}
+		else {
+			terrain.push_back(point);
+			spheres.push_back(Vec4(point, getDistanceToClosestPoint(point, air)));
+		}
+	}
+
+};
+
 struct Sandbox : public Game {
 	
 	Mutex mutex;
@@ -25,16 +97,17 @@ struct Sandbox : public Game {
 	Float mouseSensitivity = 0.0015f;
 	Player player;
 
-	NeighborQuadtree tree;
-	DynameshTerrain dmt;
+	//NeighborQuadtree tree;
+	//DynameshTerrain dmt;
+	SphereMeshing sm;
 
 
 	Sandbox() {
 		//dmt.create();
-		tree.create();
+		//tree.create();
 	}
 	~Sandbox() {
-		tree.destroy();
+		//tree.destroy();
 	}
 
 	void render(Renderer& renderer) override;

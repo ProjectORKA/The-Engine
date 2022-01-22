@@ -18,7 +18,7 @@ const vec2 wOffset = vec2(59.0,83.0);
 /////////////////////////////////////////////
 
 vec2 uvCoordsAtLevel(uint level){
-	return (textureCoordinate / pow(2,worldOffset.w - level)) + mod(worldOffset.xy/pow(2,64 - level),1);;
+	return (textureCoordinate / pow(2,worldOffset.w - level)) + mod(worldOffset.xy/pow(2,64 - level),1);
 }
 
 vec3 mix(vec3 a, vec3 b, float alpha){

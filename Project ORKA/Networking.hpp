@@ -72,7 +72,7 @@ struct Client {
 		{
 			ASIOTCPResolver resolver = ASIOTCPResolver(context);
 
-			auto t = resolver.resolve(s, std::to_string(PORT_NUMBER));
+			auto t = resolver.resolve(s, toString(PORT_NUMBER));
 
 			asio::connect(socket, t);
 		}

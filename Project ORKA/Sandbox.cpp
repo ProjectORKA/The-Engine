@@ -30,14 +30,19 @@ void Sandbox::render(Renderer& renderer) {
 
 	//////////////////////////////////////////////////////////////////////////////
 
-	tree.update(player.camera.location);
-	tree.render(renderer);
+	sm.update();
+
+	sm.render(renderer);
+
+	//tree.update(player.camera.location);
+	//tree.render(renderer);
 
 	//dmt.update(player.camera);
 	//dmt.render(renderer);
 
+	renderer.setDepthTest(false);
 	renderer.screenSpace();
-	renderer.renderText(String(std::to_string(1.0f / renderer.renderTime.delta)), Vec2(50), fonts.paragraph);
+	renderer.renderText(String(toString(1.0f / renderer.time.delta)), Vec2(50), fonts.heading);
 
 	////////////////////////
 

@@ -19,7 +19,7 @@ struct Player;
 struct Camera;
 
 struct Renderer{
-	Time renderTime;
+	Time time;
 	//settings
 	Bool wireframeMode = false;
 	Bool adjustRenderVariables = true;
@@ -62,7 +62,10 @@ struct Renderer{
 	void apectCorrectNormalizedSpace();
 	
 	//meshes
+	void rerenderMesh();
+	void useMesh(Name name);
 	void renderMesh(Name name);
+	void renderMeshInstanced(Name name, Vector<Vec4>& transformations);
 
 	//textures
 	void useTexture(Name name);

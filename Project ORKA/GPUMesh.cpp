@@ -2,18 +2,6 @@
 #include "GPUMesh.hpp"
 #include "Uniforms.hpp"
 
-void GPUMesh::render(Uniforms & uniforms) {
-	if (loaded) {
-		uniforms.upload();
-		vao.render();
-		apiDrawElements(
-		enumClassAsInt(primitiveMode),
-			vao.indexBuffer.indexCount,
-			GL_UNSIGNED_INT,
-			(void*)0
-		);
-	}
-}
 void GPUMesh::unload() {
 	//make unavailable for rendering
 	if (loaded) {
@@ -38,5 +26,38 @@ void GPUMesh::upload(CPUMesh cpuMesh) {
 	}
 	else {
 		logDebug("GPUMesh already loaded!");
+	}
+}
+void GPUMesh::render(Uniforms& uniforms) {
+	if (loaded) {
+		uniforms.instanced(false);
+		uniforms.upload();
+		vao.select();
+		if (instanced) {
+			transformations.detach();
+			instanced = false;
+		}
+		apiDrawElements(enumClassAsInt(primitiveMode), vao.indexBuffer.indexCount, GL_UNSIGNED_INT, nullptr);
+	}
+}
+void GPUMesh::renderInstances(Uniforms& uniforms, Vector<Vec4>& data) {
+	if (loaded) {
+		uniforms.instanced(true);
+		uniforms.upload();
+		if (transformations.loaded) {
+			vao.select();
+			transformations.update(glm::value_ptr(data[0]), data.size() * sizeof(Vec4));
+			transformations.attach();
+		}
+		else {
+			vao.select();
+			transformations.create(3, glm::value_ptr(data[0]), sizeof(Vec4) * data.size(), GL_STATIC_DRAW, 4);
+			glVertexAttribDivisor(3, 1);
+			transformations.attach();
+		}
+
+		instanced = true;
+
+		apiDrawElementsInstanced(enumClassAsInt(primitiveMode), vao.indexBuffer.indexCount, GL_UNSIGNED_INT, nullptr, data.size());
 	}
 }

@@ -3,42 +3,38 @@
 
 #include "Game.hpp"
 #include "KeyMap.hpp"
-#include "Player.hpp"
-#include "ParticleSystem.hpp"
-#include "Window.hpp"
+#include "MelonPlayer.hpp"
+#include "MelonWorld.hpp"
 
+struct Window;
 
-//bullethell
-//	autofire
-//parcour
-//skillbased
-//
+//[TODO] maybe implement this stuff
+// bullethell
+// autofire / direction based dip
+// parcour
+// time travel self replication challenge
+// skillbased
+// dash
+// morning star
+// no movement stops time
 
+//[TODO] next
+// vertex colors
+// smoke not affected by shadow
+// collision
+// collectables
+// smooth acceleration estimate for particle generation
 
-#define PROJECT_MELON_PARTICLE_SIZE 1
-#define PROJECT_MELON_PARTICLE_LIFETIME 2
+struct MelonGame : public Game {
+	Action	holdPosition;
 
-struct ProjectMelonPlayer : public Player {
-	Vec3 location = Vec3(0);
-	Int zoomFactor = 10;
-	ParticleSystem smoke;
+	Float mouseSensitivity = 0.0015;
 
-	void update() override;
-	void render(Renderer& renderer) override;;
-};
-
-struct ProjectMelonGame : public Game {
-	Action	forward;
-	Action	backward;
-	Action	left;
-	Action	right;
-	Action	upward;
-	Action	downward;
-	Float mouseSensitivity = 0.02;
-	ProjectMelonPlayer player;
+	MelonPlayer player;
+	MelonWorld world;
 
 	void update() override;
-	void render(Renderer& renderer) override;;
+	void render(Renderer& renderer) override;
 	void mouseIsMoving(Window& window, IVec2 position);
 	void mouseIsScrolled(Window& window, Double xAxis, Double yAxis);
 	void mouseIsPressed(Window& window, Int button, Int action, Int modifiers);

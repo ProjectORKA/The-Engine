@@ -317,9 +317,6 @@
     <Filter Include="Program\Engine\AudioSystem">
       <UniqueIdentifier>{bd09fb8e-2b3b-4b16-b698-9cfa7d6f9165}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Shaders\DND UberShader">
-      <UniqueIdentifier>{65921f46-4a03-49fd-a802-0a005ff943a9}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Program\GameSystem\Player">
       <UniqueIdentifier>{54c364f4-3158-4116-a532-8f40093cc24a}</UniqueIdentifier>
     </Filter>
@@ -353,9 +350,6 @@
     <Filter Include="Program\Common\Renderable Data\BranchStructure">
       <UniqueIdentifier>{a0bb16dd-5911-4c68-acb6-c6596bf549f1}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Program\GameSystem\Game\Mooncrash\TreeSystem">
-      <UniqueIdentifier>{91410674-aa18-402a-a348-52c68b1b5987}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Program\Common\Transform">
       <UniqueIdentifier>{fbb46c57-1c41-44c1-aa83-59bc1ff113c3}</UniqueIdentifier>
     </Filter>
@@ -371,29 +365,11 @@
     <Filter Include="Shaders\COMMON">
       <UniqueIdentifier>{794d5e1b-92ef-448d-8b61-a2c654d1b00a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Program\GameSystem\Systems">
-      <UniqueIdentifier>{d127c2a8-3917-4cb0-9aa9-14a1c6dc6601}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Program\GameSystem\Systems\DynaMesh">
-      <UniqueIdentifier>{eb7532c1-33e4-4de2-b084-a48370e46094}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Program\GameSystem\Systems\VoxelSystem">
-      <UniqueIdentifier>{066c9a7c-d376-470c-be5c-36eac774b9b5}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Shaders\sdfOctreeTerrainRender">
-      <UniqueIdentifier>{684767c4-9641-4625-ba35-f23e75a6c493}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Program\GameSystem\Systems\Neighbor Quadtree">
-      <UniqueIdentifier>{db6fabdc-a005-4d7b-918f-c9ae1472cf48}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Shaders\normals">
       <UniqueIdentifier>{78d0f300-e0e2-4ba1-8b77-9574b3641127}</UniqueIdentifier>
     </Filter>
     <Filter Include="Program\Engine\JobSystem">
       <UniqueIdentifier>{8751d8d4-66c9-43a0-9a77-ca86359f4c0e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Program\GameSystem\Systems\Sky">
-      <UniqueIdentifier>{504a2795-c6b2-41e3-a86c-dc03c5a6c7cd}</UniqueIdentifier>
     </Filter>
     <Filter Include="Shaders\texture">
       <UniqueIdentifier>{73da9f3a-d4f2-454d-bf5f-08a55ed88711}</UniqueIdentifier>
@@ -404,17 +380,53 @@
     <Filter Include="Program\Engine\UserInterface\Window\Renderer\FramebufferSystem\IndexFramebuffer">
       <UniqueIdentifier>{93bc3aea-f518-4c08-89e0-411d437ee918}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Program\Engine\InputManager\InteractiveObject">
-      <UniqueIdentifier>{626c1a05-351a-4e14-a438-205e550f28f7}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Program\GameSystem\Game\Project Melon">
       <UniqueIdentifier>{aff48ae1-dc10-45e9-9224-7e3e581c8423}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Program\GameSystem\Systems\ParticleSystem">
-      <UniqueIdentifier>{ae20cd96-66ca-4152-9d71-d573d411b6da}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Program\GameSystem\Game\GuessingGame">
       <UniqueIdentifier>{8a92ec1b-0a80-44aa-95d7-5cd4814b9e38}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\GameSystem\Game\Dungeons And Discord\DND UberShader">
+      <UniqueIdentifier>{65921f46-4a03-49fd-a802-0a005ff943a9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\GameSystem\Game\Mooncrash\sdfOctreeTerrainRender">
+      <UniqueIdentifier>{684767c4-9641-4625-ba35-f23e75a6c493}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\Engine\UserInterface\Window\Renderer\MeshSystem\Instancing">
+      <UniqueIdentifier>{7709abac-b0c7-46ce-915d-55abc2479d1c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\GameSystem\Game\Project Melon\MelonUberShader">
+      <UniqueIdentifier>{a17570be-0ba0-41e1-ba2d-03ad2e204d16}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\Engine\DynaMesh">
+      <UniqueIdentifier>{eb7532c1-33e4-4de2-b084-a48370e46094}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\Engine\Neighbor Quadtree">
+      <UniqueIdentifier>{db6fabdc-a005-4d7b-918f-c9ae1472cf48}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\Engine\ParticleSystem">
+      <UniqueIdentifier>{ae20cd96-66ca-4152-9d71-d573d411b6da}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\Engine\Sky">
+      <UniqueIdentifier>{504a2795-c6b2-41e3-a86c-dc03c5a6c7cd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\Engine\VoxelSystem">
+      <UniqueIdentifier>{066c9a7c-d376-470c-be5c-36eac774b9b5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\Engine\Scene">
+      <UniqueIdentifier>{be866374-722f-4bcf-9146-7d739134fbdb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\Engine\Scene\Renderable">
+      <UniqueIdentifier>{a6b1a22d-0a41-4477-baf7-18686fdd5acf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\Engine\Scene\Interactive">
+      <UniqueIdentifier>{626c1a05-351a-4e14-a438-205e550f28f7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\GameSystem\Game\Project Melon\MelonPlayer">
+      <UniqueIdentifier>{c476cc4a-cba0-42a0-936a-ee80f01e0747}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\GameSystem\Game\Project Melon\MelonWorld">
+      <UniqueIdentifier>{26913575-e613-4483-821d-e3c6b2aeb62a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -660,13 +672,13 @@
       <Filter>Program\Engine\UserInterface\UIElement</Filter>
     </ClCompile>
     <ClCompile Include="Sky.cpp">
-      <Filter>Program\GameSystem\Systems\Sky</Filter>
+      <Filter>Program\Engine\Sky</Filter>
     </ClCompile>
     <ClCompile Include="DynameshTerrain.cpp">
-      <Filter>Program\GameSystem\Systems\DynaMesh</Filter>
+      <Filter>Program\Engine\DynaMesh</Filter>
     </ClCompile>
     <ClCompile Include="VoxelSystem.cpp">
-      <Filter>Program\GameSystem\Systems\VoxelSystem</Filter>
+      <Filter>Program\Engine\VoxelSystem</Filter>
     </ClCompile>
     <ClCompile Include="PointCloud.cpp">
       <Filter>Program\Common\Renderable Data\PointCloud</Filter>
@@ -675,7 +687,7 @@
       <Filter>Program\Common\Renderable Data\BranchStructure</Filter>
     </ClCompile>
     <ClCompile Include="NeighborQuadtree.cpp">
-      <Filter>Program\GameSystem\Systems\Neighbor Quadtree</Filter>
+      <Filter>Program\Engine\Neighbor Quadtree</Filter>
     </ClCompile>
     <ClCompile Include="Server.cpp">
       <Filter>Program\Engine\Networking</Filter>
@@ -690,11 +702,27 @@
       <Filter>Program\Engine\UserInterface\Window\Renderer\FramebufferSystem\IndexFramebuffer</Filter>
     </ClCompile>
     <ClCompile Include="ParticleSystem.cpp">
-      <Filter>Program\GameSystem\Systems\ParticleSystem</Filter>
+      <Filter>Program\Engine\ParticleSystem</Filter>
     </ClCompile>
     <ClCompile Include="ProjectMelon.cpp">
       <Filter>Program\GameSystem\Game\Project Melon</Filter>
     </ClCompile>
+    <ClCompile Include="Instancing.cpp">
+      <Filter>Program\Engine\UserInterface\Window\Renderer\MeshSystem\Instancing</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderable.cpp">
+      <Filter>Program\Engine\Scene\Renderable</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene.cpp">
+      <Filter>Program\Engine\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="MelonPlayer.cpp">
+      <Filter>Program\GameSystem\Game\Project Melon\MelonPlayer</Filter>
+    </ClCompile>
+    <ClCompile Include="MelonWorld.cpp">
+      <Filter>Program\GameSystem\Game\Project Melon\MelonWorld</Filter>
+    </ClCompile>
+    <ClCompile Include="C++ Cheatsheet.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="icon.rc">
@@ -1022,16 +1050,16 @@
       <Filter>Program\Engine\UserInterface\UIElement</Filter>
     </ClInclude>
     <ClInclude Include="Sky.hpp">
-      <Filter>Program\GameSystem\Systems\Sky</Filter>
+      <Filter>Program\Engine\Sky</Filter>
     </ClInclude>
     <ClInclude Include="DynameshTerrain.hpp">
-      <Filter>Program\GameSystem\Systems\DynaMesh</Filter>
+      <Filter>Program\Engine\DynaMesh</Filter>
     </ClInclude>
     <ClInclude Include="VoxelSystem.hpp">
-      <Filter>Program\GameSystem\Systems\VoxelSystem</Filter>
+      <Filter>Program\Engine\VoxelSystem</Filter>
     </ClInclude>
     <ClInclude Include="NeighborQuadtree.hpp">
-      <Filter>Program\GameSystem\Systems\Neighbor Quadtree</Filter>
+      <Filter>Program\Engine\Neighbor Quadtree</Filter>
     </ClInclude>
     <ClInclude Include="Server.hpp">
       <Filter>Program\Engine\Networking</Filter>
@@ -1048,17 +1076,32 @@
     <ClInclude Include="IndexFramebuffer.hpp">
       <Filter>Program\Engine\UserInterface\Window\Renderer\FramebufferSystem\IndexFramebuffer</Filter>
     </ClInclude>
-    <ClInclude Include="InteractiveObject.hpp">
-      <Filter>Program\Engine\InputManager\InteractiveObject</Filter>
-    </ClInclude>
     <ClInclude Include="ProjectMelon.hpp">
       <Filter>Program\GameSystem\Game\Project Melon</Filter>
     </ClInclude>
     <ClInclude Include="ParticleSystem.hpp">
-      <Filter>Program\GameSystem\Systems\ParticleSystem</Filter>
+      <Filter>Program\Engine\ParticleSystem</Filter>
     </ClInclude>
     <ClInclude Include="GuessingGame.hpp">
       <Filter>Program\GameSystem\Game\GuessingGame</Filter>
+    </ClInclude>
+    <ClInclude Include="Instancing.hpp">
+      <Filter>Program\Engine\UserInterface\Window\Renderer\MeshSystem\Instancing</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene.hpp">
+      <Filter>Program\Engine\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderable.hpp">
+      <Filter>Program\Engine\Scene\Renderable</Filter>
+    </ClInclude>
+    <ClInclude Include="Interactive.hpp">
+      <Filter>Program\Engine\Scene\Interactive</Filter>
+    </ClInclude>
+    <ClInclude Include="MelonPlayer.hpp">
+      <Filter>Program\GameSystem\Game\Project Melon\MelonPlayer</Filter>
+    </ClInclude>
+    <ClInclude Include="MelonWorld.hpp">
+      <Filter>Program\GameSystem\Game\Project Melon\MelonWorld</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1146,12 +1189,6 @@
     <None Include="Data\shaders\color.vert">
       <Filter>Shaders\color</Filter>
     </None>
-    <None Include="Data\shaders\dndUberShader.vert">
-      <Filter>Shaders\DND UberShader</Filter>
-    </None>
-    <None Include="Data\shaders\dndUberShader.frag">
-      <Filter>Shaders\DND UberShader</Filter>
-    </None>
     <None Include="Data\shaders\atmosphere.frag">
       <Filter>Shaders\atmosphere</Filter>
     </None>
@@ -1162,10 +1199,10 @@
       <Filter>Shaders\COMMON</Filter>
     </None>
     <None Include="Data\shaders\sdfOctreeTerrain.frag">
-      <Filter>Shaders\sdfOctreeTerrainRender</Filter>
+      <Filter>Program\GameSystem\Game\Mooncrash\sdfOctreeTerrainRender</Filter>
     </None>
     <None Include="Data\shaders\sdfOctreeTerrain.vert">
-      <Filter>Shaders\sdfOctreeTerrainRender</Filter>
+      <Filter>Program\GameSystem\Game\Mooncrash\sdfOctreeTerrainRender</Filter>
     </None>
     <None Include="Data\shaders\normals.frag">
       <Filter>Shaders\normals</Filter>
@@ -1188,11 +1225,17 @@
     <None Include="G:\DATA\PROJEKTE\ORKA\GAME ENGINE\SOURCE CODE\Project ORKA\Data\shaders\idShader.vert">
       <Filter>Shaders\idShader</Filter>
     </None>
-    <None Include="Data\shaders\MelonUberShader.vert">
-      <Filter>Program\GameSystem\Game\Project Melon</Filter>
+    <None Include="Data\shaders\dndUberShader.frag">
+      <Filter>Program\GameSystem\Game\Dungeons And Discord\DND UberShader</Filter>
+    </None>
+    <None Include="Data\shaders\dndUberShader.vert">
+      <Filter>Program\GameSystem\Game\Dungeons And Discord\DND UberShader</Filter>
     </None>
     <None Include="Data\shaders\MelonUberShader.frag">
-      <Filter>Program\GameSystem\Game\Project Melon</Filter>
+      <Filter>Program\GameSystem\Game\Project Melon\MelonUberShader</Filter>
+    </None>
+    <None Include="Data\shaders\MelonUberShader.vert">
+      <Filter>Program\GameSystem\Game\Project Melon\MelonUberShader</Filter>
     </None>
   </ItemGroup>
 </Project>

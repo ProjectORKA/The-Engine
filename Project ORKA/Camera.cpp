@@ -1,10 +1,7 @@
 #include "Camera.hpp"
 #include "Renderer.hpp"
 
-void Camera::rotate(Vec2 rotation) {
-	rotationX -= rotation.y;
-	rotationZ += rotation.x;
-
+void Camera::update() {
 	//prevent looking upside down
 	Float cap = PI / 2;
 
@@ -29,6 +26,12 @@ void Camera::rotate(Vec2 rotation) {
 	);
 
 	upVector = glm::cross(rightVector, forwardVector);
+}
+void Camera::rotate(Vec2 rotation) {
+	rotationX -= rotation.y;
+	rotationZ += rotation.x;
+
+	update();
 }
 void Camera::render(Renderer & renderer) {
 	renderer.uniforms().cameraVec() = Vec4(forwardVector, 1);

@@ -5,7 +5,7 @@
 
 void Player::render(Renderer& renderer) {
 	speed = pow(1.2f, speedExponent);
-	accelerationVector *= speed * renderer.renderTime.delta;
+	accelerationVector *= speed * renderer.time.delta;
 	camera.location += accelerationVector;
 	accelerationVector = { 0,0,0 };
 

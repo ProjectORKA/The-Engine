@@ -25,11 +25,8 @@ layout(std140, binding = 0) uniform GlobalUniforms
 
 	uint materialID;
 	uint objectID;
-	bool distortion;
-	int i1;
-	
-	//int i2;
-	//int i3;
+	bool instanced;
+	uint customInt1;
 };
 
 uniform sampler2D texture0;

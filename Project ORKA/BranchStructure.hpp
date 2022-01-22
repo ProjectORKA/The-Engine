@@ -8,5 +8,5 @@ struct Renderer;
 
 struct BranchStructure {
 	Vector<Index> connections;
-	void render(Renderer& renderer, Vector<Vec3> points);;
+	void render(Renderer& renderer, Vector<Vec3> points);
 };

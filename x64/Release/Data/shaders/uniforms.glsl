@@ -25,11 +25,8 @@ layout(std140, binding = 0) uniform GlobalUniforms
 
 	uint materialID;
 	uint objectID;
-	bool distortion;
-	int i1;
-	
-	//int i2;
-	//int i3;
+	bool instanced;
+	uint customInt1;
 };
 
 uniform sampler2D texture0;
@@ -38,20 +35,7 @@ uniform sampler2D texture2;
 uniform sampler2D texture3;
 uniform sampler2D texture4;
 
-void calculateDistortion(inout vec3 location, inout vec3 normal) {
-
-	float radius = 256;
-
-	float dist = length(vec2(location.xy)) / radius;
-	if (dist > 1) {
-		location.xy = normalize(location.xy) * radius;
-		dist = 1;
-	}
-
-	float func = sqrt(pow((location.z / radius + 1), 2) - pow(clamp(dist, 0, 1), 2));
-	vec3 newZ = normalize(vec3(location.xy * 2 / radius, func));
-	vec3 newX = normalize(cross(vec3(0, 1, 0), newZ));
-	vec3 newY = normalize(cross(newZ, newX));
-	normal = (normal.x * newX) + (normal.y * newY) + (normal.z * newZ);
-	location.z = func * radius;
-}
+layout(location = 0) in vec3 vertex;
+layout(location = 1) in vec2 uvs;
+layout(location = 2) in vec3 normals;
+layout(location = 3) in vec4 transform;

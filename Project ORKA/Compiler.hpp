@@ -11,7 +11,7 @@ ULong compileFromSource(const char* args)
 	memset(&startupInfo, 0, sizeof(startupInfo));
 	memset(&proccessInfo, 0, sizeof(proccessInfo));
 
-	std::string cmdLine("C:\\Program Files\\LLVM\\bin\\clang++.exe");
+	String cmdLine("C:\\Program Files\\LLVM\\bin\\clang++.exe");
 	cmdLine += args;
 
 	if (!CreateProcessA(0, const_cast<char*>(cmdLine.c_str()),

@@ -4,14 +4,13 @@
 void VertexArrayObject::unload()
 {
 	for (auto& buffer : buffers) {
-		buffer.unload();
+		buffer.destroy();
 	}
 	buffers.clear();
 	indexBuffer.unload();
-
 	apiDeleteVertexArray(arrayObjectID);
 }
-void VertexArrayObject::render()
+void VertexArrayObject::select()
 {
 	apiBindVertexArray(arrayObjectID);
 }
@@ -31,4 +30,5 @@ void VertexArrayObject::create(CPUMesh& mesh)
 void VertexArrayObject::add(Index location, float* data, UInt byteSize, UInt usage, Index components)
 {
 	buffers.emplace_back().create(location, data, byteSize, usage, components);
+	buffers.back().attach();
 }

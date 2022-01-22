@@ -43,6 +43,10 @@ void apiWindowSetWindowedMode(APIWindow apiWindow, TiledRectangle monitorArea)
 	glfwSetWindowMonitor(apiWindow, nullptr, monitorArea.position.x, monitorArea.position.y, monitorArea.size.x, monitorArea.size.y, GLFW_DONT_CARE);
 }
 
+void apiWindowResize(APIWindow apiWindow, Int width, Int height) {
+	glfwSetWindowSize(apiWindow, width, height);
+}
+
 Bool apiWindowShouldClose(APIWindow apiWindow)
 {
 	return glfwWindowShouldClose(apiWindow);
