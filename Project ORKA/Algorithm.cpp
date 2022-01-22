@@ -1,9 +1,7 @@
 
 #include "Algorithm.hpp"
+#include "Math.hpp"
 
-Vec3 vectorFromAToB(Vec3 a, Vec3 b) {
-	return b - a;
-}
 void removePointsInRadius(Vec3 point, Vector<Vec3>& points, Float radius) {
 	Vector<Vec3> available;
 
@@ -70,4 +68,57 @@ void spaceColonization(Vector<Vec3>& points, Vector<Vec3>& branches, Vector<Inde
 	for (Vec3 node : newBranches) {
 		branches.push_back(node);
 	}
+}
+
+Float getDistanceToClosestPoint(Vec3 point, Vector<Vec3>& points) {
+	Float minimalDistance = distance(point, points[0]);
+	
+	for (auto p : points) {
+		minimalDistance = min(minimalDistance, distance(point, p));
+	}
+
+	return minimalDistance;
+};
+
+Bool pointInsideSphere(Vec3 point, Sphere sphere) {
+	return pointInsideSphereAtlocationWithRadius(point,Vec3(sphere),sphere.w);
+}
+Bool pointInsideSpheres(Vec3 point, List<Sphere> spheres) {
+	auto it = spheres.begin();
+
+	while (it != spheres.end()) {
+		if (pointInsideSphere(point, *it)) return 1;
+		it++;
+	}
+	return 0;
+}
+Bool pointInsideSpheres(Vec3 point, Vector<Sphere> spheres) {
+	for (auto s : spheres) {
+		if (pointInsideSphere(point, s)) return 1;
+	}
+	return 0;
+}
+Bool pointInsideSphereAtlocationWithRadius(Vec3 point, Vec3 position, Float radius) {
+	return distance(point, position) < radius;
+}
+
+Vec3 vectorFromAToB(Vec3 a, Vec3 b) {
+	return b - a;
+}
+Vec3 getClosestPoint(Vec3 point, List<Vec3>& points) {
+
+	if (points.size() == 0) return point;
+
+	Float minimalDistance = distance(point, points.front());
+	Vec3 closestPointTMP = points.front();
+
+	for (auto p : points) {
+		Float currentDistance = distance(point, p);
+		if (currentDistance < minimalDistance) {
+			minimalDistance = currentDistance;
+			closestPointTMP = p;
+		}
+	}
+
+	return closestPointTMP;
 }

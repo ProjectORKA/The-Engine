@@ -1,12 +1,19 @@
 
 //! #include "uniforms.glsl"
 
-layout(location = 0) in vec3 vertex;
-layout(location = 1) in vec2 uvs;
-layout(location = 2) in vec3 normals;
 out vec4 vertexColor;
 
+
 void main() {
-	gl_Position  = pMatrix * vMatrix * mMatrix * vec4(vertex,1);
+	
+	vec3 worldPosition;
+	
+	if(instanced){
+		worldPosition = transform.xyz + transform.w * vertex;
+	} else {
+		worldPosition = (mMatrix * vec4(vertex, 1)).xyz;
+	}
+
+	gl_Position  = pMatrix * vMatrix * vec4(worldPosition,1);
 	vertexColor = vec4(vec3(vertex),1.0f);
 };

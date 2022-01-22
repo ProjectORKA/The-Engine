@@ -46,7 +46,7 @@ void FramebufferSystem::update(Area area)
 void FramebufferSystem::use(Renderer & renderer, Index framebufferIndex)
 {
 	if (framebufferIndex > (framebuffers.size() - 1)) {
-		logError(String("Invalid framebufferIndex! (").append(std::to_string(framebufferIndex)).append(")"));
+		logError(String("Invalid framebufferIndex! (").append(toString(framebufferIndex)).append(")"));
 		return;
 	}
 	currentFramebufferIndex = framebufferIndex;

@@ -5,7 +5,7 @@
 #include "InputManager.hpp"
 
 struct Game {
-	
+
 	Game* selfReplace = nullptr;
 
 	virtual void create() {};

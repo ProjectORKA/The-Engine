@@ -6,10 +6,10 @@ void renderUI(Renderer& renderer, MooncrashPlayer& player) {
 
 	renderer.screenSpace();
 
-	String s = String("FrameTime: ").append(toString(renderer.renderTime.delta));
+	String s = String("FrameTime: ").append(toString(renderer.time.delta));
 	renderer.renderText(s, Vec2(0), fonts.debug);
 
-	s = String("FPS: ").append(toString(1.0f / renderer.renderTime.delta));
+	s = String("FPS: ").append(toString(1.0f / renderer.time.delta));
 	renderer.renderText(s, Vec2(0, fonts.debug.absoluteSize), fonts.debug);
 
 	s = String("Speed: ").append(toString(player.speedExponent));
@@ -28,7 +28,7 @@ void renderPlanet(Renderer& renderer, PlanetSystem& planetSystem, PlanetSystemPl
 
 void MooncrashPlayer::render(Renderer& renderer) {
 	speed = pow(1.2f, speedExponent);
-	accelerationVector *= speed * renderer.renderTime.delta;
+	accelerationVector *= speed * renderer.time.delta;
 
 	camera.location += accelerationVector;
 

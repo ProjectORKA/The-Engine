@@ -1,10 +1,6 @@
 
 //! #include "uniforms.glsl"
 
-layout(location = 0) in vec3 vertex;
-layout(location = 1) in vec2 uvs;
-layout(location = 2) in vec3 normals;
-
 //output
 out float depth;
 out vec3 normal;
@@ -18,7 +14,7 @@ void main() {
 	vec3 cameraRelativePosition = positionInChunk - cameraPosition.xyz;
 	vec3 customNormal = normals;
 
-	if(distortion){
+	if(bool(customInt1)){
 		if(worldOffset.w < 13){
 
 			float radius = pow(2,worldOffset.w-2)*1.2f;

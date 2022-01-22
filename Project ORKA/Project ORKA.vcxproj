@@ -24,9 +24,15 @@
   <ItemGroup>
     <ClCompile Include="AIPlayground.cpp" />
     <ClCompile Include="Algorithm.cpp" />
+    <ClCompile Include="C++ Cheatsheet.cpp" />
     <ClCompile Include="IndexFramebuffer.cpp" />
+    <ClCompile Include="Instancing.cpp" />
+    <ClCompile Include="MelonPlayer.cpp" />
+    <ClCompile Include="MelonWorld.cpp" />
     <ClCompile Include="ParticleSystem.cpp" />
     <ClCompile Include="ProjectMelon.cpp" />
+    <ClCompile Include="Renderable.cpp" />
+    <ClCompile Include="Scene.cpp" />
     <ClCompile Include="Sky.cpp" />
     <ClCompile Include="Basics.cpp" />
     <ClCompile Include="BitmapTextRenderSystem.cpp" />
@@ -119,9 +125,14 @@
   <ItemGroup>
     <ClInclude Include="GuessingGame.hpp" />
     <ClInclude Include="IndexFramebuffer.hpp" />
-    <ClInclude Include="InteractiveObject.hpp" />
+    <ClInclude Include="Instancing.hpp" />
+    <ClInclude Include="Interactive.hpp" />
+    <ClInclude Include="MelonPlayer.hpp" />
+    <ClInclude Include="MelonWorld.hpp" />
     <ClInclude Include="ParticleSystem.hpp" />
     <ClInclude Include="ProjectMelon.hpp" />
+    <ClInclude Include="Renderable.hpp" />
+    <ClInclude Include="Scene.hpp" />
     <ClInclude Include="Sky.hpp" />
     <ClInclude Include="AudioSystem.hpp" />
     <ClInclude Include="BranchStructure.hpp" />
@@ -455,6 +466,7 @@
       <LanguageStandard>stdcpp17</LanguageStandard>
       <EnableModules>false</EnableModules>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>

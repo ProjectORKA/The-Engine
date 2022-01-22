@@ -28,10 +28,6 @@ void apiDisable(Enum cap) {
 void apiCullFace(Enum mode) {
 	glCullFace(mode);
 }
-Bool apiGetCullFace() {
-	return glIsEnabled(GL_CULL_FACE);
-}
-
 void apiDepthFunc(Enum func) {
 	glDepthFunc(func);
 }
@@ -93,6 +89,12 @@ void apiUniform1i(Int location, Int value) {
 void apiEnableVertexAttribArray(UInt index) {
 	glEnableVertexAttribArray(index);
 }
+void apiBindFramebuffer(UInt framebufferID) {
+	glBindFramebuffer(GL_FRAMEBUFFER, framebufferID);
+}
+void apiDisableVertexAttribArray(UInt index) {
+	glDisableVertexAttribArray(index);
+}
 void apiClipControl(Enum origin, Enum depth) {
 	glClipControl(origin, depth);
 }
@@ -108,6 +110,9 @@ void apiBlendFunc(Enum sfactor, Enum dfactor) {
 void apiBindBuffer(Enum target, UInt bufferID) {
 	glBindBuffer(target, bufferID);
 }
+void apiBindDrawFramebuffer(UInt framebufferID) {
+	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, framebufferID);
+}
 void apiScissor(Int x, Int y, SizeI w, SizeI h) {
 	if ((scissorX != x) |
 		(scissorY != y) |
@@ -118,6 +123,9 @@ void apiScissor(Int x, Int y, SizeI w, SizeI h) {
 	scissorW = w;
 	scissorH = h;
 }
+void apiBindReadFramebuffer(UInt framebufferID) {
+	glBindFramebuffer(GL_READ_FRAMEBUFFER, framebufferID);
+}
 void apiViewport(Int x, Int y, SizeI w, SizeI h) {
 	if(	(viewportX != x)|
 		(viewportY != y)|
@@ -127,10 +135,10 @@ void apiViewport(Int x, Int y, SizeI w, SizeI h) {
 	viewportY = y;
 	viewportW = w;
 	viewportH = h;
-	//logDebug(String("New x: ").append(std::to_string(viewportX)));
-	//logDebug(String("New y:").append(std::to_string(viewportY)));
-	//logDebug(String("New width:").append(std::to_string(viewportW)));
-	//logDebug(String("New height:").append(std::to_string(viewportH)));
+	//logDebug(String("New x: ").append(toString(viewportX)));
+	//logDebug(String("New y:").append(toString(viewportY)));
+	//logDebug(String("New width:").append(toString(viewportW)));
+	//logDebug(String("New height:").append(toString(viewportH)));
 }
 void apiBindTexture(Enum target, UInt textureID) {
 	glBindTexture(target, textureID);
@@ -144,15 +152,6 @@ void apiDetachShader(UInt programID, UInt shaderID) {
 void apiNamedFramebufferDrawBuffer(UInt framebufferID) {
 
 	glNamedFramebufferDrawBuffer(framebufferID, GL_COLOR_ATTACHMENT0);
-}
-void apiBindFramebuffer(UInt framebufferID) {
-	glBindFramebuffer(GL_FRAMEBUFFER, framebufferID);
-}
-void apiBindDrawFramebuffer(UInt framebufferID) {
-	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, framebufferID);
-}
-void apiBindReadFramebuffer(UInt framebufferID) {
-	glBindFramebuffer(GL_READ_FRAMEBUFFER, framebufferID);
 }
 void apiTexParameteri(Enum target, Enum name, Int param) {
 	glTexParameteri(target, name, param);
@@ -193,6 +192,9 @@ void apiBlendFuncSeparate(Enum sfactorRGB, Enum dfactorRGB, Enum sfactorAlpha, E
 void apiFramebufferTexture2D(Enum target, Enum attachment, Enum textarget, UInt texture, Int level) {
 	glFramebufferTexture2D(target, attachment, textarget, texture, level);
 }
+void apiDrawElementsInstanced(Enum mode, SizeI size, Enum type, void* data, SizeI primitiveCount) {
+	glDrawElementsInstanced(mode, size, type, data, primitiveCount);
+}
 void apiVertexAttribPointer(UInt index, Int size, Enum type, Bool normalized, SizeI stride, const void* pointer) {
 	glVertexAttribPointer(index, size, type, normalized, stride, pointer);
 }
@@ -230,6 +232,10 @@ void __stdcall DebugOutputCallback(Enum source, Enum type, UInt id, Enum severit
 }
 void apiTexImage2D(Enum target, Int level, Int internalFormat, SizeI width, UInt height, Int border, Enum format, Enum type, const void* pixels) {
 	glTexImage2D(target, level, internalFormat, width, height, border, format, type, pixels);
+}
+
+Bool apiGetCullFace() {
+	return glIsEnabled(GL_CULL_FACE);
 }
 
 Int apiGetError() {

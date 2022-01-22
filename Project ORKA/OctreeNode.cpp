@@ -95,7 +95,7 @@ void OctreeNode::count()
 	}
 
 	if (id.level == 0) {
-		logDebug(String("OctreeNodeCount: ").append(std::to_string(nodeCount)));
+		logDebug(String("OctreeNodeCount: ").append(toString(nodeCount)));
 	}
 }
 void OctreeNode::update() {

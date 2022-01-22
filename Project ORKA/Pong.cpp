@@ -140,7 +140,7 @@ void Pong::render(Renderer& renderer) {
 	players[0].position.x = -0.9;
 	players[1].position.x = +0.9;
 
-	if (balls.size() <= 0)balls.emplace_back();
+	if (balls.size() <= 10)balls.emplace_back();
 
 	renderer.apectCorrectNormalizedSpace();
 	Vec2 normalizedCursorPosition = Vec2(2) * ((Vec2(inputManager.cursorPosition) / Vec2(renderer.framebufferSystem.framebufferSize)) - Vec2(0.5));
@@ -149,7 +149,7 @@ void Pong::render(Renderer& renderer) {
 
 	//players[1].ballLocationInput(ball);
 
-	for (Ball& ball : balls) ball.update(renderer.renderTime.delta, players);
+	for (Ball& ball : balls) ball.update(renderer.time.delta, players);
 
 
 	//players[0].keyboardInput(renderer.renderTime.delta);
@@ -158,7 +158,7 @@ void Pong::render(Renderer& renderer) {
 	//players[0].ballLocationInput(balls);
 
 	//players[1].ballLocationInput(balls);
-	players[1].aiInput(balls, renderer.renderTime.delta);
+	players[1].aiInput(balls, renderer.time.delta);
 
 
 	///////////////////////////////////////////////////////////////////////
@@ -201,12 +201,12 @@ void Pong::render(Renderer& renderer) {
 	style.absoluteSize = 50;
 
 	renderer.screenSpace();
-	renderer.renderText(std::to_string(players[0].score),					Vec2(10, height - 100),			style);
-	renderer.renderText(std::to_string(players[1].score),					Vec2(width - 100,height - 100),	style);
-	renderer.renderText(std::to_string(players[1].difficulty),				Vec2(10, height - 200),			style);
-	renderer.renderText(std::to_string(balls[0].speed),						Vec2(10, height - 300),			style);
-	renderer.renderText(std::to_string(balls[0].speed),						Vec2(10, height - 300),			style);
-	renderer.renderText(std::to_string(1.0f / renderer.renderTime.delta),	Vec2(50, 50),					fonts.paragraph);
+	renderer.renderText(toString(players[0].score),					Vec2(10, height - 100),			style);
+	renderer.renderText(toString(players[1].score),					Vec2(width - 100,height - 100),	style);
+	renderer.renderText(toString(players[1].difficulty),			Vec2(10, height - 200),			style);
+	renderer.renderText(toString(balls[0].speed),					Vec2(10, height - 300),			style);
+	renderer.renderText(toString(balls[0].speed),					Vec2(10, height - 300),			style);
+	renderer.renderText(toString(1.0f / renderer.time.delta),	Vec2(50, 50),					fonts.paragraph);
 }
 void Pong::buttonIsPressed(Window& window, Int keyID, Int action, Int modifiers) {
 

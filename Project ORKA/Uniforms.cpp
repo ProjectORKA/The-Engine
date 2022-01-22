@@ -20,10 +20,10 @@ void Uniforms::reset()
 	data.custom1 = 0.0f;
 	data.custom2 = 0.0f;
 	data.custom3 = 0.0f;
-	data.distortion = 0;
+	data.customInt1 = 0;
 	//data.width = 1;
 	//data.height = 1;
-	data.placeholder1 = 0;
+	data.instanced = 0;
 	data.objectID = -1;
 	data.materialID = -1;
 	sampler2Ds["texture0"] = 0;
@@ -66,9 +66,13 @@ Float& Uniforms::custom1() {
 	update = true;
 	return data.custom1;
 }
-Int& Uniforms::distortion() {
+Int& Uniforms::customInt1() {
 	update = true;
-	return data.distortion;
+	return data.customInt1;
+}
+Int& Uniforms::instanced() {
+	update = true;
+	return data.instanced;
 }
 Vec4& Uniforms::cameraPos() {
 	update = true;
@@ -131,12 +135,19 @@ Float& Uniforms::time(Float value) {
 	}
 	return data.time;
 }
-Int& Uniforms::distortion(Int value) {
-	if (value != data.distortion) {
-		data.distortion = value;
+Int& Uniforms::customInt1(Int value) {
+	if (value != data.customInt1) {
+		data.customInt1 = value;
 		update = true;
 	}
-	return data.distortion;
+	return data.customInt1;
+}
+Int& Uniforms::instanced(Int value) {
+	if (value != data.instanced) {
+		data.instanced = value;
+		update = true;
+	}
+	return data.customInt1;
 }
 Float& Uniforms::custom1(Float value) {
 	if (value != data.custom1) {

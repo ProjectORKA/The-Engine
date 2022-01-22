@@ -5,7 +5,7 @@
 
 struct MatrixSystem {
 
-	void applyToUniforms(Uniforms& uniforms);;
+	void applyToUniforms(Uniforms& uniforms);
 
 	//getters
 	Matrix getVP();
