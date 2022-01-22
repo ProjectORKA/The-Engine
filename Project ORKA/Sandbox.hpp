@@ -13,29 +13,6 @@ struct Window;
 #include "DynameshTerrain.hpp"
 
 struct Sandbox : public Game {
-	
-	Mutex mutex;
-
-	Action	forward;
-	Action	backward;
-	Action	left;
-	Action	right;
-	Action	upward;
-	Action	downward;
-	Float mouseSensitivity = 0.0015f;
-	Player player;
-
-	NeighborQuadtree tree;
-	DynameshTerrain dmt;
-
-
-	Sandbox() {
-		//dmt.create();
-		tree.create();
-	}
-	~Sandbox() {
-		tree.destroy();
-	}
 
 	void render(Renderer& renderer) override;
 	void mouseIsMoving(Window& window, IVec2 position)  override;
