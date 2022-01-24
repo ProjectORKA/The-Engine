@@ -24,7 +24,7 @@ void Renderer::begin()
 	clearColor(Color(Vec3(0), 0.0));		//and clears its contents
 	clearDepth();							//clears depth as to not accidentally hide geometry
 }
-void Renderer::create()
+void Renderer::create(Area size)
 {
 	randomizeSeed();
 	//basic systems
@@ -34,7 +34,7 @@ void Renderer::create()
 	shaderSystem.create();
 
 	//advanced systems
-	framebufferSystem.create(*this);
+	framebufferSystem.create(*this, size);
 	textRenderSystem.create(*this);
 	renderObjectSystem.create(*this);
 	planetRenderSystem.create(*this);
@@ -153,8 +153,9 @@ void Renderer::setAlphaBlending(Bool blending)
 	if (blending) {
 		apiEnable(GL_BLEND);
 		apiBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		apiBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA, GL_DST_ALPHA);
-		apiBlendEquationSeparate(GL_FUNC_ADD, GL_MAX);
+		glBlendEquation(GL_FUNC_ADD);
+		//apiBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA, GL_DST_ALPHA);
+		//apiBlendEquationSeparate(GL_FUNC_ADD, GL_MAX);
 	}
 	else apiDisable(GL_BLEND);
 }

@@ -1,8 +1,6 @@
 
 //! #include "uniforms.glsl"
 
-
-
 out vec4 col;
 
 void main() {

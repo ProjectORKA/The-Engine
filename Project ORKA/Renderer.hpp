@@ -45,7 +45,7 @@ struct Renderer{
 	Mutex mutex;
 	void sync(); //makes non renderer threads wait for the finished frame
 
-	void create();
+	void create(Area size);
 	void destroy();
 
 	//drawing a frame

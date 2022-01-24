@@ -13,13 +13,22 @@ struct PixelIDs {
 };
 
 struct IDFrameBuffer {
-	Area size = Area(DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT);
+	Area size = Area(100, 100);
 
 	Index framebufferID = 0;
 
 	GPUTexture idTexture;
 	GPUTexture depthTexture;
 
+	void use();
+	void destroy();
+	Float aspectRatio();
+	void create(Area size);
+	void resize(Area resolution);
+	PixelIDs getIDsAtCenter()
+	{
+		return getIDsAtLocation(size.x / 2 , size.y / 2);
+	}
 	PixelIDs getIDsAtLocation(UInt x, UInt y)
 	{
 		glBindFramebuffer(GL_READ_FRAMEBUFFER, framebufferID);
@@ -33,14 +42,4 @@ struct IDFrameBuffer {
 
 		return data;
 	}
-	PixelIDs getIDsAtCenter()
-	{
-		return getIDsAtLocation(size.x / 2 , size.y / 2);
-	}
-
-	void use();
-	void create();
-	void destroy();
-	Float aspectRatio();
-	void resize(Area resolution);
 };

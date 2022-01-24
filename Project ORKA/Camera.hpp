@@ -21,7 +21,7 @@ struct Camera {
 	Vec3 rightVector = { 1.0f, 0.0f, 0.0f };
 	Vec3 upVector = { 0.0f, 0.0f, 1.0f };
 
-	void update();;
+	void update();
 	virtual void rotate(Vec2 rotation);
 	virtual void render(Renderer & renderer);
 	virtual void renderOnlyRot(Renderer& renderer);

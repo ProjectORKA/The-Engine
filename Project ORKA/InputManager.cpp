@@ -40,22 +40,17 @@ void InputManager::windowOutOfFocus(Window& window)
 void InputManager::mouseIsMoving(Window& window, IVec2 position)
 {
 	if (apiWindowCursorIsCaptured(window.apiWindow)) {
-		cursorPosition.x = position.x;
-		cursorPosition.y = -position.y;
+		cursorPosition = IVec2(position.x, -position.y);
 		apiWindowSetCursorPosition(window.apiWindow,Vec2(0));
 	}
 	else {
-		//
-		IVec2 normalizedPosition;
-		normalizedPosition.x = position.x;
-		normalizedPosition.y = window.getWindowContentSize().y - position.y;
-		cursorPosition = normalizedPosition;
+		cursorPosition = IVec2(position.x, window.getWindowContentSize().y - position.y);
 	}
 
 	if(ui.currentlyActive) ui.currentlyActive->mouseIsMoving(window, position);
 }
 void InputManager::filesDropped(Window& window, Vector<Path> paths) {
-	window.content->filesDropped(window, paths);
+	if(window.content)window.content->filesDropped(window, paths);
 }
 void InputManager::windowChangedFocus(Window& window, Bool isInFocus)
 {
@@ -70,14 +65,19 @@ void InputManager::buttonIsPressed(Window& window, Int keyID, Int action, Int mo
 	if (action == GLFW_PRESS) {
 		switch (keyID) {
 		case GLFW_KEY_ENTER:
-			if (action == GLFW_PRESS && modifiers == GLFW_MOD_ALT) {
-				if (window.isFullScreen()) window.setWindowed();
-				else window.setExclusiveFullscreen();
+			if (modifiers == GLFW_MOD_ALT) {
+				if (window.windowState == Window::windowed) window.windowState = Window::fullscreen;
+				else window.windowState = Window::windowed;
+				window.updateWindowState();
 			}
 			break;
 		case GLFW_KEY_ESCAPE: glfwSetWindowShouldClose(window.apiWindow, GLFW_TRUE);
 			break;
-		case GLFW_KEY_B: window.borderlessFullScreen = !window.borderlessFullScreen;
+		case GLFW_KEY_B:
+			if (modifiers == GLFW_MOD_ALT) {
+				if (window.decorated) window.undecorateWindow();
+				else window.decorateWindow();
+			}
 			break;
 		default:
 			break;
@@ -89,4 +89,3 @@ void InputManager::buttonIsPressed(Window& window, Int keyID, Int action, Int mo
 void InputManager::mouseIsPressed(Window& window, Int button, Int action, Int modifiers) {
 	if(window.content)window.content->mouseIsPressed(window, button, action, modifiers);
 }
-

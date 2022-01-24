@@ -8,10 +8,8 @@
 struct Renderer;
 
 struct Framebuffer {
-	Area size = Area(DEFAULT_WINDOW_WIDTH,DEFAULT_WINDOW_HEIGHT);
-
+	Area size;
 	Index framebufferID = 0;
-
 	GPUTexture colorTexture;
 	GPUTexture normalTexture;
 	GPUTexture positionTexture;
@@ -19,10 +17,10 @@ struct Framebuffer {
 	GPUTexture materialIDTexture;
 
 	void use();
-	void create();
 	void destroy();
 	Float aspectRatio();
 	void setAsTexture();
 	void blitFramebuffer();
+	void create(Area size);
 	void resize(Area resolution);
 };
