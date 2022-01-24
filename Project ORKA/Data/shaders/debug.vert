@@ -3,7 +3,6 @@
 
 out vec4 vertexColor;
 
-
 void main() {
 	
 	vec3 worldPosition;

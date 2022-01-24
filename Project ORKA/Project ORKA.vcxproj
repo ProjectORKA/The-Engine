@@ -281,8 +281,8 @@
     <None Include="Data\shaders\terrain.vert" />
     <None Include="Data\shaders\text.frag" />
     <None Include="Data\shaders\text.vert" />
-    <None Include="Data\shaders\texture.frag" />
-    <None Include="Data\shaders\texture.vert" />
+    <None Include="Data\shaders\final.frag" />
+    <None Include="Data\shaders\final.vert" />
     <None Include="Data\shaders\ui.frag" />
     <None Include="Data\shaders\ui.vert" />
     <None Include="Data\shaders\uniforms.glsl" />

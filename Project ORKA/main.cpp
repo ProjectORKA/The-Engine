@@ -66,9 +66,7 @@ Int main(Int  argc, Char* argv[]) {
 	gameSystem.add(new Sandbox());
 	gameSystem.run();
 
-	window("ORKA",&gameView(0));
-
-	ui.windows.back().resize(100, 100);
+	window("ORKA",&gameView(0),Area(800,600),false,Window::windowed);
 
 	ui.run();
 #else

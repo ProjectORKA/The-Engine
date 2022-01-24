@@ -371,9 +371,6 @@
     <Filter Include="Program\Engine\JobSystem">
       <UniqueIdentifier>{8751d8d4-66c9-43a0-9a77-ca86359f4c0e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Shaders\texture">
-      <UniqueIdentifier>{73da9f3a-d4f2-454d-bf5f-08a55ed88711}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Shaders\idShader">
       <UniqueIdentifier>{751d381e-bdac-4037-baac-92fbc1e291ac}</UniqueIdentifier>
     </Filter>
@@ -427,6 +424,9 @@
     </Filter>
     <Filter Include="Program\GameSystem\Game\Project Melon\MelonWorld">
       <UniqueIdentifier>{26913575-e613-4483-821d-e3c6b2aeb62a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders\final">
+      <UniqueIdentifier>{73da9f3a-d4f2-454d-bf5f-08a55ed88711}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1213,11 +1213,11 @@
     <None Include="Data\shaders\simplePlanetDistortion.glsl">
       <Filter>Shaders\COMMON</Filter>
     </None>
-    <None Include="Data\shaders\texture.frag">
-      <Filter>Shaders\texture</Filter>
+    <None Include="Data\shaders\final.frag">
+      <Filter>Shaders\final</Filter>
     </None>
-    <None Include="Data\shaders\texture.vert">
-      <Filter>Shaders\texture</Filter>
+    <None Include="Data\shaders\final.vert">
+      <Filter>Shaders\final</Filter>
     </None>
     <None Include="G:\DATA\PROJEKTE\ORKA\GAME ENGINE\SOURCE CODE\Project ORKA\Data\shaders\idShader.frag">
       <Filter>Shaders\idShader</Filter>

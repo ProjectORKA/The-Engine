@@ -2,12 +2,36 @@
 #include "Framebuffer.hpp"
 #include "Renderer.hpp"
 
+void Framebuffer::use()
+{
+	apiBindFramebuffer(framebufferID);
+}
+void Framebuffer::destroy()
+{
+	apiBindFramebuffer(0);
+	apiDeleteFramebuffer(framebufferID); //doesent work. ask Nvidia
+	colorTexture.unload();
+	normalTexture.unload();
+	positionTexture.unload();
+	materialIDTexture.unload();
+	depthTexture.unload();
+}
 Float Framebuffer::aspectRatio() {
 	return Float(size.x) / Float(size.y);
 }
-
-void Framebuffer::create()
+void Framebuffer::setAsTexture()
 {
+	colorTexture.use(0);
+}
+void Framebuffer::blitFramebuffer()
+{
+	apiBindDrawFramebuffer(0);
+	apiBindReadFramebuffer(framebufferID);
+	apiBlitFramebuffer(size.x, size.y, GL_COLOR_BUFFER_BIT, GL_LINEAR);
+}
+void Framebuffer::create(Area size)
+{
+	this->size = size;
 	apiGenFramebuffer(framebufferID);
 	apiBindFramebuffer(framebufferID);
 
@@ -32,26 +56,6 @@ void Framebuffer::create()
 
 	if (apiCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) logError("Framebuffer is not complete!");
 }
-void Framebuffer::destroy()
-{
-	apiBindFramebuffer(0);
-	apiDeleteFramebuffer(framebufferID); //doesent work. ask Nvidia
-	colorTexture.unload();
-	normalTexture.unload();
-	positionTexture.unload();
-	materialIDTexture.unload();
-	depthTexture.unload();
-}
-void Framebuffer::setAsTexture()
-{
-	colorTexture.use(0);
-}
-void Framebuffer::blitFramebuffer()
-{
-	apiBindDrawFramebuffer(0);
-	apiBindReadFramebuffer(framebufferID);
-	apiBlitFramebuffer(size.x, size.y, GL_COLOR_BUFFER_BIT, GL_LINEAR);
-}
 void Framebuffer::resize(Area resolution)
 {
 	//apply size
@@ -63,8 +67,4 @@ void Framebuffer::resize(Area resolution)
 	normalTexture.resize(size);
 	positionTexture.resize(size);
 	materialIDTexture.resize(size);
-}
-void Framebuffer::use()
-{
-	apiBindFramebuffer(framebufferID);
 }
