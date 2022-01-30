@@ -2,17 +2,20 @@
 //! #include "uniforms.glsl"
 
 out vec4 vertexColor;
+out vec4 worldPosition;
 
 void main() {
 	
-	vec3 worldPosition;
+	vec3 wPos;
 	
 	if(instanced){
-		worldPosition = transform.xyz + transform.w * vertex;
+		wPos = transform.xyz + transform.w * vertex;
 	} else {
-		worldPosition = (mMatrix * vec4(vertex, 1)).xyz;
+		wPos = (mMatrix * vec4(vertex, 1)).xyz;
 	}
 
-	gl_Position  = pMatrix * vMatrix * vec4(worldPosition,1);
+	worldPosition = vec4(wPos,1);
+
+	gl_Position  = pMatrix * vMatrix * worldPosition;
 	vertexColor = vec4(vec3(vertex),1.0f);
 };

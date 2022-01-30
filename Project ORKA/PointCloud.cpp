@@ -7,21 +7,15 @@ void PointCloud::add(Vec3 point) {
 	points.push_back(point);
 }
 
-void PointCloud::render(Renderer& renderer) {
-	GPUMesh mesh;
-	mesh.upload(createMesh());
-	mesh.render(renderer.uniforms());
-	mesh.unload();
-}
-
-CPUMesh PointCloud::createMesh() {
+void PointCloudRenderer::update(PointCloud& pointCloud) {
+	if (gpuMesh.loaded)gpuMesh.unload();
 	CPUMesh mesh;
 	mesh.drawMode = MeshDrawMode::dynamicMode;
 	mesh.name = "PointCloud";
 	mesh.primitiveMode = PrimitiveMode::Points;
 
 	Int i = 0;
-	for (Vec3& point : points) {
+	for (Vec3& point : pointCloud.points) {
 		mesh.indices.push_back(i);
 		mesh.normals.push_back(Vec3(0, 0, 1));
 		mesh.uvs.push_back(Vec2(point.x, point.y));
@@ -29,5 +23,12 @@ CPUMesh PointCloud::createMesh() {
 		i++;
 	}
 	mesh.checkIntegrity();
-	return mesh;
+
+	gpuMesh.upload(mesh);
+
+	pointCloudSize = pointCloud.points.size();
+}
+void PointCloudRenderer::render(PointCloud& pointCloud, Renderer& renderer) {
+	if (pointCloud.points.size() != pointCloudSize) update(pointCloud);
+	gpuMesh.render(renderer.uniforms());
 }

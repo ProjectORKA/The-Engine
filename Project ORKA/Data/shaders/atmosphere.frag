@@ -297,9 +297,8 @@ void main() {
     vec3 camera_position = vec3(ATMOS_RADIUS * 2 * cameraPosition.xzy);
     vec3 light_dir = sunDir.xzy;
     vec4 scene = render_scene(camera_position, cameraVector, light_dir);
-    scene.xyz = texture(texture0,gl_FragCoord.xy/vec2(width,height)).xyz;
+    scene.xyz = vec3(0);//texture(texture0,gl_FragCoord.xy/vec2(width,height)).xyz;
     //scene.w = 
-
     vec3 col = calculate_scattering(
     	camera_position,				// the position of the camera
         cameraVector, 					// the camera vector (ray direction of this pixel)
@@ -329,7 +328,7 @@ void main() {
 
     //col = texture(texture1,gl_FragCoord.xy / vec2(width,height)).xyz;
 
-    gBufferColor = vec4(col, 1.0);
+    gBufferColor = vec4(col, 0.9);
     gBufferPosition = position;
     gBufferNormal = position;
     gBufferMaterialID = 0;

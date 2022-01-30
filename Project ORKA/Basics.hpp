@@ -1,6 +1,5 @@
 #pragma once
 
-
 //standard
 using Bool = bool;
 using Boolean = bool;
@@ -38,45 +37,15 @@ using SharedPointer = std::shared_ptr<T>;
 template<typename T>
 using WeakPointer = std::weak_ptr<T>;
 
-#include "String.hpp"
+#include "String.hpp";
 
-#define NAME_SIZE 64
+#include "Name.hpp"
 
-struct Name {
-	char data[NAME_SIZE] = {};
+#include "Vectors.hpp"
 
-	Name();
-	Name(const char* name);
-	Name& operator=(const char* other);
-	Name& operator=(std::string other);
-	bool operator==(const Name& rhs);
-};
+#include "Color.hpp"
 
-bool operator<(const Name& l, const Name& r);
-
-//glm
-#include "glm/glm.hpp"
-#include <glm/gtc/type_ptr.hpp>
-#include <glm/gtc/quaternion.hpp>
-#include <glm/gtx/quaternion.hpp>
-#include "glm/gtc/matrix_transform.hpp"
-
-using IVec2 = glm::ivec2;
-using Vec2 = glm::vec2;
-using DVec2 = glm::dvec2;
-
-using IVec3 = glm::ivec3;
-using DVec3 = glm::dvec3;
-using Vec3 = glm::vec3;
-
-using Location = glm::vec3;
-
-using Vec4 = glm::vec4;
-using Color = glm::vec4;
 using Sphere = Vec4;
-
-using ULLVec2 = glm::u64vec2;
-using ULLVec3 = glm::u64vec3;
 
 using Matrix = glm::mat4;
 using Quat = glm::quat;
@@ -109,9 +78,7 @@ using Vector = std::vector<T>;
 template<typename T>
 using Set = std::set<T>;
 
-#include <map>
-template<typename T, typename K>
-using Map = std::map<T, K>;
+#include "Map.hpp"
 
 #include <bitset>
 template <std::size_t T>

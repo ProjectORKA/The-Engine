@@ -14,14 +14,8 @@
     <Filter Include="Shaders\debug">
       <UniqueIdentifier>{8057ee02-1eca-49b3-9c61-27e8bd0e455b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Shaders\primitive">
-      <UniqueIdentifier>{b4447bb9-dc42-4638-87e1-88d2e0781b1b}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Shaders\postProcess">
       <UniqueIdentifier>{4db6f633-ae60-4a54-8c18-7603ecd0774d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Shaders\terrain">
-      <UniqueIdentifier>{77b10299-6395-4395-909b-016b3fc2f0c0}</UniqueIdentifier>
     </Filter>
     <Filter Include="Shaders\unlit">
       <UniqueIdentifier>{c99157e3-d897-499f-ace0-1f9ae0e36505}</UniqueIdentifier>
@@ -62,9 +56,6 @@
     <Filter Include="Program\Common\Pixel">
       <UniqueIdentifier>{3e661aca-ecf5-491d-bfb6-b7ffb576b1d8}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Shaders\blurredUI">
-      <UniqueIdentifier>{8a0a36c0-ffbc-4263-9732-cd6bb57a17bc}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Shaders\blur">
       <UniqueIdentifier>{2084c430-e18d-4031-a6ce-58f2931af800}</UniqueIdentifier>
     </Filter>
@@ -85,12 +76,6 @@
     </Filter>
     <Filter Include="Program\Common\Settings">
       <UniqueIdentifier>{fe3ca39d-82a1-4cf4-add4-2e21f81ef4d0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Shaders\depthCutter">
-      <UniqueIdentifier>{a87f273c-a40d-4808-88db-3a17bcba27e3}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Shaders\sdfTerrain">
-      <UniqueIdentifier>{4806eeb7-4a90-4650-bd49-10488765a7c3}</UniqueIdentifier>
     </Filter>
     <Filter Include="Program\Engine\GameSimulation\PlanetSystem">
       <UniqueIdentifier>{604777cb-5920-4900-813b-be0c315a86fc}</UniqueIdentifier>
@@ -136,9 +121,6 @@
     </Filter>
     <Filter Include="Program\Engine\InputManager\CameraController">
       <UniqueIdentifier>{ea07d26c-4f4c-466d-addc-882a8a7843fe}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Shaders\water">
-      <UniqueIdentifier>{b18d0530-1a91-4d0e-b400-80aeafdff6b3}</UniqueIdentifier>
     </Filter>
     <Filter Include="Program\Common\String">
       <UniqueIdentifier>{85adeb92-e448-4335-92b7-522288bdf312}</UniqueIdentifier>
@@ -290,9 +272,6 @@
     <Filter Include="Program\Engine\UserInterface\Window\Renderer\MatrixSystem\Transformation Stack">
       <UniqueIdentifier>{ee4ebd29-c373-49fd-bf17-c1c24e6de507}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Program\GameSystem\Game\Sandbox">
-      <UniqueIdentifier>{c3d51568-af50-427f-93fe-124974863bc6}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Program\Common\NeuralNetwork">
       <UniqueIdentifier>{5643a6f8-d2a4-4abf-81fa-b659d065704c}</UniqueIdentifier>
     </Filter>
@@ -386,9 +365,6 @@
     <Filter Include="Program\GameSystem\Game\Dungeons And Discord\DND UberShader">
       <UniqueIdentifier>{65921f46-4a03-49fd-a802-0a005ff943a9}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Program\GameSystem\Game\Mooncrash\sdfOctreeTerrainRender">
-      <UniqueIdentifier>{684767c4-9641-4625-ba35-f23e75a6c493}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Program\Engine\UserInterface\Window\Renderer\MeshSystem\Instancing">
       <UniqueIdentifier>{7709abac-b0c7-46ce-915d-55abc2479d1c}</UniqueIdentifier>
     </Filter>
@@ -427,6 +403,66 @@
     </Filter>
     <Filter Include="Shaders\final">
       <UniqueIdentifier>{73da9f3a-d4f2-454d-bf5f-08a55ed88711}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\GameSystem\Game\Miniverse">
+      <UniqueIdentifier>{04943fef-34e1-4557-bc62-03260d0feec0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\GameSystem\Game\UISandbox">
+      <UniqueIdentifier>{c3d51568-af50-427f-93fe-124974863bc6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\GameSystem\Game\Sandbox">
+      <UniqueIdentifier>{ae4b5e0a-62f4-4479-98df-60ff63ffe9a0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\Engine\UserInterface\Window\Renderer\ShaderSystem\Buffers">
+      <UniqueIdentifier>{25efa8c4-9465-40f2-a8f8-fd4cef34ceaa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MODULES">
+      <UniqueIdentifier>{cb77dbb2-dc1e-4a6c-9564-c7520d574673}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\Common\Color">
+      <UniqueIdentifier>{be3a3641-34b1-48c7-a86d-fcd4892e6c14}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\Common\Vectors">
+      <UniqueIdentifier>{2d13d521-2c6e-406b-ba54-094a90490600}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\Common\Map">
+      <UniqueIdentifier>{47a9dd10-0e87-4c5a-8335-40d8aa210225}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\Common\Name">
+      <UniqueIdentifier>{6729c638-02c2-41c5-a9aa-81f4fe54b7df}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\GameSystem\Game\Miniverse\miniverseUberShader">
+      <UniqueIdentifier>{686cc049-3d1e-4197-b96c-658c68782e78}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\GameSystem\Game\Mooncrash\shaders">
+      <UniqueIdentifier>{bc2d5955-c761-4b13-a142-effb6b5f04a6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\GameSystem\Game\Mooncrash\shaders\depthCutter">
+      <UniqueIdentifier>{a87f273c-a40d-4808-88db-3a17bcba27e3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\GameSystem\Game\Mooncrash\shaders\sdfOctreeTerrainRender">
+      <UniqueIdentifier>{684767c4-9641-4625-ba35-f23e75a6c493}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\GameSystem\Game\Mooncrash\shaders\terrain">
+      <UniqueIdentifier>{77b10299-6395-4395-909b-016b3fc2f0c0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\GameSystem\Game\Mooncrash\shaders\water">
+      <UniqueIdentifier>{b18d0530-1a91-4d0e-b400-80aeafdff6b3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\GameSystem\Game\Sandbox\shaders">
+      <UniqueIdentifier>{0d48b1a9-8321-4803-95c0-571276f66fa1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\GameSystem\Game\Sandbox\shaders\sphereRendering">
+      <UniqueIdentifier>{e3007fde-155f-49f8-85de-8c1e28647aa5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\GameSystem\Game\Mooncrash\shaders\sdfTerrain">
+      <UniqueIdentifier>{4806eeb7-4a90-4650-bd49-10488765a7c3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\GameSystem\Game\Mooncrash\shaders\primitive">
+      <UniqueIdentifier>{b4447bb9-dc42-4638-87e1-88d2e0781b1b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\GameSystem\Game\Mooncrash\shaders\blurredUI">
+      <UniqueIdentifier>{8a0a36c0-ffbc-4263-9732-cd6bb57a17bc}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -475,9 +511,6 @@
     </ClCompile>
     <ClCompile Include="TextRenderSystem.cpp">
       <Filter>Program\Engine\UserInterface\Window\Renderer\TextRenderSystem</Filter>
-    </ClCompile>
-    <ClCompile Include="Basics.cpp">
-      <Filter>Program\Common\Basic</Filter>
     </ClCompile>
     <ClCompile Include="Debug.cpp">
       <Filter>Program\Common\Debug</Filter>
@@ -647,17 +680,14 @@
     <ClCompile Include="PlanetSystemPlayer.cpp">
       <Filter>Program\GameSystem\Player\PlanetSystemPlayer</Filter>
     </ClCompile>
-    <ClCompile Include="Sandbox.cpp">
-      <Filter>Program\GameSystem\Game\Sandbox</Filter>
+    <ClCompile Include="UISandbox.cpp">
+      <Filter>Program\GameSystem\Game\UISandbox</Filter>
     </ClCompile>
     <ClCompile Include="Plot.cpp">
       <Filter>Program\Common\Plot</Filter>
     </ClCompile>
     <ClCompile Include="PerlinNoise.cpp">
       <Filter>Program\Common\Noise\PerlinNoise</Filter>
-    </ClCompile>
-    <ClCompile Include="Random.cpp">
-      <Filter>Program\Common\Math\Random</Filter>
     </ClCompile>
     <ClCompile Include="Algorithm.cpp">
       <Filter>Program\Common\Algorithm</Filter>
@@ -723,6 +753,21 @@
       <Filter>Program\GameSystem\Game\Project Melon\MelonWorld</Filter>
     </ClCompile>
     <ClCompile Include="C++ Cheatsheet.cpp" />
+    <ClCompile Include="Miniverse.cpp">
+      <Filter>Program\GameSystem\Game\Miniverse</Filter>
+    </ClCompile>
+    <ClCompile Include="Sandbox.cpp">
+      <Filter>Program\GameSystem\Game\Sandbox</Filter>
+    </ClCompile>
+    <ClCompile Include="GPUBuffer.cpp">
+      <Filter>Program\Engine\UserInterface\Window\Renderer\ShaderSystem\Buffers</Filter>
+    </ClCompile>
+    <ClCompile Include="Random.cpp">
+      <Filter>Program\Common\Math\Random</Filter>
+    </ClCompile>
+    <ClCompile Include="Name.cpp">
+      <Filter>Program\Common\Name</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="icon.rc">
@@ -995,8 +1040,8 @@
     <ClInclude Include="ASIONetworking.hpp">
       <Filter>Program\Engine\Networking\ASIONetworking</Filter>
     </ClInclude>
-    <ClInclude Include="Sandbox.hpp">
-      <Filter>Program\GameSystem\Game\Sandbox</Filter>
+    <ClInclude Include="UISandbox.hpp">
+      <Filter>Program\GameSystem\Game\UISandbox</Filter>
     </ClInclude>
     <ClInclude Include="NeuralNetwork.hpp">
       <Filter>Program\Common\NeuralNetwork</Filter>
@@ -1103,6 +1148,27 @@
     <ClInclude Include="MelonWorld.hpp">
       <Filter>Program\GameSystem\Game\Project Melon\MelonWorld</Filter>
     </ClInclude>
+    <ClInclude Include="Miniverse.hpp">
+      <Filter>Program\GameSystem\Game\Miniverse</Filter>
+    </ClInclude>
+    <ClInclude Include="Sandbox.hpp">
+      <Filter>Program\GameSystem\Game\Sandbox</Filter>
+    </ClInclude>
+    <ClInclude Include="GPUBuffer.hpp">
+      <Filter>Program\Engine\UserInterface\Window\Renderer\ShaderSystem\Buffers</Filter>
+    </ClInclude>
+    <ClInclude Include="Color.hpp">
+      <Filter>Program\Common\Color</Filter>
+    </ClInclude>
+    <ClInclude Include="Vectors.hpp">
+      <Filter>Program\Common\Vectors</Filter>
+    </ClInclude>
+    <ClInclude Include="Map.hpp">
+      <Filter>Program\Common\Map</Filter>
+    </ClInclude>
+    <ClInclude Include="Name.hpp">
+      <Filter>Program\Common\Name</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Data\shaders\debug.frag">
@@ -1112,10 +1178,10 @@
       <Filter>Shaders\debug</Filter>
     </None>
     <None Include="Data\shaders\primitive.frag">
-      <Filter>Shaders\primitive</Filter>
+      <Filter>Program\GameSystem\Game\Mooncrash\shaders\primitive</Filter>
     </None>
     <None Include="Data\shaders\primitive.vert">
-      <Filter>Shaders\primitive</Filter>
+      <Filter>Program\GameSystem\Game\Mooncrash\shaders\primitive</Filter>
     </None>
     <None Include="Data\shaders\postProcess.frag">
       <Filter>Shaders\postProcess</Filter>
@@ -1124,10 +1190,10 @@
       <Filter>Shaders\postProcess</Filter>
     </None>
     <None Include="Data\shaders\terrain.frag">
-      <Filter>Shaders\terrain</Filter>
+      <Filter>Program\GameSystem\Game\Mooncrash\shaders\terrain</Filter>
     </None>
     <None Include="Data\shaders\terrain.vert">
-      <Filter>Shaders\terrain</Filter>
+      <Filter>Program\GameSystem\Game\Mooncrash\shaders\terrain</Filter>
     </None>
     <None Include="Data\shaders\unlit.frag">
       <Filter>Shaders\unlit</Filter>
@@ -1147,12 +1213,6 @@
     <None Include="Data\shaders\text.vert">
       <Filter>Shaders\text</Filter>
     </None>
-    <None Include="Data\shaders\blurredUI.frag">
-      <Filter>Shaders\blurredUI</Filter>
-    </None>
-    <None Include="Data\shaders\blurredUI.vert">
-      <Filter>Shaders\blurredUI</Filter>
-    </None>
     <None Include="Data\shaders\blur.frag">
       <Filter>Shaders\blur</Filter>
     </None>
@@ -1166,22 +1226,22 @@
       <Filter>Shaders\sky</Filter>
     </None>
     <None Include="Data\shaders\depthCutter.frag">
-      <Filter>Shaders\depthCutter</Filter>
+      <Filter>Program\GameSystem\Game\Mooncrash\shaders\depthCutter</Filter>
     </None>
     <None Include="Data\shaders\depthCutter.vert">
-      <Filter>Shaders\depthCutter</Filter>
+      <Filter>Program\GameSystem\Game\Mooncrash\shaders\depthCutter</Filter>
     </None>
     <None Include="Data\shaders\sdfTerrain.frag">
-      <Filter>Shaders\sdfTerrain</Filter>
+      <Filter>Program\GameSystem\Game\Mooncrash\shaders\sdfTerrain</Filter>
     </None>
     <None Include="Data\shaders\sdfTerrain.vert">
-      <Filter>Shaders\sdfTerrain</Filter>
+      <Filter>Program\GameSystem\Game\Mooncrash\shaders\sdfTerrain</Filter>
     </None>
     <None Include="Data\shaders\water.frag">
-      <Filter>Shaders\water</Filter>
+      <Filter>Program\GameSystem\Game\Mooncrash\shaders\water</Filter>
     </None>
     <None Include="Data\shaders\water.vert">
-      <Filter>Shaders\water</Filter>
+      <Filter>Program\GameSystem\Game\Mooncrash\shaders\water</Filter>
     </None>
     <None Include="Data\shaders\color.frag">
       <Filter>Shaders\color</Filter>
@@ -1199,19 +1259,16 @@
       <Filter>Shaders\COMMON</Filter>
     </None>
     <None Include="Data\shaders\sdfOctreeTerrain.frag">
-      <Filter>Program\GameSystem\Game\Mooncrash\sdfOctreeTerrainRender</Filter>
+      <Filter>Program\GameSystem\Game\Mooncrash\shaders\sdfOctreeTerrainRender</Filter>
     </None>
     <None Include="Data\shaders\sdfOctreeTerrain.vert">
-      <Filter>Program\GameSystem\Game\Mooncrash\sdfOctreeTerrainRender</Filter>
+      <Filter>Program\GameSystem\Game\Mooncrash\shaders\sdfOctreeTerrainRender</Filter>
     </None>
     <None Include="Data\shaders\normals.frag">
       <Filter>Shaders\normals</Filter>
     </None>
     <None Include="Data\shaders\normals.vert">
       <Filter>Shaders\normals</Filter>
-    </None>
-    <None Include="Data\shaders\simplePlanetDistortion.glsl">
-      <Filter>Shaders\COMMON</Filter>
     </None>
     <None Include="Data\shaders\final.frag">
       <Filter>Shaders\final</Filter>
@@ -1236,6 +1293,24 @@
     </None>
     <None Include="Data\shaders\MelonUberShader.vert">
       <Filter>Program\GameSystem\Game\Project Melon\MelonUberShader</Filter>
+    </None>
+    <None Include="Data\shaders\sphereRendering.vert">
+      <Filter>Program\GameSystem\Game\Sandbox\shaders\sphereRendering</Filter>
+    </None>
+    <None Include="Data\shaders\sphereRendering.frag">
+      <Filter>Program\GameSystem\Game\Sandbox\shaders\sphereRendering</Filter>
+    </None>
+    <None Include="Data\shaders\miniverseUberShader.frag">
+      <Filter>Program\GameSystem\Game\Miniverse\miniverseUberShader</Filter>
+    </None>
+    <None Include="Data\shaders\miniverseUberShader.vert">
+      <Filter>Program\GameSystem\Game\Miniverse\miniverseUberShader</Filter>
+    </None>
+    <None Include="Data\shaders\blurredUI.frag">
+      <Filter>Program\GameSystem\Game\Mooncrash\shaders</Filter>
+    </None>
+    <None Include="Data\shaders\blurredUI.vert">
+      <Filter>Program\GameSystem\Game\Mooncrash\shaders</Filter>
     </None>
   </ItemGroup>
 </Project>
