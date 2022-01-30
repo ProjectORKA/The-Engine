@@ -5,11 +5,7 @@
 void FramebufferSystem::destroy()
 {
 	deselect();
-	for (Framebuffer& framebuffer : framebuffers) {
-		framebuffer.destroy();
-	}
 	framebuffers.clear();
-	idFramebuffer.destroy();
 }
 void FramebufferSystem::deselect()
 {
@@ -17,7 +13,7 @@ void FramebufferSystem::deselect()
 }
 Framebuffer& FramebufferSystem::current()
 {
-	return framebuffers[currentFramebufferIndex];
+	return *framebuffers[currentFramebufferIndex];
 }
 void FramebufferSystem::update(Area area)
 {
@@ -25,24 +21,14 @@ void FramebufferSystem::update(Area area)
 
 	if (framebufferSize != area) {
 		framebufferSize = area;
-		for (Framebuffer& framebuffer : framebuffers) {
-			framebuffer.resize(framebufferSize);
+		for (auto f : framebuffers) {
+			f->resize(framebufferSize);
 		}
-		idFramebuffer.resize(framebufferSize);
 	}
 }
-void FramebufferSystem::add(Renderer & renderer)
+void FramebufferSystem::add(Framebuffer * framebuffer)
 {
-	framebuffers.emplace_back();
-	framebuffers.back().create(framebufferSize);
-	use(renderer, framebuffers.size() - 1);
-}
-void FramebufferSystem::create(Renderer& renderer, Area size)
-{
-	this->framebufferSize = size;
-	framebuffers.clear();
-	idFramebuffer.create(framebufferSize);
-	add(renderer);	//main framebuffer
+	framebuffers.push_back(framebuffer);
 }
 void FramebufferSystem::use(Renderer & renderer, Index framebufferIndex)
 {

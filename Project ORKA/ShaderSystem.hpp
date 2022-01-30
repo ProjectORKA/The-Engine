@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ShaderProgram.hpp"
+#include "GPUBuffer.hpp"
 
 struct ShaderSystem {
 	Uniforms uniforms;

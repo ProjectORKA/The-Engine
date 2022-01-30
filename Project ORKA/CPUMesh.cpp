@@ -39,13 +39,6 @@ CPUMesh::CPUMesh(Name name)
 	load(name);
 }
 
-void CPUMesh::render(Renderer & renderer) {
-	GPUMesh mesh;
-	mesh.upload(*this);
-	mesh.render(renderer.uniforms());
-	mesh.unload();
-}
-
 void CPUMesh::saveMeshFile()
 {
 	Path path = String("Data/meshes/").append(name.data).append(".mesh");
@@ -105,6 +98,10 @@ void CPUMesh::load(Name name)
 		else
 			logDebug(String("Can not find mesh with name: (").append(name.data).append(")"));
 	}
+}
+void CPUMesh::checkIntegrity() {
+	if (uvs.size() == vertices.size() && normals.size() == vertices.size()) readyForUpload = true;
+	else readyForUpload = false;
 }
 void CPUMesh::loadFBX(Path path) {
 
@@ -180,6 +177,24 @@ void CPUMesh::loadFBX(Path path) {
 		saveMeshFile();
 	}
 }
+void CPUMesh::merge(CPUMesh source) {
+	for (Int i = 0; i < source.vertices.size(); i++) {
+		vertices.push_back(source.vertices[i]);
+		uvs.push_back(source.uvs[i]);
+		normals.push_back(source.normals[i]);
+	}
+
+	Int indexOffset = vertices.size();
+
+	for (Int i = 0; i < source.indices.size(); i++) {
+		indices.push_back(source.indices[i] + indexOffset);
+	}
+}
+void CPUMesh::move(Vec3 moveVector) {
+	for (Int i = 0; i < vertices.size(); i++) {
+		vertices[i] += moveVector;
+	}
+}
 void CPUMesh::loadMeshFile(Path path) {
 	bool error = false;
 
@@ -242,18 +257,18 @@ void CPUMesh::loadMeshFile(Path path) {
 };
 void CPUMesh::calculateSmoothNormals()
 {
-	if (primitiveMode == PrimitiveMode::Triangles) {
+	switch (primitiveMode) {
+	case PrimitiveMode::Triangles:
 		normals.resize(vertices.size());
-
 		for (Vec3& normal : normals) {
 			normal = Vec3(0);
 		}
 
-		for (int f = 0; f < (indices.size() / 3); f++) {
-			Index indexA = indices[f * 3	];
+		for (UInt f = 0; f < (indices.size() / 3); f++) {
+			Index indexA = indices[f * 3];
 			Index indexB = indices[f * 3 + 1];
 			Index indexC = indices[f * 3 + 2];
-			
+
 			//get vertex position for each face
 			Vec3 vertexA = vertices[indexA];
 			Vec3 vertexB = vertices[indexB];
@@ -267,37 +282,58 @@ void CPUMesh::calculateSmoothNormals()
 			normals[indexB] += faceNormal;
 			normals[indexC] += faceNormal;
 		}
-
 		for (Vec3& normal : normals) {
 			normal = glm::normalize(normal);
 		}
-	}
-	else {
+		break;
+	case PrimitiveMode::TriangleStrip:
+		normals.resize(vertices.size());
+
+		for (Vec3& normal : normals) {
+			normal = Vec3(0);
+		}
+
+		for (UInt f = 2; f < indices.size(); f++) {
+
+			Index a, b, c;
+			if (isEven(f)) {
+				a = indices[f - 2];
+				b = indices[f - 1];
+				c = indices[f - 0];
+			}
+			else {
+				a = indices[f - 1];
+				b = indices[f - 2];
+				c = indices[f - 0];
+			}
+
+			//get vertex position for each face
+			Vec3 vertexA = vertices[a];
+			Vec3 vertexB = vertices[b];
+			Vec3 vertexC = vertices[c];
+			
+			if(vertexA == vertexB || vertexB == vertexC || vertexA == vertexC)continue;
+
+			//get face normal
+			Vec3 faceNormal = glm::normalize(glm::cross(vertexB - vertexA, vertexC - vertexA));
+
+			//add face normal to every vertex
+			normals[a] += faceNormal;
+			normals[b] += faceNormal;
+			normals[c] += faceNormal;
+		}
+		for (Vec3& normal : normals) {
+			normal = glm::normalize(normal);
+		}
+		break;
+	default:
 		logError("Cant compute normals for this mesh! Primitive type not supported!");
+		break;
 	}
 }
-
-void CPUMesh::merge(CPUMesh source) {
-	for (Int i = 0; i < source.vertices.size(); i++) {
-		vertices.push_back(source.vertices[i]);
-		uvs.push_back(source.uvs[i]);
-		normals.push_back(source.normals[i]);
-	}
-
-	Int indexOffset = vertices.size();
-
-	for (Int i = 0; i < source.indices.size(); i++) {
-		indices.push_back(source.indices[i] + indexOffset);
-	}
-}
-
-void CPUMesh::move(Vec3 moveVector) {
-	for (Int i = 0; i < vertices.size(); i++) {
-		vertices[i] += moveVector;
-	}
-}
-
-void CPUMesh::checkIntegrity() {
-	if (uvs.size() == vertices.size() && normals.size() == vertices.size()) readyForUpload = true;
-	else readyForUpload = false;
+void CPUMesh::render(Renderer & renderer) {
+	GPUMesh mesh;
+	mesh.upload(*this);
+	mesh.render(renderer.uniforms());
+	mesh.unload();
 }

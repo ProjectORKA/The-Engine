@@ -1,23 +1,22 @@
-#include "Basics.hpp"
 
-#include <iostream>
+#include "Name.hpp"
 
 Name::Name() {
 	memset(&data[0], 0, NAME_SIZE);
 }
 Name::Name(const char* name) {
 	memset(&data[0], 0, NAME_SIZE);
-	strcpy(&data[0], name);
+	strcpy_s(data, name);
 }
 Name& Name::operator=(const char* other) {
 	memset(&data[0], 0, NAME_SIZE);
-	strcpy(&data[0], other);
+	strcpy_s(data, other);
 	return *this;
 }
-Name& Name::operator=(std::string other)
+Name& Name::operator=(String other)
 {
 	memset(&data[0], 0, NAME_SIZE);
-	strcpy(&data[0], other.data());
+	strcpy_s(data, other.data());
 	return *this;
 }
 

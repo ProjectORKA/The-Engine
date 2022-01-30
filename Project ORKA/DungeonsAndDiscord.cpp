@@ -18,7 +18,7 @@ namespace DND {
 	}
 
 	void renderClickableObjects(DungeonsAndDiscord& dnd, Renderer& renderer) {
-		renderer.framebufferSystem.idFramebuffer.use();
+		renderer.framebufferSystem.idFramebuffer().use();
 		renderer.useShader("idShader");
 		renderer.setAlphaBlending(false);
 		renderer.setCulling(false);
@@ -94,8 +94,8 @@ namespace DND {
 		DND::renderClickableObjects(*this, renderer);
 
 		PixelIDs ids;
-		if (inputManager.capturing) ids = renderer.framebufferSystem.idFramebuffer.getIDsAtCenter();
-		else ids = renderer.framebufferSystem.idFramebuffer.getIDsAtLocation(inputManager.cursorPosition.x, inputManager.cursorPosition.y);
+		if (inputManager.capturing) ids = renderer.framebufferSystem.idFramebuffer().getIDsAtCenter();
+		else ids = renderer.framebufferSystem.idFramebuffer().getIDsAtLocation(inputManager.cursorPosition.x, inputManager.cursorPosition.y);
 		renderer.framebufferSystem.use(renderer, 0);
 
 		renderer.useShader("dndUberShader");
@@ -185,5 +185,4 @@ namespace DND {
 		transform.render(renderer);
 		renderer.renderMesh(meshName);
 	}
-
 }

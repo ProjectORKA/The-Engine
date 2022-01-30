@@ -3,7 +3,8 @@
 #include "Basics.hpp"
 
 #define MAX_CHUNK_LEVEL 32			//52 is milimeter precision
-#define HEIGHTMAP_SIZE 36			//24
+#define TERRAIN_TEXTURE_SIZE 16
+#define TERRAIN_MAP_SIZE (TERRAIN_TEXTURE_SIZE + 1)
 #define TARGETFRAMERATE 144
 //#define DEFAULT_WINDOW_WIDTH 1920
 //#define DEFAULT_WINDOW_HEIGHT 1080

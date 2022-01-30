@@ -99,7 +99,7 @@ void UserInterface::run() {
 		}
 	}
 	else {
-
+		logError("No windows to render!");
 	}
 
 	for (Window& window : windows) {

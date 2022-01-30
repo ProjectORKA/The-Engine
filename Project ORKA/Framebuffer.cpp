@@ -2,6 +2,15 @@
 #include "Framebuffer.hpp"
 #include "Renderer.hpp"
 
+Framebuffer::Framebuffer() {
+	apiGenFramebuffer(framebufferID);
+	apiBindFramebuffer(framebufferID);
+}
+
+Framebuffer::~Framebuffer() {
+	apiDeleteFramebuffer(framebufferID);
+}
+
 void Framebuffer::use()
 {
 	apiBindFramebuffer(framebufferID);
@@ -10,18 +19,10 @@ void Framebuffer::destroy()
 {
 	apiBindFramebuffer(0);
 	apiDeleteFramebuffer(framebufferID); //doesent work. ask Nvidia
-	colorTexture.unload();
-	normalTexture.unload();
-	positionTexture.unload();
-	materialIDTexture.unload();
-	depthTexture.unload();
+	textures.clear();
 }
 Float Framebuffer::aspectRatio() {
 	return Float(size.x) / Float(size.y);
-}
-void Framebuffer::setAsTexture()
-{
-	colorTexture.use(0);
 }
 void Framebuffer::blitFramebuffer()
 {
@@ -29,31 +30,34 @@ void Framebuffer::blitFramebuffer()
 	apiBindReadFramebuffer(framebufferID);
 	apiBlitFramebuffer(size.x, size.y, GL_COLOR_BUFFER_BIT, GL_LINEAR);
 }
-void Framebuffer::create(Area size)
+void Framebuffer::setAsTexture(Index slot)
 {
-	this->size = size;
-	apiGenFramebuffer(framebufferID);
+	for (auto t : textures) {
+		if (t.isColor) {
+			t.texture.use(slot);
+			return;
+		};
+	}
+	logError("Framebuffer does not have renderable texture!");
+}
+void Framebuffer::add(UInt components, DataType type, UInt slot) {
+	//create texture and add it to the framebuffer
 	apiBindFramebuffer(framebufferID);
+	FramebufferTexture t;
+	t.texture.load(size, components, type);
+	t.texture.attachTexture(slot);
+	t.slot = slot;
+	textures.push_back(t);
 
-	colorTexture.load(size, 4, dataTypeFloat);
-	colorTexture.attachTexture(0);
+	//set up framebuffer for drawing
+	UInt a = 0;
+	Vector<UInt> drawBuffers;
+	for (auto t : textures) {
+		if (t.isColor) drawBuffers.push_back(GL_COLOR_ATTACHMENT0 + a++);
+	}
 
-	normalTexture.load(size, 3, dataTypeFloat);
-	normalTexture.attachTexture(1);
-
-	positionTexture.load(size, 3, dataTypeByte);
-	positionTexture.attachTexture(2);
-
-	materialIDTexture.load(size, 1, dataTypeUInt);
-	materialIDTexture.attachTexture(3);
-
-	depthTexture.load(size, 5, dataTypeFloat);
-	depthTexture.attachTexture(0);
-
-	UInt attachments[4] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2,GL_COLOR_ATTACHMENT3 };
-	glDrawBuffers(4, attachments);
+	glDrawBuffers(drawBuffers.size(), drawBuffers.data());
 	glReadBuffer(GL_NONE); // apparently fixes problems on older gpus
-
 	if (apiCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) logError("Framebuffer is not complete!");
 }
 void Framebuffer::resize(Area resolution)
@@ -61,10 +65,49 @@ void Framebuffer::resize(Area resolution)
 	//apply size
 	size = resolution;
 
-	//update textures
-	colorTexture.resize(size);
-	depthTexture.resize(size);
-	normalTexture.resize(size);
-	positionTexture.resize(size);
-	materialIDTexture.resize(size);
+	for (auto t : textures) t.resize(size);
+}
+
+IDFrameBuffer::IDFrameBuffer() {
+	add(3, dataTypeUInt, 0);
+	add(5, dataTypeFloat, 1);
+}
+
+PixelIDs IDFrameBuffer::getIDsAtCenter()
+{
+	return getIDsAtLocation(size.x / 2, size.y / 2);
+}
+
+PixelIDs IDFrameBuffer::getIDsAtLocation(UInt x, UInt y)
+{
+	glBindFramebuffer(GL_READ_FRAMEBUFFER, framebufferID);
+	glReadBuffer(GL_COLOR_ATTACHMENT0);
+
+	PixelIDs data;
+	glReadPixels(x, y, 1, 1, GL_RGB_INTEGER, GL_UNSIGNED_INT, &data);
+
+	glReadBuffer(GL_NONE);
+	glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
+
+	return data;
+}
+
+FramebufferTexture::FramebufferTexture() {
+	destroy();
+}
+
+void FramebufferTexture::destroy() {
+	texture.unload();
+}
+
+void FramebufferTexture::resize(Area area) {
+	texture.resize(area);
+}
+
+GBuffer::GBuffer() {
+	add(4, dataTypeFloat, 0);
+	add(3, dataTypeFloat, 1);
+	add(3, dataTypeFloat, 2);
+	add(1, dataTypeUInt, 3);
+	add(5, dataTypeFloat, 4);
 }

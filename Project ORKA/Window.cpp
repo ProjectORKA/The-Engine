@@ -34,7 +34,7 @@ void windowThread(Window& window)
 			renderer.uniforms().height(renderer.framebufferSystem.current().size.y);
 
 			//render interactibles
-			renderer.framebufferSystem.idFramebuffer.use();
+			renderer.framebufferSystem.idFramebuffer().use();
 			renderer.clearColor(Color(Vec3(0), 0));
 			renderer.clearDepth();
 
@@ -56,7 +56,7 @@ void windowThread(Window& window)
 			apiBindDrawFramebuffer(0);
 
 			renderer.useShader("final");
-			renderer.framebufferSystem.current().colorTexture.use(0);
+			renderer.framebufferSystem.current().setAsTexture(0);
 			renderer.uniforms().reset();
 			renderer.renderMesh("plane");
 

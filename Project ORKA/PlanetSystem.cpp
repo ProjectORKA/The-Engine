@@ -3,7 +3,7 @@
 
 PlanetSystem::PlanetSystem()
 {
-	quadtreeSystem.create();
+	quadtreeSystem.create(terrainSystem);
 	octreeSystem.create(quadtreeSystem);
 }
 
@@ -20,6 +20,6 @@ void PlanetSystem::count()
 }
 void PlanetSystem::update()
 {
-	quadtreeSystem.update();
+	quadtreeSystem.update(terrainSystem);
 	octreeSystem.update();
 }

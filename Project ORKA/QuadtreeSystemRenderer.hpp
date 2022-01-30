@@ -12,7 +12,6 @@ struct QuadtreeNodeRenderData {
 	Vec3 cameraPosition = Vec3(0);
 	Bool drawn = false;
 	Float nodeDrawDistance = 0.0;
-	ULL renderedHeight = 0;
 
 	QuadtreeNode * equivalentQuadtreeNode = nullptr;
 	Bool subdivided = false;

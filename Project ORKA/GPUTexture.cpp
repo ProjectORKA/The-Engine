@@ -43,6 +43,11 @@ void GPUTexture::unload() {
 		loaded = false;
 	}
 }
+void GPUTexture::load(Name name) {
+	CPUTexture t;
+	t.load(name);
+	load(t);
+}
 void GPUTexture::resize(Area size)
 {
 	//[IMPORTANT] apply same stuff as in creation

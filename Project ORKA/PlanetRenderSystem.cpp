@@ -9,10 +9,6 @@ void PlanetRenderSystem::destroy()
 	octreeRenderSystem.destroy();
 	quadtreeRenderSystem.destroy();
 }
-void PlanetRenderSystem::create(Renderer & renderer)
-{
-	//octreeRenderSystem.create(renderer);
-}
 void PlanetRenderSystem::render(PlanetSystem& planetSystem, Renderer& renderer, PlanetSystemPlayer& player)
 {
 	//create if necessary
@@ -29,7 +25,6 @@ void PlanetRenderSystem::render(PlanetSystem& planetSystem, Renderer& renderer, 
 	player.camera.renderOnlyRot(renderer);
 
 	renderer.setDepthTest(true);
-	renderer.setCulling(true);
 
 	for (UShort level = 0; level < MAX_CHUNK_LEVEL; level++) {
 
@@ -39,7 +34,7 @@ void PlanetRenderSystem::render(PlanetSystem& planetSystem, Renderer& renderer, 
 
 		//render terrain
 		renderer.shaderSystem.use("terrain");
-		renderer.textureSystem.use("grass");
+		renderer.textureSystem.use("terrainColor");
 		quadtreeRenderSystem.renderLevel(level, renderer);
 	}
 }

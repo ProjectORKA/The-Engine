@@ -7,16 +7,18 @@
 #include "TiledMath.hpp"
 
 struct GPUTexture {
-	Index textureID = 0;
-	Filter nearFilter = Filter::linear;
-	Filter farFilter = Filter::linearMM;
-	Int wrapping = repeat;
-	DataType dataType = dataTypeByte;
-	Short channels = 4;
 	UInt width = 1;
 	UInt height = 1;
+	Short channels = 4;
+	Index textureID = 0;
 	Bool loaded = false;
+	Int wrapping = repeat;
+	DataType dataType = dataTypeByte;
+	Filter nearFilter = Filter::linear;
+	Filter farFilter = Filter::linearMM;
+
 	void unload();
+	void load(Name name);
 	void resize(Area size);
 	void use(Index textireID);
 	void attachTexture(Int slot);
