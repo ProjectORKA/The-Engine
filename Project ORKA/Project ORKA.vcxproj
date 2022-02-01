@@ -99,6 +99,7 @@
     <ClCompile Include="TreeSystem.cpp" />
     <ClCompile Include="UIElement.cpp" />
     <ClCompile Include="UIFlatPanel.cpp" />
+    <ClCompile Include="UISandbox.cpp" />
     <ClCompile Include="ULLUtil.cpp" />
     <ClCompile Include="ProceduralMeshes.cpp" />
     <ClCompile Include="main.cpp" />
@@ -222,6 +223,7 @@
     <ClInclude Include="UIConstraints.hpp" />
     <ClInclude Include="UIElement.hpp" />
     <ClInclude Include="UIFlatPanel.hpp" />
+    <ClInclude Include="UISandbox.hpp" />
     <ClInclude Include="ULLUtil.hpp" />
     <ClInclude Include="ProceduralMeshes.hpp" />
     <ClInclude Include="Random.hpp" />

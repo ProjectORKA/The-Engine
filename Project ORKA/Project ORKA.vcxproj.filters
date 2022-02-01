@@ -428,6 +428,9 @@
     <Filter Include="Program\GameSystem\Game\Project Melon\MelonWorld">
       <UniqueIdentifier>{26913575-e613-4483-821d-e3c6b2aeb62a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Program\GameSystem\Game\UISandbox">
+      <UniqueIdentifier>{9371107b-b19b-4975-8a24-b7af4aa072c3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -723,6 +726,9 @@
       <Filter>Program\GameSystem\Game\Project Melon\MelonWorld</Filter>
     </ClCompile>
     <ClCompile Include="C++ Cheatsheet.cpp" />
+    <ClCompile Include="UISandbox.cpp">
+      <Filter>Program\GameSystem\Game\UISandbox</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="icon.rc">
@@ -1102,6 +1108,9 @@
     </ClInclude>
     <ClInclude Include="MelonWorld.hpp">
       <Filter>Program\GameSystem\Game\Project Melon\MelonWorld</Filter>
+    </ClInclude>
+    <ClInclude Include="UISandbox.hpp">
+      <Filter>Program\GameSystem\Game\UISandbox</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
