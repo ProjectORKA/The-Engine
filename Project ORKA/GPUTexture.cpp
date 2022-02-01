@@ -3,14 +3,6 @@
 #include "Math.hpp"
 #include "Util.hpp"
 
-void GPUTexture::unload() {
-	if (loaded) {
-		apiBindTexture(GL_TEXTURE_2D, 0);
-		apiDeleteTexture(textureID);
-		loaded = false;
-	}
-}
-
 void createTexture(UInt channels, DataType dataType, UInt width, UInt height, void * pixels) {
 	switch (channels) {
 	case 1: switch (dataType) {
@@ -44,7 +36,18 @@ void createTexture(UInt channels, DataType dataType, UInt width, UInt height, vo
 	};
 }
 
-
+void GPUTexture::unload() {
+	if (loaded) {
+		apiBindTexture(GL_TEXTURE_2D, 0);
+		apiDeleteTexture(textureID);
+		loaded = false;
+	}
+}
+void GPUTexture::load(Name name) {
+	CPUTexture t;
+	t.load(name);
+	load(t);
+}
 void GPUTexture::resize(Area size)
 {
 	//[IMPORTANT] apply same stuff as in creation

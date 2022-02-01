@@ -8,74 +8,57 @@ UShort nextWindowID = 0;
 //window thread
 void windowThread(Window& window)
 {
-
 	Renderer& renderer = window.renderer;
 
 	window.initializeGraphicsAPI(); //needs to be in this thread
-	renderer.create();		//also needs to be in this thread
+	renderer.create(window.getWindowContentSize());		//also needs to be in this thread
 
-	window.show();
 
-	if (window.fullScreen) {
-		window.setExclusiveFullscreen();
-	}
-	else {
-		window.setWindowed();
-	}
+	window.updateWindowState();
+
+	if(window.windowState == Window::windowed) window.centerWindow();
+	if (window.windowState == Window::windowed || window.windowState == Window::maximized) window.updateDecorations();
+
 
 	window.setCallbacks();
 
 	//main render loop for the window
 	while (window.thread.keepThreadRunning) {
 		if (window.isShown) {
-
 			renderer.begin(); //resets and syncronizes the renderer
-
-			TiledRectangle windowArea;
-			windowArea.size = window.getWindowContentSize();
-			renderer.framebufferSystem.update(windowArea.size);
-
-			renderer.renderRegion.set(windowArea);
-
-			//glClearTexImage(renderer.framebufferSystem.idFramebuffer.idTexture.textureID, 0, GL_RGB32UI, GL_UNSIGNED_INT, 0);
-
-			renderer.framebufferSystem.idFramebuffer.use();
-
-			renderer.clearColor(Color(Vec3(0), 1));
-			renderer.clearDepth();
-
-			renderer.framebufferSystem.use(renderer,0);
-			renderer.clearColor(Color(Vec3(0), 0.0));
-			renderer.clearDepth();
+			renderer.framebufferSystem.update(window.getWindowContentSize());
+			renderer.renderRegion.set(window.getWindowContentSize());
 
 			//gpu needs frameSize
 			renderer.uniforms().width(renderer.framebufferSystem.current().size.x);
 			renderer.uniforms().height(renderer.framebufferSystem.current().size.y);
 
+			//render interactibles
+			renderer.framebufferSystem.idFramebuffer().use();
+			renderer.clearColor(Color(Vec3(0), 0));
+			renderer.clearDepth();
+
+			//render scene
+			renderer.framebufferSystem.use(renderer, 0);
+			renderer.clearColor(Color(Vec3(0), 0.0));
+			renderer.clearDepth();
+
+
 			renderer.setWireframeMode(renderer.wireframeMode);
 
 			if (window.content) window.content->render(window.renderer);
 
-			/// ////////////////////////////////////////////////////////////////////////////
-			
-			//renderer.framebufferSystem.current().blitFramebuffer();
-
 			renderer.setWireframeMode(false);
 			renderer.setAlphaBlending(false);
 
+			renderer.framebufferSystem.current().blitFramebuffer();
+
 			apiBindDrawFramebuffer(0);
 
-			renderer.useShader("texture");
-			//Int tex = glGetUniformLocation(renderer.shaderSystem.currentShaderProgram().programID, "utexture0");
-			renderer.framebufferSystem.current().colorTexture.use(0);
-			//renderer.framebufferSystem.idFramebuffer.idTexture.use(tex);
+			renderer.useShader("final");
+			renderer.framebufferSystem.current().setAsTexture(0);
 			renderer.uniforms().reset();
-
-			apiEnable(GL_FRAMEBUFFER_SRGB);
-
 			renderer.renderMesh("plane");
-
-			apiDisable(GL_FRAMEBUFFER_SRGB);
 
 			renderer.end(); //checks errors and unlocks renderer
 			apiWindowSwapBuffers(window.apiWindow);
@@ -83,40 +66,26 @@ void windowThread(Window& window)
 		printDebugLog();
 	}
 
-	//window.userInterface.destroy(window);
-
 	window.destroyAPIWindow();
 }
 
 //window member functions
-void Window::show()
-{
-	apiWindowSetVisibility(apiWindow, false);
-}
-void Window::hide()
-{
-	apiWindowSetVisibility(apiWindow, false);
-}
 void Window::render() {
-	if(content)content->render(renderer);
+	if (content)content->render(renderer);
 }
 void Window::destroy() {
 	thread.stop();
 }
 void Window::setWindowed()
 {
-	TiledRectangle windowArea;
-	windowArea.size = getWindowContentSize();
-	apiWindowSetWindowedMode(apiWindow, windowArea);
-	restoreWindow();
-	if (decorated) {
-		decorateWindow();
-	}
-	else {
-		undecorateWindow();
-	}
+	apiWindowSetWindowedMode(apiWindow, windowedModeSize);
+	apiWindowRestore(apiWindow);
 	centerWindow();
-	fullScreen = false;
+	windowState = windowed;
+}
+void Window::setMaximized() {
+	apiMaximizeWindow(apiWindow);
+	windowState = maximized;
 }
 void Window::setCallbacks()
 {
@@ -124,7 +93,7 @@ void Window::setCallbacks()
 	glfwSetKeyCallback(apiWindow, whenButtonIsPressed);
 	glfwSetCursorPosCallback(apiWindow, whenMouseIsMoving);
 	glfwSetScrollCallback(apiWindow, whenMouseIsScrolling);
-	glfwSetWindowSizeCallback(apiWindow, whenWindowResized);
+	//glfwSetWindowSizeCallback(apiWindow, whenWindowResized);
 	glfwSetDropCallback(apiWindow, whenFilesDroppedOnWindow);
 	glfwSetMouseButtonCallback(apiWindow, whenMouseIsPressed);
 	glfwSetCursorEnterCallback(apiWindow, whenMouseEnterWindow);
@@ -140,13 +109,18 @@ void Window::centerWindow() {
 	TiledRectangle workableArea = apiWindowGetWorkableArea(apiWindow);
 	setPosition(workableArea.center() - getWindowFrameSize().center());
 }
-void Window::restoreWindow()
-{
-	apiWindowRestore(apiWindow);
+void Window::setMinimized() {
+	apiMinimizeWindow(apiWindow);
+	windowState = minimized;
+}
+void Window::setFullscreen() {
+	glfwSetWindowMonitor(apiWindow, glfwGetPrimaryMonitor(), 0, 0, glfwGetVideoMode(glfwGetPrimaryMonitor())->width, glfwGetVideoMode(glfwGetPrimaryMonitor())->height, GLFW_DONT_CARE);
+	windowState = fullscreen;
 }
 void Window::decorateWindow()
 {
 	apiWindowDecorate(apiWindow);
+	decorated = true;
 }
 void Window::updatePosition()
 {
@@ -155,6 +129,7 @@ void Window::updatePosition()
 void Window::undecorateWindow()
 {
 	apiWindowUndecorate(apiWindow);
+	decorated = false;
 }
 void Window::destroyAPIWindow() {
 	inputManager.uncaptureCursor(*this);
@@ -179,6 +154,19 @@ void Window::setIcon(Path path) {
 		logError("Logo could not be Loaded!");
 	}
 }
+void Window::updateWindowState() {
+	switch (windowState) {
+	case fullscreen: setFullscreen(); break;
+	case maximized: setMaximized(); break;
+	case windowed: setWindowed(); break;
+	case minimized: setMinimized(); break;
+	default: logError("Window state not supported!"); break;
+	}
+}
+void Window::updateDecorations() {
+	if (decorated) decorateWindow();
+	else undecorateWindow();
+}
 void Window::initializeGraphicsAPI() {
 	glfwMakeContextCurrent(apiWindow);
 	glewExperimental = true;
@@ -195,19 +183,6 @@ void Window::initializeGraphicsAPI() {
 	apiEnable(GL_DEBUG_OUTPUT);
 	apiEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
 }
-void Window::setExclusiveFullscreen() {
-
-	glfwMaximizeWindow(apiWindow);
-	if (borderlessFullScreen) {
-		undecorateWindow();
-	}
-	else {
-		glfwSetWindowMonitor(apiWindow, glfwGetPrimaryMonitor(), 0, 0, glfwGetVideoMode(glfwGetPrimaryMonitor())->width, glfwGetVideoMode(glfwGetPrimaryMonitor())->height, GLFW_DONT_CARE);
-	}
-	//help glfw recognize frambuffer change
-	//updateFramebuffers();
-	fullScreen = true;
-}
 void Window::setPosition(IVec2 position)
 {
 	windowPosition = position;
@@ -216,7 +191,7 @@ void Window::setPosition(IVec2 position)
 void Window::resize(Int width, Int height) {
 	apiWindowResize(apiWindow, width, height);
 }
-void Window::createAPIWindow(String title) {
+void Window::createAPIWindow(String title, Area size) {
 	if (!apiWindow) {
 		//video mode
 		const GLFWvidmode* videoMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
@@ -246,37 +221,35 @@ void Window::createAPIWindow(String title) {
 		glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
 #endif
 
-		apiWindow = glfwCreateWindow(DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT, title.c_str(), NULL, NULL);
+		apiWindow = apiCreateWindow(size, title.c_str());
 
-		assert(apiWindow);
+		if (!apiWindow)logError("Window could not be created!");
 
 		glfwSetWindowUserPointer(apiWindow, this);
 
 		setIcon("Data/textures/ORKA Logo.png");
 
 		if (glfwRawMouseMotionSupported()) glfwSetInputMode(apiWindow, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
-
-		updatePosition();
 	}
 	else {
 		logError("Window already exists!");
 	}
 }
-void Window::create(String title, UIElement * element)
+void Window::create(String title, UIElement* content, Area size, Bool decorated, WindowState state)
 {
+	this->decorated = decorated;
+	this->windowState = state;
+
 	id = nextWindowID++;
+	windowedModeSize = size;
+	createAPIWindow(title, size); //needs to be in this thread
 
-	createAPIWindow(title); //needs to be in this thread
-	centerWindow();
-
-	if(element)	content = element;
-	ui.currentlyActive = element;
+	if (content)this->content = content;
+	ui.currentlyActive = content;
 
 	thread.start(windowThread, *this);
 	logEvent("Created Window in Main Thread!");
 }
-
-
 
 //window getters
 Bool Window::shouldClose()
@@ -332,9 +305,6 @@ void whenWindowWasMinimized(APIWindow apiWindow, Int minimized)
 {
 	Window& window = *static_cast<Window*>(glfwGetWindowUserPointer(apiWindow));
 }
-void whenWindowResized(APIWindow apiWindow, Int width, Int height)
-{
-}
 void whenFramebufferIsResized(APIWindow apiWindow, Int width, Int height) {
 	Window& window = *static_cast<Window*>(glfwGetWindowUserPointer(apiWindow));
 
@@ -361,24 +331,22 @@ void whenMouseIsMoving(APIWindow apiWindow, Double xPosition, Double yPosition) 
 	Window& window = *static_cast<Window*>(glfwGetWindowUserPointer(apiWindow));
 	inputManager.mouseIsMoving(window, Vec2(xPosition, yPosition));
 }
+void whenWindowContentScaleChanged(APIWindow apiWindow, Float xScale, Float yScale)
+{
+}
 void whenFilesDroppedOnWindow(APIWindow apiWindow, Int count, const Char** droppedPaths)
 {
 	Window& window = *static_cast<Window*>(glfwGetWindowUserPointer(apiWindow));
 	Vector<Path> paths;
-	
+
 	for (Int i = 0; i < count; i++) {
 		paths.push_back(droppedPaths[i]);
 		logDebug(String("File dropped: ").append(paths.back().string()));
 	}
 	inputManager.filesDropped(window, paths);
 }
-void whenWindowContentScaleChanged(APIWindow apiWindow, Float xScale, Float yScale)
-{
-}
 void whenButtonIsPressed(APIWindow apiWindow, Int key, Int scancode, Int action, Int modifiers)
 {
 	Window& window = *static_cast<Window*>(glfwGetWindowUserPointer(apiWindow));
-
 	inputManager.buttonIsPressed(window, key, action, modifiers);
-
 }

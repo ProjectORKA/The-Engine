@@ -51,7 +51,9 @@
 #include "Intro.hpp"
 #include "Sortr.hpp"
 #include "Sandbox.hpp"
+#include "UISandbox.hpp"
 #include "Mooncrash.hpp"
+#include "Miniverse.hpp"
 #include "AIPlayground.hpp"
 #include "ProjectMelon.hpp"
 #include "DungeonsAndDiscord.hpp"
@@ -59,26 +61,23 @@
 //#define TESTING
 //#define MEMORY_LEAK_DETECTION
 
-Int main(Int  argc, Char* argv[]) {
+int main(int  argc, char* argv[]) {
 #ifndef TESTING
 	randomizeSeed();
-	
-	gameSystem.add(new Sandbox());
+
+	gameSystem.add(new Mooncrash());
 	gameSystem.run();
 
-	window("ORKA",&gameView(0));
-
-	ui.windows.back().resize(100, 100);
+	window("ORKA", &gameView(0), Area(2560, 1440), true, Window::fullscreen);
 
 	ui.run();
 #else
 	//testing code
 	/////////////////////////////////////////////////////////////////////////////////////////////////
-	
-	//if (compileFromSource(" C:\\Users\\Blendurian\\Desktop\\main.cpp"))logDebug("Okay!"); else logDebug("NotOkay!");
+
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////
-	pause();
+	system("pause");//pause();
 #endif // TESTING
 //#ifdef MEMORY_LEAK_DETECTION
 //	_CrtDumpMemoryLeaks();

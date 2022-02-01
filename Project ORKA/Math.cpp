@@ -51,10 +51,15 @@ Matrix matrixFromLocation(Vec3 location) {
 	m[3] = Vec4(location, 1);
 	return m;
 }
-Float lerp(Float from, Float to, Float t)
+Float lerp(Float a, Float b, Float alpha)
 {
-	t = clamp(t,0,1);
-	return (from * (1 - t)) + (to * t);
+	alpha = clamp(alpha,0,1);
+	return (a * (1 - alpha)) + (b * alpha);
+}
+LDouble lerp(LDouble a, LDouble b, LDouble alpha)
+{
+	alpha = clamp(alpha, 0, 1);
+	return (a * (1 - alpha)) + (b * alpha);
 }
 Matrix matrixFromOrientation(Orientation o) {
 	return matrixFromAxis(o.x, o.y, o.z);
@@ -129,6 +134,23 @@ Matrix matrixFromAxis(Vec3 x, Vec3 y, Vec3 z, Vec3 position, Float size) {
 	m[2] = Vec4(size * z, 0);
 	m[3] = Vec4(position, 1);
 	return m;
+}
+Matrix matrixFromScale(Vec3 s) {
+	Matrix m;
+	m[0] = Vec4(s.x, 0, 0, 0);
+	m[1] = Vec4(0, s.y, 0, 0);
+	m[2] = Vec4(0, 0, s.z, 0);
+	m[3] = Vec4(0, 0, 0, 1);
+	return m;
+}
+LDouble dmod(LDouble x, LDouble y) {
+	return x - (ULL)(x / y) * y; //[TODO] check if it actually works
+}
+Bool isEven(ULL a) {
+	return a % 2 == 0;
+}
+Bool isOdd(ULL a) {
+	return a % 2 != 0;
 }
 Float min(Float a, Float b) {
 	if (a < b) return a;

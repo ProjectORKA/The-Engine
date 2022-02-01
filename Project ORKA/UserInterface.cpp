@@ -70,7 +70,7 @@ void GameView::render(Renderer& renderer) {
 void GameView::mouseIsMoving(Window& window, IVec2 position) {
 	gameSystem.games[gameID]->mouseIsMoving(window, position);
 }
-void GameView::filesDropped(Window& window, Vector<Path> paths){
+void GameView::filesDropped(Window& window, Vector<Path> paths) {
 	gameSystem.games[gameID]->filesDropped(window, paths);
 };
 void GameView::buttonIsPressed(Window& window, Int keyID, Int action, Int modifiers) {
@@ -99,7 +99,7 @@ void UserInterface::run() {
 		}
 	}
 	else {
-
+		logError("No windows to render!");
 	}
 
 	for (Window& window : windows) {
@@ -126,9 +126,9 @@ Button& button(Bool& data) {
 	ui.buttons.emplace_back(data);
 	return ui.buttons.back();
 }
-Window& window(String title, UIElement* element) {
+Window& window(String title, UIElement* element, Area size, Bool decorated, Window::WindowState state) {
 	ui.windows.emplace_back();
-	ui.windows.back().create(title, element);
+	ui.windows.back().create(title, element, size, decorated, state);
 	return ui.windows.back();
 };
 CheckBox& checkBox(Bool& data) {
@@ -145,24 +145,24 @@ GameView& gameView(Index gameID) {
 	return ui.gameViews.back();
 };
 
-void exampleCode() {
-
-	String stringVariable = "Hello World";
-	Bool isEnabled = true;
-	Bool pressed = false;
-
-	window("Example", &container()
-		.insert(
-			&button(pressed)
-			.insert(
-				&textBox(stringVariable)
-			)
-		)
-		.insert(
-			&checkBox(isEnabled)
-		)
-		.horizontal()
-	);
-
-	ui.run();
-}
+//void exampleCode() {
+//
+//	String stringVariable = "Hello World";
+//	Bool isEnabled = true;
+//	Bool pressed = false;
+//
+//	window("Example", &container()
+//		.insert(
+//			&button(pressed)
+//			.insert(
+//				&textBox(stringVariable)
+//			)
+//		)
+//		.insert(
+//			&checkBox(isEnabled)
+//		)
+//		.horizontal()
+//	);
+//
+//	ui.run();
+//}

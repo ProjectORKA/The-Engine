@@ -20,10 +20,11 @@
 #[Dd]ebugPublic/
 #[Rr]elease/
 #[Rr]eleases/
-#x64/
+x64/
 #x86/
 Debug/
 Release/
+#ExternalLibraries/
 bld/
 [Bb]in/
 [Oo]bj/

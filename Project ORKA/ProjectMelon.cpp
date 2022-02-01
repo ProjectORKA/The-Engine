@@ -11,22 +11,22 @@ void MelonGame::update() {
 void MelonGame::render(Renderer& renderer) {
 	//setup
 	renderer.setDepthTest(true);
-
+	renderer.setAlphaBlending(true);
 	//background
-	renderer.clearColor(Vec4(0.25, 0.321, 0.0001, 1));
+	//renderer.clearColor(Vec4(0.25, 0.321, 0.0001, 0));
 
-	//scene
-	player.render(renderer);
+	////scene
+	//player.render(renderer);
 
-	renderer.uniforms().mMatrix(Matrix(1));
-	renderer.renderMesh("centeredCube");
+	//renderer.uniforms().mMatrix(Matrix(1));
+	//renderer.renderMesh("centeredCube");
 
-	world.render(renderer);
+	//world.render(renderer);
 
-	//ui
-	renderer.setDepthTest(false);
-	renderer.screenSpace();
-	renderer.renderText(toString(1 / renderer.time.delta), Vec2(30), fonts.heading);
+	////ui
+	//renderer.setDepthTest(false);
+	//renderer.screenSpace();
+	//renderer.renderText(toString(1 / renderer.time.delta), Vec2(30), fonts.heading);
 }
 void MelonGame::mouseIsMoving(Window& window, IVec2 position) {
 	if (inputManager.isCapturing(window)) {

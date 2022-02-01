@@ -9,10 +9,12 @@ struct Renderer;
 
 struct NeighborQuadtreeNode {
 	NeighborQuadtreeNode* parent = nullptr;
+	
 	NeighborQuadtreeNode* c00 = nullptr;
 	NeighborQuadtreeNode* c01 = nullptr;
 	NeighborQuadtreeNode* c10 = nullptr;
 	NeighborQuadtreeNode* c11 = nullptr;
+
 	NeighborQuadtreeNode* nl = nullptr;
 	NeighborQuadtreeNode* nr = nullptr;
 	NeighborQuadtreeNode* nb = nullptr;
@@ -28,12 +30,12 @@ struct NeighborQuadtreeNode {
 	NeighborQuadtreeNode& nbr();
 	NeighborQuadtreeNode& nfr();
 
-	void subdivide();
-	void unsubdivide();
+	void subdivide();//
+	void unsubdivide();//
 	void update(Vec3 location);
 	void render(Renderer& renderer);
-	void removeSelfFromNeighbours();
-	void create(NeighborQuadtreeNode& parent, Bool x, Bool y);
+	void removeSelfFromNeighbours();//
+	void create(NeighborQuadtreeNode& parent, Bool x, Bool y);//
 };
 
 struct NeighborQuadtree {

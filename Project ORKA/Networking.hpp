@@ -5,14 +5,6 @@
 #include "DebugConsole.hpp"
 #include "ASIONetworking.hpp"
 
-
-//#include <cstdlib>
-//#include <thread>
-//#include <utility>
-//#include <cstring>
-//#include <iostream>
-
-
 #define PORT_NUMBER 12297
 #define PACKET_SIZE_IN_BYTES 1024
 enum { maxPacketSize = 1024 };

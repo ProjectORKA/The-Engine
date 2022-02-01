@@ -115,15 +115,6 @@ void printDebugLog() {
 	debugSystems[std::this_thread::get_id()].flush();
 }
 
-DebugTracker::DebugTracker(String functionName) {
-	DebugSystem& ds = debugSystems[std::this_thread::get_id()]; 
-	for (int i = 0; i < ds.level; i++) {
-		ds.log.append("-");
-	}
-	ds.level++;
-	ds.log.append(functionName).append(" (");
-}
-
 DebugTracker::~DebugTracker() {
 	DebugSystem& ds = debugSystems[std::this_thread::get_id()];
 	for (int i = 0; i < ds.level; i++) {
@@ -131,4 +122,12 @@ DebugTracker::~DebugTracker() {
 	}
 	ds.log.append(")\n");
 	ds.level--;
+}
+DebugTracker::DebugTracker(String functionName) {
+	DebugSystem& ds = debugSystems[std::this_thread::get_id()]; 
+	for (int i = 0; i < ds.level; i++) {
+		ds.log.append("-");
+	}
+	ds.level++;
+	ds.log.append(functionName).append(" (");
 }

@@ -2,17 +2,27 @@
 #include "WindowAPI.hpp"
 #include "Util.hpp"
 
+APIWindow apiCreateWindow(Area size, const Char* title) {
+	return glfwCreateWindow(size.x, size.y, title, NULL, NULL);
+}
+
 void apiWindowRestore(APIWindow apiWindow)
 {
 	glfwRestoreWindow(apiWindow);
 }
+void apiMaximizeWindow(APIWindow apiWindow) {
+	glfwMaximizeWindow(apiWindow);
+}
 void apiWindowDecorate(APIWindow apiWindow)
 {
-	glfwSetWindowAttrib(apiWindow, GLFW_DECORATED, 1);
+	glfwSetWindowAttrib(apiWindow, GLFW_DECORATED, true);
+}
+void apiMinimizeWindow(APIWindow apiWindow) {
+	glfwIconifyWindow(apiWindow);
 }
 void apiWindowUndecorate(APIWindow apiWindow)
 {
-	glfwSetWindowAttrib(apiWindow, GLFW_DECORATED, 0);
+	glfwSetWindowAttrib(apiWindow, GLFW_DECORATED, false);
 }
 void apiWindowSwapBuffers(APIWindow apiWindow)
 {
@@ -34,6 +44,13 @@ void apiWindowSetVisibility(APIWindow apiWindow, Bool visible) {
 	if (visible)glfwShowWindow(apiWindow);
 	else glfwHideWindow(apiWindow);
 }
+void apiWindowResize(APIWindow apiWindow, Int width, Int height) {
+	glfwSetWindowSize(apiWindow, width, height);
+}
+void whenWindowAPIThrowsError(Int error, const Char* description)
+{
+	logError(description);
+}
 void apiWindowSetCursorPosition(APIWindow apiWindow, Vec2 position)
 {
 	glfwSetCursorPos(apiWindow, position.x, position.y);
@@ -41,10 +58,6 @@ void apiWindowSetCursorPosition(APIWindow apiWindow, Vec2 position)
 void apiWindowSetWindowedMode(APIWindow apiWindow, TiledRectangle monitorArea)
 {
 	glfwSetWindowMonitor(apiWindow, nullptr, monitorArea.position.x, monitorArea.position.y, monitorArea.size.x, monitorArea.size.y, GLFW_DONT_CARE);
-}
-
-void apiWindowResize(APIWindow apiWindow, Int width, Int height) {
-	glfwSetWindowSize(apiWindow, width, height);
 }
 
 Bool apiWindowShouldClose(APIWindow apiWindow)
@@ -110,7 +123,3 @@ TiledRectangle apiWindowGetWorkableArea(APIWindow apiWindow)
 	return rect;
 }
 
-void whenWindowAPIThrowsError(Int error, const Char* description)
-{
-	logError(description);
-}

@@ -16,6 +16,5 @@ struct PlanetRenderSystem {
 	QuadtreeRenderSystem quadtreeRenderSystem;
 
 	void destroy();
-	void create(Renderer& renderer);
 	void render(PlanetSystem& planetSystem, Renderer& renderer, PlanetSystemPlayer& player);
 };

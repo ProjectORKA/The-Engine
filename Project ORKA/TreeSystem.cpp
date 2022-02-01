@@ -78,8 +78,8 @@ void TreeGenerator::run() {
 
 	treeGeneration(leaves.points, branches.points, tree.connections, 0.01, 0.04, 0.2);
 }
-
-void TreeGenerator::render(Renderer & renderer) {
-	leaves.render(renderer);
+void TreeGenerator::render(Renderer& renderer) {
+	PointCloudRenderer p;
+	p.render(leaves, renderer);
 	tree.render(renderer, branches.points);
 }

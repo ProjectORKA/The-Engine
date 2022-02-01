@@ -1,35 +1,19 @@
+
 #include "FramebufferSystem.hpp"
 #include "Renderer.hpp"
 
-Framebuffer& FramebufferSystem::current()
-{
-	return framebuffers[currentFramebufferIndex];
-}
-
-void FramebufferSystem::add(Renderer & renderer)
-{
-	framebuffers.emplace_back();
-	framebuffers.back().create();
-	use(renderer, framebuffers.size() - 1);
-}
-void FramebufferSystem::create(Renderer& renderer)
-{
-	framebuffers.clear();
-	idFramebuffer.create();
-	add(renderer);	//main framebuffer
-}
 void FramebufferSystem::destroy()
 {
 	deselect();
-	for (Framebuffer& framebuffer : framebuffers) {
-		framebuffer.destroy();
-	}
 	framebuffers.clear();
-	idFramebuffer.destroy();
 }
 void FramebufferSystem::deselect()
 {
 	apiBindFramebuffer(0);
+}
+Framebuffer& FramebufferSystem::current()
+{
+	return *framebuffers[currentFramebufferIndex];
 }
 void FramebufferSystem::update(Area area)
 {
@@ -37,11 +21,14 @@ void FramebufferSystem::update(Area area)
 
 	if (framebufferSize != area) {
 		framebufferSize = area;
-		for (Framebuffer& framebuffer : framebuffers) {
-			framebuffer.resize(framebufferSize);
+		for (auto f : framebuffers) {
+			f->resize(framebufferSize);
 		}
-		idFramebuffer.resize(framebufferSize);
 	}
+}
+void FramebufferSystem::add(Framebuffer * framebuffer)
+{
+	framebuffers.push_back(framebuffer);
 }
 void FramebufferSystem::use(Renderer & renderer, Index framebufferIndex)
 {
