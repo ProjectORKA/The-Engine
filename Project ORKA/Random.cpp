@@ -1,7 +1,8 @@
 
 #include "Random.hpp"
-#include "Time.hpp"
-#include "Debug.hpp"
+#include <iostream>
+#include <random>
+#include <limits>
 
 Vec3 randomVec3() {
 	return Vec3(randomFloat(), randomFloat(), randomFloat());
@@ -66,7 +67,6 @@ Float randomFloat(Float low, Float high)
 Vec3 randomPointOnSphereAtLocation(Float radius, Vec3 location) {
 	return randomPointOnSphere(radius) + location;
 }
-
 Vec3 randomPointOnSphereAtLocation(Vec4 sphere) {
 	return randomPointOnSphere(sphere.w) + Vec3(sphere);
 }

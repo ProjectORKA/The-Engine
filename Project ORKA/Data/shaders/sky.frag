@@ -7,7 +7,5 @@ in vec3 normal;
 
 void main(){
 	//if(texture(texture0,textureCoordinate).a != 1) discard;
-
-	color = vec4(texture(texture0,textureCoordinate).xyz,1.0);
-
+	color = vec4(pow(texture(texture0,textureCoordinate).xyz,vec3(2)),1.0);
 };

@@ -10,6 +10,7 @@
 #include "FileSystem.hpp"
 #include "Debug.hpp"
 #include "GraphicsAPI.hpp"
+#include "Math.hpp"
 
 enum DataType {
 	dataTypeByte = GL_UNSIGNED_BYTE,
@@ -42,12 +43,17 @@ struct CPUTexture {
 		Float* floatPixels;
 		UInt* uIntPixels;
 	};
-	Filter nearFilter = Filter::nearest;
-	Filter farFilter = Filter::nearestMM;
+	Filter nearFilter = Filter::linear;
+	Filter farFilter = Filter::linear;
 	Int wrapping = repeat;
 	Bool loaded = false;
 
 	void unload();
+	Float getRed(UInt x, UInt y);
+	Float getGreen(UInt x, UInt y);
+	Float getBlue(UInt x, UInt y);
+	Float getAlpha(UInt x, UInt y);
+	Float getRed(Float x, Float y);
 	void load(Name name);
 	void load(Path path, Name name);
 

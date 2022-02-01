@@ -19,13 +19,19 @@ struct Orientation {
 	Orientation(Vec3 direction, Vec3 up);
 };
 
+
+
+Bool isOdd(ULL a);
+Bool isEven(ULL a);
 Float min(Float a, Float b);
 Float mod(Float a, Float b);
 Vec3 projectToCube(Vec3 vec);
 Float snap(Float a, Float b);
 Float distance(Vec2 a, Vec2 b);
+Matrix matrixFromScale(Vec3 s);
 Float distance(Float a, Float b);
 UInt nextPowerOfTwo(UInt& value);
+LDouble dmod(LDouble x, LDouble y);
 Vec3 lerp(Vec3 a, Vec3 b, Float alpha);
 Matrix matrixFromLocation(Vec2 location);
 Matrix matrixFromLocation(Vec3 location);
@@ -38,7 +44,6 @@ Matrix matrixFromLocationAndSize(Vec4 compressedTransform);
 Matrix matrixFromLocationAndSize(Vec3 location, Float size);
 Matrix matrixFromOrientation(Orientation o, Vec3 position, Float size);
 Matrix matrixFromAxis(Vec3 x, Vec3 y, Vec3 z, Vec3 position, Float size);
-
 
 
 template<typename T>

@@ -2,47 +2,101 @@
 #include "TerrainSystem.hpp"
 #include "QuadtreeSystem.hpp"
 #include "PerlinNoise.hpp"
+#include "Random.hpp"
 
-Double terrainGenerationFunction(LDouble x, LDouble y) {
-	static PerlinNoise noise(TERRAIN_GENERATION_SEED);
-	LDouble noiseSize = pow(2, 3);
-
-	return pow(noise.octaveNoise0_1(noiseSize * x, noiseSize * y, 32), 3) * LDouble(pow(2,60)) / noiseSize;
-};
-
-Terrain::Terrain(QuadtreeID id)
+void terrainDistributionFunction(LDouble & height) {
+	height = 4 * pow((height - 0.5), 3) + 0.5;
+}
+Terrain::Terrain(TerrainSystem& terrainSystem, QuadtreeID id, Terrain* parentTerrain, Bool cx, Bool cy)
 {
-	ULLVec2 location = id.location;
-	LDouble xLocation = 0;
-	LDouble yLocation = 0;
+	heightmap.upperLimit = 0;
+	heightmap.lowerLimit = LDouble(ULLONG_MAX);
 
-	lowerLimit = ULLONG_MAX;
+	for (UInt x = 0; x < TERRAIN_MAP_SIZE; x++) {
+		for (UInt y = 0; y < TERRAIN_MAP_SIZE; y++) {
+			if (parentTerrain) {
+				UInt xl, xh, yl, yh;
+				xl = x / 2 + TERRAIN_MAP_SIZE / 2 * cx;
+				xh = xl;
+				if (isOdd(x))xh++;
+				yl = y / 2 + TERRAIN_MAP_SIZE / 2 * cy;
+				yh = yl;
+				if (isOdd(y))yh++;
 
-	for (Int y = 0; y < HEIGHTMAP_FOR_NORMALS_SIZE; y++) {
-		for (Int x = 0; x < HEIGHTMAP_FOR_NORMALS_SIZE; x++) {
+				LDouble ah = parentTerrain->heightmap.height[xl][yl];
+				LDouble bh = parentTerrain->heightmap.height[xh][yl];
+				LDouble ch = parentTerrain->heightmap.height[xl][yh];
+				LDouble dh = parentTerrain->heightmap.height[xh][yh];
 
-			xLocation = LDouble(x - 1) / LDouble(HEIGHTMAP_FOR_NORMALS_SIZE - 3);
-			yLocation = LDouble(y - 1) / LDouble(HEIGHTMAP_FOR_NORMALS_SIZE - 3);
+				heightmap.height[x][y] = (ah + bh + ch + dh) / 4.0;
+			}
+			else {
+				heightmap.height[x][y] = ULLONG_MAX / 2;
+			}
+		}
+	}
+	for (UInt x = 0; x < TERRAIN_MAP_SIZE; x++) {
+		for (UInt y = 0; y < TERRAIN_MAP_SIZE; y++) {
 
-			xLocation += LDouble(location.x) / pow(2, 64 - id.level);
-			yLocation += LDouble(location.y) / pow(2, 64 - id.level);
+			UInt sampleX = x;
+			UInt sampleY = y;
+			if (sampleX == TERRAIN_TEXTURE_SIZE) sampleX = 0;
+			if (sampleY == TERRAIN_TEXTURE_SIZE) sampleY = 0;
 
-			xLocation /= pow(2, id.level);
-			yLocation /= pow(2, id.level);
+			LDouble height = terrainSystem.heightTexture.data[sampleX][sampleY];
+			terrainDistributionFunction(height);
+			height = (height - LDouble(0.5)) * LDouble(ULLONG_MAX);
+			LDouble impact = (1 / pow(2, id.level + 5));
+			
+			heightmap.height[x][y] += height * impact;
 
-			LDouble height = SEALEVEL + terrainGenerationFunction(xLocation, yLocation);
+			if (heightmap.height[x][y] > heightmap.upperLimit) heightmap.upperLimit = heightmap.height[x][y];
+			if (heightmap.height[x][y] < heightmap.lowerLimit) heightmap.lowerLimit = heightmap.height[x][y];
+		}
+	}
+	heightmap.loaded = true;
+}
+TerrainSystem::TerrainSystem() {
+	CPUTexture h;
+	h.load("terrainNoise");
 
-			if (height > upperLimit) upperLimit = ceil(height);
-			if (height < lowerLimit) lowerLimit = floor(height);
+	for (UInt x = 0; x < TERRAIN_TEXTURE_SIZE; x++) {
+		for (UInt y = 0; y < TERRAIN_TEXTURE_SIZE; y++) {
+			Float xCoord = (Float(x) / Float(TERRAIN_TEXTURE_SIZE));
+			Float yCoord = (Float(y) / Float(TERRAIN_TEXTURE_SIZE));
 
-			heightmapForNormals[x][y] = height;
+			heightTexture.data[x][y] = h.getRed(xCoord, yCoord);
 		}
 	}
 
-	for (UInt y = 0; y < HEIGHTMAP_FOR_NORMALS_SIZE; y++) {
-		for (UInt x = 0; x < HEIGHTMAP_FOR_NORMALS_SIZE; x++) {
-			heightmapForNormals[x][y] -= Double(lowerLimit);
-			heightmapForNormals[x][y] /= pow(2, 64 - id.level);
+	for (Int x = 0; x < TERRAIN_TEXTURE_SIZE; x++) {
+		for (Int y = 0; y < TERRAIN_TEXTURE_SIZE; y++) {
+			Float v, a, b, c, d;
+
+			v = heightTexture.data[x][y];
+			if (x < TERRAIN_TEXTURE_SIZE - 1) a = heightTexture.data[x + 1][y]; else a = heightTexture.data[0][y];
+			if (y < TERRAIN_TEXTURE_SIZE - 1) b = heightTexture.data[x][y + 1]; else b = heightTexture.data[x][0];
+			if (x > 0) c = heightTexture.data[x - 1][y]; else c = heightTexture.data[TERRAIN_TEXTURE_SIZE - 1][y];
+			if (y > 0) d = heightTexture.data[x][y - 1]; else d = heightTexture.data[x][TERRAIN_TEXTURE_SIZE - 1];
+
+			Float da = a - v;
+			Float db = b - v;
+			Float dc = c - v;
+			Float dd = d - v;
+
+			Float delta = 1.0f / Float(TERRAIN_TEXTURE_SIZE);
+
+			Vec3 va = normalize(Vec3(delta, 0, da));
+			Vec3 vb = normalize(Vec3(0, delta, db));
+			Vec3 vc = normalize(Vec3(-delta, 0, dc));
+			Vec3 vd = normalize(Vec3(0, -delta, dd));
+
+			Vec3 n1 = cross(va, vb);
+			Vec3 n2 = cross(vc, vd);
+
+			//normalTexture.data[x][y] = normalize(n1 + n2);
 		}
 	}
+
+	logDebug("Created TerrainSystem!");
 }

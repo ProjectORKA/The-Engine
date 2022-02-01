@@ -17,14 +17,14 @@ void Renderer::sync()
 }
 void Renderer::begin()
 {
-	mutex.lock();							//used for syncronizing other threads
-	time.update();					//advances the time
-	uniforms().time() = time.total;	//makes time available to shaders
-	framebufferSystem.deselect();			//selects the backbuffer of the window
-	clearColor(Color(Vec3(0), 0.0));		//and clears its contents
-	clearDepth();							//clears depth as to not accidentally hide geometry
+	mutex.lock();						//used for syncronizing other threads
+	time.update();						//advances the time
+	uniforms().time() = time.total;		//makes time available to shaders
+	framebufferSystem.deselect();		//selects the backbuffer of the window
+	clearColor(Color(Vec3(0), 0.0));	//and clears its contents
+	clearDepth();						//clears depth as to not accidentally hide geometry
 }
-void Renderer::create()
+void Renderer::create(Area size)
 {
 	randomizeSeed();
 	//basic systems
@@ -34,10 +34,9 @@ void Renderer::create()
 	shaderSystem.create();
 
 	//advanced systems
-	framebufferSystem.create(*this);
+	framebufferSystem.create(*this, size);
 	textRenderSystem.create(*this);
 	renderObjectSystem.create(*this);
-	planetRenderSystem.create(*this);
 
 	apiClipControl(GL_LOWER_LEFT, GL_ZERO_TO_ONE);
 	apiEnable(GL_SCISSOR_TEST);
@@ -89,10 +88,13 @@ void Renderer::setWireframeMode() {
 	setWireframeMode(wireframeMode);
 }
 void Renderer::renderMesh(Name name) {
-	meshSystem.render(uniforms(),name);
+	meshSystem.render(uniforms(), name);
 }
 void Renderer::useTexture(Name name) {
 	textureSystem.use(name);
+}
+void Renderer::setColor(Color& color) {
+	uniforms().customColor(color);
 }
 void Renderer::pollGraphicsAPIError() {
 	Int error = apiGetError();
@@ -130,7 +132,7 @@ void Renderer::arrow(Vec3 start, Vec3 end) {
 	//if (length >= 0.075) return; //[TODO] erase this
 	Vec3 direction = end - start;
 	Orientation o(direction, Vec3(0, 0, 1));
-	uniforms().mMatrix() = matrixFromOrientation(o,start,length);
+	uniforms().mMatrix() = matrixFromOrientation(o, start, length);
 	renderMesh("arrow");
 }
 void Renderer::apectCorrectNormalizedSpace() {
@@ -153,8 +155,9 @@ void Renderer::setAlphaBlending(Bool blending)
 	if (blending) {
 		apiEnable(GL_BLEND);
 		apiBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		apiBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA, GL_DST_ALPHA);
-		apiBlendEquationSeparate(GL_FUNC_ADD, GL_MAX);
+		glBlendEquation(GL_FUNC_ADD);
+		//apiBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA, GL_DST_ALPHA);
+		//apiBlendEquationSeparate(GL_FUNC_ADD, GL_MAX);
 	}
 	else apiDisable(GL_BLEND);
 }
@@ -214,9 +217,9 @@ void Renderer::createBlurTexture(Index from, Index to)
 {
 	//this function renders a blurred version of a framebuffer to another framebuffer
 	Index originalFramebufferID = framebufferSystem.currentFramebufferIndex;
-	
+
 	useShader("blur");
-	framebufferSystem.framebuffers[from].colorTexture.use(0);
+	framebufferSystem.framebuffers[from]->setAsTexture(0);
 	framebufferSystem.use(*this, to);
 	renderMesh("fullScreenQuad");
 
@@ -230,7 +233,7 @@ void Renderer::renderAtmosphere(Player& player, Vec3 sunDirection) {
 	setCulling(false);
 	uniforms().sunDir() = Vec4(sunDirection, 1);
 	useShader("atmosphere");
-	framebufferSystem.current().colorTexture.use(0);
+	/*framebufferSystem.current().colorTexture.use(0);*/
 	renderMesh("centeredCube");
 	setCulling(culling);
 	setDepthTest(true);
@@ -244,7 +247,7 @@ void Renderer::renderText(String text, Vec2 position, FontStyle font) {
 }
 void Renderer::renderMeshInstanced(Name name, Vector<Vec4>& transformations)
 {
-	if(transformations.size()) meshSystem.renderInstanced(uniforms(), name, transformations);
+	if (transformations.size()) meshSystem.renderInstanced(uniforms(), name, transformations);
 }
 
 Bool Renderer::getCulling() {

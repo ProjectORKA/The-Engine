@@ -1,9 +1,9 @@
 
 #include "QuadtreeSystem.hpp"
 
-void QuadtreeSystem::create() {
+void QuadtreeSystem::create(TerrainSystem& terrainSystem) {
 	root = new QuadtreeNode();
-	root->create();
+	root->create(terrainSystem);
 }
 
 void QuadtreeSystem::destroy() {
@@ -14,15 +14,15 @@ void QuadtreeSystem::destroy() {
 void QuadtreeSystem::count() {
 	root->count();
 }
-void QuadtreeSystem::update() {
-	root->update();
+void QuadtreeSystem::update(TerrainSystem& terrainSystem) {
+	root->update(terrainSystem);
 }
 
 ULLVec3 QuadtreeSystem::rayTrace(Ray ray) {
 	return ULLVec3(0); // root.rayTrace(ray);
 }
 
-QuadtreeNode& QuadtreeSystem::get(QuadtreeID id)
+QuadtreeNode& QuadtreeSystem::get(TerrainSystem& terrainSystem,QuadtreeID id)
 {
-	return root->get(id);
+	return root->get(terrainSystem,id);
 }

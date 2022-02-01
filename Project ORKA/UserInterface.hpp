@@ -94,7 +94,6 @@ Button & button(Bool& data);
 TextBox& textBox(String& data);
 CheckBox& checkBox(Bool& data);
 GameView& gameView(Index gameID);
-Window& window(String title, UIElement * element);
-
+Window& window(String title, UIElement* element, Area size, Bool decorated, Window::WindowState state);
 
 void exampleCode();

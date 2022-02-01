@@ -5,6 +5,4 @@
 
 struct QuadtreeData {
 	Terrain * terrain = nullptr;
-	//Vector<Tree> trees;
-	//Vector<Object> objects;
 };

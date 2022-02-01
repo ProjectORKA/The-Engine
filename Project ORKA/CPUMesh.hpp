@@ -52,7 +52,7 @@ struct MeshHeaderV2 {
 //struct MeshHeaderV1 {
 //	const unsigned int version = 1;
 //	Name meshName = "";
-//	PrimitiveMode primitiveMode = Triangles;
+//	PrimitiveMode primitiveMode = PrimitiveMode::Triangles;
 //	unsigned int vertexCount = 0;
 //	unsigned int uvCount = 0;
 //	unsigned int indexCount = 0;

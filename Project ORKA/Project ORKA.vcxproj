@@ -25,16 +25,20 @@
     <ClCompile Include="AIPlayground.cpp" />
     <ClCompile Include="Algorithm.cpp" />
     <ClCompile Include="C++ Cheatsheet.cpp" />
+    <ClCompile Include="GPUBuffer.cpp" />
     <ClCompile Include="IndexFramebuffer.cpp" />
     <ClCompile Include="Instancing.cpp" />
     <ClCompile Include="MelonPlayer.cpp" />
     <ClCompile Include="MelonWorld.cpp" />
+    <ClCompile Include="Miniverse.cpp" />
+    <ClCompile Include="Name.cpp" />
     <ClCompile Include="ParticleSystem.cpp" />
     <ClCompile Include="ProjectMelon.cpp" />
+    <ClCompile Include="Random.cpp" />
     <ClCompile Include="Renderable.cpp" />
+    <ClCompile Include="Sandbox.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="Sky.cpp" />
-    <ClCompile Include="Basics.cpp" />
     <ClCompile Include="BitmapTextRenderSystem.cpp" />
     <ClCompile Include="BranchStructure.cpp" />
     <ClCompile Include="Client.cpp" />
@@ -60,7 +64,7 @@
     <ClCompile Include="Pong.cpp" />
     <ClCompile Include="QuadtreeID.cpp" />
     <ClCompile Include="QuadtreeNode.cpp" />
-    <ClCompile Include="Sandbox.cpp" />
+    <ClCompile Include="UISandbox.cpp" />
     <ClCompile Include="SDFTerrainRenderSystem.cpp" />
     <ClCompile Include="Server.cpp" />
     <ClCompile Include="Settings.cpp" />
@@ -103,7 +107,6 @@
     <ClCompile Include="ULLUtil.cpp" />
     <ClCompile Include="ProceduralMeshes.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Random.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="RenderObjectSystem.cpp" />
     <ClCompile Include="ShaderSystem.cpp" />
@@ -124,15 +127,21 @@
     <ClCompile Include="OctreeSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Color.hpp" />
+    <ClInclude Include="GPUBuffer.hpp" />
     <ClInclude Include="GuessingGame.hpp" />
     <ClInclude Include="IndexFramebuffer.hpp" />
     <ClInclude Include="Instancing.hpp" />
     <ClInclude Include="Interactive.hpp" />
+    <ClInclude Include="Map.hpp" />
     <ClInclude Include="MelonPlayer.hpp" />
     <ClInclude Include="MelonWorld.hpp" />
+    <ClInclude Include="Miniverse.hpp" />
+    <ClInclude Include="Name.hpp" />
     <ClInclude Include="ParticleSystem.hpp" />
     <ClInclude Include="ProjectMelon.hpp" />
     <ClInclude Include="Renderable.hpp" />
+    <ClInclude Include="Sandbox.hpp" />
     <ClInclude Include="Scene.hpp" />
     <ClInclude Include="Sky.hpp" />
     <ClInclude Include="AudioSystem.hpp" />
@@ -152,7 +161,7 @@
     <ClInclude Include="Player.hpp" />
     <ClInclude Include="Plot.hpp" />
     <ClInclude Include="PointCloud.hpp" />
-    <ClInclude Include="Sandbox.hpp" />
+    <ClInclude Include="UISandbox.hpp" />
     <ClInclude Include="AIPlayground.hpp" />
     <ClInclude Include="ASIONetworking.hpp" />
     <ClInclude Include="AutoConstruct.hpp" />
@@ -243,6 +252,7 @@
     <ClInclude Include="Uniforms.hpp" />
     <ClInclude Include="UserInterface.hpp" />
     <ClInclude Include="Util.hpp" />
+    <ClInclude Include="Vectors.hpp" />
     <ClInclude Include="VertexArrayObject.hpp" />
     <ClInclude Include="VertexBufferObject.hpp" />
     <ClInclude Include="VoxelSystem.hpp" />
@@ -266,6 +276,8 @@
     <None Include="Data\shaders\dndUberShader.vert" />
     <None Include="Data\shaders\MelonUberShader.frag" />
     <None Include="Data\shaders\MelonUberShader.vert" />
+    <None Include="Data\shaders\miniverseUberShader.frag" />
+    <None Include="Data\shaders\miniverseUberShader.vert" />
     <None Include="Data\shaders\normals.frag" />
     <None Include="Data\shaders\normals.vert" />
     <None Include="Data\shaders\postProcess.frag" />
@@ -276,15 +288,16 @@
     <None Include="Data\shaders\sdfOctreeTerrain.vert" />
     <None Include="Data\shaders\sdfTerrain.frag" />
     <None Include="Data\shaders\sdfTerrain.vert" />
-    <None Include="Data\shaders\simplePlanetDistortion.glsl" />
     <None Include="Data\shaders\sky.frag" />
     <None Include="Data\shaders\sky.vert" />
+    <None Include="Data\shaders\sphereRendering.frag" />
+    <None Include="Data\shaders\sphereRendering.vert" />
     <None Include="Data\shaders\terrain.frag" />
     <None Include="Data\shaders\terrain.vert" />
     <None Include="Data\shaders\text.frag" />
     <None Include="Data\shaders\text.vert" />
-    <None Include="Data\shaders\texture.frag" />
-    <None Include="Data\shaders\texture.vert" />
+    <None Include="Data\shaders\final.frag" />
+    <None Include="Data\shaders\final.vert" />
     <None Include="Data\shaders\ui.frag" />
     <None Include="Data\shaders\ui.vert" />
     <None Include="Data\shaders\uniforms.glsl" />
@@ -376,6 +389,7 @@
       <EnableModules>false</EnableModules>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <BasicRuntimeChecks>UninitializedLocalUsageCheck</BasicRuntimeChecks>
+      <CompileAs>CompileAsCpp</CompileAs>
     </ClCompile>
     <Link>
       <AdditionalDependencies>opengl32.lib;freetype.lib;assimp-vc141-mtd.lib;glfw3.lib;glew32s.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -386,7 +400,8 @@
       <SubSystem>Console</SubSystem>
     </Link>
     <PostBuildEvent>
-      <Command>XCOPY "$(SolutionDir)\Project ORKA\Data" "$(TargetDir)\Data" /S /Y /I</Command>
+      <Command>XCOPY "$(SolutionDir)\Project ORKA\Data" "$(TargetDir)\Data" /S /Y /I
+XCOPY "$(SolutionDir)External Libraries\ASSIMP\lib\lib 32\debug" "$(TargetDir)" /S /Y /I</Command>
     </PostBuildEvent>
     <Manifest>
       <SuppressStartupBanner>true</SuppressStartupBanner>
@@ -407,6 +422,7 @@
       <EnableModules>false</EnableModules>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <BasicRuntimeChecks>UninitializedLocalUsageCheck</BasicRuntimeChecks>
+      <CompileAs>CompileAsCpp</CompileAs>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>$(SolutionDir)External Libraries\FREETYPE\release static\vs2015-2022\win64;G:\DATA\PROJEKTE\ORKA\GAME ENGINE\SOURCE CODE\External Libraries\FREETYPE\release static\vs2015-2022\win64;$(SolutionDir)\External Libraries\ASSIMP\lib\lib 64\debug;$(SolutionDir)\External Libraries\GLFW 64 bit\lib-vc2015;$(SolutionDir)\External Libraries\GLEW\lib\Release\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -417,7 +433,8 @@
       <SubSystem>Console</SubSystem>
     </Link>
     <PostBuildEvent>
-      <Command>XCOPY "$(SolutionDir)\Project ORKA\Data" "$(TargetDir)\Data" /S /Y /I</Command>
+      <Command>XCOPY "$(SolutionDir)\Project ORKA\Data" "$(TargetDir)\Data" /S /Y /I
+XCOPY "$(SolutionDir)External Libraries\ASSIMP\lib\lib 64\debug" "$(TargetDir)" /S /Y /I</Command>
     </PostBuildEvent>
     <Manifest>
       <SuppressStartupBanner>true</SuppressStartupBanner>
@@ -438,6 +455,7 @@
       <EnableModules>false</EnableModules>
       <PreprocessorDefinitions>_MBCS;%(PreprocessorDefinitions);%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
+      <CompileAs>CompileAsCpp</CompileAs>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -450,7 +468,8 @@
       <SubSystem>Console</SubSystem>
     </Link>
     <PostBuildEvent>
-      <Command>XCOPY "$(SolutionDir)\Project ORKA\Data" "$(TargetDir)\Data" /S /Y /I</Command>
+      <Command>XCOPY "$(SolutionDir)\Project ORKA\Data" "$(TargetDir)\Data" /S /Y /I
+XCOPY "$(SolutionDir)External Libraries\ASSIMP\lib\lib 32\release" "$(TargetDir)" /S /Y /I</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -469,6 +488,7 @@
       <EnableModules>false</EnableModules>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <CompileAs>CompileAsCpp</CompileAs>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -481,7 +501,8 @@
       <SubSystem>Console</SubSystem>
     </Link>
     <PostBuildEvent>
-      <Command>XCOPY "$(SolutionDir)Project ORKA\Data" "$(TargetDir)Data" /S /Y /I</Command>
+      <Command>XCOPY "$(SolutionDir)Project ORKA\Data" "$(TargetDir)Data" /S /Y /I
+XCOPY "$(SolutionDir)External Libraries\ASSIMP\lib\lib 64\release" "$(TargetDir)" /S /Y /I</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
