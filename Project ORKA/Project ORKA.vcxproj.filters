@@ -704,9 +704,6 @@
     <ClCompile Include="PlanetSystemPlayer.cpp">
       <Filter>Program\Games\Player\PlanetSystemPlayer</Filter>
     </ClCompile>
-    <ClCompile Include="UISandbox.cpp">
-      <Filter>Program\Games\Game\UISandbox</Filter>
-    </ClCompile>
     <ClCompile Include="Plot.cpp">
       <Filter>Program\Common\Data\Plot</Filter>
     </ClCompile>
@@ -800,6 +797,9 @@
     </ClCompile>
     <ClCompile Include="ECS.cpp">
       <Filter>Program\Engine\ECS</Filter>
+    </ClCompile>
+    <ClCompile Include="UISandbox.cpp">
+      <Filter>Program\Games\Game\UISandbox</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1067,9 +1067,6 @@
     <ClInclude Include="ASIONetworking.hpp">
       <Filter>Program\Engine\Networking\ASIONetworking</Filter>
     </ClInclude>
-    <ClInclude Include="UISandbox.hpp">
-      <Filter>Program\Games\Game\UISandbox</Filter>
-    </ClInclude>
     <ClInclude Include="NeuralNetwork.hpp">
       <Filter>Program\Engine\NeuralNetwork</Filter>
     </ClInclude>
@@ -1225,6 +1222,9 @@
     </ClInclude>
     <ClInclude Include="File.hpp">
       <Filter>Program\Common\FileSystem\File</Filter>
+    </ClInclude>
+    <ClInclude Include="UISandbox.hpp">
+      <Filter>Program\Games\Game\UISandbox</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

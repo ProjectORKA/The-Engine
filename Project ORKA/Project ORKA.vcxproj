@@ -66,7 +66,6 @@
     <ClCompile Include="QuadtreeID.cpp" />
     <ClCompile Include="QuadtreeNode.cpp" />
     <ClCompile Include="TLSFAllocator.cpp" />
-    <ClCompile Include="UISandbox.cpp" />
     <ClCompile Include="SDFTerrainRenderSystem.cpp" />
     <ClCompile Include="Server.cpp" />
     <ClCompile Include="Settings.cpp" />
@@ -170,7 +169,6 @@
     <ClInclude Include="PointCloud.hpp" />
     <ClInclude Include="SphereMeshing.hpp" />
     <ClInclude Include="TLSFAllocator.h" />
-    <ClInclude Include="UISandbox.hpp" />
     <ClInclude Include="AIPlayground.hpp" />
     <ClInclude Include="ASIONetworking.hpp" />
     <ClInclude Include="AutoConstruct.hpp" />
