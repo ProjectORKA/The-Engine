@@ -53,13 +53,13 @@ void ParticleSystem::spawn() {
 	lifetime[currentID] = 0;
 	alive[currentID] = true;
 }
-void ParticleSystem::update() {
+void ParticleSystem::update(Renderer & renderer) {
 	playerDelta = *location - lastLocation;
 
 	for (UInt i = 0; i < particleCount; i++) {
 		if (alive[i]) {
 			transformation[i] += Vec4(velocity[i] + Vec3(0, 0, 0.001), 0);
-			lifetime[i] += 1.0 / 144.0;
+			lifetime[i] += renderer.time.delta;
 			transformation[i].w = particleSizeFunction(lifetime[i] / maxLifetime[i]) * maxSize[i];
 			alive[i] = lifetime[i] < maxLifetime[i];
 		}

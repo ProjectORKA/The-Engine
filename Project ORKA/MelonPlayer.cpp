@@ -29,7 +29,7 @@ void MelonPlayer::update(Renderer& renderer) {
 	for (Float i = 0; i < distanceTraveled * 32; i++) {
 		smoke.spawn();
 	}
-	smoke.update();
+	smoke.update(renderer);
 	lastLocation = location;
 }
 void MelonPlayer::render(Renderer& renderer) {
