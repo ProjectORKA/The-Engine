@@ -33,9 +33,9 @@ struct ParticleSystem {
 	Vec3 lastLocation = Vec3(0);
 
 	void spawn();
-	void update();
 	~ParticleSystem();
 	ParticleSystem() = delete;
+	void update(Renderer& renderer);
 	void render(Renderer& renderer);
 	ParticleSystem(Vec3* location, U16 particleCount);
 };
