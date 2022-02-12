@@ -42,17 +42,14 @@ struct Ball {
 
 };
 
-struct Pong : public Game {
-	using Game::Game;
-
+struct Pong : public GameRenderer {
 	//players
 	PongPlayer players[2];
 
 	Vector<Ball> balls;
-
-	void render(Renderer& renderer) override;
-	void buttonIsPressed(Window& window, Int keyID, Int action, Int modifiers) override;
-	void mouseIsPressed(Window& window, Int button, Int action, Int modifiers) override;
+	void render(TiledRectangle area, Renderer& renderer) override;
+	void buttonIsPressed(Window& window, Key key, Int action, Int modifiers) override;
+	void mouseIsPressed(Window& window, MouseButton button, Int action, Int modifiers) override;
 };
 
 Ball* getClosestBall(PongPlayer& player, Vector<Ball>& balls);

@@ -1,6 +1,7 @@
 
 #include "Framebuffer.hpp"
 #include "Renderer.hpp"
+#include "InputManager.hpp"
 
 Framebuffer::Framebuffer() {
 	apiGenFramebuffer(framebufferID);
@@ -71,6 +72,15 @@ void Framebuffer::resize(Area resolution)
 IDFrameBuffer::IDFrameBuffer() {
 	add(3, dataTypeUInt, 0);
 	add(5, dataTypeFloat, 1);
+}
+
+PixelIDs IDFrameBuffer::getID() {
+	return getIDUnderCursor();
+}
+
+PixelIDs IDFrameBuffer::getIDUnderCursor() {
+	if (inputManager.capturing) return getIDsAtCenter();
+	else return getIDsAtLocation(inputManager.cursorPosition.x, inputManager.cursorPosition.y);
 }
 
 PixelIDs IDFrameBuffer::getIDsAtCenter()

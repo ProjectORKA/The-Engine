@@ -62,17 +62,21 @@ Vec4& Uniforms::sunDir() {
 	update = true;
 	return data.sunDir;
 }
+Int& Uniforms::objectID() {
+	update = true;
+	return data.objectID;
+}
 Float& Uniforms::custom1() {
 	update = true;
 	return data.custom1;
 }
-Int& Uniforms::customInt1() {
-	update = true;
-	return data.customInt1;
-}
 Int& Uniforms::instanced() {
 	update = true;
 	return data.instanced;
+}
+Int& Uniforms::customInt1() {
+	update = true;
+	return data.customInt1;
 }
 Vec4& Uniforms::cameraPos() {
 	update = true;
@@ -93,10 +97,6 @@ Matrix& Uniforms::vMatrix() {
 Matrix& Uniforms::pMatrix() {
 	update = true;
 	return data.pMatrix;
-}
-Int& Uniforms::objectID() {
-	update = true;
-	return data.objectID;
 }
 Vec4& Uniforms::worldOffset() {
 	update = true;
@@ -135,16 +135,23 @@ Float& Uniforms::time(Float value) {
 	}
 	return data.time;
 }
-Int& Uniforms::customInt1(Int value) {
-	if (value != data.customInt1) {
-		data.customInt1 = value;
+Int& Uniforms::objectID(UInt value) {
+	if (value != data.objectID) {
+		data.objectID = value;
 		update = true;
 	}
-	return data.customInt1;
+	return data.objectID;
 }
 Int& Uniforms::instanced(Int value) {
 	if (value != data.instanced) {
 		data.instanced = value;
+		update = true;
+	}
+	return data.customInt1;
+}
+Int& Uniforms::customInt1(Int value) {
+	if (value != data.customInt1) {
+		data.customInt1 = value;
 		update = true;
 	}
 	return data.customInt1;

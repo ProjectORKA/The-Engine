@@ -5,7 +5,7 @@
 
 #include "Random.hpp"
 
-void Sandbox::render(Renderer& renderer) {
+void Sandbox::render(TiledRectangle area, Renderer& renderer) {
 	mutex.lock();
 
 	player.speed = pow(1.2, player.speedExponent);
@@ -48,56 +48,36 @@ void Sandbox::render(Renderer& renderer) {
 
 
 	mutex.unlock();
-
 }
 void Sandbox::mouseIsMoving(Window& window, IVec2 position) {
 	if (inputManager.isCapturing(window))player.camera.rotate(Vec2(position) * Vec2(mouseSensitivity));
 }
-void Sandbox::mouseIsPressed(Window& window, Int button, Int action, Int modifiers) {
-	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) inputManager.captureCursor(window);
-	if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS) inputManager.uncaptureCursor(window);
+void Sandbox::mouseIsScrolled(Window& window, Double xAxis, Double yAxis) {
+	player.speedExponent += yAxis;
 }
-void Sandbox::buttonIsPressed(Window& window, Int keyID, Int action, Int modifiers) {
+void Sandbox::mouseIsPressed(Window& window, MouseButton button, Int action, Int modifiers) {
+	if (button == MouseButton::LEFT && action == GLFW_PRESS) inputManager.captureCursor(window);
+	if (button == MouseButton::RIGHT && action == GLFW_PRESS) inputManager.uncaptureCursor(window);
+}
+void Sandbox::buttonIsPressed(Window& window, Key keyID, Int action, Int modifiers) {
 	if (action == GLFW_PRESS) {
 
+		Bool pressed = action == GLFW_PRESS;
 
 		switch (keyID) {
-		case GLFW_KEY_F: window.renderer.wireframeMode = !window.renderer.wireframeMode;
+		case Key::F: if(pressed) window.renderer.wireframeMode = !window.renderer.wireframeMode;
 			break;
-		case GLFW_KEY_W: forward.pressed = true;
+		case Key::W: forward.pressed = pressed;
 			break;
-		case GLFW_KEY_S: backward.pressed = true;
+		case Key::S: backward.pressed = pressed;
 			break;
-		case GLFW_KEY_A: left.pressed = true;
+		case Key::A: left.pressed = pressed;
 			break;
-		case GLFW_KEY_D: right.pressed = true;
+		case Key::D: right.pressed = pressed;
 			break;
-		case GLFW_KEY_Q: downward.pressed = true;
+		case Key::Q: downward.pressed = pressed;
 			break;
-		case GLFW_KEY_E: upward.pressed = true;
-			break;
-		case GLFW_KEY_SPACE:
-		{
-		}
-		break;
-		default:
-			break;
-		}
-	}
-
-	if (action == GLFW_RELEASE) {
-		switch (keyID) {
-		case GLFW_KEY_W: forward.pressed = false;
-			break;
-		case GLFW_KEY_S: backward.pressed = false;
-			break;
-		case GLFW_KEY_A: left.pressed = false;
-			break;
-		case GLFW_KEY_D: right.pressed = false;
-			break;
-		case GLFW_KEY_Q: downward.pressed = false;
-			break;
-		case GLFW_KEY_E: upward.pressed = false;
+		case Key::E: upward.pressed = pressed;
 			break;
 		default:
 			break;

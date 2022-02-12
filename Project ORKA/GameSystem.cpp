@@ -1,21 +1,29 @@
 #include "GameSystem.hpp"
+#include "Random.hpp"
 
 GameSystem gameSystem;
 
 void GameSystem::run() {
+	//creates the gamesimulation thread which continually updates all games
 	thread.start(gameSimulationThread, thread, *this);
 }
-GameSystem::~GameSystem() {
+
+
+void GameSystem::stop() {
+	//stops the game simulation thread, meaning all games wont be updated anymore
+	//also deletes the game simulations
+	
+	randomizeSeed();
+	
 	thread.stop();
-	for (Game* game : games) {
-		game->destroy();
-		delete game;
+	for (GameSimulation* gameSimulation : games) {
+		gameSimulation->destroy();
 	}
 	games.clear();
 }
-Game * GameSystem::add(Game* game) {
-	games.push_back(game);
-	return games.back();
+void GameSystem::add(GameSimulation & game) {
+	game.create();
+	games.push_back(&game);
 }
 void gameSimulationThread(Thread& thread, GameSystem & gameSystem) {
 
@@ -25,8 +33,8 @@ void gameSimulationThread(Thread& thread, GameSystem & gameSystem) {
 
 		t = Clock::now() + Milliseconds(Int(1000.0f / 144.0f));
 
-		for (Game* game : gameSystem.games) {
-			game->update();
+		for (GameSimulation* gameSimulation : gameSystem.games) {
+			gameSimulation->update();
 		}
 
 		sleepUntil(t);

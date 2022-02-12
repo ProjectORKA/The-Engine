@@ -14,7 +14,7 @@ MelonPlayer::MelonPlayer() {
 	camera.farClipValue = 256;
 	camera.update();
 }
-void MelonPlayer::update() {
+void MelonPlayer::update(Renderer& renderer) {
 	//update location
 	location += velocity * Vec3(2.0 / 144.0);
 

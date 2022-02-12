@@ -6,5 +6,5 @@ in vec2 textureCoordinate;
 
 void main(){
 	vec4 color = texture(texture0,textureCoordinate);
-	fragmentColor = color * customColor;
+	fragmentColor = color;//color * customColor;
 };

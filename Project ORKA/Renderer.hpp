@@ -91,8 +91,8 @@ struct Renderer{
 
 	Bool getCulling();
 	void setWireframeMode();
+	void setColor(Color color);
 	void pollGraphicsAPIError();
-	void setColor(Color& color);
 	void setCulling(Bool isCulling);
 	void setDepthClamp(Bool depthClamp);
 	void setDepthTest(Bool isUsingDepth);
@@ -103,4 +103,5 @@ struct Renderer{
 	
 	Float aspectRatio();
 	Uniforms& uniforms();
+	PixelIDs getIDsUnderCursor();
 };

@@ -24,6 +24,6 @@ void main(){
     //fragmentColor = vec4(hash3(texture(utexture0,textureCoordinate).x),1);
     vec4 color = vec4(texture(texture0,textureCoordinate));
     //gamma correction
-    color = vec4(pow(color.rgb, vec3(1.0/2.2)),color.a);
+    color = vec4(pow(color.rgb, vec3(1.0/2.2)),1);
     fragmentColor = color;
 };

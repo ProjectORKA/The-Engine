@@ -7,31 +7,49 @@
 
 UserInterface ui;
 
+//UIImage
+void UIImage::render(TiledRectangle renderArea, Renderer& renderer) {
+	renderer.renderRegion.set(renderArea);
+	renderer.useShader("unlit");
+	renderer.useTexture("default");
+	renderer.setColor(Color(1.0f));
+	renderer.screenSpace();
+	Matrix m = matrixFromLocationAndSize(Vec4(renderArea.position.x, renderArea.position.y, 0, min(renderArea.size.x, renderArea.size.x)));
+	renderer.uniforms().mMatrix(m);
+	renderer.renderMesh("plane");
+}
+UIImage::UIImage(Name name) {
+	this->name = name;
+}
+
 //TextBox
 TextBox::TextBox(String& data) {
 	this->data = &data;
 }
-void TextBox::render(Renderer& renderer) {
-	std::cout << "TextBox(" << *data << ")";
+void TextBox::render(TiledRectangle renderArea, Renderer& renderer){
+	renderer.screenSpace();
+	Matrix m = matrixFromLocationAndSize(Vec4(renderArea.position.x, renderArea.position.y, 0, min(renderArea.size.x, renderArea.size.y)));
+	renderer.uniforms().mMatrix(m);
+	renderer.renderText(*data, Vec2(0), fonts.paragraph);
 }
 
 //Checkbox
 CheckBox::CheckBox(Boolean& data) {
 	this->data = &data;
 }
-void CheckBox::render(Renderer& renderer) {
-	std::cout << "CheckBox(" << *data << ")";
-}
+void CheckBox::render(TiledRectangle renderArea, Renderer& renderer) {}
 
 //Button
-void Button::render(Renderer& renderer) {
-	std::cout << "Button(" << *data << ",";
-	content->render(renderer);
-	std::cout << ")";
+Button::Button(Bool& data) {
+	this->data = &data;
 }
 Button& Button::insert(UIElement* element) {
 	content = element;
 	return *this;
+}
+void Button::render(TiledRectangle renderArea, Renderer& renderer) {
+	
+	if(content) content->render(renderArea,renderer);
 }
 
 //Container
@@ -39,54 +57,28 @@ Container& Container::horizontal() {
 	vertical = false;
 	return *this;
 }
-void  Container::render(Renderer& renderer) {
-	std::cout << "Container(";
-
-	for (auto element : contents) {
-		element->render(renderer);
-		if (element != contents.back())std::cout << ",";
-	}
-
-	std::cout << ")";
-}
-Container& Container::insert(UIElement* element) {
-	contents.push_back(element);
+Container& Container::insert(UIElement& element) {
+	contents.push_back(&element);
 	return *this;
 }
-
-//GameView
-GameView::GameView(Index gameID) {
-	this->gameID = gameID;
-}
-void GameView::render(Renderer& renderer) {
-	if (gameSystem.games[gameID]->selfReplace) {
-		Game* tmp = gameSystem.games[gameID];
-		gameSystem.games[gameID] = gameSystem.games[gameID]->selfReplace;
-		delete tmp;
+void  Container::render(TiledRectangle renderArea, Renderer& renderer) {
+	for (UInt i = 0; i < contents.size();i++) {
+		TiledRectangle a = renderArea;
+		if (vertical) {
+			a.size.y /= contents.size();
+			a.position.y = a.size.y * i;
+		}
+		else {
+			a.size.x /= contents.size();
+			a.position.x = a.size.x * i;
+		}
+		contents[i]->render(a,renderer);
 	}
-
-	gameSystem.games[gameID]->render(renderer);
-}
-void GameView::mouseIsMoving(Window& window, IVec2 position) {
-	gameSystem.games[gameID]->mouseIsMoving(window, position);
-}
-void GameView::filesDropped(Window& window, Vector<Path> paths) {
-	gameSystem.games[gameID]->filesDropped(window, paths);
-};
-void GameView::buttonIsPressed(Window& window, Int keyID, Int action, Int modifiers) {
-	gameSystem.games[gameID]->buttonIsPressed(window, keyID, action, modifiers);
-}
-void GameView::mouseIsScrolled(Window& window, Double xAxis, Double yAxis) {
-	gameSystem.games[gameID]->mouseIsScrolled(window, xAxis, yAxis);
-}
-void GameView::mouseIsPressed(Window& window, Int button, Int action, Int modifiers) {
-	gameSystem.games[gameID]->mouseIsPressed(window, button, action, modifiers);
 }
 
 //User Interface
 void UserInterface::run() {
 	if (windows.size() > 0) {
-
 		while (windows.size() > 0) {
 			glfwPollEvents();
 			for (auto it = windows.begin(); it != windows.end(); it++) {
@@ -114,23 +106,18 @@ UserInterface::UserInterface() {
 	glfwSetMonitorCallback(whenMonitorChanged);
 }
 
-GameView& gameView() {
-	ui.gameViews.emplace_back();
-	return ui.gameViews.back();
-}
 Container& container() {
 	ui.containers.emplace_back();
 	return ui.containers.back();
+}
+UIImage& image(Name name) {
+	ui.images.emplace_back(name);
+	return ui.images.back();
 }
 Button& button(Bool& data) {
 	ui.buttons.emplace_back(data);
 	return ui.buttons.back();
 }
-Window& window(String title, UIElement* element, Area size, Bool decorated, Window::WindowState state) {
-	ui.windows.emplace_back();
-	ui.windows.back().create(title, element, size, decorated, state);
-	return ui.windows.back();
-};
 CheckBox& checkBox(Bool& data) {
 	ui.checkBoxes.emplace_back(data);
 	return ui.checkBoxes.back();
@@ -139,30 +126,8 @@ TextBox& textBox(String& data) {
 	ui.textBoxes.emplace_back(data);
 	return ui.textBoxes.back();
 }
-GameView& gameView(Index gameID) {
-	ui.gameViews.emplace_back();
-	ui.gameViews.back().gameID = gameID;
-	return ui.gameViews.back();
+Window& window(String title, Area size, Bool decorated, WindowState state) {
+	ui.windows.emplace_back();
+	ui.windows.back().create(title, size, decorated, state);
+	return ui.windows.back();
 };
-
-//void exampleCode() {
-//
-//	String stringVariable = "Hello World";
-//	Bool isEnabled = true;
-//	Bool pressed = false;
-//
-//	window("Example", &container()
-//		.insert(
-//			&button(pressed)
-//			.insert(
-//				&textBox(stringVariable)
-//			)
-//		)
-//		.insert(
-//			&checkBox(isEnabled)
-//		)
-//		.horizontal()
-//	);
-//
-//	ui.run();
-//}

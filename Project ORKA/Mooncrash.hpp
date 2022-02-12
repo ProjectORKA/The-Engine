@@ -15,7 +15,17 @@ struct MooncrashPlayer : public PlanetSystemPlayer {
 	void render(Renderer& renderer, Matrix& skyRotation);
 };
 
-struct Mooncrash : public Game {
+struct MooncrashSimulation : public GameSimulation {
+	Time time;
+	PlanetSystem planetSystem;
+
+	void update()override;
+};
+
+struct MooncrashRenderer : public GameRenderer {
+
+	MooncrashSimulation* simulation = nullptr;
+
 	Action	forward;
 	Action	backward;
 	Action	left;
@@ -32,16 +42,12 @@ struct Mooncrash : public Game {
 
 	MooncrashPlayer player;
 
-	Time time;
-	PlanetSystem planetSystem;
-
-	Mooncrash();
-	void update() override;
-	void render(Renderer& renderer) override;
+	MooncrashRenderer(MooncrashSimulation * simulation);
 	void mouseIsMoving(Window& window, IVec2 position) override;
+	void render(TiledRectangle area, Renderer& renderer) override;
 	void mouseIsScrolled(Window& window, Double xAxis, Double yAxis) override;
-	void buttonIsPressed(Window& window, Int keyID, Int action, Int modifiers) override;
-	void mouseIsPressed(Window& window, Int button, Int action, Int modifiers) override;
+	void buttonIsPressed(Window& window, Key key, Int action, Int modifiers) override;
+	void mouseIsPressed(Window& window, MouseButton button, Int action, Int modifiers) override;
 };
 void renderMooncrashAtmosphere(Renderer& renderer, MooncrashPlayer& player);
 void renderPlanet(Renderer& renderer, PlanetSystem& planetSystem, PlanetSystemPlayer& player);

@@ -5,6 +5,8 @@
 #include "QuadtreeData.hpp"
 #include "Ray.hpp"
 
+struct QuadtreeSystem;
+
 struct QuadtreeNode {
 	QuadtreeData data;
 	
@@ -33,8 +35,8 @@ struct QuadtreeNode {
 	void incrementUsers();
 	void removeSelfFromNeighbours();
 	void create(TerrainSystem& terrainSystem);
-	void update(TerrainSystem& terrainSystem);
 	void subdivide(TerrainSystem& terrainSystem);
 	QuadtreeNode & get(TerrainSystem& terrainSystem, QuadtreeID id);
+	void update(QuadtreeSystem& quadtreeSystem, TerrainSystem& terrainSystem);
 	void create(TerrainSystem& terrainSystem, QuadtreeNode* parent, Bool x, Bool y);
 };

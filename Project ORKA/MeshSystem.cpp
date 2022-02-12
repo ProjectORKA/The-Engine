@@ -23,7 +23,6 @@ void MeshSystem::destroy()
 		gpuMesh.unload();
 	}
 	gpuMeshes.clear();
-	meshNames.clear();
 }
 void MeshSystem::use(Index meshID)
 {
@@ -31,15 +30,14 @@ void MeshSystem::use(Index meshID)
 }
 void MeshSystem::use(Name meshName)
 {
-	auto it = meshNames.find(meshName);
-	if (it != meshNames.end()) {
-		currentMeshID = it->second;
+	Index id;
+	if (meshNames.find(meshName, id)) {
+		currentMeshID = id;
 	}
 	else {
 		loadMesh(meshName);
-		it = meshNames.find(meshName);
-		if (it != meshNames.end()) {
-			currentMeshID = it->second;
+		if (meshNames.find(meshName, id)) {
+			currentMeshID = id;
 		}
 		else {
 			logError("Could not select nor load mesh!");
@@ -62,12 +60,9 @@ void MeshSystem::addMesh(CPUMesh cpuMesh) {
 	//[TODO] check if it works
 	GPUMesh gpuMesh;
 	gpuMesh.upload(cpuMesh);
-	
 	gpuMeshes.push_back(gpuMesh);
-
 	use(gpuMeshes.size() - 1);
-	//currentMesh().upload(cpuMesh);
-	meshNames[cpuMesh.name] = currentMeshID;
+	meshNames.add(cpuMesh.name,currentMeshID);
 }
 void MeshSystem::render(Uniforms& uniforms, Index meshID) {
 	use(meshID);

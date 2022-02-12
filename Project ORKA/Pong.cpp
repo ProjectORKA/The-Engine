@@ -103,7 +103,7 @@ void PongPlayer::mouseInput(Vec3 cursorWorldPosition) {
 	position.y = clamp(position.y, -0.9f, 0.9f);
 }
 void PongPlayer::ballLocationInput(Vector<Ball>& balls) {
-	Ball * ball = getClosestBall(*this, balls);
+	Ball* ball = getClosestBall(*this, balls);
 	if (ball) {
 		position.y = ball->position.y;
 
@@ -115,27 +115,27 @@ void PongPlayer::aiInput(Vector<Ball>& balls, Float deltaTime) {
 
 	shoot = random(1000) < 1;
 
-	Ball * ball = getClosestBall(*this, balls);
+	Ball* ball = getClosestBall(*this, balls);
 	if (ball) {
 		//if ((ball.velocity.x > 0 && ball.position.x > randomFloat(-4, 0)) || (ball.velocity.x < 0 && ball.position.x < randomFloat(-4, 0))) {
 		Float reactionTime = deltaTime * difficulty;
-		
+
 		Float predictedPosition = ball->position.y + ((position.x - ball->position.x) / ball->velocity.x) * ball->velocity.y;
-		
+
 		target = (target + reactionTime * ((predictedPosition + ball->position.y) / 2)) / (1 + reactionTime);
-		
+
 		Float targetVelocity = target - position.y;
-		
+
 		velocity += (targetVelocity - velocity);
-		
+
 		position.y += velocity;
 		//}
-		
+
 		position.y = clamp(position.y, -0.9f, 0.9f);
 	}
 }
 
-void Pong::render(Renderer& renderer) {
+void Pong::render(TiledRectangle area, Renderer& renderer) {
 
 	players[0].position.x = -0.9;
 	players[1].position.x = +0.9;
@@ -201,49 +201,39 @@ void Pong::render(Renderer& renderer) {
 	style.absoluteSize = 50;
 
 	renderer.screenSpace();
-	renderer.renderText(toString(players[0].score),					Vec2(10, height - 100),			style);
-	renderer.renderText(toString(players[1].score),					Vec2(width - 100,height - 100),	style);
-	renderer.renderText(toString(players[1].difficulty),			Vec2(10, height - 200),			style);
-	renderer.renderText(toString(balls[0].speed),					Vec2(10, height - 300),			style);
-	renderer.renderText(toString(balls[0].speed),					Vec2(10, height - 300),			style);
-	renderer.renderText(toString(1.0f / renderer.time.delta),	Vec2(50, 50),					fonts.paragraph);
+	renderer.renderText(toString(players[0].score), Vec2(10, height - 100), style);
+	renderer.renderText(toString(players[1].score), Vec2(width - 100, height - 100), style);
+	renderer.renderText(toString(players[1].difficulty), Vec2(10, height - 200), style);
+	renderer.renderText(toString(balls[0].speed), Vec2(10, height - 300), style);
+	renderer.renderText(toString(balls[0].speed), Vec2(10, height - 300), style);
+	renderer.renderText(toString(1.0f / renderer.time.delta), Vec2(50, 50), fonts.paragraph);
 }
-void Pong::buttonIsPressed(Window& window, Int keyID, Int action, Int modifiers) {
+void Pong::buttonIsPressed(Window& window, Key key, Int action, Int modifiers) {
 
-	if (keyID == GLFW_KEY_W) {
-		players[0].moveUp = (action == GLFW_PRESS || action == GLFW_REPEAT);
+	Bool pressed = action != 0;
+
+	switch (key) {
+	case Key::W:players[0].moveUp = pressed;
+		break;
+	case Key::S:players[0].moveDown = pressed;
+		break;
+	case Key::SPACE:players[0].shoot = pressed;
+		break;
+	case Key::UP:players[1].moveUp = pressed;
+		break;
+	case Key::DOWN:players[1].moveDown = pressed;
+		break;
+	case Key::LEFT:players[1].shoot = pressed;
+		break;
+	case Key::P:balls.emplace_back();
+		break;
 	}
-
-	if (keyID == GLFW_KEY_S) {
-		players[0].moveDown = (action == GLFW_PRESS || action == GLFW_REPEAT);
-	}
-
-	if (keyID == GLFW_KEY_SPACE) {
-		players[0].shoot = (action == GLFW_PRESS || action == GLFW_REPEAT);
-	}
-
-	if (keyID == GLFW_KEY_UP) {
-		players[1].moveUp = (action == GLFW_PRESS || action == GLFW_REPEAT);
-	}
-
-	if (keyID == GLFW_KEY_DOWN) {
-		players[1].moveDown = (action == GLFW_PRESS || action == GLFW_REPEAT);
-	}
-
-	if (keyID == GLFW_KEY_LEFT) {
-		players[1].shoot = (action == GLFW_PRESS || action == GLFW_REPEAT);
-	}
-
-	if (keyID == GLFW_KEY_P && action) {
-		balls.emplace_back();
-	}
-
 }
-void Pong::mouseIsPressed(Window& window, Int button, Int action, Int modifiers) {
+void Pong::mouseIsPressed(Window& window, MouseButton button, Int action, Int modifiers) {
 	players[0].shoot = (action == GLFW_PRESS || action == GLFW_REPEAT);
 }
 
-Ball * getClosestBall(PongPlayer& player, Vector<Ball>& balls) {
+Ball* getClosestBall(PongPlayer& player, Vector<Ball>& balls) {
 	Ball* closestBall = nullptr;
 
 	Float closestX = 100;

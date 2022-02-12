@@ -4,8 +4,6 @@
 
 struct Window;
 
-struct AIPlayground : public Game {
-	using Game::Game;
-
-	void render(Renderer& renderer) override;
+struct AIPlayground : public GameRenderer {
+	void render(TiledRectangle area, Renderer& renderer) override;
 };

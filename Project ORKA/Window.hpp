@@ -7,22 +7,21 @@
 #include "WindowAPI.hpp" //needs to be below the rendering stuff, e.g. "Renderer.hpp"
 #include "UIElement.hpp"
 
+enum class WindowState {
+	minimized,
+	windowed,
+	maximized,
+	fullscreen
+};
 
 struct Window {
-
-	enum WindowState {
-		minimized,
-		windowed,
-		maximized,
-		fullscreen
-	};
 
 	UShort id = 0;
 
 	Bool isShown = true;
 	IVec2 windowPosition;
 	Bool decorated = true;
-	WindowState windowState = windowed;
+	WindowState windowState = WindowState::windowed;
 	
 	APIWindow apiWindow = nullptr;
 	Area windowedModeSize = Area(1);
@@ -35,7 +34,6 @@ struct Window {
 	UIElement * content = nullptr;
 
 	//windowstate
-	void render();
 	void destroy();
 	void setWindowed();
 	void setMaximized();
@@ -53,11 +51,14 @@ struct Window {
 	void initializeGraphicsAPI();
 	void setPosition(IVec2 position);
 	void resize(Int width, Int height);
+	Window& insert(UIElement& element);
 	void createAPIWindow(String title, Area size);
-	void create(String title, UIElement* element, Area size, Bool decorated, WindowState state);
-	
+	void create(String title, Area size, Bool decorated, WindowState state);
+
 	Bool shouldClose();
+	Bool isCapturing();
 	Bool isFullScreen();
+	Bool isKeyPressed(Key key);
 
 	Area getWindowFrameSize();
 	Area getWindowContentSize();
@@ -76,8 +77,8 @@ void whenWindowWasMaximized(APIWindow apiWindow, Int maximized);
 void whenWindowWasMinimized(APIWindow apiWindow, Int minimized);
 void whenFramebufferIsResized(APIWindow apiWindow, Int width, Int height);
 void whenMouseIsScrolling(APIWindow apiWindow, Double xAxis, Double yAxis);
-void whenMouseIsPressed(APIWindow apiWindow, Int button, Int action, Int mods);
 void whenMouseIsMoving(APIWindow apiWindow, Double xPosition, Double yPosition);
 void whenFilesDroppedOnWindow(APIWindow apiWindow, Int count, const Char** paths);
 void whenWindowContentScaleChanged(APIWindow apiWindow, Float xScale, Float yScale);
+void whenMouseIsPressed(APIWindow apiWindow, Int mouseButton, Int action, Int mods);
 void whenButtonIsPressed(APIWindow apiWindow, Int key, Int scancode, Int action, Int modifiers);

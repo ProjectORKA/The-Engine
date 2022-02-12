@@ -1,13 +1,11 @@
 #include "Mooncrash.hpp"
 #include "Window.hpp"
 
-Mooncrash::Mooncrash() {
+MooncrashRenderer::MooncrashRenderer(MooncrashSimulation * simulation) {
 	player.speedExponent = 200;
+	this->simulation = simulation;
 }
-void Mooncrash::update() {
-	planetSystem.update();
-}
-void Mooncrash::render(Renderer& renderer) {
+void MooncrashRenderer::render(TiledRectangle area, Renderer& renderer) {
 	if (forward.pressed)	player.accelerationVector += player.camera.forwardVector;
 	if (backward.pressed)	player.accelerationVector -= player.camera.forwardVector;
 	if (upward.pressed)		player.accelerationVector += player.camera.upVector;
@@ -26,7 +24,7 @@ void Mooncrash::render(Renderer& renderer) {
 
 	//renderMooncrashAtmosphere(renderer, player);
 
-	renderPlanet(renderer, planetSystem, player);
+	renderPlanet(renderer, simulation->planetSystem, player);
 	//renderUI(renderer, player);
 }
 void renderUI(Renderer& renderer, MooncrashPlayer& player) {
@@ -53,7 +51,7 @@ void renderUI(Renderer& renderer, MooncrashPlayer& player) {
 	s = String("SunDir: ").append(toString(renderer.uniforms().sunDir().x).append(toString(renderer.uniforms().sunDir().y)).append(toString(renderer.uniforms().sunDir().z)));
 	renderer.renderText(s, Vec2(0, 5 * fonts.debug.absoluteSize), fonts.debug);
 }
-void Mooncrash::mouseIsMoving(Window& window, IVec2 position) {
+void MooncrashRenderer::mouseIsMoving(Window& window, IVec2 position) {
 	if (inputManager.isCapturing(window))player.camera.rotate(Vec2(position) * Vec2(mouseSensitivity));
 }
 void MooncrashPlayer::render(Renderer& renderer, Matrix& skyRotation) {
@@ -168,66 +166,60 @@ void renderMooncrashAtmosphere(Renderer& renderer, MooncrashPlayer& player)
 	//renderer.setAlphaBlending(false);
 	renderer.setDepthTest(true);
 }
-void Mooncrash::mouseIsScrolled(Window& window, Double xAxis, Double yAxis) {
+void MooncrashRenderer::mouseIsScrolled(Window& window, Double xAxis, Double yAxis) {
 	player.speedExponent += yAxis;
 }
-void Mooncrash::buttonIsPressed(Window& window, Int keyID, Int action, Int modifiers) {
+void MooncrashRenderer::buttonIsPressed(Window& window, Key key, Int action, Int modifiers) {
 	if (action == GLFW_PRESS) {
-		switch (keyID) {
-		case GLFW_KEY_F: window.renderer.wireframeMode = !window.renderer.wireframeMode;
+		
+		Bool pressed = action == GLFW_PRESS;
+		
+		switch (key) {
+		case Key::F: if(pressed) window.renderer.wireframeMode = !window.renderer.wireframeMode;
 			break;
-		case GLFW_KEY_J: window.renderer.adjustRenderVariables = !window.renderer.adjustRenderVariables;
+		case Key::J: if(pressed) window.renderer.adjustRenderVariables = !window.renderer.adjustRenderVariables;
 			break;
-		case GLFW_KEY_K: window.renderer.planetRenderSystem.worldDistortion = !window.renderer.planetRenderSystem.worldDistortion;
+		case Key::K: if(pressed) window.renderer.planetRenderSystem.worldDistortion = !window.renderer.planetRenderSystem.worldDistortion;
 			break;
-		case GLFW_KEY_T:
-			window.renderer.mutex.lock();
-			window.renderer.shaderSystem.rebuild();
-			window.renderer.mutex.unlock();
+		case Key::T:
+			if (pressed) {
+				window.renderer.mutex.lock();
+				window.renderer.shaderSystem.rebuild();
+				window.renderer.mutex.unlock();
+			}
 			break;
-		case GLFW_KEY_W: forward.pressed = true;
+		case Key::W: forward.pressed = pressed;
 			break;
-		case GLFW_KEY_S: backward.pressed = true;
+		case Key::S: backward.pressed = pressed;
 			break;
-		case GLFW_KEY_A: left.pressed = true;
+		case Key::A: left.pressed = pressed;
 			break;
-		case GLFW_KEY_D: right.pressed = true;
+		case Key::D: right.pressed = pressed;
 			break;
-		case GLFW_KEY_Q: downward.pressed = true;
+		case Key::Q: downward.pressed = pressed;
 			break;
-		case GLFW_KEY_E: upward.pressed = true;
+		case Key::E: upward.pressed = pressed;
 			break;
-		default:
-			break;
-		}
-	}
-
-	if (action == GLFW_RELEASE) {
-		switch (keyID) {
-		case GLFW_KEY_W: forward.pressed = false;
-			break;
-		case GLFW_KEY_S: backward.pressed = false;
-			break;
-		case GLFW_KEY_A: left.pressed = false;
-			break;
-		case GLFW_KEY_D: right.pressed = false;
-			break;
-		case GLFW_KEY_Q: downward.pressed = false;
-			break;
-		case GLFW_KEY_E: upward.pressed = false;
+		case Key::U: if(pressed) window.renderer.planetRenderSystem.quadtreeRenderSystem.count();
 			break;
 		default:
 			break;
 		}
 	}
 }
-void Mooncrash::mouseIsPressed(Window& window, Int button, Int action, Int modifiers) {
-	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) inputManager.captureCursor(window);
-
-	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE) inputManager.uncaptureCursor(window);
+void MooncrashRenderer::mouseIsPressed(Window& window, MouseButton button, Int action, Int modifiers) {
+	
+	if (action == GLFW_PRESS) {
+		if (button == MouseButton::L) inputManager.captureCursor(window);
+		if (button == MouseButton::R) inputManager.uncaptureCursor(window);
+	}
 }
 void renderPlanet(Renderer& renderer, PlanetSystem& planetSystem, PlanetSystemPlayer& player){
 	renderer.setDepthTest(true);
 	renderer.setAlphaBlending(false);
 	renderer.planetRenderSystem.render(planetSystem, renderer, player);
 };
+
+void MooncrashSimulation::update() {
+	planetSystem.update();
+}

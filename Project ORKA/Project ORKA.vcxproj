@@ -30,6 +30,7 @@
     <ClCompile Include="Instancing.cpp" />
     <ClCompile Include="MelonPlayer.cpp" />
     <ClCompile Include="MelonWorld.cpp" />
+    <ClCompile Include="Memory.cpp" />
     <ClCompile Include="Miniverse.cpp" />
     <ClCompile Include="Name.cpp" />
     <ClCompile Include="ParticleSystem.cpp" />
@@ -64,6 +65,7 @@
     <ClCompile Include="Pong.cpp" />
     <ClCompile Include="QuadtreeID.cpp" />
     <ClCompile Include="QuadtreeNode.cpp" />
+    <ClCompile Include="TLSFAllocator.cpp" />
     <ClCompile Include="UISandbox.cpp" />
     <ClCompile Include="SDFTerrainRenderSystem.cpp" />
     <ClCompile Include="Server.cpp" />
@@ -81,7 +83,7 @@
     <ClCompile Include="CPUMesh.cpp" />
     <ClCompile Include="CPUTexture.cpp" />
     <ClCompile Include="Debug.cpp" />
-    <ClCompile Include="Entity.cpp" />
+    <ClCompile Include="ECS.cpp" />
     <ClCompile Include="FileSystem.cpp" />
     <ClCompile Include="Framebuffer.cpp" />
     <ClCompile Include="FramebufferSystem.cpp" />
@@ -126,7 +128,10 @@
     <ClCompile Include="OctreeSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BaseAllocator.hpp" />
     <ClInclude Include="Color.hpp" />
+    <ClInclude Include="DeadVector.hpp" />
+    <ClInclude Include="File.hpp" />
     <ClInclude Include="GPUBuffer.hpp" />
     <ClInclude Include="GuessingGame.hpp" />
     <ClInclude Include="IndexFramebuffer.hpp" />
@@ -135,9 +140,11 @@
     <ClInclude Include="Map.hpp" />
     <ClInclude Include="MelonPlayer.hpp" />
     <ClInclude Include="MelonWorld.hpp" />
+    <ClInclude Include="Memory.hpp" />
     <ClInclude Include="Miniverse.hpp" />
     <ClInclude Include="Name.hpp" />
     <ClInclude Include="ParticleSystem.hpp" />
+    <ClInclude Include="PoolAllocator.hpp" />
     <ClInclude Include="ProjectMelon.hpp" />
     <ClInclude Include="Renderable.hpp" />
     <ClInclude Include="Sandbox.hpp" />
@@ -160,6 +167,8 @@
     <ClInclude Include="Player.hpp" />
     <ClInclude Include="Plot.hpp" />
     <ClInclude Include="PointCloud.hpp" />
+    <ClInclude Include="SphereMeshing.hpp" />
+    <ClInclude Include="TLSFAllocator.h" />
     <ClInclude Include="UISandbox.hpp" />
     <ClInclude Include="AIPlayground.hpp" />
     <ClInclude Include="ASIONetworking.hpp" />
@@ -192,7 +201,7 @@
     <ClInclude Include="CPUMesh.hpp" />
     <ClInclude Include="CPUTexture.hpp" />
     <ClInclude Include="Debug.hpp" />
-    <ClInclude Include="Entity.hpp" />
+    <ClInclude Include="ECS.hpp" />
     <ClInclude Include="FileSystem.hpp" />
     <ClInclude Include="Framebuffer.hpp" />
     <ClInclude Include="FramebufferSystem.hpp" />
@@ -250,7 +259,8 @@
     <ClInclude Include="Uniforms.hpp" />
     <ClInclude Include="UserInterface.hpp" />
     <ClInclude Include="Util.hpp" />
-    <ClInclude Include="Vectors.hpp" />
+    <ClInclude Include="StaticAllocator.hpp" />
+    <ClInclude Include="VectorMath.hpp" />
     <ClInclude Include="VertexArrayObject.hpp" />
     <ClInclude Include="VertexBufferObject.hpp" />
     <ClInclude Include="VoxelSystem.hpp" />

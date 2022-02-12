@@ -15,7 +15,7 @@ void main(){
 	float fresnel = 1-dot(normalize(viewPosition),normal);
 	float lighting = max(fresnel/10,dot(normal,vec3(0,0,1)));
 
-	gBufferColor = vec4(vec3(lighting),1);
+	gBufferColor = customColor + vec4(vec3(lighting),1);
 	gBufferPosition  = worldPosition.xyz;//worldPosition.xyz;
 	gBufferNormal = normal;
 };

@@ -39,8 +39,8 @@ struct CPUMesh {
 	void render(Renderer& renderer);
 };
 
-struct MeshHeaderV2 {
-	const unsigned int version = 2;
+struct MeshHeader {
+	const unsigned int version = 1;
 	Name meshName = "";
 	PrimitiveMode primitiveMode = PrimitiveMode::Triangles;
 	unsigned int vertexCount = 0;
@@ -48,12 +48,3 @@ struct MeshHeaderV2 {
 	unsigned int normalCount = 0;
 	unsigned int indexCount = 0;
 };
-
-//struct MeshHeaderV1 {
-//	const unsigned int version = 1;
-//	Name meshName = "";
-//	PrimitiveMode primitiveMode = PrimitiveMode::Triangles;
-//	unsigned int vertexCount = 0;
-//	unsigned int uvCount = 0;
-//	unsigned int indexCount = 0;
-//};

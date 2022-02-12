@@ -7,7 +7,6 @@ TimePoint now() {
 }
 
 void Time::reset(){
-
 	currentTime = now();
 	lastTime = now();
 	deltaDuration = Duration(0);

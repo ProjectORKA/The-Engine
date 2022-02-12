@@ -2,7 +2,7 @@
 #include "AIPlayground.hpp"
 #include "Window.hpp"
 
-void AIPlayground::render(Renderer& renderer)
+void AIPlayground::render(TiledRectangle area, Renderer& renderer)
 {
 	renderer.screenSpace();
 

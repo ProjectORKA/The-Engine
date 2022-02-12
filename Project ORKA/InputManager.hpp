@@ -1,8 +1,7 @@
 #pragma once
 
 #include "Basics.hpp"
-
-struct Window;
+#include "Window.hpp"
 
 struct InputManager {
 
@@ -29,8 +28,8 @@ struct InputManager {
 	void filesDropped(Window& window, Vector<Path> paths);
 	void windowChangedFocus(Window& window, Bool isInFocus);
 	void mouseWheelIsScrolled(Window& window, Double xAxis, Double yAxis);
-	void buttonIsPressed(Window& window, Int keyID, Int action, Int modifiers);
-	void mouseIsPressed(Window& window, Int button, Int action, Int modifiers);
+	void buttonIsPressed(Window& window, Key key, Int action, Int modifiers);
+	void mouseIsPressed(Window& window, MouseButton button, Int action, Int modifiers);
 };
 
 extern InputManager inputManager;

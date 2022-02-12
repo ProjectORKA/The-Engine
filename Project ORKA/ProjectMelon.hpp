@@ -25,18 +25,19 @@ struct Window;
 // collectables
 // smooth acceleration estimate for particle generation
 
-struct MelonGame : public Game {
+
+struct MelonRenderer : public GameRenderer {
 	Action	holdPosition;
 
 	Float mouseSensitivity = 0.0015;
 
 	MelonPlayer player;
-	MelonWorld world;
+	//MelonWorld world;
 
-	void update() override;
-	void render(Renderer& renderer) override;
-	void mouseIsMoving(Window& window, IVec2 position);
-	void mouseIsScrolled(Window& window, Double xAxis, Double yAxis);
-	void mouseIsPressed(Window& window, Int button, Int action, Int modifiers);
-	void buttonIsPressed(Window& window, Int keyID, Int action, Int modifiers);
+	void update(Renderer& renderer) override;
+	void mouseIsMoving(Window& window, IVec2 position) override;
+	void render(TiledRectangle area, Renderer& renderer) override;
+	void mouseIsScrolled(Window& window, Double xAxis, Double yAxis)override;
+	void buttonIsPressed(Window& window, Key key, Int action, Int modifiers)override;
+	void mouseIsPressed(Window& window, MouseButton button, Int action, Int modifiers)override;
 };

@@ -13,23 +13,18 @@ void logEvent(String message)
 	if(showEvents) std::cout <<	"Event: " << message << "\n";
 #endif // DEBUG
 }
-void logDebug(String message)
-{
-#ifdef DEBUG
-	if(showDebug) std::cout <<	"Debug: " << message << "\n";
-#endif // DEBUG
-}
-void logWarning(String message) {
-#ifdef DEBUG
-	if (showWarning) std::cout << "Warning: " << message << "\n";
-#endif // DEBUG
-}
 void logError(String message)
 {
 #ifdef DEBUG
 	if(showError) std::cout <<	"Error: " << message << "\n";
 	beep();
+	__debugbreak();
 	pause();
+#endif // DEBUG
+}
+void logWarning(String message) {
+#ifdef DEBUG
+	if (showWarning) std::cout << "Warning: " << message << "\n";
 #endif // DEBUG
 }
 
@@ -103,6 +98,12 @@ void logDebug(Matrix matrix) {
 	std::cout << "[ " << matrix[1][0] << "  " << matrix[1][1] << "  " << matrix[1][2] << "  " << matrix[1][3] << " ]" << "\n";
 	std::cout << "[ " << matrix[2][0] << "  " << matrix[2][1] << "  " << matrix[2][2] << "  " << matrix[2][3] << " ]" << "\n";
 	std::cout << "[ " << matrix[3][0] << "  " << matrix[3][1] << "  " << matrix[3][2] << "  " << matrix[3][3] << " ]" << "\n";
+#endif // DEBUG
+}
+void logDebug(String message)
+{
+#ifdef DEBUG
+	if(showDebug) std::cout <<	"Debug: " << message << "\n";
 #endif // DEBUG
 }
 void logDebug(glm::highp_dvec3 t) {

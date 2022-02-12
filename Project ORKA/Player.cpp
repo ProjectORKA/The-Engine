@@ -3,11 +3,14 @@
 #include "Renderer.hpp"
 #include "InputManager.hpp"
 
-void Player::render(Renderer& renderer) {
+void Player::update(Renderer & renderer)
+{
 	speed = pow(1.2f, speedExponent);
 	accelerationVector *= speed * renderer.time.delta;
 	camera.location += accelerationVector;
 	accelerationVector = { 0,0,0 };
+}
 
+void Player::render(Renderer& renderer) {
 	camera.render(renderer);
 }

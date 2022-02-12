@@ -34,7 +34,7 @@ void TextureSystem::create()
 	defaultTexture.farFilter = Filter::nearest;
 	defaultTexture.height = 2;
 	defaultTexture.width = 2;
-	defaultTexture.name = "default";
+	defaultTexture.name = "empty";
 	defaultTexture.wrapping = repeat;
 	defaultTexture.bytePixels = &image->red;
 
@@ -83,6 +83,7 @@ void TextureSystem::use(Name name, Index slot) {
 		}
 		else {
 			logError("Could not find Texture!");
+			use("empty");
 		}
 	}
 }

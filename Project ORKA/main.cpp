@@ -44,7 +44,6 @@
 #include "GameSystem.hpp"
 #include "UserInterface.hpp"
 #include "WindowsEntry.hpp"
-#include "Random.hpp"
 
 //games
 #include "Pong.hpp"
@@ -59,28 +58,24 @@
 #include "DungeonsAndDiscord.hpp"
 
 //#define TESTING
-//#define MEMORY_LEAK_DETECTION
 
-int main(int  argc, char* argv[]) {
+Int main(Int  argc, Char* argv[]) {
 #ifndef TESTING
-	randomizeSeed();
 
-	gameSystem.add(new Mooncrash());
+	MelonRenderer game;
+
+	window("ORKA", Area(1920, 1080), true, WindowState::windowed)
+		.insert(game);
 	gameSystem.run();
-
-	window("ORKA", &gameView(0), Area(2560, 1440), true, Window::fullscreen);
-
 	ui.run();
+	gameSystem.stop();
+
 #else
 	//testing code
 	/////////////////////////////////////////////////////////////////////////////////////////////////
-
-
+	
 	/////////////////////////////////////////////////////////////////////////////////////////////////
-	system("pause");//pause();
+	pause();
 #endif // TESTING
-//#ifdef MEMORY_LEAK_DETECTION
-//	_CrtDumpMemoryLeaks();
-//#endif // MEMORY_LEAK_DETECTION
 	return 0;
 }

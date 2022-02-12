@@ -39,14 +39,24 @@ struct GBuffer : public  Framebuffer {
 };
 
 struct PixelIDs {
-	UInt objectID = 0.0f;
-	UInt instanceID = 0.0f;
-	UInt primitiveID = 0.0f;
+	UInt objectID = -1;
+	UInt instanceID = -1;
+	UInt primitiveID = -1;
 };
 
 struct IDFrameBuffer : public Framebuffer {
 	using Framebuffer::Framebuffer;
+
+	PixelIDs currentIds;
+
+	void update() {
+		//this needs to be called after rendering all interactive objects to this framebuffer, using the idShader
+		//it will get the currently hovered object IDs so that external threads can safely interact with them
+		currentIds = getID();
+	}
 	IDFrameBuffer();
+	PixelIDs getID();
 	PixelIDs getIDsAtCenter();
+	PixelIDs getIDUnderCursor();
 	PixelIDs getIDsAtLocation(UInt x, UInt y);
 };

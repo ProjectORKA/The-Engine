@@ -2,9 +2,7 @@
 #include "Miniverse.hpp"
 #include "Window.hpp"
 
-void Miniverse::update() {
-}
-void Miniverse::render(Renderer& renderer) {
+void Miniverse::render(TiledRectangle area, Renderer& renderer) {
 	//update camera right before rendering
 	if (forward.pressed)	player.accelerationVector += player.camera.forwardVector;
 	if (backward.pressed)	player.accelerationVector -= player.camera.forwardVector;
@@ -36,48 +34,30 @@ void Miniverse::mouseIsMoving(Window& window, IVec2 position) {
 void Miniverse::mouseIsScrolled(Window& window, Double xAxis, Double yAxis) {
 	player.speedExponent += yAxis;
 }
-void Miniverse::mouseIsPressed(Window& window, Int button, Int action, Int modifiers) {
-	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) inputManager.captureCursor(window);
-	if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS) inputManager.uncaptureCursor(window);
+void Miniverse::mouseIsPressed(Window& window, MouseButton button, Int action, Int modifiers) {
+	if (button == MouseButton::LEFT && action == GLFW_PRESS) inputManager.captureCursor(window);
+	if (button == MouseButton::RIGHT && action == GLFW_PRESS) inputManager.uncaptureCursor(window);
 }
-void Miniverse::buttonIsPressed(Window& window, Int keyID, Int action, Int modifiers) {
-	if (action == GLFW_PRESS) {
-		switch (keyID) {
-		case GLFW_KEY_F: window.renderer.wireframeMode = !window.renderer.wireframeMode;
-			break;
-		case GLFW_KEY_W: forward.pressed = true;
-			break;
-		case GLFW_KEY_S: backward.pressed = true;
-			break;
-		case GLFW_KEY_A: left.pressed = true;
-			break;
-		case GLFW_KEY_D: right.pressed = true;
-			break;
-		case GLFW_KEY_Q: downward.pressed = true;
-			break;
-		case GLFW_KEY_E: upward.pressed = true;
-			break;
-		default:
-			break;
-		}
-	}
-
-	if (action == GLFW_RELEASE) {
-		switch (keyID) {
-		case GLFW_KEY_W: forward.pressed = false;
-			break;
-		case GLFW_KEY_S: backward.pressed = false;
-			break;
-		case GLFW_KEY_A: left.pressed = false;
-			break;
-		case GLFW_KEY_D: right.pressed = false;
-			break;
-		case GLFW_KEY_Q: downward.pressed = false;
-			break;
-		case GLFW_KEY_E: upward.pressed = false;
-			break;
-		default:
-			break;
-		}
+void Miniverse::buttonIsPressed(Window& window, Key key, Int action, Int modifiers) {
+	
+	Bool pressed = action == GLFW_PRESS;
+	
+	switch (key) {
+	case Key::F: if(pressed)window.renderer.wireframeMode = !window.renderer.wireframeMode;
+		break;
+	case Key::W: forward.pressed = pressed;
+		break;
+	case Key::S: backward.pressed = pressed;
+		break;
+	case Key::A: left.pressed = pressed;
+		break;
+	case Key::D: right.pressed = pressed;
+		break;
+	case Key::Q: downward.pressed = pressed;
+		break;
+	case Key::E: upward.pressed = pressed;
+		break;
+	default:
+		break;
 	}
 }

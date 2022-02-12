@@ -64,6 +64,7 @@ struct Uniforms {
 	Int& height(Int value);
 	Float& time(Float value);
 	Vec4& sunDir(Vec4 value);
+	Int& objectID(UInt value);
 	Int& instanced(Int value);
 	Int& customInt1(Int value);
 	Float& custom1(Float value);
