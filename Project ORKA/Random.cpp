@@ -7,6 +7,20 @@
 Vec3 randomVec3() {
 	return Vec3(randomFloat(), randomFloat(), randomFloat());
 }
+ULong xorshf96() {
+	static ULong x = 123456789, y = 362436069, z = 521288629;
+	ULong t;
+	x ^= x << 16;
+	x ^= x >> 5;
+	x ^= x << 1;
+
+	t = x;
+	x = y;
+	y = z;
+	z = t ^ x ^ y;
+
+	return z;
+}
 Vec2 randomVec2() {
 	return Vec2(randomFloat(), randomFloat());
 }
@@ -62,7 +76,7 @@ Vec2 randomVec2(Float low, Float high) {
 }
 Float randomFloat(Float low, Float high)
 {
-	return low + static_cast <Float> (rand()) / (static_cast <Float> (RAND_MAX / (high - low)));
+	return low + (Float(xorshf96()) / Float(ULONG_MAX) * (Float(high - low)));
 }
 Vec3 randomPointOnSphereAtLocation(Float radius, Vec3 location) {
 	return randomPointOnSphere(radius) + location;
