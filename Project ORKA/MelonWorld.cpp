@@ -10,21 +10,6 @@ void MelonWorld::render(Renderer& renderer) {
 
 	Vector<Vec4> arr;
 
-	//for (auto n : nodes) {
-	//	arr.push_back(Vec4(n, 10));
-	//}
-	//renderer.uniforms().customColor(Vec4(1, 0, 0, 1));
-	//renderer.renderMeshInstanced("stone", arr);
-
-
-	//arr.clear();
-	//for (auto s : scenery) {
-	//	arr.push_back(Vec4(s));
-	//}
-	//renderer.uniforms().customColor(Vec4(0.1, 0.1, 0.1, 1));
-	//renderer.renderMeshInstanced("stone", arr);
-
-	arr.clear();
 	for (UInt x = 0; x < ROCKGRIDSIZE; x++) {
 		for (UInt y = 0; y < ROCKGRIDSIZE; y++) {
 			arr.push_back(rocks[x][y]);

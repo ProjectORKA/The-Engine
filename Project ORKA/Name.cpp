@@ -6,17 +6,26 @@ Name::Name() {
 }
 Name::Name(const char* name) {
 	memset(&data[0], 0, NAME_SIZE);
-	strcpy_s(data, name);
+	for (int i = 0; i < NAME_SIZE; i++) {
+		if (name[i] != 0) data[i] = name[i];
+		else return;
+	}
 }
 Name& Name::operator=(const char* other) {
 	memset(&data[0], 0, NAME_SIZE);
-	strcpy_s(data, other);
+	for (int i = 0; i < NAME_SIZE; i++) {
+		if (other[i] != 0) data[i] = other[i];
+		else return *this;
+	}
 	return *this;
 }
 Name& Name::operator=(String other)
 {
 	memset(&data[0], 0, NAME_SIZE);
-	strcpy_s(data, other.data());
+	for (int i = 0; i < NAME_SIZE; i++) {
+		if (other[i] != 0) data[i] = other[i];
+		else return *this;
+	}
 	return *this;
 }
 

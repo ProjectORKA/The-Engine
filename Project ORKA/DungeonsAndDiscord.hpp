@@ -5,19 +5,39 @@
 #include "Game.hpp"
 #include "KeyMap.hpp"
 #include "Player.hpp"
+#include "ECS.hpp"
+
+// todo list
+// import objects
+// move objects around
+// also scale and rotate them in real time
+// be able to change the sky
 
 struct Renderer;
 struct Window;
 
-namespace DND {
 
-	struct Object {
-		Transform transform;
-		Name meshName = "";
-		void render(Renderer& renderer);
-	};
+struct DNDWorld : public GameSimulation {
+	//savedata for camera
+	Float fieldOfView = 80.0;
+	Float nearClipValue = 0.1;
+	Float farClipValue = 100000;
+	Vec3 location = Vec3(0);
+	Float rotationX = 0;
+	Float rotationZ = 0;
+	//player data
+	Int speedExponent = 0;
 
-	struct DungeonsAndDiscord : public Game {
+	Vector<Entity> entities;
+	
+	void save();
+	void load();
+	void create() override;
+	void destroy() override;
+	void addObject(Entity e);
+};
+
+struct DNDRenderer : public GameRenderer {
 	//Input
 	Action	forward;
 	Action	backward;
@@ -27,24 +47,31 @@ namespace DND {
 	Action	downward;
 	Action	jump;
 	Action	wireframe;
-	
-	Float mouseSensitivity = 0.0015f;
 
-	//player
+	Float mouseSensitivity = 0.0015f;
 	Player player;
 
-	//world
-	Vector<Object> objects;
-	List<Path> importObjects;
+	DNDWorld* world = nullptr;
 
-	void update() override;
-	void render(Renderer& renderer) override;
-	void mouseIsMoving(Window& window, IVec2 position)  override;
-	void filesDropped(Window& window, Vector<Path> paths) override;
-	void mouseIsScrolled(Window& window, Double xAxis, Double yAxis) override;
-	void mouseIsPressed(Window& window, Int button, Int action, Int modifiers) override;
-	void buttonIsPressed(Window& window, Int keyID, Int action, Int modifiers) override;
+	Index lastSelectedObject = -1;
+	Vector<Index> selectedObjects;
+
+	DNDRenderer() {};
+	DNDRenderer(DNDWorld* world);
+	virtual void update(Renderer& renderer)override;
+	virtual void mouseIsMoving(Window& window, IVec2 position)  override;
+	virtual void render(TiledRectangle area, Renderer& renderer) override;
+	virtual void filesDropped(Window& window, Vector<Path> paths) override;
+	virtual void renderInteractive(TiledRectangle area, Renderer& renderer) override;
+	virtual void mouseIsScrolled(Window& window, Double xAxis, Double yAxis) override;
+	virtual void buttonIsPressed(Window& window, Key key, Int action, Int modifiers) override;
+	virtual void mouseIsPressed(Window& window, MouseButton button, Int action, Int modifiers) override;
 };
 
-	Int diceRoll(Int diceCount);
-}
+struct DND {
+	DNDWorld world;
+	DNDRenderer renderer;
+	DND();
+};
+
+Int diceRoll(Int diceCount);

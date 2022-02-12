@@ -52,3 +52,7 @@ Image loadImage(Path path, Int bitcount, Bool inverted) {
 	}
 	return image;
 }
+
+Bool doesPathExist(Path path) {
+	return std::filesystem::exists(path);
+}

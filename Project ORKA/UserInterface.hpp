@@ -9,64 +9,40 @@
 struct Renderer;
 struct Window;
 
+struct Button : public UIElement {
+	Bool* data;
+	UIElement* content = nullptr;
 
-
+	Button(Bool& data);
+	Button& insert(UIElement* element);
+	void render(TiledRectangle renderArea, Renderer& renderer)override;
+};
 struct UIImage : public UIElement {
-	GPUTexture* image;
+	Name name;
 
-	void render(Renderer& renderer) {
-
-	};
-
-	UIImage(GPUTexture& image) {
-		this->image = &image;
-	};
+	UIImage(Name name);
+	void render(TiledRectangle renderArea, Renderer& renderer)override;;
 
 };
 struct TextBox : public UIElement {
 	String* data;
 
-	void render(Renderer& renderer);
 	TextBox(String& data);
+	void render(TiledRectangle renderArea, Renderer& renderer) override;
 };
 struct CheckBox : public UIElement {
 	Boolean* data;
-	void render(Renderer& renderer);
 	CheckBox(Boolean& data);
+	void render(TiledRectangle renderArea, Renderer& renderer);
 };
 struct Container : public UIElement {
 	Boolean vertical = false;
 
 	Vector<UIElement*> contents;
 
-	void render(Renderer& renderer);
-	Container& insert(UIElement* element);
 	Container& horizontal();
-};
-struct Button : public UIElement {
-	Bool* data;
-	UIElement* content = nullptr;
-
-	void render(Renderer& renderer);
-	Button(Bool& data) {
-		this->data = &data;
-	}
-
-	Button& insert(UIElement* element);
-};
-struct GameView : public UIElement {
-	using UIElement::UIElement;
-
-	Index gameID = 0;
-
-	void render(Renderer& renderer);
-	void filesDropped(Window& window, Vector<Path> paths) override;
-	void mouseIsMoving(Window& window, IVec2 position) override;
-	void mouseIsPressed(Window& window, Int button, Int action, Int modifiers) override;
-	void buttonIsPressed(Window& window, Int keyID, Int action, Int modifiers) override;
-	void mouseIsScrolled(Window& window, Double xAxis, Double yAxis) override;
-
-	GameView(Index gameID);
+	Container& insert(UIElement& element);
+	void render(TiledRectangle renderArea, Renderer& renderer) override;
 };
 
 struct UserInterface {
@@ -74,26 +50,21 @@ struct UserInterface {
 
 	UIElement* currentlyActive = nullptr;
 
-	List<Window> windows; //[TODO] check if right container
-
-	//Elements
-	Vector<Button> buttons;
-	Vector<TextBox> textBoxes;
-	Vector<GameView> gameViews;
-	Vector<CheckBox> checkBoxes;
-	Vector<Container> containers;
+	List<UIImage> images;
+	List<Window> windows;
+	List<Button> buttons;
+	List<TextBox> textBoxes;
+	List<CheckBox> checkBoxes;
+	List<Container> containers;
 
 	UserInterface();
 };
 
 extern UserInterface ui;
 
-GameView& gameView();
 Container& container();
-Button & button(Bool& data);
-TextBox& textBox(String& data);
+UIImage& image(Name name);
+Button& button(Bool& data);
 CheckBox& checkBox(Bool& data);
-GameView& gameView(Index gameID);
-Window& window(String title, UIElement* element, Area size, Bool decorated, Window::WindowState state);
-
-void exampleCode();
+TextBox& textBox(String& data);
+Window& window(String title, Area size, Bool decorated, WindowState state);

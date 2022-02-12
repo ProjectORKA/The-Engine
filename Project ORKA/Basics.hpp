@@ -14,6 +14,17 @@ using ULL = unsigned long long;
 using ULLInt = unsigned long long;
 using Float = float;
 
+#include <stdint.h>
+
+using U16 = uint16_t;
+using U8 = uint8_t;
+using U32 = uint32_t;
+using U64 = uint64_t;
+using I16 = int16_t;
+using I8 = int8_t;
+using I32 = int32_t;
+using I64 = int64_t;
+
 using Double = double;
 using LDouble = long double;
 
@@ -24,16 +35,13 @@ using Char = char;
 using Byte = unsigned char;
 using UChar = unsigned char;
 
-using SizeT = unsigned __int64;//std::size_t;
 
 //pointers
 #include <memory>
 template <typename T>
 using UniquePointer = std::unique_ptr<T>;
-
 template<typename T>
 using SharedPointer = std::shared_ptr<T>;
-
 template<typename T>
 using WeakPointer = std::weak_ptr<T>;
 
@@ -41,19 +49,20 @@ using WeakPointer = std::weak_ptr<T>;
 
 #include "Name.hpp"
 
-#include "Vectors.hpp"
+#include "VectorMath.hpp"
 
 #include "Color.hpp"
 
 using Sphere = Vec4;
 
+#include "glm/gtc/matrix_transform.hpp"
 using Matrix = glm::mat4;
-using Quat = glm::quat;
-using Quaternion = glm::quat;
 
 #include "glm/gtc/quaternion.hpp"
 #include "glm/gtx/quaternion.hpp"
 
+using Quat = glm::quat;
+using Quaternion = glm::quat;
 using Rotation = glm::quat;
 
 #include <iostream>
@@ -84,10 +93,8 @@ using Set = std::set<T>;
 template <std::size_t T>
 using BitSet = std::bitset<T>;
 
-//#include <queue>
-//template<typename T>
-//using Queue = std::queue<T>;
-
 #include <deque>
 template<typename T>
 using Deque = std::deque<T>;
+
+using SizeT = std::size_t;

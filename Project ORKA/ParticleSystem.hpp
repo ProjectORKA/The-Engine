@@ -15,33 +15,29 @@ struct Renderer;
 //	Float size = 1;
 //};
 
-#define MAXPARTICLECOUNT 32768
-
 struct ParticleSystem {
 	//particle data
-	Vec4 transformation[MAXPARTICLECOUNT];
-	Vec3 velocity[MAXPARTICLECOUNT];
-	Float maxSize[MAXPARTICLECOUNT];
-	Float maxLifetime[MAXPARTICLECOUNT];
-	Float lifetime[MAXPARTICLECOUNT];
-	Bool alive[MAXPARTICLECOUNT];
-
-	//array data
-	UInt currentID = 0;
-
+	Vec4* transformation = nullptr;
+	Vec3* velocity = nullptr;
+	Float* maxSize = nullptr;
+	Float* maxLifetime = nullptr;
+	Float* lifetime = nullptr;
+	Bool* alive = nullptr;
 
 	//system data
-	Vec3 * location;
+	U16 currentID = 0;
+	Bool loaded = false;
+	U16 particleCount = 0;
+	Vec3* location = nullptr;
 	Vec3 playerDelta = Vec3(0);
 	Vec3 lastLocation = Vec3(0);
 
-	ParticleSystem(Vec3 * location) {
-		this->location = location;
-	}
-
 	void spawn();
 	void update();
+	~ParticleSystem();
+	ParticleSystem() = delete;
 	void render(Renderer& renderer);
+	ParticleSystem(Vec3* location, U16 particleCount);
 };
 
 Float particleSizeFunction(Float particleRelativeLifeTime);

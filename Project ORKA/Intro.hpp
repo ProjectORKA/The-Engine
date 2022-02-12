@@ -3,15 +3,9 @@
 #include "Game.hpp"
 #include "Mooncrash.hpp"
 
-struct Intro : public Game {
-	using Game::Game;
+struct Intro : public GameRenderer {
+	GameRenderer* gameStartingAfterIntro = nullptr;
 
-	Game * gameStartingAfterIntro = nullptr;
-
-	void update() override;
-	void render(Renderer & renderer) override;
-
-	Intro(Game* gameStartingAfterIntro) {
-		this->gameStartingAfterIntro = gameStartingAfterIntro;
-	};
+	void render(TiledRectangle area, Renderer & renderer) override;
+	Intro(GameRenderer* gameStartingAfterIntro);
 };

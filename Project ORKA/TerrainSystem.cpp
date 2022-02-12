@@ -4,7 +4,7 @@
 #include "PerlinNoise.hpp"
 #include "Random.hpp"
 
-void terrainDistributionFunction(LDouble & height) {
+void terrainDistributionFunction(LDouble& height) {
 	height = 4 * pow((height - 0.5), 3) + 0.5;
 }
 Terrain::Terrain(TerrainSystem& terrainSystem, QuadtreeID id, Terrain* parentTerrain, Bool cx, Bool cy)
@@ -43,11 +43,11 @@ Terrain::Terrain(TerrainSystem& terrainSystem, QuadtreeID id, Terrain* parentTer
 			if (sampleX == TERRAIN_TEXTURE_SIZE) sampleX = 0;
 			if (sampleY == TERRAIN_TEXTURE_SIZE) sampleY = 0;
 
-			LDouble height = terrainSystem.heightTexture.data[sampleX][sampleY];
+			LDouble height = terrainSystem.heightTextures[id.level].data[sampleX][sampleY];
 			terrainDistributionFunction(height);
 			height = (height - LDouble(0.5)) * LDouble(ULLONG_MAX);
-			LDouble impact = (1 / pow(2, id.level + 5));
-			
+			LDouble impact = (1 / pow(2.5, id.level + 9));
+
 			heightmap.height[x][y] += height * impact;
 
 			if (heightmap.height[x][y] > heightmap.upperLimit) heightmap.upperLimit = heightmap.height[x][y];
@@ -57,44 +57,47 @@ Terrain::Terrain(TerrainSystem& terrainSystem, QuadtreeID id, Terrain* parentTer
 	heightmap.loaded = true;
 }
 TerrainSystem::TerrainSystem() {
-	CPUTexture h;
-	h.load("terrainNoise");
 
-	for (UInt x = 0; x < TERRAIN_TEXTURE_SIZE; x++) {
-		for (UInt y = 0; y < TERRAIN_TEXTURE_SIZE; y++) {
-			Float xCoord = (Float(x) / Float(TERRAIN_TEXTURE_SIZE));
-			Float yCoord = (Float(y) / Float(TERRAIN_TEXTURE_SIZE));
+	for (Int i = 0; i < MAX_CHUNK_LEVEL; i++) {
+		CPUTexture h;
 
-			heightTexture.data[x][y] = h.getRed(xCoord, yCoord);
+		if(i == 0) h.load("blah");
+		else h.load("terrainNoise");
+
+		for (UInt x = 0; x < TERRAIN_TEXTURE_SIZE; x++) {
+			for (UInt y = 0; y < TERRAIN_TEXTURE_SIZE; y++) {
+				Float xCoord = (Float(x) / Float(TERRAIN_TEXTURE_SIZE));
+				Float yCoord = (Float(y) / Float(TERRAIN_TEXTURE_SIZE));
+
+				heightTextures[i].data[x][y] = h.getRed(xCoord, yCoord);
+			}
 		}
-	}
 
-	for (Int x = 0; x < TERRAIN_TEXTURE_SIZE; x++) {
-		for (Int y = 0; y < TERRAIN_TEXTURE_SIZE; y++) {
-			Float v, a, b, c, d;
+		for (Int x = 0; x < TERRAIN_TEXTURE_SIZE; x++) {
+			for (Int y = 0; y < TERRAIN_TEXTURE_SIZE; y++) {
+				Float v, a, b, c, d;
 
-			v = heightTexture.data[x][y];
-			if (x < TERRAIN_TEXTURE_SIZE - 1) a = heightTexture.data[x + 1][y]; else a = heightTexture.data[0][y];
-			if (y < TERRAIN_TEXTURE_SIZE - 1) b = heightTexture.data[x][y + 1]; else b = heightTexture.data[x][0];
-			if (x > 0) c = heightTexture.data[x - 1][y]; else c = heightTexture.data[TERRAIN_TEXTURE_SIZE - 1][y];
-			if (y > 0) d = heightTexture.data[x][y - 1]; else d = heightTexture.data[x][TERRAIN_TEXTURE_SIZE - 1];
+				v = heightTextures[i].data[x][y];
+				if (x < TERRAIN_TEXTURE_SIZE - 1) a = heightTextures[i].data[x + 1][y]; else a = heightTextures[i].data[0][y];
+				if (y < TERRAIN_TEXTURE_SIZE - 1) b = heightTextures[i].data[x][y + 1]; else b = heightTextures[i].data[x][0];
+				if (x > 0) c = heightTextures[i].data[x - 1][y]; else c = heightTextures[i].data[TERRAIN_TEXTURE_SIZE - 1][y];
+				if (y > 0) d = heightTextures[i].data[x][y - 1]; else d = heightTextures[i].data[x][TERRAIN_TEXTURE_SIZE - 1];
 
-			Float da = a - v;
-			Float db = b - v;
-			Float dc = c - v;
-			Float dd = d - v;
+				Float da = a - v;
+				Float db = b - v;
+				Float dc = c - v;
+				Float dd = d - v;
 
-			Float delta = 1.0f / Float(TERRAIN_TEXTURE_SIZE);
+				Float delta = 1.0f / Float(TERRAIN_TEXTURE_SIZE);
 
-			Vec3 va = normalize(Vec3(delta, 0, da));
-			Vec3 vb = normalize(Vec3(0, delta, db));
-			Vec3 vc = normalize(Vec3(-delta, 0, dc));
-			Vec3 vd = normalize(Vec3(0, -delta, dd));
+				Vec3 va = normalize(Vec3(delta, 0, da));
+				Vec3 vb = normalize(Vec3(0, delta, db));
+				Vec3 vc = normalize(Vec3(-delta, 0, dc));
+				Vec3 vd = normalize(Vec3(0, -delta, dd));
 
-			Vec3 n1 = cross(va, vb);
-			Vec3 n2 = cross(vc, vd);
-
-			//normalTexture.data[x][y] = normalize(n1 + n2);
+				Vec3 n1 = cross(va, vb);
+				Vec3 n2 = cross(vc, vd);
+			}
 		}
 	}
 

@@ -34,6 +34,7 @@ void logDebug(ULLVec3 t);
 void logDebug(glm::highp_dvec3 t);
 
 #include <iostream>
+
 template <typename T>
 void logDebug(T t) {
 #ifdef DEBUG

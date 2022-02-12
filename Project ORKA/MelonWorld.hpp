@@ -12,6 +12,7 @@ struct MelonWorld {
 	Mutex m;
 	List<Vec3> nodes;
 	List<Vec4> scenery;
+	IVec2 offset = IVec2(0);
 
 	Vec4 rocks[ROCKGRIDSIZE][ROCKGRIDSIZE];
 

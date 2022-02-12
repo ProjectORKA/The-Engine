@@ -18,7 +18,5 @@ struct QuadtreeID {
 
 		Bool x = getX();
 		Bool y = getY();
-
-
 	};
 };

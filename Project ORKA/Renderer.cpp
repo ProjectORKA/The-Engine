@@ -93,7 +93,7 @@ void Renderer::renderMesh(Name name) {
 void Renderer::useTexture(Name name) {
 	textureSystem.use(name);
 }
-void Renderer::setColor(Color& color) {
+void Renderer::setColor(Color color) {
 	uniforms().customColor(color);
 }
 void Renderer::pollGraphicsAPIError() {
@@ -241,6 +241,9 @@ void Renderer::renderAtmosphere(Player& player, Vec3 sunDirection) {
 void Renderer::addRenderObject(RenderObjectNames renderObjectNames)
 {
 	renderObjectSystem.addRenderObject(renderObjectNames);
+}
+PixelIDs Renderer::getIDsUnderCursor() {
+	return framebufferSystem.idFramebuffer().getID();
 }
 void Renderer::renderText(String text, Vec2 position, FontStyle font) {
 	textRenderSystem.render(*this, text, position, font);

@@ -18,18 +18,8 @@ struct FramebufferSystem {
 	void deselect();
 	void update(Area area);
 	Framebuffer& current();
+	IDFrameBuffer& idFramebuffer();
 	void add(Framebuffer * framebuffer);
-	void create(Renderer& renderer, Area size) {
-		framebuffers.push_back(new GBuffer());
-		
-		IDFrameBuffer* pointer = new IDFrameBuffer();
-		idFbPtr = pointer;
-		framebuffers.push_back(pointer);
-		idFramebuffer().add(4, dataTypeUInt, 0);
-		idFramebuffer().add(5, dataTypeFloat, 1);
-	};
-	IDFrameBuffer& idFramebuffer() {
-		return *idFbPtr;
-	};
+	void create(Renderer& renderer, Area size);
 	void use(Renderer& renderer, Index framebufferIndex);
 };

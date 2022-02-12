@@ -28,7 +28,6 @@ struct NormalTexture {
 };
 
 struct TerrainSystem {
-	HeightTexture heightTexture;
-	//NormalTexture normalTexture;
+	HeightTexture heightTextures[MAX_CHUNK_LEVEL];
 	TerrainSystem();
 };

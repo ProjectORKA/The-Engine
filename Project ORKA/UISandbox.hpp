@@ -9,12 +9,9 @@
 struct Renderer;
 struct Window;
 
-#include "NeighborQuadtree.hpp"
-#include "DynameshTerrain.hpp"
-
-struct UISandbox : public Game {
-	void render(Renderer& renderer) override;
+struct UISandbox : public GameRenderer {
 	void mouseIsMoving(Window& window, IVec2 position)  override;
-	void mouseIsPressed(Window& window, Int button, Int action, Int modifiers) override;
-	void buttonIsPressed(Window& window, Int keyID, Int action, Int modifiers) override;
+	void render(TiledRectangle area, Renderer& renderer) override;
+	void buttonIsPressed(Window& window, Key key, Int action, Int modifiers) override;
+	void mouseIsPressed(Window& window, MouseButton button, Int action, Int modifiers) override;
 };

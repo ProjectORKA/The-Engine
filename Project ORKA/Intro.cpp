@@ -2,11 +2,7 @@
 
 #include "GameSystem.hpp"
 
-void Intro::update()
-{
-}
-
-void Intro::render(Renderer& renderer)
+void Intro::render(TiledRectangle area, Renderer& renderer)
 {
 	//renderer.time.update();
 	renderer.clearColor(Color(0));
@@ -41,8 +37,12 @@ void Intro::render(Renderer& renderer)
 		f = false;
 	}
 
+	//[TODO] make work
+	//if ((renderer.time.total > 5) && (!selfReplace)) {
+		//selfReplace = gameStartingAfterIntro;
+	//}
+}
 
-	if ((renderer.time.total > 5) && (!selfReplace)) {
-		selfReplace = gameStartingAfterIntro;
-	}
+Intro::Intro(GameRenderer* gameStartingAfterIntro) {
+	this->gameStartingAfterIntro = gameStartingAfterIntro;
 }

@@ -1,58 +1,7 @@
 
 #include "QuadtreeNode.hpp"
 #include "Debug.hpp"
-
-QuadtreeNode& QuadtreeNode::nlr() {
-	QuadtreeNode* cur = this;
-	while (!cur->nl) {
-		if (cur->parent) {
-			cur = cur->parent;
-		}
-		else {
-			logError("Quadtree Critical Failure!");
-		}
-	}
-	return *cur->nl;
-}
-
-QuadtreeNode& QuadtreeNode::nrr() {
-	QuadtreeNode* cur = this;
-	while (!cur->nr) {
-		if (cur->parent) {
-			cur = cur->parent;
-		}
-		else {
-			logError("Quadtree Critical Failure!");
-		}
-	}
-	return *cur->nr;
-}
-
-QuadtreeNode& QuadtreeNode::nbr() {
-	QuadtreeNode* cur = this;
-	while (!cur->nb) {
-		if (cur->parent) {
-			cur = cur->parent;
-		}
-		else {
-			logError("Quadtree Critical Failure!");
-		}
-	}
-	return *cur->nb;
-}
-
-QuadtreeNode& QuadtreeNode::nfr() {
-	QuadtreeNode* cur = this;
-	while (!cur->nf) {
-		if (cur->parent) {
-			cur = cur->parent;
-		}
-		else {
-			logError("Quadtree Critical Failure!");
-		}
-	}
-	return *cur->nf;
-}
+#include "QuadtreeSystem.hpp"
 
 void QuadtreeNode::count()
 {
@@ -71,50 +20,8 @@ void QuadtreeNode::count()
 		logDebug(String("QuadTreeNodeCount  : ").append(std::to_string(nodeCount)));
 	}
 }
-void QuadtreeNode::create(TerrainSystem & terrainSystem)
-{
-	parent = nullptr;
-	id.level = 0;
-	id.location = ULLVec2(0);
-
-	data.terrain = new Terrain(terrainSystem,id,nullptr,0,0);
-}
-void QuadtreeNode::update(TerrainSystem& terrainSystem)
-{
-	if (users) {
-		if (subdivided) {
-			c00->update(terrainSystem);
-			c01->update(terrainSystem);
-			c10->update(terrainSystem);
-			c11->update(terrainSystem);
-		}
-		else {
-			subdivide(terrainSystem);
-		}
-	}
-	else {
-		unsubdivide();
-	}
-}
 void QuadtreeNode::destroy() {
 	unsubdivide();
-}
-void QuadtreeNode::subdivide(TerrainSystem& terrainSystem)
-{
-	if ((!subdivided) && (id.level < MAX_CHUNK_LEVEL - 1)) {
-
-		c00 = new QuadtreeNode();
-		c01 = new QuadtreeNode();
-		c10 = new QuadtreeNode();
-		c11 = new QuadtreeNode();
-
-		c00->create(terrainSystem,this, 0, 0);
-		c01->create(terrainSystem,this, 0, 1);
-		c10->create(terrainSystem,this, 1, 0);
-		c11->create(terrainSystem,this, 1, 1);
-
-		subdivided = true;
-	}
 }
 void QuadtreeNode::unsubdivide()
 {
@@ -142,11 +49,53 @@ void QuadtreeNode::unsubdivide()
 		subdivided = false;
 	}
 }
-void QuadtreeNode::removeSelfFromNeighbours() {
-	if (nf) nf->nb = nullptr;
-	if (nb) nb->nf = nullptr;
-	if (nr) nr->nl = nullptr;
-	if (nl) nl->nr = nullptr;
+QuadtreeNode& QuadtreeNode::nlr() {
+	QuadtreeNode* cur = this;
+	while (!cur->nl) {
+		if (cur->parent) {
+			cur = cur->parent;
+		}
+		else {
+			logError("Quadtree Critical Failure!");
+		}
+	}
+	return *cur->nl;
+}
+QuadtreeNode& QuadtreeNode::nrr() {
+	QuadtreeNode* cur = this;
+	while (!cur->nr) {
+		if (cur->parent) {
+			cur = cur->parent;
+		}
+		else {
+			logError("Quadtree Critical Failure!");
+		}
+	}
+	return *cur->nr;
+}
+QuadtreeNode& QuadtreeNode::nbr() {
+	QuadtreeNode* cur = this;
+	while (!cur->nb) {
+		if (cur->parent) {
+			cur = cur->parent;
+		}
+		else {
+			logError("Quadtree Critical Failure!");
+		}
+	}
+	return *cur->nb;
+}
+QuadtreeNode& QuadtreeNode::nfr() {
+	QuadtreeNode* cur = this;
+	while (!cur->nf) {
+		if (cur->parent) {
+			cur = cur->parent;
+		}
+		else {
+			logError("Quadtree Critical Failure!");
+		}
+	}
+	return *cur->nf;
 }
 void QuadtreeNode::incrementUsers()
 {
@@ -159,6 +108,37 @@ void QuadtreeNode::decrementUsers()
 	}
 	else {
 		logError("Cant have less than 0 users, error must have happened!");
+	}
+}
+void QuadtreeNode::removeSelfFromNeighbours() {
+	if (nf) nf->nb = nullptr;
+	if (nb) nb->nf = nullptr;
+	if (nr) nr->nl = nullptr;
+	if (nl) nl->nr = nullptr;
+}
+void QuadtreeNode::create(TerrainSystem & terrainSystem)
+{
+	parent = nullptr;
+	id.level = 0;
+	id.location = ULLVec2(0);
+
+	data.terrain = new Terrain(terrainSystem,id,nullptr,0,0);
+}
+void QuadtreeNode::subdivide(TerrainSystem& terrainSystem)
+{
+	if ((!subdivided) && (id.level < MAX_CHUNK_LEVEL - 1)) {
+
+		c00 = new QuadtreeNode();
+		c01 = new QuadtreeNode();
+		c10 = new QuadtreeNode();
+		c11 = new QuadtreeNode();
+
+		c00->create(terrainSystem,this, 0, 0);
+		c01->create(terrainSystem,this, 0, 1);
+		c10->create(terrainSystem,this, 1, 0);
+		c11->create(terrainSystem,this, 1, 1);
+
+		subdivided = true;
 	}
 }
 QuadtreeNode& QuadtreeNode::get(TerrainSystem& terrainSystem, QuadtreeID id)
@@ -177,6 +157,23 @@ QuadtreeNode& QuadtreeNode::get(TerrainSystem& terrainSystem, QuadtreeID id)
 			if (y) return c01->get(terrainSystem, id);
 			else return c00->get(terrainSystem, id);
 		}
+	}
+}
+void QuadtreeNode::update(QuadtreeSystem & quadtreeSystem, TerrainSystem& terrainSystem)
+{
+	if (users) {
+		if (subdivided) {
+			c00->update(quadtreeSystem, terrainSystem);
+			c01->update(quadtreeSystem, terrainSystem);
+			c10->update(quadtreeSystem, terrainSystem);
+			c11->update(quadtreeSystem, terrainSystem);
+		}
+		else {
+			subdivide(terrainSystem);
+		}
+	}
+	else {
+		unsubdivide();
 	}
 }
 void QuadtreeNode::create(TerrainSystem& terrainSystem,QuadtreeNode* parent, Bool x, Bool y)

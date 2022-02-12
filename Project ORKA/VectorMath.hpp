@@ -6,7 +6,6 @@
 #include "glm/gtc/quaternion.hpp"
 #include "glm/gtx/quaternion.hpp"
 #include "glm/gtx/rotate_vector.hpp"
-#include "glm/gtc/matrix_transform.hpp"
 
 using IVec2 = glm::ivec2;
 using Vec2 = glm::vec2;

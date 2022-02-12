@@ -3,21 +3,25 @@
 
 #include "Basics.hpp"
 #include "FileSystem.hpp"
+#include "TiledMath.hpp"
+#include "Renderer.hpp"
+#include "KeyMap.hpp"
 
-extern Index newUIelementID;
+extern Index newUIElementID;
 
 struct Renderer;
 struct Window;
 
 struct UIElement {
-	Index id = newUIelementID++;
-
-	virtual void render(Renderer& renderer) {};
-	virtual void mouseIsMoving(Window& window, IVec2 position) {};
-	virtual void filesDropped(Window& window, Vector<Path> paths) {};
-	virtual void mouseIsScrolled(Window& window, Double xAxis, Double yAxis) {};
-	virtual void mouseIsPressed(Window& window, Int button, Int action, Int modifiers) {};
-	virtual void buttonIsPressed(Window& window, Int keyID, Int action, Int modifiers) {};
+	Index id = newUIElementID++;
 
 	~UIElement();
+	virtual void update(Renderer& renderer) {};
+	virtual void mouseIsMoving(Window& window, IVec2 position) {};
+	virtual void filesDropped(Window& window, Vector<Path> paths) {};
+	virtual void render(TiledRectangle renderArea, Renderer& renderer) {};
+	virtual void mouseIsScrolled(Window& window, Double xAxis, Double yAxis) {};
+	virtual void renderInteractive(TiledRectangle renderArea, Renderer& renderer) {};
+	virtual void buttonIsPressed(Window& window, Key key, Int action, Int modifiers) {};
+	virtual void mouseIsPressed(Window& window, MouseButton button, Int action, Int modifiers) {};
 };

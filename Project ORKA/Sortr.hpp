@@ -4,17 +4,17 @@
 #include "Game.hpp"
 #include "FileSystem.hpp"
 
-struct Sortr : public Game {
+struct Sortr : public GameRenderer {
 	Path unsortedFolder;
 	
 	Vector<Path> sortFolders;
 
-	void render(Renderer & renderer) override {
+	void render(TiledRectangle area, Renderer & renderer) override {
 
 
 	};
 
-	void buttonIsPressed(Window& window, Int keyID, Int action, Int modifiers) override {
+	void buttonIsPressed(Window& window, Key key, Int action, Int modifiers) override {
 	
 	};
 };

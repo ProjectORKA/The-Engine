@@ -6,10 +6,8 @@ PlanetSystem::PlanetSystem()
 	quadtreeSystem.create(terrainSystem);
 	octreeSystem.create(quadtreeSystem);
 }
-
 PlanetSystem::~PlanetSystem() {
 	octreeSystem.destroy();
-	quadtreeSystem.destroy();
 }
 
 //planetSystem

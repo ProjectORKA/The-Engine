@@ -41,11 +41,7 @@ CPUMesh::CPUMesh(Name name)
 
 void CPUMesh::saveMeshFile()
 {
-	Path path = String("Data/meshes/").append(name.data).append(".mesh");
-
-	logEvent(String("Saving mesh: (").append(name.data).append(") from(").append(path.string()).append(")"));
-
-	MeshHeaderV2 header;
+	MeshHeader header;
 	header.meshName = name;
 	header.primitiveMode = PrimitiveMode::Triangles;
 	header.vertexCount = vertices.size();
@@ -53,50 +49,33 @@ void CPUMesh::saveMeshFile()
 	header.normalCount = normals.size();
 	header.indexCount = indices.size();
 
-	while (!std::filesystem::exists(path.parent_path())) {
-		logDebug(String("The directory (").append(path.parent_path().string()).append(") does not exist and will be created!"));
-		std::filesystem::create_directory(path.parent_path());
-	}
-
-	std::ofstream file(path, std::ios::trunc | std::ios::binary | std::ios::out);
-	if (file.is_open()) {
-		file.write((Char*)&header, sizeof(MeshHeaderV2));
-		file.write((Char*)&vertices[0], vertices.size() * sizeof(Vec3));
-		file.write((Char*)&uvs[0], uvs.size() * sizeof(Vec2));
-		file.write((Char*)&normals[0], normals.size() * sizeof(Vec3));
-		file.write((Char*)&indices[0], indices.size() * sizeof(Index));
-		file.close();
-	}
-	else {
-		logDebug("The mesh binary file could not be opened!");
-	}
+	OutFile mesh(String("Data/meshes/").append(name.data).append(".mesh"));
+	mesh.write((Char*)&header, sizeof(MeshHeader));
+	mesh.write((Char*)&vertices[0], vertices.size() * sizeof(Vec3));
+	mesh.write((Char*)&uvs[0], uvs.size() * sizeof(Vec2));
+	mesh.write((Char*)&normals[0], normals.size() * sizeof(Vec3));
+	mesh.write((Char*)&indices[0], indices.size() * sizeof(Index));
 }
 void CPUMesh::load(Name name)
 {
 	Path meshPath = String("Data/meshes/").append(name.data).append(".mesh");
 	Path fbxPath = String("Data/objects/").append(name.data).append(".fbx");
 
-	Bool f1, f2;
-	f1 = std::filesystem::exists(meshPath);
-	f2 = std::filesystem::exists(fbxPath);
+	Bool f1 = doesPathExist(meshPath);
+	Bool f2 = doesPathExist(fbxPath);
 
 	if (f1) {
 		if (f2) {
 			auto t1 = std::filesystem::last_write_time(meshPath);
 			auto t2 = std::filesystem::last_write_time(fbxPath);
-			if (t1 > t2)
-				loadMeshFile(meshPath);
-			else
-				loadFBX(fbxPath);
+			if (t1 > t2) loadMeshFile(meshPath);
+			else loadFBX(fbxPath);
 		}
-		else
-			loadMeshFile(meshPath);
+		else loadMeshFile(meshPath);
 	}
 	else {
-		if (f2)
-			loadFBX(fbxPath);
-		else
-			logDebug(String("Can not find mesh with name: (").append(name.data).append(")"));
+		if (f2)loadFBX(fbxPath);
+		else logDebug(String("Can not find mesh with name: (").append(name.data).append(")"));
 	}
 }
 void CPUMesh::checkIntegrity() {
@@ -198,50 +177,32 @@ void CPUMesh::move(Vec3 moveVector) {
 void CPUMesh::loadMeshFile(Path path) {
 	bool error = false;
 
-	std::ifstream ifstream(path, std::ios::binary | std::ios::in);
+	InFile file(path);
 
 	logEvent(String("Loading mesh file from(").append(path.string()).append(")"));
 
-	if (ifstream.is_open()) {
-		MeshHeaderV2 header;
-		ifstream.read((char*)&header, sizeof(MeshHeaderV2));
+	if (file.isOpen) {
+		MeshHeader header;
+		file.read((char*)&header, sizeof(MeshHeader));
 
-		if (header.version == 2) {
+		if (header.version == 1) {
 			name = header.meshName;
 			primitiveMode = header.primitiveMode;
 
-			//load vertices
 			vertices.resize(header.vertexCount);
-			ifstream.read((char*)&vertices[0], header.vertexCount * sizeof(Vec3));
-
-			//load texture coordinates
 			uvs.resize(header.uvCount);
-			ifstream.read((char*)&uvs[0], header.uvCount * sizeof(Vec2));
-
-			//load normals
 			normals.resize(header.normalCount);
-			ifstream.read((char*)&normals[0], header.normalCount * sizeof(Vec3));
-
-			//load indices
 			indices.resize(header.indexCount);
-			ifstream.read((char*)&indices[0], header.indexCount * sizeof(Index));
 
-			auto pos1 = ifstream.tellg();
-			ifstream.eof();
-			auto pos2 = ifstream.tellg();
-			if (pos1 == pos2) {
-				logEvent(String("The mesh (").append(name.data).append(") was loaded successfully!"));
-			}
-			else {
-				logDebug(String("Error: The mesh (").append(name.data).append(") was loaded, but did not reach the end of the file!"));
-			}
+			file.read((char*)&vertices[0], header.vertexCount * sizeof(Vec3));
+			file.read((char*)&uvs[0], header.uvCount * sizeof(Vec2));
+			file.read((char*)&normals[0], header.normalCount * sizeof(Vec3));
+			file.read((char*)&indices[0], header.indexCount * sizeof(Index));
 		}
 		else {
 			logError("Mesh version not supported!");
 			error = true;
 		}
-
-		ifstream.close();
 	}
 	else error = true;
 
@@ -253,7 +214,6 @@ void CPUMesh::loadMeshFile(Path path) {
 	else {
 		checkIntegrity();
 	}
-
 };
 void CPUMesh::calculateSmoothNormals()
 {

@@ -26,9 +26,21 @@ void FramebufferSystem::update(Area area)
 		}
 	}
 }
+IDFrameBuffer& FramebufferSystem::idFramebuffer() {
+	return *idFbPtr;
+}
 void FramebufferSystem::add(Framebuffer * framebuffer)
 {
 	framebuffers.push_back(framebuffer);
+}
+void FramebufferSystem::create(Renderer& renderer, Area size) {
+	framebuffers.push_back(new GBuffer());
+
+	IDFrameBuffer* pointer = new IDFrameBuffer();
+	idFbPtr = pointer;
+	framebuffers.push_back(pointer);
+	idFramebuffer().add(4, dataTypeUInt, 0);
+	idFramebuffer().add(5, dataTypeFloat, 1);
 }
 void FramebufferSystem::use(Renderer & renderer, Index framebufferIndex)
 {

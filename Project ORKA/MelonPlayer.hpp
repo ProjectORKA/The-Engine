@@ -19,9 +19,9 @@ struct MelonPlayer : public Player {
 	Vec3 currentCameraVelocity = Vec3(0);
 	Vec3 lastLocationAtDistance = Vec3(0);
 	Vec3 currentVisibleDirection = Vec3(0, 1, 0);
-	ParticleSystem smoke = ParticleSystem(&location);
+	ParticleSystem smoke = ParticleSystem(&location,4096);
 
 	MelonPlayer();
-	void update() override;
+	void update(Renderer& renderer) override;
 	void render(Renderer& renderer) override;
 };
