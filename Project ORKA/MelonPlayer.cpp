@@ -16,9 +16,7 @@ MelonPlayer::MelonPlayer() {
 }
 void MelonPlayer::update(Renderer& renderer) {
 	//update location
-	location += velocity * Vec3(2.0 / 144.0);
-
-
+	location += velocity * renderer.time.delta;
 	deltaLocation = location - lastLocation;
 	lastLocationAtDistance = location + normalize(lastLocationAtDistance - location) * Vec3(1);
 	Vec3 deltaToLastLocationAtDistance = location - lastLocationAtDistance;
