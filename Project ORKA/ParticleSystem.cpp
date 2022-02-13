@@ -2,21 +2,7 @@
 #include "ParticleSystem.hpp"
 #include "Random.hpp"
 #include "Renderer.hpp"
-
-ParticleSystem::ParticleSystem(Vec3* location, U16 particleCount) {
-	this->location = location;
-	this->particleCount = particleCount;
-	
-	if (!loaded) {
-		alive = new Bool[particleCount];
-		velocity = new Vec3[particleCount];
-		maxSize = new Float[particleCount];
-		lifetime = new Float[particleCount];
-		maxLifetime = new Float[particleCount];
-		transformation = new Vec4[particleCount];
-		loaded = true;
-	}
-}
+#include "Algorithm.hpp"
 
 ParticleSystem::~ParticleSystem() {
 	if (loaded) {
@@ -37,35 +23,20 @@ ParticleSystem::~ParticleSystem() {
 	}
 	else logError("ParticleSystem was not initialized before destruction, error must have happened!");
 }
-
-void ParticleSystem::spawn() {
+void ParticleSystem::spawn(Vec3 loc,Vec3 vel) {
 	//advance to next particle slot
 	currentID++;
 	if (currentID >= particleCount) currentID = 0;
 
-	Float force = length(playerDelta);
+	Float force = length(vel);
 
-	transformation[currentID] = Vec4(*location, 0);
-	velocity[currentID] = randomUnitVec3() * (randomFloat(0.01 * force)) - randomFloat(0.2) * playerDelta;
+	transformation[currentID] = Vec4(loc, 0);
+	velocity[currentID] = -randomFloat(0.2) * vel + randomUnitVec3() * (randomFloat(0.01 * force));
 	velocity[currentID].z = abs(velocity[currentID].z);
-	maxSize[currentID] = 0.1 + force * 0.5 * randomFloat();
+	maxSize[currentID] = 0.15 + force * 0.4 * randomFloat();
 	maxLifetime[currentID] = 1 + sq(force / 100);
 	lifetime[currentID] = 0;
 	alive[currentID] = true;
-}
-void ParticleSystem::update(Renderer & renderer) {
-	playerDelta = *location - lastLocation;
-
-	for (UInt i = 0; i < particleCount; i++) {
-		if (alive[i]) {
-			transformation[i] += Vec4(velocity[i] + Vec3(0, 0, 0.001), 0);
-			lifetime[i] += renderer.time.delta;
-			transformation[i].w = particleSizeFunction(lifetime[i] / maxLifetime[i]) * maxSize[i];
-			alive[i] = lifetime[i] < maxLifetime[i];
-		}
-	}
-
-	lastLocation = *location;
 }
 void ParticleSystem::render(Renderer& renderer) {
 	static Vector<Vec4> pos;
@@ -75,6 +46,48 @@ void ParticleSystem::render(Renderer& renderer) {
 	}
 	renderer.renderMeshInstanced("particle", pos);
 }
+ParticleSystem::ParticleSystem(U16 particleCount) {
+	this->particleCount = particleCount;
+	
+	if (!loaded) {
+		alive = new Bool[particleCount];
+		velocity = new Vec3[particleCount];
+		maxSize = new Float[particleCount];
+		lifetime = new Float[particleCount];
+		maxLifetime = new Float[particleCount];
+		transformation = new Vec4[particleCount];
+		loaded = true;
+	}
+}
 Float particleSizeFunction(Float particleRelativeLifeTime) {
 	return particleRelativeLifeTime - pow(particleRelativeLifeTime, 5);
+}
+void ParticleSystem::update(Vec3 location, Renderer& renderer) {
+	delta += renderer.time.delta;
+	if (location != this->location) {
+		previous2 = previous1;
+		previous1 = this->location;
+		this->location = location;
+
+		Vec3 endLast = (previous2 + previous1) / 2.0f;
+		Vec3 startNext = (previous1 + location) / 2.0f;
+		
+		Float distanceTravelled = length(endLast - previous1) + length(startNext - previous1);
+
+		for (Float i = 1.0f / particlesPerUnit; i < distanceTravelled; i += 1.0f / particlesPerUnit) {
+			Vec3 currentparticleLocation = quadraticInterpolation(endLast, previous1, startNext, i / distanceTravelled);
+			Vec3 previousParticleLocation = quadraticInterpolation(endLast, previous1, startNext, -1 / distanceTravelled);
+			Vec3 currentParticleVelocity = currentparticleLocation - previousParticleLocation;
+			spawn(currentparticleLocation, currentParticleVelocity);
+		}
+	}
+
+	for (UInt i = 0; i < particleCount; i++) {
+		if (alive[i]) {
+			transformation[i] += Vec4(velocity[i] + Vec3(0, 0, 0.001), 0);
+			lifetime[i] += renderer.time.delta;
+			transformation[i].w = particleSizeFunction(lifetime[i] / maxLifetime[i]) * maxSize[i];
+			alive[i] = lifetime[i] < maxLifetime[i];
+		}
+	}
 }

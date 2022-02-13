@@ -4,14 +4,9 @@
 #include "Window.hpp"
 
 struct InputManager {
-
-	//Double scrollAxisYTotal = 0;
-
 	Bool capturing = false;
 
-	//IVec2 cursorDelta = IVec2(0, 0);
 	IVec2 cursorPosition = IVec2(0, 0);
-
 	IVec2 capturePosition = IVec2(0);
 
 	//these functions will be called by the window/windowAPI

@@ -5,6 +5,7 @@
 #include "KeyMap.hpp"
 #include "MelonPlayer.hpp"
 #include "MelonWorld.hpp"
+#include "Algorithm.hpp"
 
 struct Window;
 
@@ -30,6 +31,8 @@ struct MelonRenderer : public GameRenderer {
 	Action	holdPosition;
 
 	Float mouseSensitivity = 0.0015;
+
+	Vec3 mousePosA, mousePosB, mousePosC = Vec3(0);
 
 	MelonPlayer player;
 	//MelonWorld world;
