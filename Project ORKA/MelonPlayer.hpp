@@ -10,6 +10,7 @@ struct Renderer;
 struct MelonPlayer : public Player {
 	Int zoomFactor = 10;
 	Vec3 location = Vec3(0);
+	Vec3 targetLocation = Vec3(0);
 	Vec3 velocity = Vec3(0);
 	Float distanceTraveled = 0;
 	Vec3 lastLocation = Vec3(0);
@@ -17,10 +18,10 @@ struct MelonPlayer : public Player {
 	Vec3 deltaLocation = Vec3(0);
 	Vec3 direction = Vec3(0, 1, 0);
 	Vec3 currentCameraVelocity = Vec3(0);
-	Vec3 lastLocationAtDistance = Vec3(0);
+	Vec3 lastLocationAtDistance = Vec3(0,-1,0);
 	Vec3 currentVisibleDirection = Vec3(0, 1, 0);
-	ParticleSystem smoke = ParticleSystem(&location,4096);
-
+	ParticleSystem smoke = ParticleSystem(1024*32);
+	Orientation orientation = Orientation(Vec3(0,1,0));
 	MelonPlayer();
 	void update(Renderer& renderer) override;
 	void render(Renderer& renderer) override;

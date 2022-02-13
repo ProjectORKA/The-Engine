@@ -23,21 +23,24 @@ struct ParticleSystem {
 	Float* maxLifetime = nullptr;
 	Float* lifetime = nullptr;
 	Bool* alive = nullptr;
-
+	Float particlesPerUnit = 64;
 	//system data
 	U16 currentID = 0;
 	Bool loaded = false;
 	U16 particleCount = 0;
-	Vec3* location = nullptr;
-	Vec3 playerDelta = Vec3(0);
-	Vec3 lastLocation = Vec3(0);
+	Vec3 location = Vec3(0);
+	
+	//advanced data for smooth interpolation
+	Vec3 previous1 = Vec3(0);
+	Vec3 previous2 = Vec3(0);
+	Float delta = 0;
 
-	void spawn();
 	~ParticleSystem();
+	void spawn(Vec3 location, Vec3 velocity);
 	ParticleSystem() = delete;
-	void update(Renderer& renderer);
 	void render(Renderer& renderer);
-	ParticleSystem(Vec3* location, U16 particleCount);
+	ParticleSystem(U16 particleCount);
+	void update(Vec3 location, Renderer& renderer);
 };
 
 Float particleSizeFunction(Float particleRelativeLifeTime);

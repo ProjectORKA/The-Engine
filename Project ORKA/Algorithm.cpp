@@ -102,6 +102,14 @@ Bool pointInsideSphereAtlocationWithRadius(Vec3 point, Vec3 position, Float radi
 	return distance(point, position) < radius;
 }
 
+Vec3 quadraticInterpolation(Vec3 start, Vec3 control, Vec3 end, Float time) {
+	return lerp(
+		lerp(start, control, time),
+		lerp(control, end, time),
+		time
+	);
+}
+
 Vec3 vectorFromAToB(Vec3 a, Vec3 b) {
 	return b - a;
 }

@@ -2,7 +2,6 @@
 #include "ProjectMelon.hpp"
 #include "Window.hpp"
 #include "Random.hpp"
-#include "Algorithm.hpp"
 
 void MelonRenderer::update(Renderer& renderer) {
 	player.update(renderer);
@@ -17,7 +16,7 @@ void MelonRenderer::mouseIsMoving(Window& window, IVec2 position) {
 		}
 		else {
 			player.velocity = Vec3(0);
-			player.location += delta;
+			player.targetLocation += delta;
 		}
 	}
 }
@@ -30,7 +29,8 @@ void MelonRenderer::render(TiledRectangle area, Renderer& renderer) {
 
 	renderer.clearColor(Vec4(0));
 
-	//scene
+	//render scene
+	renderer.uniforms().sunDir(Vec4(normalize(Vec3(-0.666, 0.333, 1)), 1));
 	player.render(renderer);
 
 	renderer.uniforms().mMatrix(Matrix(1));

@@ -4,9 +4,7 @@
 #include "Time.hpp"
 #include "Debug.hpp"
 
-
 ULong xorshf96();
-
 Vec2 randomVec2();
 Vec3 randomVec3();
 Float randomFloat();

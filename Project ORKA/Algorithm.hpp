@@ -16,3 +16,4 @@ Float getDistanceToClosestPoint(Vec3 point, Vector<Vec3>& points);
 
 Vec3 vectorFromAToB(Vec3 a, Vec3 b);
 Vec3 getClosestPoint(Vec3 point, List<Vec3>& points);
+Vec3 quadraticInterpolation(Vec3 start, Vec3 control, Vec3 end, Float time);
