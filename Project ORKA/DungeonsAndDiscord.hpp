@@ -64,8 +64,8 @@ struct DNDRenderer : public GameRenderer {
 	virtual void filesDropped(Window& window, Vector<Path> paths) override;
 	virtual void renderInteractive(TiledRectangle area, Renderer& renderer) override;
 	virtual void mouseIsScrolled(Window& window, Double xAxis, Double yAxis) override;
-	virtual void buttonIsPressed(Window& window, Key key, Int action, Int modifiers) override;
-	virtual void mouseIsPressed(Window& window, MouseButton button, Int action, Int modifiers) override;
+	virtual void buttonIsPressed(Window& window, Key key, ActionState action, Int modifiers) override;
+	virtual void mouseIsPressed(Window& window, MouseButton button, ActionState action, Int modifiers) override;
 };
 
 struct DND {

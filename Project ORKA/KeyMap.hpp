@@ -158,3 +158,9 @@ enum class MouseButton {
 	MOUSE_BUTTON_7 = GLFW_MOUSE_BUTTON_7,
 	MOUSE_BUTTON_8 = GLFW_MOUSE_BUTTON_8
 };
+
+enum class ActionState {
+	Release = GLFW_RELEASE,
+	Press = GLFW_PRESS,
+	Repeat = GLFW_REPEAT,
+};

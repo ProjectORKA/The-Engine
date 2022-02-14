@@ -48,8 +48,8 @@ struct Pong : public GameRenderer {
 
 	Vector<Ball> balls;
 	void render(TiledRectangle area, Renderer& renderer) override;
-	void buttonIsPressed(Window& window, Key key, Int action, Int modifiers) override;
-	void mouseIsPressed(Window& window, MouseButton button, Int action, Int modifiers) override;
+	void buttonIsPressed(Window& window, Key key, ActionState action, Int modifiers) override;
+	void mouseIsPressed(Window& window, MouseButton button, ActionState action, Int modifiers) override;
 };
 
 Ball* getClosestBall(PongPlayer& player, Vector<Ball>& balls);

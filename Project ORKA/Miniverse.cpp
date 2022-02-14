@@ -34,13 +34,13 @@ void Miniverse::mouseIsMoving(Window& window, IVec2 position) {
 void Miniverse::mouseIsScrolled(Window& window, Double xAxis, Double yAxis) {
 	player.speedExponent += yAxis;
 }
-void Miniverse::mouseIsPressed(Window& window, MouseButton button, Int action, Int modifiers) {
-	if (button == MouseButton::LEFT && action == GLFW_PRESS) inputManager.captureCursor(window);
-	if (button == MouseButton::RIGHT && action == GLFW_PRESS) inputManager.uncaptureCursor(window);
+void Miniverse::mouseIsPressed(Window& window, MouseButton button, ActionState action, Int modifiers) {
+	if (button == MouseButton::LEFT && action == ActionState::Press) inputManager.captureCursor(window);
+	if (button == MouseButton::RIGHT && action == ActionState::Press) inputManager.uncaptureCursor(window);
 }
-void Miniverse::buttonIsPressed(Window& window, Key key, Int action, Int modifiers) {
+void Miniverse::buttonIsPressed(Window& window, Key key, ActionState action, Int modifiers) {
 	
-	Bool pressed = action == GLFW_PRESS;
+	Bool pressed = action == ActionState::Press;
 	
 	switch (key) {
 	case Key::F: if(pressed)window.renderer.wireframeMode = !window.renderer.wireframeMode;

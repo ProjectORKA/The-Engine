@@ -62,18 +62,24 @@
 Int main(Int  argc, Char* argv[]) {
 #ifndef TESTING
 
-	MelonRenderer game;
+	TestButton game;
 
-	window("ORKA", Area(1920, 1080), true, WindowState::windowed)
+	window("ORKA", Area(1600, 900), true, WindowState::windowed)
 		.insert(game);
 	gameSystem.run();
 	ui.run();
 	gameSystem.stop();
+	
 
 #else
 	//testing code
 	/////////////////////////////////////////////////////////////////////////////////////////////////
+	if () {
+	
+	}
+	else {
 
+	}
 	/////////////////////////////////////////////////////////////////////////////////////////////////
 	pause();
 #endif // TESTING
