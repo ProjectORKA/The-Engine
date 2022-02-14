@@ -52,6 +52,33 @@ void Button::render(TiledRectangle renderArea, Renderer& renderer) {
 	if(content) content->render(renderArea,renderer);
 }
 
+//Test Button
+void TestButton::mouseIsPressed(Window& window, MouseButton button, ActionState action, Int modifiers) {
+	if (button == MouseButton::L) {
+		if (action == ActionState::Press) {
+			if (window.renderer.framebufferSystem.idFramebuffer().currentIds.objectID == id) {
+				pressed = true;
+			}
+			else {
+				pressed = false;
+			}
+		}
+		else {
+
+			if (window.renderer.framebufferSystem.idFramebuffer().currentIds.objectID == id) {
+				if (pressed) {
+					pressed = false;
+					beep();
+				}
+			}
+			else {
+				pressed = false;
+			}
+		}
+	}
+	else pressed = false;
+}
+
 //Container
 Container& Container::horizontal() {
 	vertical = false;

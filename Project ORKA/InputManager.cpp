@@ -60,9 +60,9 @@ void InputManager::mouseWheelIsScrolled(Window& window, Double xAxis, Double yAx
 {
 	window.content->mouseIsScrolled(window, xAxis, yAxis);
 }
-void InputManager::buttonIsPressed(Window& window, Key key, Int action, Int modifiers)
+void InputManager::buttonIsPressed(Window& window, Key key, ActionState action, Int modifiers)
 {
-	if (action == GLFW_PRESS) {
+	if (action == ActionState::Press) {
 		switch (key) {
 		case Key::ENTER:
 			if (modifiers == GLFW_MOD_ALT) {
@@ -84,6 +84,6 @@ void InputManager::buttonIsPressed(Window& window, Key key, Int action, Int modi
 	
 	if(window.content)window.content->buttonIsPressed(window, key, action, modifiers);
 }
-void InputManager::mouseIsPressed(Window& window, MouseButton button, Int action, Int modifiers) {
+void InputManager::mouseIsPressed(Window& window, MouseButton button, ActionState action, Int modifiers) {
 	if(window.content)window.content->mouseIsPressed(window, button, action, modifiers);
 }

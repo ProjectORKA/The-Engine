@@ -46,8 +46,8 @@ struct MooncrashRenderer : public GameRenderer {
 	void mouseIsMoving(Window& window, IVec2 position) override;
 	void render(TiledRectangle area, Renderer& renderer) override;
 	void mouseIsScrolled(Window& window, Double xAxis, Double yAxis) override;
-	void buttonIsPressed(Window& window, Key key, Int action, Int modifiers) override;
-	void mouseIsPressed(Window& window, MouseButton button, Int action, Int modifiers) override;
+	void buttonIsPressed(Window& window, Key key, ActionState action, Int modifiers) override;
+	void mouseIsPressed(Window& window, MouseButton button, ActionState action, Int modifiers) override;
 };
 void renderMooncrashAtmosphere(Renderer& renderer, MooncrashPlayer& player);
 void renderPlanet(Renderer& renderer, PlanetSystem& planetSystem, PlanetSystemPlayer& player);
