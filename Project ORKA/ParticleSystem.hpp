@@ -6,15 +6,6 @@
 
 struct Renderer;
 
-//struct Particle {
-//	Vec3 velocity;
-//	Float maxSize = 1;
-//	Float maxLifetime = 1;
-//	Float lifetime = 0;
-//	Bool alive = false;
-//	Float size = 1;
-//};
-
 struct ParticleSystem {
 	//particle data
 	Vec4* transformation = nullptr;
