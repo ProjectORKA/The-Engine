@@ -60,6 +60,41 @@ struct UserInterface {
 	UserInterface();
 };
 
+struct TestButton :public UIElement {
+	Bool pressed = false;
+	void mouseIsPressed(Window& window, MouseButton button, ActionState action, Int modifiers)override;;
+	void render(TiledRectangle renderArea, Renderer& renderer)override {
+
+		renderer.useShader("color");
+		if (pressed) {
+			renderer.uniforms().customColor(Color(1, 1, 0, 1));
+		}
+		else {
+			PixelIDs ids = renderer.getIDsUnderCursor();
+			if (ids.objectID == id) {
+				renderer.uniforms().customColor(Color(1));
+			}
+			else {
+				renderer.uniforms().customColor(Color(0.1, 0.1, 0.1, 1));
+			}
+		}
+
+		renderer.screenSpace();
+		renderer.uniforms().mMatrix(matrixFromLocationAndSize(Vec3(10, 10, 0), 100));
+
+		renderer.renderMesh("button");
+	};
+	void renderInteractive(TiledRectangle renderArea, Renderer& renderer)override {
+		renderer.useShader("idShader");
+		renderer.screenSpace();
+		renderer.uniforms().objectID(id);
+		renderer.uniforms().mMatrix(matrixFromLocationAndSize(Vec3(10, 10, 0), 100));
+
+		renderer.renderMesh("button");
+
+	};
+};
+
 extern UserInterface ui;
 
 Container& container();

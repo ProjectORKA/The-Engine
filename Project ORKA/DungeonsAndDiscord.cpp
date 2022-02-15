@@ -118,8 +118,8 @@ void DNDRenderer::renderInteractive(TiledRectangle area, Renderer& renderer)
 void DNDRenderer::mouseIsScrolled(Window& window, Double xAxis, Double yAxis) {
 	player.speedExponent += yAxis;
 }
-void DNDRenderer::buttonIsPressed(Window& window, Key key, Int action, Int modifiers) {
-	if (action == GLFW_PRESS) {
+void DNDRenderer::buttonIsPressed(Window& window, Key key, ActionState action, Int modifiers) {
+	if (action == ActionState::Press) {
 		switch (key) {
 		case Key::F: window.renderer.wireframeMode = !window.renderer.wireframeMode;
 			break;
@@ -144,7 +144,7 @@ void DNDRenderer::buttonIsPressed(Window& window, Key key, Int action, Int modif
 		}
 	}
 
-	if (action == GLFW_RELEASE) {
+	if (action == ActionState::Release) {
 		switch (key) {
 		case Key::W: forward.pressed = false;
 			break;
@@ -163,8 +163,8 @@ void DNDRenderer::buttonIsPressed(Window& window, Key key, Int action, Int modif
 		}
 	}
 }
-void DNDRenderer::mouseIsPressed(Window& window, MouseButton button, Int action, Int modifiers) {
-	if (action == GLFW_PRESS) {
+void DNDRenderer::mouseIsPressed(Window& window, MouseButton button, ActionState action, Int modifiers) {
+	if (action == ActionState::Press) {
 		if (button == MouseButton::LEFT) {
 			if (!inputManager.isCapturing(window)) {
 

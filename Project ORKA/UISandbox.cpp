@@ -20,9 +20,9 @@ void UISandbox::render(TiledRectangle area, Renderer& renderer) {
 void UISandbox::mouseIsMoving(Window& window, IVec2 position) {
 	
 }
-void UISandbox::mouseIsPressed(Window& window, MouseButton button, Int action, Int modifiers) {
+void UISandbox::mouseIsPressed(Window& window, MouseButton button, ActionState action, Int modifiers) {
 	
 }
-void UISandbox::buttonIsPressed(Window& window, Key key, Int action, Int modifiers) {
+void UISandbox::buttonIsPressed(Window& window, Key key, ActionState action, Int modifiers) {
 
 }

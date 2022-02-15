@@ -38,11 +38,9 @@ void windowThread(Window& window)
 
 				//render interactibles
 				renderer.framebufferSystem.idFramebuffer().use();
-
 				renderer.useShader("idShader");
 				renderer.uniforms().reset();
-				renderer.renderMesh("plane");
-
+				renderer.renderMesh("centeredPlane");
 				renderer.clearDepth();
 				renderer.setWireframeMode(false);
 				renderer.setCulling(false);
@@ -346,7 +344,7 @@ void whenMouseIsMoving(APIWindow apiWindow, Double xPosition, Double yPosition) 
 }
 void whenMouseIsPressed(APIWindow apiWindow, Int mouseButton, Int action, Int mods) {
 	Window& window = *static_cast<Window*>(glfwGetWindowUserPointer(apiWindow));
-	inputManager.mouseIsPressed(window, static_cast<MouseButton>(mouseButton), action, mods);
+	inputManager.mouseIsPressed(window, static_cast<MouseButton>(mouseButton), static_cast<ActionState>(action), mods);
 }
 void whenWindowContentScaleChanged(APIWindow apiWindow, Float xScale, Float yScale)
 {
@@ -365,5 +363,5 @@ void whenFilesDroppedOnWindow(APIWindow apiWindow, Int count, const Char** dropp
 void whenButtonIsPressed(APIWindow apiWindow, Int key, Int scancode, Int action, Int modifiers)
 {
 	Window& window = *static_cast<Window*>(glfwGetWindowUserPointer(apiWindow));
-	inputManager.buttonIsPressed(window, static_cast<Key>(key), action, modifiers);
+	inputManager.buttonIsPressed(window, static_cast<Key>(key), static_cast<ActionState>(action), modifiers);
 }

@@ -14,7 +14,7 @@ struct Sortr : public GameRenderer {
 
 	};
 
-	void buttonIsPressed(Window& window, Key key, Int action, Int modifiers) override {
+	void buttonIsPressed(Window& window, Key key, ActionState action, Int modifiers) override {
 	
 	};
 };

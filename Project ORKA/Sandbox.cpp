@@ -55,14 +55,14 @@ void Sandbox::mouseIsMoving(Window& window, IVec2 position) {
 void Sandbox::mouseIsScrolled(Window& window, Double xAxis, Double yAxis) {
 	player.speedExponent += yAxis;
 }
-void Sandbox::mouseIsPressed(Window& window, MouseButton button, Int action, Int modifiers) {
-	if (button == MouseButton::LEFT && action == GLFW_PRESS) inputManager.captureCursor(window);
-	if (button == MouseButton::RIGHT && action == GLFW_PRESS) inputManager.uncaptureCursor(window);
+void Sandbox::mouseIsPressed(Window& window, MouseButton button, ActionState action, Int modifiers) {
+	if (button == MouseButton::LEFT && action == ActionState::Press) inputManager.captureCursor(window);
+	if (button == MouseButton::RIGHT && action == ActionState::Press) inputManager.uncaptureCursor(window);
 }
-void Sandbox::buttonIsPressed(Window& window, Key keyID, Int action, Int modifiers) {
-	if (action == GLFW_PRESS) {
+void Sandbox::buttonIsPressed(Window& window, Key keyID, ActionState action, Int modifiers) {
+	if (action == ActionState::Press) {
 
-		Bool pressed = action == GLFW_PRESS;
+		Bool pressed = action == ActionState::Press;
 
 		switch (keyID) {
 		case Key::F: if(pressed) window.renderer.wireframeMode = !window.renderer.wireframeMode;
