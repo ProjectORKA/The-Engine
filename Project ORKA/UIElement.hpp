@@ -22,6 +22,6 @@ struct UIElement {
 	virtual void render(TiledRectangle renderArea, Renderer& renderer) {};
 	virtual void mouseIsScrolled(Window& window, Double xAxis, Double yAxis) {};
 	virtual void renderInteractive(TiledRectangle renderArea, Renderer& renderer) {};
-	virtual void buttonIsPressed(Window& window, Key key, Int action, Int modifiers) {};
-	virtual void mouseIsPressed(Window& window, MouseButton button, Int action, Int modifiers) {};
+	virtual void buttonIsPressed(Window& window, Key key, ActionState action, Int modifiers) {};
+	virtual void mouseIsPressed(Window& window, MouseButton button, ActionState action, Int modifiers) {};
 };

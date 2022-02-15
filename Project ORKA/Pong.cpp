@@ -208,9 +208,9 @@ void Pong::render(TiledRectangle area, Renderer& renderer) {
 	renderer.renderText(toString(balls[0].speed), Vec2(10, height - 300), style);
 	renderer.renderText(toString(1.0f / renderer.time.delta), Vec2(50, 50), fonts.paragraph);
 }
-void Pong::buttonIsPressed(Window& window, Key key, Int action, Int modifiers) {
+void Pong::buttonIsPressed(Window& window, Key key, ActionState action, Int modifiers) {
 
-	Bool pressed = action != 0;
+	Bool pressed = action != ActionState::Release;
 
 	switch (key) {
 	case Key::W:players[0].moveUp = pressed;
@@ -229,8 +229,8 @@ void Pong::buttonIsPressed(Window& window, Key key, Int action, Int modifiers) {
 		break;
 	}
 }
-void Pong::mouseIsPressed(Window& window, MouseButton button, Int action, Int modifiers) {
-	players[0].shoot = (action == GLFW_PRESS || action == GLFW_REPEAT);
+void Pong::mouseIsPressed(Window& window, MouseButton button, ActionState action, Int modifiers) {
+	players[0].shoot = (action == ActionState::Press || action == ActionState::Repeat);
 }
 
 Ball* getClosestBall(PongPlayer& player, Vector<Ball>& balls) {

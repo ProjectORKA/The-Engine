@@ -47,8 +47,8 @@ void MelonRenderer::mouseIsScrolled(Window& window, Double xAxis, Double yAxis) 
 	player.zoomFactor -= yAxis;
 	player.zoomFactor = clamp(player.zoomFactor, -3, 30);
 }
-void MelonRenderer::buttonIsPressed(Window& window, Key key, Int action, Int modifiers) {
-	if (action == GLFW_PRESS) {
+void MelonRenderer::buttonIsPressed(Window& window, Key key, ActionState action, Int modifiers) {
+	if (action == ActionState::Press) {
 		switch (key) {
 		case Key::F: window.renderer.wireframeMode = !window.renderer.wireframeMode;
 			break;
@@ -57,11 +57,11 @@ void MelonRenderer::buttonIsPressed(Window& window, Key key, Int action, Int mod
 		}
 	}
 }
-void MelonRenderer::mouseIsPressed(Window& window, MouseButton button, Int action, Int modifiers) {
-	if (button == MouseButton::LEFT && action == GLFW_PRESS) {
+void MelonRenderer::mouseIsPressed(Window& window, MouseButton button, ActionState action, Int modifiers) {
+	if (button == MouseButton::LEFT && action == ActionState::Press) {
 		holdPosition.pressed = true;
 		inputManager.captureCursor(window);
 	}
 	else holdPosition.pressed = false;
-	if (button == MouseButton::RIGHT && action == GLFW_PRESS) inputManager.uncaptureCursor(window);
+	if (button == MouseButton::RIGHT && action == ActionState::Press) inputManager.uncaptureCursor(window);
 }

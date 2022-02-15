@@ -169,10 +169,10 @@ void renderMooncrashAtmosphere(Renderer& renderer, MooncrashPlayer& player)
 void MooncrashRenderer::mouseIsScrolled(Window& window, Double xAxis, Double yAxis) {
 	player.speedExponent += yAxis;
 }
-void MooncrashRenderer::buttonIsPressed(Window& window, Key key, Int action, Int modifiers) {
-	if (action == GLFW_PRESS) {
+void MooncrashRenderer::buttonIsPressed(Window& window, Key key, ActionState action, Int modifiers) {
+	if (action == ActionState::Press) {
 		
-		Bool pressed = action == GLFW_PRESS;
+		Bool pressed = action == ActionState::Press;
 		
 		switch (key) {
 		case Key::F: if(pressed) window.renderer.wireframeMode = !window.renderer.wireframeMode;
@@ -207,9 +207,9 @@ void MooncrashRenderer::buttonIsPressed(Window& window, Key key, Int action, Int
 		}
 	}
 }
-void MooncrashRenderer::mouseIsPressed(Window& window, MouseButton button, Int action, Int modifiers) {
+void MooncrashRenderer::mouseIsPressed(Window& window, MouseButton button, ActionState action, Int modifiers) {
 	
-	if (action == GLFW_PRESS) {
+	if (action == ActionState::Press) {
 		if (button == MouseButton::L) inputManager.captureCursor(window);
 		if (button == MouseButton::R) inputManager.uncaptureCursor(window);
 	}
