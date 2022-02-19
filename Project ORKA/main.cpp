@@ -62,26 +62,46 @@
 Int main(Int  argc, Char* argv[]) {
 #ifndef TESTING
 
-	TestButton game;
+	UISandbox game;
 
-	window("ORKA", Area(1600, 900), true, WindowState::windowed)
-		.insert(game);
+	window(
+		"ORKA",
+		Area(1600, 900),
+		true,
+		WindowState::windowed,
+		game
+	);
+
+
+	//window("ORKA", Area(1600, 900), true, WindowState::windowed)
+	//	.insert(container().vertical()
+	//		.insert(container()
+	//			.insert(button().padding(5))
+	//			.insert(button().padding(5))
+	//			.insert(button().padding(5)))
+	//			.insert(container()
+	//				.insert(button().padding(5))
+	//				.insert(button().padding(5))
+	//				.insert(button().padding(5)))
+	//		.insert(container()
+	//			.insert(button().padding(5))
+	//			.insert(button().padding(5))
+	//			.insert(button().padding(5)))
+	//	);
+
+	//UISandbox sandBox;
+
+	//window("ORKA", Area(1600, 900), true, WindowState::windowed).insert(sandBox);
+
+
 	gameSystem.run();
 	ui.run();
 	gameSystem.stop();
-	
+
 
 #else
 	//testing code
 	/////////////////////////////////////////////////////////////////////////////////////////////////
-	if () {
-	
-	}
-	else {
-
-
-
-
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////
 	pause();

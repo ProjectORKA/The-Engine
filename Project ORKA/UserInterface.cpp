@@ -23,10 +23,10 @@ UIImage::UIImage(Name name) {
 }
 
 //TextBox
-TextBox::TextBox(String& data) {
+UITextBox::UITextBox(String& data) {
 	this->data = &data;
 }
-void TextBox::render(TiledRectangle renderArea, Renderer& renderer){
+void UITextBox::render(TiledRectangle renderArea, Renderer& renderer){
 	renderer.screenSpace();
 	Matrix m = matrixFromLocationAndSize(Vec4(renderArea.position.x, renderArea.position.y, 0, min(renderArea.size.x, renderArea.size.y)));
 	renderer.uniforms().mMatrix(m);
@@ -34,73 +34,56 @@ void TextBox::render(TiledRectangle renderArea, Renderer& renderer){
 }
 
 //Checkbox
-CheckBox::CheckBox(Boolean& data) {
+UICheckBox::UICheckBox(Boolean& data) {
 	this->data = &data;
 }
-void CheckBox::render(TiledRectangle renderArea, Renderer& renderer) {}
-
-//Button
-Button::Button(Bool& data) {
-	this->data = &data;
-}
-Button& Button::insert(UIElement* element) {
-	content = element;
-	return *this;
-}
-void Button::render(TiledRectangle renderArea, Renderer& renderer) {
-	
-	if(content) content->render(renderArea,renderer);
-}
-
-//Test Button
-void TestButton::mouseIsPressed(Window& window, MouseButton button, ActionState action, Int modifiers) {
-	if (button == MouseButton::L) {
-		if (action == ActionState::Press) {
-			if (window.renderer.framebufferSystem.idFramebuffer().currentIds.objectID == id) {
-				pressed = true;
-			}
-			else {
-				pressed = false;
-			}
-		}
-		else {
-
-			if (window.renderer.framebufferSystem.idFramebuffer().currentIds.objectID == id) {
-				if (pressed) {
-					pressed = false;
-					beep();
-				}
-			}
-			else {
-				pressed = false;
-			}
-		}
-	}
-	else pressed = false;
-}
+void UICheckBox::render(TiledRectangle renderArea, Renderer& renderer) {}
 
 //Container
-Container& Container::horizontal() {
-	vertical = false;
+UIContainer& UIContainer::horizontal() {
+	renderVertical = false;
 	return *this;
 }
-Container& Container::insert(UIElement& element) {
+UIContainer& UIContainer::vertical() {
+	renderVertical = true;
+	return *this;
+}
+UIContainer& UIContainer::insert(UIElement& element) {
 	contents.push_back(&element);
 	return *this;
 }
-void  Container::render(TiledRectangle renderArea, Renderer& renderer) {
-	for (UInt i = 0; i < contents.size();i++) {
+void UIContainer::render(TiledRectangle renderArea, Renderer& renderer) {
+	for (UInt i = 0; i < contents.size(); i++) {
 		TiledRectangle a = renderArea;
-		if (vertical) {
+		if (renderVertical) {
 			a.size.y /= contents.size();
-			a.position.y = a.size.y * i;
+			a.position.y += a.size.y * i;
 		}
 		else {
 			a.size.x /= contents.size();
-			a.position.x = a.size.x * i;
+			a.position.x += a.size.x * i;
 		}
-		contents[i]->render(a,renderer);
+		contents[i]->render(a, renderer);
 	}
+}
+void UIContainer::renderInteractive(TiledRectangle renderArea, Renderer& renderer)
+{
+	for (UInt i = 0; i < contents.size(); i++) {
+		TiledRectangle a = renderArea;
+		if (renderVertical) {
+			a.size.y /= contents.size();
+			a.position.y += a.size.y * i;
+		}
+		else {
+			a.size.x /= contents.size();
+			a.position.x += a.size.x * i;
+		}
+		contents[i]->renderInteractive(a, renderer);
+	}
+}
+void UIContainer::mouseIsPressed(Window& window, MouseButton button, ActionState action, Int modifiers)
+{
+	for (auto c : contents)c->mouseIsPressed(window, button, action, modifiers);
 }
 
 //User Interface
@@ -133,7 +116,11 @@ UserInterface::UserInterface() {
 	glfwSetMonitorCallback(whenMonitorChanged);
 }
 
-Container& container() {
+UIButton& button() {
+	ui.buttons.emplace_back();
+	return ui.buttons.back();
+}
+UIContainer& container() {
 	ui.containers.emplace_back();
 	return ui.containers.back();
 }
@@ -141,20 +128,23 @@ UIImage& image(Name name) {
 	ui.images.emplace_back(name);
 	return ui.images.back();
 }
-Button& button(Bool& data) {
-	ui.buttons.emplace_back(data);
-	return ui.buttons.back();
-}
-CheckBox& checkBox(Bool& data) {
+UICheckBox& checkBox(Bool& data) {
 	ui.checkBoxes.emplace_back(data);
 	return ui.checkBoxes.back();
 }
-TextBox& textBox(String& data) {
+UITextBox& textBox(String& data) {
 	ui.textBoxes.emplace_back(data);
 	return ui.textBoxes.back();
 }
 Window& window(String title, Area size, Bool decorated, WindowState state) {
 	ui.windows.emplace_back();
 	ui.windows.back().create(title, size, decorated, state);
+	return ui.windows.back();
+};
+
+Window& window(String title, Area size, Bool decorated, WindowState state, UIElement & element) {
+	ui.windows.emplace_back();
+	ui.windows.back().create(title, size, decorated, state);
+	ui.windows.back().content = &element;
 	return ui.windows.back();
 };

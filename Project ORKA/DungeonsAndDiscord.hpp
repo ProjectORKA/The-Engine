@@ -16,6 +16,14 @@
 struct Renderer;
 struct Window;
 
+struct DNDEntity {
+	Name meshName = "empty";
+	Transform transform;
+	void render(Renderer & renderer) {
+		transform.render(renderer);
+		renderer.renderMesh(meshName);
+	}
+};
 
 struct DNDWorld : public GameSimulation {
 	//savedata for camera
@@ -27,14 +35,13 @@ struct DNDWorld : public GameSimulation {
 	Float rotationZ = 0;
 	//player data
 	Int speedExponent = 0;
-
-	Vector<Entity> entities;
 	
+	Vector<DNDEntity> entities;
+
 	void save();
 	void load();
 	void create() override;
 	void destroy() override;
-	void addObject(Entity e);
 };
 
 struct DNDRenderer : public GameRenderer {

@@ -491,6 +491,9 @@
     <Filter Include="Program\Common\FileSystem\File">
       <UniqueIdentifier>{f695857c-3660-4078-913b-0fc7ca5e5446}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Program\Engine\UserInterface\UIButton">
+      <UniqueIdentifier>{32eb8225-ba4f-432f-b645-236fc5245d93}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -800,6 +803,9 @@
     </ClCompile>
     <ClCompile Include="UISandbox.cpp">
       <Filter>Program\Games\Game\UISandbox</Filter>
+    </ClCompile>
+    <ClCompile Include="UIButton.cpp">
+      <Filter>Program\Engine\UserInterface\UIButton</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1225,6 +1231,9 @@
     </ClInclude>
     <ClInclude Include="UISandbox.hpp">
       <Filter>Program\Games\Game\UISandbox</Filter>
+    </ClInclude>
+    <ClInclude Include="UIButton.hpp">
+      <Filter>Program\Engine\UserInterface\UIButton</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

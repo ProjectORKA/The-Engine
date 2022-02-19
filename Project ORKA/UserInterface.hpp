@@ -4,19 +4,12 @@
 #include "Basics.hpp"
 #include "GPUTexture.hpp"
 #include "Window.hpp"
-#include "UIElement.hpp"
+
+#include "UIButton.hpp"
 
 struct Renderer;
 struct Window;
 
-struct Button : public UIElement {
-	Bool* data;
-	UIElement* content = nullptr;
-
-	Button(Bool& data);
-	Button& insert(UIElement* element);
-	void render(TiledRectangle renderArea, Renderer& renderer)override;
-};
 struct UIImage : public UIElement {
 	Name name;
 
@@ -24,25 +17,28 @@ struct UIImage : public UIElement {
 	void render(TiledRectangle renderArea, Renderer& renderer)override;;
 
 };
-struct TextBox : public UIElement {
+struct UITextBox : public UIElement {
 	String* data;
 
-	TextBox(String& data);
+	UITextBox(String& data);
 	void render(TiledRectangle renderArea, Renderer& renderer) override;
 };
-struct CheckBox : public UIElement {
+struct UICheckBox : public UIElement {
 	Boolean* data;
-	CheckBox(Boolean& data);
+	UICheckBox(Boolean& data);
 	void render(TiledRectangle renderArea, Renderer& renderer);
 };
-struct Container : public UIElement {
-	Boolean vertical = false;
+struct UIContainer : public UIElement {
+	Boolean renderVertical = false;
 
 	Vector<UIElement*> contents;
 
-	Container& horizontal();
-	Container& insert(UIElement& element);
+	UIContainer& horizontal();
+	UIContainer& vertical();;
+	UIContainer& insert(UIElement& element);
 	void render(TiledRectangle renderArea, Renderer& renderer) override;
+	void renderInteractive(TiledRectangle renderArea, Renderer& renderer)override;
+	void mouseIsPressed(Window& window, MouseButton button, ActionState action, Int modifiers)override;
 };
 
 struct UserInterface {
@@ -52,54 +48,20 @@ struct UserInterface {
 
 	List<UIImage> images;
 	List<Window> windows;
-	List<Button> buttons;
-	List<TextBox> textBoxes;
-	List<CheckBox> checkBoxes;
-	List<Container> containers;
+	List<UIButton> buttons;
+	List<UITextBox> textBoxes;
+	List<UICheckBox> checkBoxes;
+	List<UIContainer> containers;
 
 	UserInterface();
 };
 
-struct TestButton :public UIElement {
-	Bool pressed = false;
-	void mouseIsPressed(Window& window, MouseButton button, ActionState action, Int modifiers)override;;
-	void render(TiledRectangle renderArea, Renderer& renderer)override {
-
-		renderer.useShader("color");
-		if (pressed) {
-			renderer.uniforms().customColor(Color(1, 1, 0, 1));
-		}
-		else {
-			PixelIDs ids = renderer.getIDsUnderCursor();
-			if (ids.objectID == id) {
-				renderer.uniforms().customColor(Color(1));
-			}
-			else {
-				renderer.uniforms().customColor(Color(0.1, 0.1, 0.1, 1));
-			}
-		}
-
-		renderer.screenSpace();
-		renderer.uniforms().mMatrix(matrixFromLocationAndSize(Vec3(10, 10, 0), 100));
-
-		renderer.renderMesh("button");
-	};
-	void renderInteractive(TiledRectangle renderArea, Renderer& renderer)override {
-		renderer.useShader("idShader");
-		renderer.screenSpace();
-		renderer.uniforms().objectID(id);
-		renderer.uniforms().mMatrix(matrixFromLocationAndSize(Vec3(10, 10, 0), 100));
-
-		renderer.renderMesh("button");
-
-	};
-};
-
 extern UserInterface ui;
 
-Container& container();
+UIButton& button();
+UIContainer& container();
 UIImage& image(Name name);
-Button& button(Bool& data);
-CheckBox& checkBox(Bool& data);
-TextBox& textBox(String& data);
+UICheckBox& checkBox(Bool& data);
+UITextBox& textBox(String& data);
 Window& window(String title, Area size, Bool decorated, WindowState state);
+Window& window(String title, Area size, Bool decorated, WindowState state, UIElement& element);

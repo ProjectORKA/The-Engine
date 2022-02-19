@@ -81,7 +81,7 @@ void DNDRenderer::render(TiledRectangle area, Renderer& renderer) {
 	renderer.setWireframeMode(false);
 	renderer.screenSpace();
 	Int i = 0;
-	for (Entity& e : world->entities) {
+	for (DNDEntity& e : world->entities) {
 		i++;
 		renderer.renderText(String(e.meshName.data), Vec2(15, i * 15), fonts.paragraph);
 	}
@@ -100,10 +100,11 @@ void DNDRenderer::filesDropped(Window& window, Vector<Path> paths) {
 
 		String fileName = path.filename().string();
 		Name name = fileName.substr(0, fileName.size() - 4).c_str();
-		Entity e;
+		
+		DNDEntity e;
 		e.meshName = name;
 		e.transform = Transform();
-		world->addObject(e);
+		world->entities.push_back(e);
 	}
 }
 void DNDRenderer::renderInteractive(TiledRectangle area, Renderer& renderer)
@@ -235,9 +236,6 @@ void DNDWorld::create() {
 }
 void DNDWorld::destroy() {
 	save();
-}
-void DNDWorld::addObject(Entity e) {
-	entities.push_back(e);
 }
 
 DND::DND() {
