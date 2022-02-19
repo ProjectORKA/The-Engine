@@ -6,6 +6,7 @@
 #include "Renderer.hpp"
 #include "WindowAPI.hpp" //needs to be below the rendering stuff, e.g. "Renderer.hpp"
 #include "UIElement.hpp"
+#include "ECS.hpp"
 
 enum class WindowState {
 	minimized,
@@ -27,6 +28,8 @@ struct Window {
 	Area windowedModeSize = Area(1);
 	
 	Renderer renderer;
+
+	ECS ecs;
 
 	//thread
 	Thread thread;

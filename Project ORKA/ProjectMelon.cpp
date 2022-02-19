@@ -33,15 +33,15 @@ void MelonRenderer::render(TiledRectangle area, Renderer& renderer) {
 	renderer.uniforms().sunDir(Vec4(normalize(Vec3(-0.666, 0.333, 1)), 1));
 	player.render(renderer);
 
-	renderer.uniforms().mMatrix(Matrix(1));
-	renderer.renderMesh("centeredCube");
+	//renderer.uniforms().mMatrix(Matrix(1));
+	//renderer.renderMesh("centeredCube");
 
 	//world.render(renderer);
 
 	//ui
 	renderer.setDepthTest(false);
 	renderer.screenSpace();
-	renderer.renderText(toString(1 / renderer.time.delta), Vec2(30), fonts.heading);
+	//renderer.renderText(toString(1 / renderer.time.delta), Vec2(30), fonts.heading);
 }
 void MelonRenderer::mouseIsScrolled(Window& window, Double xAxis, Double yAxis) {
 	player.zoomFactor -= yAxis;

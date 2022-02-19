@@ -4,6 +4,8 @@
 
 #define PI 3.14159265359f
 
+struct TiledRectangle;
+
 struct Graph {
 	Vector<Float> points;
 
@@ -39,12 +41,12 @@ Float lerp(Float a, Float b, Float alpha);
 Matrix matrixFromOrientation(Orientation o);
 Matrix matrixFromAxis(Vec3 x, Vec3 y, Vec3 z);
 bool isFloatNearOther(Float a, Float b, Float error);
+Matrix matrixFromTiledRectangle(TiledRectangle area);
 Rotation getRotationBetweenVectors(Vec3 start, Vec3 dest);
 Matrix matrixFromLocationAndSize(Vec4 compressedTransform);
 Matrix matrixFromLocationAndSize(Vec3 location, Float size);
 Matrix matrixFromOrientation(Orientation o, Vec3 position, Float size);
 Matrix matrixFromAxis(Vec3 x, Vec3 y, Vec3 z, Vec3 position, Float size);
-
 
 template<typename T>
 T sq(T a) {
