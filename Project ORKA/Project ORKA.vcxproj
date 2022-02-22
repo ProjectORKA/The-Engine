@@ -22,6 +22,13 @@
     <ResourceCompile Include="icon.rc" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\External Libraries\IMGUI\backends\imgui_impl_glfw.cpp" />
+    <ClCompile Include="..\External Libraries\IMGUI\backends\imgui_impl_opengl3.cpp" />
+    <ClCompile Include="..\External Libraries\IMGUI\imgui.cpp" />
+    <ClCompile Include="..\External Libraries\IMGUI\imgui_demo.cpp" />
+    <ClCompile Include="..\External Libraries\IMGUI\imgui_draw.cpp" />
+    <ClCompile Include="..\External Libraries\IMGUI\imgui_tables.cpp" />
+    <ClCompile Include="..\External Libraries\IMGUI\imgui_widgets.cpp" />
     <ClCompile Include="AIPlayground.cpp" />
     <ClCompile Include="Algorithm.cpp" />
     <ClCompile Include="C++ Cheatsheet.cpp" />
@@ -129,12 +136,15 @@
     <ClCompile Include="OctreeSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\External Libraries\IMGUI\backends\imgui_impl_glfw.h" />
+    <ClInclude Include="..\External Libraries\IMGUI\backends\imgui_impl_opengl3.h" />
     <ClInclude Include="BaseAllocator.hpp" />
     <ClInclude Include="Color.hpp" />
     <ClInclude Include="DeadVector.hpp" />
     <ClInclude Include="File.hpp" />
     <ClInclude Include="GPUBuffer.hpp" />
     <ClInclude Include="GuessingGame.hpp" />
+    <ClInclude Include="ImguiWrapper.hpp" />
     <ClInclude Include="IndexFramebuffer.hpp" />
     <ClInclude Include="Instancing.hpp" />
     <ClInclude Include="Interactive.hpp" />
@@ -393,7 +403,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)\External Libraries\STBIMAGE;$(SolutionDir)\External Libraries\FREETYPE\include;$(SolutionDir)\External Libraries\ASIO\asio-1.18.1\include;$(SolutionDir)\External Libraries\freetype-2.10.4\include;$(SolutionDir)\External Libraries\STB IMAGE;$(SolutionDir)\External Libraries\ASSIMP\include;$(SolutionDir)\External Libraries\GLM;$(SolutionDir)\External Libraries\GLEW\include;$(SolutionDir)\External Libraries\GLFW 32 bit\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)External Libraries\IMGUI;$(SolutionDir)\External Libraries\STBIMAGE;$(SolutionDir)\External Libraries\FREETYPE\include;$(SolutionDir)\External Libraries\ASIO\asio-1.18.1\include;$(SolutionDir)\External Libraries\freetype-2.10.4\include;$(SolutionDir)\External Libraries\STB IMAGE;$(SolutionDir)\External Libraries\ASSIMP\include;$(SolutionDir)\External Libraries\GLM;$(SolutionDir)\External Libraries\GLEW\include;$(SolutionDir)\External Libraries\GLFW 32 bit\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <EnableModules>false</EnableModules>
@@ -423,7 +433,7 @@ XCOPY "$(SolutionDir)External Libraries\ASSIMP\lib\lib 32\debug" "$(TargetDir)" 
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)External Libraries\STBIMAGE;$(SolutionDir)External Libraries\FREETYPE\include;$(SolutionDir)External Libraries\ASIO\asio-1.18.1\include;$(SolutionDir)External Libraries\freetype-2.10.4\include;$(SolutionDir)External Libraries\STB IMAGE;$(SolutionDir)External Libraries\ASSIMP\include;$(SolutionDir)External Libraries\GLM;$(SolutionDir)External Libraries\GLEW\include;$(SolutionDir)External Libraries\GLFW 64 bit\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)External Libraries\IMGUI;$(SolutionDir)External Libraries\STBIMAGE;$(SolutionDir)External Libraries\FREETYPE\include;$(SolutionDir)External Libraries\ASIO\asio-1.18.1\include;$(SolutionDir)External Libraries\freetype-2.10.4\include;$(SolutionDir)External Libraries\STB IMAGE;$(SolutionDir)External Libraries\ASSIMP\include;$(SolutionDir)External Libraries\GLM;$(SolutionDir)External Libraries\GLEW\include;$(SolutionDir)External Libraries\GLFW 64 bit\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <SupportJustMyCode>true</SupportJustMyCode>
@@ -458,7 +468,7 @@ XCOPY "$(SolutionDir)External Libraries\ASSIMP\lib\lib 64\debug" "$(TargetDir)" 
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)\External Libraries\STBIMAGE;$(SolutionDir)\External Libraries\FREETYPE\include;$(SolutionDir)\External Libraries\ASIO\asio-1.18.1\include;$(SolutionDir)\External Libraries\freetype-2.10.4\include;$(SolutionDir)\External Libraries\STB IMAGE;$(SolutionDir)\External Libraries\ASSIMP\include;$(SolutionDir)\External Libraries\GLM;$(SolutionDir)\External Libraries\GLEW\include;$(SolutionDir)\External Libraries\GLFW 32 bit\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)External Libraries\IMGUI;$(SolutionDir)\External Libraries\STBIMAGE;$(SolutionDir)\External Libraries\FREETYPE\include;$(SolutionDir)\External Libraries\ASIO\asio-1.18.1\include;$(SolutionDir)\External Libraries\freetype-2.10.4\include;$(SolutionDir)\External Libraries\STB IMAGE;$(SolutionDir)\External Libraries\ASSIMP\include;$(SolutionDir)\External Libraries\GLM;$(SolutionDir)\External Libraries\GLEW\include;$(SolutionDir)\External Libraries\GLFW 32 bit\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <FloatingPointModel>Fast</FloatingPointModel>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LanguageStandard>stdcpp17</LanguageStandard>
@@ -490,7 +500,7 @@ XCOPY "$(SolutionDir)External Libraries\ASSIMP\lib\lib 32\release" "$(TargetDir)
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)External Libraries\STBIMAGE;$(SolutionDir)External Libraries\FREETYPE\include;$(SolutionDir)External Libraries\ASIO\asio-1.18.1\include;$(SolutionDir)External Libraries\freetype-2.10.4\include;$(SolutionDir)External Libraries\STB IMAGE;$(SolutionDir)External Libraries\ASSIMP\include;$(SolutionDir)External Libraries\GLM;$(SolutionDir)External Libraries\GLEW\include;$(SolutionDir)External Libraries\GLFW 64 bit\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)External Libraries\IMGUI;$(SolutionDir)External Libraries\STBIMAGE;$(SolutionDir)External Libraries\FREETYPE\include;$(SolutionDir)External Libraries\ASIO\asio-1.18.1\include;$(SolutionDir)External Libraries\freetype-2.10.4\include;$(SolutionDir)External Libraries\STB IMAGE;$(SolutionDir)External Libraries\ASSIMP\include;$(SolutionDir)External Libraries\GLM;$(SolutionDir)External Libraries\GLEW\include;$(SolutionDir)External Libraries\GLFW 64 bit\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <FloatingPointModel>Fast</FloatingPointModel>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);%(PreprocessorDefinitions)</PreprocessorDefinitions>
