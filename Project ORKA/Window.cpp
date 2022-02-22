@@ -13,6 +13,11 @@ void windowThread(Window& window)
 	renderer.create(window.getWindowContentSize());		//also needs to be in this thread
 	window.updateWindowState();
 
+	//imgui initialization
+	ImguiWrapper imGui;
+	imGui.create(window.apiWindow);
+
+
 	if(window.windowState == WindowState::windowed) window.centerWindow();
 	if (window.windowState == WindowState::windowed || window.windowState == WindowState::maximized) window.updateDecorations();
 
@@ -55,6 +60,11 @@ void windowThread(Window& window)
 				renderer.clearDepth();
 				renderer.setWireframeMode(renderer.wireframeMode);
 				window.content->render(windowArea, renderer);
+
+				//render imgui
+				imGui.render();
+				
+
 			}
 			renderer.setWireframeMode(false);
 			renderer.setAlphaBlending(false);
