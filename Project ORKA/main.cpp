@@ -57,7 +57,20 @@
 #include "ProjectMelon.hpp"
 #include "DungeonsAndDiscord.hpp"
 
-//#define TESTING
+#define TESTING
+
+
+
+struct ImguiWrapper {
+	void create(APIWindow apiWindow) {
+		imguiInitiafhjsdahldhsal(apiWindow);
+	};
+};
+
+
+
+
+
 
 Int main(Int  argc, Char* argv[]) {
 #ifndef TESTING
@@ -102,6 +115,13 @@ Int main(Int  argc, Char* argv[]) {
 #else
 	//testing code
 	/////////////////////////////////////////////////////////////////////////////////////////////////
+
+	Window window;
+
+	ImguiWrapper wrapper;
+
+	wrapper.create(window.apiWindow);
+
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////
 	pause();

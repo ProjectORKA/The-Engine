@@ -423,7 +423,7 @@ XCOPY "$(SolutionDir)External Libraries\ASSIMP\lib\lib 32\debug" "$(TargetDir)" 
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)External Libraries\STBIMAGE;$(SolutionDir)External Libraries\FREETYPE\include;$(SolutionDir)External Libraries\ASIO\asio-1.18.1\include;$(SolutionDir)External Libraries\freetype-2.10.4\include;$(SolutionDir)External Libraries\STB IMAGE;$(SolutionDir)External Libraries\ASSIMP\include;$(SolutionDir)External Libraries\GLM;$(SolutionDir)External Libraries\GLEW\include;$(SolutionDir)External Libraries\GLFW 64 bit\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)External Libraries\OpenAL\include;$(SolutionDir)External Libraries\STBIMAGE;$(SolutionDir)External Libraries\FREETYPE\include;$(SolutionDir)External Libraries\ASIO\asio-1.18.1\include;$(SolutionDir)External Libraries\freetype-2.10.4\include;$(SolutionDir)External Libraries\STB IMAGE;$(SolutionDir)External Libraries\ASSIMP\include;$(SolutionDir)External Libraries\GLM;$(SolutionDir)External Libraries\GLEW\include;$(SolutionDir)External Libraries\GLFW 64 bit\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <SupportJustMyCode>true</SupportJustMyCode>
@@ -435,9 +435,9 @@ XCOPY "$(SolutionDir)External Libraries\ASSIMP\lib\lib 32\debug" "$(TargetDir)" 
       <CompileAs>CompileAsCpp</CompileAs>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>$(SolutionDir)External Libraries\FREETYPE\release static\vs2015-2022\win64;G:\DATA\PROJEKTE\ORKA\GAME ENGINE\SOURCE CODE\External Libraries\FREETYPE\release static\vs2015-2022\win64;$(SolutionDir)\External Libraries\ASSIMP\lib\lib 64\debug;$(SolutionDir)\External Libraries\GLFW 64 bit\lib-vc2015;$(SolutionDir)\External Libraries\GLEW\lib\Release\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>G:\DATA\PROJEKTE\ORKA\GAME ENGINE\SOURCE CODE\External Libraries\OpenAL\libs\Win64;$(SolutionDir)External Libraries\FREETYPE\release static\vs2015-2022\win64;G:\DATA\PROJEKTE\ORKA\GAME ENGINE\SOURCE CODE\External Libraries\FREETYPE\release static\vs2015-2022\win64;$(SolutionDir)\External Libraries\ASSIMP\lib\lib 64\debug;$(SolutionDir)\External Libraries\GLFW 64 bit\lib-vc2015;$(SolutionDir)\External Libraries\GLEW\lib\Release\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
-      <AdditionalDependencies>opengl32.lib;freetype.lib;assimp-vc141-mtd.lib;glfw3.lib;glew32s.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>opengl32.lib;freetype.lib;OpenAL32.lib;assimp-vc141-mtd.lib;glfw3.lib;glew32s.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>
       </IgnoreSpecificDefaultLibraries>
       <SubSystem>Console</SubSystem>
@@ -490,7 +490,7 @@ XCOPY "$(SolutionDir)External Libraries\ASSIMP\lib\lib 32\release" "$(TargetDir)
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)External Libraries\STBIMAGE;$(SolutionDir)External Libraries\FREETYPE\include;$(SolutionDir)External Libraries\ASIO\asio-1.18.1\include;$(SolutionDir)External Libraries\freetype-2.10.4\include;$(SolutionDir)External Libraries\STB IMAGE;$(SolutionDir)External Libraries\ASSIMP\include;$(SolutionDir)External Libraries\GLM;$(SolutionDir)External Libraries\GLEW\include;$(SolutionDir)External Libraries\GLFW 64 bit\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)External Libraries\OpenAL\include;$(SolutionDir)External Libraries\STBIMAGE;$(SolutionDir)External Libraries\FREETYPE\include;$(SolutionDir)External Libraries\ASIO\asio-1.18.1\include;$(SolutionDir)External Libraries\freetype-2.10.4\include;$(SolutionDir)External Libraries\STB IMAGE;$(SolutionDir)External Libraries\ASSIMP\include;$(SolutionDir)External Libraries\GLM;$(SolutionDir)External Libraries\GLEW\include;$(SolutionDir)External Libraries\GLFW 64 bit\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <FloatingPointModel>Fast</FloatingPointModel>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -503,8 +503,8 @@ XCOPY "$(SolutionDir)External Libraries\ASSIMP\lib\lib 32\release" "$(TargetDir)
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>opengl32.lib;freetype.lib;assimp-vc141-mt.lib;glfw3.lib;glew32s.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)External Libraries\FREETYPE\release static\vs2015-2022\win64;$(SolutionDir)\External Libraries\FREETYPE\release static\vs2015-2022\win64;$(SolutionDir)\External Libraries\ASSIMP\lib\lib 64\release;$(SolutionDir)\External Libraries\GLFW 64 bit\lib-vc2015;$(SolutionDir)\External Libraries\GLEW\lib\Release\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>opengl32.lib;freetype.lib;OpenAL32.lib;assimp-vc141-mt.lib;glfw3.lib;glew32s.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>G:\DATA\PROJEKTE\ORKA\GAME ENGINE\SOURCE CODE\External Libraries\OpenAL\libs\Win64;$(SolutionDir)External Libraries\FREETYPE\release static\vs2015-2022\win64;$(SolutionDir)\External Libraries\FREETYPE\release static\vs2015-2022\win64;$(SolutionDir)\External Libraries\ASSIMP\lib\lib 64\release;$(SolutionDir)\External Libraries\GLFW 64 bit\lib-vc2015;$(SolutionDir)\External Libraries\GLEW\lib\Release\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <IgnoreSpecificDefaultLibraries>
       </IgnoreSpecificDefaultLibraries>
