@@ -2,15 +2,6 @@
 #include "CPUTexture.hpp"
 #include "FileSystem.hpp"
 
-void CPUTexture::unload()
-{
-	logDebug(String("Unloading Texture: (").append(name.data).append(")"));
-	
-	if (loaded) {
-		if (pixels)free(pixels);
-		pixels = nullptr;
-	}
-}
 Float CPUTexture::getRed(UInt x, UInt y) {
 	x = x % width;
 	y = y % height;
@@ -73,6 +64,100 @@ Float CPUTexture::getRed(Float x, Float y) {
 
 	//do linear interpolation to get the final blend
 	return lerp(lerp(a, b, fracX), lerp(c, d, fracX), fracY);
+}
+Float CPUTexture::getGreen(Float x, Float y) {
+	//convert normalized coordinates to texture space
+	Float texX = x * Float(width);
+	Float texY = y * Float(height);
+
+	//turn float to desired indices
+	UInt aX = floor(texX);
+	UInt aY = floor(texY);
+	UInt dX = ceil(texX);
+	UInt dY = ceil(texY);
+	UInt bX = dX;
+	UInt bY = aY;
+	UInt cX = aX;
+	UInt cY = dY;
+
+	//get colors of adjacent pixels
+	Float a = getGreen(aX, aY);
+	Float b = getGreen(bX, bY);
+	Float c = getGreen(cX, cY);
+	Float d = getGreen(dX, dY);
+
+	//get fraction to determine blending
+	Float fracX = fmod(texX, 1.0f);
+	Float fracY = fmod(texY, 1.0f);
+
+	//do linear interpolation to get the final blend
+	return lerp(lerp(a, b, fracX), lerp(c, d, fracX), fracY);
+}
+Float CPUTexture::getBlue(Float x, Float y) {
+	//convert normalized coordinates to texture space
+	Float texX = x * Float(width);
+	Float texY = y * Float(height);
+
+	//turn float to desired indices
+	UInt aX = floor(texX);
+	UInt aY = floor(texY);
+	UInt dX = ceil(texX);
+	UInt dY = ceil(texY);
+	UInt bX = dX;
+	UInt bY = aY;
+	UInt cX = aX;
+	UInt cY = dY;
+
+	//get colors of adjacent pixels
+	Float a = getBlue(aX, aY);
+	Float b = getBlue(bX, bY);
+	Float c = getBlue(cX, cY);
+	Float d = getBlue(dX, dY);
+
+	//get fraction to determine blending
+	Float fracX = fmod(texX, 1.0f);
+	Float fracY = fmod(texY, 1.0f);
+
+	//do linear interpolation to get the final blend
+	return lerp(lerp(a, b, fracX), lerp(c, d, fracX), fracY);
+}
+Float CPUTexture::getAlpha(Float x, Float y) {
+	//convert normalized coordinates to texture space
+	Float texX = x * Float(width);
+	Float texY = y * Float(height);
+
+	//turn float to desired indices
+	UInt aX = floor(texX);
+	UInt aY = floor(texY);
+	UInt dX = ceil(texX);
+	UInt dY = ceil(texY);
+	UInt bX = dX;
+	UInt bY = aY;
+	UInt cX = aX;
+	UInt cY = dY;
+
+	//get colors of adjacent pixels
+	Float a = getAlpha(aX, aY);
+	Float b = getAlpha(bX, bY);
+	Float c = getAlpha(cX, cY);
+	Float d = getAlpha(dX, dY);
+
+	//get fraction to determine blending
+	Float fracX = fmod(texX, 1.0f);
+	Float fracY = fmod(texY, 1.0f);
+
+	//do linear interpolation to get the final blend
+	return lerp(lerp(a, b, fracX), lerp(c, d, fracX), fracY);
+}
+
+void CPUTexture::unload()
+{
+	logDebug(String("Unloading Texture: (").append(name.data).append(")"));
+	
+	if (loaded) {
+		if (pixels)free(pixels);
+		pixels = nullptr;
+	}
 }
 void CPUTexture::load(Name name) {
 	if (!loaded)load(String("Data/textures/").append(name.data).append(".png"), name);

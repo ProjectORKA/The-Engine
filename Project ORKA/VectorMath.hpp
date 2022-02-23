@@ -17,3 +17,4 @@ using Location = glm::vec3;
 using Vec4 = glm::vec4;
 using ULLVec2 = glm::u64vec2;
 using ULLVec3 = glm::u64vec3;
+using ULLVec4 = glm::u64vec4;

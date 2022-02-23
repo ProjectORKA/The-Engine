@@ -72,18 +72,35 @@ struct ImguiWrapper {
 
 
 
+#include "imgui.h"
+
+struct DearImGui :public UIElement {
+	void update(Renderer& renderer) {};
+	void mouseIsMoving(Window& window, IVec2 position) {};
+	void render(TiledRectangle area, Renderer& renderer) {
+		ImGui::Text("Hello, world %d", 123);
+		if (ImGui::Button("Save"))
+			beep();
+	};
+	void filesDropped(Window& window, Vector<Path> paths) {};
+	void renderInteractive(TiledRectangle area, Renderer& renderer) {};
+	void mouseIsScrolled(Window& window, Double xAxis, Double yAxis) {};
+	void buttonIsPressed(Window& window, Key key, ActionState action, Int modifiers) {};
+	void mouseIsPressed(Window& window, MouseButton button, ActionState action, Int modifiers) {};
+};
+
 Int main(Int  argc, Char* argv[]) {
 #ifndef TESTING
 
-	UISandbox game;
+	UIButton button;
 
 	window(
 		"ORKA",
 		Area(1600, 900),
 		true,
 		WindowState::windowed,
-		game
-	);
+		button
+		);
 
 
 	//window("ORKA", Area(1600, 900), true, WindowState::windowed)
