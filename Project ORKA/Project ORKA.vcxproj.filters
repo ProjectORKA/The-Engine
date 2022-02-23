@@ -494,6 +494,12 @@
     <Filter Include="Program\Engine\UserInterface\UIButton">
       <UniqueIdentifier>{32eb8225-ba4f-432f-b645-236fc5245d93}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Program\Engine\UserInterface\DearImGui">
+      <UniqueIdentifier>{de2da536-787c-42ca-8c01-97da644955a6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\Engine\UserInterface\DearImGui\ImGuiSource">
+      <UniqueIdentifier>{e0025ebd-74ec-4fd0-93e2-10647161a12a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -806,6 +812,27 @@
     </ClCompile>
     <ClCompile Include="UIButton.cpp">
       <Filter>Program\Engine\UserInterface\UIButton</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External Libraries\IMGUI\backends\imgui_impl_opengl3.cpp">
+      <Filter>Program\Engine\UserInterface\DearImGui\ImGuiSource</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External Libraries\IMGUI\backends\imgui_impl_glfw.cpp">
+      <Filter>Program\Engine\UserInterface\DearImGui\ImGuiSource</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External Libraries\IMGUI\imgui.cpp">
+      <Filter>Program\Engine\UserInterface\DearImGui\ImGuiSource</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External Libraries\IMGUI\imgui_demo.cpp">
+      <Filter>Program\Engine\UserInterface\DearImGui\ImGuiSource</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External Libraries\IMGUI\imgui_draw.cpp">
+      <Filter>Program\Engine\UserInterface\DearImGui\ImGuiSource</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External Libraries\IMGUI\imgui_tables.cpp">
+      <Filter>Program\Engine\UserInterface\DearImGui\ImGuiSource</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External Libraries\IMGUI\imgui_widgets.cpp">
+      <Filter>Program\Engine\UserInterface\DearImGui\ImGuiSource</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1234,6 +1261,15 @@
     </ClInclude>
     <ClInclude Include="UIButton.hpp">
       <Filter>Program\Engine\UserInterface\UIButton</Filter>
+    </ClInclude>
+    <ClInclude Include="ImguiWrapper.hpp">
+      <Filter>Program\Engine\UserInterface\DearImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External Libraries\IMGUI\backends\imgui_impl_opengl3.h">
+      <Filter>Program\Engine\UserInterface\DearImGui\ImGuiSource</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External Libraries\IMGUI\backends\imgui_impl_glfw.h">
+      <Filter>Program\Engine\UserInterface\DearImGui\ImGuiSource</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

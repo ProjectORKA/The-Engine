@@ -48,12 +48,16 @@ struct CPUTexture {
 	Int wrapping = repeat;
 	Bool loaded = false;
 
-	void unload();
 	Float getRed(UInt x, UInt y);
 	Float getGreen(UInt x, UInt y);
 	Float getBlue(UInt x, UInt y);
-	Float getAlpha(UInt x, UInt y);
 	Float getRed(Float x, Float y);
+	Float getAlpha(UInt x, UInt y);
+	Float getGreen(Float x, Float y);
+	Float getBlue(Float x, Float y);
+	Float getAlpha(Float x, Float y);
+
+	void unload();
 	void load(Name name);
 	void load(Path path, Name name);
 
