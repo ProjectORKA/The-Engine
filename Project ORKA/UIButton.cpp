@@ -3,6 +3,7 @@
 #include "Window.hpp"
 
 UIButton::UIButton() {
+
 }
 UIButton& UIButton::insert(UIElement& element) {
 	content = &element;
@@ -42,7 +43,6 @@ void UIButton::renderInteractive(TiledRectangle renderArea, Renderer& renderer) 
 	renderer.uniforms().mMatrix(matrixFromTiledRectangle(renderArea));
 
 	renderer.renderMesh("button");
-
 }
 void UIButton::mouseIsPressed(Window& window, MouseButton button, ActionState action, Int modifiers) {
 	if (button == MouseButton::L) {
