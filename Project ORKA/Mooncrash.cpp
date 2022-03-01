@@ -13,6 +13,8 @@ void MooncrashRenderer::render(TiledRectangle area, Renderer& renderer) {
 	if (right.pressed)		player.accelerationVector += player.camera.rightVector;
 	if (left.pressed)		player.accelerationVector -= player.camera.rightVector;
 
+	player.update(renderer);
+
 	player.render(renderer, skyRotationMatrix);
 
 	renderer.uniforms().sunDir(skyRotationMatrix * Vec4(0,0,1,0));

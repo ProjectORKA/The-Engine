@@ -11,6 +11,8 @@ void Miniverse::render(TiledRectangle area, Renderer& renderer) {
 	if (right.pressed)		player.accelerationVector += player.camera.rightVector;
 	if (left.pressed)		player.accelerationVector -= player.camera.rightVector;
 
+	player.update(renderer);
+
 	//preprocess
 	renderer.setWireframeMode();
 	renderer.setCulling(true);

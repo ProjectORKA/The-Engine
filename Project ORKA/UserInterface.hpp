@@ -14,8 +14,7 @@ struct UIImage : public UIElement {
 	Name name;
 
 	UIImage(Name name);
-	void render(TiledRectangle renderArea, Renderer& renderer)override;;
-
+	void render(TiledRectangle renderArea, Renderer& renderer)override;
 };
 struct UITextBox : public UIElement {
 	String* data;
@@ -33,8 +32,8 @@ struct UIContainer : public UIElement {
 
 	Vector<UIElement*> contents;
 
+	UIContainer& vertical();
 	UIContainer& horizontal();
-	UIContainer& vertical();;
 	UIContainer& insert(UIElement& element);
 	void render(TiledRectangle renderArea, Renderer& renderer) override;
 	void renderInteractive(TiledRectangle renderArea, Renderer& renderer)override;
@@ -42,6 +41,7 @@ struct UIContainer : public UIElement {
 };
 
 struct UserInterface {
+	
 	void run();
 
 	UIElement* currentlyActive = nullptr;

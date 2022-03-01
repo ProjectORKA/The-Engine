@@ -1,6 +1,6 @@
 
 //! #include "uniforms.glsl"
-
+in vec3 normal;
 in vec4 vertexColor;
 in vec4 worldPosition;
 in vec2 textureCoordinate; 
@@ -13,5 +13,6 @@ void main(){
 
 	col = normalize(col);
 
-	color = vec4(worldPosition.xyz,1);
+	color = vec4(mod(worldPosition.xyz,vec3(1)),1);
+	//color = vec4(worldPosition.xyz,1);
 };

@@ -4,9 +4,6 @@
 #include <random>
 #include <limits>
 
-Vec3 randomVec3() {
-	return Vec3(randomFloat(), randomFloat(), randomFloat());
-}
 ULong xorshf96() {
 	static ULong x = 123456789, y = 362436069, z = 521288629;
 	ULong t;
@@ -20,6 +17,9 @@ ULong xorshf96() {
 	z = t ^ x ^ y;
 
 	return z;
+}
+Vec3 randomVec3() {
+	return Vec3(randomFloat(), randomFloat(), randomFloat());
 }
 Vec2 randomVec2() {
 	return Vec2(randomFloat(), randomFloat());
@@ -58,6 +58,9 @@ Vec3 randomVec3(Float high) {
 Float randomFloat(Float high) {
 	return randomFloat(0, high);
 }
+Vec3 randomVec3(Vec3 low, Vec3 high) {
+	return Vec3(randomFloat(low.x,high.x), randomFloat(low.y,high.y), randomFloat(low.z,high.z));
+}
 Vec3 randomPointInSphere(Float radius) {
 	Vec3 v;
 	do {
@@ -78,9 +81,9 @@ Float randomFloat(Float low, Float high)
 {
 	return low + (Float(xorshf96()) / Float(ULONG_MAX) * (Float(high - low)));
 }
-Vec3 randomPointOnSphereAtLocation(Float radius, Vec3 location) {
-	return randomPointOnSphere(radius) + location;
-}
 Vec3 randomPointOnSphereAtLocation(Vec4 sphere) {
 	return randomPointOnSphere(sphere.w) + Vec3(sphere);
+}
+Vec3 randomPointOnSphereAtLocation(Float radius, Vec3 location) {
+	return randomPointOnSphere(radius) + location;
 }

@@ -5,8 +5,7 @@
 
 #include "Random.hpp"
 
-void Sandbox::render(TiledRectangle area, Renderer& renderer) {
-	mutex.lock();
+void Sandbox::update(Renderer& renderer) {
 
 	player.speed = pow(1.2, player.speedExponent);
 
@@ -17,7 +16,16 @@ void Sandbox::render(TiledRectangle area, Renderer& renderer) {
 	if (right.pressed)		player.accelerationVector += player.camera.rightVector;
 	if (left.pressed)		player.accelerationVector -= player.camera.rightVector;
 
-	player.render(renderer); //[TODO] get rid of this vvvvvvvv
+	player.update(renderer);
+
+	noct.update(player.camera.location);
+}
+
+void Sandbox::mouseIsMoving(Window& window, IVec2 position) {
+	if (inputManager.isCapturing(window))player.camera.rotate(Vec2(position) * Vec2(mouseSensitivity));
+}
+void Sandbox::render(TiledRectangle area, Renderer& renderer) {
+	mutex.lock();
 
 	renderer.setWireframeMode();
 	renderer.setCulling(true);
@@ -30,15 +38,9 @@ void Sandbox::render(TiledRectangle area, Renderer& renderer) {
 
 	//////////////////////////////////////////////////////////////////////////////
 
-	sm.update();
+	
 
-	sm.render(renderer);
-
-	//tree.update(player.camera.location);
-	//tree.render(renderer);
-
-	//dmt.update(player.camera);
-	//dmt.render(renderer);
+	noct.render(renderer);
 
 	renderer.setDepthTest(false);
 	renderer.screenSpace();
@@ -46,41 +48,33 @@ void Sandbox::render(TiledRectangle area, Renderer& renderer) {
 
 	////////////////////////
 
-
 	mutex.unlock();
-}
-void Sandbox::mouseIsMoving(Window& window, IVec2 position) {
-	if (inputManager.isCapturing(window))player.camera.rotate(Vec2(position) * Vec2(mouseSensitivity));
 }
 void Sandbox::mouseIsScrolled(Window& window, Double xAxis, Double yAxis) {
 	player.speedExponent += yAxis;
 }
+void Sandbox::buttonIsPressed(Window& window, Key keyID, ActionState action, Int modifiers) {
+	Bool pressed = (action != ActionState::Release);
+	switch (keyID) {
+	case Key::F: if (pressed) window.renderer.wireframeMode = !window.renderer.wireframeMode;
+		break;
+	case Key::W: forward.pressed = pressed;
+		break;
+	case Key::S: backward.pressed = pressed;
+		break;
+	case Key::A: left.pressed = pressed;
+		break;
+	case Key::D: right.pressed = pressed;
+		break;
+	case Key::Q: downward.pressed = pressed;
+		break;
+	case Key::E: upward.pressed = pressed;
+		break;
+	default:
+		break;
+	}
+}
 void Sandbox::mouseIsPressed(Window& window, MouseButton button, ActionState action, Int modifiers) {
 	if (button == MouseButton::LEFT && action == ActionState::Press) inputManager.captureCursor(window);
 	if (button == MouseButton::RIGHT && action == ActionState::Press) inputManager.uncaptureCursor(window);
-}
-void Sandbox::buttonIsPressed(Window& window, Key keyID, ActionState action, Int modifiers) {
-	if (action == ActionState::Press) {
-
-		Bool pressed = action == ActionState::Press;
-
-		switch (keyID) {
-		case Key::F: if(pressed) window.renderer.wireframeMode = !window.renderer.wireframeMode;
-			break;
-		case Key::W: forward.pressed = pressed;
-			break;
-		case Key::S: backward.pressed = pressed;
-			break;
-		case Key::A: left.pressed = pressed;
-			break;
-		case Key::D: right.pressed = pressed;
-			break;
-		case Key::Q: downward.pressed = pressed;
-			break;
-		case Key::E: upward.pressed = pressed;
-			break;
-		default:
-			break;
-		}
-	}
 }

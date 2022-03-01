@@ -47,6 +47,9 @@ UInt nextPowerOfTwo(UInt& value)
 	while (powerOfTwo < value) powerOfTwo <<= 1;
 	return powerOfTwo;
 }
+Bool withinLength(Vec3 a, Float b) {
+	return (a.x* a.x + a.y * a.y + a.z * a.z) < (b * b);
+};
 LDouble dmod(LDouble x, LDouble y) {
 	return x - (ULL)(x / y) * y; //[TODO] check if it actually works
 }
@@ -57,6 +60,9 @@ Vec3 lerp(Vec3 a, Vec3 b, Float alpha) {
 	c.z = lerp(a.z, b.z, alpha);
 	return c;
 }
+Bool withinDiamondArea(Vec3 a, Float b) {
+	return (abs(a.x) + abs(a.y) + abs(a.z)) < 2 * b;
+};
 Orientation::Orientation(Vec3 direction) {
 	//this function just assumes +Z is up
 	z = normalize(direction);
@@ -154,6 +160,7 @@ Matrix matrixFromLocationAndSize(Vec3 location, Float size)
 	m[3] = Vec4(location, 1);
 	return m;
 }
+
 Matrix matrixFromOrientation(Orientation o, Vec3 position, Float size) {
 	return matrixFromAxis(o.x, o.y, o.z, position, size);
 }

@@ -24,7 +24,6 @@ CPUMesh Chunk::generateMesh() {
 	CPUMesh frontFace("voxelFront");
 	CPUMesh backFace("voxelBack");
 
-
 	for (Int x = 0; x < VOXEL_CHUNK_SIZE; x++) {
 		for (Int y = 0; y < VOXEL_CHUNK_SIZE; y++) {
 			for (Int z = 0; z < VOXEL_CHUNK_HEIGHT; z++) {
@@ -70,11 +69,17 @@ CPUMesh Chunk::generateMesh() {
 		}
 	}
 
+
 	terrain.checkIntegrity();
+
+	terrain.removeDoubles();
+
+	terrain.calculateSmoothNormals();
+	
 	return terrain;
 }
 
-void VoxelRenderer::render(Renderer& renderer, VoxelWorld& world) {
+void VoxelRenderer::render(Renderer& renderer) {
 	if (!terrainMesh.loaded)terrainMesh.upload(world.chunk.generateMesh());
 	else terrainMesh.render(renderer.uniforms());
 }

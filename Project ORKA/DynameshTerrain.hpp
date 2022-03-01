@@ -7,10 +7,16 @@ struct Renderer;
 struct Camera;
 
 struct DynameshNode {
+	Bool exists = true;
+
 	DynameshNode* parent = nullptr;
 
 	Vec3 position = Vec3(1);
 	Float size = 1.0f;
+
+	~DynameshNode() {
+		exists = false;
+	}
 
 	void render(Renderer& renderer);
 };
@@ -18,8 +24,8 @@ struct DynameshNode {
 struct DynameshTerrain {
 	Int lastIndex = 0;
 	Vector<DynameshNode> nodes;
+	Bool loaded = false;
 
-	void create();
 	void update(Camera camera);
 	void render(Renderer& renderer);
 };

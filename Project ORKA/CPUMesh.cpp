@@ -78,6 +78,22 @@ void CPUMesh::load(Name name)
 		else logDebug(String("Can not find mesh with name: (").append(name.data).append(")"));
 	}
 }
+void CPUMesh::removeDoubles() {
+	for (Int i = 0; i < vertices.size(); i++) {
+
+		Vec3 current = vertices[i];
+		Index currentID = i;
+
+		for (Int j = 0; j < vertices.size(); j++) {
+			if (vertices[j] == current) {
+
+				for (Int k = 0; k < indices.size(); k++) {
+					if (indices[k] == j)  indices[k] = currentID;
+				}
+			}
+		}
+	}
+}
 void CPUMesh::checkIntegrity() {
 	if (uvs.size() == vertices.size() && normals.size() == vertices.size()) readyForUpload = true;
 	else readyForUpload = false;

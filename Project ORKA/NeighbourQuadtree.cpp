@@ -1,9 +1,9 @@
 
-#include "NeighborQuadtree.hpp"
+#include "NeighbourQuadtree.hpp"
 #include "Renderer.hpp"
 
-NeighborQuadtreeNode& NeighborQuadtreeNode::nlr() {
-	NeighborQuadtreeNode* cur = this;
+NeighbourQuadtreeNode& NeighbourQuadtreeNode::nlr() {
+	NeighbourQuadtreeNode* cur = this;
 	while (!cur->nl) {
 		if (cur->parent) {
 			cur = cur->parent;
@@ -14,8 +14,8 @@ NeighborQuadtreeNode& NeighborQuadtreeNode::nlr() {
 	}
 	return *cur->nl;
 }
-NeighborQuadtreeNode& NeighborQuadtreeNode::nrr() {
-	NeighborQuadtreeNode* cur = this;
+NeighbourQuadtreeNode& NeighbourQuadtreeNode::nrr() {
+	NeighbourQuadtreeNode* cur = this;
 	while (!cur->nr) {
 		if (cur->parent) {
 			cur = cur->parent;
@@ -26,8 +26,8 @@ NeighborQuadtreeNode& NeighborQuadtreeNode::nrr() {
 	}
 	return *cur->nr;
 }
-NeighborQuadtreeNode& NeighborQuadtreeNode::nbr() {
-	NeighborQuadtreeNode* cur = this;
+NeighbourQuadtreeNode& NeighbourQuadtreeNode::nbr() {
+	NeighbourQuadtreeNode* cur = this;
 	while (!cur->nb) {
 		if (cur->parent) {
 			cur = cur->parent;
@@ -38,8 +38,8 @@ NeighborQuadtreeNode& NeighborQuadtreeNode::nbr() {
 	}
 	return *cur->nb;
 }
-NeighborQuadtreeNode& NeighborQuadtreeNode::nfr() {
-	NeighborQuadtreeNode* cur = this;
+NeighbourQuadtreeNode& NeighbourQuadtreeNode::nfr() {
+	NeighbourQuadtreeNode* cur = this;
 	while (!cur->nf) {
 		if (cur->parent) {
 			cur = cur->parent;
@@ -51,12 +51,12 @@ NeighborQuadtreeNode& NeighborQuadtreeNode::nfr() {
 	return *cur->nf;
 }
 
-void NeighborQuadtreeNode::subdivide() {
+void NeighbourQuadtreeNode::subdivide() {
 	if (!subdivided && (level < 8)) {
-		c00 = new NeighborQuadtreeNode();
-		c01 = new NeighborQuadtreeNode();
-		c10 = new NeighborQuadtreeNode();
-		c11 = new NeighborQuadtreeNode();
+		c00 = new NeighbourQuadtreeNode();
+		c01 = new NeighbourQuadtreeNode();
+		c10 = new NeighbourQuadtreeNode();
+		c11 = new NeighbourQuadtreeNode();
 
 		c00->create(*this,0,0);
 		c01->create(*this,0,1);
@@ -66,7 +66,7 @@ void NeighborQuadtreeNode::subdivide() {
 		subdivided = true;
 	}
 }
-void NeighborQuadtreeNode::unsubdivide() {
+void NeighbourQuadtreeNode::unsubdivide() {
 	if (subdivided) {
 		c00->unsubdivide();
 		c01->unsubdivide();
@@ -91,7 +91,7 @@ void NeighborQuadtreeNode::unsubdivide() {
 		subdivided = false;
 	}
 }
-void NeighborQuadtreeNode::update(Vec3 location) {
+void NeighbourQuadtreeNode::update(Vec3 location) {
 	if (distance(position, location) < pow(2, 5 - level)) {
 		subdivide();
 	}
@@ -106,7 +106,7 @@ void NeighborQuadtreeNode::update(Vec3 location) {
 		c11->update(location);
 	}
 }
-void NeighborQuadtreeNode::render(Renderer& renderer) {
+void NeighbourQuadtreeNode::render(Renderer& renderer) {
 	if (subdivided) {
 		c00->render(renderer);
 		c01->render(renderer);
@@ -131,13 +131,13 @@ void NeighborQuadtreeNode::render(Renderer& renderer) {
 		}
 	}
 }
-void NeighborQuadtreeNode::removeSelfFromNeighbours() {
+void NeighbourQuadtreeNode::removeSelfFromNeighbours() {
 	if (nf) nf->nb = nullptr;
 	if (nb) nb->nf = nullptr;
 	if (nr) nr->nl = nullptr;
 	if (nl) nl->nr = nullptr;
 }
-void NeighborQuadtreeNode::create(NeighborQuadtreeNode& parent, Bool x, Bool y) {
+void NeighbourQuadtreeNode::create(NeighbourQuadtreeNode& parent, Bool x, Bool y) {
 	
 	this->parent = &parent;
 	level = parent.level + 1;
@@ -182,19 +182,19 @@ void NeighborQuadtreeNode::create(NeighborQuadtreeNode& parent, Bool x, Bool y) 
 	if (nl) nl->nr = this;
 }
 
-void NeighborQuadtree::create() {
+void NeighbourQuadtree::create() {
 	root.nl = &root;
 	root.nr = &root;
 	root.nb = &root;
 	root.nf = &root;
 	root.position = Vec3(1, 1, 0);
 }
-void NeighborQuadtree::destroy() {
+void NeighbourQuadtree::destroy() {
 	root.unsubdivide();
 }
-void NeighborQuadtree::update(Vec3 location) {
+void NeighbourQuadtree::update(Vec3 location) {
 	root.update(location);
 }
-void NeighborQuadtree::render(Renderer& renderer) {
+void NeighbourQuadtree::render(Renderer& renderer) {
 	root.render(renderer);
 }

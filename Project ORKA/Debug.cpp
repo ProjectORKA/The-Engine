@@ -112,10 +112,6 @@ void logDebug(glm::highp_dvec3 t) {
 #endif // DEBUG
 }
 
-void printDebugLog() {
-	debugSystems[std::this_thread::get_id()].flush();
-}
-
 DebugTracker::~DebugTracker() {
 	DebugSystem& ds = debugSystems[std::this_thread::get_id()];
 	for (int i = 0; i < ds.level; i++) {

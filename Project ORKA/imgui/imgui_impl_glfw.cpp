@@ -1,3 +1,6 @@
+
+#include <iostream>
+
 // dear imgui: Platform Backend for GLFW
 // This needs to be used along with a Renderer (e.g. OpenGL3, Vulkan, WebGPU..)
 // (Info: GLFW is a cross-platform general purpose library for handling windows, inputs, OpenGL/Vulkan graphics context creation, etc.)
@@ -364,6 +367,9 @@ static void ImGui_ImplGlfw_UpdateMousePosAndButtons()
         double mouse_x, mouse_y;
         glfwGetCursorPos(mouse_window, &mouse_x, &mouse_y);
         io.MousePos = ImVec2((float)mouse_x, (float)mouse_y);
+
+        std::cout << mouse_x << std::endl;
+
     }
 }
 

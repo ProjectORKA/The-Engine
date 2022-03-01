@@ -57,88 +57,28 @@
 #include "ProjectMelon.hpp"
 #include "DungeonsAndDiscord.hpp"
 
-#define TESTING
-
-
-
-struct ImguiWrapper {
-	void create(APIWindow apiWindow) {
-		imguiInitiafhjsdahldhsal(apiWindow);
-	};
-};
-
-
-
-
-
-
-#include "imgui.h"
-
-struct DearImGui :public UIElement {
-	void update(Renderer& renderer) {};
-	void mouseIsMoving(Window& window, IVec2 position) {};
-	void render(TiledRectangle area, Renderer& renderer) {
-		ImGui::Text("Hello, world %d", 123);
-		if (ImGui::Button("Save"))
-			beep();
-	};
-	void filesDropped(Window& window, Vector<Path> paths) {};
-	void renderInteractive(TiledRectangle area, Renderer& renderer) {};
-	void mouseIsScrolled(Window& window, Double xAxis, Double yAxis) {};
-	void buttonIsPressed(Window& window, Key key, ActionState action, Int modifiers) {};
-	void mouseIsPressed(Window& window, MouseButton button, ActionState action, Int modifiers) {};
-};
+//#define TESTING
 
 Int main(Int  argc, Char* argv[]) {
 #ifndef TESTING
 
-	UIButton button;
+	Sandbox game;
 
 	window(
 		"ORKA",
 		Area(1600, 900),
 		true,
 		WindowState::windowed,
-		button
-		);
-
-
-	//window("ORKA", Area(1600, 900), true, WindowState::windowed)
-	//	.insert(container().vertical()
-	//		.insert(container()
-	//			.insert(button().padding(5))
-	//			.insert(button().padding(5))
-	//			.insert(button().padding(5)))
-	//			.insert(container()
-	//				.insert(button().padding(5))
-	//				.insert(button().padding(5))
-	//				.insert(button().padding(5)))
-	//		.insert(container()
-	//			.insert(button().padding(5))
-	//			.insert(button().padding(5))
-	//			.insert(button().padding(5)))
-	//	);
-
-	//UISandbox sandBox;
-
-	//window("ORKA", Area(1600, 900), true, WindowState::windowed).insert(sandBox);
-
+		game
+	);
 
 	gameSystem.run();
 	ui.run();
 	gameSystem.stop();
 
-
 #else
 	//testing code
 	/////////////////////////////////////////////////////////////////////////////////////////////////
-
-	Window window;
-
-	ImguiWrapper wrapper;
-
-	wrapper.create(window.apiWindow);
-
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////
 	pause();

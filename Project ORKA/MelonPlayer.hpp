@@ -8,7 +8,7 @@
 struct Renderer;
 
 struct MelonPlayer : public Player {
-	Int zoomFactor = 10;
+	Int zoomFactor = 30;
 	Vec3 location = Vec3(0);
 	Vec3 targetLocation = Vec3(0);
 	Vec3 velocity = Vec3(0);

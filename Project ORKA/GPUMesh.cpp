@@ -5,8 +5,8 @@
 void GPUMesh::unload() {
 	//make unavailable for rendering
 	if (loaded) {
-		loaded = false;
 		vao.unload();
+		loaded = false;
 	}
 }
 void GPUMesh::upload(CPUMesh cpuMesh) {

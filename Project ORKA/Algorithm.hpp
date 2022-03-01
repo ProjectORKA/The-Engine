@@ -2,10 +2,13 @@
 #pragma once
 
 #include "Basics.hpp"
+#include "Debug.hpp"
 
 void removePointsInRadius(Vec3 point, Vector<Vec3>& points, Float radius);
 void getClosestPoint(Vec3 point, Vector<Vec3>& points, Index& closestID, Vec3& closestPoint);
 void spaceColonization(Vector<Vec3> & points, Vector<Vec3> & branches, Vector<Index> & connections, Float segmentSize, Float killRadius);
+
+UInt fibonacciSequence(UInt iterations);
 
 Bool pointInsideSphere(Vec3 point, Sphere sphere);
 Bool pointInsideSpheres(Vec3 point, List<Sphere> spheres);

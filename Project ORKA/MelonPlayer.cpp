@@ -47,6 +47,9 @@ void MelonPlayer::update(Renderer& renderer) {
 }
 void MelonPlayer::render(Renderer& renderer) {
 	camera.render(renderer);
+	
+	renderer.screenSpace();
+	
 	renderer.arrow(lastLocationAtDistance, location);
 
 	//render player
