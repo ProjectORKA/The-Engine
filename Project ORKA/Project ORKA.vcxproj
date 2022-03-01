@@ -26,6 +26,13 @@
     <ClCompile Include="Algorithm.cpp" />
     <ClCompile Include="C++ Cheatsheet.cpp" />
     <ClCompile Include="GPUBuffer.cpp" />
+    <ClCompile Include="imgui\imgui.cpp" />
+    <ClCompile Include="imgui\imgui_demo.cpp" />
+    <ClCompile Include="imgui\imgui_draw.cpp" />
+    <ClCompile Include="imgui\imgui_impl_glfw.cpp" />
+    <ClCompile Include="imgui\imgui_impl_opengl3.cpp" />
+    <ClCompile Include="imgui\imgui_tables.cpp" />
+    <ClCompile Include="imgui\imgui_widgets.cpp" />
     <ClCompile Include="IndexFramebuffer.cpp" />
     <ClCompile Include="Instancing.cpp" />
     <ClCompile Include="MelonPlayer.cpp" />
@@ -33,6 +40,7 @@
     <ClCompile Include="Memory.cpp" />
     <ClCompile Include="Miniverse.cpp" />
     <ClCompile Include="Name.cpp" />
+    <ClCompile Include="NeighbourOctree.cpp" />
     <ClCompile Include="ParticleSystem.cpp" />
     <ClCompile Include="ProjectMelon.cpp" />
     <ClCompile Include="Random.cpp" />
@@ -54,7 +62,7 @@
     <ClCompile Include="MathDNA.cpp" />
     <ClCompile Include="MatrixSystem.cpp" />
     <ClCompile Include="Mooncrash.cpp" />
-    <ClCompile Include="NeighborQuadtree.cpp" />
+    <ClCompile Include="NeighbourQuadtree.cpp" />
     <ClCompile Include="NeuralNetwork.cpp" />
     <ClCompile Include="OctreeNode.cpp" />
     <ClCompile Include="PerlinNoise.cpp" />
@@ -135,6 +143,16 @@
     <ClInclude Include="File.hpp" />
     <ClInclude Include="GPUBuffer.hpp" />
     <ClInclude Include="GuessingGame.hpp" />
+    <ClInclude Include="ImguiWrapper.hpp" />
+    <ClInclude Include="imgui\imconfig.h" />
+    <ClInclude Include="imgui\imgui.h" />
+    <ClInclude Include="imgui\imgui_impl_glfw.h" />
+    <ClInclude Include="imgui\imgui_impl_opengl3.h" />
+    <ClInclude Include="imgui\imgui_impl_opengl3_loader.h" />
+    <ClInclude Include="imgui\imgui_internal.h" />
+    <ClInclude Include="imgui\imstb_rectpack.h" />
+    <ClInclude Include="imgui\imstb_textedit.h" />
+    <ClInclude Include="imgui\imstb_truetype.h" />
     <ClInclude Include="IndexFramebuffer.hpp" />
     <ClInclude Include="Instancing.hpp" />
     <ClInclude Include="Interactive.hpp" />
@@ -144,6 +162,7 @@
     <ClInclude Include="Memory.hpp" />
     <ClInclude Include="Miniverse.hpp" />
     <ClInclude Include="Name.hpp" />
+    <ClInclude Include="NeighbourOctree.hpp" />
     <ClInclude Include="ParticleSystem.hpp" />
     <ClInclude Include="PoolAllocator.hpp" />
     <ClInclude Include="ProjectMelon.hpp" />
@@ -161,7 +180,7 @@
     <ClInclude Include="JobSystem.hpp" />
     <ClInclude Include="MathDNA.hpp" />
     <ClInclude Include="Message.hpp" />
-    <ClInclude Include="NeighborQuadtree.hpp" />
+    <ClInclude Include="NeighbourQuadtree.hpp" />
     <ClInclude Include="NeuralNetwork.hpp" />
     <ClInclude Include="PerlinNoise.hpp" />
     <ClInclude Include="PlanetSystemPlayer.hpp" />
@@ -250,7 +269,6 @@
     <ClInclude Include="RenderObjectSystem.hpp" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="ShaderSystem.hpp" />
-    <ClInclude Include="Shapes.hpp" />
     <ClInclude Include="QuadtreeSystem.hpp" />
     <ClInclude Include="TextRenderSystem.hpp" />
     <ClInclude Include="TextureSystem.hpp" />
@@ -423,7 +441,7 @@ XCOPY "$(SolutionDir)External Libraries\ASSIMP\lib\lib 32\debug" "$(TargetDir)" 
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)External Libraries\OpenAL\include;$(SolutionDir)External Libraries\STBIMAGE;$(SolutionDir)External Libraries\FREETYPE\include;$(SolutionDir)External Libraries\ASIO\asio-1.18.1\include;$(SolutionDir)External Libraries\freetype-2.10.4\include;$(SolutionDir)External Libraries\STB IMAGE;$(SolutionDir)External Libraries\ASSIMP\include;$(SolutionDir)External Libraries\GLM;$(SolutionDir)External Libraries\GLEW\include;$(SolutionDir)External Libraries\GLFW 64 bit\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)External Libraries\STBIMAGE;$(SolutionDir)External Libraries\FREETYPE\include;$(SolutionDir)External Libraries\ASIO\asio-1.18.1\include;$(SolutionDir)External Libraries\STB IMAGE;$(SolutionDir)External Libraries\ASSIMP\include;$(SolutionDir)External Libraries\GLM;$(SolutionDir)External Libraries\GLEW\include;$(SolutionDir)External Libraries\GLFW 64 bit\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <SupportJustMyCode>true</SupportJustMyCode>
@@ -437,7 +455,7 @@ XCOPY "$(SolutionDir)External Libraries\ASSIMP\lib\lib 32\debug" "$(TargetDir)" 
     <Link>
       <AdditionalLibraryDirectories>G:\DATA\PROJEKTE\ORKA\GAME ENGINE\SOURCE CODE\External Libraries\OpenAL\libs\Win64;$(SolutionDir)External Libraries\FREETYPE\release static\vs2015-2022\win64;G:\DATA\PROJEKTE\ORKA\GAME ENGINE\SOURCE CODE\External Libraries\FREETYPE\release static\vs2015-2022\win64;$(SolutionDir)\External Libraries\ASSIMP\lib\lib 64\debug;$(SolutionDir)\External Libraries\GLFW 64 bit\lib-vc2015;$(SolutionDir)\External Libraries\GLEW\lib\Release\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
-      <AdditionalDependencies>opengl32.lib;freetype.lib;OpenAL32.lib;assimp-vc141-mtd.lib;glfw3.lib;glew32s.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>opengl32.lib;freetype.lib;assimp-vc141-mtd.lib;glfw3.lib;glew32s.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>
       </IgnoreSpecificDefaultLibraries>
       <SubSystem>Console</SubSystem>
@@ -490,7 +508,7 @@ XCOPY "$(SolutionDir)External Libraries\ASSIMP\lib\lib 32\release" "$(TargetDir)
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)External Libraries\OpenAL\include;$(SolutionDir)External Libraries\STBIMAGE;$(SolutionDir)External Libraries\FREETYPE\include;$(SolutionDir)External Libraries\ASIO\asio-1.18.1\include;$(SolutionDir)External Libraries\freetype-2.10.4\include;$(SolutionDir)External Libraries\STB IMAGE;$(SolutionDir)External Libraries\ASSIMP\include;$(SolutionDir)External Libraries\GLM;$(SolutionDir)External Libraries\GLEW\include;$(SolutionDir)External Libraries\GLFW 64 bit\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)External Libraries\STBIMAGE;$(SolutionDir)External Libraries\FREETYPE\include;$(SolutionDir)External Libraries\ASIO\asio-1.18.1\include;$(SolutionDir)External Libraries\STB IMAGE;$(SolutionDir)External Libraries\ASSIMP\include;$(SolutionDir)External Libraries\GLM;$(SolutionDir)External Libraries\GLEW\include;$(SolutionDir)External Libraries\GLFW 64 bit\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <FloatingPointModel>Fast</FloatingPointModel>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -503,7 +521,7 @@ XCOPY "$(SolutionDir)External Libraries\ASSIMP\lib\lib 32\release" "$(TargetDir)
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>opengl32.lib;freetype.lib;OpenAL32.lib;assimp-vc141-mt.lib;glfw3.lib;glew32s.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>opengl32.lib;freetype.lib;assimp-vc141-mt.lib;glfw3.lib;glew32s.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>G:\DATA\PROJEKTE\ORKA\GAME ENGINE\SOURCE CODE\External Libraries\OpenAL\libs\Win64;$(SolutionDir)External Libraries\FREETYPE\release static\vs2015-2022\win64;$(SolutionDir)\External Libraries\FREETYPE\release static\vs2015-2022\win64;$(SolutionDir)\External Libraries\ASSIMP\lib\lib 64\release;$(SolutionDir)\External Libraries\GLFW 64 bit\lib-vc2015;$(SolutionDir)\External Libraries\GLEW\lib\Release\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <IgnoreSpecificDefaultLibraries>

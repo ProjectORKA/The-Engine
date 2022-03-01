@@ -6,7 +6,7 @@
 #include "GPUMesh.hpp"
 #include "PerlinNoise.hpp"
 
-#define VOXEL_CHUNK_SIZE 512
+#define VOXEL_CHUNK_SIZE 64
 #define VOXEL_CHUNK_HEIGHT 64
 
 struct Renderer;
@@ -24,6 +24,6 @@ struct VoxelWorld {
 
 struct VoxelRenderer {
 	GPUMesh terrainMesh;
-
-	void render(Renderer& renderer, VoxelWorld& world);
+	VoxelWorld world;
+	void render(Renderer& renderer);
 };

@@ -224,20 +224,11 @@
     <Filter Include="Program\Engine\UserInterface\Window\Renderer\MeshSystem\Instancing">
       <UniqueIdentifier>{7709abac-b0c7-46ce-915d-55abc2479d1c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Program\Engine\DynaMesh">
-      <UniqueIdentifier>{eb7532c1-33e4-4de2-b084-a48370e46094}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Program\Engine\Neighbor Quadtree">
-      <UniqueIdentifier>{db6fabdc-a005-4d7b-918f-c9ae1472cf48}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Program\Engine\ParticleSystem">
       <UniqueIdentifier>{ae20cd96-66ca-4152-9d71-d573d411b6da}</UniqueIdentifier>
     </Filter>
     <Filter Include="Program\Engine\Sky">
       <UniqueIdentifier>{504a2795-c6b2-41e3-a86c-dc03c5a6c7cd}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Program\Engine\VoxelSystem">
-      <UniqueIdentifier>{066c9a7c-d376-470c-be5c-36eac774b9b5}</UniqueIdentifier>
     </Filter>
     <Filter Include="Program\Engine\Scene">
       <UniqueIdentifier>{be866374-722f-4bcf-9146-7d739134fbdb}</UniqueIdentifier>
@@ -262,9 +253,6 @@
     </Filter>
     <Filter Include="Program\Engine\Memory\DeadVector">
       <UniqueIdentifier>{6eb36015-c068-4698-b37b-9d88d54cd565}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Program\Engine\SphereMeshing">
-      <UniqueIdentifier>{3d18f830-87cf-4e87-9d59-5a4f6ca024af}</UniqueIdentifier>
     </Filter>
     <Filter Include="Program\Engine\Memory\TLSF">
       <UniqueIdentifier>{338f62f5-3ee5-4d43-b6f9-a20ad5af94d2}</UniqueIdentifier>
@@ -443,9 +431,6 @@
     <Filter Include="Program\Engine\Memory\Allocators\StaticAllocator">
       <UniqueIdentifier>{821f70b3-7812-4388-a1f8-549e6a4eb353}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Program\Engine\NeuralNetwork">
-      <UniqueIdentifier>{5643a6f8-d2a4-4abf-81fa-b659d065704c}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Program\Engine\ECS">
       <UniqueIdentifier>{e7dad1e4-3920-4c3a-ace2-d61daf304b6e}</UniqueIdentifier>
     </Filter>
@@ -482,23 +467,44 @@
     <Filter Include="Program\Engine\PlanetSystem\Util">
       <UniqueIdentifier>{6ed910bb-6133-44bf-a110-ddd23522025a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Program\Engine\TerrainSystem">
-      <UniqueIdentifier>{ef6cbb06-4831-4093-a235-241cc5130c14}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Program\Engine\TreeSystem">
-      <UniqueIdentifier>{ddfc7411-f058-42c4-90fa-8ccb5f0ea0db}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Program\Common\FileSystem\File">
       <UniqueIdentifier>{f695857c-3660-4078-913b-0fc7ca5e5446}</UniqueIdentifier>
     </Filter>
     <Filter Include="Program\Engine\UserInterface\UIButton">
       <UniqueIdentifier>{32eb8225-ba4f-432f-b645-236fc5245d93}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Program\Engine\UserInterface\DearImGui">
+    <Filter Include="Program\Engine\UserInterface\ImGui">
       <UniqueIdentifier>{de2da536-787c-42ca-8c01-97da644955a6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Program\Engine\UserInterface\DearImGui\ImGuiSource">
-      <UniqueIdentifier>{e0025ebd-74ec-4fd0-93e2-10647161a12a}</UniqueIdentifier>
+    <Filter Include="Program\Engine\UserInterface\ImGui\ImGui Source">
+      <UniqueIdentifier>{0ca77478-3a21-49e2-9049-6a7ca3100f23}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\Games\Pototypes">
+      <UniqueIdentifier>{ea91a823-2692-48c9-847a-c1bf7c1b4cac}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\Games\Pototypes\VoxelSystem">
+      <UniqueIdentifier>{066c9a7c-d376-470c-be5c-36eac774b9b5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\Games\Pototypes\TreeSystem">
+      <UniqueIdentifier>{ddfc7411-f058-42c4-90fa-8ccb5f0ea0db}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\Games\Pototypes\TerrainSystem">
+      <UniqueIdentifier>{ef6cbb06-4831-4093-a235-241cc5130c14}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\Games\Pototypes\SphereMeshing">
+      <UniqueIdentifier>{3d18f830-87cf-4e87-9d59-5a4f6ca024af}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\Games\Pototypes\NeuralNetwork">
+      <UniqueIdentifier>{5643a6f8-d2a4-4abf-81fa-b659d065704c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\Games\Pototypes\DynaMesh">
+      <UniqueIdentifier>{eb7532c1-33e4-4de2-b084-a48370e46094}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\Games\Pototypes\NeighbourOctree">
+      <UniqueIdentifier>{ba07d2d6-d92e-44b1-9e02-a2e66bc06941}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\Games\Pototypes\Neighbour Quadtree">
+      <UniqueIdentifier>{db6fabdc-a005-4d7b-918f-c9ae1472cf48}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -612,7 +618,7 @@
       <Filter>Program\Engine\UserInterface\Window\Renderer\PlanetRenderSystem\RelativeChunkOffset</Filter>
     </ClCompile>
     <ClCompile Include="TerrainSystem.cpp">
-      <Filter>Program\Engine\TerrainSystem</Filter>
+      <Filter>Program\Games\Pototypes\TerrainSystem</Filter>
     </ClCompile>
     <ClCompile Include="WindowAPI.cpp">
       <Filter>Program\Engine\UserInterface\Window\WindowAPI</Filter>
@@ -696,7 +702,7 @@
       <Filter>Program\Engine\UserInterface\Window\Renderer\TextRenderSystem\BitmapTextRenderSystem</Filter>
     </ClCompile>
     <ClCompile Include="NeuralNetwork.cpp">
-      <Filter>Program\Engine\NeuralNetwork</Filter>
+      <Filter>Program\Games\Pototypes\NeuralNetwork</Filter>
     </ClCompile>
     <ClCompile Include="MathDNA.cpp">
       <Filter>Program\Games\Game\Math DNA</Filter>
@@ -723,7 +729,7 @@
       <Filter>Program\Common\Math\Algorithm</Filter>
     </ClCompile>
     <ClCompile Include="TreeSystem.cpp">
-      <Filter>Program\Engine\TreeSystem</Filter>
+      <Filter>Program\Games\Pototypes\TreeSystem</Filter>
     </ClCompile>
     <ClCompile Include="Transform.cpp">
       <Filter>Program\Common\Transform</Filter>
@@ -735,10 +741,10 @@
       <Filter>Program\Engine\Sky</Filter>
     </ClCompile>
     <ClCompile Include="DynameshTerrain.cpp">
-      <Filter>Program\Engine\DynaMesh</Filter>
+      <Filter>Program\Games\Pototypes\DynaMesh</Filter>
     </ClCompile>
     <ClCompile Include="VoxelSystem.cpp">
-      <Filter>Program\Engine\VoxelSystem</Filter>
+      <Filter>Program\Games\Pototypes\VoxelSystem</Filter>
     </ClCompile>
     <ClCompile Include="PointCloud.cpp">
       <Filter>Program\Common\Data\PointCloud</Filter>
@@ -746,8 +752,8 @@
     <ClCompile Include="BranchStructure.cpp">
       <Filter>Program\Common\Data\BranchStructure</Filter>
     </ClCompile>
-    <ClCompile Include="NeighborQuadtree.cpp">
-      <Filter>Program\Engine\Neighbor Quadtree</Filter>
+    <ClCompile Include="NeighbourQuadtree.cpp">
+      <Filter>Program\Games\Pototypes\Neighbour Quadtree</Filter>
     </ClCompile>
     <ClCompile Include="Server.cpp">
       <Filter>Program\Engine\Networking</Filter>
@@ -813,26 +819,29 @@
     <ClCompile Include="UIButton.cpp">
       <Filter>Program\Engine\UserInterface\UIButton</Filter>
     </ClCompile>
-    <ClCompile Include="..\External Libraries\IMGUI\backends\imgui_impl_opengl3.cpp">
-      <Filter>Program\Engine\UserInterface\DearImGui\ImGuiSource</Filter>
+    <ClCompile Include="imgui\imgui.cpp">
+      <Filter>Program\Engine\UserInterface\ImGui\ImGui Source</Filter>
     </ClCompile>
-    <ClCompile Include="..\External Libraries\IMGUI\backends\imgui_impl_glfw.cpp">
-      <Filter>Program\Engine\UserInterface\DearImGui\ImGuiSource</Filter>
+    <ClCompile Include="imgui\imgui_demo.cpp">
+      <Filter>Program\Engine\UserInterface\ImGui\ImGui Source</Filter>
     </ClCompile>
-    <ClCompile Include="..\External Libraries\IMGUI\imgui.cpp">
-      <Filter>Program\Engine\UserInterface\DearImGui\ImGuiSource</Filter>
+    <ClCompile Include="imgui\imgui_draw.cpp">
+      <Filter>Program\Engine\UserInterface\ImGui\ImGui Source</Filter>
     </ClCompile>
-    <ClCompile Include="..\External Libraries\IMGUI\imgui_demo.cpp">
-      <Filter>Program\Engine\UserInterface\DearImGui\ImGuiSource</Filter>
+    <ClCompile Include="imgui\imgui_impl_glfw.cpp">
+      <Filter>Program\Engine\UserInterface\ImGui\ImGui Source</Filter>
     </ClCompile>
-    <ClCompile Include="..\External Libraries\IMGUI\imgui_draw.cpp">
-      <Filter>Program\Engine\UserInterface\DearImGui\ImGuiSource</Filter>
+    <ClCompile Include="imgui\imgui_impl_opengl3.cpp">
+      <Filter>Program\Engine\UserInterface\ImGui\ImGui Source</Filter>
     </ClCompile>
-    <ClCompile Include="..\External Libraries\IMGUI\imgui_tables.cpp">
-      <Filter>Program\Engine\UserInterface\DearImGui\ImGuiSource</Filter>
+    <ClCompile Include="imgui\imgui_tables.cpp">
+      <Filter>Program\Engine\UserInterface\ImGui\ImGui Source</Filter>
     </ClCompile>
-    <ClCompile Include="..\External Libraries\IMGUI\imgui_widgets.cpp">
-      <Filter>Program\Engine\UserInterface\DearImGui\ImGuiSource</Filter>
+    <ClCompile Include="imgui\imgui_widgets.cpp">
+      <Filter>Program\Engine\UserInterface\ImGui\ImGui Source</Filter>
+    </ClCompile>
+    <ClCompile Include="NeighbourOctree.cpp">
+      <Filter>Program\Games\Pototypes\NeighbourOctree</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -905,9 +914,6 @@
     <ClInclude Include="Heightmap.hpp">
       <Filter>Program\Engine\PlanetSystem\Heightmap</Filter>
     </ClInclude>
-    <ClInclude Include="Shapes.hpp">
-      <Filter>Program\Common\Math</Filter>
-    </ClInclude>
     <ClInclude Include="OctreeSystem.hpp">
       <Filter>Program\Engine\PlanetSystem\OctreeSystem</Filter>
     </ClInclude>
@@ -969,7 +975,7 @@
       <Filter>Program\Engine\UserInterface\Window\Renderer\PlanetRenderSystem\RelativeChunkOffset</Filter>
     </ClInclude>
     <ClInclude Include="TerrainSystem.hpp">
-      <Filter>Program\Engine\TerrainSystem</Filter>
+      <Filter>Program\Games\Pototypes\TerrainSystem</Filter>
     </ClInclude>
     <ClInclude Include="QuadtreeID.hpp">
       <Filter>Program\Engine\PlanetSystem\QuadtreeSystem\QuadtreeID</Filter>
@@ -1047,7 +1053,7 @@
       <Filter>Program\Engine\UserInterface\Window\Renderer\SDFTerrainRenderer</Filter>
     </ClInclude>
     <ClInclude Include="TreeSystem.hpp">
-      <Filter>Program\Engine\TreeSystem</Filter>
+      <Filter>Program\Games\Pototypes\TreeSystem</Filter>
     </ClInclude>
     <ClInclude Include="AutoConstruct.hpp">
       <Filter>Program\Common\Advanced</Filter>
@@ -1101,7 +1107,7 @@
       <Filter>Program\Engine\Networking\ASIONetworking</Filter>
     </ClInclude>
     <ClInclude Include="NeuralNetwork.hpp">
-      <Filter>Program\Engine\NeuralNetwork</Filter>
+      <Filter>Program\Games\Pototypes\NeuralNetwork</Filter>
     </ClInclude>
     <ClInclude Include="MathDNA.hpp">
       <Filter>Program\Games\Game\Math DNA</Filter>
@@ -1155,13 +1161,13 @@
       <Filter>Program\Engine\Sky</Filter>
     </ClInclude>
     <ClInclude Include="DynameshTerrain.hpp">
-      <Filter>Program\Engine\DynaMesh</Filter>
+      <Filter>Program\Games\Pototypes\DynaMesh</Filter>
     </ClInclude>
     <ClInclude Include="VoxelSystem.hpp">
-      <Filter>Program\Engine\VoxelSystem</Filter>
+      <Filter>Program\Games\Pototypes\VoxelSystem</Filter>
     </ClInclude>
-    <ClInclude Include="NeighborQuadtree.hpp">
-      <Filter>Program\Engine\Neighbor Quadtree</Filter>
+    <ClInclude Include="NeighbourQuadtree.hpp">
+      <Filter>Program\Games\Pototypes\Neighbour Quadtree</Filter>
     </ClInclude>
     <ClInclude Include="Server.hpp">
       <Filter>Program\Engine\Networking</Filter>
@@ -1236,7 +1242,7 @@
       <Filter>Program\Engine\Memory\Allocators\PoolAllocator</Filter>
     </ClInclude>
     <ClInclude Include="SphereMeshing.hpp">
-      <Filter>Program\Engine\SphereMeshing</Filter>
+      <Filter>Program\Games\Pototypes\SphereMeshing</Filter>
     </ClInclude>
     <ClInclude Include="TLSFAllocator.h">
       <Filter>Program\Engine\Memory\TLSF</Filter>
@@ -1263,13 +1269,37 @@
       <Filter>Program\Engine\UserInterface\UIButton</Filter>
     </ClInclude>
     <ClInclude Include="ImguiWrapper.hpp">
-      <Filter>Program\Engine\UserInterface\DearImGui</Filter>
+      <Filter>Program\Engine\UserInterface\ImGui</Filter>
     </ClInclude>
-    <ClInclude Include="..\External Libraries\IMGUI\backends\imgui_impl_opengl3.h">
-      <Filter>Program\Engine\UserInterface\DearImGui\ImGuiSource</Filter>
+    <ClInclude Include="imgui\imconfig.h">
+      <Filter>Program\Engine\UserInterface\ImGui\ImGui Source</Filter>
     </ClInclude>
-    <ClInclude Include="..\External Libraries\IMGUI\backends\imgui_impl_glfw.h">
-      <Filter>Program\Engine\UserInterface\DearImGui\ImGuiSource</Filter>
+    <ClInclude Include="imgui\imgui.h">
+      <Filter>Program\Engine\UserInterface\ImGui\ImGui Source</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui\imgui_impl_glfw.h">
+      <Filter>Program\Engine\UserInterface\ImGui\ImGui Source</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui\imgui_impl_opengl3.h">
+      <Filter>Program\Engine\UserInterface\ImGui\ImGui Source</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui\imgui_internal.h">
+      <Filter>Program\Engine\UserInterface\ImGui\ImGui Source</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui\imstb_rectpack.h">
+      <Filter>Program\Engine\UserInterface\ImGui\ImGui Source</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui\imstb_textedit.h">
+      <Filter>Program\Engine\UserInterface\ImGui\ImGui Source</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui\imstb_truetype.h">
+      <Filter>Program\Engine\UserInterface\ImGui\ImGui Source</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui\imgui_impl_opengl3_loader.h">
+      <Filter>Program\Engine\UserInterface\ImGui\ImGui Source</Filter>
+    </ClInclude>
+    <ClInclude Include="NeighbourOctree.hpp">
+      <Filter>Program\Games\Pototypes\NeighbourOctree</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

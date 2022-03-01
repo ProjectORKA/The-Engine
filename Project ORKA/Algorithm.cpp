@@ -70,6 +70,21 @@ void spaceColonization(Vector<Vec3>& points, Vector<Vec3>& branches, Vector<Inde
 	}
 }
 
+UInt fibonacciSequence(UInt iterations) {
+	Bool isX = true;
+	UInt x = 1;
+	UInt y = 1;
+
+	for (UInt i = 0; i < iterations-3; i++) {
+		if (isX) x += y;
+		else y += x;
+		isX = !isX;
+	}
+
+	if (isX) return x;
+	else return y;
+}
+
 Float getDistanceToClosestPoint(Vec3 point, Vector<Vec3>& points) {
 	Float minimalDistance = distance(point, points[0]);
 	

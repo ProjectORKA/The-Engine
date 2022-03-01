@@ -11,7 +11,6 @@ struct Graph {
 
 	void add(Float value);
 };
-
 struct Orientation {
 	Vec3 x = Vec3(1, 0, 0);
 	Vec3 y = Vec3(0, 1, 0);
@@ -20,8 +19,6 @@ struct Orientation {
 	Orientation(Vec3 direction);
 	Orientation(Vec3 direction, Vec3 up);
 };
-
-
 
 Bool isOdd(ULL a);
 Bool isEven(ULL a);
@@ -34,7 +31,9 @@ Matrix matrixFromScale(Vec3 s);
 Float distance(Float a, Float b);
 UInt nextPowerOfTwo(UInt& value);
 LDouble dmod(LDouble x, LDouble y);
+Bool withinLength(Vec3 a, Float b);
 Vec3 lerp(Vec3 a, Vec3 b, Float alpha);
+Bool withinDiamondArea(Vec3 a, Float b);
 Matrix matrixFromLocation(Vec2 location);
 Matrix matrixFromLocation(Vec3 location);
 Float lerp(Float a, Float b, Float alpha);

@@ -5,12 +5,14 @@
 #include "Camera.hpp"
 #include "Transform.hpp"
 
-void DynameshTerrain::create() {
-	nodes.push_back(DynameshNode());
-	nodes.back().position = Vec3(1);
-}
-
 void DynameshTerrain::update(Camera camera) {
+	
+	if (!loaded) {
+		nodes.push_back(DynameshNode());
+		nodes.back().position = Vec3(1);
+		loaded = true;
+	}
+	
 	Int start = lastIndex;
 	Int end = start + 1000;
 	end = min(end, Int(nodes.size()));
@@ -56,7 +58,7 @@ void DynameshNode::render(Renderer& renderer) {
 	}
 }
 void DynameshTerrain::render(Renderer& renderer) {
-	renderer.useShader("sdfOctreeTerrain");
+	renderer.useShader("debug");
 	for (DynameshNode& node : nodes) {
 		node.render(renderer);
 	}

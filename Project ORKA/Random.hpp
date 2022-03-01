@@ -16,6 +16,7 @@ Vec3 randomVec3(Vec3 high);
 Vec2 randomVec2(Float high);
 Vec3 randomVec3(Float high);
 Float randomFloat(Float high);
+Vec3 randomVec3(Vec3 low, Vec3 high);
 Vec2 randomVec2(Float low, Float high);
 Vec3 randomPointInSphere(Float radius);
 Vec3 randomPointOnSphere(Float radius);

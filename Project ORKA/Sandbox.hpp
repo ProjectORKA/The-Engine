@@ -10,11 +10,10 @@
 struct Renderer;
 struct Window;
 
-#include "NeighborQuadtree.hpp"
+#include "NeighbourQuadtree.hpp"
+#include "NeighbourOctree.hpp"
 #include "DynameshTerrain.hpp"
-
 #include "SphereMeshing.hpp"
-
 
 struct Sandbox : public GameRenderer {
 	
@@ -29,20 +28,19 @@ struct Sandbox : public GameRenderer {
 	Float mouseSensitivity = 0.0015f;
 	Player player;
 
-
-	SphereMeshing sm;
+	NeighbourOctree noct;
 
 	Sandbox() {
-		//dmt.create();
-		//tree.create();
+		noct.create();
 	}
 	~Sandbox() {
-		//tree.destroy();
+		noct.destroy();
 	}
 
-	void render(TiledRectangle area, Renderer& renderer) override;
+	void update(Renderer& renderer) override;
 	void mouseIsMoving(Window& window, IVec2 position)  override;
-	void mouseIsScrolled(Window& window, Double xAxis, Double yAxis) override;;
+	void render(TiledRectangle area, Renderer& renderer) override;
+	void mouseIsScrolled(Window& window, Double xAxis, Double yAxis) override;
 	void mouseIsPressed(Window& window, MouseButton button, ActionState action, Int modifiers) override;
 	void buttonIsPressed(Window& window, Key key, ActionState action, Int modifiers) override;
 };

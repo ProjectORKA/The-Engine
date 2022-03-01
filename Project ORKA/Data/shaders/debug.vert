@@ -1,6 +1,7 @@
 
 //! #include "uniforms.glsl"
 
+out vec3 normal;
 out vec4 vertexColor;
 out vec4 worldPosition;
 
@@ -15,7 +16,7 @@ void main() {
 	}
 
 	worldPosition = vec4(wPos,1);
-
+	normal = normals;
 	gl_Position  = pMatrix * vMatrix * worldPosition;
 	vertexColor = vec4(vec3(vertex),1.0f);
 };

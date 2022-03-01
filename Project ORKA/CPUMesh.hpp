@@ -30,6 +30,7 @@ struct CPUMesh {
 
 	void saveMeshFile();
 	void load(Name name);
+	void removeDoubles();
 	void checkIntegrity();
 	void loadFBX(Path path);
 	void move(Vec3 moveVector);

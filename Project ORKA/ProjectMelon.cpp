@@ -19,6 +19,9 @@ void MelonRenderer::mouseIsMoving(Window& window, IVec2 position) {
 			player.targetLocation += delta;
 		}
 	}
+	else {
+		player.targetLocation = Vec3(position.x,-position.y,0);
+	}
 }
 void MelonRenderer::render(TiledRectangle area, Renderer& renderer) {
 	//setup
