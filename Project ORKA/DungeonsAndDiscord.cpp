@@ -242,3 +242,8 @@ DND::DND() {
 	gameSystem.add(world);
 	renderer = DNDRenderer(&world);
 }
+
+void DNDEntity::render(Renderer& renderer) {
+	transform.render(renderer);
+	renderer.renderMesh(meshName);
+}

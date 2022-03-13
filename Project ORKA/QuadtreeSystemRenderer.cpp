@@ -70,7 +70,7 @@ void QuadtreeNodeRenderData::unsubdivide()
 void QuadtreeNodeRenderData::loadTerrainMesh() {
 	if (!terrainMesh.loaded && equivalentQuadtreeNode->data.terrain) {
 		CPUMesh cpuMesh;
-		cpuMesh = createTerrainMesh(equivalentQuadtreeNode->data.terrain->heightmap, equivalentQuadtreeNode->id.level);
+		cpuMesh = createTerrainMesh(equivalentQuadtreeNode->data.terrain->heightmap);
 		terrainMesh.upload(cpuMesh);
 	}
 }

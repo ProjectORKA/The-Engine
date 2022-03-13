@@ -62,9 +62,9 @@ struct SphereMeshing {
 		if (!loaded) {
 			UInt gridSize = 64;
 			Float noiseSize = 4;
-			for (int x = 0; x < gridSize; x++) {
-				for (int y = 0; y < gridSize; y++) {
-					for (int z = 0; z < gridSize; z++) {
+			for (UInt x = 0; x < gridSize; x++) {
+				for (UInt y = 0; y < gridSize; y++) {
+					for (UInt z = 0; z < gridSize; z++) {
 						//Vec3 point = (Vec3(x, y, z) + randomVec3(-0.5, 0.5)) / Vec3(gridSize);
 						Vec3 point = Vec3(x, y, z) / Vec3(gridSize);
 						if (noise.octaveNoise0_1(point.x * noiseSize, point.y * noiseSize, point.z * noiseSize, 8) + point.z - 0.5 > 0.5) air.push_back(point);

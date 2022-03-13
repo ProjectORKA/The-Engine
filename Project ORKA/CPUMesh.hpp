@@ -3,6 +3,7 @@
 #include "Basics.hpp"
 #include "Math.hpp"
 #include "Debug.hpp"
+#include "Array2D.hpp"
 #include "FileSystem.hpp"
 #include "GraphicsAPI.hpp"
 //assimp 
@@ -38,14 +39,15 @@ struct CPUMesh {
 	void loadMeshFile(Path path);
 	void calculateSmoothNormals();
 	void render(Renderer& renderer);
+	void meshFromHeightmap(Array2D<Float>& heightmap, UInt size);
 };
 
 struct MeshHeader {
-	const unsigned int version = 1;
+	UInt version = 1;
 	Name meshName = "";
 	PrimitiveMode primitiveMode = PrimitiveMode::Triangles;
-	unsigned int vertexCount = 0;
-	unsigned int uvCount = 0;
-	unsigned int normalCount = 0;
-	unsigned int indexCount = 0;
+	UInt vertexCount = 0;
+	UInt uvCount = 0;
+	UInt normalCount = 0;
+	UInt indexCount = 0;
 };

@@ -1,7 +1,7 @@
 #include "TerrainRendering.hpp"
 #include "Math.hpp"
 
-CPUMesh createTerrainMesh(AdvancedHeightMap& heightmap, UInt level)
+CPUMesh createTerrainMesh(AdvancedHeightMap & heightmap)
 {
 	if (heightmap.loaded) {
 		CPUMesh mesh;
@@ -27,12 +27,6 @@ CPUMesh createTerrainMesh(AdvancedHeightMap& heightmap, UInt level)
 				mesh.uvs.push_back(Vec2(position.x, position.y));
 			}
 		}
-
-		//for (Int y = 0; y < TERRAIN_MAP_SIZE; y++) {
-		//	for (Int x = 0; x < TERRAIN_MAP_SIZE; x++) {
-
-		//	}
-		//}
 		
 		//create indices
 		for (UInt y = 0; y < TERRAIN_MAP_SIZE - 1; y++) {	//very top row doesn't have triangle strip

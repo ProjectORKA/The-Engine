@@ -19,10 +19,7 @@ struct Window;
 struct DNDEntity {
 	Name meshName = "empty";
 	Transform transform;
-	void render(Renderer & renderer) {
-		transform.render(renderer);
-		renderer.renderMesh(meshName);
-	}
+	void render(Renderer& renderer);
 };
 
 struct DNDWorld : public GameSimulation {

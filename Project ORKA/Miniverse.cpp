@@ -26,9 +26,11 @@ void Miniverse::render(TiledRectangle area, Renderer& renderer) {
 
 	player.render(renderer);
 
-	renderer.useShader("miniverseShader");
-	renderer.uniforms().mMatrix(Matrix(1));
-	renderer.renderMesh("monkey");
+	renderer.useShader("miniverseUberShader");
+	//renderer.uniforms().mMatrix(Matrix(1));
+	//renderer.renderMesh("monkey");
+
+	renderer.renderMeshInstanced("miniverseTree",gameSimulation->treeTransforms);
 }
 void Miniverse::mouseIsMoving(Window& window, IVec2 position) {
 	if (inputManager.isCapturing(window))player.camera.rotate(Vec2(position) * Vec2(mouseSensitivity));
@@ -42,7 +44,7 @@ void Miniverse::mouseIsPressed(Window& window, MouseButton button, ActionState a
 }
 void Miniverse::buttonIsPressed(Window& window, Key key, ActionState action, Int modifiers) {
 	
-	Bool pressed = action == ActionState::Press;
+	Bool pressed = action > ActionState::Release;
 	
 	switch (key) {
 	case Key::F: if(pressed)window.renderer.wireframeMode = !window.renderer.wireframeMode;

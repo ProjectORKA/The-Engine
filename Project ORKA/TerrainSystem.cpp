@@ -46,7 +46,7 @@ Terrain::Terrain(TerrainSystem& terrainSystem, QuadtreeID id, Terrain* parentTer
 			LDouble height = terrainSystem.heightTextures[id.level].data[sampleX][sampleY];
 			terrainDistributionFunction(height);
 			height = (height - LDouble(0.5)) * LDouble(ULLONG_MAX);
-			LDouble impact = (1 / pow(2.5, id.level + 9));
+			LDouble impact = (1 / pow(2.5, id.level + 7));
 
 			heightmap.height[x][y] += height * impact;
 

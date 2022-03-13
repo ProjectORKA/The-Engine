@@ -1,10 +1,13 @@
 
 #include "Sandbox.hpp"
-
+#include "Random.hpp"
 #include "Window.hpp"
 
-#include "Random.hpp"
+Sandbox::Sandbox(SandboxSimulation& sim) {
+	simulation = &sim;
 
+	//system.create();
+}
 void Sandbox::update(Renderer& renderer) {
 
 	player.speed = pow(1.2, player.speedExponent);
@@ -18,9 +21,17 @@ void Sandbox::update(Renderer& renderer) {
 
 	player.update(renderer);
 
-	noct.update(player.camera.location);
-}
+	simulation->location = player.camera.location;
 
+	system.update();
+	system.update();
+	system.update();
+	system.update();
+	system.update();
+	system.update();
+	system.update();
+	system.update();
+}
 void Sandbox::mouseIsMoving(Window& window, IVec2 position) {
 	if (inputManager.isCapturing(window))player.camera.rotate(Vec2(position) * Vec2(mouseSensitivity));
 }
@@ -38,9 +49,7 @@ void Sandbox::render(TiledRectangle area, Renderer& renderer) {
 
 	//////////////////////////////////////////////////////////////////////////////
 
-	
-
-	noct.render(renderer);
+	system.render(renderer);
 
 	renderer.setDepthTest(false);
 	renderer.screenSpace();
@@ -77,4 +86,14 @@ void Sandbox::buttonIsPressed(Window& window, Key keyID, ActionState action, Int
 void Sandbox::mouseIsPressed(Window& window, MouseButton button, ActionState action, Int modifiers) {
 	if (button == MouseButton::LEFT && action == ActionState::Press) inputManager.captureCursor(window);
 	if (button == MouseButton::RIGHT && action == ActionState::Press) inputManager.uncaptureCursor(window);
+}
+
+void SandboxSimulation::update() {
+	//noct.update(location);
+}
+SandboxSimulation::SandboxSimulation() {
+	//system.create();
+}
+SandboxSimulation::~SandboxSimulation() {
+	//noct.destroy();
 }

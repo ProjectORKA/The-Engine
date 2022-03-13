@@ -313,3 +313,35 @@ void CPUMesh::render(Renderer & renderer) {
 	mesh.render(renderer.uniforms());
 	mesh.unload();
 }
+void CPUMesh::meshFromHeightmap(Array2D<Float> & heightmap, UInt size) {
+	name = "terrain";
+	primitiveMode = PrimitiveMode::TriangleStrip;
+	vertices.clear();
+	indices.clear();
+	normals.clear();
+	uvs.clear();
+
+	for (Int y = 0; y < size; y++) {
+		for (Int x = 0; x < size; x++) {
+			Vec3 position = Vec3(x, y, 0) / Vec3(size);
+			position.z = heightmap.get(x,y);
+			vertices.push_back(position);
+			normals.push_back(Vec3(0, 0, 1));
+			uvs.push_back(Vec2(position.x, position.y));
+		}
+	}
+
+	//create indices
+	for (UInt y = 0; y < size - 1; y++) {	//very top row doesn't have triangle strip
+		for (UInt x = 0; x < size; x++) {
+			if ((x == 0) && (y > 0))indices.push_back(x + size * (y + 1));
+			indices.push_back(x + (size * (y + 1)));
+			indices.push_back(x + (size * y));
+			if ((x == (size - 1)) && (y < (size - 1))) indices.push_back(x + size * y);
+		}
+	}
+
+	//calculateSmoothNormals();
+
+	checkIntegrity();
+}

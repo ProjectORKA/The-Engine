@@ -42,7 +42,7 @@ struct MooncrashRenderer : public GameRenderer {
 
 	MooncrashPlayer player;
 
-	MooncrashRenderer(MooncrashSimulation * simulation);
+	MooncrashRenderer(MooncrashSimulation & simulation);
 	void mouseIsMoving(Window& window, IVec2 position) override;
 	void render(TiledRectangle area, Renderer& renderer) override;
 	void mouseIsScrolled(Window& window, Double xAxis, Double yAxis) override;

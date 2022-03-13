@@ -3,4 +3,4 @@
 #include "CPUTexture.hpp"
 #include "Heightmap.hpp"
 
-CPUMesh createTerrainMesh(AdvancedHeightMap& heightmap, UInt level);
+CPUMesh createTerrainMesh(AdvancedHeightMap& heightmap);
