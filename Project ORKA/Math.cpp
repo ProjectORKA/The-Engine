@@ -160,6 +160,12 @@ Matrix matrixFromLocationAndSize(Vec3 location, Float size)
 	m[3] = Vec4(location, 1);
 	return m;
 }
+Matrix matrixFromLocationAndSize(Vec2 location, Float size)
+{
+	Matrix m(size);
+	m[3] = Vec4(location,0, 1);
+	return m;
+}
 
 Matrix matrixFromOrientation(Orientation o, Vec3 position, Float size) {
 	return matrixFromAxis(o.x, o.y, o.z, position, size);

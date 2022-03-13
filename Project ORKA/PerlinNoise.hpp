@@ -2,11 +2,6 @@
 #pragma once
 
 #include "Basics.hpp"
-
-
-//# include <cstdint>
-//# include <numeric>
-//# include <algorithm>
 # include <random>
 
 struct PerlinNoise

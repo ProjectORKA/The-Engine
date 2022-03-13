@@ -4,30 +4,12 @@
 #include "Basics.hpp"
 #include "Random.hpp"
 #include "Transform.hpp"
-
 #include "PointCloud.hpp"
 
 struct Renderer;
-
 struct NeighbourOctreeNode;
 
-struct NeighbourOctreeNodeData {
-	PointCloudRenderer pcr;
-	PointCloud points;
-	//Vec4 color = Vec4(randomVec3(), 1);
-	
-	void render(Renderer& renderer);
-	void create(NeighbourOctreeNode& node);
-	void update(NeighbourOctreeNode& node);
-	void destroy() {
-		
-	}
-};
-
 struct NeighbourOctreeNode {
-	
-	NeighbourOctreeNodeData data;
-	
 	NeighbourOctreeNode* parent = nullptr;
 
 	NeighbourOctreeNode* c000 = nullptr;
@@ -54,14 +36,18 @@ struct NeighbourOctreeNode {
 	NeighbourOctreeNode& ndr();
 
 	UChar level = 0;
-	Bool rendered = false;
+	Bool inRenderDistance = false;
+	Bool isTerrain = false;
+	Bool isSurface = false;
 	Vec3 position = Vec3(0);
-	Boolean subdivided = false;
+	Bool subdivided = false;
+	Bool hasAllNeighbours = false;
 
 	void subdivide();
 	void unsubdivide();
+	void updateIsSurface();
 	void update(Vec3 location);
-	void render(Renderer& renderer);
+	void updateHasAllNeighbours();
 	void removeSelfFromNeighbours();
 	void create(NeighbourOctreeNode& parent, Bool x, Bool y, Bool z);
 };
@@ -71,5 +57,6 @@ struct NeighbourOctree {
 	void create();
 	void destroy();
 	void update(Vec3 location);
-	void render(Renderer& renderer);
 };
+
+void renderNeighbourOctreeNode(NeighbourOctreeNode& node, Renderer& renderer);

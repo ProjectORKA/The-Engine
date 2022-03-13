@@ -11,15 +11,14 @@ void NeighbourOctree::create() {
 	root.nd = &root;
 
 	root.position = Vec3(10, 10, 0);
+	root.isTerrain = true;
+	root.isSurface = true;
 }
 void NeighbourOctree::destroy() {
 	root.unsubdivide();
 }
 void NeighbourOctree::update(Vec3 location) {
 	root.update(location);
-}
-void NeighbourOctree::render(Renderer& renderer) {
-	root.render(renderer);
 }
 
 NeighbourOctreeNode& NeighbourOctreeNode::nlr() {
@@ -96,7 +95,7 @@ NeighbourOctreeNode& NeighbourOctreeNode::ndr() {
 }
 
 void NeighbourOctreeNode::subdivide() {
-	if (!subdivided && (level < 8)) {
+	if (!subdivided && (level < 12)) {
 		c000 = new NeighbourOctreeNode();
 		c001 = new NeighbourOctreeNode();
 		c010 = new NeighbourOctreeNode();
@@ -120,6 +119,8 @@ void NeighbourOctreeNode::subdivide() {
 }
 void NeighbourOctreeNode::unsubdivide() {
 	if (subdivided) {
+		subdivided = false;
+
 		c000->unsubdivide();
 		c001->unsubdivide();
 		c010->unsubdivide();
@@ -138,15 +139,14 @@ void NeighbourOctreeNode::unsubdivide() {
 		c110->removeSelfFromNeighbours();
 		c111->removeSelfFromNeighbours();
 
-		c000->data.destroy();
-		c001->data.destroy();
-		c010->data.destroy();
-		c011->data.destroy();
-		c100->data.destroy();
-		c101->data.destroy();
-		c110->data.destroy();
-		c111->data.destroy();
-
+		//c000->data.destroy();
+		//c001->data.destroy();
+		//c010->data.destroy();
+		//c011->data.destroy();
+		//c100->data.destroy();
+		//c101->data.destroy();
+		//c110->data.destroy();
+		//c111->data.destroy();
 
 		delete c000;
 		delete c001;
@@ -166,16 +166,35 @@ void NeighbourOctreeNode::unsubdivide() {
 		c110 = nullptr;
 		c111 = nullptr;
 
-		subdivided = false;
+	}
+}
+void NeighbourOctreeNode::updateIsSurface()
+{
+	if (hasAllNeighbours) {
+		if (isTerrain) {
+			isSurface = !(nfr().isTerrain && nbr().isTerrain && nlr().isTerrain && nrr().isTerrain);
+		}
+		else {
+			isSurface = nfr().isTerrain || nbr().isTerrain || nlr().isTerrain || nrr().isTerrain;
+		}
+	}
+	else isSurface = true;
+
+	if (isSurface) {
+		NeighbourOctreeNode* curr = this;
+		while (curr) {
+			curr->isSurface = true;
+			curr = curr->parent;
+		}
 	}
 }
 void NeighbourOctreeNode::update(Vec3 location) {
-	
-	rendered = withinDiamondArea(position-location,pow(2, 5 - level));
-	
-	//if (!rendered) unsubdivide();
 
-	if (subdivided) {
+	inRenderDistance = withinDiamondArea(position - location, pow(2, 5 - level+1));
+
+	//if (!inRenderDistance) unsubdivide();
+
+	if (subdivided && inRenderDistance) {
 		c000->update(location);
 		c001->update(location);
 		c010->update(location);
@@ -186,47 +205,18 @@ void NeighbourOctreeNode::update(Vec3 location) {
 		c111->update(location);
 	}
 
-	if(rendered) subdivide();
-
-	data.update(*this);
+	if (inRenderDistance && isSurface) subdivide();
 }
-void NeighbourOctreeNode::render(Renderer& renderer) {
-	if (!rendered || !subdivided) {
-		Transform t;
-		t.location = position;
-		t.scale = pow(2, -level + 1);
-		t.render(renderer);
-
-		data.render(renderer);
-
-		//render connections
-		//if (level > 0) {
-		//	renderer.arrow(position, nrr().position);
-		//	renderer.arrow(position, nlr().position);
-		//	renderer.arrow(position, nfr().position);
-		//	renderer.arrow(position, nbr().position);
-		//	renderer.arrow(position, ntr().position);
-		//	renderer.arrow(position, ndr().position);
-		//}
-	}
-	else {
-		c000->render(renderer);
-		c001->render(renderer);
-		c010->render(renderer);
-		c011->render(renderer);
-		c100->render(renderer);
-		c101->render(renderer);
-		c110->render(renderer);
-		c111->render(renderer);
-	}
+void NeighbourOctreeNode::updateHasAllNeighbours() {
+	hasAllNeighbours = (nl && nr && nb && nf && nt && nd);
 }
 void NeighbourOctreeNode::removeSelfFromNeighbours() {
-	if (nf) nf->nb = nullptr;
-	if (nb) nb->nf = nullptr;
-	if (nr) nr->nl = nullptr;
-	if (nl) nl->nr = nullptr;
-	if (nt) nt->nd = nullptr;
-	if (nd) nd->nt = nullptr;
+	if (nf)nf->nb = nullptr;
+	if (nb)nb->nf = nullptr;
+	if (nr)nr->nl = nullptr;
+	if (nl)nl->nr = nullptr;
+	if (nt)nt->nd = nullptr;
+	if (nd)nd->nt = nullptr;
 }
 void NeighbourOctreeNode::create(NeighbourOctreeNode& parent, Bool x, Bool y, Bool z) {
 
@@ -325,37 +315,39 @@ void NeighbourOctreeNode::create(NeighbourOctreeNode& parent, Bool x, Bool y, Bo
 		}
 	}
 
-	//make sure neighbours have connection to this
-	if (nf) nf->nb = this;
-	if (nb) nb->nf = this;
-	if (nr) nr->nl = this;
-	if (nl) nl->nr = this;
-	if (nt) nt->nd = this;
-	if (nd) nd->nt = this;
+	Float noiseSize = 4;
+	isTerrain = noise.octaveNoise0_1(position.x * noiseSize, position.y * noiseSize, position.z * noiseSize, 8) + position.z - 0.5 < 0.5;
 
-	data.create(*this);
+	//make sure neighbours have connection to this (and update them for good measure)
+	if (nf) { nf->nb = this; nf->updateHasAllNeighbours(); nf->updateIsSurface();}
+	if (nb) { nb->nf = this; nb->updateHasAllNeighbours(); nb->updateIsSurface();}
+	if (nr) { nr->nl = this; nr->updateHasAllNeighbours(); nr->updateIsSurface();}
+	if (nl) { nl->nr = this; nl->updateHasAllNeighbours(); nl->updateIsSurface();}
+	if (nt) { nt->nd = this; nt->updateHasAllNeighbours(); nt->updateIsSurface();}
+	if (nd) { nd->nt = this; nd->updateHasAllNeighbours(); nd->updateIsSurface();}
+
+	updateHasAllNeighbours();
+	updateIsSurface();
 }
 
-void NeighbourOctreeNodeData::create(NeighbourOctreeNode& node) {
-	//for (Int i = 0; i < 10000; i++) {
-	//	Vec3 point = randomVec3(node.position - Vec3(pow(2, -node.level)), node.position + Vec3(pow(2, -node.level)));
-	//	Float noiseSize = 4;
-	//	if (noise.octaveNoise0_1(point.x * noiseSize, point.y * noiseSize, point.z * noiseSize, 8) + point.z - 0.5 < 0.5) points.add((point - node.position) / Vec3(pow(2, -node.level + 1)));
-	//}
-}
-void NeighbourOctreeNodeData::update(NeighbourOctreeNode& node) {
-	//if (points.points.size() < 10000) {
-	//	for (UInt i = 0; i < 1; i++) {
-	//		Vec3 point = randomVec3(node.position - Vec3(pow(2, -node.level)), node.position + Vec3(pow(2, -node.level)));
-	//		Float noiseSize = 4;
-	//		if (noise.octaveNoise0_1(point.x * noiseSize, point.y * noiseSize, point.z * noiseSize, 8) + point.z - 0.5 < 0.5) points.add((point - node.position) / Vec3(pow(2, -node.level + 1)));
-	//	}
-	//}
-};
-void NeighbourOctreeNodeData::render(Renderer& renderer) {
-	//renderer.fill(color);
-	renderer.useShader("debug");
-	renderer.renderMesh("centeredCube");
-	
-	//pcr.render(points, renderer);
+void renderNeighbourOctreeNode(NeighbourOctreeNode & node, Renderer& renderer) {
+	if (!node.inRenderDistance || !node.subdivided) {
+		if (node.isTerrain) {
+			Transform t;
+			t.location = node.position;
+			t.scale = pow(2, -node.level + 2);
+			t.render(renderer);
+			renderer.renderMesh("centeredCube");
+		}
+	}
+	else {
+		renderNeighbourOctreeNode(*node.c000,renderer);
+		renderNeighbourOctreeNode(*node.c001,renderer);
+		renderNeighbourOctreeNode(*node.c010,renderer);
+		renderNeighbourOctreeNode(*node.c011,renderer);
+		renderNeighbourOctreeNode(*node.c100,renderer);
+		renderNeighbourOctreeNode(*node.c101,renderer);
+		renderNeighbourOctreeNode(*node.c110,renderer);
+		renderNeighbourOctreeNode(*node.c111,renderer);
+	}
 }

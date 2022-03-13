@@ -44,6 +44,7 @@ Matrix matrixFromTiledRectangle(TiledRectangle area);
 Rotation getRotationBetweenVectors(Vec3 start, Vec3 dest);
 Matrix matrixFromLocationAndSize(Vec4 compressedTransform);
 Matrix matrixFromLocationAndSize(Vec3 location, Float size);
+Matrix matrixFromLocationAndSize(Vec2 location, Float size);
 Matrix matrixFromOrientation(Orientation o, Vec3 position, Float size);
 Matrix matrixFromAxis(Vec3 x, Vec3 y, Vec3 z, Vec3 position, Float size);
 

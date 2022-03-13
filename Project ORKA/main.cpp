@@ -61,8 +61,16 @@
 
 Int main(Int  argc, Char* argv[]) {
 #ifndef TESTING
+	 //MiniverseSimulation simulation;
+	 //Miniverse game(simulation);
 
-	Sandbox game;
+	SandboxSimulation sim;
+	gameSystem.add(sim);
+	Sandbox game(sim);
+
+	//MooncrashSimulation sim;
+	//gameSystem.add(sim);
+	//MooncrashRenderer game(sim);
 
 	window(
 		"ORKA",

@@ -15,6 +15,7 @@ Int randomInt(Int high);
 Vec3 randomVec3(Vec3 high);
 Vec2 randomVec2(Float high);
 Vec3 randomVec3(Float high);
+ULL random(ULL min, ULL max);
 Float randomFloat(Float high);
 Vec3 randomVec3(Vec3 low, Vec3 high);
 Vec2 randomVec2(Float low, Float high);

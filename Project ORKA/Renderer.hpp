@@ -14,6 +14,7 @@
 #include "RenderRegion.hpp"
 #include "SDFTerrainRenderSystem.hpp"
 #include "VoxelSystem.hpp"
+#include "LineRenderer.hpp"
 
 struct Player;
 struct Camera;
@@ -34,6 +35,7 @@ struct Renderer{
 	MeshSystem meshSystem;
 	ShaderSystem shaderSystem;
 	MatrixSystem matrixSystem;
+	LineRenderer lineRenderer;
 	TextureSystem textureSystem;
 	VoxelRenderer voxelRenderer;
 	TextRenderSystem textRenderSystem;
@@ -79,8 +81,10 @@ struct Renderer{
 	void clearColor(Color color);
 
 	//primitives
-	void line(Vec3 start, Vec3 end, Float width);
 	void arrow(Vec3 start, Vec3 end);
+	void circle(Vec2 pos, Float radius);
+	void line(Vec3 start, Vec3 end, Float width);
+	void line(Vec2 start, Vec2 end, Float width);
 
 	//text
 	void renderText(String text, Vec2 position, FontStyle font);

@@ -35,12 +35,15 @@
     <ClCompile Include="imgui\imgui_widgets.cpp" />
     <ClCompile Include="IndexFramebuffer.cpp" />
     <ClCompile Include="Instancing.cpp" />
+    <ClCompile Include="LevelledGraph.cpp" />
+    <ClCompile Include="LineRenderer.cpp" />
     <ClCompile Include="MelonPlayer.cpp" />
     <ClCompile Include="MelonWorld.cpp" />
     <ClCompile Include="Memory.cpp" />
     <ClCompile Include="Miniverse.cpp" />
     <ClCompile Include="Name.cpp" />
     <ClCompile Include="NeighbourOctree.cpp" />
+    <ClCompile Include="Molecules2D.cpp" />
     <ClCompile Include="ParticleSystem.cpp" />
     <ClCompile Include="ProjectMelon.cpp" />
     <ClCompile Include="Random.cpp" />
@@ -137,10 +140,12 @@
     <ClCompile Include="OctreeSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Array2D.hpp" />
     <ClInclude Include="BaseAllocator.hpp" />
     <ClInclude Include="Color.hpp" />
     <ClInclude Include="DeadVector.hpp" />
     <ClInclude Include="File.hpp" />
+    <ClInclude Include="GeometryClipmapTerrain.hpp" />
     <ClInclude Include="GPUBuffer.hpp" />
     <ClInclude Include="GuessingGame.hpp" />
     <ClInclude Include="ImguiWrapper.hpp" />
@@ -156,6 +161,8 @@
     <ClInclude Include="IndexFramebuffer.hpp" />
     <ClInclude Include="Instancing.hpp" />
     <ClInclude Include="Interactive.hpp" />
+    <ClInclude Include="LevelledGraph.hpp" />
+    <ClInclude Include="LineRenderer.hpp" />
     <ClInclude Include="Map.hpp" />
     <ClInclude Include="MelonPlayer.hpp" />
     <ClInclude Include="MelonWorld.hpp" />
@@ -163,6 +170,7 @@
     <ClInclude Include="Miniverse.hpp" />
     <ClInclude Include="Name.hpp" />
     <ClInclude Include="NeighbourOctree.hpp" />
+    <ClInclude Include="Molecules2D.hpp" />
     <ClInclude Include="ParticleSystem.hpp" />
     <ClInclude Include="PoolAllocator.hpp" />
     <ClInclude Include="ProjectMelon.hpp" />

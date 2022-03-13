@@ -5,11 +5,31 @@
 #include "Game.hpp"
 #include "Player.hpp"
 #include "KeyMap.hpp"
+#include "Transform.hpp"
+#include "Random.hpp"
 
 struct Window;
 
+#define MINIVERSE_TREE_COUNT 1024
+
+struct MiniverseSimulation : public GameSimulation {
+	Vector<Vec4> treeTransforms;
+
+	MiniverseSimulation() {
+		treeTransforms.resize(MINIVERSE_TREE_COUNT);
+		for (Vec4& t : treeTransforms) {
+			t.x = randomFloat(0.0f, 100.0f);
+			t.y = randomFloat(0.0f, 100.0f);
+			t.z = 0.0f;
+			t.w = randomFloat(0.5f, 1.2f);
+		}
+	}
+};
+
 struct Miniverse : public GameRenderer{
 	
+	MiniverseSimulation* gameSimulation = nullptr;
+
 	Action	forward;
 	Action	backward;
 	Action	left;
@@ -23,6 +43,11 @@ struct Miniverse : public GameRenderer{
 
 	//player
 	Player player;
+
+	Miniverse(MiniverseSimulation& simulation) {
+		gameSimulation = &simulation;
+	}
+	Miniverse() = delete;
 
 	void mouseIsMoving(Window& window, IVec2 position)  override;
 	void render(TiledRectangle area, Renderer& renderer) override;

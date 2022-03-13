@@ -34,17 +34,32 @@ void randomizeSeed() {
 	logDebug(String("Seed:").append(std::to_string(seed)));
 }
 ULL random(ULL size) {
+	if (size == 0) return 0;
+
 	std::random_device seed;
 	std::mt19937_64 randomizer(seed());
 	std::uniform_int_distribution<unsigned long long> distribution;
 
 	return distribution(randomizer) / (ULLONG_MAX / size);
 }
+ULL random(ULL min, ULL max) {
+	ULL range = max - min;
+	
+	if (range == 0) return 0;
+
+	std::random_device seed;
+	std::mt19937_64 randomizer(seed());
+	std::uniform_int_distribution<unsigned long long> distribution;
+
+	return distribution(randomizer) / (ULLONG_MAX / range) + min;
+}
+
 Vec3 randomUnitVec3() {
 	return normalize(randomPointInSphere(1));
 }
 Int randomInt(Int max) {
-	return rand() % max;
+	if (max < 1) return 0;
+	return xorshf96() % max;
 }
 Vec3 randomVec3(Vec3 high) {
 	return Vec3(randomFloat(high.x), randomFloat(high.y), randomFloat(high.z));

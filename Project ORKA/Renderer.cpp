@@ -24,23 +24,6 @@ void Renderer::begin()
 	clearColor(Color(Vec3(0), 0.0));	//and clears its contents
 	clearDepth();						//clears depth as to not accidentally hide geometry
 }
-void Renderer::create(Area size)
-{
-	randomizeSeed();
-	//basic systems
-	time.reset();
-	textureSystem.create();
-	meshSystem.create();
-	shaderSystem.create();
-
-	//advanced systems
-	framebufferSystem.create(*this, size);
-	textRenderSystem.create(*this);
-	renderObjectSystem.create(*this);
-
-	apiClipControl(GL_LOWER_LEFT, GL_ZERO_TO_ONE);
-	apiEnable(GL_SCISSOR_TEST);
-}
 void Renderer::destroy()
 {
 	textRenderSystem.destroy();
@@ -79,6 +62,25 @@ void Renderer::fill(Vec4 color) {
 void Renderer::normalizedSpace() {
 	uniforms().vMatrix() = Matrix(1);
 	uniforms().pMatrix() = Matrix(1);
+}
+void Renderer::create(Area size)
+{
+	randomizeSeed();
+	//basic systems
+	time.reset();
+	textureSystem.create();
+	meshSystem.create();
+	shaderSystem.create();
+	lineRenderer.create();
+	
+	//advanced systems
+	framebufferSystem.create(*this, size);
+	textRenderSystem.create(*this);
+	renderObjectSystem.create(*this);
+
+
+	apiClipControl(GL_LOWER_LEFT, GL_ZERO_TO_ONE);
+	apiEnable(GL_SCISSOR_TEST);
 }
 void Renderer::useMesh(Name name) {
 	//selects a mesh to be rendered but doesent render it
@@ -150,6 +152,11 @@ void Renderer::setDepthClamp(Bool depthClamp)
 		apiDisable(GL_DEPTH_CLAMP);
 	}
 }
+void Renderer::circle(Vec2 pos, Float radius)
+{
+	uniforms().mMatrix(matrixFromLocationAndSize(pos,radius));
+	renderMesh("circle");
+}
 void Renderer::setAlphaBlending(Bool blending)
 {
 	if (blending) {
@@ -182,37 +189,12 @@ void Renderer::useTexture(Name name, Index location) {
 	textureSystem.use(name, location);
 }
 void Renderer::line(Vec3 start, Vec3 end, Float width) {
-
-	Vec3 dir = normalize(start - end);
-	Vec3 extend = cross(dir, Vec3(0, 0, 1));
-
-	CPUMesh line;
-	line.drawMode = MeshDrawMode::dynamicMode;
-	line.indices.push_back(0);
-	line.indices.push_back(1);
-	line.indices.push_back(2);
-	line.indices.push_back(3);
-	line.name = "line";
-	line.normals.push_back(Vec3(0, 0, 1));
-	line.normals.push_back(Vec3(0, 0, 1));
-	line.normals.push_back(Vec3(0, 0, 1));
-	line.normals.push_back(Vec3(0, 0, 1));
-	line.primitiveMode = PrimitiveMode::TriangleStrip;
-	line.uvs.push_back(Vec2(0, 1));
-	line.uvs.push_back(Vec2(0, 0));
-	line.uvs.push_back(Vec2(1, 0));
-	line.uvs.push_back(Vec2(1, 1));
-	line.vertices.push_back(start + extend * width);
-	line.vertices.push_back(start - extend * width);
-	line.vertices.push_back(end + extend * width);
-	line.vertices.push_back(end - extend * width);
-	line.checkIntegrity();
-
-	GPUMesh gpuMesh;
-	gpuMesh.upload(line);
-	gpuMesh.render(uniforms());
-	gpuMesh.unload();
+	lineRenderer.renderLine(*this, start, end, width);
 }
+void Renderer::line(Vec2 start, Vec2 end, Float width) {
+	lineRenderer.renderLine(*this, Vec3(start,0.0f), Vec3(end,0.0f), width);
+}
+
 void Renderer::createBlurTexture(Index from, Index to)
 {
 	//this function renders a blurred version of a framebuffer to another framebuffer
@@ -242,9 +224,6 @@ void Renderer::addRenderObject(RenderObjectNames renderObjectNames)
 {
 	renderObjectSystem.addRenderObject(renderObjectNames);
 }
-PixelIDs Renderer::getIDsUnderCursor() {
-	return framebufferSystem.idFramebuffer().getID();
-}
 void Renderer::renderText(String text, Vec2 position, FontStyle font) {
 	textRenderSystem.render(*this, text, position, font);
 }
@@ -266,4 +245,7 @@ Uniforms& Renderer::uniforms()
 }
 Index Renderer::useShader(Name name) {
 	return shaderSystem.use(name);
+}
+PixelIDs Renderer::getIDsUnderCursor() {
+	return framebufferSystem.idFramebuffer().getID();
 }
