@@ -10,15 +10,15 @@ Int diceRoll(Int diceCount) {
 	return 1 + randomInt(diceCount);
 }
 
-DNDRenderer::DNDRenderer(DNDWorld* world) {
-	this->world = world;
-	player.speedExponent = world->speedExponent;
-	player.camera.farClipValue = world->farClipValue;
-	player.camera.nearClipValue = world->nearClipValue;
-	player.camera.fieldOfView = world->fieldOfView;
-	player.camera.rotationX = world->rotationX;
-	player.camera.rotationZ = world->rotationZ;
-	player.camera.location = world->location;
+DNDRenderer::DNDRenderer(DNDWorld& world) {
+	this->world = &world;
+	player.speedExponent = world.speedExponent;
+	player.camera.farClipValue = world.farClipValue;
+	player.camera.nearClipValue = world.nearClipValue;
+	player.camera.fieldOfView = world.fieldOfView;
+	player.camera.rotationX = world.rotationX;
+	player.camera.rotationZ = world.rotationZ;
+	player.camera.location = world.location;
 	player.camera.update();
 }
 void DNDRenderer::update(Renderer& renderer)
@@ -37,62 +37,66 @@ void DNDRenderer::mouseIsMoving(Window& window, IVec2 position) {
 	if (inputManager.isCapturing(window))player.camera.rotate(Vec2(position) * Vec2(mouseSensitivity));
 }
 void DNDRenderer::render(TiledRectangle area, Renderer& renderer) {
-	//preprocess
-	renderer.setWireframeMode();
-	renderer.setCulling(false);
-	renderer.setDepthTest(true);
-	//renderer.clearColor();
-	//renderer.clearDepth();
-	renderer.renderSky(player.camera);
+	if (world->loaded) {
 
-	renderer.renderAtmosphere(player, normalize(Vec3(1)));
+		//preprocess
+		renderer.setWireframeMode();
+		renderer.setCulling(false);
+		renderer.setDepthTest(true);
+		//renderer.clearColor();
+		//renderer.clearDepth();
+		renderer.renderSky(player.camera);
 
-	renderer.useShader("dndUberShader");
-	renderer.uniforms().mMatrix(matrixFromLocationAndSize(Vec4(0, 0, -1,1000)));
-	renderer.renderMesh("plane");
+		renderer.renderAtmosphere(player, normalize(Vec3(1)));
 
-	renderer.clearDepth();
-	//scene
-	renderer.setAlphaBlending(false);
+		renderer.useShader("dndUberShader");
+		renderer.uniforms().mMatrix(matrixFromLocationAndSize(Vec4(0, 0, -1, 1000)));
+		renderer.renderMesh("centeredPlane");
 
-	player.render(renderer);
+		renderer.clearDepth();
+		//scene
+		renderer.setAlphaBlending(false);
 
-	PixelIDs ids;
-	if (inputManager.capturing) ids = renderer.framebufferSystem.idFramebuffer().getIDsAtCenter();
-	else ids = renderer.framebufferSystem.idFramebuffer().getIDsAtLocation(inputManager.cursorPosition.x, inputManager.cursorPosition.y);
+		player.render(renderer);
 
-	renderer.setCulling(false);
-	renderer.useShader("dndUberShader");
-	for (Int i = 0; i < world->entities.size(); i++) {
-		//render selected objects with an orange highlight
-		if (!inputManager.capturing) {
-			if (std::find(selectedObjects.begin(), selectedObjects.end(), i) != selectedObjects.end()) renderer.setColor(Color(0.4, 0.25, 0.1, 0));
+		PixelIDs ids;
+		if (inputManager.capturing) ids = renderer.framebufferSystem.idFramebuffer().getIDsAtCenter();
+		else ids = renderer.framebufferSystem.idFramebuffer().getIDsAtLocation(inputManager.cursorPosition.x, inputManager.cursorPosition.y);
+
+		renderer.setCulling(false);
+		renderer.useShader("dndUberShader");
+		for (Int i = 0; i < world->entities.size(); i++) {
+			//render selected objects with an orange highlight
+			if (!inputManager.capturing) {
+				if (std::find(selectedObjects.begin(), selectedObjects.end(), i) != selectedObjects.end()) renderer.setColor(Color(0.4, 0.25, 0.1, 0));
+				else renderer.setColor(Color(0, 0, 0, 0));
+
+				//render last object with brighter highlight
+				if (lastSelectedObject == i) renderer.setColor(Color(0.5, 0.4, 0.15, 0));
+			}
 			else renderer.setColor(Color(0, 0, 0, 0));
 
-			//render last object with brighter highlight
-			if (lastSelectedObject == i) renderer.setColor(Color(0.5, 0.4, 0.15, 0));
-		} else renderer.setColor(Color(0, 0, 0, 0));
+			world->entities[i].render(renderer);
+		}
 
-		world->entities[i].render(renderer);
+		renderer.uniforms().reset();
+
+		renderer.setWireframeMode(false);
+		renderer.screenSpace();
+		Int i = 0;
+		for (DNDEntity& e : world->entities) {
+			i++;
+			renderer.renderText(String(e.meshName.data), Vec2(15, i * 15), fonts.paragraph);
+		}
+
+		world->speedExponent = player.speedExponent;
+		world->fieldOfView = player.camera.fieldOfView;
+		world->nearClipValue = player.camera.nearClipValue;
+		world->farClipValue = player.camera.farClipValue;
+		world->location = player.camera.location;
+		world->rotationX = player.camera.rotationX;
+		world->rotationZ = player.camera.rotationZ;
 	}
-
-	renderer.uniforms().reset();
-
-	renderer.setWireframeMode(false);
-	renderer.screenSpace();
-	Int i = 0;
-	for (DNDEntity& e : world->entities) {
-		i++;
-		renderer.renderText(String(e.meshName.data), Vec2(15, i * 15), fonts.paragraph);
-	}
-
-	world->speedExponent = player.speedExponent;
-	world->fieldOfView = player.camera.fieldOfView;
-	world->nearClipValue = player.camera.nearClipValue;
-	world->farClipValue = player.camera.farClipValue;
-	world->location = player.camera.location;
-	world->rotationX = player.camera.rotationX;
-	world->rotationZ = player.camera.rotationZ;
 }
 void DNDRenderer::filesDropped(Window& window, Vector<Path> paths) {
 	for (Path& path : paths) {
@@ -100,7 +104,7 @@ void DNDRenderer::filesDropped(Window& window, Vector<Path> paths) {
 
 		String fileName = path.filename().string();
 		Name name = fileName.substr(0, fileName.size() - 4).c_str();
-		
+
 		DNDEntity e;
 		e.meshName = name;
 		e.transform = Transform();
@@ -205,13 +209,10 @@ void DNDWorld::save() {
 		save.write((Char*)&speedExponent, sizeof(Int));
 
 		save.write((Char*)&entityCount, sizeof(UInt));
-		save.write((Char*)&entities[0], sizeof(Entity) * entities.size());
+		save.write((Char*)&entities[0], sizeof(DNDEntity) * entities.size());
 	}
 }
 void DNDWorld::load() {
-
-	logDebug("hello");
-
 	Path saveGameLocation = "data/saves/dnd.save";
 
 	if (doesPathExist(saveGameLocation)) {
@@ -228,21 +229,17 @@ void DNDWorld::load() {
 		UInt entityCount;
 		save.read((Char*)&entityCount, sizeof(UInt));
 		entities.resize(entityCount);
-		save.read((Char*)&entities[0], sizeof(Entity) * entityCount);
+		save.read((Char*)&entities[0], sizeof(DNDEntity) * entityCount);
 	}
 }
 void DNDWorld::create() {
 	load();
+	loaded = true;
 }
 void DNDWorld::destroy() {
 	save();
+	loaded = false;
 }
-
-DND::DND() {
-	gameSystem.add(world);
-	renderer = DNDRenderer(&world);
-}
-
 void DNDEntity::render(Renderer& renderer) {
 	transform.render(renderer);
 	renderer.renderMesh(meshName);

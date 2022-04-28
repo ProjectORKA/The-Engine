@@ -7,33 +7,33 @@ Float CPUTexture::getRed(UInt x, UInt y) {
 	y = y % height;
 
 	switch (dataType) {
-	case dataTypeByte: return Float(bytePixels[channels * (y * width + x) + 0]) / 255; break;
-	case dataTypeFloat: return floatPixels[channels * (y * width + x) + 0]; break;
-	case dataTypeUInt: return uIntPixels[channels * (y * width + x) + 0]; break;
+	case dataTypeByte:  return Float(bytePixels	[xyToIndex(x, y, 0)]) / 255.0f; break;
+	case dataTypeFloat: return floatPixels		[xyToIndex(x, y, 0)]; break;
+	case dataTypeUInt:  return uIntPixels		[xyToIndex(x, y, 0)]; break;
 	default: logError("Not supported!"); break;
 	}
 }
 Float CPUTexture::getGreen(UInt x, UInt y) {
 	switch (dataType) {
-	case dataTypeByte: return bytePixels[channels * (y * width + x) + 1]; break;
-	case dataTypeFloat: return floatPixels[channels * (y * width + x) + 1]; break;
-	case dataTypeUInt: return uIntPixels[channels * (y * width + x) + 1]; break;
+	case dataTypeByte:  return Float(bytePixels[xyToIndex(x, y, 1)]) / 255.0f; break;
+	case dataTypeFloat: return floatPixels[xyToIndex(x, y, 1)]; break;
+	case dataTypeUInt:  return uIntPixels[xyToIndex(x, y, 1)]; break;
 	default: logError("Not supported!"); break;
 	}
 }
 Float CPUTexture::getBlue(UInt x, UInt y) {
 	switch (dataType) {
-	case dataTypeByte: return bytePixels[channels * (y * width + x) + 2]; break;
-	case dataTypeFloat: return floatPixels[channels * (y * width + x) + 2]; break;
-	case dataTypeUInt: return uIntPixels[channels * (y * width + x) + 2]; break;
+	case dataTypeByte:  return Float(bytePixels[xyToIndex(x, y, 2)]) / 255.0f; break;
+	case dataTypeFloat: return floatPixels[xyToIndex(x, y, 2)]; break;
+	case dataTypeUInt:  return uIntPixels[xyToIndex(x, y, 2)]; break;
 	default: logError("Not supported!"); break;
 	}
 }
 Float CPUTexture::getAlpha(UInt x, UInt y) {
 	switch (dataType) {
-	case dataTypeByte: return bytePixels[channels * (y * width + x) + 3]; break;
-	case dataTypeFloat: return floatPixels[channels * (y * width + x) + 3]; break;
-	case dataTypeUInt: return uIntPixels[channels * (y * width + x) + 3]; break;
+	case dataTypeByte:  return Float(bytePixels[xyToIndex(x, y, 3)]) / 255.0f; break;
+	case dataTypeFloat: return floatPixels[xyToIndex(x, y, 3)]; break;
+	case dataTypeUInt:  return uIntPixels[xyToIndex(x, y, 3)]; break;
 	default: logError("Not supported!"); break;
 	}
 }
@@ -179,6 +179,11 @@ void CPUTexture::load(Path path, Name name)
 	this->channels = image.channels;
 
 	if (pixels) loaded = true; else logEvent("Texture not loaded! Searching for different file format...");
+}
+
+Index CPUTexture::xyToIndex(Int x, Int y, Int channel)
+{
+	return channels * (y * width + x) + channel;
 }
 
 CPUTexture::~CPUTexture()

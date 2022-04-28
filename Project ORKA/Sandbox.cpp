@@ -23,14 +23,7 @@ void Sandbox::update(Renderer& renderer) {
 
 	simulation->location = player.camera.location;
 
-	system.update();
-	system.update();
-	system.update();
-	system.update();
-	system.update();
-	system.update();
-	system.update();
-	system.update();
+	//system.update();
 }
 void Sandbox::mouseIsMoving(Window& window, IVec2 position) {
 	if (inputManager.isCapturing(window))player.camera.rotate(Vec2(position) * Vec2(mouseSensitivity));
@@ -49,7 +42,9 @@ void Sandbox::render(TiledRectangle area, Renderer& renderer) {
 
 	//////////////////////////////////////////////////////////////////////////////
 
-	system.render(renderer);
+	player.camera.renderOnlyRot(renderer);
+
+	system.render(renderer, player.camera.location);
 
 	renderer.setDepthTest(false);
 	renderer.screenSpace();
@@ -88,7 +83,7 @@ void Sandbox::mouseIsPressed(Window& window, MouseButton button, ActionState act
 	if (button == MouseButton::RIGHT && action == ActionState::Press) inputManager.uncaptureCursor(window);
 }
 
-void SandboxSimulation::update() {
+void SandboxSimulation::update(Float timestep) {
 	//noct.update(location);
 }
 SandboxSimulation::SandboxSimulation() {

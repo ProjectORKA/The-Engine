@@ -52,37 +52,57 @@
 #include "Sandbox.hpp"
 #include "UISandbox.hpp"
 #include "Mooncrash.hpp"
+#include "CheatTest.hpp"
 #include "Miniverse.hpp"
+#include "MindMapper.hpp"
 #include "AIPlayground.hpp"
 #include "ProjectMelon.hpp"
 #include "DungeonsAndDiscord.hpp"
+#include "SimpleRTS.hpp"
+#include "ResourceManager.hpp"
 
 //#define TESTING
 
 Int main(Int  argc, Char* argv[]) {
 #ifndef TESTING
-	 //MiniverseSimulation simulation;
-	 //Miniverse game(simulation);
 
-	SandboxSimulation sim;
-	gameSystem.add(sim);
-	Sandbox game(sim);
+	initializeResourcemanager();
+	initializeGameSystem();
 
+	//DNDWorld sim;
+	//SandboxSimulation sim;
+	//MiniverseSimulation sim;
 	//MooncrashSimulation sim;
-	//gameSystem.add(sim);
+	//MiniverseSimulation sim;
+	SimpleRTSSimulation sim;
+	
+	gameSystem->add(sim);
+	
+	//Pong game;
+	//UISandbox game;
+	//MindMapper game;
+	//Sandbox game(sim);
+	//AIPlayground game;
+	//MelonRenderer game;
+	//Miniverse game(sim);
+	//DNDRenderer game(sim);
+	SimpleRTSRenderer game(sim);
 	//MooncrashRenderer game(sim);
 
 	window(
 		"ORKA",
-		Area(1600, 900),
+		Area(1920, 1080),
 		true,
-		WindowState::windowed,
+		WindowState::fullscreen,
 		game
 	);
 
-	gameSystem.run();
+	gameSystem->run();
 	ui.run();
-	gameSystem.stop();
+	gameSystem->stop();
+
+	destroyGameSystem();
+	destroyResourceManager();
 
 #else
 	//testing code

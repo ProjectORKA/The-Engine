@@ -53,9 +53,18 @@ ULL random(ULL min, ULL max) {
 
 	return distribution(randomizer) / (ULLONG_MAX / range) + min;
 }
-
+Vec2 randomPointInCircle(Float radius) {
+	Vec2 v;
+	do {
+		v = randomVec2(-radius, radius);
+	} while (length(v) > radius);
+	return v;
+}
 Vec3 randomUnitVec3() {
 	return normalize(randomPointInSphere(1));
+}
+Vec2 randomUnitVec2() {
+	return normalize(randomPointInCircle(1));
 }
 Int randomInt(Int max) {
 	if (max < 1) return 0;

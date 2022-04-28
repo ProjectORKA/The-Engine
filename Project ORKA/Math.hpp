@@ -20,38 +20,70 @@ struct Orientation {
 	Orientation(Vec3 direction, Vec3 up);
 };
 
+
 Bool isOdd(ULL a);
 Bool isEven(ULL a);
+Bool withinLength(Vec3 a, Float b);
+Bool withinDiamondArea(Vec3 a, Float b);
+Bool isNear(Vec3 a, Vec3 b, Float error);
+Bool isNear(Float a, Float b, Float error);
+Bool pointInsideSphere(Vec3 point, Sphere sphere);
+Bool pointInsideSpheres(Vec3 point, List<Sphere> spheres);
+Bool pointInsideSpheres(Vec3 point, Vector<Sphere> spheres);
+Bool isWithinDistanceOfOtherPoints(Vec2 point, Vector<Vec2>& points, Float dist);
+Bool pointInsideSphereAtlocationWithRadius(Vec3 point, Vec3 position, Float radius);
+
+UInt nextPowerOfTwo(UInt& value);
+UInt fibonacciSequence(UInt iterations);
+
+Index idOfClosestPoint(Vec2 origin, Vector<Vec2>& positions);
+Index idOfClosestPointInLoopingSpace(Vec2 origin, Vector<Vec2>& positions, Float extend);
+
+Float sq(Float a);
 Float min(Float a, Float b);
 Float mod(Float a, Float b);
-Vec3 projectToCube(Vec3 vec);
 Float snap(Float a, Float b);
 Float distance(Vec2 a, Vec2 b);
-Matrix matrixFromScale(Vec3 s);
 Float distance(Float a, Float b);
-UInt nextPowerOfTwo(UInt& value);
+Float lerp(Float a, Float b, Float alpha);
+Float deltaInLoopingSpace(Float a, Float b, Float extend);
+Float getDistanceToClosestPoint(Vec3 point, Vector<Vec3>& points);
+Float distanceToPointInLoopingSpace(Vec2 a, Vec2 b, Float extend);
+
 LDouble dmod(LDouble x, LDouble y);
-Bool withinLength(Vec3 a, Float b);
+
+
+Vec2 vectorFromAToB(Vec2 a, Vec2 b);
+Vec2 deltaInLoopingSpace(Vec2 a, Vec2 b, Float extend);
+
+Vec3 projectToCube(Vec3 vec);
+Vec3 vectorFromAToB(Vec3 a, Vec3 b);
 Vec3 lerp(Vec3 a, Vec3 b, Float alpha);
-Bool withinDiamondArea(Vec3 a, Float b);
+Vec3 getClosestPoint(Vec3 point, List<Vec3>& points);
+Vec3 quadraticInterpolation(Vec3 start, Vec3 control, Vec3 end, Float time);
+
+
+Rotation getRotationBetweenVectors(Vec3 start, Vec3 dest);
+
+Matrix matrixFromScale(Vec3 s);
+Matrix matrixFromScale(Float size);
 Matrix matrixFromLocation(Vec2 location);
 Matrix matrixFromLocation(Vec3 location);
-Float lerp(Float a, Float b, Float alpha);
 Matrix matrixFromOrientation(Orientation o);
 Matrix matrixFromAxis(Vec3 x, Vec3 y, Vec3 z);
-bool isFloatNearOther(Float a, Float b, Float error);
 Matrix matrixFromTiledRectangle(TiledRectangle area);
-Rotation getRotationBetweenVectors(Vec3 start, Vec3 dest);
+Matrix matrixFromPositionAndDirection(Vec2 pos, Vec2 dir);
 Matrix matrixFromLocationAndSize(Vec4 compressedTransform);
 Matrix matrixFromLocationAndSize(Vec3 location, Float size);
 Matrix matrixFromLocationAndSize(Vec2 location, Float size);
 Matrix matrixFromOrientation(Orientation o, Vec3 position, Float size);
 Matrix matrixFromAxis(Vec3 x, Vec3 y, Vec3 z, Vec3 position, Float size);
+Matrix matrixFromLocationDirectionAndSize(Vec2 pos, Vec2 dir, Float size);
 
-template<typename T>
-T sq(T a) {
-	return (a * a);
-}
+void loopWithin(Vec2 & point, Float extend);
+void removePointsInRadius(Vec3 point, Vector<Vec3>& points, Float radius);
+void getClosestPoint(Vec3 point, Vector<Vec3>& points, Index& closestID, Vec3& closestPoint);
+void spaceColonization(Vector<Vec3>& points, Vector<Vec3>& branches, Vector<Index>& connections, Float segmentSize, Float killRadius);
 
 template<typename T, typename R>
 T max(T a, R b) {

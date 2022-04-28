@@ -9,7 +9,6 @@ struct Shader {
 	Bool isLoaded = false;
 
 	void destroy();
+	void create(Path path, String uniformBlock);
 	void loadShaderCode(ShaderType shaderType, String shaderCode);
-	void create(ShaderType shaderType, Name name, String uniformBlock);
-	void create(ShaderType shaderType, Path path, String uniformBlock);
 };

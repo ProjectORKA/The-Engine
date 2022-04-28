@@ -1,31 +1,32 @@
 #pragma once
 
-#include "Basics.hpp"
+#include "Random.hpp"
 
-Float desiredDistance = 1.0;
+struct Renderer;
 
-struct Connection;
+struct MindmapConnection {
+	Index a;
+	Index b;
 
-struct Node {
-	Index id = -1;
-	Vec2 location;
-	Vector<Connection*> connections;
-};
-
-struct Connection {
-	Index id = -1;
-	Node* nodeA = nullptr;
-	Node* nodeB = nullptr;
-
-	Connection(Node& a, Node& b);
-	~Connection();
-	void update();
+	MindmapConnection(Index a, Index b) {
+		this->a = a;
+		this->b = b;
+	};
 };
 
 struct MindMap {
-	Vector<Node> nodes; //[TODO] turn into quadtree
-	Vector<Connection> connections;
 
+	UInt nodeCount = 0;
+
+	Vector<Vec2> positions;
+	Vector<Vec2> forces;
+	Vector<Float> numforces;
+
+	Vector<MindmapConnection> connections;
+
+	void update();
 	void addNode();
-	void create();
+	void render(Renderer& renderer);
+	void renderInteractive(Renderer& renderer);
+	void addForce(Index a, Vec2 force);
 };

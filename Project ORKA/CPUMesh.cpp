@@ -2,11 +2,11 @@
 #include "CPUMesh.hpp"
 #include "GPUMesh.hpp"
 #include "Renderer.hpp"
+#include "ResourceManager.hpp"
 
-CPUMesh::CPUMesh()
-{
+CPUMesh::CPUMesh(Name name) {
+	load(name);
 }
-CPUMesh::~CPUMesh() {}
 CPUMesh::CPUMesh(Graph& graph) {
 	drawMode = MeshDrawMode::dynamicMode;
 	name = "graph";
@@ -23,20 +23,6 @@ CPUMesh::CPUMesh(Graph& graph) {
 	}
 
 	checkIntegrity();
-}
-CPUMesh::CPUMesh(Name name, MeshDrawMode drawMode, PrimitiveMode primitiveMode) {
-	this->name = name;
-	this->drawMode = drawMode;
-	this->primitiveMode = primitiveMode;
-	indices.clear();
-	vertices.clear();
-	normals.clear();
-	uvs.clear();
-	readyForUpload = false;
-}
-CPUMesh::CPUMesh(Name name)
-{
-	load(name);
 }
 
 void CPUMesh::saveMeshFile()
@@ -56,28 +42,58 @@ void CPUMesh::saveMeshFile()
 	mesh.write((Char*)&normals[0], normals.size() * sizeof(Vec3));
 	mesh.write((Char*)&indices[0], indices.size() * sizeof(Index));
 }
-void CPUMesh::load(Name name)
-{
-	Path meshPath = String("Data/meshes/").append(name.data).append(".mesh");
-	Path fbxPath = String("Data/objects/").append(name.data).append(".fbx");
+void CPUMesh::load(Name name) {
+	auto it{ resourceManager->meshResources.find(name) };
+	if (it != std::end(resourceManager->meshResources))
+	{
+		Path path = it->second;
 
-	Bool f1 = doesPathExist(meshPath);
-	Bool f2 = doesPathExist(fbxPath);
+		bool error = false;
 
-	if (f1) {
-		if (f2) {
-			auto t1 = std::filesystem::last_write_time(meshPath);
-			auto t2 = std::filesystem::last_write_time(fbxPath);
-			if (t1 > t2) loadMeshFile(meshPath);
-			else loadFBX(fbxPath);
+		InFile file(path);
+
+		logDebug(String("Loading mesh file from(").append(path.string()).append(")"));
+
+		this->name = name;
+
+		if (file.isOpen) {
+			MeshHeader header;
+			file.read((char*)&header, sizeof(MeshHeader));
+
+			if (header.version == 1) {
+				name = header.meshName;
+				primitiveMode = header.primitiveMode;
+
+				vertices.resize(header.vertexCount);
+				uvs.resize(header.uvCount);
+				normals.resize(header.normalCount);
+				indices.resize(header.indexCount);
+
+				file.read((char*)&vertices[0], header.vertexCount * sizeof(Vec3));
+				file.read((char*)&uvs[0], header.uvCount * sizeof(Vec2));
+				file.read((char*)&normals[0], header.normalCount * sizeof(Vec3));
+				file.read((char*)&indices[0], header.indexCount * sizeof(Index));
+			}
+			else {
+				logError("Mesh version not supported!");
+				error = true;
+			}
 		}
-		else loadMeshFile(meshPath);
+		else error = true;
+
+		if (error) {
+			logEvent(String("The model (").append(path.filename().replace_extension().string()).append(") could not be loaded! (").append(path.string()).append(")"));
+			readyForUpload = false;
+			return;
+		}
+		else {
+			checkIntegrity();
+		}
 	}
 	else {
-		if (f2)loadFBX(fbxPath);
-		else logDebug(String("Can not find mesh with name: (").append(name.data).append(")"));
+		logError(String("Mesh (").append(name.data).append(") not found as resource!"));
 	}
-}
+};
 void CPUMesh::removeDoubles() {
 	for (Int i = 0; i < vertices.size(); i++) {
 
@@ -98,80 +114,6 @@ void CPUMesh::checkIntegrity() {
 	if (uvs.size() == vertices.size() && normals.size() == vertices.size()) readyForUpload = true;
 	else readyForUpload = false;
 }
-void CPUMesh::loadFBX(Path path) {
-
-	//check if file is valid
-	String errorMessage = "";
-
-	if (std::filesystem::exists(path.parent_path())) {
-
-		logEvent(String("Loading mesh: (").append(name.data).append(") from (").append(path.string()).append(")"));
-
-		//create the mesh
-		name = path.filename().replace_extension().string();
-		primitiveMode = PrimitiveMode::Triangles;
-		Assimp::Importer Importer;
-		const aiScene* scene = Importer.ReadFile(path.string(),
-			aiProcess_CalcTangentSpace |
-			aiProcess_GenSmoothNormals |
-			aiProcess_JoinIdenticalVertices |
-			aiProcess_SortByPType |
-			aiProcess_Triangulate
-		);
-
-		if (scene) {
-			if (scene->HasMeshes()) {
-				if (scene->mMeshes[0]->HasPositions()) {
-					for (UInt i = 0; i < scene->mMeshes[0]->mNumVertices; i++) {
-						glm::vec3 vertex;
-						vertex.x = scene->mMeshes[0]->mVertices[i].x;
-						vertex.y = scene->mMeshes[0]->mVertices[i].y;
-						vertex.z = scene->mMeshes[0]->mVertices[i].z;
-						vertices.push_back(vertex);
-
-						glm::vec2 texCoord;
-						texCoord.x = scene->mMeshes[0]->mTextureCoords[0][i].x;
-						texCoord.y = scene->mMeshes[0]->mTextureCoords[0][i].y;
-						uvs.push_back(texCoord);
-
-						glm::vec3 normal;
-						normal.x = scene->mMeshes[0]->mNormals[i].x;
-						normal.y = scene->mMeshes[0]->mNormals[i].y;
-						normal.z = scene->mMeshes[0]->mNormals[i].z;
-						normals.push_back(normal);
-					}
-					if (scene->mMeshes[0]->HasFaces()) {
-						for (unsigned int i = 0; i < scene->mMeshes[0]->mNumFaces; i++) {
-							for (unsigned int j = 0; j < scene->mMeshes[0]->mFaces->mNumIndices; j++) { //should always be 3 (0 -> 1 -> 2 <<)
-								unsigned int index = scene->mMeshes[0]->mFaces[i].mIndices[j];
-								indices.push_back(index);
-							}
-						}
-					}
-					else errorMessage = "Mesh does not have faces!";
-				}
-				else errorMessage = "Mesh does not have positions stored!";
-			}
-			else errorMessage = "No meshes in fbx scene!";
-		}
-		else errorMessage = "No Scene in fbx file!";
-	}
-	else {
-		errorMessage = path.parent_path().string().append(" does not exist!");
-	}
-
-	if (errorMessage.size()) {
-
-		logDebug(String("The model (").append(name.data).append(") could not be loaded! (").append(path.string()).append(")").append(" Error: ").append(errorMessage));
-		readyForUpload = false;
-		return;
-	}
-	else {
-		checkIntegrity();
-
-		saveMeshFile();
-	}
-}
 void CPUMesh::merge(CPUMesh source) {
 	for (Int i = 0; i < source.vertices.size(); i++) {
 		vertices.push_back(source.vertices[i]);
@@ -190,47 +132,6 @@ void CPUMesh::move(Vec3 moveVector) {
 		vertices[i] += moveVector;
 	}
 }
-void CPUMesh::loadMeshFile(Path path) {
-	bool error = false;
-
-	InFile file(path);
-
-	logEvent(String("Loading mesh file from(").append(path.string()).append(")"));
-
-	if (file.isOpen) {
-		MeshHeader header;
-		file.read((char*)&header, sizeof(MeshHeader));
-
-		if (header.version == 1) {
-			name = header.meshName;
-			primitiveMode = header.primitiveMode;
-
-			vertices.resize(header.vertexCount);
-			uvs.resize(header.uvCount);
-			normals.resize(header.normalCount);
-			indices.resize(header.indexCount);
-
-			file.read((char*)&vertices[0], header.vertexCount * sizeof(Vec3));
-			file.read((char*)&uvs[0], header.uvCount * sizeof(Vec2));
-			file.read((char*)&normals[0], header.normalCount * sizeof(Vec3));
-			file.read((char*)&indices[0], header.indexCount * sizeof(Index));
-		}
-		else {
-			logError("Mesh version not supported!");
-			error = true;
-		}
-	}
-	else error = true;
-
-	if (error) {
-		logEvent(String("The model (").append(path.filename().replace_extension().string()).append(") could not be loaded! (").append(path.string()).append(")"));
-		readyForUpload = false;
-		return;
-	}
-	else {
-		checkIntegrity();
-	}
-};
 void CPUMesh::calculateSmoothNormals()
 {
 	switch (primitiveMode) {

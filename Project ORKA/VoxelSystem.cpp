@@ -15,7 +15,10 @@ Chunk::Chunk() {
 
 CPUMesh Chunk::generateMesh() {
 
-	CPUMesh terrain("terrain", MeshDrawMode::staticMode, PrimitiveMode::Triangles);
+	CPUMesh terrain;
+	terrain.name = "terrain";
+	terrain.drawMode = MeshDrawMode::staticMode;
+	terrain.primitiveMode = PrimitiveMode::Triangles;
 
 	CPUMesh topFace("voxelTop");
 	CPUMesh bottomFace("voxelBot");

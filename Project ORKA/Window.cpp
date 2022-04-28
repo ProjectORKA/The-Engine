@@ -40,7 +40,7 @@ void windowThread(Window& window)
 				renderer.framebufferSystem.idFramebuffer().use();
 				renderer.useShader("idShader");
 				renderer.uniforms().reset();
-				renderer.renderMesh("centeredPlane");
+				renderer.renderMesh("fullScreenQuad");
 				renderer.clearDepth();
 				renderer.setWireframeMode(false);
 				renderer.setCulling(false);
@@ -69,7 +69,7 @@ void windowThread(Window& window)
 			renderer.useShader("final");
 			renderer.framebufferSystem.current().setAsTexture(0);
 			renderer.uniforms().reset();
-			renderer.renderMesh("plane");
+			renderer.renderMesh("fullScreenQuad");
 
 			renderer.end(); //checks errors and unlocks renderer
 			apiWindowSwapBuffers(window.apiWindow);
@@ -268,12 +268,12 @@ Bool Window::shouldClose()
 {
 	return glfwWindowShouldClose(apiWindow);
 }
+Bool Window::isCapturing() {
+	return apiWindowIsCapturing(apiWindow);
+}
 Bool Window::isFullScreen()
 {
 	return apiWindowIsFullscreen(apiWindow);
-}
-Bool Window::isCapturing() {
-	return apiWindowIsCapturing(apiWindow);
 }
 Area Window::getWindowFrameSize()
 {

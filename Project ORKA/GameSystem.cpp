@@ -1,14 +1,12 @@
 #include "GameSystem.hpp"
 #include "Random.hpp"
 
-GameSystem gameSystem;
+GameSystem* gameSystem = nullptr;
 
 void GameSystem::run() {
 	//creates the gamesimulation thread which continually updates all games
 	thread.start(gameSimulationThread, thread, *this);
 }
-
-
 void GameSystem::stop() {
 	//stops the game simulation thread, meaning all games wont be updated anymore
 	//also deletes the game simulations
@@ -31,12 +29,22 @@ void gameSimulationThread(Thread& thread, GameSystem & gameSystem) {
 
 	while (thread.keepThreadRunning) {
 
-		t = Clock::now() + Milliseconds(Int(1000.0f / 144.0f));
+		Float framerate = 144;
+
+		t = Clock::now() + Milliseconds(Int(1000.0f / framerate));
 
 		for (GameSimulation* gameSimulation : gameSystem.games) {
-			gameSimulation->update();
+			gameSimulation->update(1/framerate);
 		}
 
 		sleepUntil(t);
 	}
+}
+
+void initializeGameSystem() {
+	gameSystem = new GameSystem();
+}
+
+void destroyGameSystem() {
+	delete gameSystem;
 }

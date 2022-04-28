@@ -10,9 +10,9 @@
 
 struct VertexArrayObject {
 	Index arrayObjectID = 0;
+	Bool instanced = false;
 	Vector<VertexBufferObject> buffers;
 	IndexBufferObject indexBuffer;
-
 	void select();
 	void unload();
 	void create(CPUMesh& mesh);

@@ -30,7 +30,6 @@ vec3 mix(vec3 a, vec3 b, float alpha){
 void main(){
 
 	vec3 fragmentViewVector = normalize(vertexPosition);
-	//vec3 sunDir = normalize(vec3(1,1,1));
 	vec3 reflection = normalize(reflect(fragmentViewVector,normal));
 
 	float diffuse = clamp(dot(normalize(normal),sunDir.xyz),0,1);

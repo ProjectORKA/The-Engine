@@ -1,7 +1,7 @@
 #include "Mooncrash.hpp"
 #include "Window.hpp"
 
-void MooncrashSimulation::update() {
+void MooncrashSimulation::update(Float timeStep) {
 	planetSystem.update();
 }
 
@@ -73,7 +73,7 @@ void MooncrashPlayer::render(Renderer& renderer, Matrix& skyRotation) {
 	skyRotation[2] = Vec4(normalize(cross(Vec3(skyRotation[0]), Vec3(skyRotation[1]))), 0);
 	skyRotation[3] = Vec4(0, 0, 0, 1);
 
-	//logDebug(skyRotation);
+	logDebug(skyRotation);
 
 	camera.location += accelerationVector;
 
@@ -163,8 +163,6 @@ void MooncrashRenderer::render(TiledRectangle area, Renderer& renderer) {
 	if (downward.pressed)	player.accelerationVector -= player.camera.upVector;
 	if (right.pressed)		player.accelerationVector += player.camera.rightVector;
 	if (left.pressed)		player.accelerationVector -= player.camera.rightVector;
-
-	player.update(renderer);
 
 	player.render(renderer, skyRotationMatrix);
 

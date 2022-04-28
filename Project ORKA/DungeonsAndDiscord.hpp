@@ -60,8 +60,7 @@ struct DNDRenderer : public GameRenderer {
 	Index lastSelectedObject = -1;
 	Vector<Index> selectedObjects;
 
-	DNDRenderer() {};
-	DNDRenderer(DNDWorld* world);
+	DNDRenderer(DNDWorld& world);
 	virtual void update(Renderer& renderer)override;
 	virtual void mouseIsMoving(Window& window, IVec2 position)  override;
 	virtual void render(TiledRectangle area, Renderer& renderer) override;
@@ -70,12 +69,6 @@ struct DNDRenderer : public GameRenderer {
 	virtual void mouseIsScrolled(Window& window, Double xAxis, Double yAxis) override;
 	virtual void buttonIsPressed(Window& window, Key key, ActionState action, Int modifiers) override;
 	virtual void mouseIsPressed(Window& window, MouseButton button, ActionState action, Int modifiers) override;
-};
-
-struct DND {
-	DNDWorld world;
-	DNDRenderer renderer;
-	DND();
 };
 
 Int diceRoll(Int diceCount);

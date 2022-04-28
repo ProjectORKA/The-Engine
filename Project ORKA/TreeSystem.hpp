@@ -3,7 +3,6 @@
 #include "Basics.hpp"
 #include "Random.hpp"
 #include "Math.hpp"
-#include "Algorithm.hpp"
 #include "PointCloud.hpp"
 #include "BranchStructure.hpp"
 

@@ -1,7 +1,5 @@
 #include "Debug.hpp"
 
-Map<std::thread::id, DebugSystem> debugSystems;
-
 bool showEvents = true;
 bool showDebug = true;
 bool showWarning = true;
@@ -40,7 +38,6 @@ void pause() {
 	std::cin >> a;
 #endif
 }
-
 void logDebug(ULL t) {
 #ifdef DEBUG
 	std::cout << "Debug: (" << std::bitset<64>(t) << ")" << t << "\n";
@@ -69,6 +66,12 @@ void logDebug(Vec3 t) {
 	std::cout << "(" << t.x << "|" << t.y << "|" << t.z << ")" << "\n";
 #endif // DEBUG
 }
+void logDebug(Vec4 t)
+{
+#ifdef DEBUG
+	std::cout << "(" << t.x << "|" << t.y << "|" << t.z << "|" << t.w << ")" << "\n";
+#endif // DEBUG
+}
 void logDebug(Short t)
 {
 #ifdef DEBUG
@@ -94,10 +97,10 @@ void logDebug(ULLVec3 t) {
 }
 void logDebug(Matrix matrix) {
 #ifdef DEBUG
-	std::cout << "[ " << matrix[0][0] << "  " << matrix[0][1] << "  " << matrix[0][2] << "  " << matrix[0][3] << " ]" << "\n";
-	std::cout << "[ " << matrix[1][0] << "  " << matrix[1][1] << "  " << matrix[1][2] << "  " << matrix[1][3] << " ]" << "\n";
-	std::cout << "[ " << matrix[2][0] << "  " << matrix[2][1] << "  " << matrix[2][2] << "  " << matrix[2][3] << " ]" << "\n";
-	std::cout << "[ " << matrix[3][0] << "  " << matrix[3][1] << "  " << matrix[3][2] << "  " << matrix[3][3] << " ]" << "\n";
+	std::cout << "[ " << matrix[0][0] << "  " << matrix[0][1] << "  " << matrix[0][2] << "  " << matrix[0][3] << " ]\n";
+	std::cout << "[ " << matrix[1][0] << "  " << matrix[1][1] << "  " << matrix[1][2] << "  " << matrix[1][3] << " ]\n";
+	std::cout << "[ " << matrix[2][0] << "  " << matrix[2][1] << "  " << matrix[2][2] << "  " << matrix[2][3] << " ]\n";
+	std::cout << "[ " << matrix[3][0] << "  " << matrix[3][1] << "  " << matrix[3][2] << "  " << matrix[3][3] << " ]\n";
 #endif // DEBUG
 }
 void logDebug(String message)
@@ -110,21 +113,4 @@ void logDebug(glm::highp_dvec3 t) {
 #ifdef DEBUG
 	std::cout << "(" << t.x << "|" << t.y << "|" << t.z << ")" << "\n";
 #endif // DEBUG
-}
-
-DebugTracker::~DebugTracker() {
-	DebugSystem& ds = debugSystems[std::this_thread::get_id()];
-	for (int i = 0; i < ds.level; i++) {
-		ds.log.append("-");
-	}
-	ds.log.append(")\n");
-	ds.level--;
-}
-DebugTracker::DebugTracker(String functionName) {
-	DebugSystem& ds = debugSystems[std::this_thread::get_id()]; 
-	for (int i = 0; i < ds.level; i++) {
-		ds.log.append("-");
-	}
-	ds.level++;
-	ds.log.append(functionName).append(" (");
 }

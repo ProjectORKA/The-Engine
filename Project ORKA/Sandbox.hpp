@@ -15,16 +15,16 @@ struct Window;
 #include "DynameshTerrain.hpp"
 #include "SphereMeshing.hpp"
 #include "GeometryClipmapTerrain.hpp"
-#include "LevelledGraph.hpp"
 #include "Molecules2D.hpp"
+#include "MindMap.hpp"
 
 struct SandboxSimulation : public GameSimulation {
-	//ClipMapTerrain terr;
+
 	Vec3 location = Vec3(0);
 
-	void update() override;;
 	SandboxSimulation();
 	~SandboxSimulation();
+	void update(Float timestep) override;
 };
 
 struct Sandbox : public GameRenderer {
@@ -40,7 +40,7 @@ struct Sandbox : public GameRenderer {
 	Float mouseSensitivity = 0.0015f;
 	SandboxSimulation * simulation = nullptr;
 
-	LevelledGraph system;
+	ClipMap system;
 
 	Sandbox(SandboxSimulation& sim);
 	void update(Renderer& renderer) override;

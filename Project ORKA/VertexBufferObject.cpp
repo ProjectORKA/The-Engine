@@ -25,8 +25,6 @@ void VertexBufferObject::update(Float* data, UInt byteSize)
 		this->byteSize = byteSize;
 		apiBindBuffer(GL_ARRAY_BUFFER, bufferID);
 		apiBufferData(GL_ARRAY_BUFFER, byteSize, data, usage);
-		//apiEnableVertexAttribArray(location);
-		//apiVertexAttribPointer(location, components, GL_FLOAT, GL_FALSE, 0, (void*)0);
 		loaded = true;
 	}
 }

@@ -19,7 +19,7 @@ struct MooncrashSimulation : public GameSimulation {
 	Time time;
 	PlanetSystem planetSystem;
 
-	void update()override;
+	void update(Float timeStep) override;
 };
 
 struct MooncrashRenderer : public GameRenderer {

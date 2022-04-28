@@ -227,10 +227,20 @@ void Renderer::addRenderObject(RenderObjectNames renderObjectNames)
 void Renderer::renderText(String text, Vec2 position, FontStyle font) {
 	textRenderSystem.render(*this, text, position, font);
 }
-void Renderer::renderMeshInstanced(Name name, Vector<Vec4>& transformations)
+//void Renderer::renderMeshInstanced(Name name, Vector<Vec4>& transformations)
+//{
+//	if (transformations.size()) meshSystem.renderInstanced(uniforms(), name, transformations);
+//}
+
+void Renderer::renderMeshInstanced(Name name)
 {
-	if (transformations.size()) meshSystem.renderInstanced(uniforms(), name, transformations);
+	meshSystem.renderInstanced(uniforms(), name, matrixSystem.modelMatrixArray);
 }
+
+//void Renderer::renderMeshInstanced(Name name, Vector<Vec2>& positions)
+//{
+//	if (positions.size()) meshSystem.renderInstanced(uniforms(), name, positions);
+//}
 
 Bool Renderer::getCulling() {
 	return apiGetCullFace();
