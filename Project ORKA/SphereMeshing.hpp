@@ -1,5 +1,4 @@
 #include "Random.hpp"
-#include "Algorithm.hpp"
 #include "PointCloud.hpp"
 
 using Face = Index[3];

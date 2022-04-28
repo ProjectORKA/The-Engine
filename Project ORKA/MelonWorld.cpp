@@ -3,7 +3,6 @@
 #include "Renderer.hpp"
 #include "MelonPlayer.hpp"
 #include "Random.hpp"
-#include "Algorithm.hpp"
 
 void MelonWorld::render(Renderer& renderer) {
 	m.lock();
@@ -16,7 +15,8 @@ void MelonWorld::render(Renderer& renderer) {
 		}
 	}
 	renderer.uniforms().customColor(Vec4(0.1, 0.1, 0.1, 1));
-	renderer.renderMeshInstanced("stone", arr);
+	renderer.matrixSystem.matrixArray(arr);
+	renderer.renderMeshInstanced("stone");
 
 	m.unlock();
 };

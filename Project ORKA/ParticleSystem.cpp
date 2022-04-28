@@ -2,11 +2,9 @@
 #include "ParticleSystem.hpp"
 #include "Random.hpp"
 #include "Renderer.hpp"
-#include "Algorithm.hpp"
 
 ParticleSystem::~ParticleSystem() {
 	if (loaded) {
-
 		delete transformation;
 		delete velocity;
 		delete maxSize;
@@ -44,7 +42,8 @@ void ParticleSystem::render(Renderer& renderer) {
 	for (Int i = 0; i < particleCount; i++) {
 		if (alive[i])pos.push_back(Vec4(transformation[i]));
 	}
-	renderer.renderMeshInstanced("particle", pos);
+	renderer.matrixSystem.matrixArray(pos);
+	renderer.renderMeshInstanced("particle");
 }
 ParticleSystem::ParticleSystem(U16 particleCount) {
 	this->particleCount = particleCount;

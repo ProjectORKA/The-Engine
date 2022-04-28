@@ -29,8 +29,8 @@ void Miniverse::render(TiledRectangle area, Renderer& renderer) {
 	renderer.useShader("miniverseUberShader");
 	//renderer.uniforms().mMatrix(Matrix(1));
 	//renderer.renderMesh("monkey");
-
-	renderer.renderMeshInstanced("miniverseTree",gameSimulation->treeTransforms);
+	renderer.matrixSystem.matrixArray(gameSimulation->treeTransforms);
+	renderer.renderMeshInstanced("miniverseTree");
 }
 void Miniverse::mouseIsMoving(Window& window, IVec2 position) {
 	if (inputManager.isCapturing(window))player.camera.rotate(Vec2(position) * Vec2(mouseSensitivity));

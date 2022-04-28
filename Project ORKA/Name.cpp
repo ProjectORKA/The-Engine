@@ -4,6 +4,9 @@
 Name::Name() {
 	memset(&data[0], 0, NAME_SIZE);
 }
+Name::Name(String name) {
+	*this = name;
+}
 Name::Name(const char* name) {
 	memset(&data[0], 0, NAME_SIZE);
 	for (int i = 0; i < NAME_SIZE; i++) {

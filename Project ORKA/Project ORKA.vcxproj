@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -23,8 +23,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AIPlayground.cpp" />
-    <ClCompile Include="Algorithm.cpp" />
     <ClCompile Include="C++ Cheatsheet.cpp" />
+    <ClCompile Include="EntityComponentSystem.cpp" />
     <ClCompile Include="GPUBuffer.cpp" />
     <ClCompile Include="imgui\imgui.cpp" />
     <ClCompile Include="imgui\imgui_demo.cpp" />
@@ -35,7 +35,6 @@
     <ClCompile Include="imgui\imgui_widgets.cpp" />
     <ClCompile Include="IndexFramebuffer.cpp" />
     <ClCompile Include="Instancing.cpp" />
-    <ClCompile Include="LevelledGraph.cpp" />
     <ClCompile Include="LineRenderer.cpp" />
     <ClCompile Include="MelonPlayer.cpp" />
     <ClCompile Include="MelonWorld.cpp" />
@@ -48,13 +47,14 @@
     <ClCompile Include="ProjectMelon.cpp" />
     <ClCompile Include="Random.cpp" />
     <ClCompile Include="Renderable.cpp" />
+    <ClCompile Include="ResourceManager.cpp" />
     <ClCompile Include="Sandbox.cpp" />
     <ClCompile Include="Scene.cpp" />
+    <ClCompile Include="SimpleRTS.cpp" />
     <ClCompile Include="Sky.cpp" />
     <ClCompile Include="BitmapTextRenderSystem.cpp" />
     <ClCompile Include="BranchStructure.cpp" />
     <ClCompile Include="Client.cpp" />
-    <ClCompile Include="DebugConsole.cpp" />
     <ClCompile Include="DungeonsAndDiscord.cpp" />
     <ClCompile Include="DynameshTerrain.cpp" />
     <ClCompile Include="Fonts.cpp" />
@@ -126,9 +126,7 @@
     <ClCompile Include="QuadtreeSystem.cpp" />
     <ClCompile Include="TextRenderSystem.cpp" />
     <ClCompile Include="TextureSystem.cpp" />
-    <ClCompile Include="Threading.cpp" />
     <ClCompile Include="Time.cpp" />
-    <ClCompile Include="Timer.cpp" />
     <ClCompile Include="UniformBuffer.cpp" />
     <ClCompile Include="Uniforms.cpp" />
     <ClCompile Include="UserInterface.cpp" />
@@ -142,8 +140,10 @@
   <ItemGroup>
     <ClInclude Include="Array2D.hpp" />
     <ClInclude Include="BaseAllocator.hpp" />
+    <ClInclude Include="CheatTest.hpp" />
     <ClInclude Include="Color.hpp" />
     <ClInclude Include="DeadVector.hpp" />
+    <ClInclude Include="EntityComponentSystem.hpp" />
     <ClInclude Include="File.hpp" />
     <ClInclude Include="GeometryClipmapTerrain.hpp" />
     <ClInclude Include="GPUBuffer.hpp" />
@@ -160,13 +160,14 @@
     <ClInclude Include="imgui\imstb_truetype.h" />
     <ClInclude Include="IndexFramebuffer.hpp" />
     <ClInclude Include="Instancing.hpp" />
+    <ClInclude Include="InteractionSystem.hpp" />
     <ClInclude Include="Interactive.hpp" />
-    <ClInclude Include="LevelledGraph.hpp" />
     <ClInclude Include="LineRenderer.hpp" />
     <ClInclude Include="Map.hpp" />
     <ClInclude Include="MelonPlayer.hpp" />
     <ClInclude Include="MelonWorld.hpp" />
     <ClInclude Include="Memory.hpp" />
+    <ClInclude Include="MindMapper.hpp" />
     <ClInclude Include="Miniverse.hpp" />
     <ClInclude Include="Name.hpp" />
     <ClInclude Include="NeighbourOctree.hpp" />
@@ -175,8 +176,10 @@
     <ClInclude Include="PoolAllocator.hpp" />
     <ClInclude Include="ProjectMelon.hpp" />
     <ClInclude Include="Renderable.hpp" />
+    <ClInclude Include="ResourceManager.hpp" />
     <ClInclude Include="Sandbox.hpp" />
     <ClInclude Include="Scene.hpp" />
+    <ClInclude Include="SimpleRTS.hpp" />
     <ClInclude Include="Sky.hpp" />
     <ClInclude Include="AudioSystem.hpp" />
     <ClInclude Include="BranchStructure.hpp" />
@@ -204,7 +207,6 @@
     <ClInclude Include="BitmapTextRenderSystem.hpp" />
     <ClInclude Include="CameraControllers.hpp" />
     <ClInclude Include="Compiler.hpp" />
-    <ClInclude Include="DebugConsole.hpp" />
     <ClInclude Include="Fonts.hpp" />
     <ClInclude Include="Functor.hpp" />
     <ClInclude Include="Game.hpp" />
@@ -257,7 +259,6 @@
     <ClInclude Include="Camera.hpp" />
     <ClInclude Include="SimplePlanetRenderer.hpp" />
     <ClInclude Include="Sortr.hpp" />
-    <ClInclude Include="Algorithm.hpp" />
     <ClInclude Include="String.hpp" />
     <ClInclude Include="TerrainRendering.hpp" />
     <ClInclude Include="TerrainSystem.hpp" />
@@ -282,7 +283,6 @@
     <ClInclude Include="TextureSystem.hpp" />
     <ClInclude Include="Threading.hpp" />
     <ClInclude Include="Time.hpp" />
-    <ClInclude Include="Timer.hpp" />
     <ClInclude Include="UniformBuffer.hpp" />
     <ClInclude Include="Uniforms.hpp" />
     <ClInclude Include="UserInterface.hpp" />
@@ -324,6 +324,8 @@
     <None Include="Data\shaders\sdfOctreeTerrain.vert" />
     <None Include="Data\shaders\sdfTerrain.frag" />
     <None Include="Data\shaders\sdfTerrain.vert" />
+    <None Include="Data\shaders\simpleRTS.frag" />
+    <None Include="Data\shaders\simpleRTS.vert" />
     <None Include="Data\shaders\sky.frag" />
     <None Include="Data\shaders\sky.vert" />
     <None Include="Data\shaders\sphereRendering.frag" />
@@ -467,6 +469,7 @@ XCOPY "$(SolutionDir)External Libraries\ASSIMP\lib\lib 32\debug" "$(TargetDir)" 
       <IgnoreSpecificDefaultLibraries>
       </IgnoreSpecificDefaultLibraries>
       <SubSystem>Console</SubSystem>
+      <StackReserveSize>4194304</StackReserveSize>
     </Link>
     <PostBuildEvent>
       <Command>XCOPY "$(SolutionDir)\Project ORKA\Data" "$(TargetDir)\Data" /S /Y /I
@@ -535,6 +538,7 @@ XCOPY "$(SolutionDir)External Libraries\ASSIMP\lib\lib 32\release" "$(TargetDir)
       <IgnoreSpecificDefaultLibraries>
       </IgnoreSpecificDefaultLibraries>
       <SubSystem>Console</SubSystem>
+      <StackReserveSize>4194304</StackReserveSize>
     </Link>
     <PostBuildEvent>
       <Command>XCOPY "$(SolutionDir)Project ORKA\Data" "$(TargetDir)Data" /S /Y /I

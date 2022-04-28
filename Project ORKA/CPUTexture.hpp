@@ -61,6 +61,8 @@ struct CPUTexture {
 	void load(Name name);
 	void load(Path path, Name name);
 
+	Index xyToIndex(Int x, Int y, Int channel);
+
 	CPUTexture() {};
 	~CPUTexture();
 	CPUTexture(CPUTexture&&) = delete;

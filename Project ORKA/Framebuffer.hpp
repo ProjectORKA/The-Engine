@@ -20,7 +20,7 @@ struct FramebufferTexture {
 struct Framebuffer {
 	Area size = Area(1);
 	Index framebufferID = 0;
-	Vector<FramebufferTexture> textures;
+	Vector<FramebufferTexture> frameBufferTextures;
 
 	void use();
 	Framebuffer();

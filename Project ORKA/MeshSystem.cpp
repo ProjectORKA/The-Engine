@@ -35,34 +35,28 @@ void MeshSystem::use(Name meshName)
 		currentMeshID = id;
 	}
 	else {
-		loadMesh(meshName);
+		CPUMesh mesh;
+		mesh.load(meshName);
+		addMesh(mesh);
 		if (meshNames.find(meshName, id)) {
 			currentMeshID = id;
 		}
 		else {
-			logError("Could not select nor load mesh!");
+			logError("Mesh could not be loaded!");
 		}
 	}
 }
-void MeshSystem::loadMesh(Name name)
-{
-	CPUMesh mesh;
-	mesh.load(name);
-
-	if (mesh.readyForUpload) {
-		addMesh(mesh);
+void MeshSystem::addMesh(CPUMesh cpuMesh) {
+	if (cpuMesh.readyForUpload) {
+		GPUMesh gpuMesh;
+		gpuMesh.upload(cpuMesh);
+		gpuMeshes.push_back(gpuMesh);
+		use(gpuMeshes.size() - 1);
+		meshNames.add(cpuMesh.name,currentMeshID);
 	}
 	else {
-		logDebug("Mesh could not be loaded from file!");
+		logError("Mesh could not be loaded properly!");
 	}
-}
-void MeshSystem::addMesh(CPUMesh cpuMesh) {
-	//[TODO] check if it works
-	GPUMesh gpuMesh;
-	gpuMesh.upload(cpuMesh);
-	gpuMeshes.push_back(gpuMesh);
-	use(gpuMeshes.size() - 1);
-	meshNames.add(cpuMesh.name,currentMeshID);
 }
 void MeshSystem::render(Uniforms& uniforms, Index meshID) {
 	use(meshID);
@@ -72,12 +66,57 @@ void MeshSystem::render(Uniforms & uniforms, Name meshName) {
 	use(meshName);
 	currentMesh().render(uniforms);
 }
-void MeshSystem::renderInstanced(Uniforms& uniforms, Name meshName, Vector<Vec4>& transformations) {
+void MeshSystem::renderInstanced(Uniforms& uniforms, Name meshName, Vector<Matrix>& data) {
 	use(meshName);
-	currentMesh().renderInstances(uniforms,transformations);
+
+	currentMesh().vao.select();
+
+	if (currentMesh().vao.instanced) {
+		transforms.update(glm::value_ptr(data[0]), data.size() * sizeof(Matrix));
+	}
+	else {
+		if (!transforms.loaded){
+			transforms.create(3, glm::value_ptr(data[0]), data.size() * sizeof(Matrix), GL_STATIC_DRAW, 4);
+		}
+		apiBindBuffer(GL_ARRAY_BUFFER, transforms.bufferID);
+		
+		glEnableVertexAttribArray(3);
+		glEnableVertexAttribArray(4);
+		glEnableVertexAttribArray(5);
+		glEnableVertexAttribArray(6);
+
+		glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(Matrix), (void*)0);
+		glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, sizeof(Matrix), (void*)(1 * sizeof(Vec4)));
+		glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE, sizeof(Matrix), (void*)(2 * sizeof(Vec4)));
+		glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE, sizeof(Matrix), (void*)(3 * sizeof(Vec4)));
+
+		glVertexAttribDivisor(3, 1);
+		glVertexAttribDivisor(4, 1);
+		glVertexAttribDivisor(5, 1);
+		glVertexAttribDivisor(6, 1);
+
+		currentMesh().vao.instanced = true;
+	}
+
+	currentMesh().renderInstances(uniforms, data.size());
 }
 
 GPUMesh& MeshSystem::currentMesh()
 {
 	return gpuMeshes[currentMeshID];
+}
+
+void NameTable::add(Name name, Index id) {
+	names.push_back(name);
+	indices.push_back(id);
+}
+Bool NameTable::find(Name name, Index& id) {
+	id = -1;
+	for (Index i = 0; i < names.size(); i++) {
+		if (names[i] == name) {
+			id = indices[i];
+			return true;
+		}
+	}
+	return false;
 }

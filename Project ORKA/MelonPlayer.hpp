@@ -17,7 +17,6 @@ struct MelonPlayer : public Player {
 	Float distanceInRadians = 0;
 	Vec3 deltaLocation = Vec3(0);
 	Vec3 direction = Vec3(0, 1, 0);
-	Vec3 currentCameraVelocity = Vec3(0);
 	Vec3 lastLocationAtDistance = Vec3(0,-1,0);
 	Vec3 currentVisibleDirection = Vec3(0, 1, 0);
 	ParticleSystem smoke = ParticleSystem(1024*32);

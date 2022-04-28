@@ -15,6 +15,8 @@
 #include "SDFTerrainRenderSystem.hpp"
 #include "VoxelSystem.hpp"
 #include "LineRenderer.hpp"
+#include "InteractionSystem.hpp"
+
 
 struct Player;
 struct Camera;
@@ -40,9 +42,9 @@ struct Renderer{
 	VoxelRenderer voxelRenderer;
 	TextRenderSystem textRenderSystem;
 	FramebufferSystem framebufferSystem;
+	InteractionSystem interactionSystem;
 	RenderObjectSystem renderObjectSystem;
 	PlanetRenderSystem planetRenderSystem;
-	SDFTerrainRenderSystem sdfTerrainRenderSystem;
 
 	Mutex mutex;
 	void sync(); //makes non renderer threads wait for the finished frame
@@ -67,8 +69,9 @@ struct Renderer{
 	void rerenderMesh();
 	void useMesh(Name name);
 	void renderMesh(Name name);
-	void renderMeshInstanced(Name name, Vector<Vec4>& transformations);
-
+	void renderMeshInstanced(Name name);
+	//void renderMeshInstanced(Name name, Vector<Vec2>& positions);
+	//void renderMeshInstanced(Name name, Vector<Vec4>& transformations);
 	//textures
 	void useTexture(Name name);
 	void useTexture(Name name, Index location);

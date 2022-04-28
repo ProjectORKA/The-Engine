@@ -20,7 +20,7 @@ void Framebuffer::destroy()
 {
 	apiBindFramebuffer(0);
 	apiDeleteFramebuffer(framebufferID); //doesent work. ask Nvidia
-	textures.clear();
+	frameBufferTextures.clear();
 }
 Float Framebuffer::aspectRatio() {
 	return Float(size.x) / Float(size.y);
@@ -33,7 +33,7 @@ void Framebuffer::blitFramebuffer()
 }
 void Framebuffer::setAsTexture(Index slot)
 {
-	for (auto t : textures) {
+	for (auto t : frameBufferTextures) {
 		if (t.isColor) {
 			t.texture.use(slot);
 			return;
@@ -48,12 +48,12 @@ void Framebuffer::add(UInt components, DataType type, UInt slot) {
 	t.texture.load(size, components, type);
 	t.texture.attachTexture(slot);
 	t.slot = slot;
-	textures.push_back(t);
+	frameBufferTextures.push_back(t);
 
 	//set up framebuffer for drawing
 	UInt a = 0;
 	Vector<UInt> drawBuffers;
-	for (auto t : textures) {
+	for (auto t : frameBufferTextures) {
 		if (t.isColor) drawBuffers.push_back(GL_COLOR_ATTACHMENT0 + a++);
 	}
 
@@ -66,7 +66,7 @@ void Framebuffer::resize(Area resolution)
 	//apply size
 	size = resolution;
 
-	for (auto t : textures) t.resize(size);
+	for (auto t : frameBufferTextures) t.resize(size);
 }
 
 IDFrameBuffer::IDFrameBuffer() {

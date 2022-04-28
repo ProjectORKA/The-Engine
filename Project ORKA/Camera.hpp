@@ -10,8 +10,8 @@ struct Renderer;
 
 struct Camera {
 	Float fieldOfView = 80.0;
-	Float nearClipValue = 0.001f;
-	Float farClipValue = 1000.0f;
+	Float nearClipValue = 0.1f;
+	Float farClipValue = 10000.0f;
 
 	Vec3 location = Vec3(0);
 	Float rotationX = 0;

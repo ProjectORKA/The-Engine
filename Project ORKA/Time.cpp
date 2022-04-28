@@ -37,6 +37,18 @@ void Time::unpause()
 	paused = false;
 }
 
+void Timer::start()
+{
+	startTP = now();
+}
+void Timer::stop()
+{
+	stopTP = now();
+	deltaDuration = stopTP - startTP;
+	delta = deltaDuration.count();
+	logDebug(String("Process took (").append(std::to_string(delta)).append(") seconds."));
+}
+
 void sleep()
 {
 	std::this_thread::sleep_for(std::chrono::nanoseconds(1));

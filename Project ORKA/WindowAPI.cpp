@@ -122,4 +122,3 @@ TiledRectangle apiWindowGetWorkableArea(APIWindow apiWindow)
 	glfwGetMonitorWorkarea(glfwGetPrimaryMonitor(), &rect.position.x, &rect.position.y, &rect.size.x, &rect.size.y);
 	return rect;
 }
-

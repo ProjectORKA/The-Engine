@@ -40,17 +40,10 @@ void MelonPlayer::update(Renderer& renderer) {
 	//update camera
 	Vec3 cameraTargetLocation = location + Vec3(0, 0, 1 + pow(1.2, zoomFactor));
 	Vec3 cameraDesiredDelta = cameraTargetLocation - camera.location;
-	currentCameraVelocity = lerp(currentCameraVelocity, cameraDesiredDelta, renderer.time.delta * 10);
-	currentCameraVelocity /= 1 + renderer.time.delta * 500;
-	camera.location += currentCameraVelocity;
-	
+	camera.location += cameraDesiredDelta * renderer.time.delta * 10.0f;
 }
 void MelonPlayer::render(Renderer& renderer) {
 	camera.render(renderer);
-	
-	renderer.screenSpace();
-	
-	renderer.arrow(lastLocationAtDistance, location);
 
 	//render player
 	renderer.useShader("MelonUberShader");

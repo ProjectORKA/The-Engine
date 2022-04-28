@@ -6,9 +6,10 @@
 #include "UIElement.hpp"
 
 struct GameSimulation{
+	Bool loaded = false;
 	virtual void create() {};
-	virtual void update() {};
 	virtual void destroy() {};
+	virtual void update(Float timestep) {};
 };
 
 struct GameRenderer : public UIElement{

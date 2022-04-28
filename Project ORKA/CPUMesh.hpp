@@ -6,12 +6,16 @@
 #include "Array2D.hpp"
 #include "FileSystem.hpp"
 #include "GraphicsAPI.hpp"
-//assimp 
-#include <assimp/Importer.hpp>
-#include <assimp/postprocess.h>
-#include <assimp/scene.h>
 
 struct Renderer;
+
+enum class VertexDataLocation {
+	Position = 0,
+	Normals = 1,
+	TextureCoordinates = 2,
+	Indices = 16,
+
+};
 
 struct CPUMesh {
 	Name name = "empty";
@@ -19,24 +23,23 @@ struct CPUMesh {
 	Vector<Vec3> vertices;
 	Vector<Vec2> uvs;
 	Vector<Vec3> normals;
+	Vector<Index> materialID;
+
 	Vector<Index> indices;
 	MeshDrawMode drawMode = MeshDrawMode::staticMode;
 	Bool readyForUpload = false;
-		
-	CPUMesh();
-	~CPUMesh();
+
+	CPUMesh() {};
+	~CPUMesh() {};
 	CPUMesh(Name name);
 	CPUMesh(Graph& graph);
-	CPUMesh(Name name, MeshDrawMode drawMode, PrimitiveMode primitiveMode);
 
 	void saveMeshFile();
-	void load(Name name);
 	void removeDoubles();
+	void load(Name name);
 	void checkIntegrity();
-	void loadFBX(Path path);
 	void move(Vec3 moveVector);
 	void merge(CPUMesh source);
-	void loadMeshFile(Path path);
 	void calculateSmoothNormals();
 	void render(Renderer& renderer);
 	void meshFromHeightmap(Array2D<Float>& heightmap, UInt size);

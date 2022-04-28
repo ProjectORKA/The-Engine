@@ -74,9 +74,6 @@
     <Filter Include="Common\Math\Noise\PerlinNoise">
       <UniqueIdentifier>{170d8259-f4d9-4457-9472-2bb787e51315}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Common\Math\Algorithm">
-      <UniqueIdentifier>{471eef3e-2937-4356-b928-296f2ec62715}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Common\Math\VectorMath">
       <UniqueIdentifier>{2d13d521-2c6e-406b-ba54-094a90490600}</UniqueIdentifier>
     </Filter>
@@ -88,9 +85,6 @@
     </Filter>
     <Filter Include="Common\Advanced\Threading">
       <UniqueIdentifier>{e54cf082-0377-43d0-926e-993f59bf0ba1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Common\Advanced\Time">
-      <UniqueIdentifier>{6fb63ff6-d7db-4b15-981a-b2c04228363d}</UniqueIdentifier>
     </Filter>
     <Filter Include="Common\Advanced\Util">
       <UniqueIdentifier>{1b3c6c0e-a78c-42a3-9248-9f270de8adbf}</UniqueIdentifier>
@@ -154,9 +148,6 @@
     </Filter>
     <Filter Include="Engine\Compiler">
       <UniqueIdentifier>{023fa743-45eb-43fa-97cf-f88703d81630}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\Debug Console">
-      <UniqueIdentifier>{74ee1686-d3ff-42a5-a4ed-0a9609b8c8ea}</UniqueIdentifier>
     </Filter>
     <Filter Include="Engine\UserInterface">
       <UniqueIdentifier>{0794c978-10eb-433d-82f6-f90232ea1746}</UniqueIdentifier>
@@ -416,9 +407,6 @@
     <Filter Include="Games\Game\AIplayground">
       <UniqueIdentifier>{bd903ea8-cf67-4516-b3b3-501e4ccf696f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Games\Game\MindMap">
-      <UniqueIdentifier>{d1272b2a-7353-4bab-bfda-cfefbc220d55}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Games\Game\Pong">
       <UniqueIdentifier>{af08b023-4f5a-42ca-8781-515946c403c5}</UniqueIdentifier>
     </Filter>
@@ -506,14 +494,35 @@
     <Filter Include="Common\Data\Array2D">
       <UniqueIdentifier>{0a9ca969-1009-4e90-babf-7fd3ef806c35}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Games\Pototypes\LevelledGraph">
-      <UniqueIdentifier>{dcfdf9f2-7bc4-4a7a-874c-1edc68810d22}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Engine\UserInterface\Window\Renderer\LineRenderer">
       <UniqueIdentifier>{f44790b7-ec58-4735-9f90-46dc7b38f170}</UniqueIdentifier>
     </Filter>
     <Filter Include="Games\Pototypes\Molecules2D">
       <UniqueIdentifier>{7f6fda8d-67f2-448b-acd9-e6e3ad6365c6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\UserInterface\Window\Renderer\InteractionSystem">
+      <UniqueIdentifier>{b09d3ce9-f867-4bfa-9c17-0990d64f931f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Games\Pototypes\MindMap">
+      <UniqueIdentifier>{d1272b2a-7353-4bab-bfda-cfefbc220d55}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Games\Game\MindMapper">
+      <UniqueIdentifier>{cc6a9446-9327-4862-908b-30f824e246c1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Games\Game\SimpleRTS">
+      <UniqueIdentifier>{845c9c3c-4726-4f1c-80ce-3d081d06be3f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Games\Game\SimpleRTS\shaders">
+      <UniqueIdentifier>{1196324f-cb32-4d50-9cde-c7996443921d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Common\Time">
+      <UniqueIdentifier>{6fb63ff6-d7db-4b15-981a-b2c04228363d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Common\ResourceManager">
+      <UniqueIdentifier>{79f500eb-1c76-4ed5-8e8a-cc0d0193876f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Common\ECS">
+      <UniqueIdentifier>{02c6a19c-1b38-4994-ae40-9a7d64149d2d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -569,9 +578,6 @@
     <ClCompile Include="Math.cpp">
       <Filter>Common\Math</Filter>
     </ClCompile>
-    <ClCompile Include="Threading.cpp">
-      <Filter>Common\Advanced\Threading</Filter>
-    </ClCompile>
     <ClCompile Include="OctreeSystem.cpp">
       <Filter>Engine\PlanetSystem\OctreeSystem</Filter>
     </ClCompile>
@@ -582,10 +588,7 @@
       <Filter>Engine\PlanetSystem\QuadtreeSystem</Filter>
     </ClCompile>
     <ClCompile Include="Time.cpp">
-      <Filter>Common\Advanced\Time</Filter>
-    </ClCompile>
-    <ClCompile Include="Timer.cpp">
-      <Filter>Common\Advanced\Time</Filter>
+      <Filter>Common\Time</Filter>
     </ClCompile>
     <ClCompile Include="ULLUtil.cpp">
       <Filter>Engine\PlanetSystem\Util</Filter>
@@ -696,10 +699,7 @@
       <Filter>Engine\PlanetSystem\QuadtreeSystem\QuadtreeID</Filter>
     </ClCompile>
     <ClCompile Include="MindMap.cpp">
-      <Filter>Games\Game\MindMap</Filter>
-    </ClCompile>
-    <ClCompile Include="DebugConsole.cpp">
-      <Filter>Engine\Debug Console</Filter>
+      <Filter>Games\Pototypes\MindMap</Filter>
     </ClCompile>
     <ClCompile Include="Pong.cpp">
       <Filter>Games\Game\Pong</Filter>
@@ -733,9 +733,6 @@
     </ClCompile>
     <ClCompile Include="PerlinNoise.cpp">
       <Filter>Common\Math\Noise\PerlinNoise</Filter>
-    </ClCompile>
-    <ClCompile Include="Algorithm.cpp">
-      <Filter>Common\Math\Algorithm</Filter>
     </ClCompile>
     <ClCompile Include="TreeSystem.cpp">
       <Filter>Games\Pototypes\TreeSystem</Filter>
@@ -852,12 +849,18 @@
     <ClCompile Include="NeighbourOctree.cpp">
       <Filter>Games\Pototypes\NeighbourOctree</Filter>
     </ClCompile>
-    <ClCompile Include="LevelledGraph.cpp">
-      <Filter>Games\Pototypes\LevelledGraph</Filter>
-    </ClCompile>
     <ClCompile Include="LineRenderer.cpp" />
     <ClCompile Include="Molecules2D.cpp">
       <Filter>Games\Pototypes\Molecules2D</Filter>
+    </ClCompile>
+    <ClCompile Include="SimpleRTS.cpp">
+      <Filter>Games\Game\SimpleRTS</Filter>
+    </ClCompile>
+    <ClCompile Include="ResourceManager.cpp">
+      <Filter>Common\ResourceManager</Filter>
+    </ClCompile>
+    <ClCompile Include="EntityComponentSystem.cpp">
+      <Filter>Common\ECS</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -940,10 +943,7 @@
       <Filter>Engine\PlanetSystem\QuadtreeSystem</Filter>
     </ClInclude>
     <ClInclude Include="Time.hpp">
-      <Filter>Common\Advanced\Time</Filter>
-    </ClInclude>
-    <ClInclude Include="Timer.hpp">
-      <Filter>Common\Advanced\Time</Filter>
+      <Filter>Common\Time</Filter>
     </ClInclude>
     <ClInclude Include="ULLUtil.hpp">
       <Filter>Engine\PlanetSystem\Util</Filter>
@@ -1105,13 +1105,10 @@
       <Filter>Common\Data\Queue</Filter>
     </ClInclude>
     <ClInclude Include="MindMap.hpp">
-      <Filter>Games\Game\MindMap</Filter>
+      <Filter>Games\Pototypes\MindMap</Filter>
     </ClInclude>
     <ClInclude Include="Compiler.hpp">
       <Filter>Engine\Compiler</Filter>
-    </ClInclude>
-    <ClInclude Include="DebugConsole.hpp">
-      <Filter>Engine\Debug Console</Filter>
     </ClInclude>
     <ClInclude Include="Pong.hpp">
       <Filter>Games\Game\Pong</Filter>
@@ -1160,9 +1157,6 @@
     </ClInclude>
     <ClInclude Include="Random.hpp">
       <Filter>Common\Math\Random</Filter>
-    </ClInclude>
-    <ClInclude Include="Algorithm.hpp">
-      <Filter>Common\Math\Algorithm</Filter>
     </ClInclude>
     <ClInclude Include="BranchStructure.hpp">
       <Filter>Common\Data\BranchStructure</Filter>
@@ -1323,14 +1317,27 @@
     <ClInclude Include="Array2D.hpp">
       <Filter>Common\Data\Array2D</Filter>
     </ClInclude>
-    <ClInclude Include="LevelledGraph.hpp">
-      <Filter>Games\Pototypes\LevelledGraph</Filter>
-    </ClInclude>
     <ClInclude Include="LineRenderer.hpp">
       <Filter>Engine\UserInterface\Window\Renderer\LineRenderer</Filter>
     </ClInclude>
     <ClInclude Include="Molecules2D.hpp">
       <Filter>Games\Pototypes\Molecules2D</Filter>
+    </ClInclude>
+    <ClInclude Include="InteractionSystem.hpp">
+      <Filter>Engine\UserInterface\Window\Renderer\InteractionSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="MindMapper.hpp">
+      <Filter>Games\Game\MindMapper</Filter>
+    </ClInclude>
+    <ClInclude Include="SimpleRTS.hpp">
+      <Filter>Games\Game\SimpleRTS</Filter>
+    </ClInclude>
+    <ClInclude Include="CheatTest.hpp" />
+    <ClInclude Include="ResourceManager.hpp">
+      <Filter>Common\ResourceManager</Filter>
+    </ClInclude>
+    <ClInclude Include="EntityComponentSystem.hpp">
+      <Filter>Common\ECS</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1474,6 +1481,12 @@
     </None>
     <None Include="Data\shaders\blurredUI.vert">
       <Filter>Games\Game\Mooncrash\shaders</Filter>
+    </None>
+    <None Include="Data\shaders\simpleRTS.frag">
+      <Filter>Games\Game\SimpleRTS\shaders</Filter>
+    </None>
+    <None Include="Data\shaders\simpleRTS.vert">
+      <Filter>Games\Game\SimpleRTS\shaders</Filter>
     </None>
   </ItemGroup>
 </Project>
