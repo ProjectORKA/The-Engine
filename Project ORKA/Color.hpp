@@ -15,4 +15,4 @@ struct ColorPalette {
 	}
 };
 
-extern ColorPalette colors;
+extern ColorPalette globalColors;

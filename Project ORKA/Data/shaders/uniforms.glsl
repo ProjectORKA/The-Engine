@@ -38,4 +38,5 @@ uniform sampler2D texture4;
 layout(location = 0) in vec3 vertex;
 layout(location = 1) in vec2 uvs;
 layout(location = 2) in vec3 normals;
-layout(location = 3) in mat4 transform;
+layout(location = 3) in vec3 colors;
+layout(location = 4) in mat4 transform;

@@ -35,8 +35,6 @@ void Scene::loadFBX(Path path) {
 
 				for (Index objectID = 0; objectID < assimpScene->mRootNode->mNumChildren; objectID++) {
 
-					assimpScene->mRootNode->mChildren[objectID]->mName;
-
 					if (assimpScene->mRootNode->mChildren[objectID]->mNumMeshes > 0) {
 
 						//get all meshes of object
@@ -49,6 +47,13 @@ void Scene::loadFBX(Path path) {
 
 						for (UInt objectsMeshID = 0; objectsMeshID < numMeshes; objectsMeshID++) {
 							Index meshID = assimpScene->mRootNode->mChildren[objectID]->mMeshes[objectsMeshID];
+
+							aiColor4D diffuseColor(0.0f, 0.0f, 0.0f, 0.0f);
+							aiGetMaterialColor(assimpScene->mMaterials[assimpScene->mMeshes[meshID]->mMaterialIndex], AI_MATKEY_COLOR_DIFFUSE, &diffuseColor);
+
+							Vec3 color(diffuseColor.r, diffuseColor.g, diffuseColor.b);
+
+							logDebug(color);
 
 							if (assimpScene->mMeshes[meshID]->HasPositions()) {
 								for (UInt i = 0; i < assimpScene->mMeshes[meshID]->mNumVertices; i++) {
@@ -72,6 +77,8 @@ void Scene::loadFBX(Path path) {
 									normal.y = assimpScene->mMeshes[meshID]->mNormals[i].y;
 									normal.z = assimpScene->mMeshes[meshID]->mNormals[i].z;
 									mesh.normals.push_back(normal);
+
+									mesh.colors.push_back(color);
 								}
 
 								if (assimpScene->mMeshes[meshID]->HasFaces()) {
@@ -88,6 +95,7 @@ void Scene::loadFBX(Path path) {
 
 							lastIndex += assimpScene->mMeshes[meshID]->mNumVertices;
 						}
+						
 						if (errorMessage.size()) {
 							logError(String("The model (").append(path.stem().string()).append(") could not be loaded! (").append(path.string()).append(")").append(" Error: ").append(errorMessage));
 							mesh.readyForUpload = false;
@@ -99,7 +107,7 @@ void Scene::loadFBX(Path path) {
 						}
 						meshes.push_back(mesh);
 					}
-					else errorMessage = "Object in scene does not have meshes!";
+					else logDebug(String("Object (").append(assimpScene->mRootNode->mChildren[objectID]->mName.C_Str()).append("in scene does not have meshes!"));
 				}
 			}
 			else errorMessage = "No meshes in fbx scene!";

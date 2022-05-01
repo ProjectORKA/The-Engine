@@ -69,6 +69,8 @@ void MeshSystem::render(Uniforms & uniforms, Name meshName) {
 void MeshSystem::renderInstanced(Uniforms& uniforms, Name meshName, Vector<Matrix>& data) {
 	use(meshName);
 
+	const UInt transformPos = 4;
+
 	currentMesh().vao.select();
 
 	if (currentMesh().vao.instanced) {
@@ -76,24 +78,24 @@ void MeshSystem::renderInstanced(Uniforms& uniforms, Name meshName, Vector<Matri
 	}
 	else {
 		if (!transforms.loaded){
-			transforms.create(3, glm::value_ptr(data[0]), data.size() * sizeof(Matrix), GL_STATIC_DRAW, 4);
+			transforms.create(4, glm::value_ptr(data[0]), data.size() * sizeof(Matrix), GL_STATIC_DRAW, 4);
 		}
 		apiBindBuffer(GL_ARRAY_BUFFER, transforms.bufferID);
 		
-		glEnableVertexAttribArray(3);
-		glEnableVertexAttribArray(4);
-		glEnableVertexAttribArray(5);
-		glEnableVertexAttribArray(6);
+		glEnableVertexAttribArray(transformPos + 0);
+		glEnableVertexAttribArray(transformPos + 1);
+		glEnableVertexAttribArray(transformPos + 2);
+		glEnableVertexAttribArray(transformPos + 3);
 
-		glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(Matrix), (void*)0);
-		glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, sizeof(Matrix), (void*)(1 * sizeof(Vec4)));
-		glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE, sizeof(Matrix), (void*)(2 * sizeof(Vec4)));
-		glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE, sizeof(Matrix), (void*)(3 * sizeof(Vec4)));
+		glVertexAttribPointer(transformPos + 0, 4, GL_FLOAT, GL_FALSE, sizeof(Matrix), (void*) 0);
+		glVertexAttribPointer(transformPos + 1, 4, GL_FLOAT, GL_FALSE, sizeof(Matrix), (void*)(1 * sizeof(Vec4)));
+		glVertexAttribPointer(transformPos + 2, 4, GL_FLOAT, GL_FALSE, sizeof(Matrix), (void*)(2 * sizeof(Vec4)));
+		glVertexAttribPointer(transformPos + 3, 4, GL_FLOAT, GL_FALSE, sizeof(Matrix), (void*)(3 * sizeof(Vec4)));
 
-		glVertexAttribDivisor(3, 1);
-		glVertexAttribDivisor(4, 1);
-		glVertexAttribDivisor(5, 1);
-		glVertexAttribDivisor(6, 1);
+		glVertexAttribDivisor(transformPos + 0, 1);
+		glVertexAttribDivisor(transformPos + 1, 1);
+		glVertexAttribDivisor(transformPos + 2, 1);
+		glVertexAttribDivisor(transformPos + 3, 1);
 
 		currentMesh().vao.instanced = true;
 	}

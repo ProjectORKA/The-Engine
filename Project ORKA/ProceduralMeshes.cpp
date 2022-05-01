@@ -5,24 +5,31 @@ void proceduralWireframeAxisLines(CPUMesh& cpuMesh)
 	cpuMesh.primitiveMode = PrimitiveMode::Lines;
 
 	cpuMesh.vertices = {
-		Vec3(0,0,0),
-		Vec3(1,0,0),
-		Vec3(0,1,0),
-		Vec3(0,0,1)
+		Vec3(0.0f, 0.0f, 0.0f),
+		Vec3(1.0f, 0.0f, 0.0f),
+		Vec3(0.0f, 1.0f, 0.0f),
+		Vec3(0.0f, 0.0f, 1.0f)
 	};
 
 	cpuMesh.uvs = {
-		Vec2(0.0, 0.0),
-		Vec2(1.0, 0.0),
-		Vec2(0.0, 1.0),
-		Vec2(0.0, 0.0)
+		Vec2(0.0f, 0.0f),
+		Vec2(1.0f, 0.0f),
+		Vec2(0.0f, 1.0f),
+		Vec2(0.0f, 0.0f)
 	};
 
 	cpuMesh.normals = {
-		Vec3(0,0,1),
-		Vec3(0,0,1),
-		Vec3(0,0,1),
-		Vec3(0,0,1)
+		Vec3(0.0f, 0.0f, 1.0f),
+		Vec3(0.0f, 0.0f, 1.0f),
+		Vec3(0.0f, 0.0f, 1.0f),
+		Vec3(0.0f, 0.0f, 1.0f)
+	};
+
+	cpuMesh.colors = {
+		Vec3(1.0f, 1.0f, 1.0f),
+		Vec3(1.0f, 1.0f, 1.0f),
+		Vec3(1.0f, 1.0f, 1.0f),
+		Vec3(1.0f, 1.0f, 1.0f)
 	};
 
 	cpuMesh.indices = {
@@ -35,9 +42,9 @@ void proceduralPlaneMesh(CPUMesh& cpuMesh, Float width, Float height) {
 
 	cpuMesh.vertices =
 	{
-		Vec3( width,  height, 0.0f),
-		Vec3( width, -height, 0.0f),
-		Vec3(-width,  height, 0.0f),
+		Vec3(+width, +height, 0.0f),
+		Vec3(+width, -height, 0.0f),
+		Vec3(-width, +height, 0.0f),
 		Vec3(-width, -height, 0.0f)
 	};
 
@@ -49,10 +56,17 @@ void proceduralPlaneMesh(CPUMesh& cpuMesh, Float width, Float height) {
 	};
 
 	cpuMesh.normals = {
-	Vec3(0.0f, 0.0f, 1.0f),
-	Vec3(0.0f, 0.0f, 1.0f),
-	Vec3(0.0f, 0.0f, 1.0f),
-	Vec3(0.0f, 0.0f, 1.0f)
+		Vec3(0.0f, 0.0f, 1.0f),
+		Vec3(0.0f, 0.0f, 1.0f),
+		Vec3(0.0f, 0.0f, 1.0f),
+		Vec3(0.0f, 0.0f, 1.0f)
+	};
+
+	cpuMesh.colors = {
+		Vec3(1.0f, 1.0f, 1.0f),
+		Vec3(1.0f, 1.0f, 1.0f),
+		Vec3(1.0f, 1.0f, 1.0f),
+		Vec3(1.0f, 1.0f, 1.0f)
 	};
 
 	cpuMesh.indices = {
@@ -78,25 +92,36 @@ void proceduralWireframeCubeMesh(CPUMesh& cpuMesh, Float size, Float size2)
 	};
 
 	cpuMesh.uvs = {
-		Vec2(1.0, 1.0),
-		Vec2(1.0, 1.0),
-		Vec2(1.0, 0.0),
-		Vec2(1.0, 0.0),
-		Vec2(0.0, 1.0),
-		Vec2(0.0, 1.0),
-		Vec2(0.0, 0.0),
-		Vec2(0.0, 0.0)
+		Vec2(1.0f, 1.0f),
+		Vec2(1.0f, 1.0f),
+		Vec2(1.0f, 0.0f),
+		Vec2(1.0f, 0.0f),
+		Vec2(0.0f, 1.0f),
+		Vec2(0.0f, 1.0f),
+		Vec2(0.0f, 0.0f),
+		Vec2(0.0f, 0.0f)
 	};
 
 	cpuMesh.normals = {
-	Vec3(0.0f, 0.0f, 1.0f),
-	Vec3(0.0f, 0.0f, 1.0f),
-	Vec3(0.0f, 0.0f, 1.0f),
-	Vec3(0.0f, 0.0f, 1.0f),
-	Vec3(0.0f, 0.0f, 1.0f),
-	Vec3(0.0f, 0.0f, 1.0f),
-	Vec3(0.0f, 0.0f, 1.0f),
-	Vec3(0.0f, 0.0f, 1.0f)
+		Vec3(0.0f, 0.0f, 1.0f),
+		Vec3(0.0f, 0.0f, 1.0f),
+		Vec3(0.0f, 0.0f, 1.0f),
+		Vec3(0.0f, 0.0f, 1.0f),
+		Vec3(0.0f, 0.0f, 1.0f),
+		Vec3(0.0f, 0.0f, 1.0f),
+		Vec3(0.0f, 0.0f, 1.0f),
+		Vec3(0.0f, 0.0f, 1.0f)
+	};
+
+	cpuMesh.colors = {
+	Vec3(1.0f, 1.0f, 1.0f),
+	Vec3(1.0f, 1.0f, 1.0f),
+	Vec3(1.0f, 1.0f, 1.0f),
+	Vec3(1.0f, 1.0f, 1.0f),
+	Vec3(1.0f, 1.0f, 1.0f),
+	Vec3(1.0f, 1.0f, 1.0f),
+	Vec3(1.0f, 1.0f, 1.0f),
+	Vec3(1.0f, 1.0f, 1.0f)
 	};
 
 	cpuMesh.indices = {

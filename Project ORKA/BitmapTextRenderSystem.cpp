@@ -60,6 +60,13 @@ void BitmapTextRenderSystem::render(Renderer & renderer, String text, Vec2 posit
 		cpuText.normals.push_back(Vec3(0, 0, 1));
 		cpuText.normals.push_back(Vec3(0, 0, 1));
 
+		cpuText.colors.push_back(Vec3(1.0f, 1.0f, 1.0f));
+		cpuText.colors.push_back(Vec3(1.0f, 1.0f, 1.0f));
+		cpuText.colors.push_back(Vec3(1.0f, 1.0f, 1.0f));
+		cpuText.colors.push_back(Vec3(1.0f, 1.0f, 1.0f));
+		cpuText.colors.push_back(Vec3(1.0f, 1.0f, 1.0f));
+		cpuText.colors.push_back(Vec3(1.0f, 1.0f, 1.0f));
+
 		cpuText.indices.push_back(i * 6);
 		cpuText.indices.push_back(i * 6 + 1);
 		cpuText.indices.push_back(i * 6 + 2);
