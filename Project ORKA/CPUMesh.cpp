@@ -13,7 +13,7 @@ CPUMesh::CPUMesh(Graph& graph) {
 	primitiveMode = PrimitiveMode::LineStrip;
 
 	for (UInt index = 0; index < graph.points.size(); index++) {
-		Vec2 pointPos = Vec2( Float(index) / Float(graph.points.size()), graph.points[index]);
+		Vec2 pointPos = Vec2(Float(index) / Float(graph.points.size()), graph.points[index]);
 
 		vertices.push_back(Vec3(pointPos, 0));
 		uvs.push_back(pointPos);
@@ -27,19 +27,22 @@ CPUMesh::CPUMesh(Graph& graph) {
 
 void CPUMesh::saveMeshFile()
 {
-	MeshHeader header;
+	MeshHeader2 header;
+	header.version = 2;
 	header.meshName = name;
 	header.primitiveMode = PrimitiveMode::Triangles;
 	header.vertexCount = vertices.size();
 	header.uvCount = uvs.size();
 	header.normalCount = normals.size();
+	header.colorCount = colors.size();
 	header.indexCount = indices.size();
 
 	OutFile mesh(String("Data/meshes/").append(name.data).append(".mesh"));
-	mesh.write((Char*)&header, sizeof(MeshHeader));
+	mesh.write((Char*)&header, sizeof(MeshHeader2));
 	mesh.write((Char*)&vertices[0], vertices.size() * sizeof(Vec3));
 	mesh.write((Char*)&uvs[0], uvs.size() * sizeof(Vec2));
 	mesh.write((Char*)&normals[0], normals.size() * sizeof(Vec3));
+	mesh.write((Char*)&colors[0], colors.size() * sizeof(Vec3));
 	mesh.write((Char*)&indices[0], indices.size() * sizeof(Index));
 }
 void CPUMesh::load(Name name) {
@@ -57,10 +60,10 @@ void CPUMesh::load(Name name) {
 		this->name = name;
 
 		if (file.isOpen) {
-			MeshHeader header;
-			file.read((char*)&header, sizeof(MeshHeader));
+			MeshHeader2 header;
+			file.read((char*)&header, sizeof(MeshHeader2));
 
-			if (header.version == 1) {
+			if (header.version == 2) {
 				name = header.meshName;
 				primitiveMode = header.primitiveMode;
 
@@ -68,10 +71,12 @@ void CPUMesh::load(Name name) {
 				uvs.resize(header.uvCount);
 				normals.resize(header.normalCount);
 				indices.resize(header.indexCount);
+				colors.resize(header.colorCount);
 
 				file.read((char*)&vertices[0], header.vertexCount * sizeof(Vec3));
 				file.read((char*)&uvs[0], header.uvCount * sizeof(Vec2));
 				file.read((char*)&normals[0], header.normalCount * sizeof(Vec3));
+				file.read((char*)&colors[0], header.colorCount * sizeof(Vec3));
 				file.read((char*)&indices[0], header.indexCount * sizeof(Index));
 			}
 			else {
@@ -188,8 +193,8 @@ void CPUMesh::calculateSmoothNormals()
 			Vec3 vertexA = vertices[a];
 			Vec3 vertexB = vertices[b];
 			Vec3 vertexC = vertices[c];
-			
-			if(vertexA == vertexB || vertexB == vertexC || vertexA == vertexC)continue;
+
+			if (vertexA == vertexB || vertexB == vertexC || vertexA == vertexC)continue;
 
 			//get face normal
 			Vec3 faceNormal = glm::normalize(glm::cross(vertexB - vertexA, vertexC - vertexA));
@@ -208,13 +213,13 @@ void CPUMesh::calculateSmoothNormals()
 		break;
 	}
 }
-void CPUMesh::render(Renderer & renderer) {
+void CPUMesh::render(Renderer& renderer) {
 	GPUMesh mesh;
 	mesh.upload(*this);
 	mesh.render(renderer.uniforms());
 	mesh.unload();
 }
-void CPUMesh::meshFromHeightmap(Array2D<Float> & heightmap, UInt size) {
+void CPUMesh::meshFromHeightmap(Array2D<Float>& heightmap, UInt size) {
 	name = "terrain";
 	primitiveMode = PrimitiveMode::TriangleStrip;
 	vertices.clear();
@@ -225,7 +230,7 @@ void CPUMesh::meshFromHeightmap(Array2D<Float> & heightmap, UInt size) {
 	for (Int y = 0; y < size; y++) {
 		for (Int x = 0; x < size; x++) {
 			Vec3 position = Vec3(x, y, 0) / Vec3(size);
-			position.z = heightmap.get(x,y);
+			position.z = heightmap.get(x, y);
 			vertices.push_back(position);
 			normals.push_back(Vec3(0, 0, 1));
 			uvs.push_back(Vec2(position.x, position.y));

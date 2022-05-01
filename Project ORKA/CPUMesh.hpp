@@ -23,7 +23,7 @@ struct CPUMesh {
 	Vector<Vec3> vertices;
 	Vector<Vec2> uvs;
 	Vector<Vec3> normals;
-	Vector<Index> materialID;
+	Vector<Vec3> colors;
 
 	Vector<Index> indices;
 	MeshDrawMode drawMode = MeshDrawMode::staticMode;
@@ -45,12 +45,23 @@ struct CPUMesh {
 	void meshFromHeightmap(Array2D<Float>& heightmap, UInt size);
 };
 
-struct MeshHeader {
+struct MeshHeader1 {
 	UInt version = 1;
 	Name meshName = "";
 	PrimitiveMode primitiveMode = PrimitiveMode::Triangles;
 	UInt vertexCount = 0;
 	UInt uvCount = 0;
 	UInt normalCount = 0;
+	UInt indexCount = 0;
+};
+
+struct MeshHeader2 {
+	UInt version = 2;
+	Name meshName = "";
+	PrimitiveMode primitiveMode = PrimitiveMode::Triangles;
+	UInt vertexCount = 0;
+	UInt uvCount = 0;
+	UInt normalCount = 0;
+	UInt colorCount = 0;
 	UInt indexCount = 0;
 };

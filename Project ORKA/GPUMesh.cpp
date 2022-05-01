@@ -36,28 +36,6 @@ void GPUMesh::render(Uniforms& uniforms) {
 		apiDrawElements(enumClassAsInt(primitiveMode), vao.indexBuffer.indexCount, GL_UNSIGNED_INT, nullptr);
 	}
 }
-//void GPUMesh::renderInstances(Uniforms& uniforms, Vector<Vec4>& data) {
-//	if (loaded) {
-//
-//		uniforms.instanced(true);
-//		uniforms.upload();
-//		if (transformations.loaded) {
-//			vao.select();
-//			transformations.update(glm::value_ptr(data[0]), data.size() * sizeof(Vec4));
-//			transformations.attach();
-//		}
-//		else {
-//			vao.select();
-//			transformations.create(3, glm::value_ptr(data[0]), data.size() * sizeof(Vec4), GL_STATIC_DRAW, 4);
-//			glVertexAttribDivisor(3, 1);
-//			transformations.attach();
-//		}
-//
-//		instanced = true;
-//
-//		apiDrawElementsInstanced(enumClassAsInt(primitiveMode), vao.indexBuffer.indexCount, GL_UNSIGNED_INT, nullptr, data.size());
-//	}
-//}
 void GPUMesh::renderInstances(Uniforms& uniforms, UInt instanceCount) {
 	if (loaded) {
 		uniforms.instanced(true);
@@ -66,24 +44,3 @@ void GPUMesh::renderInstances(Uniforms& uniforms, UInt instanceCount) {
 		apiDrawElementsInstanced(enumClassAsInt(primitiveMode), vao.indexBuffer.indexCount, GL_UNSIGNED_INT, nullptr, instanceCount);
 	}
 }
-//void GPUMesh::renderInstances(Uniforms& uniforms, Vector<Vec2>& data) {
-//	if (loaded) {
-//		uniforms.instanced(true);
-//		uniforms.upload();
-//		if (transformations.loaded) {
-//			vao.select();
-//			transformations.update(glm::value_ptr(data[0]), data.size() * sizeof(Vec2));
-//			transformations.attach();
-//		}
-//		else {
-//			vao.select();
-//			transformations.create(4, glm::value_ptr(data[0]), data.size() * sizeof(Vec2), GL_STATIC_DRAW, 2);
-//			glVertexAttribDivisor(4, 1);
-//			transformations.attach();
-//		}
-//
-//		instanced = true;
-//
-//		apiDrawElementsInstanced(enumClassAsInt(primitiveMode), vao.indexBuffer.indexCount, GL_UNSIGNED_INT, nullptr, data.size());
-//	}
-//}
