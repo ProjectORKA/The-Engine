@@ -29,7 +29,7 @@ void gameSimulationThread(Thread& thread, GameSystem & gameSystem) {
 
 	while (thread.keepThreadRunning) {
 
-		Float framerate = 144;
+		Float framerate = 120;
 
 		t = Clock::now() + Milliseconds(Int(1000.0f / framerate));
 

@@ -5,7 +5,7 @@
 #include "FileSystem.hpp"
 #include "TiledMath.hpp"
 #include "Renderer.hpp"
-#include "KeyMap.hpp"
+#include "Input.hpp"
 
 extern Index nextInteractiveElementID;
 
@@ -34,22 +34,15 @@ struct Constraints {
 };
 
 struct UIElement {
-	Index id = nextInteractiveElementID++;
 	Constraints constraints;
+	Index id = nextInteractiveElementID++;
 
 	~UIElement();
-	UIElement& padding(U16 width) {
-		constraints.paddingX = width;
-		constraints.paddingY = width;
-		return *this;
-	}
+	UIElement& padding(U16 width);
 
-	virtual void update(Renderer& renderer) {};
-	virtual void mouseIsMoving(Window& window, IVec2 position) {};
-	virtual void render(TiledRectangle area, Renderer& renderer) {};
-	virtual void filesDropped(Window& window, Vector<Path> paths) {};
-	virtual void renderInteractive(TiledRectangle area, Renderer& renderer) {};
-	virtual void mouseIsScrolled(Window& window, Double xAxis, Double yAxis) {};
-	virtual void buttonIsPressed(Window& window, Key key, ActionState action, Int modifiers) {};
-	virtual void mouseIsPressed(Window& window, MouseButton button, ActionState action, Int modifiers) {};
+	virtual void update(Window& window) {};
+	virtual void render(Window& window, TiledRectangle area) {};
+	virtual void inputEvent(Window& window, InputEvent input) {};
+	virtual void mouseMoved(Window& window, MouseMovementInput input) {};
+	virtual void renderInteractive(Window& window, TiledRectangle area) {};
 };

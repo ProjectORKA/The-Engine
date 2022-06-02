@@ -247,7 +247,5 @@ void CPUMesh::meshFromHeightmap(Array2D<Float>& heightmap, UInt size) {
 		}
 	}
 
-	//calculateSmoothNormals();
-
 	checkIntegrity();
 }

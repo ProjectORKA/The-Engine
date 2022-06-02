@@ -28,47 +28,40 @@ struct DNDWorld : public GameSimulation {
 	Float nearClipValue = 0.1;
 	Float farClipValue = 100000;
 	Vec3 location = Vec3(0);
-	Float rotationX = 0;
-	Float rotationZ = 0;
+	DVec3 rotation = Vec3(0);
 	//player data
-	Int speedExponent = 0;
+	Int speedExponent = 1;
 	
 	Vector<DNDEntity> entities;
 
-	void save();
+	DNDWorld() {
+		load();
+	}
+	~DNDWorld() {
+		save();
+	}
 	void load();
-	void create() override;
-	void destroy() override;
+	void save();
 };
 
 struct DNDRenderer : public GameRenderer {
-	//Input
-	Action	forward;
-	Action	backward;
-	Action	left;
-	Action	right;
-	Action	upward;
-	Action	downward;
-	Action	jump;
-	Action	wireframe;
-
-	Float mouseSensitivity = 0.0015f;
-	Player player;
-
+	DebugPlayer player;
 	DNDWorld* world = nullptr;
-
 	Index lastSelectedObject = -1;
 	Vector<Index> selectedObjects;
+	Float mouseSensitivity = 0.0015f;
+	InputEvent select = InputEvent(InputType::Mouse, LMB, 1);
+	InputID selectMultiple = InputID(InputType::KeyBoard, SHIFT);
+
+	InputEvent exit = InputEvent(InputType::Mouse, RMB, 0);
+	InputEvent enter = InputEvent(InputType::Mouse, LMB, 1);
 
 	DNDRenderer(DNDWorld& world);
-	virtual void update(Renderer& renderer)override;
-	virtual void mouseIsMoving(Window& window, IVec2 position)  override;
-	virtual void render(TiledRectangle area, Renderer& renderer) override;
-	virtual void filesDropped(Window& window, Vector<Path> paths) override;
-	virtual void renderInteractive(TiledRectangle area, Renderer& renderer) override;
-	virtual void mouseIsScrolled(Window& window, Double xAxis, Double yAxis) override;
-	virtual void buttonIsPressed(Window& window, Key key, ActionState action, Int modifiers) override;
-	virtual void mouseIsPressed(Window& window, MouseButton button, ActionState action, Int modifiers) override;
+	void update(Window& window) override;
+	void render(Window& window, TiledRectangle area) override;
+	void inputEvent(Window& window, InputEvent input) override;
+	void renderInteractive(Window& window, TiledRectangle area) override;
+	void mouseMoved(Window& window, MouseMovementInput input) override;
 };
 
 Int diceRoll(Int diceCount);

@@ -8,31 +8,37 @@
 #define GLEW_STATIC
 #include "GL/glew.h"
 
-enum class ShaderType {
-	vertex = GL_VERTEX_SHADER,
-	compute = GL_COMPUTE_SHADER,
-	geometry = GL_GEOMETRY_SHADER,
-	fragment = GL_FRAGMENT_SHADER,
-	tessellationControl = GL_TESS_CONTROL_SHADER,
-	tessellationEvaluation = GL_TESS_EVALUATION_SHADER
-};
-enum class MeshDrawMode {
-	staticMode = GL_STATIC_DRAW,
-	dynamicMode = GL_DYNAMIC_DRAW,
-	streamMode = GL_STREAM_DRAW,
-};
-enum class PrimitiveMode
-{
-	Lines = GL_LINES,
-	Points = GL_POINTS,
-	Triangles = GL_TRIANGLES,
-	LineStrip = GL_LINE_STRIP,
-	TriangleStrip = GL_TRIANGLE_STRIP
-};
+namespace ShaderType {
+	enum {
+		vertex = GL_VERTEX_SHADER,
+		compute = GL_COMPUTE_SHADER,
+		geometry = GL_GEOMETRY_SHADER,
+		fragment = GL_FRAGMENT_SHADER,
+		tessellationControl = GL_TESS_CONTROL_SHADER,
+		tessellationEvaluation = GL_TESS_EVALUATION_SHADER
+	};
+}
+namespace MeshDrawMode{
+	enum {
+		staticMode = GL_STATIC_DRAW,
+		dynamicMode = GL_DYNAMIC_DRAW,
+		streamMode = GL_STREAM_DRAW,
+	};
+}
+namespace PrimitiveMode {
+	enum {
+		Lines = GL_LINES,
+		Points = GL_POINTS,
+		Triangles = GL_TRIANGLES,
+		LineStrip = GL_LINE_STRIP,
+		TriangleStrip = GL_TRIANGLE_STRIP
+	};
+}
 
 using Enum = UInt;
 using SizeI = Int;
 using SizeIPtr = __int64;
+
 void apiClearColor();
 void apiClearDepth();
 Bool apiGetCullFace();
@@ -45,11 +51,11 @@ void apiGenVertexArray(UInt& id);
 void apiDeleteBuffer(UInt buffer);
 void apiGenBuffer(UInt& bufferID);
 void apiSetClearColor(Color color);
+void apiUseProgram(UInt programID);
 void apiGenerateMipmap(Enum target);
 void apiLinkProgram(UInt programID);
 void apiDeleteShader(UInt shaderID);
 void apiActiveTexture(Enum texture);
-void apiUseProgram(UInt programID);
 void apiCompileShader(Int shaderID);
 void apiGenTexture(UInt& textureID);
 void apiDeleteTexture(UInt textureID);
@@ -58,7 +64,6 @@ void apiDeleteProgram(UInt programID);
 void apiDeleteVertexArray(UInt arrayID);
 void apiPolygonMode(Enum face, Enum mode);
 void apiUniform1i(Int location, Int value);
-void apiBindFramebuffer(UInt framebufferID);
 void apiGenFramebuffer(UInt& framebufferID);
 void apiEnableVertexAttribArray(UInt index);
 void apiDisableVertexAttribArray(UInt index);

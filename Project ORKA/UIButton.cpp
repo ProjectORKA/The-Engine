@@ -9,7 +9,8 @@ UIButton& UIButton::insert(UIElement& element) {
 	content = &element;
 	return *this;
 }
-void UIButton::render(TiledRectangle renderArea, Renderer& renderer) {
+void UIButton::render(Window& window, TiledRectangle renderArea) {
+	Renderer& renderer = window.renderer;
 
 	constraints.update(renderArea);
 
@@ -18,8 +19,9 @@ void UIButton::render(TiledRectangle renderArea, Renderer& renderer) {
 		renderer.uniforms().customColor(Color(1, 1, 0, 1));
 	}
 	else {
-		PixelIDs ids = renderer.getIDsUnderCursor();
-		if (ids.objectID == id) {
+		UInt objectID = renderer.idFramebuffer.objectID;
+
+		if (objectID == id) {
 			renderer.uniforms().customColor(Color(1));
 		}
 		else {
@@ -29,33 +31,31 @@ void UIButton::render(TiledRectangle renderArea, Renderer& renderer) {
 
 	renderer.screenSpace();
 	renderer.uniforms().mMatrix(matrixFromTiledRectangle(renderArea));
-	renderer.renderMesh("button");
+	renderer.renderMesh("plane");
 
-	if (content) content->render(renderArea, renderer);
+	if (content) content->render(window, renderArea);
 }
-void UIButton::renderInteractive(TiledRectangle renderArea, Renderer& renderer) {
+void UIButton::renderInteractive(Window& window, TiledRectangle renderArea) {
 	
 	constraints.update(renderArea);
 	
-	renderer.useShader("idShader");
-	renderer.screenSpace();
-	renderer.uniforms().objectID(id);
-	renderer.uniforms().mMatrix(matrixFromTiledRectangle(renderArea));
+	window.renderer.useShader("idShader");
+	window.renderer.screenSpace();
+	window.renderer.uniforms().objectID(id);
+	window.renderer.uniforms().mMatrix(matrixFromTiledRectangle(renderArea));
 
-	renderer.renderMesh("button");
+	window.renderer.renderMesh("plane");
 }
-void UIButton::mouseIsPressed(Window& window, MouseButton button, ActionState action, Int modifiers) {
-	if (button == MouseButton::L) {
-		if (action == ActionState::Press) pressed = window.renderer.framebufferSystem.idFramebuffer().currentIds.objectID == id;
-		else {
-			if (window.renderer.framebufferSystem.idFramebuffer().currentIds.objectID == id) {
-				if (pressed) {
-					pressed = false;
-					doThis();
-				}
-			}
-			else pressed = false;
+
+void UIButton::inputEvent(Window& window, InputEvent input)
+{
+	if (input == InputEvent(InputType::Mouse,0,1)) pressed = window.renderer.idFramebuffer.objectID == id;
+	if (input == InputEvent(InputType::Mouse, 0, 0)) {
+		if (pressed) {
+			pressed = false;
+			doThis();
 		}
 	}
-	else pressed = false;
+
+	if(content)content->inputEvent(window, input);
 }

@@ -36,6 +36,36 @@ void MatrixSystem::overridePush(Matrix matrix) {
 void MatrixSystem::setProjection(Matrix matrix) {
 	projectionMatrix = matrix;
 }
+void MatrixSystem::matrixArray(Vector<Vec2>& pos) {
+	modelMatrixArray.resize(pos.size());
+	for (UInt i = 0; i < pos.size(); i++) {
+		modelMatrixArray[i] = matrixFromLocation(pos[i]);
+	}
+}
+void MatrixSystem::matrixArray(Vector<Vec2>& pos, Float size) {
+	modelMatrixArray.resize(pos.size());
+	for (UInt i = 0; i < pos.size(); i++) {
+		modelMatrixArray[i] = matrixFromLocationAndSize(pos[i], size);
+	}
+}
+void MatrixSystem::matrixArray(Vector<Vec2>& pos, Vector<Vec2>& dir) {
+	modelMatrixArray.resize(pos.size());
+	for (UInt i = 0; i < pos.size(); i++) {
+		modelMatrixArray[i] = matrixFromPositionAndDirection(pos[i], dir[i]);
+	}
+}
+void MatrixSystem::matrixArray(Vector<Vec4>& compactTransform) {
+	modelMatrixArray.resize(compactTransform.size());
+	for (UInt i = 0; i < compactTransform.size(); i++) {
+		modelMatrixArray[i] = matrixFromLocationAndSize(compactTransform[i]);
+	}
+}
+void MatrixSystem::matrixArray(Vector<Vec2>& position, Vector<Vec2>& direction, Vector<Float>& size) {
+	modelMatrixArray.resize(position.size());
+	for (UInt i = 0; i < position.size(); i++) {
+		modelMatrixArray[i] = matrixFromLocationDirectionAndSize(position[i], direction[i], size[i]);
+	}
+}
 void MatrixSystem::applyToUniforms(Uniforms& uniforms) {
 	uniforms.mMatrix() = getModel();
 	uniforms.vMatrix() = getView();

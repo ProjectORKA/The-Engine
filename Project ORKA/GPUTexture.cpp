@@ -1,7 +1,6 @@
 
 #include "GPUTexture.hpp"
 #include "Math.hpp"
-#include "Util.hpp"
 
 void createTexture(UInt channels, DataType dataType, UInt width, UInt height, void * pixels) {
 	switch (channels) {
@@ -52,7 +51,7 @@ void GPUTexture::resize(Area size)
 {
 	//[IMPORTANT] apply same stuff as in creation
 
-	if ((size.x == 0) | (size.y == 0))logError("Texture can't be resized to (0|0)!");
+	size.clamp(1);
 
 	width = size.x;
 	height = size.y;
@@ -138,8 +137,8 @@ void GPUTexture::load(CPUTexture& cpuTexture) {
 			if (wrapping == border) apiTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, glm::value_ptr(Color(0.0f, 0.0f, 0.0f, 1.0f)));
 
 			//set texture filter
-			apiTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, enumClassAsInt(nearFilter));
-			apiTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, enumClassAsInt(farFilter));
+			apiTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, nearFilter);
+			apiTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, farFilter);
 			apiTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY, 1.0f);
 
 			//set up mip mapping

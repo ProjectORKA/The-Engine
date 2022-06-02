@@ -9,22 +9,19 @@ struct Area : public IVec2 {
 	Area(Int a);
 	Area(Int x, Int y);
 	Area center();
-	void clamp(Area minimumSize);
 	void clamp(Int a);
+	void clamp(Area minimumSize);
 };
 
 void logDebug(Area t);
 
 struct TiledRectangle {
-	IVec2 position = IVec2(0);
 	Area size = Area(1);
+	IVec2 position = IVec2(0);
 
-
-	TiledRectangle() {};
-	TiledRectangle(Area area) {
-		this->size = area;
-		this->position = IVec2(0);
-	}
 	IVec2 center();
+	TiledRectangle() {};
+	TiledRectangle(Area area);
 	Bool positionInsideArea(IVec2 position);
+	TiledRectangle(Int x, Int y, Int w, Int h);
 };

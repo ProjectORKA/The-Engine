@@ -10,3 +10,9 @@ UIElement::~UIElement() {
 	}
 }
 
+UIElement& UIElement::padding(U16 width) {
+	constraints.paddingX = width;
+	constraints.paddingY = width;
+	return *this;
+}
+

@@ -53,6 +53,10 @@ Bool isNear(Vec3 a, Vec3 b, Float error) {
 	return isNear(a.x, b.x, error) && isNear(a.y, b.y, error) && isNear(a.z, b.z, error);
 }
 
+UInt max(UInt a, UInt b) {
+	if (a > b) return a;
+	else return b;
+}
 UInt nextPowerOfTwo(UInt& value)
 {
 	UInt powerOfTwo = 1;
@@ -99,6 +103,11 @@ Index idOfClosestPointInLoopingSpace(Vec2 origin, Vector<Vec2>& positions, Float
 	return index;
 }
 
+Int max(Int a, Int b) {
+	if (a > b) return a;
+	else return b;
+}
+
 Float sq(Float a) {
 	return a * a;
 }
@@ -120,8 +129,12 @@ Float distance(Float a, Float b) {
 }
 Float lerp(Float a, Float b, Float alpha)
 {
-	alpha = clamp(alpha, 0, 1);
 	return (a * (1 - alpha)) + (b * alpha);
+}
+Float clerp(Float a, Float b, Float alpha)
+{
+	alpha = clamp(alpha, 0, 1);
+	return lerp(a,b,alpha);
 }
 Float deltaInLoopingSpace(Float a, Float b, Float extend) {
 	Float delta1 = b - a;
@@ -154,8 +167,12 @@ LDouble dmod(LDouble x, LDouble y) {
 }
 LDouble lerp(LDouble a, LDouble b, LDouble alpha)
 {
-	alpha = clamp(alpha, 0, 1);
 	return (a * (1 - alpha)) + (b * alpha);
+}
+LDouble clerp(LDouble a, LDouble b, LDouble alpha)
+{
+	alpha = clamp(alpha, 0, 1);
+	return lerp(a,b,alpha);
 }
 
 Vec2 vectorFromAToB(Vec2 a, Vec2 b) {
@@ -165,6 +182,9 @@ Vec2 deltaInLoopingSpace(Vec2 a, Vec2 b, Float extend) {
 	return Vec2(deltaInLoopingSpace(a.x, b.x, extend), deltaInLoopingSpace(a.y, b.y, extend));
 }
 
+Vec3 max(Vec3 a, Vec3 b) {
+	return Vec3(max(a.x, b.x), max(a.y, b.y), max(a.z, b.z));
+}
 Vec3 projectToCube(Vec3 vec) {
 	Float max = abs(vec.x);
 	if (abs(vec.y) > max) max = abs(vec.y);
@@ -179,6 +199,13 @@ Vec3 lerp(Vec3 a, Vec3 b, Float alpha) {
 	c.x = lerp(a.x, b.x, alpha);
 	c.y = lerp(a.y, b.y, alpha);
 	c.z = lerp(a.z, b.z, alpha);
+	return c;
+}
+Vec3 clerp(Vec3 a, Vec3 b, Float alpha) {
+	Vec3 c;
+	c.x = clerp(a.x, b.x, alpha);
+	c.y = clerp(a.y, b.y, alpha);
+	c.z = clerp(a.z, b.z, alpha);
 	return c;
 }
 Vec3 getClosestPoint(Vec3 point, List<Vec3>& points) {
@@ -296,6 +323,17 @@ Matrix matrixFromTiledRectangle(TiledRectangle area) {
 	m[3] = Vec4(area.position.x, area.position.y, 0, 1);
 	return m;
 }
+Matrix matrixFromRotation(Float x, Float y, Float z) {
+	return	glm::eulerAngleYXZ(z, x, y);
+}
+Matrix matrixFromPositionAndDirection(Vec2 pos, Vec2 dir) {
+	Matrix m(1);
+	m[0] = Vec4(-dir.y, dir.x, 0, 0);
+	m[1] = Vec4(-dir.x, -dir.y, 0, 0);
+	m[2] = Vec4(0, 0, 1, 0);
+	m[3] = Vec4(pos.x, pos.y, 0, 1);
+	return m;
+}
 Matrix matrixFromLocationAndSize(Vec4 compressedTransform)
 {
 	Matrix m(compressedTransform.w);
@@ -315,6 +353,14 @@ Matrix matrixFromLocationAndSize(Vec2 location, Float size)
 	m[3] = Vec4(location, 0, 1);
 	return m;
 }
+Matrix matrixFromLocationAndSize2D(Float x, Float y, Float w, Float h) {
+	Matrix m(1);
+	m[0] = Vec4(w, 0, 0, 0);
+	m[1] = Vec4(0, h, 0, 0);
+	m[2] = Vec4(0, 0, 1, 0);
+	m[3] = Vec4(x, y, 0, 1);
+	return m;
+}
 Matrix matrixFromOrientation(Orientation o, Vec3 position, Float size) {
 	return matrixFromAxis(o.x, o.y, o.z, position, size);
 }
@@ -326,22 +372,12 @@ Matrix matrixFromAxis(Vec3 x, Vec3 y, Vec3 z, Vec3 position, Float size) {
 	m[3] = Vec4(position, 1);
 	return m;
 }
-
 Matrix matrixFromLocationDirectionAndSize(Vec2 pos, Vec2 dir, Float size) {
 	Matrix m(1);
 	dir *= size;
 	m[0] = Vec4(-dir.y, dir.x, 0, 0);
 	m[1] = Vec4(-dir.x, -dir.y, 0, 0);
 	m[2] = Vec4(0, 0, size, 0);
-	m[3] = Vec4(pos.x, pos.y, 0, 1);
-	return m;
-}
-
-Matrix matrixFromPositionAndDirection(Vec2 pos, Vec2 dir) {
-	Matrix m(1);
-	m[0] = Vec4(-dir.y, dir.x, 0, 0);
-	m[1] = Vec4(-dir.x, -dir.y, 0, 0);
-	m[2] = Vec4(0, 0, 1, 0);
 	m[3] = Vec4(pos.x, pos.y, 0, 1);
 	return m;
 }

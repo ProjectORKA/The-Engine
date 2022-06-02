@@ -9,8 +9,8 @@ struct GPUMesh
 {
 	Bool loaded = false;
 	VertexArrayObject vao;
-	MeshDrawMode drawMode = MeshDrawMode::staticMode;
-	PrimitiveMode primitiveMode = PrimitiveMode::Triangles;
+	Int drawMode = MeshDrawMode::staticMode;
+	Int primitiveMode = PrimitiveMode::Triangles;
 
 	void unload();
 	void upload(CPUMesh cpuMesh);

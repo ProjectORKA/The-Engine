@@ -29,11 +29,6 @@ struct InFile {
 	}
 
 	~InFile() {
-		auto pos1 = file.tellg();
-		file.eof();
-		auto pos2 = file.tellg();
-		if (pos1 == pos2) logDebug("File loaded successfully!");
-		else logError("File was loaded, but did not exit at end!");
 		file.close();
 	}
 };

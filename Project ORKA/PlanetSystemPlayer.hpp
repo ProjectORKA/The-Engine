@@ -5,7 +5,7 @@
 
 struct Renderer;
 
-struct PlanetSystemPlayer : public Player {
-	ULLVec3 chunkLocation = ULLVec3(0);// ULLONG_MAX / 2);
-	void render(Renderer& renderer) override;
+struct PlanetSystemPlayer : public DebugPlayer {
+	ULLVec3 chunkLocation = ULLVec3(0);
+	void render(Window & window) override;
 };

@@ -20,7 +20,7 @@ void Ball::update(Float deltaTime, PongPlayer players[2]) {
 				stuckToPaddle = false;
 				velocity.x = 1;
 				velocity.y = randomFloat(-1, 1);
-				speed = 2;
+				desiredSpeed = 2;
 			}
 		}
 		else {
@@ -30,16 +30,16 @@ void Ball::update(Float deltaTime, PongPlayer players[2]) {
 				stuckToPaddle = false;
 				velocity.x = -1;
 				velocity.y = randomFloat(-1, 1);
-				speed = 2;
+				desiredSpeed = 2;
 			}
 		}
 	}
 	else {
 		//ball is not stuck to paddle
 
-		speed += deltaTime / 45.0f;
+		desiredSpeed += deltaTime / 45.0f;
 
-		velocity = normalize(velocity) * speed;
+		velocity = normalize(velocity) * desiredSpeed;
 		position += velocity * deltaTime;
 		if (velocity.x > 0) {
 			//ball is moving to the right
@@ -91,12 +91,6 @@ void Ball::update(Float deltaTime, PongPlayer players[2]) {
 	}
 }
 
-void PongPlayer::keyboardInput(Float deltaTime) {
-	if (moveUp) position.y += paddleSpeed * deltaTime;
-	if (moveDown) position.y -= paddleSpeed * deltaTime;
-
-	position.y = clamp(position.y, -0.9f, 0.9f);
-}
 void PongPlayer::mouseInput(Vec3 cursorWorldPosition) {
 	position.y = cursorWorldPosition.y;
 
@@ -108,7 +102,6 @@ void PongPlayer::ballLocationInput(Vector<Ball>& balls) {
 		position.y = ball->position.y;
 
 		position.y = clamp(position.y, -0.9f, 0.9f);
-		shoot = true;
 	}
 }
 void PongPlayer::aiInput(Vector<Ball>& balls, Float deltaTime) {
@@ -135,7 +128,33 @@ void PongPlayer::aiInput(Vector<Ball>& balls, Float deltaTime) {
 	}
 }
 
-void Pong::render(TiledRectangle area, Renderer& renderer) {
+void PongPlayer::update(Window& window) {
+	position.y = clamp(position.y, -0.9f, 0.9f);
+}
+
+void Pong::create(Window& window) {
+	//window.input.add("player1shoot", ButtonType::Key, Key::SPACE);
+	//window.input.add("player1up", ButtonType::Key, Key::W);
+	//window.input.add("player1down", ButtonType::Key, Key::S);
+	//window.input.add("player2shoot", ButtonType::Key, Key::LEFT);
+	//window.input.add("player2up", ButtonType::Key, Key::UP);
+	//window.input.add("player2down", ButtonType::Key, Key::DOWN);
+	//window.input.add("spawnBall", ButtonType::Key, Key::P);
+}
+void Pong::render(Window& window, TiledRectangle area) {
+	Renderer& renderer = window.renderer;
+
+	////input
+	//players[0].shoot = window.input.holding("player1shoot");
+	//players[0].moveUp = window.input.holding("player1up");
+	//players[0].moveDown = window.input.holding("player1down");
+
+	//players[1].shoot = window.input.holding("player2shoot");
+	//players[1].moveUp = window.input.holding("player2up");
+	//players[1].moveDown = window.input.holding("player2down");
+
+	//if(window.input.holding("spawnBall")) balls.emplace_back();
+
 
 	players[0].position.x = -0.9;
 	players[1].position.x = +0.9;
@@ -143,7 +162,7 @@ void Pong::render(TiledRectangle area, Renderer& renderer) {
 	if (balls.size() <= 10)balls.emplace_back();
 
 	renderer.apectCorrectNormalizedSpace();
-	Vec2 normalizedCursorPosition = Vec2(2) * ((Vec2(inputManager.cursorPosition) / Vec2(renderer.framebufferSystem.framebufferSize)) - Vec2(0.5));
+	Vec2 normalizedCursorPosition = Vec2(2) * ((Vec2(window.mousePositionFromBottomLeft) / Vec2(renderer.framebufferSystem.framebufferSize)) - Vec2(0.5));
 	Vec3 cursorWorldPos = inverse(renderer.uniforms().pMatrix()) * Vec4(normalizedCursorPosition, 0, 1);
 
 
@@ -204,34 +223,26 @@ void Pong::render(TiledRectangle area, Renderer& renderer) {
 	renderer.renderText(toString(players[0].score), Vec2(10, height - 100), style);
 	renderer.renderText(toString(players[1].score), Vec2(width - 100, height - 100), style);
 	renderer.renderText(toString(players[1].difficulty), Vec2(10, height - 200), style);
-	renderer.renderText(toString(balls[0].speed), Vec2(10, height - 300), style);
-	renderer.renderText(toString(balls[0].speed), Vec2(10, height - 300), style);
+	renderer.renderText(toString(balls[0].desiredSpeed), Vec2(10, height - 300), style);
+	renderer.renderText(toString(balls[0].desiredSpeed), Vec2(10, height - 300), style);
 	renderer.renderText(toString(1.0f / renderer.time.delta), Vec2(50, 50), fonts.paragraph);
 }
-void Pong::buttonIsPressed(Window& window, Key key, ActionState action, Int modifiers) {
 
-	Bool pressed = action != ActionState::Release;
+void Pong::update(Window& window) {
+	Float delta = window.renderer.deltaTime();
+	if (window.pressed(moveUpButton1)) players[0].position.y += paddleSpeed * delta;
+	if (window.pressed(moveDownButton1)) players[0].position.y -= paddleSpeed * delta;
+	players[0].shoot = window.pressed(shootButton1) || window.pressed(shootButton1secondary);
 
-	switch (key) {
-	case Key::W:players[0].moveUp = pressed;
-		break;
-	case Key::S:players[0].moveDown = pressed;
-		break;
-	case Key::SPACE:players[0].shoot = pressed;
-		break;
-	case Key::UP:players[1].moveUp = pressed;
-		break;
-	case Key::DOWN:players[1].moveDown = pressed;
-		break;
-	case Key::LEFT:players[1].shoot = pressed;
-		break;
-	case Key::P:balls.emplace_back();
-		break;
+	if (window.pressed(moveUpButton2)) players[1].position.y += paddleSpeed * delta;
+	if (window.pressed(moveDownButton2)) players[1].position.y -= paddleSpeed * delta;
+	players[1].shoot = window.pressed(shootButton2);
+
+	for (PongPlayer& p : players) {
+		p.update(window);
 	}
 }
-void Pong::mouseIsPressed(Window& window, MouseButton button, ActionState action, Int modifiers) {
-	players[0].shoot = (action == ActionState::Press || action == ActionState::Repeat);
-}
+
 
 Ball* getClosestBall(PongPlayer& player, Vector<Ball>& balls) {
 	Ball* closestBall = nullptr;

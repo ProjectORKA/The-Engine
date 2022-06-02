@@ -4,38 +4,17 @@
 #include "Uniforms.hpp"
 #include "Math.hpp"
 
+// the transformation stack is not working yet, or at least its not being used anywhere
+// but matrix arrays are very useful for instanced rendering
+// just give it the information you have and it will render instanced meshes based on that
 struct MatrixSystem {
-	Vector<Matrix> modelMatrixArray; // experimental system for instancing
-
-	void matrixArray(Vector<Vec2>& pos) {
-		modelMatrixArray.resize(pos.size());
-		for (UInt i = 0; i < pos.size(); i++) {
-			modelMatrixArray[i] = matrixFromLocation(pos[i]);
-		}
-	};
-
-	void matrixArray(Vector<Vec2> & pos, Vector<Vec2> & dir) {
-		modelMatrixArray.resize(pos.size());
-		for (UInt i = 0; i < pos.size(); i++) {
-			modelMatrixArray[i] = matrixFromPositionAndDirection(pos[i],dir[i]);
-		}
-	};
-
-	void matrixArray(Vector<Vec4>& compactTransform) {
-		modelMatrixArray.resize(compactTransform.size());
-		for (UInt i = 0; i < compactTransform.size(); i++) {
-			modelMatrixArray[i] = matrixFromLocationAndSize(compactTransform[i]);
-		}
-	};
-
-	void matrixArray(Vector<Vec2>& position, Vector<Vec2>& direction, Vector<Float>& size) {
-		modelMatrixArray.resize(position.size());
-		for (UInt i = 0; i < position.size(); i++) {
-			modelMatrixArray[i] = matrixFromLocationDirectionAndSize(position[i], direction[i], size[i]);
-		}
-	}
-
-	void applyToUniforms(Uniforms& uniforms);
+	//matrix array for instanced rendering
+	Vector<Matrix> modelMatrixArray;
+	void matrixArray(Vector<Vec2>& pos);
+	void matrixArray(Vector<Vec2>& pos, Float size);
+	void matrixArray(Vector<Vec4>& compactTransform);
+	void matrixArray(Vector<Vec2>& pos, Vector<Vec2>& dir);
+	void matrixArray(Vector<Vec2>& position, Vector<Vec2>& direction, Vector<Float>& size);
 
 	//getters
 	Matrix getVP();
@@ -52,10 +31,11 @@ struct MatrixSystem {
 	UInt stackCount();
 	void pushMatrix(Matrix matrix);
 	void overridePush(Matrix matrix);
+	void applyToUniforms(Uniforms& uniforms);
 
 private :
 	TransformationStack transformationStack;
+	Matrix mvp = Matrix(1);
 	Matrix viewMatrix = Matrix(1);
 	Matrix projectionMatrix =Matrix(1);
-	Matrix mvp = Matrix(1);
 };

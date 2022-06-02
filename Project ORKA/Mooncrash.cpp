@@ -41,7 +41,7 @@ void renderMooncrashAtmosphere(Renderer& renderer, MooncrashPlayer& player)
 	renderer.uniforms().cameraPos() = Vec4(Vec3(0, 0, (Float(player.chunkLocation.z) + player.camera.location.z) / Float(ULLONG_MAX)), 1);
 	renderer.setCulling(false);
 	renderer.useShader("atmosphere");
-	renderer.framebufferSystem.current().setAsTexture(0);
+	renderer.framebufferSystem.currentDraw().setAsTexture(0); //[TODO]might not work if draw doesent bind; check
 
 	//renderer.setAlphaBlending(true);
 	//glBlendFunc(GL_ONE, GL_ONE);
@@ -59,23 +59,43 @@ void renderPlanet(Renderer& renderer, PlanetSystem& planetSystem, PlanetSystemPl
 	renderer.planetRenderSystem.render(planetSystem, renderer, player);
 };
 
-void MooncrashPlayer::render(Renderer& renderer, Matrix& skyRotation) {
-	speed = pow(1.2f, speedExponent);
-	accelerationVector *= speed * renderer.time.delta;
+MooncrashPlayer::MooncrashPlayer() {
+	chunkLocation.z = ULLONG_MAX / 2;
+}
+
+void MooncrashPlayer::update(Window& window) {
+	//get frequently used info
+	Float delta = window.renderer.deltaTime();
+
+	//set up temporary data
+	Vec3 movementVector = Vec3(0);
+	Float desiredSpeed = 0;
+
+	//process input
+	if (window.pressed(forward)) movementVector += camera.forwardVector;
+	if (window.pressed(backward)) movementVector -= camera.forwardVector;
+	if (window.pressed(right)) movementVector += camera.rightVector;
+	if (window.pressed(left)) movementVector -= camera.rightVector;
+	if (window.pressed(up)) movementVector += camera.upVector;
+	if (window.pressed(down)) movementVector -= camera.upVector;
+
+	//calculate movement
+	if (length(movementVector) > 0) {					//if there is movement input
+		desiredSpeed = pow(baseNumber, speedExponent);	//calculate speed
+		movementVector = normalize(movementVector);		//get direction of movement (just direction)
+		movementVector *= desiredSpeed * delta;			//add speed to direction
+		camera.location += movementVector;				//add it to cameras location
+	}
 
 	Float planetRadius = 4;
-	Vec3 v1 = rotate(Vec3(skyRotation[0]), -accelerationVector.x * Float(planetRadius) / Float(ULLONG_MAX), Vec3(0, 1, 0));
-	Vec3 v2 = rotate(Vec3(skyRotation[0]), +accelerationVector.y * Float(planetRadius) / Float(ULLONG_MAX), Vec3(1, 0, 0));
-	Vec3 v3 = rotate(Vec3(skyRotation[1]), -accelerationVector.x * Float(planetRadius) / Float(ULLONG_MAX), Vec3(0, 1, 0));
-	Vec3 v4 = rotate(Vec3(skyRotation[1]), +accelerationVector.y * Float(planetRadius) / Float(ULLONG_MAX), Vec3(1, 0, 0));
+	Vec3 v1 = rotate(Vec3(skyRotation[0]), -movementVector.x * Float(planetRadius) / Float(ULLONG_MAX), Vec3(0, 1, 0));
+	Vec3 v2 = rotate(Vec3(skyRotation[0]), +movementVector.y * Float(planetRadius) / Float(ULLONG_MAX), Vec3(1, 0, 0));
+	Vec3 v3 = rotate(Vec3(skyRotation[1]), -movementVector.x * Float(planetRadius) / Float(ULLONG_MAX), Vec3(0, 1, 0));
+	Vec3 v4 = rotate(Vec3(skyRotation[1]), +movementVector.y * Float(planetRadius) / Float(ULLONG_MAX), Vec3(1, 0, 0));
 	skyRotation[0] = Vec4(normalize(v1 + v2), 0);
 	skyRotation[1] = Vec4(normalize(v3 + v4), 0);
 	skyRotation[2] = Vec4(normalize(cross(Vec3(skyRotation[0]), Vec3(skyRotation[1]))), 0);
 	skyRotation[3] = Vec4(0, 0, 0, 1);
-
-	logDebug(skyRotation);
-
-	camera.location += accelerationVector;
 
 	//apply sub chunk location
 	if (floor(camera.location.x) != 0) {
@@ -128,49 +148,28 @@ void MooncrashPlayer::render(Renderer& renderer, Matrix& skyRotation) {
 			}
 		}
 	}
+}
 
-	accelerationVector = { 0,0,0 };
-
-	//if (CAMERA_TERRAIN_LIMIT) {
-	//LDouble oldCamHeight = LDouble(chunkLocation.z) + LDouble(camera.location.z);
-
-	//LDouble xLocation = camera.location.x;
-	//LDouble yLocation = camera.location.y;
-
-	//xLocation += LDouble(chunkLocation.x) / pow(2, 64);
-	//yLocation += LDouble(chunkLocation.y) / pow(2, 64);
-
-	//LDouble newCamHeight = pow(2, 64 - 20) + terrainGenerationFunction(xLocation, yLocation);
-
-	//if (newCamHeight > oldCamHeight) {
-	//		ULL chunkheight = newCamHeight;
-	//		newCamHeight -= chunkheight;
-	//		chunkLocation.z = chunkheight;
-	//		camera.location.z = newCamHeight;
-	//	}
-	//}
+void MooncrashPlayer::render(Window & window) {
+	Renderer& renderer = window.renderer;
 
 	camera.render(renderer);
 }
 
-void MooncrashRenderer::mouseIsMoving(Window& window, IVec2 position) {
-	if (inputManager.isCapturing(window))player.camera.rotate(Vec2(position) * Vec2(mouseSensitivity));
+
+void MooncrashRenderer::update(Window& window) {
+	player.update(window);
 }
-void MooncrashRenderer::render(TiledRectangle area, Renderer& renderer) {
-	if (forward.pressed)	player.accelerationVector += player.camera.forwardVector;
-	if (backward.pressed)	player.accelerationVector -= player.camera.forwardVector;
-	if (upward.pressed)		player.accelerationVector += player.camera.upVector;
-	if (downward.pressed)	player.accelerationVector -= player.camera.upVector;
-	if (right.pressed)		player.accelerationVector += player.camera.rightVector;
-	if (left.pressed)		player.accelerationVector -= player.camera.rightVector;
+void MooncrashRenderer::render(Window& window, TiledRectangle area) {
+	Renderer& renderer = window.renderer;
 
-	player.render(renderer, skyRotationMatrix);
+	player.render(window);
 
-	renderer.uniforms().sunDir(skyRotationMatrix * Vec4(0, 0, 1, 0));
+	renderer.uniforms().sunDir(player.skyRotation * Vec4(0, 0, 1, 0));
 
 	renderer.setWireframeMode(renderer.wireframeMode);
 
-	renderer.uniforms().mMatrix(skyRotationMatrix);
+	renderer.uniforms().mMatrix(player.skyRotation);
 	renderer.renderSky(player.camera);
 
 	//renderMooncrashAtmosphere(renderer, player);
@@ -178,48 +177,22 @@ void MooncrashRenderer::render(TiledRectangle area, Renderer& renderer) {
 	renderPlanet(renderer, simulation->planetSystem, player);
 	//renderUI(renderer, player);
 }
-void MooncrashRenderer::mouseIsScrolled(Window& window, Double xAxis, Double yAxis) {
-	player.speedExponent += yAxis;
-}
-void MooncrashRenderer::buttonIsPressed(Window& window, Key key, ActionState action, Int modifiers) {
-	Bool pressed = action > ActionState::Release;
 
-	switch (key) {
-	case Key::F: if (pressed) window.renderer.wireframeMode = !window.renderer.wireframeMode;
-		break;
-	case Key::J: if (pressed) window.renderer.adjustRenderVariables = !window.renderer.adjustRenderVariables;
-		break;
-	case Key::K: if (pressed) window.renderer.planetRenderSystem.worldDistortion = !window.renderer.planetRenderSystem.worldDistortion;
-		break;
-	case Key::T:
-		if (pressed) {
-			window.renderer.mutex.lock();
-			window.renderer.shaderSystem.rebuild();
-			window.renderer.mutex.unlock();
-		}
-		break;
-	case Key::W: forward.pressed = pressed;
-		break;
-	case Key::S: backward.pressed = pressed;
-		break;
-	case Key::A: left.pressed = pressed;
-		break;
-	case Key::D: right.pressed = pressed;
-		break;
-	case Key::Q: downward.pressed = pressed;
-		break;
-	case Key::E: upward.pressed = pressed;
-		break;
-	case Key::U: if (pressed) window.renderer.planetRenderSystem.quadtreeRenderSystem.count();
-		break;
-	default:
-		break;
+void MooncrashRenderer::inputEvent(Window& window, InputEvent input) {
+	if (input == wireframeToggle) window.renderer.wireframeMode = !window.renderer.wireframeMode;
+	if (input == countNodesButton) window.renderer.planetRenderSystem.quadtreeRenderSystem.count();
+	if (input == worldDistortion) window.renderer.planetRenderSystem.worldDistortion = !window.renderer.planetRenderSystem.worldDistortion;
+	if (input == rebuildShaders) {
+		window.renderer.mutex.lock();
+		window.renderer.shaderSystem.rebuild();
+		window.renderer.mutex.unlock();
 	}
-}
-void MooncrashRenderer::mouseIsPressed(Window& window, MouseButton button, ActionState action, Int modifiers) {
+	if (input == enter) window.captureCursor();
+	if (input == exit) window.uncaptureCursor();
 
-	if (action == ActionState::Press) {
-		if (button == MouseButton::L) inputManager.captureCursor(window);
-		if (button == MouseButton::R) inputManager.uncaptureCursor(window);
-	}
+	player.inputEvent(window, input);
+}
+
+void MooncrashRenderer::mouseMoved(Window& window, MouseMovementInput input) {
+	player.mouseMoved(window, input);
 }

@@ -1,12 +1,11 @@
 #include "Shader.hpp"
-#include "Util.hpp"
 
 void Shader::destroy() {
 	isLoaded = false;
 	apiDeleteShader(shaderID);
 }
 void Shader::create(Path path, String uniformBlock) {
-	ShaderType shaderType;
+	Int shaderType;
 	String extension = path.extension().string();
 	
 	if (extension == ".vert") shaderType = ShaderType::vertex;
@@ -19,10 +18,10 @@ void Shader::create(Path path, String uniformBlock) {
 
 	loadShaderCode(shaderType, shaderCode);
 }
-void Shader::loadShaderCode(ShaderType shaderType, String shaderCode)
+void Shader::loadShaderCode(Int shaderType, String shaderCode)
 {
 
-	shaderID = apiCreateShader(enumClassAsInt(shaderType));
+	shaderID = apiCreateShader(shaderType);
 
 	char const* SourcePointer = shaderCode.c_str();
 	apiShaderSource(shaderID, 1, &SourcePointer, NULL);

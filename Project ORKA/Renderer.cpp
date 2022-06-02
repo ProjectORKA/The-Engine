@@ -1,5 +1,4 @@
 #include "Renderer.hpp"
-
 #include "Random.hpp"
 #include "Player.hpp"
 #include "Camera.hpp"
@@ -77,7 +76,7 @@ void Renderer::create(Area size)
 	framebufferSystem.create(*this, size);
 	textRenderSystem.create(*this);
 	renderObjectSystem.create(*this);
-
+	idFramebuffer.create(*this); //needs to be below framebuffer system
 
 	apiClipControl(GL_LOWER_LEFT, GL_ZERO_TO_ONE);
 	apiEnable(GL_SCISSOR_TEST);
@@ -198,14 +197,14 @@ void Renderer::line(Vec2 start, Vec2 end, Float width) {
 void Renderer::createBlurTexture(Index from, Index to)
 {
 	//this function renders a blurred version of a framebuffer to another framebuffer
-	Index originalFramebufferID = framebufferSystem.currentFramebufferIndex;
+	Index originalFramebufferID = framebufferSystem.currentDrawFramebufferIndex;
 
 	useShader("blur");
-	framebufferSystem.framebuffers[from]->setAsTexture(0);
-	framebufferSystem.use(*this, to);
+	framebufferSystem.framebuffers[from].setAsTexture(0);
+	framebufferSystem.draw(*this, to);
 	renderMesh("fullScreenQuad");
 
-	framebufferSystem.use(*this, originalFramebufferID);
+	framebufferSystem.draw(*this, originalFramebufferID);
 }
 void Renderer::renderAtmosphere(Player& player, Vec3 sunDirection) {
 	Bool culling = getCulling();
@@ -245,9 +244,12 @@ void Renderer::renderMeshInstanced(Name name)
 Bool Renderer::getCulling() {
 	return apiGetCullFace();
 }
+Float Renderer::deltaTime() {
+	return time.delta;
+}
 Float Renderer::aspectRatio()
 {
-	return framebufferSystem.current().aspectRatio();
+	return framebufferSystem.currentDraw().aspectRatio();
 }
 Uniforms& Renderer::uniforms()
 {
@@ -255,7 +257,4 @@ Uniforms& Renderer::uniforms()
 }
 Index Renderer::useShader(Name name) {
 	return shaderSystem.use(name);
-}
-PixelIDs Renderer::getIDsUnderCursor() {
-	return framebufferSystem.idFramebuffer().getID();
 }

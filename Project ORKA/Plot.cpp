@@ -2,11 +2,6 @@
 #include "Plot.hpp"
 #include"Renderer.hpp"
 
-void Plot::render(Renderer & renderer) {
-	GPUMesh mesh;
-	mesh.upload(createMesh());
-	mesh.render(renderer.uniforms());
-}
 void Plot::add(Vec2 value) {
 	points.push_back(value);
 }
@@ -32,4 +27,20 @@ CPUMesh Plot::createMesh() {
 }
 void Plot::add(Float a, Float b) {
 	add(Vec2(a, b));
+}
+void Plot::render(Renderer& renderer) {
+	Vec2 last = points[0];
+
+	for (Vec2 p : points) {
+		renderer.lineRenderer.renderLine(renderer, Vec3(last, 0), Vec3(p, 0), 1);
+		last = p;
+	}
+}
+void Plot::render(Renderer & renderer, Float linewidth) {
+	Vec2 last = points[0];
+
+	for (Vec2 p : points) {
+		renderer.lineRenderer.renderLine(renderer, Vec3(last, 0), Vec3(p, 0), linewidth);
+		last = p;
+	}
 }

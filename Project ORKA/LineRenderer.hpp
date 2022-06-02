@@ -10,5 +10,6 @@ struct LineRenderer {
 	CPUMesh cpuMesh;
 
 	void create();
+	void renderLine(Renderer& renderer, Vec2 start, Vec2 end, Float width);
 	void renderLine(Renderer& renderer, Vec3 start, Vec3 end, Float width);
 };

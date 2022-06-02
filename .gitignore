@@ -270,3 +270,8 @@ __pycache__/
 /Project ORKA/Data/textures/terrain.png
 /Project ORKA/Data/textures/terrainColor.png
 /Project ORKA/Data/objects/dnd.fbx
+*.blend
+*.blend1
+*.blend2
+*.blend3
+*.save

@@ -5,7 +5,6 @@
 #include "FileSystem.hpp"
 #include "GameSystem.hpp"
 
-
 Int diceRoll(Int diceCount) {
 	return 1 + randomInt(diceCount);
 }
@@ -16,58 +15,61 @@ DNDRenderer::DNDRenderer(DNDWorld& world) {
 	player.camera.farClipValue = world.farClipValue;
 	player.camera.nearClipValue = world.nearClipValue;
 	player.camera.fieldOfView = world.fieldOfView;
-	player.camera.rotationX = world.rotationX;
-	player.camera.rotationZ = world.rotationZ;
+	player.camera.setRotation(world.rotation);
 	player.camera.location = world.location;
-	player.camera.update();
 }
-void DNDRenderer::update(Renderer& renderer)
+void DNDRenderer::update(Window& window)
 {
-	if (forward.pressed)	player.accelerationVector += player.camera.forwardVector;
-	if (backward.pressed)	player.accelerationVector -= player.camera.forwardVector;
-	if (upward.pressed)		player.accelerationVector += player.camera.upVector;
-	if (downward.pressed)	player.accelerationVector -= player.camera.upVector;
-	if (right.pressed)		player.accelerationVector += player.camera.rightVector;
-	if (left.pressed)		player.accelerationVector -= player.camera.rightVector;
+	player.update(window);
 
-	player.update(renderer);
-}
+	for (Path& path : window.droppedFilePaths) {
+		Name name = path.stem().string();
 
-void DNDRenderer::mouseIsMoving(Window& window, IVec2 position) {
-	if (inputManager.isCapturing(window))player.camera.rotate(Vec2(position) * Vec2(mouseSensitivity));
+		DNDEntity e;
+		e.meshName = name;
+		e.transform = Transform();
+		world->entities.push_back(e);
+	}
+	window.droppedFilePaths.clear();
 }
-void DNDRenderer::render(TiledRectangle area, Renderer& renderer) {
+void DNDRenderer::render(Window& window, TiledRectangle area) {
+	Renderer& renderer = window.renderer;
+	
+	//preprocess
+	renderer.setWireframeMode();
+	renderer.setCulling(true);
+
+	renderer.clearColor();
+	renderer.clearDepth();
+	//renderer.renderSky(player.camera);
+
+	renderer.renderAtmosphere(player, normalize(Vec3(1)));
+
+	renderer.fill(Color(1));
+
+	renderer.setAlphaBlending(false);
+	renderer.setCulling(true);
+
+
+	player.render(window);
+
+	//scene
+	renderer.setDepthTest(false);
+
+	renderer.useShader("dndUberShader");
+	renderer.uniforms().mMatrix(matrixFromLocationAndSize(Vec4(0, 0, 0, 10000)));
+	renderer.renderMesh("dndGroundPlane");
+	renderer.uniforms().mMatrix(matrixFromLocationAndSize(Vec4(0, 0, 0, 1000000)));
+	renderer.renderMesh("dndGroundPlane");
+
+	renderer.clearDepth();
+	renderer.setDepthTest(true);
+
 	if (world->loaded) {
 
-		//preprocess
-		renderer.setWireframeMode();
-		renderer.setCulling(false);
-		renderer.setDepthTest(true);
-		//renderer.clearColor();
-		//renderer.clearDepth();
-		renderer.renderSky(player.camera);
-
-		renderer.renderAtmosphere(player, normalize(Vec3(1)));
-
-		renderer.useShader("dndUberShader");
-		renderer.uniforms().mMatrix(matrixFromLocationAndSize(Vec4(0, 0, -1, 1000)));
-		renderer.renderMesh("centeredPlane");
-
-		renderer.clearDepth();
-		//scene
-		renderer.setAlphaBlending(false);
-
-		player.render(renderer);
-
-		PixelIDs ids;
-		if (inputManager.capturing) ids = renderer.framebufferSystem.idFramebuffer().getIDsAtCenter();
-		else ids = renderer.framebufferSystem.idFramebuffer().getIDsAtLocation(inputManager.cursorPosition.x, inputManager.cursorPosition.y);
-
-		renderer.setCulling(false);
-		renderer.useShader("dndUberShader");
 		for (Int i = 0; i < world->entities.size(); i++) {
 			//render selected objects with an orange highlight
-			if (!inputManager.capturing) {
+			if (true) {
 				if (std::find(selectedObjects.begin(), selectedObjects.end(), i) != selectedObjects.end()) renderer.setColor(Color(0.4, 0.25, 0.1, 0));
 				else renderer.setColor(Color(0, 0, 0, 0));
 
@@ -79,120 +81,62 @@ void DNDRenderer::render(TiledRectangle area, Renderer& renderer) {
 			world->entities[i].render(renderer);
 		}
 
-		renderer.uniforms().reset();
-
-		renderer.setWireframeMode(false);
-		renderer.screenSpace();
-		Int i = 0;
-		for (DNDEntity& e : world->entities) {
-			i++;
-			renderer.renderText(String(e.meshName.data), Vec2(15, i * 15), fonts.paragraph);
-		}
+		//text
+		//renderer.uniforms().reset();
+		//renderer.setWireframeMode(false);
+		//renderer.screenSpace();
+		//Int i = 0;
+		//for (DNDEntity& e : world->entities) {
+		//	i++;
+		//	renderer.renderText(String(&e.meshName.data[0]), Vec2(15, i * 15), fonts.paragraph);
+		//}
 
 		world->speedExponent = player.speedExponent;
 		world->fieldOfView = player.camera.fieldOfView;
 		world->nearClipValue = player.camera.nearClipValue;
 		world->farClipValue = player.camera.farClipValue;
 		world->location = player.camera.location;
-		world->rotationX = player.camera.rotationX;
-		world->rotationZ = player.camera.rotationZ;
+		world->rotation = player.camera.getRotation();
 	}
 }
-void DNDRenderer::filesDropped(Window& window, Vector<Path> paths) {
-	for (Path& path : paths) {
-		if (path.filename().extension() == ".fbx") copyFile(path, std::filesystem::absolute(Path(String("Data/objects/"))));
+void DNDRenderer::inputEvent(Window& window, InputEvent input) {
 
-		String fileName = path.filename().string();
-		Name name = fileName.substr(0, fileName.size() - 4).c_str();
+	if (input == enter) window.captureCursor();
+	if (input == exit) window.uncaptureCursor();
 
-		DNDEntity e;
-		e.meshName = name;
-		e.transform = Transform();
-		world->entities.push_back(e);
-	}
-}
-void DNDRenderer::renderInteractive(TiledRectangle area, Renderer& renderer)
-{
-	player.render(renderer);
+	if (input == select && window.capturing) {
+		Index objectID = window.renderer.idFramebuffer.objectID;
 
-	for (Int i = 0; i < world->entities.size(); i++) {
-		renderer.uniforms().objectID() = i;
-		world->entities[i].render(renderer);
-	}
-}
-void DNDRenderer::mouseIsScrolled(Window& window, Double xAxis, Double yAxis) {
-	player.speedExponent += yAxis;
-}
-void DNDRenderer::buttonIsPressed(Window& window, Key key, ActionState action, Int modifiers) {
-	if (action == ActionState::Press) {
-		switch (key) {
-		case Key::F: window.renderer.wireframeMode = !window.renderer.wireframeMode;
-			break;
-		case Key::W: forward.pressed = true;
-			break;
-		case Key::S: backward.pressed = true;
-			break;
-		case Key::A: left.pressed = true;
-			break;
-		case Key::D: right.pressed = true;
-			break;
-		case Key::Q: downward.pressed = true;
-			break;
-		case Key::E: upward.pressed = true;
-			break;
-		case Key::SPACE:
-			if (inputManager.capturing)inputManager.uncaptureCursor(window);
-			else		inputManager.captureCursor(window);
-			break;
-		default:
-			break;
+		logDebug(objectID);
+
+		if (objectID != -1) {
+			if (!window.pressed(selectMultiple)) selectedObjects.clear();
+			selectedObjects.push_back(objectID);
+			lastSelectedObject = objectID;
 		}
-	}
-
-	if (action == ActionState::Release) {
-		switch (key) {
-		case Key::W: forward.pressed = false;
-			break;
-		case Key::S: backward.pressed = false;
-			break;
-		case Key::A: left.pressed = false;
-			break;
-		case Key::D: right.pressed = false;
-			break;
-		case Key::Q: downward.pressed = false;
-			break;
-		case Key::E: upward.pressed = false;
-			break;
-		default:
-			break;
-		}
-	}
-}
-void DNDRenderer::mouseIsPressed(Window& window, MouseButton button, ActionState action, Int modifiers) {
-	if (action == ActionState::Press) {
-		if (button == MouseButton::LEFT) {
-			if (!inputManager.isCapturing(window)) {
-
-				Index objectID = window.renderer.framebufferSystem.idFramebuffer().currentIds.objectID;
-
-				logDebug(objectID);
-
-				if (objectID != -1) {
-
-					if (!window.isKeyPressed(Key::SHIFT_L) && !window.isKeyPressed(Key::SHIFT_R)) {
-						selectedObjects.clear();
-					}
-					selectedObjects.push_back(objectID);
-					lastSelectedObject = objectID;
-
-				}
-				else {
-					lastSelectedObject = -1;
-					selectedObjects.clear();
-				}
+		else {
+			if (!window.pressed(selectMultiple)) {
+				lastSelectedObject = -1;
+				selectedObjects.clear();
 			}
 		}
 	}
+
+	player.inputEvent(window, input);
+}
+void DNDRenderer::renderInteractive(Window& window, TiledRectangle area)
+{
+	player.render(window);
+
+	if (world->loaded) {
+		for (Int i = 0; i < world->entities.size(); i++) {
+			window.renderer.uniforms().objectID() = i;
+			world->entities[i].render(window.renderer);
+		}
+	}
+}
+void DNDRenderer::mouseMoved(Window& window, MouseMovementInput input) {
+	player.mouseMoved(window, input);
 }
 
 void DNDWorld::save() {
@@ -204,8 +148,7 @@ void DNDWorld::save() {
 		save.write((Char*)&nearClipValue, sizeof(Float));
 		save.write((Char*)&farClipValue, sizeof(Float));
 		save.write((Char*)&location, sizeof(Vec3));
-		save.write((Char*)&rotationX, sizeof(Float));
-		save.write((Char*)&rotationZ, sizeof(Float));
+		save.write((Char*)&rotation, sizeof(DVec3));
 		save.write((Char*)&speedExponent, sizeof(Int));
 
 		save.write((Char*)&entityCount, sizeof(UInt));
@@ -222,8 +165,7 @@ void DNDWorld::load() {
 		save.read((Char*)&nearClipValue, sizeof(Float));
 		save.read((Char*)&farClipValue, sizeof(Float));
 		save.read((Char*)&location, sizeof(Vec3));
-		save.read((Char*)&rotationX, sizeof(Float));
-		save.read((Char*)&rotationZ, sizeof(Float));
+		save.read((Char*)&rotation, sizeof(DVec3));
 		save.read((Char*)&speedExponent, sizeof(Int));
 
 		UInt entityCount;
@@ -231,14 +173,8 @@ void DNDWorld::load() {
 		entities.resize(entityCount);
 		save.read((Char*)&entities[0], sizeof(DNDEntity) * entityCount);
 	}
-}
-void DNDWorld::create() {
-	load();
+
 	loaded = true;
-}
-void DNDWorld::destroy() {
-	save();
-	loaded = false;
 }
 void DNDEntity::render(Renderer& renderer) {
 	transform.render(renderer);

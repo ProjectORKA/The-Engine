@@ -43,59 +43,68 @@
 //program includes
 #include "GameSystem.hpp"
 #include "UserInterface.hpp"
-#include "WindowsEntry.hpp"
 
 //games
 #include "Pong.hpp"
 #include "Intro.hpp"
 #include "Sortr.hpp"
+#include "GPUSim.hpp"
 #include "Sandbox.hpp"
 #include "UISandbox.hpp"
 #include "Mooncrash.hpp"
 #include "CheatTest.hpp"
-#include "Miniverse.hpp"
+#include "SimpleRTS.hpp"
 #include "MindMapper.hpp"
 #include "AIPlayground.hpp"
 #include "ProjectMelon.hpp"
-#include "DungeonsAndDiscord.hpp"
-#include "SimpleRTS.hpp"
+#include "QuakeMovement.hpp"
 #include "ResourceManager.hpp"
+#include "PhysicsPlayground.hpp"
+#include "DungeonsAndDiscord.hpp"
+#include "InfiniteDetailPrototype.hpp"
 
 //#define TESTING
 
 Int main(Int  argc, Char* argv[]) {
 #ifndef TESTING
 
-	initializeResourcemanager();
-	initializeGameSystem();
+	//initializeResourcemanager();
+	//initializeGameSystem();
 
 	//DNDWorld sim;
+	//DNDRenderer game(sim);
+
+	//SimpleRTSSimulation sim;
+	//SimpleRTSRenderer game(sim);
+
 	//SandboxSimulation sim;
-	//MiniverseSimulation sim;
-	//MooncrashSimulation sim;
-	//MiniverseSimulation sim;
-	SimpleRTSSimulation sim;
+	//Sandbox game(sim);
 	
-	gameSystem->add(sim);
+	//MooncrashSimulation sim;
+	//MooncrashRenderer game(sim);
+
+	//PhysicsPlaygroundSimulation sim;
+	//PhysicsPlayGroundRenderer game(sim);
 	
 	//Pong game;
 	//UISandbox game;
 	//MindMapper game;
-	//Sandbox game(sim);
 	//AIPlayground game;
 	//MelonRenderer game;
-	//Miniverse game(sim);
-	//DNDRenderer game(sim);
-	SimpleRTSRenderer game(sim);
-	//MooncrashRenderer game(sim);
+	//GPUSimRenderer game;
+	QuakeMovementRenderer game;
 
-	window(
+	//gameSystem->add(sim);
+
+	Window& w = window(
 		"ORKA",
 		Area(1920, 1080),
 		true,
-		WindowState::fullscreen,
-		game
+		WindowState::windowed
 	);
+	
+	w.content = &game;
+	game.create(w); //[TODO] clean this up
 
 	gameSystem->run();
 	ui.run();
@@ -107,6 +116,9 @@ Int main(Int  argc, Char* argv[]) {
 #else
 	//testing code
 	/////////////////////////////////////////////////////////////////////////////////////////////////
+	Everything everythingPrototype;
+
+	everythingPrototype.generate();
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////
 	pause();

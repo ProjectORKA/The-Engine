@@ -1,16 +1,19 @@
 
 #include "MindMap.hpp"
-#include "Renderer.hpp"
+#include "Window.hpp"
 
-void MindMap::update() {
+void MindMap::update()
+{
 	static int t = 0;
-	if (nodeCount < 1) {
+	if (nodeCount < 1)
+	{
 		addNode();
 	}
 	t++;
 
 	//keep distance to nodes
-	for (UInt i = 0; i < connections.size(); i++) {
+	for (UInt i = 0; i < connections.size(); i++)
+	{
 		MindmapConnection& c = connections[i];
 
 		Vec2 delta = positions[c.b] - positions[c.a];
@@ -26,9 +29,11 @@ void MindMap::update() {
 
 	//calculate collisions
 	//for every node
-	for (UInt a = 0; a < nodeCount; a++) {
+	for (UInt a = 0; a < nodeCount; a++)
+	{
 		//get every other node
-		for (UInt b = a + 1; b < nodeCount; b++) {
+		for (UInt b = a + 1; b < nodeCount; b++)
+		{
 			Vec2 delta = positions[b] - positions[a];
 			if (delta != Vec2(0)) {
 				Float intersectionDistance = 2 - length(delta);
@@ -46,8 +51,10 @@ void MindMap::update() {
 		}
 	}
 
-	for (UInt i = 0; i < nodeCount; i++) {
-		if (numforces[i]) {
+	for (UInt i = 0; i < nodeCount; i++)
+	{
+		if (numforces[i])
+		{
 			positions[i] += forces[i] / numforces[i];
 			forces[i] = Vec2(0);
 			numforces[i] = 0;
@@ -57,7 +64,8 @@ void MindMap::update() {
 	positions[0] = Vec2(-100, 0);
 
 }
-void MindMap::addNode() {
+void MindMap::addNode()
+{
 	forces.emplace_back();
 	numforces.emplace_back();
 	for (Int i = 0; i < random(1) + 1; i++) connections.emplace_back(random(nodeCount), nodeCount);
@@ -65,7 +73,12 @@ void MindMap::addNode() {
 	else positions.push_back(Vec2(0));
 	nodeCount++;
 }
-void MindMap::render(Renderer& renderer) {
+void MindMap::render(Renderer& renderer)
+{
+
+	renderer.clearColor();
+	renderer.clearDepth();
+
 	renderer.setDepthTest(false);
 	renderer.useShader("color");
 
@@ -79,34 +92,41 @@ void MindMap::render(Renderer& renderer) {
 	renderer.fill(Color(1));
 	for (UInt a = 0; a < positions.size(); a++) {
 		renderer.uniforms().mMatrix(matrixFromLocation(Vec3(positions[a], 0.0f)));
-		renderer.renderMesh("1x1planeCentered");
+		renderer.renderMesh("centeredPlane");
 	}
 
 	renderer.setDepthTest(true);
 }
+void MindMap::addForce(Index a, Vec2 force)
+{
+	forces[a] += force;
+	numforces[a]++;
+}
+void MindMap::renderInteractive(Window & window)
+{
+	Renderer& renderer = window.renderer;
 
-void MindMap::renderInteractive(Renderer& renderer) {
 	renderer.setDepthTest(false);
 	renderer.useShader("idShader");
 
-	renderer.getIDsUnderCursor();
-
 	//render connections
 	renderer.fill(Color(0.5, 0.5, 0.5, 1));
-	for (UInt i = 0; i < connections.size(); i++) {
+	for (UInt i = 0; i < connections.size(); i++)
+	{
+		renderer.uniforms().objectID(i);
 		renderer.line(positions[connections[i].a], positions[connections[i].b], 0.05);
 	}
 
 	//render nodes
 	renderer.fill(Color(1));
-	for (UInt a = 0; a < positions.size(); a++) {
-		renderer.uniforms().mMatrix(matrixFromLocation(Vec3(positions[a], 0.0f)));
+	for (UInt i = 0; i < positions.size(); i++)
+	{
+		renderer.uniforms().objectID(connections.size() - 1 + i);
+		renderer.uniforms().mMatrix(matrixFromLocation(Vec3(positions[i], 0.0f)));
 		renderer.renderMesh("1x1planeCentered");
 	}
 
+	renderer.idFramebuffer.updateIdsUnderCursor(window);
+
 	renderer.setDepthTest(true);
-}
-void MindMap::addForce(Index a, Vec2 force) {
-	forces[a] += force;
-	numforces[a]++;
 }

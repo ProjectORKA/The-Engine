@@ -30,23 +30,14 @@ struct SandboxSimulation : public GameSimulation {
 struct Sandbox : public GameRenderer {
 	
 	Mutex mutex;
-	Player player;
-	Action forward;
-	Action backward;
-	Action left;
-	Action right;
-	Action upward;
-	Action downward;
+	ClipMap system;
+	DebugPlayer player;
 	Float mouseSensitivity = 0.0015f;
 	SandboxSimulation * simulation = nullptr;
 
-	ClipMap system;
 
 	Sandbox(SandboxSimulation& sim);
-	void update(Renderer& renderer) override;
-	void mouseIsMoving(Window& window, IVec2 position)  override;
-	void render(TiledRectangle area, Renderer& renderer) override;
-	void mouseIsScrolled(Window& window, Double xAxis, Double yAxis) override;
-	void buttonIsPressed(Window& window, Key key, ActionState action, Int modifiers) override;
-	void mouseIsPressed(Window& window, MouseButton button, ActionState action, Int modifiers) override;
+	void create(Window& window) override;
+	void update(Window& window) override;
+	void render(Window& window, TiledRectangle area) override;
 };

@@ -6,6 +6,6 @@
 struct Intro : public GameRenderer {
 	GameRenderer* gameStartingAfterIntro = nullptr;
 
-	void render(TiledRectangle area, Renderer & renderer) override;
 	Intro(GameRenderer* gameStartingAfterIntro);
+	void render(Window& window, TiledRectangle area) override;
 };

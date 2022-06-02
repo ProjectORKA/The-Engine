@@ -11,6 +11,7 @@ struct Graph {
 
 	void add(Float value);
 };
+
 struct Orientation {
 	Vec3 x = Vec3(1, 0, 0);
 	Vec3 y = Vec3(0, 1, 0);
@@ -19,7 +20,6 @@ struct Orientation {
 	Orientation(Vec3 direction);
 	Orientation(Vec3 direction, Vec3 up);
 };
-
 
 Bool isOdd(ULL a);
 Bool isEven(ULL a);
@@ -33,11 +33,14 @@ Bool pointInsideSpheres(Vec3 point, Vector<Sphere> spheres);
 Bool isWithinDistanceOfOtherPoints(Vec2 point, Vector<Vec2>& points, Float dist);
 Bool pointInsideSphereAtlocationWithRadius(Vec3 point, Vec3 position, Float radius);
 
+UInt max(UInt a, UInt b);
 UInt nextPowerOfTwo(UInt& value);
 UInt fibonacciSequence(UInt iterations);
 
 Index idOfClosestPoint(Vec2 origin, Vector<Vec2>& positions);
 Index idOfClosestPointInLoopingSpace(Vec2 origin, Vector<Vec2>& positions, Float extend);
+
+Int max(Int a, Int b);
 
 Float sq(Float a);
 Float min(Float a, Float b);
@@ -45,23 +48,27 @@ Float mod(Float a, Float b);
 Float snap(Float a, Float b);
 Float distance(Vec2 a, Vec2 b);
 Float distance(Float a, Float b);
+
 Float lerp(Float a, Float b, Float alpha);
+Float clerp(Float a, Float b, Float alpha);
 Float deltaInLoopingSpace(Float a, Float b, Float extend);
 Float getDistanceToClosestPoint(Vec3 point, Vector<Vec3>& points);
 Float distanceToPointInLoopingSpace(Vec2 a, Vec2 b, Float extend);
 
 LDouble dmod(LDouble x, LDouble y);
-
+LDouble lerp(LDouble a, LDouble b, LDouble alpha);
+LDouble clerp(LDouble a, LDouble b, LDouble alpha);
 
 Vec2 vectorFromAToB(Vec2 a, Vec2 b);
 Vec2 deltaInLoopingSpace(Vec2 a, Vec2 b, Float extend);
 
+Vec3 max(Vec3 a, Vec3 b);
 Vec3 projectToCube(Vec3 vec);
 Vec3 vectorFromAToB(Vec3 a, Vec3 b);
 Vec3 lerp(Vec3 a, Vec3 b, Float alpha);
+Vec3 clerp(Vec3 a, Vec3 b, Float alpha);
 Vec3 getClosestPoint(Vec3 point, List<Vec3>& points);
 Vec3 quadraticInterpolation(Vec3 start, Vec3 control, Vec3 end, Float time);
-
 
 Rotation getRotationBetweenVectors(Vec3 start, Vec3 dest);
 
@@ -72,11 +79,13 @@ Matrix matrixFromLocation(Vec3 location);
 Matrix matrixFromOrientation(Orientation o);
 Matrix matrixFromAxis(Vec3 x, Vec3 y, Vec3 z);
 Matrix matrixFromTiledRectangle(TiledRectangle area);
+Matrix matrixFromRotation(Float x, Float y, Float z);
 Matrix matrixFromPositionAndDirection(Vec2 pos, Vec2 dir);
 Matrix matrixFromLocationAndSize(Vec4 compressedTransform);
 Matrix matrixFromLocationAndSize(Vec3 location, Float size);
 Matrix matrixFromLocationAndSize(Vec2 location, Float size);
 Matrix matrixFromOrientation(Orientation o, Vec3 position, Float size);
+Matrix matrixFromLocationAndSize2D(Float x, Float y, Float w, Float h);
 Matrix matrixFromAxis(Vec3 x, Vec3 y, Vec3 z, Vec3 position, Float size);
 Matrix matrixFromLocationDirectionAndSize(Vec2 pos, Vec2 dir, Float size);
 
@@ -104,5 +113,5 @@ T clamp(T a, R min, E max) {
 
 template <typename T>
 void approach(T& a, T b, Float rateOfChange) {
-	a = lerp(a, b, rateOfChange);
+	a = clerp(a, b, rateOfChange);
 }

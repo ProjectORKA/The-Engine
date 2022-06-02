@@ -33,7 +33,7 @@ void GPUMesh::render(Uniforms& uniforms) {
 		uniforms.instanced(false);
 		uniforms.upload();
 		vao.select();
-		apiDrawElements(enumClassAsInt(primitiveMode), vao.indexBuffer.indexCount, GL_UNSIGNED_INT, nullptr);
+		apiDrawElements(primitiveMode, vao.indexBuffer.indexCount, GL_UNSIGNED_INT, nullptr);
 	}
 }
 void GPUMesh::renderInstances(Uniforms& uniforms, UInt instanceCount) {
@@ -41,6 +41,6 @@ void GPUMesh::renderInstances(Uniforms& uniforms, UInt instanceCount) {
 		uniforms.instanced(true);
 		uniforms.upload();
 		vao.select();
-		apiDrawElementsInstanced(enumClassAsInt(primitiveMode), vao.indexBuffer.indexCount, GL_UNSIGNED_INT, nullptr, instanceCount);
+		apiDrawElementsInstanced(primitiveMode, vao.indexBuffer.indexCount, GL_UNSIGNED_INT, nullptr, instanceCount);
 	}
 }

@@ -10,5 +10,5 @@ struct Shader {
 
 	void destroy();
 	void create(Path path, String uniformBlock);
-	void loadShaderCode(ShaderType shaderType, String shaderCode);
+	void loadShaderCode(Int shaderType, String shaderCode);
 };
