@@ -5,49 +5,63 @@
 void FramebufferSystem::destroy()
 {
 	deselect();
-	framebuffers.clear();
+	for (auto f : framebuffers) f.destroy();
 }
 void FramebufferSystem::deselect()
 {
-	apiBindFramebuffer(0);
+	apiBindDrawFramebuffer(0);
 }
-Framebuffer& FramebufferSystem::current()
-{
-	return *framebuffers[currentFramebufferIndex];
+void FramebufferSystem::addGbuffer() {
+	framebuffers.emplace_back();
+	framebuffers.back().create(Area(1));
+	framebuffers.back().resizeable = true;
+	framebuffers.back().add(4, dataTypeFloat, 0);
+	framebuffers.back().add(3, dataTypeFloat, 1);
+	framebuffers.back().add(3, dataTypeFloat, 2);
+	framebuffers.back().add(1, dataTypeUInt, 3);
+	framebuffers.back().add(5, dataTypeFloat, 4);
+}
+void FramebufferSystem::addIDBuffer() {
+	framebuffers.emplace_back();
+	framebuffers.back().resizeable = true;
+	framebuffers.back().create(Area(1));
+	framebuffers.back().add(3, dataTypeUInt, 0);
+	framebuffers.back().add(5, dataTypeFloat, 1);
 }
 void FramebufferSystem::update(Area area)
 {
 	area.clamp(1);
-
-	if (framebufferSize != area) {
-		framebufferSize = area;
-		for (auto f : framebuffers) {
-			f->resize(framebufferSize);
-		}
+	framebufferSize = area;
+	for (Framebuffer& f : framebuffers) {
+		if(f.resizeable) f.resize(area);
 	}
 }
-IDFrameBuffer& FramebufferSystem::idFramebuffer() {
-	return *idFbPtr;
-}
-void FramebufferSystem::add(Framebuffer * framebuffer)
+Framebuffer& FramebufferSystem::currentRead()
 {
-	framebuffers.push_back(framebuffer);
+	return framebuffers[currentReadFramebufferIndex];
+}
+Framebuffer& FramebufferSystem::currentDraw()
+{
+	return framebuffers[currentDrawFramebufferIndex];
 }
 void FramebufferSystem::create(Renderer& renderer, Area size) {
-	framebuffers.push_back(new GBuffer());
-
-	IDFrameBuffer* pointer = new IDFrameBuffer();
-	idFbPtr = pointer;
-	framebuffers.push_back(pointer);
-	idFramebuffer().add(4, dataTypeUInt, 0);
-	idFramebuffer().add(5, dataTypeFloat, 1);
+	//gbuffer
+	addGbuffer();
+	nametoID["main"] = framebuffers.size() - 1;
 }
-void FramebufferSystem::use(Renderer & renderer, Index framebufferIndex)
-{
+void  FramebufferSystem::read(Renderer& renderer, Index framebufferIndex) {
 	if (framebufferIndex > (framebuffers.size() - 1)) {
 		logError(String("Invalid framebufferIndex! (").append(toString(framebufferIndex)).append(")"));
 		return;
 	}
-	currentFramebufferIndex = framebufferIndex;
-	current().use();
-}
+	currentReadFramebufferIndex = framebufferIndex;
+	currentRead().read();
+};
+void  FramebufferSystem::draw(Renderer& renderer, Index framebufferIndex) {
+	if (framebufferIndex > (framebuffers.size() - 1)) {
+		logError(String("Invalid framebufferIndex! (").append(toString(framebufferIndex)).append(")"));
+		return;
+	}
+	currentDrawFramebufferIndex = framebufferIndex;
+	currentDraw().draw();
+};

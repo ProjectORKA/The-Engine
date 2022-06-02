@@ -8,7 +8,9 @@
 UserInterface ui;
 
 //UIImage
-void UIImage::render(TiledRectangle renderArea, Renderer& renderer) {
+void UIImage::render(Window& window, TiledRectangle renderArea) {
+	Renderer& renderer = window.renderer;
+
 	renderer.renderRegion.set(renderArea);
 	renderer.useShader("unlit");
 	renderer.useTexture("default");
@@ -26,7 +28,9 @@ UIImage::UIImage(Name name) {
 UITextBox::UITextBox(String& data) {
 	this->data = &data;
 }
-void UITextBox::render(TiledRectangle renderArea, Renderer& renderer){
+void UITextBox::render(Window& window, TiledRectangle renderArea){
+	Renderer& renderer = window.renderer;
+
 	renderer.screenSpace();
 	Matrix m = matrixFromLocationAndSize(Vec4(renderArea.position.x, renderArea.position.y, 0, min(renderArea.size.x, renderArea.size.y)));
 	renderer.uniforms().mMatrix(m);
@@ -37,7 +41,7 @@ void UITextBox::render(TiledRectangle renderArea, Renderer& renderer){
 UICheckBox::UICheckBox(Boolean& data) {
 	this->data = &data;
 }
-void UICheckBox::render(TiledRectangle renderArea, Renderer& renderer) {}
+void UICheckBox::render(Window& window, TiledRectangle renderArea) {}
 
 //Container
 UIContainer& UIContainer::horizontal() {
@@ -52,7 +56,7 @@ UIContainer& UIContainer::insert(UIElement& element) {
 	contents.push_back(&element);
 	return *this;
 }
-void UIContainer::render(TiledRectangle renderArea, Renderer& renderer) {
+void UIContainer::render(Window& window, TiledRectangle renderArea) {
 	for (UInt i = 0; i < contents.size(); i++) {
 		TiledRectangle a = renderArea;
 		if (renderVertical) {
@@ -63,10 +67,10 @@ void UIContainer::render(TiledRectangle renderArea, Renderer& renderer) {
 			a.size.x /= contents.size();
 			a.position.x += a.size.x * i;
 		}
-		contents[i]->render(a, renderer);
+		contents[i]->render(window, a);
 	}
 }
-void UIContainer::renderInteractive(TiledRectangle renderArea, Renderer& renderer)
+void UIContainer::renderInteractive(Window& window, TiledRectangle renderArea)
 {
 	for (UInt i = 0; i < contents.size(); i++) {
 		TiledRectangle a = renderArea;
@@ -78,13 +82,23 @@ void UIContainer::renderInteractive(TiledRectangle renderArea, Renderer& rendere
 			a.size.x /= contents.size();
 			a.position.x += a.size.x * i;
 		}
-		contents[i]->renderInteractive(a, renderer);
+		contents[i]->renderInteractive(window, a);
 	}
 }
-void UIContainer::mouseIsPressed(Window& window, MouseButton button, ActionState action, Int modifiers)
-{
-	for (auto c : contents)c->mouseIsPressed(window, button, action, modifiers);
-}
+
+//Window
+Window& window(String title, Area size, Bool decorated, WindowState state) {
+	ui.windows.emplace_back();
+	ui.windows.back().create(title, size, decorated, state);
+	ui.windows.back().content = nullptr;
+	return ui.windows.back();
+};
+Window& window(String title, Area size, Bool decorated, WindowState state, UIElement & element) {
+	ui.windows.emplace_back();
+	ui.windows.back().create(title, size, decorated, state);
+	ui.windows.back().content = &element;
+	return ui.windows.back();
+};
 
 //User Interface
 void UserInterface::run() {
@@ -113,7 +127,7 @@ void UserInterface::run() {
 UserInterface::UserInterface() {
 	assert(glfwInit() == GLFW_TRUE);
 	glfwSetErrorCallback(whenWindowAPIThrowsError);
-	glfwSetMonitorCallback(whenMonitorChanged);
+	/*glfwSetMonitorCallback(whenMonitorChanged);*/
 }
 
 UIButton& button() {
@@ -136,15 +150,3 @@ UITextBox& textBox(String& data) {
 	ui.textBoxes.emplace_back(data);
 	return ui.textBoxes.back();
 }
-Window& window(String title, Area size, Bool decorated, WindowState state) {
-	ui.windows.emplace_back();
-	ui.windows.back().create(title, size, decorated, state);
-	return ui.windows.back();
-};
-
-Window& window(String title, Area size, Bool decorated, WindowState state, UIElement & element) {
-	ui.windows.emplace_back();
-	ui.windows.back().create(title, size, decorated, state);
-	ui.windows.back().content = &element;
-	return ui.windows.back();
-};

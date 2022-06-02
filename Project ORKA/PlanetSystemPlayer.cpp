@@ -1,11 +1,11 @@
 #include "PlanetSystemPlayer.hpp"
-#include "Renderer.hpp"
+#include "Window.hpp"
 
-void PlanetSystemPlayer::render(Renderer& renderer) {
+void PlanetSystemPlayer::render(Window & window) {
 	Float cameraHeight = chunkLocation.z + camera.location.z;
-	renderer.uniforms().custom1() = cameraHeight;
-	renderer.uniforms().cameraVec() = Vec4(camera.forwardVector, 1);
-	renderer.uniforms().cameraPos() = Vec4(0);
-	renderer.uniforms().vMatrix() = camera.viewMatrixOnlyRot();
-	renderer.uniforms().pMatrix() = camera.projectionMatrix(renderer.aspectRatio());
+	window.renderer.uniforms().custom1() = cameraHeight;
+	window.renderer.uniforms().cameraVec() = Vec4(camera.forwardVector, 1);
+	window.renderer.uniforms().cameraPos() = Vec4(0);
+	window.renderer.uniforms().vMatrix() = camera.viewMatrixOnlyRot();
+	window.renderer.uniforms().pMatrix() = camera.projectionMatrix(window.renderer.aspectRatio());
 }

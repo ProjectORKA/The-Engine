@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Random.hpp"
+#include "Window.hpp"
 
 struct Renderer;
 
@@ -27,6 +28,6 @@ struct MindMap {
 	void update();
 	void addNode();
 	void render(Renderer& renderer);
-	void renderInteractive(Renderer& renderer);
 	void addForce(Index a, Vec2 force);
+	void renderInteractive(Window& window);
 };

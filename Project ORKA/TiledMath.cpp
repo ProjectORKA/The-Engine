@@ -15,8 +15,8 @@ void logDebug(Area t)
 	std::cout << "(" << t.x << "|" << t.y << ")" << "\n";
 }
 void Area::clamp(Int a) {
-	x = max<Int>(x, a);
-	y = max<Int>(y, a);
+	x = max(x, a);
+	y = max(y, a);
 }
 Area::Area(Int x, Int y) {
 	this->x = x;
@@ -31,9 +31,19 @@ void Area::clamp(Area minimumSize)
 	x = max<Int>(x, minimumSize.x);
 	y = max<Int>(y, minimumSize.y);
 }
+TiledRectangle::TiledRectangle(Area area) {
+	this->size = area;
+	this->position = IVec2(0);
+}
 Bool TiledRectangle::positionInsideArea(IVec2 position)
 {
 	position -= this->position;
 	if (position.x < 0 | position.y < 0) return 0;
 	return position.x <= size.x & position.y <= size.y;
+}
+TiledRectangle::TiledRectangle(Int x, Int y, Int w, Int h) {
+	position.x = x;
+	position.y = y;
+	size.x = w;
+	size.y = h;
 }

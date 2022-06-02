@@ -1,18 +1,24 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.29519.87
+# Visual Studio Version 17
+VisualStudioVersion = 17.2.32516.85
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Project ORKA", "Project ORKA\Project ORKA.vcxproj", "{AD44ABC9-E10E-485B-A111-65EE96C2FFC1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Copy Files Release|x64 = Copy Files Release|x64
+		Copy Files Release|x86 = Copy Files Release|x86
 		Debug|x64 = Debug|x64
 		Debug|x86 = Debug|x86
 		Release|x64 = Release|x64
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{AD44ABC9-E10E-485B-A111-65EE96C2FFC1}.Copy Files Release|x64.ActiveCfg = Copy Files Release|x64
+		{AD44ABC9-E10E-485B-A111-65EE96C2FFC1}.Copy Files Release|x64.Build.0 = Copy Files Release|x64
+		{AD44ABC9-E10E-485B-A111-65EE96C2FFC1}.Copy Files Release|x86.ActiveCfg = Copy Files Release|Win32
+		{AD44ABC9-E10E-485B-A111-65EE96C2FFC1}.Copy Files Release|x86.Build.0 = Copy Files Release|Win32
 		{AD44ABC9-E10E-485B-A111-65EE96C2FFC1}.Debug|x64.ActiveCfg = Debug|x64
 		{AD44ABC9-E10E-485B-A111-65EE96C2FFC1}.Debug|x64.Build.0 = Debug|x64
 		{AD44ABC9-E10E-485B-A111-65EE96C2FFC1}.Debug|x86.ActiveCfg = Debug|Win32

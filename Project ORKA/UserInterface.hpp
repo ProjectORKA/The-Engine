@@ -14,18 +14,18 @@ struct UIImage : public UIElement {
 	Name name;
 
 	UIImage(Name name);
-	void render(TiledRectangle renderArea, Renderer& renderer)override;
+	void render(Window& window, TiledRectangle renderArea)override;
 };
 struct UITextBox : public UIElement {
 	String* data;
 
 	UITextBox(String& data);
-	void render(TiledRectangle renderArea, Renderer& renderer) override;
+	void render(Window& window, TiledRectangle renderArea) override;
 };
 struct UICheckBox : public UIElement {
 	Boolean* data;
 	UICheckBox(Boolean& data);
-	void render(TiledRectangle renderArea, Renderer& renderer);
+	void render(Window& window, TiledRectangle renderArea) override;
 };
 struct UIContainer : public UIElement {
 	Boolean renderVertical = false;
@@ -35,9 +35,8 @@ struct UIContainer : public UIElement {
 	UIContainer& vertical();
 	UIContainer& horizontal();
 	UIContainer& insert(UIElement& element);
-	void render(TiledRectangle renderArea, Renderer& renderer) override;
-	void renderInteractive(TiledRectangle renderArea, Renderer& renderer)override;
-	void mouseIsPressed(Window& window, MouseButton button, ActionState action, Int modifiers)override;
+	void render(Window& window, TiledRectangle renderArea) override;
+	void renderInteractive(Window& window, TiledRectangle renderArea) override;
 };
 
 struct UserInterface {

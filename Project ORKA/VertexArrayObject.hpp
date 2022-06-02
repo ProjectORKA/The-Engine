@@ -6,7 +6,6 @@
 #include "IndexBufferObject.hpp"
 #include "VertexBufferObject.hpp"
 #include "CPUMesh.hpp"
-#include "Util.hpp"
 
 struct VertexArrayObject {
 	Index arrayObjectID = 0;

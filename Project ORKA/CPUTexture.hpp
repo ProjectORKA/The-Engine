@@ -1,11 +1,5 @@
 #pragma once
 
-#ifdef DEBUG_TEXTURES
-#define DEBUG
-#else
-#undef DEBUG
-#endif
-
 #include "Basics.hpp"
 #include "FileSystem.hpp"
 #include "Debug.hpp"
@@ -24,18 +18,24 @@ enum Wrapping
 	clamped = GL_CLAMP_TO_EDGE,
 	border = GL_CLAMP_TO_BORDER
 };
-enum class Filter {
-	nearest = GL_NEAREST,
-	nearestMM = GL_NEAREST_MIPMAP_NEAREST,
-	linear = GL_LINEAR,
-	linearMM = GL_LINEAR_MIPMAP_LINEAR
-};
+namespace Filter {
+	enum {
+		nearest = GL_NEAREST,
+		nearestMM = GL_NEAREST_MIPMAP_NEAREST,
+		linear = GL_LINEAR,
+		linearMM = GL_LINEAR_MIPMAP_LINEAR
+	};
+}
 
 struct CPUTexture {
-	Name name = "NULL";
 	Int width = 0;
 	Int height = 0;
 	Int channels = 0;
+	Name name = "NULL";
+	Bool loaded = false;
+	Int wrapping = repeat;
+	Int farFilter = Filter::linear;
+	Int nearFilter = Filter::linear;
 	DataType dataType = dataTypeByte;
 	union {
 		void* pixels = nullptr;
@@ -43,16 +43,13 @@ struct CPUTexture {
 		Float* floatPixels;
 		UInt* uIntPixels;
 	};
-	Filter nearFilter = Filter::linear;
-	Filter farFilter = Filter::linear;
-	Int wrapping = repeat;
-	Bool loaded = false;
 
 	Float getRed(UInt x, UInt y);
 	Float getGreen(UInt x, UInt y);
 	Float getBlue(UInt x, UInt y);
-	Float getRed(Float x, Float y);
 	Float getAlpha(UInt x, UInt y);
+
+	Float getRed(Float x, Float y);
 	Float getGreen(Float x, Float y);
 	Float getBlue(Float x, Float y);
 	Float getAlpha(Float x, Float y);

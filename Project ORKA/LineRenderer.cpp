@@ -17,9 +17,12 @@ void LineRenderer::create() {
 	cpuMesh.uvs.push_back(Vec2(0, 0));
 	cpuMesh.uvs.push_back(Vec2(1, 0));
 	cpuMesh.uvs.push_back(Vec2(1, 1));
+	cpuMesh.colors.push_back(Vec3(1));
+	cpuMesh.colors.push_back(Vec3(1));
+	cpuMesh.colors.push_back(Vec3(1));
+	cpuMesh.colors.push_back(Vec3(1));
 	cpuMesh.vertices.resize(4);
 }
-
 void LineRenderer::renderLine(Renderer& renderer, Vec3 start, Vec3 end, Float width) {
 	renderer.uniforms().mMatrix(Matrix(1));
 	Vec3 dir = normalize(start - end);
@@ -28,8 +31,12 @@ void LineRenderer::renderLine(Renderer& renderer, Vec3 start, Vec3 end, Float wi
 	cpuMesh.vertices[1] = (start - extend * width);
 	cpuMesh.vertices[2] = (end + extend * width);
 	cpuMesh.vertices[3] = (end - extend * width);
+
 	cpuMesh.checkIntegrity();
 	gpuMesh.upload(cpuMesh);
 	gpuMesh.render(renderer.uniforms());
 	gpuMesh.unload();
+}
+void LineRenderer::renderLine(Renderer& renderer, Vec2 start, Vec2 end, Float width) {
+	renderLine(renderer,Vec3(start, 0), Vec3(end, 0), width);
 }

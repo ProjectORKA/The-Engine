@@ -1,6 +1,5 @@
 
 #include "Window.hpp"
-#include "InputManager.hpp"
 #include "UserInterface.hpp"
 
 UShort nextWindowID = 0;
@@ -29,15 +28,15 @@ void windowThread(Window& window)
 			renderer.renderRegion.set(windowArea);
 
 			//gpu needs frameSize
-			renderer.uniforms().width(renderer.framebufferSystem.current().size.x);
-			renderer.uniforms().height(renderer.framebufferSystem.current().size.y);
+			renderer.uniforms().width(renderer.framebufferSystem.currentDraw().size.x);
+			renderer.uniforms().height(renderer.framebufferSystem.currentDraw().size.y);
 
 			if (window.content) {
 				//update ui
-				window.content->update(renderer);
+				window.content->update(window);
 
 				//render interactibles
-				renderer.framebufferSystem.idFramebuffer().use();
+				renderer.idFramebuffer.draw(renderer);
 				renderer.useShader("idShader");
 				renderer.uniforms().reset();
 				renderer.renderMesh("fullScreenQuad");
@@ -46,15 +45,15 @@ void windowThread(Window& window)
 				renderer.setCulling(false);
 				renderer.useShader("idShader");
 				renderer.setAlphaBlending(false);
-				window.content->renderInteractive(windowArea, renderer);
-				renderer.framebufferSystem.idFramebuffer().update();
+				window.content->renderInteractive(window, windowArea);
+				renderer.idFramebuffer.updateIdsUnderCursor(window);
 
 				//render ui
-				renderer.framebufferSystem.use(renderer, 0);
+				renderer.framebufferSystem.draw(renderer, 0);
 				renderer.clearColor(Color(Vec3(0), 0.0));
 				renderer.clearDepth();
 				renderer.setWireframeMode(renderer.wireframeMode);
-				window.content->render(windowArea, renderer);
+				window.content->render(window, windowArea);
 			}
 
 			renderer.setWireframeMode(false);
@@ -67,25 +66,41 @@ void windowThread(Window& window)
 			apiBindDrawFramebuffer(0);
 
 			renderer.useShader("final");
-			renderer.framebufferSystem.current().setAsTexture(0);
+			renderer.framebufferSystem.currentDraw().setAsTexture(0); //[TODO] might not work; check
 			renderer.uniforms().reset();
 			renderer.renderMesh("fullScreenQuad");
 
 			renderer.end(); //checks errors and unlocks renderer
 			apiWindowSwapBuffers(window.apiWindow);
+
+			if(window.capturing)apiWindowSetCursorPosition(window.apiWindow, IVec2(0, 0));
 		}
 	}
 
 	window.destroyAPIWindow();
 }
 
+
+//windowstate
+void Window::captureCursor() {
+	if (!capturing) {
+		mousePositionFromTopLeft = apiWindowGetCursorPosition(apiWindow);
+		apiWindowSetCursorPosition(apiWindow, Vec2(0));
+		apiWindowDisableCursor(apiWindow);
+		capturing = true;
+	}
+}
+void Window::uncaptureCursor() {
+	if (capturing) {
+		apiWindowEnableCursor(apiWindow);
+		glfwSetCursorPos(apiWindow, mousePositionFromTopLeft.x, mousePositionFromTopLeft.y);
+		capturing = false;
+	}
+}
+
 //window member functions
 void Window::destroy() {
 	thread.stop();
-}
-Window& Window::insert(UIElement& element) {
-	content = &element;
-	return *this;
 }
 void Window::setWindowed()
 {
@@ -100,20 +115,20 @@ void Window::setMaximized() {
 }
 void Window::setCallbacks()
 {
-	glfwSetCharCallback(apiWindow, whenCharIsTyped);
+	//glfwSetCharCallback(apiWindow, whenCharIsTyped);
 	glfwSetKeyCallback(apiWindow, whenButtonIsPressed);
 	glfwSetCursorPosCallback(apiWindow, whenMouseIsMoving);
 	glfwSetScrollCallback(apiWindow, whenMouseIsScrolling);
 	//glfwSetWindowSizeCallback(apiWindow, whenWindowResized);
 	glfwSetDropCallback(apiWindow, whenFilesDroppedOnWindow);
 	glfwSetMouseButtonCallback(apiWindow, whenMouseIsPressed);
-	glfwSetCursorEnterCallback(apiWindow, whenMouseEnterWindow);
-	glfwSetWindowFocusCallback(apiWindow, whenWindowChangedFocus);
+	//glfwSetCursorEnterCallback(apiWindow, whenMouseEnterWindow);
+	//glfwSetWindowFocusCallback(apiWindow, whenWindowChangedFocus);
 	glfwSetWindowCloseCallback(apiWindow, whenWindowCloseRequest);
 	glfwSetWindowIconifyCallback(apiWindow, whenWindowWasMinimized);
 	glfwSetWindowMaximizeCallback(apiWindow, whenWindowWasMaximized);
 	glfwSetFramebufferSizeCallback(apiWindow, whenFramebufferIsResized);
-	glfwSetWindowRefreshCallback(apiWindow, whenWindowDamagedOrRefreshed);
+	//glfwSetWindowRefreshCallback(apiWindow, whenWindowDamagedOrRefreshed);
 	glfwSetWindowContentScaleCallback(apiWindow, whenWindowContentScaleChanged);
 }
 void Window::centerWindow() {
@@ -143,7 +158,7 @@ void Window::undecorateWindow()
 	decorated = false;
 }
 void Window::destroyAPIWindow() {
-	inputManager.uncaptureCursor(*this);
+	uncaptureCursor();
 	if (apiWindow) {
 		glfwDestroyWindow(apiWindow);
 		apiWindow = nullptr;
@@ -199,6 +214,10 @@ void Window::setPosition(IVec2 position)
 	windowPosition = position;
 	updatePosition();
 }
+Window& Window::insert(UIElement& element) {
+	content = &element;
+	return *this;
+}
 void Window::resize(Int width, Int height) {
 	apiWindowResize(apiWindow, width, height);
 }
@@ -225,8 +244,8 @@ void Window::createAPIWindow(String title, Area size) {
 		//glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_COMPAT_PROFILE);
 		glfwWindowHint(GLFW_TRANSPARENT_FRAMEBUFFER, GL_TRUE);
 		glfwWindowHint(GLFW_CENTER_CURSOR, GLFW_TRUE);
-		//if (!decorated)
-		glfwWindowHint(GLFW_DECORATED, GL_FALSE);
+		if (!decorated) glfwWindowHint(GLFW_DECORATED, GL_FALSE);
+		else glfwWindowHint(GLFW_DECORATED, GL_TRUE);
 
 #ifdef DEBUG
 		glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
@@ -259,8 +278,17 @@ void Window::create(String title, Area size, Bool decorated, WindowState state)
 	logEvent("Created Window in Main Thread!");
 }
 
-Bool Window::isKeyPressed(Key key) {
+//key input
+Bool Window::isKeyPressed(Int key) {
 	return apiWindowKeyIsPressed(apiWindow, key);
+}
+Bool Window::pressed(InputID input) {
+	switch (input.type) {
+	case InputType::KeyBoard: return glfwGetKey(apiWindow, input.id); break;
+	case InputType::Mouse: return mouseState[input.id]; break;
+	default: logError("Unsupported InputType!");
+	}
+	return false;
 }
 
 //window getters
@@ -286,31 +314,7 @@ Area Window::getWindowContentSize()
 
 //window callbacks
 void whenWindowCloseRequest(APIWindow apiWindow) {
-	logDebug("Window requested to close");
-	//if (!true) glfwSetWindowShouldClose(apiWindow, false);
-}
-void whenWindowDamagedOrRefreshed(APIWindow apiWindow) {
-}
-void whenMonitorChanged(APIMonitor monitor, Int event)
-{
-	if (event == GLFW_CONNECTED)
-	{
-		// The monitor was connected
-	}
-	else if (event == GLFW_DISCONNECTED)
-	{
-		// The monitor was disconnected
-	}
-}
-void whenCharIsTyped(APIWindow apiWindow, UInt character)
-{
-}
-void whenMouseEnterWindow(APIWindow apiWindow, Int entered) {
-
-};
-void whenWindowChangedFocus(APIWindow apiWindow, Int focused) {
-	Window& window = *static_cast<Window*>(glfwGetWindowUserPointer(apiWindow));
-	inputManager.windowChangedFocus(window, focused);
+	glfwSetWindowShouldClose(apiWindow, true);
 }
 void whenWindowWasMaximized(APIWindow apiWindow, Int maximized)
 {
@@ -327,7 +331,7 @@ void whenFramebufferIsResized(APIWindow apiWindow, Int width, Int height) {
 
 	if (!window.isFullScreen()) window.windowedModeSize = Area(width, height);
 
-	if (apiWindowKeyIsPressed(apiWindow, Key::LEFT_SHIFT)) {
+	if (apiWindowKeyIsPressed(apiWindow, LEFT_SHIFT)) {
 		window.centerWindow();
 	}
 
@@ -336,15 +340,34 @@ void whenFramebufferIsResized(APIWindow apiWindow, Int width, Int height) {
 void whenMouseIsScrolling(APIWindow apiWindow, Double xAxis, Double yAxis) {
 	Window& window = *static_cast<Window*>(glfwGetWindowUserPointer(apiWindow));
 
-	inputManager.mouseWheelIsScrolled(window, xAxis, yAxis);
+	Int countX = abs(xAxis);
+	Int countY = abs(yAxis);
+
+	for (Int i = 0; i < countX; i++) {
+		window.content->inputEvent(window, InputEvent(InputType::Scroll, 0, xAxis > 0));
+	}
+
+	for (Int i = 0; i < countY; i++) {
+		window.content->inputEvent(window, InputEvent(InputType::Scroll, 1, yAxis > 0));
+	}
 }
 void whenMouseIsMoving(APIWindow apiWindow, Double xPosition, Double yPosition) {
 	Window& window = *static_cast<Window*>(glfwGetWindowUserPointer(apiWindow));
-	inputManager.mouseIsMoving(window, Vec2(xPosition, yPosition));
-}
-void whenMouseIsPressed(APIWindow apiWindow, Int mouseButton, Int action, Int mods) {
-	Window& window = *static_cast<Window*>(glfwGetWindowUserPointer(apiWindow));
-	inputManager.mouseIsPressed(window, static_cast<MouseButton>(mouseButton), static_cast<ActionState>(action), mods);
+	
+	DVec2 delta;
+
+	if (window.capturing) {
+		delta = DVec2(xPosition, -yPosition);
+		apiWindowSetCursorPosition(apiWindow, IVec2(0));
+	}
+	else {
+		delta =  DVec2(xPosition, yPosition) - window.mousePositionFromTopLeft;
+		delta.y = -delta.y;
+		window.mousePositionFromTopLeft = DVec2(xPosition, yPosition);
+		window.mousePositionFromBottomLeft = DVec2(xPosition, window.getWindowContentSize().y - yPosition);
+	}
+
+	window.content->mouseMoved(window, delta);
 }
 void whenWindowContentScaleChanged(APIWindow apiWindow, Float xScale, Float yScale)
 {
@@ -358,10 +381,26 @@ void whenFilesDroppedOnWindow(APIWindow apiWindow, Int count, const Char** dropp
 		paths.push_back(droppedPaths[i]);
 		logDebug(String("File dropped: ").append(paths.back().string()));
 	}
-	inputManager.filesDropped(window, paths);
+
+	window.droppedFilePaths = paths;
+}
+void whenMouseIsPressed(APIWindow apiWindow, Int mouseButton, Int action, Int modifiers) {
+	Window& window = *static_cast<Window*>(glfwGetWindowUserPointer(apiWindow));
+	window.mouseState[mouseButton] = action > 0;
+	window.content->inputEvent(window, InputEvent(InputType::Mouse, mouseButton, action));
 }
 void whenButtonIsPressed(APIWindow apiWindow, Int key, Int scancode, Int action, Int modifiers)
 {
 	Window& window = *static_cast<Window*>(glfwGetWindowUserPointer(apiWindow));
-	inputManager.buttonIsPressed(window, static_cast<Key>(key), static_cast<ActionState>(action), modifiers);
+	
+	InputEvent input = InputEvent(InputType::KeyBoard, key, action);
+
+	if (input == window.escape) apiSetWindowShouldClose(apiWindow, true);
+	if (input == window.enter && window.pressed(window.altKey)) {
+		if (window.windowState == WindowState::windowed) window.windowState = WindowState::fullscreen;
+		else window.windowState = WindowState::windowed;
+		window.updateWindowState();
+	}
+
+	window.content->inputEvent(window, input);
 }

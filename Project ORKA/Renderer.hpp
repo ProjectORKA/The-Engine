@@ -16,7 +16,8 @@
 #include "VoxelSystem.hpp"
 #include "LineRenderer.hpp"
 #include "InteractionSystem.hpp"
-
+#include "RectangleRenderer.hpp"
+#include "IdFramebuffer.hpp"
 
 struct Player;
 struct Camera;
@@ -40,7 +41,9 @@ struct Renderer{
 	LineRenderer lineRenderer;
 	TextureSystem textureSystem;
 	VoxelRenderer voxelRenderer;
+	IdFramebuffer idFramebuffer;
 	TextRenderSystem textRenderSystem;
+	RectangleRenderer rectangleRenderer;
 	FramebufferSystem framebufferSystem;
 	InteractionSystem interactionSystem;
 	RenderObjectSystem renderObjectSystem;
@@ -96,7 +99,6 @@ struct Renderer{
 	void renderSky(Camera& camera);
 	void renderAtmosphere(Player& player, Vec3 sunDirection);
 
-	Bool getCulling();
 	void setWireframeMode();
 	void setColor(Color color);
 	void pollGraphicsAPIError();
@@ -108,7 +110,10 @@ struct Renderer{
 	void createBlurTexture(Index from, Index to);
 	void addRenderObject(RenderObjectNames renderObjectNames);
 	
+	Bool getCulling();
+
+	Float deltaTime();
 	Float aspectRatio();
+
 	Uniforms& uniforms();
-	PixelIDs getIDsUnderCursor();
 };

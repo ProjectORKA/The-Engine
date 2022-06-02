@@ -14,4 +14,5 @@ struct Plot {
 	CPUMesh createMesh();
 	void add(Float a, Float b);
 	void render(Renderer& renderer);
+	void render(Renderer& renderer, Float lineWidth);
 };

@@ -43,7 +43,7 @@ void ParticleSystem::render(Renderer& renderer) {
 		if (alive[i])pos.push_back(Vec4(transformation[i]));
 	}
 	renderer.matrixSystem.matrixArray(pos);
-	renderer.renderMeshInstanced("particle");
+	renderer.renderMeshInstanced("melonSmokeParticle");
 }
 ParticleSystem::ParticleSystem(U16 particleCount) {
 	this->particleCount = particleCount;

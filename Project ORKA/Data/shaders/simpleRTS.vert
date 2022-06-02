@@ -9,9 +9,9 @@ out vec3 vertexColor;
 
 void main() {
 
-	vec3 wPos;
 	vertexColor = colors;
 
+	vec3 wPos;
 	if(instanced){
 		wPos = (transform * vec4(vertex,1)).xyz;
 		normal = normalize((transform * vec4(normals,0)).xyz);

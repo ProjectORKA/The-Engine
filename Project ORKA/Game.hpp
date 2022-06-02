@@ -2,7 +2,6 @@
 #pragma once
 
 #include "Renderer.hpp"
-#include "InputManager.hpp"
 #include "UIElement.hpp"
 
 struct GameSimulation{
@@ -13,7 +12,6 @@ struct GameSimulation{
 };
 
 struct GameRenderer : public UIElement{
-	//GameRenderer* selfReplace = nullptr;
-	virtual void create() {};
 	virtual void destroy() {};
+	virtual void create(Window & window) {};
 };

@@ -5,30 +5,31 @@
 
 Sandbox::Sandbox(SandboxSimulation& sim) {
 	simulation = &sim;
-
-	//system.create();
 }
-void Sandbox::update(Renderer& renderer) {
 
-	player.speed = pow(1.2, player.speedExponent);
+void Sandbox::create(Window& window) {
+	//Input & input = window.input;
+	////setup keymap
+	//input.add("forward", ButtonType::Key, Key::W);
+	//input.add("backward", ButtonType::Key, Key::S);
+	//input.add("right", ButtonType::Key, Key::D);
+	//input.add("left", ButtonType::Key, Key::A);
+	//input.add("up", ButtonType::Key, Key::E);
+	//input.add("down", ButtonType::Key, Key::Q);
+}
 
-	if (forward.pressed)	player.accelerationVector += player.camera.forwardVector;
-	if (backward.pressed)	player.accelerationVector -= player.camera.forwardVector;
-	if (upward.pressed)		player.accelerationVector += player.camera.upVector;
-	if (downward.pressed)	player.accelerationVector -= player.camera.upVector;
-	if (right.pressed)		player.accelerationVector += player.camera.rightVector;
-	if (left.pressed)		player.accelerationVector -= player.camera.rightVector;
-
-	player.update(renderer);
+void Sandbox::update(Window& window) {
+	
+	player.update(window);
 
 	simulation->location = player.camera.location;
 
 	//system.update();
 }
-void Sandbox::mouseIsMoving(Window& window, IVec2 position) {
-	if (inputManager.isCapturing(window))player.camera.rotate(Vec2(position) * Vec2(mouseSensitivity));
-}
-void Sandbox::render(TiledRectangle area, Renderer& renderer) {
+
+void Sandbox::render(Window& window, TiledRectangle area) {
+	Renderer& renderer = window.renderer;
+	
 	mutex.lock();
 
 	renderer.setWireframeMode();
@@ -36,7 +37,7 @@ void Sandbox::render(TiledRectangle area, Renderer& renderer) {
 	renderer.setDepthTest(true);
 	renderer.clearDepth();
 
-	player.render(renderer); //[TODO] or this
+	player.render(window);
 	renderer.uniforms().mMatrix() = Matrix(1);
 	renderer.shaderSystem.use("debug");
 
@@ -53,34 +54,6 @@ void Sandbox::render(TiledRectangle area, Renderer& renderer) {
 	////////////////////////
 
 	mutex.unlock();
-}
-void Sandbox::mouseIsScrolled(Window& window, Double xAxis, Double yAxis) {
-	player.speedExponent += yAxis;
-}
-void Sandbox::buttonIsPressed(Window& window, Key keyID, ActionState action, Int modifiers) {
-	Bool pressed = (action != ActionState::Release);
-	switch (keyID) {
-	case Key::F: if (pressed) window.renderer.wireframeMode = !window.renderer.wireframeMode;
-		break;
-	case Key::W: forward.pressed = pressed;
-		break;
-	case Key::S: backward.pressed = pressed;
-		break;
-	case Key::A: left.pressed = pressed;
-		break;
-	case Key::D: right.pressed = pressed;
-		break;
-	case Key::Q: downward.pressed = pressed;
-		break;
-	case Key::E: upward.pressed = pressed;
-		break;
-	default:
-		break;
-	}
-}
-void Sandbox::mouseIsPressed(Window& window, MouseButton button, ActionState action, Int modifiers) {
-	if (button == MouseButton::LEFT && action == ActionState::Press) inputManager.captureCursor(window);
-	if (button == MouseButton::RIGHT && action == ActionState::Press) inputManager.uncaptureCursor(window);
 }
 
 void SandboxSimulation::update(Float timestep) {

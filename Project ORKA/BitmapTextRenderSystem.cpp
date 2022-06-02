@@ -15,6 +15,7 @@ void BitmapTextRenderSystem::create(Renderer& renderer) {
 }
 void BitmapTextRenderSystem::render(Renderer & renderer, String text, Vec2 position, FontStyle style) {
 	
+	renderer.setDepthTest(false);
 	UInt length = text.size();
 
 	cpuText.name = "text";
@@ -24,11 +25,12 @@ void BitmapTextRenderSystem::render(Renderer & renderer, String text, Vec2 posit
 	cpuText.normals.clear();
 	cpuText.drawMode = MeshDrawMode::dynamicMode;
 
+	Float up = 1.0;
+	Float down = 0.0;
+
 	for (UInt i = 0; i < length; i++) {
 		//[TODO] use 4 vertex and index pushbacks instead of 6
-		Float up = 1.0;
 		Float left = Float(i) * style.letterSpacing;
-		Float down = 0.0;
 		Float right = left + 1.0;
 
 		Int character = text[i];
@@ -85,6 +87,7 @@ void BitmapTextRenderSystem::render(Renderer & renderer, String text, Vec2 posit
 
 	renderer.setAlphaBlending(true);
 
-	renderer.uniforms().mMatrix(scale(translate(Matrix(1), Vec3(position, 0)), Vec3(style.absoluteSize)));
+	//renderer.uniforms().mMatrix(scale(translate(Matrix(1), Vec3(position, 0)), Vec3(style.absoluteSize)));
+	renderer.uniforms().mMatrix(matrixFromLocationAndSize2D(position.x, position.y, style.absoluteSize, style.absoluteSize));
 	gpuText.render(renderer.uniforms());
 }

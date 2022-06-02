@@ -86,9 +86,6 @@
     <Filter Include="Common\Advanced\Threading">
       <UniqueIdentifier>{e54cf082-0377-43d0-926e-993f59bf0ba1}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Common\Advanced\Util">
-      <UniqueIdentifier>{1b3c6c0e-a78c-42a3-9248-9f270de8adbf}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Common\Transform">
       <UniqueIdentifier>{fbb46c57-1c41-44c1-aa83-59bc1ff113c3}</UniqueIdentifier>
     </Filter>
@@ -134,12 +131,6 @@
     <Filter Include="Engine">
       <UniqueIdentifier>{1b27f742-3b68-461a-8a95-ed051c254b47}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Engine\Networking">
-      <UniqueIdentifier>{9f7e75f3-5863-4398-a6f5-94c9f89fe662}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\Networking\ASIONetworking">
-      <UniqueIdentifier>{2f9701e3-1267-4944-a912-f42aca935888}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Engine\InputManager">
       <UniqueIdentifier>{7a9588e2-a35a-4c16-98a6-7d8e16544223}</UniqueIdentifier>
     </Filter>
@@ -169,9 +160,6 @@
     </Filter>
     <Filter Include="Engine\UserInterface\Window\Renderer\FramebufferSystem\Framebuffer">
       <UniqueIdentifier>{83389054-f4b6-4c15-91a9-47cd01e77add}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\UserInterface\Window\Renderer\FramebufferSystem\IndexFramebuffer">
-      <UniqueIdentifier>{93bc3aea-f518-4c08-89e0-411d437ee918}</UniqueIdentifier>
     </Filter>
     <Filter Include="Engine\UserInterface\Window\Renderer\RenderObjectSystem">
       <UniqueIdentifier>{461edde2-4db7-4a4e-9e3f-24912649b9ee}</UniqueIdentifier>
@@ -437,12 +425,6 @@
     <Filter Include="Games\Game\GuessingGame">
       <UniqueIdentifier>{8a92ec1b-0a80-44aa-95d7-5cd4814b9e38}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Games\Game\Miniverse">
-      <UniqueIdentifier>{04943fef-34e1-4557-bc62-03260d0feec0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Games\Game\Miniverse\miniverseUberShader">
-      <UniqueIdentifier>{686cc049-3d1e-4197-b96c-658c68782e78}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Games\Game\UISandbox">
       <UniqueIdentifier>{c3d51568-af50-427f-93fe-124974863bc6}</UniqueIdentifier>
     </Filter>
@@ -524,6 +506,48 @@
     <Filter Include="Common\ECS">
       <UniqueIdentifier>{02c6a19c-1b38-4994-ae40-9a7d64149d2d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Shaders\mxAO">
+      <UniqueIdentifier>{771c2078-504d-4fb6-88bf-ca924a7e8374}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Games\Game\NewFilter1">
+      <UniqueIdentifier>{acec371a-1fe7-4825-8749-00bba840766d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Games\Game\GPUSim">
+      <UniqueIdentifier>{d02b2238-f682-48da-ac8a-5dc0790529cf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Games\Game\GPUSim\gpuSimShader">
+      <UniqueIdentifier>{1152aaf9-aa41-421f-a3f4-4b628db388dd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\UserInterface\Window\Renderer\RectangleRenderer">
+      <UniqueIdentifier>{d1258648-6ea1-439f-8a74-aadb487f999e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\UserInterface\Window\Renderer\IdFramebuffer">
+      <UniqueIdentifier>{9a3f9286-0ee3-4827-90a5-de50c0975b3e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Games\Game\Infinite Detail Prototype">
+      <UniqueIdentifier>{b373c41e-7062-451a-a79b-352934469ec5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Games\Game\Quake Movement">
+      <UniqueIdentifier>{2f613e36-d8f3-4d3e-96df-770afb8df484}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Games\Pototypes\CheatTest">
+      <UniqueIdentifier>{a39fea45-9f65-464b-8de8-0c1f72739b27}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\UserInterface\Window\Input">
+      <UniqueIdentifier>{42db91e8-0ac8-4e27-8a74-584d87e4d977}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\ParticleSystem\Networking">
+      <UniqueIdentifier>{9f7e75f3-5863-4398-a6f5-94c9f89fe662}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\ParticleSystem\Networking\ASIONetworking">
+      <UniqueIdentifier>{2f9701e3-1267-4944-a912-f42aca935888}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Games\Game\Physics Playground">
+      <UniqueIdentifier>{a96a32e2-6e0b-4b39-a101-6a7a0af9bebc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Physics">
+      <UniqueIdentifier>{aefa119f-ac70-4217-b495-8d7b9101d935}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -564,7 +588,7 @@
       <Filter>Engine\UserInterface\Window\Renderer\MeshSystem\GPUMesh</Filter>
     </ClCompile>
     <ClCompile Include="Networking.cpp">
-      <Filter>Engine\Networking</Filter>
+      <Filter>Engine\ParticleSystem\Networking</Filter>
     </ClCompile>
     <ClCompile Include="TextRenderSystem.cpp">
       <Filter>Engine\UserInterface\Window\Renderer\TextRenderSystem</Filter>
@@ -634,9 +658,6 @@
     </ClCompile>
     <ClCompile Include="WindowAPI.cpp">
       <Filter>Engine\UserInterface\Window\WindowAPI</Filter>
-    </ClCompile>
-    <ClCompile Include="InputManager.cpp">
-      <Filter>Engine\InputManager</Filter>
     </ClCompile>
     <ClCompile Include="TiledMath.cpp">
       <Filter>Common\Math</Filter>
@@ -762,16 +783,13 @@
       <Filter>Games\Pototypes\Neighbour Quadtree</Filter>
     </ClCompile>
     <ClCompile Include="Server.cpp">
-      <Filter>Engine\Networking</Filter>
+      <Filter>Engine\ParticleSystem\Networking</Filter>
     </ClCompile>
     <ClCompile Include="Client.cpp">
-      <Filter>Engine\Networking</Filter>
+      <Filter>Engine\ParticleSystem\Networking</Filter>
     </ClCompile>
     <ClCompile Include="JobSystem.cpp">
       <Filter>Engine\JobSystem</Filter>
-    </ClCompile>
-    <ClCompile Include="IndexFramebuffer.cpp">
-      <Filter>Engine\UserInterface\Window\Renderer\FramebufferSystem\IndexFramebuffer</Filter>
     </ClCompile>
     <ClCompile Include="ParticleSystem.cpp">
       <Filter>Engine\ParticleSystem</Filter>
@@ -795,9 +813,6 @@
       <Filter>Games\Game\Project Melon\MelonWorld</Filter>
     </ClCompile>
     <ClCompile Include="C++ Cheatsheet.cpp" />
-    <ClCompile Include="Miniverse.cpp">
-      <Filter>Games\Game\Miniverse</Filter>
-    </ClCompile>
     <ClCompile Include="Sandbox.cpp">
       <Filter>Games\Game\Sandbox</Filter>
     </ClCompile>
@@ -849,7 +864,6 @@
     <ClCompile Include="NeighbourOctree.cpp">
       <Filter>Games\Pototypes\NeighbourOctree</Filter>
     </ClCompile>
-    <ClCompile Include="LineRenderer.cpp" />
     <ClCompile Include="Molecules2D.cpp">
       <Filter>Games\Pototypes\Molecules2D</Filter>
     </ClCompile>
@@ -862,6 +876,37 @@
     <ClCompile Include="EntityComponentSystem.cpp">
       <Filter>Common\ECS</Filter>
     </ClCompile>
+    <ClCompile Include="LineRenderer.cpp">
+      <Filter>Engine\UserInterface\Window\Renderer\LineRenderer</Filter>
+    </ClCompile>
+    <ClCompile Include="RectangleRenderer.cpp">
+      <Filter>Engine\UserInterface\Window\Renderer\RectangleRenderer</Filter>
+    </ClCompile>
+    <ClCompile Include="IdFramebuffer.cpp">
+      <Filter>Engine\UserInterface\Window\Renderer\IdFramebuffer</Filter>
+    </ClCompile>
+    <ClCompile Include="InfiniteDetailPrototype.cpp">
+      <Filter>Games\Game\Infinite Detail Prototype</Filter>
+    </ClCompile>
+    <ClCompile Include="CheatTest.cpp">
+      <Filter>Games\Pototypes\CheatTest</Filter>
+    </ClCompile>
+    <ClCompile Include="MindMapper.cpp">
+      <Filter>Games\Game\MindMapper</Filter>
+    </ClCompile>
+    <ClCompile Include="Input.cpp" />
+    <ClCompile Include="QuakeMovement.cpp">
+      <Filter>Games\Game\Quake Movement</Filter>
+    </ClCompile>
+    <ClCompile Include="PhysicsPlayground.cpp">
+      <Filter>Games\Game\Physics Playground</Filter>
+    </ClCompile>
+    <ClCompile Include="Physics.cpp">
+      <Filter>Engine\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="Compiler.cpp">
+      <Filter>Engine\Compiler</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="icon.rc">
@@ -869,7 +914,6 @@
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="WindowsEntry.hpp" />
     <ClInclude Include="MeshSystem.hpp">
       <Filter>Engine\UserInterface\Window\Renderer\MeshSystem</Filter>
     </ClInclude>
@@ -910,7 +954,7 @@
       <Filter>Engine\UserInterface\Window\Renderer\MeshSystem\GPUMesh</Filter>
     </ClInclude>
     <ClInclude Include="Networking.hpp">
-      <Filter>Engine\Networking</Filter>
+      <Filter>Engine\ParticleSystem\Networking</Filter>
     </ClInclude>
     <ClInclude Include="TextRenderSystem.hpp">
       <Filter>Engine\UserInterface\Window\Renderer\TextRenderSystem</Filter>
@@ -1002,9 +1046,6 @@
     <ClInclude Include="Organizer.hpp">
       <Filter>Games\Game\Organizer</Filter>
     </ClInclude>
-    <ClInclude Include="InputManager.hpp">
-      <Filter>Engine\InputManager</Filter>
-    </ClInclude>
     <ClInclude Include="TiledMath.hpp">
       <Filter>Common\Math</Filter>
     </ClInclude>
@@ -1022,9 +1063,6 @@
     </ClInclude>
     <ClInclude Include="Functor.hpp">
       <Filter>Common\Advanced</Filter>
-    </ClInclude>
-    <ClInclude Include="Util.hpp">
-      <Filter>Common\Advanced\Util</Filter>
     </ClInclude>
     <ClInclude Include="Pixel.hpp">
       <Filter>Common\Data\Pixel</Filter>
@@ -1117,7 +1155,7 @@
       <Filter>Engine\UserInterface\Window\Renderer\TextRenderSystem\BitmapTextRenderSystem</Filter>
     </ClInclude>
     <ClInclude Include="ASIONetworking.hpp">
-      <Filter>Engine\Networking\ASIONetworking</Filter>
+      <Filter>Engine\ParticleSystem\Networking\ASIONetworking</Filter>
     </ClInclude>
     <ClInclude Include="NeuralNetwork.hpp">
       <Filter>Games\Pototypes\NeuralNetwork</Filter>
@@ -1180,19 +1218,16 @@
       <Filter>Games\Pototypes\Neighbour Quadtree</Filter>
     </ClInclude>
     <ClInclude Include="Server.hpp">
-      <Filter>Engine\Networking</Filter>
+      <Filter>Engine\ParticleSystem\Networking</Filter>
     </ClInclude>
     <ClInclude Include="Client.hpp">
-      <Filter>Engine\Networking</Filter>
+      <Filter>Engine\ParticleSystem\Networking</Filter>
     </ClInclude>
     <ClInclude Include="JobSystem.hpp">
       <Filter>Engine\JobSystem</Filter>
     </ClInclude>
     <ClInclude Include="Message.hpp">
-      <Filter>Engine\Networking</Filter>
-    </ClInclude>
-    <ClInclude Include="IndexFramebuffer.hpp">
-      <Filter>Engine\UserInterface\Window\Renderer\FramebufferSystem\IndexFramebuffer</Filter>
+      <Filter>Engine\ParticleSystem\Networking</Filter>
     </ClInclude>
     <ClInclude Include="ProjectMelon.hpp">
       <Filter>Games\Game\Project Melon</Filter>
@@ -1220,9 +1255,6 @@
     </ClInclude>
     <ClInclude Include="MelonWorld.hpp">
       <Filter>Games\Game\Project Melon\MelonWorld</Filter>
-    </ClInclude>
-    <ClInclude Include="Miniverse.hpp">
-      <Filter>Games\Game\Miniverse</Filter>
     </ClInclude>
     <ClInclude Include="Sandbox.hpp">
       <Filter>Games\Game\Sandbox</Filter>
@@ -1257,7 +1289,7 @@
     <ClInclude Include="TLSFAllocator.h">
       <Filter>Engine\Memory\TLSF</Filter>
     </ClInclude>
-    <ClInclude Include="KeyMap.hpp">
+    <ClInclude Include="Keymap.hpp">
       <Filter>Global</Filter>
     </ClInclude>
     <ClInclude Include="StaticAllocator.hpp">
@@ -1332,12 +1364,38 @@
     <ClInclude Include="SimpleRTS.hpp">
       <Filter>Games\Game\SimpleRTS</Filter>
     </ClInclude>
-    <ClInclude Include="CheatTest.hpp" />
     <ClInclude Include="ResourceManager.hpp">
       <Filter>Common\ResourceManager</Filter>
     </ClInclude>
     <ClInclude Include="EntityComponentSystem.hpp">
       <Filter>Common\ECS</Filter>
+    </ClInclude>
+    <ClInclude Include="GPUSim.hpp">
+      <Filter>Games\Game\GPUSim</Filter>
+    </ClInclude>
+    <ClInclude Include="RectangleRenderer.hpp">
+      <Filter>Engine\UserInterface\Window\Renderer\RectangleRenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="IdFramebuffer.hpp">
+      <Filter>Engine\UserInterface\Window\Renderer\IdFramebuffer</Filter>
+    </ClInclude>
+    <ClInclude Include="InfiniteDetailPrototype.hpp">
+      <Filter>Games\Game\Infinite Detail Prototype</Filter>
+    </ClInclude>
+    <ClInclude Include="QuakeMovement.hpp">
+      <Filter>Games\Game\Quake Movement</Filter>
+    </ClInclude>
+    <ClInclude Include="CheatTest.hpp">
+      <Filter>Games\Pototypes\CheatTest</Filter>
+    </ClInclude>
+    <ClInclude Include="Input.hpp">
+      <Filter>Engine\UserInterface\Window\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysicsPlayground.hpp">
+      <Filter>Games\Game\Physics Playground</Filter>
+    </ClInclude>
+    <ClInclude Include="Physics.hpp">
+      <Filter>Engine\Physics</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1470,12 +1528,6 @@
     <None Include="Data\shaders\sphereRendering.frag">
       <Filter>Games\Game\Sandbox\shaders\sphereRendering</Filter>
     </None>
-    <None Include="Data\shaders\miniverseUberShader.frag">
-      <Filter>Games\Game\Miniverse\miniverseUberShader</Filter>
-    </None>
-    <None Include="Data\shaders\miniverseUberShader.vert">
-      <Filter>Games\Game\Miniverse\miniverseUberShader</Filter>
-    </None>
     <None Include="Data\shaders\blurredUI.frag">
       <Filter>Games\Game\Mooncrash\shaders</Filter>
     </None>
@@ -1488,5 +1540,17 @@
     <None Include="Data\shaders\simpleRTS.vert">
       <Filter>Games\Game\SimpleRTS\shaders</Filter>
     </None>
+    <None Include="Data\shaders\mxAO.frag">
+      <Filter>Shaders\mxAO</Filter>
+    </None>
+    <None Include="Data\shaders\gpuSimShader.vert">
+      <Filter>Games\Game\GPUSim\gpuSimShader</Filter>
+    </None>
+    <None Include="Data\shaders\gpuSimShader.frag">
+      <Filter>Games\Game\GPUSim\gpuSimShader</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="GitHub.txt" />
   </ItemGroup>
 </Project>

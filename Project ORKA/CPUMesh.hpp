@@ -14,19 +14,18 @@ enum class VertexDataLocation {
 	Normals = 1,
 	TextureCoordinates = 2,
 	Indices = 16,
-
 };
 
 struct CPUMesh {
 	Name name = "empty";
-	PrimitiveMode primitiveMode = PrimitiveMode::Triangles;
+	Int primitiveMode = PrimitiveMode::Triangles;
 	Vector<Vec3> vertices;
 	Vector<Vec2> uvs;
 	Vector<Vec3> normals;
 	Vector<Vec3> colors;
 
 	Vector<Index> indices;
-	MeshDrawMode drawMode = MeshDrawMode::staticMode;
+	Int drawMode = MeshDrawMode::staticMode;
 	Bool readyForUpload = false;
 
 	CPUMesh() {};
@@ -48,7 +47,7 @@ struct CPUMesh {
 struct MeshHeader1 {
 	UInt version = 1;
 	Name meshName = "";
-	PrimitiveMode primitiveMode = PrimitiveMode::Triangles;
+	Int primitiveMode = PrimitiveMode::Triangles;
 	UInt vertexCount = 0;
 	UInt uvCount = 0;
 	UInt normalCount = 0;
@@ -58,7 +57,7 @@ struct MeshHeader1 {
 struct MeshHeader2 {
 	UInt version = 2;
 	Name meshName = "";
-	PrimitiveMode primitiveMode = PrimitiveMode::Triangles;
+	Int primitiveMode = PrimitiveMode::Triangles;
 	UInt vertexCount = 0;
 	UInt uvCount = 0;
 	UInt normalCount = 0;

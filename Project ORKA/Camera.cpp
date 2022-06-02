@@ -1,35 +1,36 @@
 #include "Camera.hpp"
-#include "Renderer.hpp"
+
+DVec3 Camera::getRotation() {
+	return rotation;
+}
 
 void Camera::update() {
 	//prevent looking upside down
-	Float cap = PI / 2;
+	const Float cap = PI/2;
+	if (rotation.x < -cap) {rotation.x = -cap;} else
+	if (rotation.x > cap) { rotation.x = cap;}
 
-	if (rotationX < -cap) {
-		rotationX = -cap;
-	}
-	if (rotationX > +cap) {
-		rotationX = +cap;
-	}
+	//figure out direction based on z rotation
+	DVec2 direction = DVec2(sin(rotation.z), cos(rotation.z)); //direction were facing
+	DVec2 direction2 = DVec2(direction.y, -direction.x);		 //90° right of direction
 
-	//calculate directional vectors
-	forwardVector = Vec3(
-		cos(rotationX) * sin(rotationZ),
-		cos(rotationX) * cos(rotationZ),
-		sin(rotationX)
-	);
-
-	rightVector = Vec3(
-		-sin(rotationZ - PI / 2),
-		-cos(rotationZ - PI / 2),
-		0
-	);
-
-	upVector = glm::cross(rightVector, forwardVector);
+	//complicated math stuff
+	forwardVector = normalize(DVec3(
+		direction.x * cos(-rotation.x),
+		direction.y * cos(-rotation.x),
+		sin(-rotation.x)));
+	//more complicated math stuff
+	rightVector = normalize(DVec3(
+		direction2.x * cos(rotation.y),
+		direction2.y * cos(rotation.y),
+		sin(rotation.y)
+	));
+	//calculate up from existing info
+	upVector = normalize(cross(rightVector, forwardVector));
 }
-void Camera::rotate(Vec2 rotation) {
-	rotationX -= rotation.y;
-	rotationZ += rotation.x;
+void Camera::rotate(DVec2 rotation) {
+	this->rotation.z += rotation.x;
+	this->rotation.x -= rotation.y;
 
 	update();
 }
@@ -39,6 +40,10 @@ void Camera::render(Renderer & renderer) {
 	renderer.uniforms().vMatrix() = viewMatrix();
 	renderer.uniforms().pMatrix() = projectionMatrix(renderer.aspectRatio());
 }
+void Camera::setRotation(DVec3 rotation) {
+	this->rotation = rotation;
+	update();
+};
 void Camera::renderOnlyRot(Renderer& renderer)
 {
 	renderer.uniforms().cameraVec() = Vec4(forwardVector, 1);

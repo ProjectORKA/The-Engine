@@ -11,6 +11,7 @@ using IVec2 = glm::ivec2;
 using Vec2 = glm::vec2;
 using DVec2 = glm::dvec2;
 using IVec3 = glm::ivec3;
+using IVec4 = glm::ivec4;
 using DVec3 = glm::dvec3;
 using Vec3 = glm::vec3;
 using Location = glm::vec3;

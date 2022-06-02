@@ -11,7 +11,7 @@ Int scissorY = -1;
 Int scissorW = -1;
 Int scissorH = -1;
 
-Color clearColor = Color(0,0,0,0);
+Color clearColor = Color(0, 0, 0, 0);
 
 void apiClearColor() {
 	glClear(GL_COLOR_BUFFER_BIT);
@@ -37,7 +37,7 @@ void apiDrawBuffer(Enum mode) {
 void apiDeleteBuffer(UInt buffer) {
 	glDeleteBuffers(1, &buffer);
 }
-void apiGenVertexArray(UInt & id) {
+void apiGenVertexArray(UInt& id) {
 	glGenVertexArrays(1, &id);
 }
 void apiSetClearColor(Color color) {
@@ -46,7 +46,7 @@ void apiSetClearColor(Color color) {
 void apiUseProgram(UInt programID) {
 	glUseProgram(programID);
 }
-void apiGenBuffer(UInt & bufferID) {
+void apiGenBuffer(UInt& bufferID) {
 	glGenBuffers(1, &bufferID);
 }
 void apiGenTexture(UInt& textureID) {
@@ -89,16 +89,13 @@ void apiUniform1i(Int location, Int value) {
 void apiEnableVertexAttribArray(UInt index) {
 	glEnableVertexAttribArray(index);
 }
-void apiBindFramebuffer(UInt framebufferID) {
-	glBindFramebuffer(GL_FRAMEBUFFER, framebufferID);
-}
 void apiDisableVertexAttribArray(UInt index) {
 	glDisableVertexAttribArray(index);
 }
 void apiClipControl(Enum origin, Enum depth) {
 	glClipControl(origin, depth);
 }
-void apiGenFramebuffer(UInt & framebufferID) {
+void apiGenFramebuffer(UInt& framebufferID) {
 	glGenFramebuffers(1, &framebufferID);
 }
 void apiDeleteFramebuffer(UInt framebufferID) {
@@ -113,32 +110,32 @@ void apiBindBuffer(Enum target, UInt bufferID) {
 void apiBindDrawFramebuffer(UInt framebufferID) {
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, framebufferID);
 }
-void apiScissor(Int x, Int y, SizeI w, SizeI h) {
-	if ((scissorX != x) |
-		(scissorY != y) |
-		(scissorW != w) |
-		(scissorH != h))glScissor(x, y, w, h);
-	scissorX = x;
-	scissorY = y;
-	scissorW = w;
-	scissorH = h;
-}
 void apiBindReadFramebuffer(UInt framebufferID) {
 	glBindFramebuffer(GL_READ_FRAMEBUFFER, framebufferID);
 }
+void apiScissor(Int x, Int y, SizeI w, SizeI h) {
+	if ((scissorX != x) ||
+		(scissorY != y) ||
+		(scissorW != w) ||
+		(scissorH != h)) {
+		glScissor(x, y, w, h);
+		scissorX = x;
+		scissorY = y;
+		scissorW = w;
+		scissorH = h;
+	}
+}
 void apiViewport(Int x, Int y, SizeI w, SizeI h) {
-	if(	(viewportX != x)|
-		(viewportY != y)|
-		(viewportW != w)|
-		(viewportH != h))glViewport(x, y, w, h);
-	viewportX = x;
-	viewportY = y;
-	viewportW = w;
-	viewportH = h;
-	//logDebug(String("New x: ").append(toString(viewportX)));
-	//logDebug(String("New y:").append(toString(viewportY)));
-	//logDebug(String("New width:").append(toString(viewportW)));
-	//logDebug(String("New height:").append(toString(viewportH)));
+	if ((viewportX != x) ||
+		(viewportY != y) ||
+		(viewportW != w) ||
+		(viewportH != h)) {
+		glViewport(x, y, w, h);
+		viewportX = x;
+		viewportY = y;
+		viewportW = w;
+		viewportH = h;
+	}
 }
 void apiBindTexture(Enum target, UInt textureID) {
 	glBindTexture(target, textureID);
@@ -183,7 +180,7 @@ void apiDebugMessageCallback(GLDEBUGPROC callback, const void* userParam) {
 void apiUniformBlockBinding(UInt programID, UInt uniformBlockIndex, UInt value) {
 	glUniformBlockBinding(programID, uniformBlockIndex, value);
 }
-void apiShaderSource(UInt shaderID, SizeI count, const Char* const*string, const Int* length) {
+void apiShaderSource(UInt shaderID, SizeI count, const Char* const* string, const Int* length) {
 	glShaderSource(shaderID, count, string, length);
 }
 void apiBlendFuncSeparate(Enum sfactorRGB, Enum dfactorRGB, Enum sfactorAlpha, Enum dfactorAlpha) {
@@ -200,7 +197,7 @@ void apiVertexAttribPointer(UInt index, Int size, Enum type, Bool normalized, Si
 }
 void __stdcall DebugOutputCallback(Enum source, Enum type, UInt id, Enum severity, SizeI length, const Char* message, const void* userParam) {
 	if (severity != GL_DEBUG_SEVERITY_NOTIFICATION) {
-		
+
 		String outputMessage;
 
 		printf("OpenGL Debug Output message : ");
@@ -222,8 +219,8 @@ void __stdcall DebugOutputCallback(Enum source, Enum type, UInt id, Enum severit
 		if (severity == GL_DEBUG_SEVERITY_HIGH_ARB)				outputMessage.append("Severity : HIGH; ");
 		else if (severity == GL_DEBUG_SEVERITY_MEDIUM_ARB)		outputMessage.append("Severity : MEDIUM; ");
 		else if (severity == GL_DEBUG_SEVERITY_LOW_ARB)			outputMessage.append("Severity : LOW; ");
-																
-																outputMessage.append(message);
+
+		outputMessage.append(message);
 
 		if (severity == GL_DEBUG_SEVERITY_HIGH_ARB)				logError(outputMessage);
 		else if (severity == GL_DEBUG_SEVERITY_MEDIUM_ARB)		logWarning(outputMessage);

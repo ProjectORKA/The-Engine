@@ -1,24 +1,20 @@
 
 #include "MelonPlayer.hpp"
-#include "Renderer.hpp"
+#include "Window.hpp"
 
 MelonPlayer::MelonPlayer() {
-	//set physics
-	//mass = 1;
-	//isDynamic = true;
-
-	//set camera rotation
-	camera.rotationX = -PI / 2;
 	camera.fieldOfView = 90;
 	camera.nearClipValue = 0.125;
 	camera.farClipValue = 256;
-	camera.update();
 }
-void MelonPlayer::update(Renderer& renderer) {
+void MelonPlayer::update(Window & window) {
+	//get frequently used info
+	Float delta = window.renderer.deltaTime();
+
 	//update target location
-	targetLocation += velocity * renderer.time.delta;
+	targetLocation += velocity * delta;
 	
-	location = lerp(location,targetLocation,renderer.time.delta * 500);
+	approach(location, targetLocation, delta * 300);
 
 	//player location (smoothed)
 	deltaLocation = location - lastLocation;
@@ -30,26 +26,47 @@ void MelonPlayer::update(Renderer& renderer) {
 	if (distanceTraveled != 0) direction = normalize(deltaToLastLocationAtDistance);
 
 	//update smoke
-	smoke.update(location, renderer);
+	smoke.update(location, window.renderer);
 
 	//player rotation
-	approach(currentVisibleDirection, direction, renderer.time.delta * 8);
+	approach(currentVisibleDirection, direction, delta * 8);
 	orientation = Orientation(currentVisibleDirection);
 	lastLocation = location;
 
 	//update camera
 	Vec3 cameraTargetLocation = location + Vec3(0, 0, 1 + pow(1.2, zoomFactor));
 	Vec3 cameraDesiredDelta = cameraTargetLocation - camera.location;
-	camera.location += cameraDesiredDelta * renderer.time.delta * 10.0f;
+	camera.location += cameraDesiredDelta * delta * 10.0f;
 }
-void MelonPlayer::render(Renderer& renderer) {
+void MelonPlayer::render(Window & window) {
+	Renderer& renderer = window.renderer;
+	
+	camera.setRotation(DVec3(PI/2,0,0));
+
 	camera.render(renderer);
 
 	//render player
 	renderer.useShader("MelonUberShader");
 	renderer.uniforms().mMatrix(matrixFromOrientation(orientation, location, 0.5) * rotate(Matrix(1), -2 * distanceInRadians, Vec3(1, 0, 0)));
 	renderer.uniforms().customColor(Vec4(1));
-	renderer.renderMesh("playerRolling");
+	renderer.renderMesh("melonPlayerRolling");
 
 	smoke.render(renderer);
+}
+void MelonPlayer::inputEvent(Window& window, InputEvent input) {
+	if (input == zoomIn)zoomFactor++;
+	if (input == zoomOut)zoomFactor--;
+	zoomFactor = clamp(zoomFactor, -3, 30);
+	logDebug(zoomFactor);
+}
+void MelonPlayer::mouseMoved(Window& window, MouseMovementInput input) {
+	if (window.capturing) {
+		Vec3 delta = Vec3(Vec2(input) * Vec2(0.0015), 0);
+		delta *= (camera.location.z);
+		velocity = Vec3(0);
+		targetLocation += delta;
+	}
+	else {
+		targetLocation = Vec3(window.mousePositionFromBottomLeft, 0);
+	}
 }

@@ -2,24 +2,24 @@
 #pragma once
 
 #include "Framebuffer.hpp"
-#include "IndexFramebuffer.hpp"
 
 struct Renderer;
 
 struct FramebufferSystem {
-	Area framebufferSize;
-	Vector<Framebuffer *> framebuffers;
-	Map<Name, Index> framebufferNames;
-	Index currentFramebufferIndex = 0;
-
-	IDFrameBuffer * idFbPtr = nullptr;
+	Area framebufferSize = Area(1);
+	Map<Name, Index> nametoID;
+	Vector<Framebuffer> framebuffers;
+	Index currentReadFramebufferIndex = 0;
+	Index currentDrawFramebufferIndex = 0;
 
 	void destroy();
 	void deselect();
+	void addGbuffer();
+	void addIDBuffer();
 	void update(Area area);
-	Framebuffer& current();
-	IDFrameBuffer& idFramebuffer();
-	void add(Framebuffer * framebuffer);
+	Framebuffer& currentRead();
+	Framebuffer& currentDraw();
 	void create(Renderer& renderer, Area size);
-	void use(Renderer& renderer, Index framebufferIndex);
+	void read(Renderer& renderer, Index framebufferIndex);
+	void draw(Renderer& renderer, Index framebufferIndex);
 };

@@ -14,8 +14,8 @@ struct GPUTexture {
 	Bool loaded = false;
 	Int wrapping = repeat;
 	DataType dataType = dataTypeByte;
-	Filter nearFilter = Filter::linear;
-	Filter farFilter = Filter::linearMM;
+	Int nearFilter = Filter::linear;
+	Int farFilter = Filter::linearMM;
 
 	void unload();
 	void load(Name name);
