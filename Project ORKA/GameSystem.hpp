@@ -15,8 +15,6 @@ struct GameSystem {
 	void add(GameSimulation & game);	//adds a new game to the list of globally acessible games
 };
 
-extern GameSystem * gameSystem; //grants global access
+extern GameSystem gameSystem; //grants global access
 
-void destroyGameSystem();
-void initializeGameSystem();
 void gameSimulationThread(Thread& thread, GameSystem& gameSystem); //loops through all game instances at a fixed Hz rate and updates them

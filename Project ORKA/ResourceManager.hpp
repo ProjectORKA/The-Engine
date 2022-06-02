@@ -27,7 +27,7 @@ struct ResourceManager {
 	void loadResourcesFromFBXFiles();
 };
 
-extern ResourceManager * resourceManager;
+extern ResourceManager resourceManager;
 
 void destroyResourceManager();
 void initializeResourcemanager();

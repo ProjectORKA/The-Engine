@@ -17,9 +17,6 @@ void calculateDistortion2(inout vec3 location, inout vec3 normal){
 		location = vec3(0,0,-5);
 		
 		return;
-
-//		location.xy = normalize(location.xy) * pow(2,worldOffset.w-1);
-//		dist = 1;
 	}
 	float func = sqrt(1 - pow(clamp(dist,-1,1),2));
 	vec3 newZ = normalize(vec3(location.xy * 2,  func * pow(2,worldOffset.w)));

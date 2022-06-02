@@ -94,7 +94,7 @@ Int main(Int  argc, Char* argv[]) {
 	//GPUSimRenderer game;
 	QuakeMovementRenderer game;
 
-	//gameSystem->add(sim);
+	//gameSystem.add(sim);
 
 	Window& w = window(
 		"ORKA",
@@ -106,12 +106,9 @@ Int main(Int  argc, Char* argv[]) {
 	w.content = &game;
 	game.create(w); //[TODO] clean this up
 
-	gameSystem->run();
+	gameSystem.run();
 	ui.run();
-	gameSystem->stop();
-
-	destroyGameSystem();
-	destroyResourceManager();
+	gameSystem.stop();
 
 #else
 	//testing code

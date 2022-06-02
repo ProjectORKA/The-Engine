@@ -23,18 +23,18 @@ void ShaderProgram::destroy()
 }
 void ShaderProgram::create(Name name, Uniforms& uniforms) {
 	
-	auto vertIt = resourceManager->vertexShaderResources.find(name);
+	auto vertIt = resourceManager.vertexShaderResources.find(name);
 	Shader vertexShader;
-	if (vertIt != resourceManager->vertexShaderResources.end()) {
+	if (vertIt != resourceManager.vertexShaderResources.end()) {
 		vertexShader.create(vertIt->second, uniforms.uniformBlockShaderCode);
 	}
 	else {
 		logError("Vertex shader could not be found!");
 	}
 
-	auto fragIt = resourceManager->fragmentShaderResources.find(name);
+	auto fragIt = resourceManager.fragmentShaderResources.find(name);
 	Shader fragmentShader;
-	if (fragIt != resourceManager->fragmentShaderResources.end()) {
+	if (fragIt != resourceManager.fragmentShaderResources.end()) {
 		fragmentShader.create(fragIt->second, uniforms.uniformBlockShaderCode);
 	}
 	else {

@@ -1,7 +1,7 @@
 #include "GameSystem.hpp"
 #include "Random.hpp"
 
-GameSystem* gameSystem = nullptr;
+GameSystem gameSystem;
 
 void GameSystem::run() {
 	//creates the gamesimulation thread which continually updates all games
@@ -39,12 +39,4 @@ void gameSimulationThread(Thread& thread, GameSystem & gameSystem) {
 
 		sleepUntil(t);
 	}
-}
-
-void initializeGameSystem() {
-	gameSystem = new GameSystem();
-}
-
-void destroyGameSystem() {
-	delete gameSystem;
 }

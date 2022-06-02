@@ -2,7 +2,7 @@
 #include "ResourceManager.hpp"
 #include "Scene.hpp"
 
-ResourceManager * resourceManager = nullptr;
+ResourceManager resourceManager;
 
 ResourceManager::ResourceManager() {
 	reloadAllResources();
@@ -97,12 +97,4 @@ void ResourceManager::reloadAllResources() {
 		fragmentShaderResources[Name(p.stem().string())] = p;
 	}
 
-}
-
-void initializeResourcemanager() {
-	resourceManager = new ResourceManager();
-}
-
-void destroyResourceManager() {
-	delete resourceManager;
 }

@@ -46,8 +46,8 @@ void CPUMesh::saveMeshFile()
 	mesh.write((Char*)&indices[0], indices.size() * sizeof(Index));
 }
 void CPUMesh::load(Name name) {
-	auto it{ resourceManager->meshResources.find(name) };
-	if (it != std::end(resourceManager->meshResources))
+	auto it{ resourceManager.meshResources.find(name) };
+	if (it != std::end(resourceManager.meshResources))
 	{
 		Path path = it->second;
 
