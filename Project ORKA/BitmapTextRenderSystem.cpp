@@ -19,10 +19,8 @@ void BitmapTextRenderSystem::render(Renderer & renderer, String text, Vec2 posit
 	UInt length = text.size();
 
 	cpuText.name = "text";
-	cpuText.vertices.clear();
-	cpuText.uvs.clear();
-	cpuText.indices.clear();
-	cpuText.normals.clear();
+	cpuText.clearGeometry();
+	
 	cpuText.drawMode = MeshDrawMode::dynamicMode;
 
 	Float up = 1.0;

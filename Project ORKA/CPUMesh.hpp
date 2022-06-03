@@ -34,6 +34,7 @@ struct CPUMesh {
 	CPUMesh(Graph& graph);
 
 	void saveMeshFile();
+	void clearGeometry();
 	void removeDoubles();
 	void load(Name name);
 	void checkIntegrity();
