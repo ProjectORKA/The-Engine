@@ -156,7 +156,7 @@ void QuakePlayer::calculateHeadPosition(Window & window, Float delta) {
 	approach(eyeHeight, eyeHeightTarget, delta * eyeMovementSpeed);
 
 	//leanOffset based on lean angle
-	Float lowerChestToEyeDistance = height * (1 - lowerChestMultiplier);
+	Float lowerChestToEyeDistance = eyeHeightTarget - (height * lowerChestMultiplier);
 	Float leanOffsetX = lowerChestToEyeDistance * sin(lean * leanAngle);
 	Float leanOffsetZ = lowerChestToEyeDistance * cos(lean * leanAngle) - lowerChestToEyeDistance;
 

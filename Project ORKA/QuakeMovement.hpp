@@ -57,8 +57,8 @@ struct QuakePlayer : public Player {
 
 	//player physique
 	const Float height = 1.8 * unit;			//total height when standing
-	const Float lowerChestMultiplier = 0.73;	//height of camera based on total height
-	const Float eyeHeightMultilpier = 0.94;		//height of lower chest based on total height
+	const Float lowerChestMultiplier = 0.73;	//height of lower chest based on total height
+	const Float eyeHeightMultilpier = 0.94;		//height of camera based on total height
 
 
 	//head movement
