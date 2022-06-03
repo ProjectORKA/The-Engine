@@ -7,10 +7,7 @@ CPUMesh createTerrainMesh(AdvancedHeightMap & heightmap)
 		CPUMesh mesh;
 		mesh.name = "terrain";
 		mesh.primitiveMode = PrimitiveMode::TriangleStrip;
-		mesh.vertices.clear();
-		mesh.indices.clear();
-		mesh.normals.clear();
-		mesh.uvs.clear();
+		mesh.clearGeometry();
 
 		for (Int y = 0; y < TERRAIN_MAP_SIZE; y++) {
 			for (Int x = 0; x < TERRAIN_MAP_SIZE; x++) {

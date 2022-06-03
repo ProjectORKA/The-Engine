@@ -8,9 +8,8 @@ struct Renderer;
 struct NeuralNet {
 	Vector<UInt> structure;
 	Vector<Vector<Vector<Float>>> weights;
-	Vector<Vector<Vector<Float>>> contribution;
-
 	Vector<Vector<Float>> neuronActivation;
+	Vector<Vector<Vector<Float>>> contribution;
 	
 	UInt layerCount();
 	Vector<Float> output();

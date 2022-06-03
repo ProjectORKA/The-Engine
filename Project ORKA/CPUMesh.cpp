@@ -7,24 +7,6 @@
 CPUMesh::CPUMesh(Name name) {
 	load(name);
 }
-CPUMesh::CPUMesh(Graph& graph) {
-	drawMode = MeshDrawMode::dynamicMode;
-	name = "graph";
-	primitiveMode = PrimitiveMode::LineStrip;
-
-	for (UInt index = 0; index < graph.points.size(); index++) {
-		Vec2 pointPos = Vec2(Float(index) / Float(graph.points.size()), graph.points[index]);
-
-		vertices.push_back(Vec3(pointPos, 0));
-		uvs.push_back(pointPos);
-		normals.push_back(Vec3(0, 0, 1));
-
-		indices.push_back(index);
-	}
-
-	checkIntegrity();
-}
-
 void CPUMesh::saveMeshFile()
 {
 	MeshHeader2 header;
@@ -44,6 +26,13 @@ void CPUMesh::saveMeshFile()
 	mesh.write((Char*)&normals[0], normals.size() * sizeof(Vec3));
 	mesh.write((Char*)&colors[0], colors.size() * sizeof(Vec3));
 	mesh.write((Char*)&indices[0], indices.size() * sizeof(Index));
+}
+void CPUMesh::clearGeometry() {
+	vertices.clear();
+	uvs.clear();
+	normals.clear();
+	colors.clear();
+	indices.clear();
 }
 void CPUMesh::load(Name name) {
 	auto it{ resourceManager.meshResources.find(name) };
@@ -114,6 +103,23 @@ void CPUMesh::removeDoubles() {
 			}
 		}
 	}
+}
+CPUMesh::CPUMesh(Graph& graph) {
+	drawMode = MeshDrawMode::dynamicMode;
+	name = "graph";
+	primitiveMode = PrimitiveMode::LineStrip;
+
+	for (UInt index = 0; index < graph.points.size(); index++) {
+		Vec2 pointPos = Vec2(Float(index) / Float(graph.points.size()), graph.points[index]);
+
+		vertices.push_back(Vec3(pointPos, 0));
+		uvs.push_back(pointPos);
+		normals.push_back(Vec3(0, 0, 1));
+
+		indices.push_back(index);
+	}
+
+	checkIntegrity();
 }
 void CPUMesh::checkIntegrity() {
 	if (uvs.size() == vertices.size() && normals.size() == vertices.size()) readyForUpload = true;
@@ -222,10 +228,8 @@ void CPUMesh::render(Renderer& renderer) {
 void CPUMesh::meshFromHeightmap(Array2D<Float>& heightmap, UInt size) {
 	name = "terrain";
 	primitiveMode = PrimitiveMode::TriangleStrip;
-	vertices.clear();
-	indices.clear();
-	normals.clear();
-	uvs.clear();
+
+	clearGeometry();
 
 	for (Int y = 0; y < size; y++) {
 		for (Int x = 0; x < size; x++) {
