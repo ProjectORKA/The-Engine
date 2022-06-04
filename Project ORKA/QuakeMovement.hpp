@@ -17,10 +17,13 @@ enum class PlayerState {
 struct QuakePlayer : public Player {
 	// [TODO]
 	// queue up jump
+	// implement direction vectors separate from camera
+	// crouching
+	// proning
 	// coyote time
 	// sprint jump charge
 	// either c alt or a and d to enable free cam while sprinting
-
+	
 	//pressed input
 	InputID forward = InputID(InputType::KeyBoard, W);
 	InputID backward = InputID(InputType::KeyBoard, S);
@@ -37,7 +40,6 @@ struct QuakePlayer : public Player {
 	//event input
 	InputEvent jumpRelease = InputEvent(InputType::KeyBoard, SPACE, 0);
 
-	void releaseJump(Window & window);
 	//temporary input data
 	DVec2 targetCameraRotation = DVec2(0);
 	Float inputTurnX = 0;
@@ -54,6 +56,10 @@ struct QuakePlayer : public Player {
 	const Float walkingSpeed = 2 * unit;	//
 	const Float runningSpeed = 5 * unit;
 	Float speedControl = 0;
+
+	//strafe
+	const Float maxStrafeSpeed = 1;
+	const Float maxStrafeAcceleration = 1000000;
 
 	//player physique
 	const Float height = 1.8 * unit;			//total height when standing
@@ -108,10 +114,11 @@ struct QuakePlayer : public Player {
 	Float movementFriction = 6;
 	Float actualFriction = stopFriction;
 
-
+	void releaseJump();
 	void collisionResponse();
 	void calculatePhysics(Float delta);
 	void calculateFriction(Float delta);
+	void airStrafe(Window& window, Float delta);
 	void calculateHeadPosition(Window & window, Float delta);
 
 	void update(Window & window) override;
@@ -120,7 +127,7 @@ struct QuakePlayer : public Player {
 };
 
 struct QuakeMovementRenderer : public GameRenderer {
-	Vec3 sunDiretion = normalize(Vec3(1, 0, 0.6));
+	Vec3 sunDirection = normalize(Vec3(1, 0, 0.6));
 	QuakePlayer player;
 	Float playerSpeed = 1;
 

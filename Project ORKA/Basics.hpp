@@ -61,6 +61,7 @@ using Matrix = glm::mat4;
 #include "glm/gtc/quaternion.hpp"
 #include "glm/gtx/quaternion.hpp"
 #include <glm/gtx/euler_angles.hpp>
+#include <glm/gtx/projection.hpp>
 
 using Quat = glm::quat;
 using Quaternion = glm::quat;
