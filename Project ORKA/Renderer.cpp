@@ -136,7 +136,7 @@ void Renderer::arrow(Vec3 start, Vec3 end) {
 	uniforms().mMatrix() = matrixFromOrientation(o, start, length);
 	renderMesh("arrow");
 }
-void Renderer::apectCorrectNormalizedSpace() {
+void Renderer::aspectCorrectNormalizedSpace() {
 	Float aspect = aspectRatio();
 	uniforms().vMatrix() = Matrix(1);
 	if (aspect > 1) uniforms().pMatrix() = scale(Matrix(1), Vec3(1 / aspectRatio(), 1, 1));

@@ -55,6 +55,7 @@
 #include "CheatTest.hpp"
 #include "SimpleRTS.hpp"
 #include "MindMapper.hpp"
+#include "ProjectSnek.hpp"
 #include "AIPlayground.hpp"
 #include "ProjectMelon.hpp"
 #include "QuakeMovement.hpp"
@@ -87,12 +88,13 @@ Int main(Int  argc, Char* argv[]) {
 	//PhysicsPlayGroundRenderer game(sim);
 	
 	//Pong game;
+	SnakeGame game;
 	//UISandbox game;
 	//MindMapper game;
 	//AIPlayground game;
 	//MelonRenderer game;
 	//GPUSimRenderer game;
-	QuakeMovementRenderer game;
+	//QuakeMovementRenderer game;
 
 	//gameSystem.add(sim);
 
