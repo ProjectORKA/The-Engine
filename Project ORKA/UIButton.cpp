@@ -9,6 +9,18 @@ UIButton& UIButton::insert(UIElement& element) {
 	content = &element;
 	return *this;
 }
+void UIButton::inputEvent(Window& window, InputEvent input)
+{
+	if (input == InputEvent(InputType::Mouse,0,1)) pressed = window.renderer.idFramebuffer.objectID == id;
+	if (input == InputEvent(InputType::Mouse, 0, 0)) {
+		if (pressed) {
+			pressed = false;
+			doThis();
+		}
+	}
+
+	if(content)content->inputEvent(window, input);
+}
 void UIButton::render(Window& window, TiledRectangle renderArea) {
 	Renderer& renderer = window.renderer;
 
@@ -45,17 +57,4 @@ void UIButton::renderInteractive(Window& window, TiledRectangle renderArea) {
 	window.renderer.uniforms().mMatrix(matrixFromTiledRectangle(renderArea));
 
 	window.renderer.renderMesh("plane");
-}
-
-void UIButton::inputEvent(Window& window, InputEvent input)
-{
-	if (input == InputEvent(InputType::Mouse,0,1)) pressed = window.renderer.idFramebuffer.objectID == id;
-	if (input == InputEvent(InputType::Mouse, 0, 0)) {
-		if (pressed) {
-			pressed = false;
-			doThis();
-		}
-	}
-
-	if(content)content->inputEvent(window, input);
 }

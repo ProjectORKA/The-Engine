@@ -26,7 +26,6 @@ void SimpleRTSRenderer::render(Window& window, TiledRectangle area) {
 	renderer.renderMesh("fullScreenQuad");
 	renderer.setDepthTest(true);
 
-
 	renderer.fill(Color(1.0f));
 
 	//prepare rendering scene
@@ -87,11 +86,6 @@ void SimpleRTSRenderer::render(Window& window, TiledRectangle area) {
 
 	mutex.unlock();
 }
-
-void SimpleRTSRenderer::mouseMoved(Window& window, MouseMovementInput input) {
-	player.mouseMoved(window, input);
-}
-
 void SimpleRTSRenderer::inputEvent(Window& window, InputEvent input) {
 
 	if (input == enter) window.captureCursor();

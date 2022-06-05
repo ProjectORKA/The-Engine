@@ -8,6 +8,10 @@
 UISandbox::UISandbox() {
 	pauseButton.padding(50);
 }
+ void UISandbox::update(Window& window) {
+	pauseButton.update(window);
+	saveButton.update(window);
+}
 void UISandbox::render(Window& window, TiledRectangle area) {
 	Renderer& renderer = window.renderer;
 	
@@ -30,10 +34,6 @@ void UISandbox::inputEvent(Window& window, InputEvent input) {
 	pauseButton.inputEvent(window, input);
 	
 	paused = pauseButton.toggle;
-}
-void UISandbox::mouseMoved(Window& window, MouseMovementInput input) {
-	pauseButton.mouseMoved(window, input);
-	saveButton.mouseMoved(window, input);
 }
 void UISandbox::renderInteractive(Window& window, TiledRectangle area) {
 	Renderer& renderer = window.renderer;

@@ -162,7 +162,7 @@ void Pong::render(Window& window, TiledRectangle area) {
 	if (balls.size() <= 10)balls.emplace_back();
 
 	renderer.apectCorrectNormalizedSpace();
-	Vec2 normalizedCursorPosition = Vec2(2) * ((Vec2(window.mousePositionFromBottomLeft) / Vec2(renderer.framebufferSystem.framebufferSize)) - Vec2(0.5));
+	Vec2 normalizedCursorPosition = Vec2(2) * ((Vec2(window.mousePosBotLeft) / Vec2(renderer.framebufferSystem.framebufferSize)) - Vec2(0.5));
 	Vec3 cursorWorldPos = inverse(renderer.uniforms().pMatrix()) * Vec4(normalizedCursorPosition, 0, 1);
 
 

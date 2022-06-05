@@ -12,6 +12,7 @@ void Player::update(Window& window) {
 	Float desiredSpeed = 1;
 
 	//process input
+	if (window.capturing) camera.rotate(window.mouseDelta * MouseMovement(mouseSensitivity));
 	if (window.pressed(forward)) movementVector += camera.forwardVector;
 	if (window.pressed(backward)) movementVector -= camera.forwardVector;
 	if (window.pressed(right)) movementVector += camera.rightVector;
@@ -31,10 +32,6 @@ void Player::render(Window & window) {
 	camera.render(window.renderer);		//set up matrices to view the world from cameras perspective
 }
 
-void Player::mouseMoved(Window& window, DVec2 input) {
-	if (window.capturing) camera.rotate(input * DVec2(mouseSensitivity));
-}
-
 void DebugPlayer::update(Window & window) {
 	//get frequently used info
 	Float delta = window.renderer.deltaTime();
@@ -44,6 +41,7 @@ void DebugPlayer::update(Window & window) {
 	Float desiredSpeed = 0;
 
 	//process input
+	if (window.capturing) camera.rotate(window.mouseDelta * MouseMovement(mouseSensitivity));
 	if (window.pressed(forward)) movementVector += camera.forwardVector;
 	if (window.pressed(backward)) movementVector -= camera.forwardVector;
 	if (window.pressed(right)) movementVector += camera.rightVector;

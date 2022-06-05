@@ -113,7 +113,7 @@ void apiSetWindowShouldClose(APIWindow apiWindow, Bool shouldClose)
 {
 	glfwSetWindowShouldClose(apiWindow, shouldClose);
 }
-void apiWindowSetCursorPosition(APIWindow apiWindow, IVec2 position)
+void apiWindowSetCursorPosition(APIWindow apiWindow, MouseMovement position)
 {
 	glfwSetCursorPos(apiWindow, position.x, position.y);
 }

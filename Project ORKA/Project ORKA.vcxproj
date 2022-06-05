@@ -92,6 +92,7 @@
     <ClCompile Include="Pong.cpp" />
     <ClCompile Include="QuadtreeID.cpp" />
     <ClCompile Include="QuadtreeNode.cpp" />
+    <ClCompile Include="String.cpp" />
     <ClCompile Include="TLSFAllocator.cpp" />
     <ClCompile Include="SDFTerrainRenderSystem.cpp" />
     <ClCompile Include="Server.cpp" />
@@ -360,6 +361,8 @@
     <None Include="Data\shaders\uniforms.glsl" />
     <None Include="Data\shaders\unlit.frag" />
     <None Include="Data\shaders\unlit.vert" />
+    <None Include="Data\shaders\vertexColor.frag" />
+    <None Include="Data\shaders\vertexColor.vert" />
     <None Include="Data\shaders\water.frag" />
     <None Include="Data\shaders\water.vert" />
     <None Include="Data\shaders\color.frag" />

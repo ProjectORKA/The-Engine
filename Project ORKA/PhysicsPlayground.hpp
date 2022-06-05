@@ -28,5 +28,4 @@ struct PhysicsPlayGroundRenderer : public GameRenderer {
 	virtual void render(Window& window, TiledRectangle area);
 	virtual void inputEvent(Window& window, InputEvent input) {};
 	virtual void renderInteractive(Window& window, TiledRectangle area) {};
-	virtual void mouseMoved(Window& window, MouseMovementInput input) {};
 };

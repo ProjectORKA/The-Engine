@@ -9,7 +9,7 @@ void windowThread(Window& window)
 {
 	Renderer& renderer = window.renderer;
 	window.initializeGraphicsAPI();						//needs to be in this thread
-	renderer.create(window.getWindowContentSize());		//also needs to be in this thread
+	renderer.create(window.getContentSize());		//also needs to be in this thread
 	window.updateWindowState();
 
 	if(window.windowState == WindowState::windowed) window.centerWindow();
@@ -17,13 +17,19 @@ void windowThread(Window& window)
 
 	window.setCallbacks();
 
+	MouseMovement prevPos = MouseMovement(0);
+
 	//main render loop for the window
 	while (window.thread.keepThreadRunning) {
 		if (window.isShown) {
+			
+			window.mouseDelta = window.mousePosBotLeft - prevPos;
+			prevPos = window.mousePosBotLeft;
+
 			renderer.begin(); //resets and syncronizes the renderer
 			TiledRectangle windowArea;
 			windowArea.position = IVec2(0);
-			windowArea.size = window.getWindowContentSize();
+			windowArea.size = window.getContentSize();
 			renderer.framebufferSystem.update(windowArea.size);
 			renderer.renderRegion.set(windowArea);
 
@@ -72,20 +78,17 @@ void windowThread(Window& window)
 
 			renderer.end(); //checks errors and unlocks renderer
 			apiWindowSwapBuffers(window.apiWindow);
-
-			if(window.capturing)apiWindowSetCursorPosition(window.apiWindow, IVec2(0, 0));
 		}
+		window.mouseDelta = MouseMovement(0);
 	}
 
 	window.destroyAPIWindow();
 }
 
-
 //windowstate
 void Window::captureCursor() {
 	if (!capturing) {
-		mousePositionFromTopLeft = apiWindowGetCursorPosition(apiWindow);
-		apiWindowSetCursorPosition(apiWindow, Vec2(0));
+		mousePos = apiWindowGetCursorPosition(apiWindow);
 		apiWindowDisableCursor(apiWindow);
 		capturing = true;
 	}
@@ -93,7 +96,7 @@ void Window::captureCursor() {
 void Window::uncaptureCursor() {
 	if (capturing) {
 		apiWindowEnableCursor(apiWindow);
-		glfwSetCursorPos(apiWindow, mousePositionFromTopLeft.x, mousePositionFromTopLeft.y);
+		apiWindowSetCursorPosition(apiWindow, mousePos);
 		capturing = false;
 	}
 }
@@ -133,7 +136,7 @@ void Window::setCallbacks()
 }
 void Window::centerWindow() {
 	TiledRectangle workableArea = apiWindowGetWorkableArea(apiWindow);
-	setPosition(workableArea.center() - getWindowFrameSize().center());
+	setPosition(workableArea.center() - getFrameSize().center());
 }
 void Window::setMinimized() {
 	apiMinimizeWindow(apiWindow);
@@ -303,11 +306,11 @@ Bool Window::isFullScreen()
 {
 	return apiWindowIsFullscreen(apiWindow);
 }
-Area Window::getWindowFrameSize()
+Area Window::getFrameSize()
 {
 	return apiWindowGetWindowFrameSize(apiWindow);
 }
-Area Window::getWindowContentSize()
+Area Window::getContentSize()
 {
 	return apiWindowGetFramebufferSize(apiWindow);
 }
@@ -337,6 +340,11 @@ void whenFramebufferIsResized(APIWindow apiWindow, Int width, Int height) {
 
 	while (current == window.renderer.frameCount) {}
 }
+void whenMouseIsMoving(APIWindow apiWindow, Double mouseX, Double mouseY) {
+	Window& window = *static_cast<Window*>(glfwGetWindowUserPointer(apiWindow));
+	window.mousePos = MouseMovement(mouseX, mouseY);
+	window.mousePosBotLeft = MouseMovement(mouseX, window.getContentSize().y - mouseY);
+}
 void whenMouseIsScrolling(APIWindow apiWindow, Double xAxis, Double yAxis) {
 	Window& window = *static_cast<Window*>(glfwGetWindowUserPointer(apiWindow));
 
@@ -350,24 +358,6 @@ void whenMouseIsScrolling(APIWindow apiWindow, Double xAxis, Double yAxis) {
 	for (Int i = 0; i < countY; i++) {
 		window.content->inputEvent(window, InputEvent(InputType::Scroll, 1, yAxis > 0));
 	}
-}
-void whenMouseIsMoving(APIWindow apiWindow, Double xPosition, Double yPosition) {
-	Window& window = *static_cast<Window*>(glfwGetWindowUserPointer(apiWindow));
-	
-	DVec2 delta;
-
-	if (window.capturing) {
-		delta = DVec2(xPosition, -yPosition);
-		apiWindowSetCursorPosition(apiWindow, IVec2(0));
-	}
-	else {
-		delta =  DVec2(xPosition, yPosition) - window.mousePositionFromTopLeft;
-		delta.y = -delta.y;
-		window.mousePositionFromTopLeft = DVec2(xPosition, yPosition);
-		window.mousePositionFromBottomLeft = DVec2(xPosition, window.getWindowContentSize().y - yPosition);
-	}
-
-	window.content->mouseMoved(window, delta);
 }
 void whenWindowContentScaleChanged(APIWindow apiWindow, Float xScale, Float yScale)
 {

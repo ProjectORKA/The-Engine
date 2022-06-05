@@ -4,6 +4,14 @@ DVec3 Camera::getRotation() {
 	return rotation;
 }
 
+Double Camera::getRotationZ() {
+	return rotation.z;
+}
+
+Double Camera::getRotationX() {
+	return rotation.x;
+}
+
 void Camera::update() {
 	//prevent looking upside down
 	const Float cap = PI/2;

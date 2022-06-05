@@ -26,8 +26,6 @@ struct Player {
 	virtual void render(Window& window);
 	//this gets called for every input event
 	virtual void inputEvent(Window& window, InputEvent input) {};
-	//this gets called when the mouse moves, dont put any heavy logic in here, update the camera in the update method
-	virtual void mouseMoved(Window& window, DVec2 input);
 };
 
 struct DebugPlayer : public Player {

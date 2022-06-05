@@ -43,6 +43,5 @@ struct UIElement {
 	virtual void update(Window& window) {};
 	virtual void render(Window& window, TiledRectangle area) {};
 	virtual void inputEvent(Window& window, InputEvent input) {};
-	virtual void mouseMoved(Window& window, MouseMovementInput input) {};
 	virtual void renderInteractive(Window& window, TiledRectangle area) {};
 };

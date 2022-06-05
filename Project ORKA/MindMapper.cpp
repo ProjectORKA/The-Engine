@@ -41,6 +41,3 @@ void MindMapper::inputEvent(Window& window, InputEvent input) {
 	if (input == enter) window.captureCursor();
 	player.inputEvent(window, input);
 }
-void MindMapper::mouseMoved(Window& window, MouseMovementInput input) {
-	player.mouseMoved(window, input);
-}

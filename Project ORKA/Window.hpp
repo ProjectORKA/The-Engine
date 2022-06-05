@@ -23,15 +23,20 @@ struct Window {
 	Bool isShown = true;
 	IVec2 windowPosition;
 	Bool decorated = true;
-	MouseState mouseState;
-	Bool capturing = false;
 	APIWindow apiWindow = nullptr;
 	UIElement * content = nullptr;
 	Area windowedModeSize = Area(1);
 	Vector<Path> droppedFilePaths = {};
-	DVec2 mousePositionFromTopLeft = DVec2(0);
-	DVec2 mousePositionFromBottomLeft = DVec2(0);
 	WindowState windowState = WindowState::windowed;
+	
+	//mouse
+	MouseState mouseState;
+
+	//new shit
+	Bool capturing = false;
+	MouseMovement mousePos = MouseMovement(0);
+	MouseMovement mouseDelta = MouseMovement(0);
+	MouseMovement mousePosBotLeft = MouseMovement(0);
 
 	//generic inputs
 	InputID altKey = InputID(InputType::KeyBoard, ALT);
@@ -68,8 +73,8 @@ struct Window {
 	Bool isKeyPressed(Int key);
 	Bool pressed(InputID input);
 
-	Area getWindowFrameSize();
-	Area getWindowContentSize();
+	Area getFrameSize();
+	Area getContentSize();
 };
 
 void windowThread(Window& window);
@@ -78,9 +83,9 @@ void windowThread(Window& window);
 void whenWindowCloseRequest(APIWindow apiWindow);
 void whenWindowWasMaximized(APIWindow apiWindow, Int maximized);
 void whenWindowWasMinimized(APIWindow apiWindow, Int minimized);
+void whenMouseIsMoving(APIWindow apiWindow, Double mouseX, Double mouseY);
 void whenFramebufferIsResized(APIWindow apiWindow, Int width, Int height);
 void whenMouseIsScrolling(APIWindow apiWindow, Double xAxis, Double yAxis);
-void whenMouseIsMoving(APIWindow apiWindow, Double xPosition, Double yPosition);
 void whenFilesDroppedOnWindow(APIWindow apiWindow, Int count, const Char** paths);
 void whenWindowContentScaleChanged(APIWindow apiWindow, Float xScale, Float yScale);
 void whenMouseIsPressed(APIWindow apiWindow, Int mouseButton, Int action, Int modifiers);

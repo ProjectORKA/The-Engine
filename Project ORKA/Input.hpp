@@ -3,7 +3,6 @@
 #include "Keymap.hpp"
 
 using  Action = Bool&;
-using MouseMovementInput = DVec2;
 
 struct InputID {
 	Int type = InputType::UNKNOWN;

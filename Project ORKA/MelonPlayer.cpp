@@ -8,6 +8,18 @@ MelonPlayer::MelonPlayer() {
 	camera.farClipValue = 256;
 }
 void MelonPlayer::update(Window & window) {
+
+	//mouse input
+	if (window.capturing) {
+		Vec3 delta = Vec3(Vec2(window.mouseDelta) * Vec2(mouseSensitivity), 0);
+		delta *= (camera.location.z);
+		velocity = Vec3(0);
+		targetLocation += delta;
+	}
+	else {
+		targetLocation = Vec3(window.mousePosBotLeft, 0);
+	}
+
 	//get frequently used info
 	Float delta = window.renderer.deltaTime();
 
@@ -58,15 +70,4 @@ void MelonPlayer::inputEvent(Window& window, InputEvent input) {
 	if (input == zoomOut)zoomFactor--;
 	zoomFactor = clamp(zoomFactor, -3, 30);
 	logDebug(zoomFactor);
-}
-void MelonPlayer::mouseMoved(Window& window, MouseMovementInput input) {
-	if (window.capturing) {
-		Vec3 delta = Vec3(Vec2(input) * Vec2(0.0015), 0);
-		delta *= (camera.location.z);
-		velocity = Vec3(0);
-		targetLocation += delta;
-	}
-	else {
-		targetLocation = Vec3(window.mousePositionFromBottomLeft, 0);
-	}
 }

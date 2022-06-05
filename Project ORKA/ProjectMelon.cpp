@@ -3,10 +3,6 @@
 #include "Window.hpp"
 #include "Random.hpp"
 
-void MelonRenderer::mouseMoved(Window& window, MouseMovementInput input) {
-	player.mouseMoved(window, input);
-}
-
 void MelonRenderer::inputEvent(Window& window, InputEvent input) {
 	if (input == enter) window.captureCursor();
 	if (input == exit) window.uncaptureCursor();

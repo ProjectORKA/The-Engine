@@ -5,11 +5,6 @@ void MooncrashSimulation::update(Float timeStep) {
 	planetSystem.update();
 }
 
-MooncrashRenderer::MooncrashRenderer(MooncrashSimulation& simulation) {
-	player.speedExponent = 200;
-	this->simulation = &simulation;
-}
-
 void renderUI(Renderer& renderer, MooncrashPlayer& player) {
 	renderer.setWireframeMode(false);
 	renderer.setDepthTest(false);
@@ -62,7 +57,6 @@ void renderPlanet(Renderer& renderer, PlanetSystem& planetSystem, PlanetSystemPl
 MooncrashPlayer::MooncrashPlayer() {
 	chunkLocation.z = ULLONG_MAX / 2;
 }
-
 void MooncrashPlayer::update(Window& window) {
 	//get frequently used info
 	Float delta = window.renderer.deltaTime();
@@ -72,6 +66,7 @@ void MooncrashPlayer::update(Window& window) {
 	Float desiredSpeed = 0;
 
 	//process input
+	if (window.capturing) camera.rotate(window.mouseDelta * MouseMovement(mouseSensitivity));
 	if (window.pressed(forward)) movementVector += camera.forwardVector;
 	if (window.pressed(backward)) movementVector -= camera.forwardVector;
 	if (window.pressed(right)) movementVector += camera.rightVector;
@@ -149,13 +144,11 @@ void MooncrashPlayer::update(Window& window) {
 		}
 	}
 }
-
 void MooncrashPlayer::render(Window & window) {
 	Renderer& renderer = window.renderer;
 
 	camera.render(renderer);
 }
-
 
 void MooncrashRenderer::update(Window& window) {
 	player.update(window);
@@ -177,7 +170,6 @@ void MooncrashRenderer::render(Window& window, TiledRectangle area) {
 	renderPlanet(renderer, simulation->planetSystem, player);
 	//renderUI(renderer, player);
 }
-
 void MooncrashRenderer::inputEvent(Window& window, InputEvent input) {
 	if (input == wireframeToggle) window.renderer.wireframeMode = !window.renderer.wireframeMode;
 	if (input == countNodesButton) window.renderer.planetRenderSystem.quadtreeRenderSystem.count();
@@ -192,7 +184,7 @@ void MooncrashRenderer::inputEvent(Window& window, InputEvent input) {
 
 	player.inputEvent(window, input);
 }
-
-void MooncrashRenderer::mouseMoved(Window& window, MouseMovementInput input) {
-	player.mouseMoved(window, input);
+MooncrashRenderer::MooncrashRenderer(MooncrashSimulation& simulation) {
+	player.speedExponent = 200;
+	this->simulation = &simulation;
 }
