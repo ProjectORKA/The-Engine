@@ -92,7 +92,11 @@
     <ClCompile Include="Pong.cpp" />
     <ClCompile Include="QuadtreeID.cpp" />
     <ClCompile Include="QuadtreeNode.cpp" />
+<<<<<<< HEAD
     <ClCompile Include="String.cpp" />
+=======
+    <ClCompile Include="ProjectSnek.cpp" />
+>>>>>>> 12d9506acdfb6395de0ee7b809bba4d982e78fa1
     <ClCompile Include="TLSFAllocator.cpp" />
     <ClCompile Include="SDFTerrainRenderSystem.cpp" />
     <ClCompile Include="Server.cpp" />
@@ -220,6 +224,7 @@
     <ClInclude Include="Player.hpp" />
     <ClInclude Include="Plot.hpp" />
     <ClInclude Include="PointCloud.hpp" />
+    <ClInclude Include="ProjectSnek.hpp" />
     <ClInclude Include="SphereMeshing.hpp" />
     <ClInclude Include="TLSFAllocator.h" />
     <ClInclude Include="AIPlayground.hpp" />

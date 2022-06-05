@@ -85,6 +85,9 @@ Float randomFloat(Float high) {
 Vec3 randomVec3(Vec3 low, Vec3 high) {
 	return Vec3(randomFloat(low.x,high.x), randomFloat(low.y,high.y), randomFloat(low.z,high.z));
 }
+Vec4 randomVec4(Float low, Float high) {
+	return Vec4(randomFloat(low,high), randomFloat(low,high), randomFloat(low,high), randomFloat(low,high));
+}
 Vec3 randomPointInSphere(Float radius) {
 	Vec3 v;
 	do {

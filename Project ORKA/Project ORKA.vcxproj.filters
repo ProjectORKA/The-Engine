@@ -509,9 +509,6 @@
     <Filter Include="Shaders\mxAO">
       <UniqueIdentifier>{771c2078-504d-4fb6-88bf-ca924a7e8374}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Games\Game\NewFilter1">
-      <UniqueIdentifier>{acec371a-1fe7-4825-8749-00bba840766d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Games\Game\GPUSim">
       <UniqueIdentifier>{d02b2238-f682-48da-ac8a-5dc0790529cf}</UniqueIdentifier>
     </Filter>
@@ -548,8 +545,13 @@
     <Filter Include="Engine\Physics">
       <UniqueIdentifier>{aefa119f-ac70-4217-b495-8d7b9101d935}</UniqueIdentifier>
     </Filter>
+<<<<<<< HEAD
     <Filter Include="Shaders\vertexColor">
       <UniqueIdentifier>{1594becc-716e-470c-8958-377b17b0fd77}</UniqueIdentifier>
+=======
+    <Filter Include="Games\Game\ProjectSnek">
+      <UniqueIdentifier>{57766de2-a5a6-41bb-afdc-083876755e6a}</UniqueIdentifier>
+>>>>>>> 12d9506acdfb6395de0ee7b809bba4d982e78fa1
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -910,7 +912,13 @@
     <ClCompile Include="Compiler.cpp">
       <Filter>Engine\Compiler</Filter>
     </ClCompile>
+<<<<<<< HEAD
     <ClCompile Include="String.cpp" />
+=======
+    <ClCompile Include="ProjectSnek.cpp">
+      <Filter>Games\Game\ProjectSnek</Filter>
+    </ClCompile>
+>>>>>>> 12d9506acdfb6395de0ee7b809bba4d982e78fa1
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="icon.rc">
@@ -1400,6 +1408,9 @@
     </ClInclude>
     <ClInclude Include="Physics.hpp">
       <Filter>Engine\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="ProjectSnek.hpp">
+      <Filter>Games\Game\ProjectSnek</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
