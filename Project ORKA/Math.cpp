@@ -127,6 +127,9 @@ Float distance(Vec2 a, Vec2 b) {
 Float distance(Float a, Float b) {
 	return abs(a - b);
 }
+Float approach(Float input, Float maxValue) {
+	return (maxValue * input) / (maxValue + abs(input));
+}
 Float lerp(Float a, Float b, Float alpha)
 {
 	return (a * (1 - alpha)) + (b * alpha);

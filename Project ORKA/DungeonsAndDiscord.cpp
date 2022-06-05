@@ -135,9 +135,6 @@ void DNDRenderer::renderInteractive(Window& window, TiledRectangle area)
 		}
 	}
 }
-void DNDRenderer::mouseMoved(Window& window, MouseMovementInput input) {
-	player.mouseMoved(window, input);
-}
 
 void DNDWorld::save() {
 	UInt entityCount = entities.size();

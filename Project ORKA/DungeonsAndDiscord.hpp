@@ -61,7 +61,6 @@ struct DNDRenderer : public GameRenderer {
 	void render(Window& window, TiledRectangle area) override;
 	void inputEvent(Window& window, InputEvent input) override;
 	void renderInteractive(Window& window, TiledRectangle area) override;
-	void mouseMoved(Window& window, MouseMovementInput input) override;
 };
 
 Int diceRoll(Int diceCount);

@@ -17,7 +17,7 @@ struct MelonPlayer : public Player {
 	Float distanceInRadians = 0;
 	Vec3 deltaLocation = Vec3(0);
 	Vec3 direction = Vec3(0, 1, 0);
-	Float mouseSensitivity = 0.0001;
+	Float mouseSensitivity = 0.0015;
 	Vec3 lastLocationAtDistance = Vec3(0,-1,0);
 	Vec3 currentVisibleDirection = Vec3(0, 1, 0);
 	ParticleSystem smoke = ParticleSystem(1024*32);
@@ -31,5 +31,4 @@ struct MelonPlayer : public Player {
 	void update(Window & window) override;
 	void render(Window & window) override;
 	void inputEvent(Window& window, InputEvent input) override;
-	void mouseMoved(Window& window, MouseMovementInput input) override;
 };

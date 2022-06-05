@@ -29,7 +29,7 @@ void IdFramebuffer::updateIdsUnderCursor(Window& window)
 		idData = window.renderer.framebufferSystem.currentRead().readPixelsAtCenterUIntRGB(0);
 	}
 	else {
-		Vec2 curPos = window.mousePositionFromBottomLeft;
+		Vec2 curPos = window.mousePosBotLeft;
 		idData = window.renderer.framebufferSystem.currentRead().readPixelsUIntRGB(curPos.x, curPos.y, 0);
 	}
 

@@ -20,6 +20,8 @@ struct Camera {
 
 	DVec3 getRotation();
 	Matrix viewMatrix();
+	Double getRotationZ();
+	Double getRotationX();
 	Matrix viewMatrixOnlyRot();
 	Matrix projectionMatrix(Float aspectRatio);
 

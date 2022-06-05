@@ -5,7 +5,7 @@
 struct FontStyle {
 	Float absoluteSize = 20;	//size in pixels
 	Float relativeSize = 1;		//relative size of all fonts
-	Float letterSpacing = 0.5;
+	Float letterSpacing = 0.6;
 
 	void setSize(Float size);
 };

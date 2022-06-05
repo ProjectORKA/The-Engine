@@ -548,6 +548,9 @@
     <Filter Include="Engine\Physics">
       <UniqueIdentifier>{aefa119f-ac70-4217-b495-8d7b9101d935}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Shaders\vertexColor">
+      <UniqueIdentifier>{1594becc-716e-470c-8958-377b17b0fd77}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -907,6 +910,7 @@
     <ClCompile Include="Compiler.cpp">
       <Filter>Engine\Compiler</Filter>
     </ClCompile>
+    <ClCompile Include="String.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="icon.rc">
@@ -1548,6 +1552,12 @@
     </None>
     <None Include="Data\shaders\gpuSimShader.frag">
       <Filter>Games\Game\GPUSim\gpuSimShader</Filter>
+    </None>
+    <None Include="Data\shaders\vertexColor.vert">
+      <Filter>Shaders\vertexColor</Filter>
+    </None>
+    <None Include="Data\shaders\vertexColor.frag">
+      <Filter>Shaders\vertexColor</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

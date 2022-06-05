@@ -48,9 +48,9 @@ Float mod(Float a, Float b);
 Float snap(Float a, Float b);
 Float distance(Vec2 a, Vec2 b);
 Float distance(Float a, Float b);
-
 Float lerp(Float a, Float b, Float alpha);
 Float clerp(Float a, Float b, Float alpha);
+Float approach(Float input, Float maxValue);
 Float deltaInLoopingSpace(Float a, Float b, Float extend);
 Float getDistanceToClosestPoint(Vec3 point, Vector<Vec3>& points);
 Float distanceToPointInLoopingSpace(Vec2 a, Vec2 b, Float extend);

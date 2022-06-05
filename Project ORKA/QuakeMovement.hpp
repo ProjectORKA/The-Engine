@@ -16,6 +16,7 @@ enum class PlayerState {
 
 struct QuakePlayer : public Player {
 	// [TODO]
+	// fix speed
 	// queue up jump
 	// implement direction vectors separate from camera
 	// crouching
@@ -40,32 +41,42 @@ struct QuakePlayer : public Player {
 	//event input
 	InputEvent jumpRelease = InputEvent(InputType::KeyBoard, SPACE, 0);
 
+	//global scale
+	const Float unit = 1;
+
 	//temporary input data
 	DVec2 targetCameraRotation = DVec2(0);
 	Float inputTurnX = 0;
-	Bool moving = false;
+	Bool movementInput = false;
 
-	const Float unit = 1;
+	//player vectors
+	Vec3 forwardVector = Vec3(0, 1, 0);
+	Vec3 rightVector = Vec3(1, 0, 0);
 
 	//jump
-	const Float minJumpVelocity = 3 * unit;
+	const Float minJumpVelocity = 6 * unit;
 	const Float maxJumpVelocity = 6 * unit;
 	Float jumpCharge = 0;
 	
 	//speed
-	const Float walkingSpeed = 2 * unit;	//
-	const Float runningSpeed = 5 * unit;
+	const Float walkingSpeed = 1 * unit;	//
+	const Float runningSpeed = 5.5 * unit;
+	const Float speedControlAcceleration = 2;
+	const Float speedControlDeceleration = 1;
+	Bool isMoving = false;
 	Float speedControl = 0;
+	Vec3 movementControl = Vec3(0);
 
 	//strafe
 	const Float maxStrafeSpeed = 1;
 	const Float maxStrafeAcceleration = 1000000;
+	//Vec2 strafeControl = Vec2(0);
 
 	//player physique
-	const Float height = 1.8 * unit;			//total height when standing
-	const Float lowerChestMultiplier = 0.73;	//height of lower chest based on total height
-	const Float eyeHeightMultilpier = 0.94;		//height of camera based on total height
-
+	const Float height = 1.8 * unit;				//total height when standing
+	const Float lowerChestHeightMultiplier = 0.6;	//height of lower chest based on total height //0.73
+	const Float eyeHeightMultilpier = 0.94;			//height of camera based on total height
+	const Float lowerChestHeight = height * lowerChestHeightMultiplier;
 
 	//head movement
 	Float walkCycle = 0;
@@ -76,30 +87,41 @@ struct QuakePlayer : public Player {
 	const Float eyeHeightFlying = height * 0.6 * eyeHeightMultilpier;		//off ground
 	const Float eyeHeightWalking = height * 0.9 * eyeHeightMultilpier;		//walking
 	const Float eyeHeightCrouching = height * 0.3 * eyeHeightMultilpier;	//charging jump
-	const Float eyeHeightRunning = height * 0.55 * eyeHeightMultilpier;		//running
+	const Float eyeHeightRunning = height * 0.75 * eyeHeightMultilpier;		//running
 
 	const Float eyeMovementSpeed = 10;
 
 	Float eyeHeight = 0;
-		//bob
-	const Float headBobSpeed = 3;
-	const Float headBobIntensity = 0.02;
+	
+	//headbob
+	const Float headBobSpeed = 2.6;
+	const Float headBobIntensity = 0.01;
 	Float headBob = 0;
-		//lean
-	const Float leanSpeed = 10;
-	const Float leanAngle = 0.6;
-	const Float leanAngleWhenMoving = 0.4;
-	const Float runningLeanFactor = 4;
-	Float leanTarget = 0.0;
-	Float lean = 0;
-		//sway
+	
+	//lean
+	//upper body lean
+	const Float upperBodyLeanSpeed = 20;
+	const Float upperBodyMaxLeanAngle = 0.8;
+	const Float upperBodyLeanHeadTiltFactor = 0.4;
+	Float upperBodyLean = 0;
+	Float upperBodyLeanAngle = 0;
+	Float upperBodyLeanControl = 0.0;
+	//full body lean
+	const Float fullBodyLeanSpeed = 5;
+	const Float fullBodyMaxLeanAngle = 0.6;
+	Float fullBodyLean = 0;
+	Float fullBodyLeanAngle = 0;
+	Float fullBodyLeanControl = 0.0;
+
+	//sway
 	const Float headSwayImpact = 0.02;
 	Float sway = 0;
 	
 	//state
 	Bool onGround = false;
 	Float actualSpeed = 0;
-	Float desiredSpeed = walkingSpeed;
+	Float targetSpeed = walkingSpeed;
+	Float actualInputSpeed = 0;
 
 	//physics
 	Float mass = 80; //kg
@@ -111,19 +133,17 @@ struct QuakePlayer : public Player {
 	const Float iceFrictionFactor = 0.1;
 	const Float normalFrictionFactor = 1;
 	Float stopFriction = 12;
-	Float movementFriction = 6;
+	Float movementFriction = 0;
 	Float actualFriction = stopFriction;
 
 	void releaseJump();
 	void collisionResponse();
 	void calculatePhysics(Float delta);
 	void calculateFriction(Float delta);
-	void airStrafe(Window& window, Float delta);
 	void calculateHeadPosition(Window & window, Float delta);
 
 	void update(Window & window) override;
 	void inputEvent(Window& window, InputEvent input) override;
-	void mouseMoved(Window& window, MouseMovementInput input) override;
 };
 
 struct QuakeMovementRenderer : public GameRenderer {
@@ -137,5 +157,4 @@ struct QuakeMovementRenderer : public GameRenderer {
 	void update(Window& window) override;
 	void render(Window& window, TiledRectangle area) override;
 	void inputEvent(Window& window, InputEvent input) override;
-	void mouseMoved(Window& window, MouseMovementInput input) override;
 };
