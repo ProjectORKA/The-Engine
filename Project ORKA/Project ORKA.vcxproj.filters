@@ -122,9 +122,6 @@
     <Filter Include="Common\Data\Queue">
       <UniqueIdentifier>{c390a4fe-1ca5-45d3-b928-f6e84d18483a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Common\Data\Vect">
-      <UniqueIdentifier>{19129ed0-77d9-40be-aaa6-77d0c91296e6}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Common\Debug">
       <UniqueIdentifier>{42ff64d9-fea1-4a31-b5fd-e759905a5be0}</UniqueIdentifier>
     </Filter>
@@ -545,13 +542,11 @@
     <Filter Include="Engine\Physics">
       <UniqueIdentifier>{aefa119f-ac70-4217-b495-8d7b9101d935}</UniqueIdentifier>
     </Filter>
-<<<<<<< HEAD
     <Filter Include="Shaders\vertexColor">
       <UniqueIdentifier>{1594becc-716e-470c-8958-377b17b0fd77}</UniqueIdentifier>
-=======
-    <Filter Include="Games\Game\ProjectSnek">
-      <UniqueIdentifier>{57766de2-a5a6-41bb-afdc-083876755e6a}</UniqueIdentifier>
->>>>>>> 12d9506acdfb6395de0ee7b809bba4d982e78fa1
+    </Filter>
+    <Filter Include="Games\Game\Project Snek">
+      <UniqueIdentifier>{6a15c641-e369-4528-97bc-3c60842d8107}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -899,7 +894,6 @@
     <ClCompile Include="MindMapper.cpp">
       <Filter>Games\Game\MindMapper</Filter>
     </ClCompile>
-    <ClCompile Include="Input.cpp" />
     <ClCompile Include="QuakeMovement.cpp">
       <Filter>Games\Game\Quake Movement</Filter>
     </ClCompile>
@@ -912,13 +906,15 @@
     <ClCompile Include="Compiler.cpp">
       <Filter>Engine\Compiler</Filter>
     </ClCompile>
-<<<<<<< HEAD
-    <ClCompile Include="String.cpp" />
-=======
     <ClCompile Include="ProjectSnek.cpp">
-      <Filter>Games\Game\ProjectSnek</Filter>
+      <Filter>Games\Game\Project Snek</Filter>
     </ClCompile>
->>>>>>> 12d9506acdfb6395de0ee7b809bba4d982e78fa1
+    <ClCompile Include="Input.cpp">
+      <Filter>Engine\UserInterface\Window\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="String.cpp">
+      <Filter>Common\Data\String</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="icon.rc">
@@ -1410,7 +1406,7 @@
       <Filter>Engine\Physics</Filter>
     </ClInclude>
     <ClInclude Include="ProjectSnek.hpp">
-      <Filter>Games\Game\ProjectSnek</Filter>
+      <Filter>Games\Game\Project Snek</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1570,8 +1566,5 @@
     <None Include="Data\shaders\vertexColor.frag">
       <Filter>Shaders\vertexColor</Filter>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="GitHub.txt" />
   </ItemGroup>
 </Project>
