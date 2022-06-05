@@ -92,11 +92,8 @@
     <ClCompile Include="Pong.cpp" />
     <ClCompile Include="QuadtreeID.cpp" />
     <ClCompile Include="QuadtreeNode.cpp" />
-<<<<<<< HEAD
     <ClCompile Include="String.cpp" />
-=======
     <ClCompile Include="ProjectSnek.cpp" />
->>>>>>> 12d9506acdfb6395de0ee7b809bba4d982e78fa1
     <ClCompile Include="TLSFAllocator.cpp" />
     <ClCompile Include="SDFTerrainRenderSystem.cpp" />
     <ClCompile Include="Server.cpp" />
@@ -374,9 +371,6 @@
     <None Include="Data\shaders\color.vert" />
     <None Include="G:\DATA\PROJEKTE\ORKA\GAME ENGINE\SOURCE CODE\Project ORKA\Data\shaders\idShader.frag" />
     <None Include="G:\DATA\PROJEKTE\ORKA\GAME ENGINE\SOURCE CODE\Project ORKA\Data\shaders\idShader.vert" />
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="GitHub.txt" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
