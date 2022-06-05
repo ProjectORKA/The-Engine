@@ -66,7 +66,7 @@ struct Renderer{
 	//spaces
 	void screenSpace();
 	void normalizedSpace();
-	void apectCorrectNormalizedSpace();
+	void aspectCorrectNormalizedSpace();
 	
 	//meshes
 	void rerenderMesh();

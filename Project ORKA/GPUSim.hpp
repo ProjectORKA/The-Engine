@@ -76,7 +76,7 @@ struct GPUSimRenderer : public GameRenderer {
 		//render on screen
 		renderer.framebufferSystem.framebuffers[factionsID1].setAsTexture(0);
 		renderer.framebufferSystem.draw(renderer, 0);
-		renderer.apectCorrectNormalizedSpace();
+		renderer.aspectCorrectNormalizedSpace();
 		//renderer.clearColor(Color(1));
 		renderer.useShader("final");
 		renderer.renderMesh("fullScreenQuad");
