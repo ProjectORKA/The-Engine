@@ -5,5 +5,8 @@
 struct Renderer;
 
 struct RectangleRenderer{
-	void render(Renderer& renderer, Float x, Float y, Float w, Float h);
+	Index rectangleMeshId = -1;
+
+	void create(Renderer& renderer);
+	void render(Renderer& renderer, Vec2 pos, Vec2 size);
 };
