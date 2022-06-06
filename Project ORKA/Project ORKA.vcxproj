@@ -33,6 +33,7 @@
     <ClCompile Include="AIPlayground.cpp" />
     <ClCompile Include="C++ Cheatsheet.cpp" />
     <ClCompile Include="CheatTest.cpp" />
+    <ClCompile Include="Collision.cpp" />
     <ClCompile Include="Compiler.cpp" />
     <ClCompile Include="EntityComponentSystem.cpp" />
     <ClCompile Include="GPUBuffer.cpp" />
@@ -58,6 +59,7 @@
     <ClCompile Include="ParticleSystem.cpp" />
     <ClCompile Include="Physics.cpp" />
     <ClCompile Include="PhysicsPlayground.cpp" />
+    <ClCompile Include="PhysicsUtil.cpp" />
     <ClCompile Include="ProjectMelon.cpp" />
     <ClCompile Include="QuakeMovement.cpp" />
     <ClCompile Include="Random.cpp" />
@@ -156,11 +158,17 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Array2D.hpp" />
+    <ClInclude Include="artery-font.h" />
     <ClInclude Include="BaseAllocator.hpp" />
     <ClInclude Include="CheatTest.hpp" />
+    <ClInclude Include="Colliders.hpp" />
+    <ClInclude Include="Collision.hpp" />
     <ClInclude Include="Color.hpp" />
+    <ClInclude Include="crc32.h" />
+    <ClInclude Include="crc32.hpp" />
     <ClInclude Include="DeadVector.hpp" />
     <ClInclude Include="EntityComponentSystem.hpp" />
+    <ClInclude Include="enums.h" />
     <ClInclude Include="File.hpp" />
     <ClInclude Include="GeometryClipmapTerrain.hpp" />
     <ClInclude Include="GPUBuffer.hpp" />
@@ -188,12 +196,14 @@
     <ClInclude Include="MelonWorld.hpp" />
     <ClInclude Include="Memory.hpp" />
     <ClInclude Include="MindMapper.hpp" />
+    <ClInclude Include="MSDFText.hpp" />
     <ClInclude Include="Name.hpp" />
     <ClInclude Include="NeighbourOctree.hpp" />
     <ClInclude Include="Molecules2D.hpp" />
     <ClInclude Include="ParticleSystem.hpp" />
     <ClInclude Include="Physics.hpp" />
     <ClInclude Include="PhysicsPlayground.hpp" />
+    <ClInclude Include="PhysicsUtil.hpp" />
     <ClInclude Include="PoolAllocator.hpp" />
     <ClInclude Include="ProjectMelon.hpp" />
     <ClInclude Include="QuakeMovement.hpp" />
@@ -202,6 +212,9 @@
     <ClInclude Include="ResourceManager.hpp" />
     <ClInclude Include="Sandbox.hpp" />
     <ClInclude Include="Scene.hpp" />
+    <ClInclude Include="SDFTextRenderSystem.hpp" />
+    <ClInclude Include="serialization.h" />
+    <ClInclude Include="serialization.hpp" />
     <ClInclude Include="SimpleRTS.hpp" />
     <ClInclude Include="Sky.hpp" />
     <ClInclude Include="AudioSystem.hpp" />
@@ -223,6 +236,10 @@
     <ClInclude Include="PointCloud.hpp" />
     <ClInclude Include="ProjectSnek.hpp" />
     <ClInclude Include="SphereMeshing.hpp" />
+    <ClInclude Include="std-artery-font.h" />
+    <ClInclude Include="stdio-serialization.h" />
+    <ClInclude Include="stdio-serialization.hpp" />
+    <ClInclude Include="structures.h" />
     <ClInclude Include="TLSFAllocator.h" />
     <ClInclude Include="AIPlayground.hpp" />
     <ClInclude Include="ASIONetworking.hpp" />
@@ -288,6 +305,7 @@
     <ClInclude Include="Transform.hpp" />
     <ClInclude Include="TransformationStack.hpp" />
     <ClInclude Include="TreeSystem.hpp" />
+    <ClInclude Include="types.h" />
     <ClInclude Include="UIButton.hpp" />
     <ClInclude Include="UIConstraints.hpp" />
     <ClInclude Include="UIElement.hpp" />
@@ -335,6 +353,8 @@
     <None Include="Data\shaders\gpuSimShader.vert" />
     <None Include="Data\shaders\MelonUberShader.frag" />
     <None Include="Data\shaders\MelonUberShader.vert" />
+    <None Include="Data\shaders\msdfFont.frag" />
+    <None Include="Data\shaders\msdfFont.vert" />
     <None Include="Data\shaders\mxAO.frag" />
     <None Include="Data\shaders\normals.frag" />
     <None Include="Data\shaders\normals.vert" />
