@@ -4,21 +4,33 @@
 #include "Game.hpp"
 #include "Window.hpp"
 #include "Random.hpp"
+#include "Basics.hpp"
+#include "Math.hpp"
+
+struct SnakeFood;
 
 struct Snake {
-	Vec2 position = Vec2(-1, 0);
+	Vec2 headPosition = Vec2(-1, 0);
 	Vec2 direction = Vec2(0, 0);
 	Color snakeColor = Color(0.2, 0.5, 0, 1);
+	Vector<Vec2> bodySegments;
+
+	void addSegment() {
+		bodySegments.push_back(Vec2(0, 0));
+	}
+
 	void render(Window& window) {
 		window.renderer.fill(Color(snakeColor));
 		window.renderer.useShader("color");
-		window.renderer.uniforms().mMatrix(matrixFromLocationAndSize(position,0.03));
+		window.renderer.uniforms().mMatrix(matrixFromLocationAndSize(headPosition,0.03));
 		window.renderer.renderMesh("circle");
+		for (Int i = 0; i < bodySegments.size(); i++) {
+			window.renderer.uniforms().mMatrix(matrixFromLocationAndSize(bodySegments[i], 0.03));
+			window.renderer.renderMesh("circle");
+		}
+	}
 
-	}
-	void update() {
-		position = position + direction;
-	}
+	void update(SnakeFood& snakefood);
 };
 
 struct SnakeFood {
@@ -71,7 +83,7 @@ struct SnakeGame :public GameRenderer {
 		window.renderer.aspectCorrectNormalizedSpace();
 		totalTime += window.renderer.deltaTime();
 		if (totalTime > 0.016666) {
-			snake.update();
+			snake.update(snakefood);
 			snakefood.update();
 			totalTime = 0;
 		}
