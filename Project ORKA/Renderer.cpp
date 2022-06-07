@@ -137,10 +137,10 @@ void Renderer::arrow(Vec3 start, Vec3 end) {
 	renderMesh("arrow");
 }
 void Renderer::aspectCorrectNormalizedSpace() {
-	Float aspect = aspectRatio();
+	Float aspect = getAspectRatio();
 	uniforms().vMatrix() = Matrix(1);
-	if (aspect > 1) uniforms().pMatrix() = scale(Matrix(1), Vec3(1 / aspectRatio(), 1, 1));
-	else uniforms().pMatrix() = scale(Matrix(1), Vec3(1, aspectRatio(), 1));
+	if (aspect > 1) uniforms().pMatrix() = scale(Matrix(1), Vec3(1 / getAspectRatio(), 1, 1));
+	else uniforms().pMatrix() = scale(Matrix(1), Vec3(1, getAspectRatio(), 1));
 }
 void Renderer::setDepthClamp(Bool depthClamp)
 {
@@ -223,6 +223,9 @@ void Renderer::addRenderObject(RenderObjectNames renderObjectNames)
 {
 	renderObjectSystem.addRenderObject(renderObjectNames);
 }
+Area Renderer::getArea() {
+	return framebufferSystem.framebufferSize;
+}
 void Renderer::renderText(String text, Vec2 position, FontStyle font) {
 	textRenderSystem.render(*this, text, position, font);
 }
@@ -247,8 +250,7 @@ Bool Renderer::getCulling() {
 Float Renderer::deltaTime() {
 	return time.delta;
 }
-Float Renderer::aspectRatio()
-{
+Float Renderer::getAspectRatio(){
 	return framebufferSystem.currentDraw().aspectRatio();
 }
 Uniforms& Renderer::uniforms()

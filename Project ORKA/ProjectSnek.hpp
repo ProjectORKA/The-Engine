@@ -80,14 +80,15 @@ struct SnakeGame :public GameRenderer {
 
 	void render(Window& window, TiledRectangle area) override {
 		window.renderer.clearColor(Color(0, 0.2, 0.2, 0.7));
-		window.renderer.aspectCorrectNormalizedSpace();
+		window.renderer.aspectRatioNormalizedSpace(16.0 / 9.0);
 		totalTime += window.renderer.deltaTime();
 		if (totalTime > 0.016666) {
 			snake.update(snakefood);
 			snakefood.update();
 			totalTime = 0;
 		}
-
+		window.renderer.useShader("color");
+		window.renderer.renderMesh("centeredPlane");
 		snake.render(window);
 		snakefood.render(window);
 

@@ -67,6 +67,19 @@ struct Renderer{
 	void screenSpace();
 	void normalizedSpace();
 	void aspectCorrectNormalizedSpace();
+	void aspectRatioNormalizedSpace(Float aspectRatio) {
+		Area renderSize = getArea();
+		Float renderAspectRatio = getAspectRatio();
+			uniforms().vMatrix() = Matrix(1);
+			//scale the view up based on the target aspect ratio
+			Matrix pMatrix(1);
+			Float scaleUpFactor = max(aspectRatio, 1 / aspectRatio);
+			pMatrix = scale(pMatrix, Vec3(scaleUpFactor, scaleUpFactor, 1));
+
+
+			if (renderAspectRatio > 1) uniforms().pMatrix() = scale(pMatrix, Vec3(1 / renderAspectRatio, 1, 1));
+			else uniforms().pMatrix() = scale(pMatrix, Vec3(1, renderAspectRatio, 1));
+	}
 	
 	//meshes
 	void rerenderMesh();
@@ -110,10 +123,12 @@ struct Renderer{
 	void createBlurTexture(Index from, Index to);
 	void addRenderObject(RenderObjectNames renderObjectNames);
 	
+	Area getArea();
+	
 	Bool getCulling();
 
 	Float deltaTime();
-	Float aspectRatio();
+	Float getAspectRatio();
 
 	Uniforms& uniforms();
 };
