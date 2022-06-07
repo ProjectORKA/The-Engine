@@ -46,7 +46,7 @@ void Camera::render(Renderer & renderer) {
 	renderer.uniforms().cameraVec() = Vec4(forwardVector, 1);
 	renderer.uniforms().cameraPos() = Vec4(location, 1);
 	renderer.uniforms().vMatrix() = viewMatrix();
-	renderer.uniforms().pMatrix() = projectionMatrix(renderer.aspectRatio());
+	renderer.uniforms().pMatrix() = projectionMatrix(renderer.getAspectRatio());
 }
 void Camera::setRotation(DVec3 rotation) {
 	this->rotation = rotation;
@@ -57,7 +57,7 @@ void Camera::renderOnlyRot(Renderer& renderer)
 	renderer.uniforms().cameraVec() = Vec4(forwardVector, 1);
 	renderer.uniforms().cameraPos() = Vec4(location, 1);
 	renderer.uniforms().vMatrix() = viewMatrixOnlyRot();
-	renderer.uniforms().pMatrix() = projectionMatrix(renderer.aspectRatio());
+	renderer.uniforms().pMatrix() = projectionMatrix(renderer.getAspectRatio());
 }
 
 Matrix Camera::viewMatrix() {
