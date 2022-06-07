@@ -77,6 +77,7 @@ void Renderer::create(Area size)
 	textRenderSystem.create(*this);
 	renderObjectSystem.create(*this);
 	idFramebuffer.create(*this); //needs to be below framebuffer system
+	rectangleRenderer.create(*this);
 
 	apiClipControl(GL_LOWER_LEFT, GL_ZERO_TO_ONE);
 	apiEnable(GL_SCISSOR_TEST);
@@ -90,6 +91,9 @@ void Renderer::setWireframeMode() {
 }
 void Renderer::renderMesh(Name name) {
 	meshSystem.render(uniforms(), name);
+}
+void Renderer::renderMesh(Index meshID) {
+	meshSystem.render(uniforms(), meshID);
 }
 void Renderer::useTexture(Name name) {
 	textureSystem.use(name);
@@ -155,6 +159,9 @@ void Renderer::circle(Vec2 pos, Float radius)
 {
 	uniforms().mMatrix(matrixFromLocationAndSize(pos,radius));
 	renderMesh("circle");
+}
+void Renderer::rectangle(Vec2 pos, Vec2 size) {
+	rectangleRenderer.render(*this, pos, size);
 }
 void Renderer::setAlphaBlending(Bool blending)
 {

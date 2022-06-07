@@ -80,6 +80,7 @@ Matrix matrixFromOrientation(Orientation o);
 Matrix matrixFromAxis(Vec3 x, Vec3 y, Vec3 z);
 Matrix matrixFromTiledRectangle(TiledRectangle area);
 Matrix matrixFromRotation(Float x, Float y, Float z);
+Matrix matrixFromLocationAndSize2D(Vec2 pos, Vec2 size);
 Matrix matrixFromPositionAndDirection(Vec2 pos, Vec2 dir);
 Matrix matrixFromLocationAndSize(Vec4 compressedTransform);
 Matrix matrixFromLocationAndSize(Vec3 location, Float size);

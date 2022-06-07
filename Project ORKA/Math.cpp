@@ -329,6 +329,14 @@ Matrix matrixFromTiledRectangle(TiledRectangle area) {
 Matrix matrixFromRotation(Float x, Float y, Float z) {
 	return	glm::eulerAngleYXZ(z, x, y);
 }
+Matrix matrixFromLocationAndSize2D(Vec2 pos, Vec2 size) {
+	Matrix m(1);
+	m[0] = Vec4(size.x, 0, 0, 0);
+	m[1] = Vec4(0, size.y, 0, 0);
+	m[2] = Vec4(0, 0, 1, 0);
+	m[3] = Vec4(pos.x, pos.y, 0, 1);
+	return m;
+}
 Matrix matrixFromPositionAndDirection(Vec2 pos, Vec2 dir) {
 	Matrix m(1);
 	m[0] = Vec4(-dir.y, dir.x, 0, 0);

@@ -50,6 +50,7 @@
 #include "Sortr.hpp"
 #include "GPUSim.hpp"
 #include "Sandbox.hpp"
+#include "MSDFText.hpp"
 #include "UISandbox.hpp"
 #include "Mooncrash.hpp"
 #include "CheatTest.hpp"
@@ -65,6 +66,8 @@
 #include "InfiniteDetailPrototype.hpp"
 
 //#define TESTING
+
+#include "serialization.hpp"
 
 Int main(Int  argc, Char* argv[]) {
 #ifndef TESTING
@@ -88,12 +91,13 @@ Int main(Int  argc, Char* argv[]) {
 	//PhysicsPlayGroundRenderer game(sim);
 	
 	//Pong game;
-	SnakeGame game;
+	//SnakeGame game;
 	//UISandbox game;
 	//MindMapper game;
 	//AIPlayground game;
 	//MelonRenderer game;
 	//GPUSimRenderer game;
+	MSDFTextRenderer game;
 	//QuakeMovementRenderer game;
 
 	//gameSystem.add(sim);
@@ -115,9 +119,6 @@ Int main(Int  argc, Char* argv[]) {
 #else
 	//testing code
 	/////////////////////////////////////////////////////////////////////////////////////////////////
-	Everything everythingPrototype;
-
-	everythingPrototype.generate();
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////
 	pause();

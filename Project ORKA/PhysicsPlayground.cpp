@@ -1,24 +1,24 @@
 
 #include "PhysicsPlayground.hpp"
 #include "Window.hpp"
+#include "Physics.hpp"
 
 void PhysicsParticle::update(Float delta) {
-	Vec2 gravity = Vec2(0, -10);
+	Vec2 gravity = Vec2(0, 0);
 	verletPhysics(position, velocity, gravity, delta);
+
+	loopPointInSpace2D(position, Vec2(1000, 1000));
 
 	collisionCheck();
 }
 
 void PhysicsParticle::collisionCheck() {
-	if (position.y <= 0.5) {
-		position.y = 0.5;
-		velocity.y *= -1;
-	}
+
 }
 
 void PhysicsParticle::render(Window& window) {
 	Renderer& renderer = window.renderer;
-	renderer.circle(position, 5);
+	renderer.circle(position, particleSize);
 }
 
 PhysicsPlayGroundRenderer::PhysicsPlayGroundRenderer(PhysicsPlaygroundSimulation& simulation) {

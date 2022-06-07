@@ -8,7 +8,7 @@ struct GameSimulation{
 	Bool loaded = false;
 	virtual void create() {};
 	virtual void destroy() {};
-	virtual void update(Float timestep) {};
+	virtual void update(Float delta) {};
 };
 
 struct GameRenderer : public UIElement{
