@@ -85,9 +85,9 @@ struct Renderer{
 	void rerenderMesh();
 	void useMesh(Name name);
 	void renderMesh(Name name);
+	void renderMesh(Index meshID);
 	void renderMeshInstanced(Name name);
-	//void renderMeshInstanced(Name name, Vector<Vec2>& positions);
-	//void renderMeshInstanced(Name name, Vector<Vec4>& transformations);
+
 	//textures
 	void useTexture(Name name);
 	void useTexture(Name name, Index location);
@@ -102,6 +102,7 @@ struct Renderer{
 	//primitives
 	void arrow(Vec3 start, Vec3 end);
 	void circle(Vec2 pos, Float radius);
+	void rectangle(Vec2 pos, Vec2 size);
 	void line(Vec3 start, Vec3 end, Float width);
 	void line(Vec2 start, Vec2 end, Float width);
 

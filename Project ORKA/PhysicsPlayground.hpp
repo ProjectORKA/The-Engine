@@ -2,11 +2,13 @@
 
 #include "Game.hpp"
 #include "Random.hpp"
-#include "Physics.hpp"
+
+const Float particleSize = 30;
 
 struct PhysicsParticle {
-	Vec2 position = randomVec2(500,1500);
-	Vec2 velocity = Vec2(0);
+	Vec2 position = randomVec2(0,1000);
+	Vec2 velocity = randomVec2(-100, 100);
+	Bool isColliding = false;
 
 	void collisionCheck();
 	void update(Float delta);

@@ -548,6 +548,27 @@
     <Filter Include="Games\Game\Project Snek">
       <UniqueIdentifier>{6a15c641-e369-4528-97bc-3c60842d8107}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\Physics\Collision">
+      <UniqueIdentifier>{5bd74850-a2d7-452b-85fd-28e73c5e9295}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Physics\Collision\Colliders">
+      <UniqueIdentifier>{61e49a65-d900-4299-8910-5bbef38dd8f3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Physics\PhysicsUtil">
+      <UniqueIdentifier>{0de62e7e-94f9-4653-85c0-a64c872a223b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\UserInterface\Window\Renderer\TextRenderSystem\SDFTextRenderSystem">
+      <UniqueIdentifier>{b9a825e2-3208-499d-b2f6-7919143b4728}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Games\Game\MSDFText">
+      <UniqueIdentifier>{9b6a8fae-2158-47d5-bf51-92a395e29735}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders\msdfFont">
+      <UniqueIdentifier>{f58e639e-19bc-457c-81f9-403e8ce1c91c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\UserInterface\Window\Renderer\TextRenderSystem\SDFTextRenderSystem\Artery Format">
+      <UniqueIdentifier>{2da8f64c-48cf-4861-b717-cd76bbb0a146}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -914,6 +935,12 @@
     </ClCompile>
     <ClCompile Include="String.cpp">
       <Filter>Common\Data\String</Filter>
+    </ClCompile>
+    <ClCompile Include="PhysicsUtil.cpp">
+      <Filter>Engine\Physics\PhysicsUtil</Filter>
+    </ClCompile>
+    <ClCompile Include="Collision.cpp">
+      <Filter>Engine\Physics\Collision</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1408,6 +1435,54 @@
     <ClInclude Include="ProjectSnek.hpp">
       <Filter>Games\Game\Project Snek</Filter>
     </ClInclude>
+    <ClInclude Include="Collision.hpp">
+      <Filter>Engine\Physics\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="Colliders.hpp">
+      <Filter>Engine\Physics\Collision\Colliders</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysicsUtil.hpp">
+      <Filter>Engine\Physics\PhysicsUtil</Filter>
+    </ClInclude>
+    <ClInclude Include="SDFTextRenderSystem.hpp">
+      <Filter>Engine\UserInterface\Window\Renderer\TextRenderSystem\SDFTextRenderSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="MSDFText.hpp">
+      <Filter>Games\Game\MSDFText</Filter>
+    </ClInclude>
+    <ClInclude Include="crc32.h">
+      <Filter>Engine\UserInterface\Window\Renderer\TextRenderSystem\SDFTextRenderSystem\Artery Format</Filter>
+    </ClInclude>
+    <ClInclude Include="crc32.hpp">
+      <Filter>Engine\UserInterface\Window\Renderer\TextRenderSystem\SDFTextRenderSystem\Artery Format</Filter>
+    </ClInclude>
+    <ClInclude Include="enums.h">
+      <Filter>Engine\UserInterface\Window\Renderer\TextRenderSystem\SDFTextRenderSystem\Artery Format</Filter>
+    </ClInclude>
+    <ClInclude Include="serialization.h">
+      <Filter>Engine\UserInterface\Window\Renderer\TextRenderSystem\SDFTextRenderSystem\Artery Format</Filter>
+    </ClInclude>
+    <ClInclude Include="serialization.hpp">
+      <Filter>Engine\UserInterface\Window\Renderer\TextRenderSystem\SDFTextRenderSystem\Artery Format</Filter>
+    </ClInclude>
+    <ClInclude Include="std-artery-font.h">
+      <Filter>Engine\UserInterface\Window\Renderer\TextRenderSystem\SDFTextRenderSystem\Artery Format</Filter>
+    </ClInclude>
+    <ClInclude Include="stdio-serialization.h">
+      <Filter>Engine\UserInterface\Window\Renderer\TextRenderSystem\SDFTextRenderSystem\Artery Format</Filter>
+    </ClInclude>
+    <ClInclude Include="stdio-serialization.hpp">
+      <Filter>Engine\UserInterface\Window\Renderer\TextRenderSystem\SDFTextRenderSystem\Artery Format</Filter>
+    </ClInclude>
+    <ClInclude Include="structures.h">
+      <Filter>Engine\UserInterface\Window\Renderer\TextRenderSystem\SDFTextRenderSystem\Artery Format</Filter>
+    </ClInclude>
+    <ClInclude Include="types.h">
+      <Filter>Engine\UserInterface\Window\Renderer\TextRenderSystem\SDFTextRenderSystem\Artery Format</Filter>
+    </ClInclude>
+    <ClInclude Include="artery-font.h">
+      <Filter>Engine\UserInterface\Window\Renderer\TextRenderSystem\SDFTextRenderSystem\Artery Format</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Data\shaders\debug.frag">
@@ -1565,6 +1640,12 @@
     </None>
     <None Include="Data\shaders\vertexColor.frag">
       <Filter>Shaders\vertexColor</Filter>
+    </None>
+    <None Include="Data\shaders\msdfFont.vert">
+      <Filter>Shaders\msdfFont</Filter>
+    </None>
+    <None Include="Data\shaders\msdfFont.frag">
+      <Filter>Shaders\msdfFont</Filter>
     </None>
   </ItemGroup>
 </Project>
