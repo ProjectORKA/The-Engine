@@ -84,8 +84,8 @@ Int main(Int  argc, Char* argv[]) {
 	//SandboxSimulation sim;
 	//Sandbox game(sim);
 	
-	//MooncrashSimulation sim;
-	//MooncrashRenderer game(sim);
+	MooncrashSimulation sim;
+	MooncrashRenderer game(sim);
 
 	//PhysicsPlaygroundSimulation sim;
 	//PhysicsPlayGroundRenderer game(sim);
@@ -97,10 +97,10 @@ Int main(Int  argc, Char* argv[]) {
 	//AIPlayground game;
 	//MelonRenderer game;
 	//GPUSimRenderer game;
-	MSDFTextRenderer game;
+	//MSDFTextRenderer game;
 	//QuakeMovementRenderer game;
 
-	//gameSystem.add(sim);
+	gameSystem.add(sim);
 
 	Window& w = window(
 		"ORKA",

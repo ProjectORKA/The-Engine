@@ -569,6 +569,9 @@
     <Filter Include="Engine\UserInterface\Window\Renderer\TextRenderSystem\SDFTextRenderSystem\Artery Format">
       <UniqueIdentifier>{2da8f64c-48cf-4861-b717-cd76bbb0a146}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Games\Game\Mooncrash\shaders\MooncrashVertex">
+      <UniqueIdentifier>{95f0c071-f471-4f7b-93f5-2732fffd3b13}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -1646,6 +1649,12 @@
     </None>
     <None Include="Data\shaders\msdfFont.frag">
       <Filter>Shaders\msdfFont</Filter>
+    </None>
+    <None Include="Data\shaders\MooncrashVertex.vert">
+      <Filter>Games\Game\Mooncrash\shaders\MooncrashVertex</Filter>
+    </None>
+    <None Include="Data\shaders\MooncrashVertex.frag">
+      <Filter>Games\Game\Mooncrash\shaders\MooncrashVertex</Filter>
     </None>
   </ItemGroup>
 </Project>
