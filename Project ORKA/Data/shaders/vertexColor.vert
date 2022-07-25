@@ -13,7 +13,7 @@ void main() {
 	}
 
 	vec4 worldPosition = vec4(wPos,1);
-	gl_Position = pMatrix* vMatrix * worldPosition;
+	gl_Position = pMatrix * vMatrix * worldPosition;
 
 	col = vec4(colors,1);
 };

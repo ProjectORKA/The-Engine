@@ -9,7 +9,7 @@ out float slope;
 out vec4 vertexColor;
 out vec3 vertexPosition;
 out vec3 worldCoordinate;
-out vec2 textureCoordinate; 
+out vec2 textureCoordinate;
 
 void calculateDistortion2(inout vec3 location, inout vec3 normal){
 	float dist = length(vec2(location.xy * 1.5)) / pow(2,worldOffset.w);

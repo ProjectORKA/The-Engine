@@ -33,7 +33,8 @@ void PlanetRenderSystem::render(PlanetSystem& planetSystem, Renderer& renderer, 
 		//octreeRenderSystem.renderLevel(level, renderer);
 
 		//render terrain
-		renderer.shaderSystem.use("terrain");
+		//renderer.shaderSystem.use("terrain");
+		renderer.shaderSystem.use("MooncrashVertex");
 		renderer.textureSystem.use("terrainColor");
 		quadtreeRenderSystem.renderLevel(level, renderer);
 	}
