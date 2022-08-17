@@ -28,3 +28,4 @@ The Data folder should automatically be copied to the output folder when you run
 * [GLM](https://glm.g-truc.net/0.9.9/index.html) - Math
 * [ASSIMP](https://www.assimp.org/) - Mesh Loader
 * [STB IMAGE](https://github.com/nothings/stb) - Image loading
+* [OPTICK](https://github.com/bombomby/optick) - Profiling
