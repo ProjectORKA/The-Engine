@@ -1,1727 +1,396 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Resources">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
-    <Filter Include="Shaders">
-      <UniqueIdentifier>{cc60b519-74ce-4163-9630-a4fd784dd7e1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Shaders\debug">
-      <UniqueIdentifier>{8057ee02-1eca-49b3-9c61-27e8bd0e455b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Shaders\postProcess">
-      <UniqueIdentifier>{4db6f633-ae60-4a54-8c18-7603ecd0774d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Shaders\unlit">
-      <UniqueIdentifier>{c99157e3-d897-499f-ace0-1f9ae0e36505}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Shaders\uiShader">
-      <UniqueIdentifier>{acdd694b-8c13-437d-a8d9-6d5640d73f8a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Shaders\text">
-      <UniqueIdentifier>{56899af3-0746-4888-b31e-af4cd7ae04d2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Shaders\blur">
-      <UniqueIdentifier>{2084c430-e18d-4031-a6ce-58f2931af800}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Shaders\sky">
-      <UniqueIdentifier>{b4b4a38c-c762-4c7c-865b-499489569028}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Shaders\color">
-      <UniqueIdentifier>{362d56af-d719-4a07-b04f-b39fffdf50b5}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Shaders\atmosphere">
-      <UniqueIdentifier>{fdbcc838-eb48-4a79-b555-771b81c17957}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Shaders\COMMON">
-      <UniqueIdentifier>{794d5e1b-92ef-448d-8b61-a2c654d1b00a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Shaders\normals">
-      <UniqueIdentifier>{78d0f300-e0e2-4ba1-8b77-9574b3641127}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Shaders\idShader">
-      <UniqueIdentifier>{751d381e-bdac-4037-baac-92fbc1e291ac}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Shaders\final">
-      <UniqueIdentifier>{73da9f3a-d4f2-454d-bf5f-08a55ed88711}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Global">
-      <UniqueIdentifier>{fe3ca39d-82a1-4cf4-add4-2e21f81ef4d0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Common">
-      <UniqueIdentifier>{4684f843-1ee9-4813-bd3f-ed28cefdc038}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Common\Basic">
-      <UniqueIdentifier>{695af8fd-29cb-4f4b-a742-893b031d0a4b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Common\FileSystem">
-      <UniqueIdentifier>{dbb0fa04-5b33-4e99-b1e6-ed0ba194247b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Common\FileSystem\File">
-      <UniqueIdentifier>{f695857c-3660-4078-913b-0fc7ca5e5446}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Common\Math">
-      <UniqueIdentifier>{83b44308-8a81-4d09-8e5e-2d0e360d85c6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Common\Math\Random">
-      <UniqueIdentifier>{f1107c86-6841-4b7a-8d45-17545f509716}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Common\Math\Noise">
-      <UniqueIdentifier>{eea46552-5c50-4bcc-bb73-3df9d341ed85}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Common\Math\Noise\PerlinNoise">
-      <UniqueIdentifier>{170d8259-f4d9-4457-9472-2bb787e51315}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Common\Math\VectorMath">
-      <UniqueIdentifier>{2d13d521-2c6e-406b-ba54-094a90490600}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Common\Advanced">
-      <UniqueIdentifier>{fb34d34b-e422-480e-b241-b3cb59619355}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Common\Advanced\Override">
-      <UniqueIdentifier>{9521e601-8dbe-4398-a4b8-098914582ac7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Common\Advanced\Threading">
-      <UniqueIdentifier>{e54cf082-0377-43d0-926e-993f59bf0ba1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Common\Transform">
-      <UniqueIdentifier>{fbb46c57-1c41-44c1-aa83-59bc1ff113c3}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Common\Data">
-      <UniqueIdentifier>{511e0c09-ac25-4aaf-b317-8c688a5b0e9a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Common\Data\Image">
-      <UniqueIdentifier>{675e9636-2792-4863-b643-0a95ef799b38}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Common\Data\Name">
-      <UniqueIdentifier>{6729c638-02c2-41c5-a9aa-81f4fe54b7df}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Common\Data\Pixel">
-      <UniqueIdentifier>{3e661aca-ecf5-491d-bfb6-b7ffb576b1d8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Common\Data\String">
-      <UniqueIdentifier>{85adeb92-e448-4335-92b7-522288bdf312}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Common\Data\Color">
-      <UniqueIdentifier>{be3a3641-34b1-48c7-a86d-fcd4892e6c14}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Common\Data\Map">
-      <UniqueIdentifier>{47a9dd10-0e87-4c5a-8335-40d8aa210225}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Common\Data\BranchStructure">
-      <UniqueIdentifier>{a0bb16dd-5911-4c68-acb6-c6596bf549f1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Common\Data\PointCloud">
-      <UniqueIdentifier>{bb1eb5eb-f929-4684-ad50-c90421db11f0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Common\Data\Plot">
-      <UniqueIdentifier>{d4ddd7cf-4a20-4ac1-bb0e-0557cdf9b27e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Common\Data\Queue">
-      <UniqueIdentifier>{c390a4fe-1ca5-45d3-b928-f6e84d18483a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Common\Debug">
-      <UniqueIdentifier>{42ff64d9-fea1-4a31-b5fd-e759905a5be0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine">
-      <UniqueIdentifier>{1b27f742-3b68-461a-8a95-ed051c254b47}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\InputManager">
-      <UniqueIdentifier>{7a9588e2-a35a-4c16-98a6-7d8e16544223}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\InputManager\CameraController">
-      <UniqueIdentifier>{ea07d26c-4f4c-466d-addc-882a8a7843fe}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\Compiler">
-      <UniqueIdentifier>{023fa743-45eb-43fa-97cf-f88703d81630}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\UserInterface">
-      <UniqueIdentifier>{0794c978-10eb-433d-82f6-f90232ea1746}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\UserInterface\UIConstraints">
-      <UniqueIdentifier>{53831a67-93d6-41f9-b733-dc2b663d2485}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\UserInterface\Window">
-      <UniqueIdentifier>{d9c81761-f981-426b-a2d3-1d9ada3ee465}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\UserInterface\Window\WindowAPI">
-      <UniqueIdentifier>{8f8db753-4351-4346-9556-1086cbf2bd9f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\UserInterface\Window\Renderer">
-      <UniqueIdentifier>{8983aea4-6e5e-4a1d-b227-3a1ad3157f11}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\UserInterface\Window\Renderer\FramebufferSystem">
-      <UniqueIdentifier>{ddcde9e2-34dc-41c5-b145-75388667f7e1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\UserInterface\Window\Renderer\FramebufferSystem\Framebuffer">
-      <UniqueIdentifier>{83389054-f4b6-4c15-91a9-47cd01e77add}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\UserInterface\Window\Renderer\RenderObjectSystem">
-      <UniqueIdentifier>{461edde2-4db7-4a4e-9e3f-24912649b9ee}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\UserInterface\Window\Renderer\PlanetRenderSystem">
-      <UniqueIdentifier>{edf5df30-b6df-4df3-8656-ed098c6e68da}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\UserInterface\Window\Renderer\PlanetRenderSystem\QuadtreeSystemRenderer">
-      <UniqueIdentifier>{e9d6fa29-4101-4d6f-a38d-7e25ba6fced1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\UserInterface\Window\Renderer\PlanetRenderSystem\OctreeSystemRenderer">
-      <UniqueIdentifier>{8edeb171-3391-43e2-9ab1-27c3c69cd8ae}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\UserInterface\Window\Renderer\PlanetRenderSystem\TerrainRendering">
-      <UniqueIdentifier>{f9f8954f-c57d-49b7-9183-baf6d1162ecd}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\UserInterface\Window\Renderer\PlanetRenderSystem\RelativeChunkOffset">
-      <UniqueIdentifier>{48654fe3-8b1f-4b0a-b3b2-dd8d6330ae51}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\UserInterface\Window\Renderer\TextRenderSystem">
-      <UniqueIdentifier>{deb23d9e-84f6-441d-b65d-2e11a755d244}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\UserInterface\Window\Renderer\TextRenderSystem\Fonts">
-      <UniqueIdentifier>{f7cb8862-b9d3-4178-85b5-44650d4b0d60}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\UserInterface\Window\Renderer\TextRenderSystem\BitmapTextRenderSystem">
-      <UniqueIdentifier>{24d577c3-124a-46c0-ba84-85c8bef5e60f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\UserInterface\Window\Renderer\TextRenderSystem\GlyphTextRenderSystem">
-      <UniqueIdentifier>{631b4138-f4c8-40bf-ac12-aa3eb8abcdb1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\UserInterface\Window\Renderer\MeshSystem">
-      <UniqueIdentifier>{fe7d1840-f4e9-4212-bd63-094c59350e7a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\UserInterface\Window\Renderer\MeshSystem\IndexedBufferObject">
-      <UniqueIdentifier>{dd4fa99f-7a02-4c26-a434-ab0f93ab8d37}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\UserInterface\Window\Renderer\MeshSystem\CPUMesh">
-      <UniqueIdentifier>{5f425866-fcf7-4a80-a6fb-99daf74feee6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\UserInterface\Window\Renderer\MeshSystem\GPUMesh">
-      <UniqueIdentifier>{a55d4651-4649-432b-80b6-2184d953e3a1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\UserInterface\Window\Renderer\MeshSystem\Instancing">
-      <UniqueIdentifier>{7709abac-b0c7-46ce-915d-55abc2479d1c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\UserInterface\Window\Renderer\ShaderSystem">
-      <UniqueIdentifier>{c9eaa8a5-3a6a-4110-a206-751a74dafb6b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\UserInterface\Window\Renderer\ShaderSystem\Shader">
-      <UniqueIdentifier>{134ecb17-76b6-4d79-9737-c4a0c66957b0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\UserInterface\Window\Renderer\ShaderSystem\Uniforms">
-      <UniqueIdentifier>{7ea2baf7-11ca-4aa1-b3e4-c8f48e892530}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\UserInterface\Window\Renderer\ShaderSystem\Uniforms\UniformBuffer">
-      <UniqueIdentifier>{c04daa80-a0c4-44bc-be2e-1b529d41451d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\UserInterface\Window\Renderer\ShaderSystem\ShaderProgram">
-      <UniqueIdentifier>{acff2f26-9942-4dca-980f-20d2171bbc33}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\UserInterface\Window\Renderer\ShaderSystem\Buffers">
-      <UniqueIdentifier>{25efa8c4-9465-40f2-a8f8-fd4cef34ceaa}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\UserInterface\Window\Renderer\TextureSystem">
-      <UniqueIdentifier>{6185e155-1bba-482a-adea-515da0616a59}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\UserInterface\Window\Renderer\TextureSystem\CPUTexture">
-      <UniqueIdentifier>{ffc88abb-f496-4d8e-a45a-4caa86e5e963}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\UserInterface\Window\Renderer\TextureSystem\GPUTexture">
-      <UniqueIdentifier>{f23fb907-ec4b-4c91-a45a-6e80a722b9c6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\UserInterface\Window\Renderer\RenderRegion">
-      <UniqueIdentifier>{7b63c268-1039-4db4-b027-f461a72b02e9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\UserInterface\Window\Renderer\SimplePlanetRenderer">
-      <UniqueIdentifier>{3349c4bf-e1b3-4efd-b05f-c7994399bac5}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\UserInterface\Window\Renderer\RayMarchedTerrain">
-      <UniqueIdentifier>{f7bd76f1-0c54-4f96-b22c-80fbad60f877}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\UserInterface\Window\Renderer\Cameras">
-      <UniqueIdentifier>{920b6a6f-e90c-41f6-9f39-d391cfd9ded4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\UserInterface\Window\Renderer\Cameras\PlanetCamera">
-      <UniqueIdentifier>{c344e3ab-b1e9-4ab0-9d9a-e53658cf77ce}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\UserInterface\Window\Renderer\Cameras\Camera">
-      <UniqueIdentifier>{cde7c062-fb5f-4bce-96f4-c51e70575524}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\UserInterface\Window\Renderer\GraphicsAPI">
-      <UniqueIdentifier>{28d1cefc-e722-44de-bd5a-bdb01854a711}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\UserInterface\Window\Renderer\SDFTerrainRenderer">
-      <UniqueIdentifier>{484eea1f-787a-49c5-b2fa-459e5e0fd8c6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\UserInterface\Window\Renderer\MatrixSystem">
-      <UniqueIdentifier>{07d6ea81-b53f-48a9-aa87-fe5a3a4a8747}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\UserInterface\Window\Renderer\MatrixSystem\Transformation Stack">
-      <UniqueIdentifier>{ee4ebd29-c373-49fd-bf17-c1c24e6de507}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\UserInterface\UIElement">
-      <UniqueIdentifier>{5a5c1d5e-9102-401b-9d35-8f005d4d4a5c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\UserInterface\UIElement\UIFlatPanel">
-      <UniqueIdentifier>{24951454-5368-4cc9-9675-f66324be07d7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\UserInterface\UIButton">
-      <UniqueIdentifier>{32eb8225-ba4f-432f-b645-236fc5245d93}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\UserInterface\ImGui">
-      <UniqueIdentifier>{de2da536-787c-42ca-8c01-97da644955a6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\AudioSystem">
-      <UniqueIdentifier>{bd09fb8e-2b3b-4b16-b698-9cfa7d6f9165}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\JobSystem">
-      <UniqueIdentifier>{8751d8d4-66c9-43a0-9a77-ca86359f4c0e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\ParticleSystem">
-      <UniqueIdentifier>{ae20cd96-66ca-4152-9d71-d573d411b6da}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\Sky">
-      <UniqueIdentifier>{504a2795-c6b2-41e3-a86c-dc03c5a6c7cd}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\Scene">
-      <UniqueIdentifier>{be866374-722f-4bcf-9146-7d739134fbdb}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\Scene\Renderable">
-      <UniqueIdentifier>{a6b1a22d-0a41-4477-baf7-18686fdd5acf}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\Scene\Interactive">
-      <UniqueIdentifier>{626c1a05-351a-4e14-a438-205e550f28f7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\Memory">
-      <UniqueIdentifier>{5113b7b9-61a2-437a-95d6-b4b579e0eb41}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\Memory\DeadVector">
-      <UniqueIdentifier>{6eb36015-c068-4698-b37b-9d88d54cd565}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\Memory\TLSF">
-      <UniqueIdentifier>{338f62f5-3ee5-4d43-b6f9-a20ad5af94d2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\Memory\Allocators">
-      <UniqueIdentifier>{09842dae-4d7c-4e05-8381-ee35f4e2b4f1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\Memory\Allocators\PoolAllocator">
-      <UniqueIdentifier>{54c88bc0-ddce-45f4-bf11-98c5b1f6aa58}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\Memory\Allocators\StaticAllocator">
-      <UniqueIdentifier>{821f70b3-7812-4388-a1f8-549e6a4eb353}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\ECS">
-      <UniqueIdentifier>{e7dad1e4-3920-4c3a-ace2-d61daf304b6e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\PlanetSystem">
-      <UniqueIdentifier>{604777cb-5920-4900-813b-be0c315a86fc}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\PlanetSystem\OctreeSystem">
-      <UniqueIdentifier>{29891783-4580-46ff-a5bb-d0759f151e76}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\PlanetSystem\OctreeSystem\OctreeID">
-      <UniqueIdentifier>{4bdc795e-e4b2-4b93-be86-8990c9eba501}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\PlanetSystem\OctreeSystem\OctreeData">
-      <UniqueIdentifier>{e76046f6-c940-4910-9e70-7c61cfc28410}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\PlanetSystem\OctreeSystem\OctreeNode">
-      <UniqueIdentifier>{e3382977-80ef-4db2-9fa7-999573965a6c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\PlanetSystem\QuadtreeSystem">
-      <UniqueIdentifier>{e5531201-fe1e-4a87-9551-3113374eda98}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\PlanetSystem\QuadtreeSystem\QuadtreeID">
-      <UniqueIdentifier>{84045d38-c2e5-4710-a5cb-65234acec582}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\PlanetSystem\Heightmap">
-      <UniqueIdentifier>{2f42e84e-7aa2-4972-bea8-b849c08c6b15}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\PlanetSystem\Util">
-      <UniqueIdentifier>{6ed910bb-6133-44bf-a110-ddd23522025a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Games">
-      <UniqueIdentifier>{9f9d8d8e-0ffc-4c47-98dc-881a58beae89}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Games\Game">
-      <UniqueIdentifier>{77ee8e15-caee-44fc-98f4-532ae95e6107}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Games\Game\Organizer">
-      <UniqueIdentifier>{7bdb92d9-9125-4a12-ab78-d4789253feb6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Games\Game\Mooncrash">
-      <UniqueIdentifier>{44fec228-bc21-4a76-9d83-8bb1a57c1ca3}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Games\Game\Mooncrash\shaders">
-      <UniqueIdentifier>{bc2d5955-c761-4b13-a142-effb6b5f04a6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Games\Game\Mooncrash\shaders\depthCutter">
-      <UniqueIdentifier>{a87f273c-a40d-4808-88db-3a17bcba27e3}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Games\Game\Mooncrash\shaders\sdfOctreeTerrainRender">
-      <UniqueIdentifier>{684767c4-9641-4625-ba35-f23e75a6c493}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Games\Game\Mooncrash\shaders\terrain">
-      <UniqueIdentifier>{77b10299-6395-4395-909b-016b3fc2f0c0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Games\Game\Mooncrash\shaders\water">
-      <UniqueIdentifier>{b18d0530-1a91-4d0e-b400-80aeafdff6b3}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Games\Game\Mooncrash\shaders\sdfTerrain">
-      <UniqueIdentifier>{4806eeb7-4a90-4650-bd49-10488765a7c3}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Games\Game\Mooncrash\shaders\primitive">
-      <UniqueIdentifier>{b4447bb9-dc42-4638-87e1-88d2e0781b1b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Games\Game\Mooncrash\shaders\blurredUI">
-      <UniqueIdentifier>{8a0a36c0-ffbc-4263-9732-cd6bb57a17bc}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Games\Game\Intro">
-      <UniqueIdentifier>{d2a99038-0c1d-4150-8f73-9cf1bc603d29}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Games\Game\AIplayground">
-      <UniqueIdentifier>{bd903ea8-cf67-4516-b3b3-501e4ccf696f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Games\Game\Pong">
-      <UniqueIdentifier>{af08b023-4f5a-42ca-8781-515946c403c5}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Games\Game\Math DNA">
-      <UniqueIdentifier>{a24b8bf3-c3a7-4152-a653-cfabf4f42417}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Games\Game\Sortr">
-      <UniqueIdentifier>{25b41ab4-2945-409c-9e4d-7e3934d99041}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Games\Game\Dungeons And Discord">
-      <UniqueIdentifier>{7d652147-ce9f-48f0-910e-1e0c4cc15c7f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Games\Game\Dungeons And Discord\DND UberShader">
-      <UniqueIdentifier>{65921f46-4a03-49fd-a802-0a005ff943a9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Games\Game\Project Melon">
-      <UniqueIdentifier>{aff48ae1-dc10-45e9-9224-7e3e581c8423}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Games\Game\Project Melon\MelonUberShader">
-      <UniqueIdentifier>{a17570be-0ba0-41e1-ba2d-03ad2e204d16}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Games\Game\Project Melon\MelonPlayer">
-      <UniqueIdentifier>{c476cc4a-cba0-42a0-936a-ee80f01e0747}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Games\Game\Project Melon\MelonWorld">
-      <UniqueIdentifier>{26913575-e613-4483-821d-e3c6b2aeb62a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Games\Game\GuessingGame">
-      <UniqueIdentifier>{8a92ec1b-0a80-44aa-95d7-5cd4814b9e38}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Games\Game\UISandbox">
-      <UniqueIdentifier>{c3d51568-af50-427f-93fe-124974863bc6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Games\Game\Sandbox">
-      <UniqueIdentifier>{ae4b5e0a-62f4-4479-98df-60ff63ffe9a0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Games\Game\Sandbox\shaders">
-      <UniqueIdentifier>{0d48b1a9-8321-4803-95c0-571276f66fa1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Games\Game\Sandbox\shaders\sphereRendering">
-      <UniqueIdentifier>{e3007fde-155f-49f8-85de-8c1e28647aa5}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Games\Player">
-      <UniqueIdentifier>{54c364f4-3158-4116-a532-8f40093cc24a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Games\Player\PlanetSystemPlayer">
-      <UniqueIdentifier>{60037d5c-4d83-4520-803b-2c4c5b7240f3}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Games\Pototypes">
-      <UniqueIdentifier>{ea91a823-2692-48c9-847a-c1bf7c1b4cac}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Games\Pototypes\VoxelSystem">
-      <UniqueIdentifier>{066c9a7c-d376-470c-be5c-36eac774b9b5}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Games\Pototypes\TreeSystem">
-      <UniqueIdentifier>{ddfc7411-f058-42c4-90fa-8ccb5f0ea0db}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Games\Pototypes\TerrainSystem">
-      <UniqueIdentifier>{ef6cbb06-4831-4093-a235-241cc5130c14}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Games\Pototypes\SphereMeshing">
-      <UniqueIdentifier>{3d18f830-87cf-4e87-9d59-5a4f6ca024af}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Games\Pototypes\NeuralNetwork">
-      <UniqueIdentifier>{5643a6f8-d2a4-4abf-81fa-b659d065704c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Games\Pototypes\DynaMesh">
-      <UniqueIdentifier>{eb7532c1-33e4-4de2-b084-a48370e46094}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Games\Pototypes\NeighbourOctree">
-      <UniqueIdentifier>{ba07d2d6-d92e-44b1-9e02-a2e66bc06941}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Games\Pototypes\Neighbour Quadtree">
-      <UniqueIdentifier>{db6fabdc-a005-4d7b-918f-c9ae1472cf48}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Games\Pototypes\GeometryClipMapTerrain">
-      <UniqueIdentifier>{ee11ee2d-b315-4f9e-bd9c-d2d3b738b9e5}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Common\Data\Array2D">
-      <UniqueIdentifier>{0a9ca969-1009-4e90-babf-7fd3ef806c35}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\UserInterface\Window\Renderer\LineRenderer">
-      <UniqueIdentifier>{f44790b7-ec58-4735-9f90-46dc7b38f170}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Games\Pototypes\Molecules2D">
-      <UniqueIdentifier>{7f6fda8d-67f2-448b-acd9-e6e3ad6365c6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\UserInterface\Window\Renderer\InteractionSystem">
-      <UniqueIdentifier>{b09d3ce9-f867-4bfa-9c17-0990d64f931f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Games\Pototypes\MindMap">
-      <UniqueIdentifier>{d1272b2a-7353-4bab-bfda-cfefbc220d55}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Games\Game\MindMapper">
-      <UniqueIdentifier>{cc6a9446-9327-4862-908b-30f824e246c1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Games\Game\SimpleRTS">
-      <UniqueIdentifier>{845c9c3c-4726-4f1c-80ce-3d081d06be3f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Games\Game\SimpleRTS\shaders">
-      <UniqueIdentifier>{1196324f-cb32-4d50-9cde-c7996443921d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Common\Time">
-      <UniqueIdentifier>{6fb63ff6-d7db-4b15-981a-b2c04228363d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Common\ResourceManager">
-      <UniqueIdentifier>{79f500eb-1c76-4ed5-8e8a-cc0d0193876f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Common\ECS">
-      <UniqueIdentifier>{02c6a19c-1b38-4994-ae40-9a7d64149d2d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Shaders\mxAO">
-      <UniqueIdentifier>{771c2078-504d-4fb6-88bf-ca924a7e8374}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Games\Game\GPUSim">
-      <UniqueIdentifier>{d02b2238-f682-48da-ac8a-5dc0790529cf}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Games\Game\GPUSim\gpuSimShader">
-      <UniqueIdentifier>{1152aaf9-aa41-421f-a3f4-4b628db388dd}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\UserInterface\Window\Renderer\RectangleRenderer">
-      <UniqueIdentifier>{d1258648-6ea1-439f-8a74-aadb487f999e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\UserInterface\Window\Renderer\IdFramebuffer">
-      <UniqueIdentifier>{9a3f9286-0ee3-4827-90a5-de50c0975b3e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Games\Game\Infinite Detail Prototype">
-      <UniqueIdentifier>{b373c41e-7062-451a-a79b-352934469ec5}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Games\Game\Quake Movement">
-      <UniqueIdentifier>{2f613e36-d8f3-4d3e-96df-770afb8df484}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Games\Pototypes\CheatTest">
-      <UniqueIdentifier>{a39fea45-9f65-464b-8de8-0c1f72739b27}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\UserInterface\Window\Input">
-      <UniqueIdentifier>{42db91e8-0ac8-4e27-8a74-584d87e4d977}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\ParticleSystem\Networking">
-      <UniqueIdentifier>{9f7e75f3-5863-4398-a6f5-94c9f89fe662}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\ParticleSystem\Networking\ASIONetworking">
-      <UniqueIdentifier>{2f9701e3-1267-4944-a912-f42aca935888}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Games\Game\Physics Playground">
-      <UniqueIdentifier>{a96a32e2-6e0b-4b39-a101-6a7a0af9bebc}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\Physics">
-      <UniqueIdentifier>{aefa119f-ac70-4217-b495-8d7b9101d935}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Shaders\vertexColor">
-      <UniqueIdentifier>{1594becc-716e-470c-8958-377b17b0fd77}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Games\Game\Project Snek">
-      <UniqueIdentifier>{6a15c641-e369-4528-97bc-3c60842d8107}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\Physics\Collision">
-      <UniqueIdentifier>{5bd74850-a2d7-452b-85fd-28e73c5e9295}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\Physics\Collision\Colliders">
-      <UniqueIdentifier>{61e49a65-d900-4299-8910-5bbef38dd8f3}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\Physics\PhysicsUtil">
-      <UniqueIdentifier>{0de62e7e-94f9-4653-85c0-a64c872a223b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\UserInterface\Window\Renderer\TextRenderSystem\SDFTextRenderSystem">
-      <UniqueIdentifier>{b9a825e2-3208-499d-b2f6-7919143b4728}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Games\Game\MSDFText">
-      <UniqueIdentifier>{9b6a8fae-2158-47d5-bf51-92a395e29735}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Shaders\msdfFont">
-      <UniqueIdentifier>{f58e639e-19bc-457c-81f9-403e8ce1c91c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\UserInterface\Window\Renderer\TextRenderSystem\SDFTextRenderSystem\Artery Format">
-      <UniqueIdentifier>{2da8f64c-48cf-4861-b717-cd76bbb0a146}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Games\Game\Flappy Bird">
-      <UniqueIdentifier>{3980f6e6-1dbb-4224-bc17-bda55195b90c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Libraries">
-      <UniqueIdentifier>{d6d6de30-f3d2-4fc5-a342-1fd6260db708}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Tools">
-      <UniqueIdentifier>{7e39fe6d-377a-48b1-b11d-577482cde881}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Common\Template Octree">
-      <UniqueIdentifier>{4d3ddb05-0a57-46d0-b207-4e5ede569120}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Common\Interfaces">
-      <UniqueIdentifier>{9eddc00c-9bfd-4b7a-a989-42d44ce8d819}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\PlanetSystem\QuadtreeSystem\QuadtreeNode">
-      <UniqueIdentifier>{527b9d4e-31ef-4006-b5c9-039aeefd4b50}</UniqueIdentifier>
-    </Filter>
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="MeshSystem.cpp">
-      <Filter>Engine\UserInterface\Window\Renderer\MeshSystem</Filter>
-    </ClCompile>
-    <ClCompile Include="TextureSystem.cpp">
-      <Filter>Engine\UserInterface\Window\Renderer\TextureSystem</Filter>
-    </ClCompile>
-    <ClCompile Include="ProceduralMeshes.cpp">
-      <Filter>Engine\UserInterface\Window\Renderer\MeshSystem</Filter>
-    </ClCompile>
-    <ClCompile Include="Renderer.cpp">
-      <Filter>Engine\UserInterface\Window\Renderer</Filter>
-    </ClCompile>
-    <ClCompile Include="IndexBufferObject.cpp">
-      <Filter>Engine\UserInterface\Window\Renderer\MeshSystem\IndexedBufferObject</Filter>
-    </ClCompile>
-    <ClCompile Include="RenderObjectSystem.cpp">
-      <Filter>Engine\UserInterface\Window\Renderer\RenderObjectSystem</Filter>
-    </ClCompile>
-    <ClCompile Include="ShaderSystem.cpp">
-      <Filter>Engine\UserInterface\Window\Renderer\ShaderSystem</Filter>
-    </ClCompile>
-    <ClCompile Include="PlanetRenderSystem.cpp">
-      <Filter>Engine\UserInterface\Window\Renderer\PlanetRenderSystem</Filter>
-    </ClCompile>
-    <ClCompile Include="VertexArrayObject.cpp">
-      <Filter>Engine\UserInterface\Window\Renderer\MeshSystem</Filter>
-    </ClCompile>
-    <ClCompile Include="VertexBufferObject.cpp">
-      <Filter>Engine\UserInterface\Window\Renderer\MeshSystem</Filter>
-    </ClCompile>
-    <ClCompile Include="CPUMesh.cpp">
-      <Filter>Engine\UserInterface\Window\Renderer\MeshSystem\CPUMesh</Filter>
-    </ClCompile>
-    <ClCompile Include="GPUMesh.cpp">
-      <Filter>Engine\UserInterface\Window\Renderer\MeshSystem\GPUMesh</Filter>
-    </ClCompile>
-    <ClCompile Include="Networking.cpp">
-      <Filter>Engine\ParticleSystem\Networking</Filter>
-    </ClCompile>
-    <ClCompile Include="TextRenderSystem.cpp">
-      <Filter>Engine\UserInterface\Window\Renderer\TextRenderSystem</Filter>
-    </ClCompile>
-    <ClCompile Include="Debug.cpp">
-      <Filter>Common\Debug</Filter>
-    </ClCompile>
-    <ClCompile Include="FileSystem.cpp">
-      <Filter>Common\FileSystem</Filter>
-    </ClCompile>
-    <ClCompile Include="Math.cpp">
-      <Filter>Common\Math</Filter>
-    </ClCompile>
-    <ClCompile Include="OctreeSystem.cpp">
-      <Filter>Engine\PlanetSystem\OctreeSystem</Filter>
-    </ClCompile>
-    <ClCompile Include="PlanetSystem.cpp">
-      <Filter>Engine\PlanetSystem</Filter>
-    </ClCompile>
-    <ClCompile Include="QuadtreeSystem.cpp">
-      <Filter>Engine\PlanetSystem\QuadtreeSystem</Filter>
-    </ClCompile>
-    <ClCompile Include="Time.cpp">
-      <Filter>Common\Time</Filter>
-    </ClCompile>
-    <ClCompile Include="ULLUtil.cpp">
-      <Filter>Engine\PlanetSystem\Util</Filter>
-    </ClCompile>
-    <ClCompile Include="CPUTexture.cpp">
-      <Filter>Engine\UserInterface\Window\Renderer\TextureSystem\CPUTexture</Filter>
-    </ClCompile>
-    <ClCompile Include="GPUTexture.cpp">
-      <Filter>Engine\UserInterface\Window\Renderer\TextureSystem\GPUTexture</Filter>
-    </ClCompile>
-    <ClCompile Include="Framebuffer.cpp">
-      <Filter>Engine\UserInterface\Window\Renderer\FramebufferSystem\Framebuffer</Filter>
-    </ClCompile>
-    <ClCompile Include="Window.cpp">
-      <Filter>Engine\UserInterface\Window</Filter>
-    </ClCompile>
-    <ClCompile Include="FramebufferSystem.cpp">
-      <Filter>Engine\UserInterface\Window\Renderer\FramebufferSystem</Filter>
-    </ClCompile>
-    <ClCompile Include="Shader.cpp">
-      <Filter>Engine\UserInterface\Window\Renderer\ShaderSystem\Shader</Filter>
-    </ClCompile>
-    <ClCompile Include="QuadtreeSystemRenderer.cpp">
-      <Filter>Engine\UserInterface\Window\Renderer\PlanetRenderSystem\QuadtreeSystemRenderer</Filter>
-    </ClCompile>
-    <ClCompile Include="TerrainRendering.cpp">
-      <Filter>Engine\UserInterface\Window\Renderer\PlanetRenderSystem\TerrainRendering</Filter>
-    </ClCompile>
-    <ClCompile Include="PlanetCamera.cpp">
-      <Filter>Engine\UserInterface\Window\Renderer\Cameras\PlanetCamera</Filter>
-    </ClCompile>
-    <ClCompile Include="Camera.cpp">
-      <Filter>Engine\UserInterface\Window\Renderer\Cameras\Camera</Filter>
-    </ClCompile>
-    <ClCompile Include="OctreeSystemRenderer.cpp">
-      <Filter>Engine\UserInterface\Window\Renderer\PlanetRenderSystem\OctreeSystemRenderer</Filter>
-    </ClCompile>
-    <ClCompile Include="RelativeChunkOffset.cpp">
-      <Filter>Engine\UserInterface\Window\Renderer\PlanetRenderSystem\RelativeChunkOffset</Filter>
-    </ClCompile>
-    <ClCompile Include="TerrainSystem.cpp">
-      <Filter>Games\Pototypes\TerrainSystem</Filter>
-    </ClCompile>
-    <ClCompile Include="WindowAPI.cpp">
-      <Filter>Engine\UserInterface\Window\WindowAPI</Filter>
-    </ClCompile>
-    <ClCompile Include="TiledMath.cpp">
-      <Filter>Common\Math</Filter>
-    </ClCompile>
-    <ClCompile Include="Uniforms.cpp">
-      <Filter>Engine\UserInterface\Window\Renderer\ShaderSystem\Uniforms</Filter>
-    </ClCompile>
-    <ClCompile Include="UniformBuffer.cpp">
-      <Filter>Engine\UserInterface\Window\Renderer\ShaderSystem\Uniforms\UniformBuffer</Filter>
-    </ClCompile>
-    <ClCompile Include="RenderRegion.cpp">
-      <Filter>Engine\UserInterface\Window\Renderer\RenderRegion</Filter>
-    </ClCompile>
-    <ClCompile Include="ShaderProgram.cpp">
-      <Filter>Engine\UserInterface\Window\Renderer\ShaderSystem\ShaderProgram</Filter>
-    </ClCompile>
-    <ClCompile Include="UIFlatPanel.cpp">
-      <Filter>Engine\UserInterface\UIElement\UIFlatPanel</Filter>
-    </ClCompile>
-    <ClCompile Include="OctreeNode.cpp">
-      <Filter>Engine\PlanetSystem\OctreeSystem\OctreeNode</Filter>
-    </ClCompile>
-    <ClCompile Include="GraphicsAPI.cpp">
-      <Filter>Engine\UserInterface\Window\Renderer\GraphicsAPI</Filter>
-    </ClCompile>
-    <ClCompile Include="Settings.cpp">
-      <Filter>Global</Filter>
-    </ClCompile>
-    <ClCompile Include="SDFTerrainRenderSystem.cpp">
-      <Filter>Engine\UserInterface\Window\Renderer\SDFTerrainRenderer</Filter>
-    </ClCompile>
-    <ClCompile Include="TransformationStack.cpp">
-      <Filter>Engine\UserInterface\Window\Renderer\MatrixSystem\Transformation Stack</Filter>
-    </ClCompile>
-    <ClCompile Include="MatrixSystem.cpp">
-      <Filter>Engine\UserInterface\Window\Renderer\MatrixSystem</Filter>
-    </ClCompile>
-    <ClCompile Include="Game.cpp">
-      <Filter>Games\Game</Filter>
-    </ClCompile>
-    <ClCompile Include="Intro.cpp">
-      <Filter>Games\Game\Intro</Filter>
-    </ClCompile>
-    <ClCompile Include="Mooncrash.cpp">
-      <Filter>Games\Game\Mooncrash</Filter>
-    </ClCompile>
-    <ClCompile Include="AIPlayground.cpp">
-      <Filter>Games\Game\AIplayground</Filter>
-    </ClCompile>
-    <ClCompile Include="Fonts.cpp">
-      <Filter>Engine\UserInterface\Window\Renderer\TextRenderSystem\Fonts</Filter>
-    </ClCompile>
-    <ClCompile Include="QuadtreeID.cpp">
-      <Filter>Engine\PlanetSystem\QuadtreeSystem\QuadtreeID</Filter>
-    </ClCompile>
-    <ClCompile Include="MindMap.cpp">
-      <Filter>Games\Pototypes\MindMap</Filter>
-    </ClCompile>
-    <ClCompile Include="Pong.cpp">
-      <Filter>Games\Game\Pong</Filter>
-    </ClCompile>
-    <ClCompile Include="UserInterface.cpp">
-      <Filter>Engine\UserInterface</Filter>
-    </ClCompile>
-    <ClCompile Include="BitmapTextRenderSystem.cpp">
-      <Filter>Engine\UserInterface\Window\Renderer\TextRenderSystem\BitmapTextRenderSystem</Filter>
-    </ClCompile>
-    <ClCompile Include="NeuralNetwork.cpp">
-      <Filter>Games\Pototypes\NeuralNetwork</Filter>
-    </ClCompile>
-    <ClCompile Include="MathDNA.cpp">
-      <Filter>Games\Game\Math DNA</Filter>
-    </ClCompile>
-    <ClCompile Include="Sortr.cpp">
-      <Filter>Games\Game\Sortr</Filter>
-    </ClCompile>
-    <ClCompile Include="DungeonsAndDiscord.cpp">
-      <Filter>Games\Game\Dungeons And Discord</Filter>
-    </ClCompile>
-    <ClCompile Include="Player.cpp">
-      <Filter>Games\Player</Filter>
-    </ClCompile>
-    <ClCompile Include="PlanetSystemPlayer.cpp">
-      <Filter>Games\Player\PlanetSystemPlayer</Filter>
-    </ClCompile>
-    <ClCompile Include="Plot.cpp">
-      <Filter>Common\Data\Plot</Filter>
-    </ClCompile>
-    <ClCompile Include="PerlinNoise.cpp">
-      <Filter>Common\Math\Noise\PerlinNoise</Filter>
-    </ClCompile>
-    <ClCompile Include="TreeSystem.cpp">
-      <Filter>Games\Pototypes\TreeSystem</Filter>
-    </ClCompile>
-    <ClCompile Include="Transform.cpp">
-      <Filter>Common\Transform</Filter>
-    </ClCompile>
-    <ClCompile Include="UIElement.cpp">
-      <Filter>Engine\UserInterface\UIElement</Filter>
-    </ClCompile>
-    <ClCompile Include="Sky.cpp">
-      <Filter>Engine\Sky</Filter>
-    </ClCompile>
-    <ClCompile Include="DynameshTerrain.cpp">
-      <Filter>Games\Pototypes\DynaMesh</Filter>
-    </ClCompile>
-    <ClCompile Include="VoxelSystem.cpp">
-      <Filter>Games\Pototypes\VoxelSystem</Filter>
-    </ClCompile>
-    <ClCompile Include="PointCloud.cpp">
-      <Filter>Common\Data\PointCloud</Filter>
-    </ClCompile>
-    <ClCompile Include="BranchStructure.cpp">
-      <Filter>Common\Data\BranchStructure</Filter>
-    </ClCompile>
-    <ClCompile Include="NeighbourQuadtree.cpp">
-      <Filter>Games\Pototypes\Neighbour Quadtree</Filter>
-    </ClCompile>
-    <ClCompile Include="Server.cpp">
-      <Filter>Engine\ParticleSystem\Networking</Filter>
-    </ClCompile>
-    <ClCompile Include="Client.cpp">
-      <Filter>Engine\ParticleSystem\Networking</Filter>
-    </ClCompile>
-    <ClCompile Include="JobSystem.cpp">
-      <Filter>Engine\JobSystem</Filter>
-    </ClCompile>
-    <ClCompile Include="ParticleSystem.cpp">
-      <Filter>Engine\ParticleSystem</Filter>
-    </ClCompile>
-    <ClCompile Include="ProjectMelon.cpp">
-      <Filter>Games\Game\Project Melon</Filter>
-    </ClCompile>
-    <ClCompile Include="Instancing.cpp">
-      <Filter>Engine\UserInterface\Window\Renderer\MeshSystem\Instancing</Filter>
-    </ClCompile>
-    <ClCompile Include="Renderable.cpp">
-      <Filter>Engine\Scene\Renderable</Filter>
-    </ClCompile>
-    <ClCompile Include="Scene.cpp">
-      <Filter>Engine\Scene</Filter>
-    </ClCompile>
-    <ClCompile Include="MelonPlayer.cpp">
-      <Filter>Games\Game\Project Melon\MelonPlayer</Filter>
-    </ClCompile>
-    <ClCompile Include="MelonWorld.cpp">
-      <Filter>Games\Game\Project Melon\MelonWorld</Filter>
-    </ClCompile>
+    <ClCompile Include="AIPlayground.cpp" />
     <ClCompile Include="C++ Cheatsheet.cpp" />
-    <ClCompile Include="Sandbox.cpp">
-      <Filter>Games\Game\Sandbox</Filter>
-    </ClCompile>
-    <ClCompile Include="GPUBuffer.cpp">
-      <Filter>Engine\UserInterface\Window\Renderer\ShaderSystem\Buffers</Filter>
-    </ClCompile>
-    <ClCompile Include="Random.cpp">
-      <Filter>Common\Math\Random</Filter>
-    </ClCompile>
-    <ClCompile Include="Name.cpp">
-      <Filter>Common\Data\Name</Filter>
-    </ClCompile>
-    <ClCompile Include="Memory.cpp">
-      <Filter>Engine\Memory</Filter>
-    </ClCompile>
-    <ClCompile Include="TLSFAllocator.cpp">
-      <Filter>Engine\Memory\TLSF</Filter>
-    </ClCompile>
-    <ClCompile Include="ECS.cpp">
-      <Filter>Engine\ECS</Filter>
-    </ClCompile>
-    <ClCompile Include="UISandbox.cpp">
-      <Filter>Games\Game\UISandbox</Filter>
-    </ClCompile>
-    <ClCompile Include="UIButton.cpp">
-      <Filter>Engine\UserInterface\UIButton</Filter>
-    </ClCompile>
-    <ClCompile Include="NeighbourOctree.cpp">
-      <Filter>Games\Pototypes\NeighbourOctree</Filter>
-    </ClCompile>
-    <ClCompile Include="Molecules2D.cpp">
-      <Filter>Games\Pototypes\Molecules2D</Filter>
-    </ClCompile>
-    <ClCompile Include="SimpleRTS.cpp">
-      <Filter>Games\Game\SimpleRTS</Filter>
-    </ClCompile>
-    <ClCompile Include="ResourceManager.cpp">
-      <Filter>Common\ResourceManager</Filter>
-    </ClCompile>
-    <ClCompile Include="EntityComponentSystem.cpp">
-      <Filter>Common\ECS</Filter>
-    </ClCompile>
-    <ClCompile Include="LineRenderer.cpp">
-      <Filter>Engine\UserInterface\Window\Renderer\LineRenderer</Filter>
-    </ClCompile>
-    <ClCompile Include="RectangleRenderer.cpp">
-      <Filter>Engine\UserInterface\Window\Renderer\RectangleRenderer</Filter>
-    </ClCompile>
-    <ClCompile Include="IdFramebuffer.cpp">
-      <Filter>Engine\UserInterface\Window\Renderer\IdFramebuffer</Filter>
-    </ClCompile>
-    <ClCompile Include="InfiniteDetailPrototype.cpp">
-      <Filter>Games\Game\Infinite Detail Prototype</Filter>
-    </ClCompile>
-    <ClCompile Include="CheatTest.cpp">
-      <Filter>Games\Pototypes\CheatTest</Filter>
-    </ClCompile>
-    <ClCompile Include="MindMapper.cpp">
-      <Filter>Games\Game\MindMapper</Filter>
-    </ClCompile>
-    <ClCompile Include="QuakeMovement.cpp">
-      <Filter>Games\Game\Quake Movement</Filter>
-    </ClCompile>
-    <ClCompile Include="PhysicsPlayground.cpp">
-      <Filter>Games\Game\Physics Playground</Filter>
-    </ClCompile>
-    <ClCompile Include="Physics.cpp">
-      <Filter>Engine\Physics</Filter>
-    </ClCompile>
-    <ClCompile Include="Compiler.cpp">
-      <Filter>Engine\Compiler</Filter>
-    </ClCompile>
-    <ClCompile Include="ProjectSnek.cpp">
-      <Filter>Games\Game\Project Snek</Filter>
-    </ClCompile>
-    <ClCompile Include="Input.cpp">
-      <Filter>Engine\UserInterface\Window\Input</Filter>
-    </ClCompile>
-    <ClCompile Include="String.cpp">
-      <Filter>Common\Data\String</Filter>
-    </ClCompile>
-    <ClCompile Include="PhysicsUtil.cpp">
-      <Filter>Engine\Physics\PhysicsUtil</Filter>
-    </ClCompile>
-    <ClCompile Include="Collision.cpp">
-      <Filter>Engine\Physics\Collision</Filter>
-    </ClCompile>
+    <ClCompile Include="CheatTest.cpp" />
+    <ClCompile Include="Collision.cpp" />
+    <ClCompile Include="Compiler.cpp" />
+    <ClCompile Include="EntityComponentSystem.cpp" />
     <ClCompile Include="File.cpp" />
-    <ClCompile Include="optik\optick_core.cpp">
-      <Filter>Libraries</Filter>
-    </ClCompile>
-    <ClCompile Include="optik\optick_gpu.cpp">
-      <Filter>Libraries</Filter>
-    </ClCompile>
-    <ClCompile Include="optik\optick_gpu.d3d12.cpp">
-      <Filter>Libraries</Filter>
-    </ClCompile>
-    <ClCompile Include="optik\optick_gpu.vulkan.cpp">
-      <Filter>Libraries</Filter>
-    </ClCompile>
-    <ClCompile Include="optik\optick_message.cpp">
-      <Filter>Libraries</Filter>
-    </ClCompile>
-    <ClCompile Include="optik\optick_miniz.cpp">
-      <Filter>Libraries</Filter>
-    </ClCompile>
-    <ClCompile Include="optik\optick_serialization.cpp">
-      <Filter>Libraries</Filter>
-    </ClCompile>
-    <ClCompile Include="optik\optick_server.cpp">
-      <Filter>Libraries</Filter>
-    </ClCompile>
-    <ClCompile Include="optik\optick_capi.cpp">
-      <Filter>Libraries</Filter>
-    </ClCompile>
-    <ClCompile Include="QuadtreeNode.cpp">
-      <Filter>Engine\PlanetSystem\QuadtreeSystem\QuadtreeNode</Filter>
-    </ClCompile>
+    <ClCompile Include="GPUBuffer.cpp" />
+    <ClCompile Include="IdFramebuffer.cpp" />
+    <ClCompile Include="InfiniteDetailPrototype.cpp" />
+    <ClCompile Include="Input.cpp" />
+    <ClCompile Include="Instancing.cpp" />
+    <ClCompile Include="LineRenderer.cpp" />
+    <ClCompile Include="MelonPlayer.cpp" />
+    <ClCompile Include="MelonWorld.cpp" />
+    <ClCompile Include="Memory.cpp" />
+    <ClCompile Include="MindMapper.cpp" />
+    <ClCompile Include="Name.cpp" />
+    <ClCompile Include="NeighbourOctree.cpp" />
+    <ClCompile Include="Molecules2D.cpp" />
+    <ClCompile Include="optik\optick_capi.cpp" />
+    <ClCompile Include="optik\optick_core.cpp" />
+    <ClCompile Include="optik\optick_gpu.cpp" />
+    <ClCompile Include="optik\optick_gpu.d3d12.cpp" />
+    <ClCompile Include="optik\optick_gpu.vulkan.cpp" />
+    <ClCompile Include="optik\optick_message.cpp" />
+    <ClCompile Include="optik\optick_miniz.cpp" />
+    <ClCompile Include="optik\optick_serialization.cpp" />
+    <ClCompile Include="optik\optick_server.cpp" />
+    <ClCompile Include="ParticleSystem.cpp" />
+    <ClCompile Include="Physics.cpp" />
+    <ClCompile Include="PhysicsPlayground.cpp" />
+    <ClCompile Include="PhysicsUtil.cpp" />
+    <ClCompile Include="ProjectMelon.cpp" />
+    <ClCompile Include="QuadtreeNode.cpp" />
+    <ClCompile Include="QuakeMovement.cpp" />
+    <ClCompile Include="Random.cpp" />
+    <ClCompile Include="RectangleRenderer.cpp" />
+    <ClCompile Include="Renderable.cpp" />
+    <ClCompile Include="ResourceManager.cpp" />
+    <ClCompile Include="Sandbox.cpp" />
+    <ClCompile Include="Scene.cpp" />
+    <ClCompile Include="SimpleRTS.cpp" />
+    <ClCompile Include="Sky.cpp" />
+    <ClCompile Include="BitmapTextRenderSystem.cpp" />
+    <ClCompile Include="BranchStructure.cpp" />
+    <ClCompile Include="Client.cpp" />
+    <ClCompile Include="DungeonsAndDiscord.cpp" />
+    <ClCompile Include="DynameshTerrain.cpp" />
+    <ClCompile Include="Fonts.cpp" />
+    <ClCompile Include="Game.cpp" />
+    <ClCompile Include="Intro.cpp" />
+    <ClCompile Include="JobSystem.cpp" />
+    <ClCompile Include="MathDNA.cpp" />
+    <ClCompile Include="MatrixSystem.cpp" />
+    <ClCompile Include="Mooncrash.cpp" />
+    <ClCompile Include="NeighbourQuadtree.cpp" />
+    <ClCompile Include="NeuralNetwork.cpp" />
+    <ClCompile Include="OctreeNode.cpp" />
+    <ClCompile Include="PerlinNoise.cpp" />
+    <ClCompile Include="PlanetSystemPlayer.cpp" />
+    <ClCompile Include="Player.cpp" />
+    <ClCompile Include="Plot.cpp" />
+    <ClCompile Include="PointCloud.cpp" />
+    <ClCompile Include="Pong.cpp" />
+    <ClCompile Include="QuadtreeID.cpp" />
+    <ClCompile Include="String.cpp" />
+    <ClCompile Include="ProjectSnek.cpp" />
+    <ClCompile Include="TLSFAllocator.cpp" />
+    <ClCompile Include="SDFTerrainRenderSystem.cpp" />
+    <ClCompile Include="Server.cpp" />
+    <ClCompile Include="Settings.cpp" />
+    <ClCompile Include="Sortr.cpp" />
+    <ClCompile Include="Transform.cpp" />
+    <ClCompile Include="TransformationStack.cpp" />
+    <ClCompile Include="MindMap.cpp" />
+    <ClCompile Include="RenderRegion.cpp" />
+    <ClCompile Include="ShaderProgram.cpp" />
+    <ClCompile Include="TiledMath.cpp" />
+    <ClCompile Include="OctreeSystemRenderer.cpp" />
+    <ClCompile Include="PlanetCamera.cpp" />
+    <ClCompile Include="CPUMesh.cpp" />
+    <ClCompile Include="CPUTexture.cpp" />
+    <ClCompile Include="Debug.cpp" />
+    <ClCompile Include="ECS.cpp" />
+    <ClCompile Include="FileSystem.cpp" />
+    <ClCompile Include="Framebuffer.cpp" />
+    <ClCompile Include="FramebufferSystem.cpp" />
+    <ClCompile Include="GPUMesh.cpp" />
+    <ClCompile Include="GPUTexture.cpp" />
+    <ClCompile Include="GraphicsAPI.cpp" />
+    <ClCompile Include="IndexBufferObject.cpp" />
+    <ClCompile Include="Math.cpp" />
+    <ClCompile Include="MeshSystem.cpp" />
+    <ClCompile Include="Networking.cpp" />
+    <ClCompile Include="PlanetRenderSystem.cpp" />
+    <ClCompile Include="PlanetSystem.cpp" />
+    <ClCompile Include="QuadtreeSystemRenderer.cpp" />
+    <ClCompile Include="RelativeChunkOffset.cpp" />
+    <ClCompile Include="Shader.cpp" />
+    <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="TerrainRendering.cpp" />
+    <ClCompile Include="TerrainSystem.cpp" />
+    <ClCompile Include="TreeSystem.cpp" />
+    <ClCompile Include="UIButton.cpp" />
+    <ClCompile Include="UIElement.cpp" />
+    <ClCompile Include="UIFlatPanel.cpp" />
+    <ClCompile Include="UISandbox.cpp" />
+    <ClCompile Include="ULLUtil.cpp" />
+    <ClCompile Include="ProceduralMeshes.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="Renderer.cpp" />
+    <ClCompile Include="RenderObjectSystem.cpp" />
+    <ClCompile Include="ShaderSystem.cpp" />
+    <ClCompile Include="QuadtreeSystem.cpp" />
+    <ClCompile Include="TextRenderSystem.cpp" />
+    <ClCompile Include="TextureSystem.cpp" />
+    <ClCompile Include="Time.cpp" />
+    <ClCompile Include="UniformBuffer.cpp" />
+    <ClCompile Include="Uniforms.cpp" />
+    <ClCompile Include="UserInterface.cpp" />
+    <ClCompile Include="VertexArrayObject.cpp" />
+    <ClCompile Include="VertexBufferObject.cpp" />
+    <ClCompile Include="VoxelSystem.cpp" />
+    <ClCompile Include="Window.cpp" />
+    <ClCompile Include="WindowAPI.cpp" />
+    <ClCompile Include="OctreeSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="icon.rc">
-      <Filter>Resources</Filter>
-    </ResourceCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="MeshSystem.hpp">
-      <Filter>Engine\UserInterface\Window\Renderer\MeshSystem</Filter>
-    </ClInclude>
-    <ClInclude Include="TextureSystem.hpp">
-      <Filter>Engine\UserInterface\Window\Renderer\TextureSystem</Filter>
-    </ClInclude>
-    <ClInclude Include="ProceduralMeshes.hpp">
-      <Filter>Engine\UserInterface\Window\Renderer\MeshSystem</Filter>
-    </ClInclude>
-    <ClInclude Include="Renderer.hpp">
-      <Filter>Engine\UserInterface\Window\Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="resource.h">
-      <Filter>Resources</Filter>
-    </ClInclude>
-    <ClInclude Include="IndexBufferObject.hpp">
-      <Filter>Engine\UserInterface\Window\Renderer\MeshSystem\IndexedBufferObject</Filter>
-    </ClInclude>
-    <ClInclude Include="RenderObjectSystem.hpp">
-      <Filter>Engine\UserInterface\Window\Renderer\RenderObjectSystem</Filter>
-    </ClInclude>
-    <ClInclude Include="ShaderSystem.hpp">
-      <Filter>Engine\UserInterface\Window\Renderer\ShaderSystem</Filter>
-    </ClInclude>
-    <ClInclude Include="PlanetRenderSystem.hpp">
-      <Filter>Engine\UserInterface\Window\Renderer\PlanetRenderSystem</Filter>
-    </ClInclude>
-    <ClInclude Include="VertexArrayObject.hpp">
-      <Filter>Engine\UserInterface\Window\Renderer\MeshSystem</Filter>
-    </ClInclude>
-    <ClInclude Include="VertexBufferObject.hpp">
-      <Filter>Engine\UserInterface\Window\Renderer\MeshSystem</Filter>
-    </ClInclude>
-    <ClInclude Include="CPUMesh.hpp">
-      <Filter>Engine\UserInterface\Window\Renderer\MeshSystem\CPUMesh</Filter>
-    </ClInclude>
-    <ClInclude Include="GPUMesh.hpp">
-      <Filter>Engine\UserInterface\Window\Renderer\MeshSystem\GPUMesh</Filter>
-    </ClInclude>
-    <ClInclude Include="Networking.hpp">
-      <Filter>Engine\ParticleSystem\Networking</Filter>
-    </ClInclude>
-    <ClInclude Include="TextRenderSystem.hpp">
-      <Filter>Engine\UserInterface\Window\Renderer\TextRenderSystem</Filter>
-    </ClInclude>
-    <ClInclude Include="Basics.hpp">
-      <Filter>Common\Basic</Filter>
-    </ClInclude>
-    <ClInclude Include="Debug.hpp">
-      <Filter>Common\Debug</Filter>
-    </ClInclude>
-    <ClInclude Include="FileSystem.hpp">
-      <Filter>Common\FileSystem</Filter>
-    </ClInclude>
-    <ClInclude Include="Math.hpp">
-      <Filter>Common\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="Threading.hpp">
-      <Filter>Common\Advanced\Threading</Filter>
-    </ClInclude>
-    <ClInclude Include="Heightmap.hpp">
-      <Filter>Engine\PlanetSystem\Heightmap</Filter>
-    </ClInclude>
-    <ClInclude Include="OctreeSystem.hpp">
-      <Filter>Engine\PlanetSystem\OctreeSystem</Filter>
-    </ClInclude>
-    <ClInclude Include="PlanetSystem.hpp">
-      <Filter>Engine\PlanetSystem</Filter>
-    </ClInclude>
-    <ClInclude Include="QuadtreeSystem.hpp">
-      <Filter>Engine\PlanetSystem\QuadtreeSystem</Filter>
-    </ClInclude>
-    <ClInclude Include="Time.hpp">
-      <Filter>Common\Time</Filter>
-    </ClInclude>
-    <ClInclude Include="ULLUtil.hpp">
-      <Filter>Engine\PlanetSystem\Util</Filter>
-    </ClInclude>
-    <ClInclude Include="CPUTexture.hpp">
-      <Filter>Engine\UserInterface\Window\Renderer\TextureSystem\CPUTexture</Filter>
-    </ClInclude>
-    <ClInclude Include="GPUTexture.hpp">
-      <Filter>Engine\UserInterface\Window\Renderer\TextureSystem\GPUTexture</Filter>
-    </ClInclude>
-    <ClInclude Include="Framebuffer.hpp">
-      <Filter>Engine\UserInterface\Window\Renderer\FramebufferSystem\Framebuffer</Filter>
-    </ClInclude>
-    <ClInclude Include="FramebufferSystem.hpp">
-      <Filter>Engine\UserInterface\Window\Renderer\FramebufferSystem</Filter>
-    </ClInclude>
-    <ClInclude Include="Window.hpp">
-      <Filter>Engine\UserInterface\Window</Filter>
-    </ClInclude>
-    <ClInclude Include="Shader.hpp">
-      <Filter>Engine\UserInterface\Window\Renderer\ShaderSystem\Shader</Filter>
-    </ClInclude>
-    <ClInclude Include="QuadtreeSystemRenderer.hpp">
-      <Filter>Engine\UserInterface\Window\Renderer\PlanetRenderSystem\QuadtreeSystemRenderer</Filter>
-    </ClInclude>
-    <ClInclude Include="TerrainRendering.hpp">
-      <Filter>Engine\UserInterface\Window\Renderer\PlanetRenderSystem\TerrainRendering</Filter>
-    </ClInclude>
-    <ClInclude Include="OctreeID.hpp">
-      <Filter>Engine\PlanetSystem\OctreeSystem\OctreeID</Filter>
-    </ClInclude>
-    <ClInclude Include="OctreeData.hpp">
-      <Filter>Engine\PlanetSystem\OctreeSystem\OctreeData</Filter>
-    </ClInclude>
-    <ClInclude Include="PlanetCamera.hpp">
-      <Filter>Engine\UserInterface\Window\Renderer\Cameras\PlanetCamera</Filter>
-    </ClInclude>
-    <ClInclude Include="Camera.hpp">
-      <Filter>Engine\UserInterface\Window\Renderer\Cameras\Camera</Filter>
-    </ClInclude>
-    <ClInclude Include="OctreeSystemRenderer.hpp">
-      <Filter>Engine\UserInterface\Window\Renderer\PlanetRenderSystem\OctreeSystemRenderer</Filter>
-    </ClInclude>
-    <ClInclude Include="RelativeChunkOffset.hpp">
-      <Filter>Engine\UserInterface\Window\Renderer\PlanetRenderSystem\RelativeChunkOffset</Filter>
-    </ClInclude>
-    <ClInclude Include="TerrainSystem.hpp">
-      <Filter>Games\Pototypes\TerrainSystem</Filter>
-    </ClInclude>
-    <ClInclude Include="QuadtreeID.hpp">
-      <Filter>Engine\PlanetSystem\QuadtreeSystem\QuadtreeID</Filter>
-    </ClInclude>
-    <ClInclude Include="WindowAPI.hpp">
-      <Filter>Engine\UserInterface\Window\WindowAPI</Filter>
-    </ClInclude>
-    <ClInclude Include="Organizer.hpp">
-      <Filter>Games\Game\Organizer</Filter>
-    </ClInclude>
-    <ClInclude Include="TiledMath.hpp">
-      <Filter>Common\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="CameraControllers.hpp">
-      <Filter>Engine\InputManager\CameraController</Filter>
-    </ClInclude>
-    <ClInclude Include="Uniforms.hpp">
-      <Filter>Engine\UserInterface\Window\Renderer\ShaderSystem\Uniforms</Filter>
-    </ClInclude>
-    <ClInclude Include="UniformBuffer.hpp">
-      <Filter>Engine\UserInterface\Window\Renderer\ShaderSystem\Uniforms\UniformBuffer</Filter>
-    </ClInclude>
-    <ClInclude Include="RenderRegion.hpp">
-      <Filter>Engine\UserInterface\Window\Renderer\RenderRegion</Filter>
-    </ClInclude>
-    <ClInclude Include="Functor.hpp">
-      <Filter>Common\Advanced</Filter>
-    </ClInclude>
-    <ClInclude Include="Pixel.hpp">
-      <Filter>Common\Data\Pixel</Filter>
-    </ClInclude>
-    <ClInclude Include="ShaderProgram.hpp">
-      <Filter>Engine\UserInterface\Window\Renderer\ShaderSystem\ShaderProgram</Filter>
-    </ClInclude>
-    <ClInclude Include="UIConstraints.hpp">
-      <Filter>Engine\UserInterface\UIConstraints</Filter>
-    </ClInclude>
-    <ClInclude Include="UIFlatPanel.hpp">
-      <Filter>Engine\UserInterface\UIElement\UIFlatPanel</Filter>
-    </ClInclude>
-    <ClInclude Include="UserInterface.hpp">
-      <Filter>Engine\UserInterface</Filter>
-    </ClInclude>
-    <ClInclude Include="SimplePlanetRenderer.hpp">
-      <Filter>Engine\UserInterface\Window\Renderer\SimplePlanetRenderer</Filter>
-    </ClInclude>
-    <ClInclude Include="OctreeNode.hpp">
-      <Filter>Engine\PlanetSystem\OctreeSystem\OctreeNode</Filter>
-    </ClInclude>
-    <ClInclude Include="RayMarchedTerrain.hpp">
-      <Filter>Engine\UserInterface\Window\Renderer\RayMarchedTerrain</Filter>
-    </ClInclude>
-    <ClInclude Include="GraphicsAPI.hpp">
-      <Filter>Engine\UserInterface\Window\Renderer\GraphicsAPI</Filter>
-    </ClInclude>
-    <ClInclude Include="Override.hpp">
-      <Filter>Common\Advanced\Override</Filter>
-    </ClInclude>
-    <ClInclude Include="Settings.hpp">
-      <Filter>Global</Filter>
-    </ClInclude>
-    <ClInclude Include="SDFTerrainRenderSystem.hpp">
-      <Filter>Engine\UserInterface\Window\Renderer\SDFTerrainRenderer</Filter>
-    </ClInclude>
-    <ClInclude Include="TreeSystem.hpp">
-      <Filter>Games\Pototypes\TreeSystem</Filter>
-    </ClInclude>
-    <ClInclude Include="AutoConstruct.hpp">
-      <Filter>Common\Advanced</Filter>
-    </ClInclude>
-    <ClInclude Include="TransformationStack.hpp">
-      <Filter>Engine\UserInterface\Window\Renderer\MatrixSystem\Transformation Stack</Filter>
-    </ClInclude>
-    <ClInclude Include="MatrixSystem.hpp">
-      <Filter>Engine\UserInterface\Window\Renderer\MatrixSystem</Filter>
-    </ClInclude>
-    <ClInclude Include="String.hpp">
-      <Filter>Common\Data\String</Filter>
-    </ClInclude>
-    <ClInclude Include="Game.hpp">
-      <Filter>Games\Game</Filter>
-    </ClInclude>
-    <ClInclude Include="Mooncrash.hpp">
-      <Filter>Games\Game\Mooncrash</Filter>
-    </ClInclude>
-    <ClInclude Include="Intro.hpp">
-      <Filter>Games\Game\Intro</Filter>
-    </ClInclude>
-    <ClInclude Include="AIPlayground.hpp">
-      <Filter>Games\Game\AIplayground</Filter>
-    </ClInclude>
-    <ClInclude Include="Fonts.hpp">
-      <Filter>Engine\UserInterface\Window\Renderer\TextRenderSystem\Fonts</Filter>
-    </ClInclude>
-    <ClInclude Include="Queue.hpp">
-      <Filter>Common\Data\Queue</Filter>
-    </ClInclude>
-    <ClInclude Include="MindMap.hpp">
-      <Filter>Games\Pototypes\MindMap</Filter>
-    </ClInclude>
-    <ClInclude Include="Compiler.hpp">
-      <Filter>Engine\Compiler</Filter>
-    </ClInclude>
-    <ClInclude Include="Pong.hpp">
-      <Filter>Games\Game\Pong</Filter>
-    </ClInclude>
-    <ClInclude Include="BitmapTextRenderSystem.hpp">
-      <Filter>Engine\UserInterface\Window\Renderer\TextRenderSystem\BitmapTextRenderSystem</Filter>
-    </ClInclude>
-    <ClInclude Include="ASIONetworking.hpp">
-      <Filter>Engine\ParticleSystem\Networking\ASIONetworking</Filter>
-    </ClInclude>
-    <ClInclude Include="NeuralNetwork.hpp">
-      <Filter>Games\Pototypes\NeuralNetwork</Filter>
-    </ClInclude>
-    <ClInclude Include="MathDNA.hpp">
-      <Filter>Games\Game\Math DNA</Filter>
-    </ClInclude>
-    <ClInclude Include="GlyphTextRenderSystem.hpp">
-      <Filter>Engine\UserInterface\Window\Renderer\TextRenderSystem\GlyphTextRenderSystem</Filter>
-    </ClInclude>
-    <ClInclude Include="Image.hpp">
-      <Filter>Common\Data\Image</Filter>
-    </ClInclude>
-    <ClInclude Include="Sortr.hpp">
-      <Filter>Games\Game\Sortr</Filter>
-    </ClInclude>
-    <ClInclude Include="DungeonsAndDiscord.hpp">
-      <Filter>Games\Game\Dungeons And Discord</Filter>
-    </ClInclude>
-    <ClInclude Include="AudioSystem.hpp">
-      <Filter>Engine\AudioSystem</Filter>
-    </ClInclude>
-    <ClInclude Include="Player.hpp">
-      <Filter>Games\Player</Filter>
-    </ClInclude>
-    <ClInclude Include="PlanetSystemPlayer.hpp">
-      <Filter>Games\Player\PlanetSystemPlayer</Filter>
-    </ClInclude>
-    <ClInclude Include="PointCloud.hpp">
-      <Filter>Common\Data\PointCloud</Filter>
-    </ClInclude>
-    <ClInclude Include="Plot.hpp">
-      <Filter>Common\Data\Plot</Filter>
-    </ClInclude>
-    <ClInclude Include="PerlinNoise.hpp">
-      <Filter>Common\Math\Noise\PerlinNoise</Filter>
-    </ClInclude>
-    <ClInclude Include="Random.hpp">
-      <Filter>Common\Math\Random</Filter>
-    </ClInclude>
-    <ClInclude Include="BranchStructure.hpp">
-      <Filter>Common\Data\BranchStructure</Filter>
-    </ClInclude>
-    <ClInclude Include="Transform.hpp">
-      <Filter>Common\Transform</Filter>
-    </ClInclude>
-    <ClInclude Include="UIElement.hpp">
-      <Filter>Engine\UserInterface\UIElement</Filter>
-    </ClInclude>
-    <ClInclude Include="Sky.hpp">
-      <Filter>Engine\Sky</Filter>
-    </ClInclude>
-    <ClInclude Include="DynameshTerrain.hpp">
-      <Filter>Games\Pototypes\DynaMesh</Filter>
-    </ClInclude>
-    <ClInclude Include="VoxelSystem.hpp">
-      <Filter>Games\Pototypes\VoxelSystem</Filter>
-    </ClInclude>
-    <ClInclude Include="NeighbourQuadtree.hpp">
-      <Filter>Games\Pototypes\Neighbour Quadtree</Filter>
-    </ClInclude>
-    <ClInclude Include="Server.hpp">
-      <Filter>Engine\ParticleSystem\Networking</Filter>
-    </ClInclude>
-    <ClInclude Include="Client.hpp">
-      <Filter>Engine\ParticleSystem\Networking</Filter>
-    </ClInclude>
-    <ClInclude Include="JobSystem.hpp">
-      <Filter>Engine\JobSystem</Filter>
-    </ClInclude>
-    <ClInclude Include="Message.hpp">
-      <Filter>Engine\ParticleSystem\Networking</Filter>
-    </ClInclude>
-    <ClInclude Include="ProjectMelon.hpp">
-      <Filter>Games\Game\Project Melon</Filter>
-    </ClInclude>
-    <ClInclude Include="ParticleSystem.hpp">
-      <Filter>Engine\ParticleSystem</Filter>
-    </ClInclude>
-    <ClInclude Include="GuessingGame.hpp">
-      <Filter>Games\Game\GuessingGame</Filter>
-    </ClInclude>
-    <ClInclude Include="Instancing.hpp">
-      <Filter>Engine\UserInterface\Window\Renderer\MeshSystem\Instancing</Filter>
-    </ClInclude>
-    <ClInclude Include="Scene.hpp">
-      <Filter>Engine\Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="Renderable.hpp">
-      <Filter>Engine\Scene\Renderable</Filter>
-    </ClInclude>
-    <ClInclude Include="Interactive.hpp">
-      <Filter>Engine\Scene\Interactive</Filter>
-    </ClInclude>
-    <ClInclude Include="MelonPlayer.hpp">
-      <Filter>Games\Game\Project Melon\MelonPlayer</Filter>
-    </ClInclude>
-    <ClInclude Include="MelonWorld.hpp">
-      <Filter>Games\Game\Project Melon\MelonWorld</Filter>
-    </ClInclude>
-    <ClInclude Include="Sandbox.hpp">
-      <Filter>Games\Game\Sandbox</Filter>
-    </ClInclude>
-    <ClInclude Include="GPUBuffer.hpp">
-      <Filter>Engine\UserInterface\Window\Renderer\ShaderSystem\Buffers</Filter>
-    </ClInclude>
-    <ClInclude Include="Color.hpp">
-      <Filter>Common\Data\Color</Filter>
-    </ClInclude>
-    <ClInclude Include="VectorMath.hpp">
-      <Filter>Common\Math\VectorMath</Filter>
-    </ClInclude>
-    <ClInclude Include="Map.hpp">
-      <Filter>Common\Data\Map</Filter>
-    </ClInclude>
-    <ClInclude Include="Name.hpp">
-      <Filter>Common\Data\Name</Filter>
-    </ClInclude>
-    <ClInclude Include="Memory.hpp">
-      <Filter>Engine\Memory</Filter>
-    </ClInclude>
-    <ClInclude Include="DeadVector.hpp">
-      <Filter>Engine\Memory\DeadVector</Filter>
-    </ClInclude>
-    <ClInclude Include="PoolAllocator.hpp">
-      <Filter>Engine\Memory\Allocators\PoolAllocator</Filter>
-    </ClInclude>
-    <ClInclude Include="SphereMeshing.hpp">
-      <Filter>Games\Pototypes\SphereMeshing</Filter>
-    </ClInclude>
-    <ClInclude Include="TLSFAllocator.h">
-      <Filter>Engine\Memory\TLSF</Filter>
-    </ClInclude>
-    <ClInclude Include="Keymap.hpp">
-      <Filter>Global</Filter>
-    </ClInclude>
-    <ClInclude Include="StaticAllocator.hpp">
-      <Filter>Engine\Memory\Allocators\StaticAllocator</Filter>
-    </ClInclude>
-    <ClInclude Include="BaseAllocator.hpp">
-      <Filter>Engine\Memory\Allocators</Filter>
-    </ClInclude>
-    <ClInclude Include="ECS.hpp">
-      <Filter>Engine\ECS</Filter>
-    </ClInclude>
-    <ClInclude Include="File.hpp">
-      <Filter>Common\FileSystem\File</Filter>
-    </ClInclude>
-    <ClInclude Include="UISandbox.hpp">
-      <Filter>Games\Game\UISandbox</Filter>
-    </ClInclude>
-    <ClInclude Include="UIButton.hpp">
-      <Filter>Engine\UserInterface\UIButton</Filter>
-    </ClInclude>
-    <ClInclude Include="ImguiWrapper.hpp">
-      <Filter>Engine\UserInterface\ImGui</Filter>
-    </ClInclude>
-    <ClInclude Include="NeighbourOctree.hpp">
-      <Filter>Games\Pototypes\NeighbourOctree</Filter>
-    </ClInclude>
-    <ClInclude Include="GeometryClipmapTerrain.hpp">
-      <Filter>Games\Pototypes\GeometryClipMapTerrain</Filter>
-    </ClInclude>
-    <ClInclude Include="Array2D.hpp">
-      <Filter>Common\Data\Array2D</Filter>
-    </ClInclude>
-    <ClInclude Include="LineRenderer.hpp">
-      <Filter>Engine\UserInterface\Window\Renderer\LineRenderer</Filter>
-    </ClInclude>
-    <ClInclude Include="Molecules2D.hpp">
-      <Filter>Games\Pototypes\Molecules2D</Filter>
-    </ClInclude>
-    <ClInclude Include="InteractionSystem.hpp">
-      <Filter>Engine\UserInterface\Window\Renderer\InteractionSystem</Filter>
-    </ClInclude>
-    <ClInclude Include="MindMapper.hpp">
-      <Filter>Games\Game\MindMapper</Filter>
-    </ClInclude>
-    <ClInclude Include="SimpleRTS.hpp">
-      <Filter>Games\Game\SimpleRTS</Filter>
-    </ClInclude>
-    <ClInclude Include="ResourceManager.hpp">
-      <Filter>Common\ResourceManager</Filter>
-    </ClInclude>
-    <ClInclude Include="EntityComponentSystem.hpp">
-      <Filter>Common\ECS</Filter>
-    </ClInclude>
-    <ClInclude Include="GPUSim.hpp">
-      <Filter>Games\Game\GPUSim</Filter>
-    </ClInclude>
-    <ClInclude Include="RectangleRenderer.hpp">
-      <Filter>Engine\UserInterface\Window\Renderer\RectangleRenderer</Filter>
-    </ClInclude>
-    <ClInclude Include="IdFramebuffer.hpp">
-      <Filter>Engine\UserInterface\Window\Renderer\IdFramebuffer</Filter>
-    </ClInclude>
-    <ClInclude Include="InfiniteDetailPrototype.hpp">
-      <Filter>Games\Game\Infinite Detail Prototype</Filter>
-    </ClInclude>
-    <ClInclude Include="QuakeMovement.hpp">
-      <Filter>Games\Game\Quake Movement</Filter>
-    </ClInclude>
-    <ClInclude Include="CheatTest.hpp">
-      <Filter>Games\Pototypes\CheatTest</Filter>
-    </ClInclude>
-    <ClInclude Include="Input.hpp">
-      <Filter>Engine\UserInterface\Window\Input</Filter>
-    </ClInclude>
-    <ClInclude Include="PhysicsPlayground.hpp">
-      <Filter>Games\Game\Physics Playground</Filter>
-    </ClInclude>
-    <ClInclude Include="Physics.hpp">
-      <Filter>Engine\Physics</Filter>
-    </ClInclude>
-    <ClInclude Include="ProjectSnek.hpp">
-      <Filter>Games\Game\Project Snek</Filter>
-    </ClInclude>
-    <ClInclude Include="Collision.hpp">
-      <Filter>Engine\Physics\Collision</Filter>
-    </ClInclude>
-    <ClInclude Include="Colliders.hpp">
-      <Filter>Engine\Physics\Collision\Colliders</Filter>
-    </ClInclude>
-    <ClInclude Include="PhysicsUtil.hpp">
-      <Filter>Engine\Physics\PhysicsUtil</Filter>
-    </ClInclude>
-    <ClInclude Include="SDFTextRenderSystem.hpp">
-      <Filter>Engine\UserInterface\Window\Renderer\TextRenderSystem\SDFTextRenderSystem</Filter>
-    </ClInclude>
-    <ClInclude Include="MSDFText.hpp">
-      <Filter>Games\Game\MSDFText</Filter>
-    </ClInclude>
-    <ClInclude Include="crc32.h">
-      <Filter>Engine\UserInterface\Window\Renderer\TextRenderSystem\SDFTextRenderSystem\Artery Format</Filter>
-    </ClInclude>
-    <ClInclude Include="crc32.hpp">
-      <Filter>Engine\UserInterface\Window\Renderer\TextRenderSystem\SDFTextRenderSystem\Artery Format</Filter>
-    </ClInclude>
-    <ClInclude Include="enums.h">
-      <Filter>Engine\UserInterface\Window\Renderer\TextRenderSystem\SDFTextRenderSystem\Artery Format</Filter>
-    </ClInclude>
-    <ClInclude Include="serialization.h">
-      <Filter>Engine\UserInterface\Window\Renderer\TextRenderSystem\SDFTextRenderSystem\Artery Format</Filter>
-    </ClInclude>
-    <ClInclude Include="serialization.hpp">
-      <Filter>Engine\UserInterface\Window\Renderer\TextRenderSystem\SDFTextRenderSystem\Artery Format</Filter>
-    </ClInclude>
-    <ClInclude Include="std-artery-font.h">
-      <Filter>Engine\UserInterface\Window\Renderer\TextRenderSystem\SDFTextRenderSystem\Artery Format</Filter>
-    </ClInclude>
-    <ClInclude Include="stdio-serialization.h">
-      <Filter>Engine\UserInterface\Window\Renderer\TextRenderSystem\SDFTextRenderSystem\Artery Format</Filter>
-    </ClInclude>
-    <ClInclude Include="stdio-serialization.hpp">
-      <Filter>Engine\UserInterface\Window\Renderer\TextRenderSystem\SDFTextRenderSystem\Artery Format</Filter>
-    </ClInclude>
-    <ClInclude Include="structures.h">
-      <Filter>Engine\UserInterface\Window\Renderer\TextRenderSystem\SDFTextRenderSystem\Artery Format</Filter>
-    </ClInclude>
-    <ClInclude Include="types.h">
-      <Filter>Engine\UserInterface\Window\Renderer\TextRenderSystem\SDFTextRenderSystem\Artery Format</Filter>
-    </ClInclude>
-    <ClInclude Include="artery-font.h">
-      <Filter>Engine\UserInterface\Window\Renderer\TextRenderSystem\SDFTextRenderSystem\Artery Format</Filter>
-    </ClInclude>
-    <ClInclude Include="FlappyBird.hpp">
-      <Filter>Games\Game\Flappy Bird</Filter>
-    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\..\Downloads\New folder (2)\array.h" />
+    <ClInclude Include="..\..\..\..\..\..\Downloads\New folder (2)\array2d.h" />
+    <ClInclude Include="..\..\..\..\..\..\Downloads\New folder (2)\numtraits.h" />
+    <ClInclude Include="..\..\..\..\..\..\Downloads\New folder (2)\octree.h" />
+    <ClInclude Include="..\..\..\..\..\..\Downloads\New folder (2)\point3d.h" />
+    <ClInclude Include="..\..\..\..\..\..\Downloads\New folder (2)\shareddata.h" />
+    <ClInclude Include="..\..\..\..\..\..\Downloads\New folder (2)\tinyvector.h" />
+    <ClInclude Include="Array2D.hpp" />
+    <ClInclude Include="artery-font.h" />
+    <ClInclude Include="BaseAllocator.hpp" />
+    <ClInclude Include="CheatTest.hpp" />
+    <ClInclude Include="Colliders.hpp" />
+    <ClInclude Include="Collision.hpp" />
+    <ClInclude Include="Color.hpp" />
+    <ClInclude Include="crc32.h" />
+    <ClInclude Include="crc32.hpp" />
     <ClInclude Include="cxxopts.hpp" />
-    <ClInclude Include="optik\optick.config.h">
-      <Filter>Libraries</Filter>
-    </ClInclude>
-    <ClInclude Include="optik\optick.h">
-      <Filter>Libraries</Filter>
-    </ClInclude>
-    <ClInclude Include="optik\optick_core.freebsd.h">
-      <Filter>Libraries</Filter>
-    </ClInclude>
-    <ClInclude Include="optik\optick_core.h">
-      <Filter>Libraries</Filter>
-    </ClInclude>
-    <ClInclude Include="optik\optick_core.linux.h">
-      <Filter>Libraries</Filter>
-    </ClInclude>
-    <ClInclude Include="optik\optick_core.macos.h">
-      <Filter>Libraries</Filter>
-    </ClInclude>
-    <ClInclude Include="optik\optick_core.platform.h">
-      <Filter>Libraries</Filter>
-    </ClInclude>
-    <ClInclude Include="optik\optick_core.win.h">
-      <Filter>Libraries</Filter>
-    </ClInclude>
-    <ClInclude Include="optik\optick_gpu.h">
-      <Filter>Libraries</Filter>
-    </ClInclude>
-    <ClInclude Include="optik\optick_memory.h">
-      <Filter>Libraries</Filter>
-    </ClInclude>
-    <ClInclude Include="optik\optick_message.h">
-      <Filter>Libraries</Filter>
-    </ClInclude>
-    <ClInclude Include="optik\optick_miniz.h">
-      <Filter>Libraries</Filter>
-    </ClInclude>
-    <ClInclude Include="optik\optick_serialization.h">
-      <Filter>Libraries</Filter>
-    </ClInclude>
-    <ClInclude Include="optik\optick_server.h">
-      <Filter>Libraries</Filter>
-    </ClInclude>
-    <ClInclude Include="optik\optick_capi.h">
-      <Filter>Libraries</Filter>
-    </ClInclude>
-    <ClInclude Include="optik\optick_common.h">
-      <Filter>Libraries</Filter>
-    </ClInclude>
-    <ClInclude Include="Profiler.hpp">
-      <Filter>Tools</Filter>
-    </ClInclude>
-    <ClInclude Include="NameGenerator.hpp">
-      <Filter>Tools</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\..\..\Downloads\New folder (2)\numtraits.h">
-      <Filter>Common\Template Octree</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\..\..\Downloads\New folder (2)\octree.h">
-      <Filter>Common\Template Octree</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\..\..\Downloads\New folder (2)\point3d.h">
-      <Filter>Common\Template Octree</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\..\..\Downloads\New folder (2)\shareddata.h">
-      <Filter>Common\Template Octree</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\..\..\Downloads\New folder (2)\tinyvector.h">
-      <Filter>Common\Template Octree</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\..\..\Downloads\New folder (2)\array.h">
-      <Filter>Common\Template Octree</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\..\..\Downloads\New folder (2)\array2d.h">
-      <Filter>Common\Template Octree</Filter>
-    </ClInclude>
-    <ClInclude Include="QuadtreeNode.hpp">
-      <Filter>Engine\PlanetSystem\QuadtreeSystem\QuadtreeNode</Filter>
-    </ClInclude>
+    <ClInclude Include="DeadVector.hpp" />
+    <ClInclude Include="EntityComponentSystem.hpp" />
+    <ClInclude Include="enums.h" />
+    <ClInclude Include="File.hpp" />
+    <ClInclude Include="FlappyBird.hpp" />
+    <ClInclude Include="GeometryClipmapTerrain.hpp" />
+    <ClInclude Include="GPUBuffer.hpp" />
+    <ClInclude Include="GPUSim.hpp" />
+    <ClInclude Include="GuessingGame.hpp" />
+    <ClInclude Include="IdFramebuffer.hpp" />
+    <ClInclude Include="ImguiWrapper.hpp" />
+    <ClInclude Include="InfiniteDetailPrototype.hpp" />
+    <ClInclude Include="Input.hpp" />
+    <ClInclude Include="Instancing.hpp" />
+    <ClInclude Include="InteractionSystem.hpp" />
+    <ClInclude Include="Interactive.hpp" />
+    <ClInclude Include="LineRenderer.hpp" />
+    <ClInclude Include="Map.hpp" />
+    <ClInclude Include="MelonPlayer.hpp" />
+    <ClInclude Include="MelonWorld.hpp" />
+    <ClInclude Include="Memory.hpp" />
+    <ClInclude Include="MindMapper.hpp" />
+    <ClInclude Include="MSDFText.hpp" />
+    <ClInclude Include="Name.hpp" />
+    <ClInclude Include="NameGenerator.hpp" />
+    <ClInclude Include="NeighbourOctree.hpp" />
+    <ClInclude Include="Molecules2D.hpp" />
+    <ClInclude Include="optik\optick.config.h" />
+    <ClInclude Include="optik\optick.h" />
+    <ClInclude Include="optik\optick_capi.h" />
+    <ClInclude Include="optik\optick_common.h" />
+    <ClInclude Include="optik\optick_core.freebsd.h" />
+    <ClInclude Include="optik\optick_core.h" />
+    <ClInclude Include="optik\optick_core.linux.h" />
+    <ClInclude Include="optik\optick_core.macos.h" />
+    <ClInclude Include="optik\optick_core.platform.h" />
+    <ClInclude Include="optik\optick_core.win.h" />
+    <ClInclude Include="optik\optick_gpu.h" />
+    <ClInclude Include="optik\optick_memory.h" />
+    <ClInclude Include="optik\optick_message.h" />
+    <ClInclude Include="optik\optick_miniz.h" />
+    <ClInclude Include="optik\optick_serialization.h" />
+    <ClInclude Include="optik\optick_server.h" />
+    <ClInclude Include="ParticleSystem.hpp" />
+    <ClInclude Include="Physics.hpp" />
+    <ClInclude Include="PhysicsPlayground.hpp" />
+    <ClInclude Include="PhysicsUtil.hpp" />
+    <ClInclude Include="PoolAllocator.hpp" />
+    <ClInclude Include="Profiler.hpp" />
+    <ClInclude Include="ProjectMelon.hpp" />
+    <ClInclude Include="QuadtreeNode.hpp" />
+    <ClInclude Include="QuakeMovement.hpp" />
+    <ClInclude Include="RectangleRenderer.hpp" />
+    <ClInclude Include="Renderable.hpp" />
+    <ClInclude Include="ResourceManager.hpp" />
+    <ClInclude Include="Sandbox.hpp" />
+    <ClInclude Include="Scene.hpp" />
+    <ClInclude Include="SDFTextRenderSystem.hpp" />
+    <ClInclude Include="serialization.h" />
+    <ClInclude Include="serialization.hpp" />
+    <ClInclude Include="SimpleRTS.hpp" />
+    <ClInclude Include="Sky.hpp" />
+    <ClInclude Include="AudioSystem.hpp" />
+    <ClInclude Include="BranchStructure.hpp" />
+    <ClInclude Include="Client.hpp" />
+    <ClInclude Include="DungeonsAndDiscord.hpp" />
+    <ClInclude Include="DynameshTerrain.hpp" />
+    <ClInclude Include="GlyphTextRenderSystem.hpp" />
+    <ClInclude Include="Image.hpp" />
+    <ClInclude Include="JobSystem.hpp" />
+    <ClInclude Include="MathDNA.hpp" />
+    <ClInclude Include="Message.hpp" />
+    <ClInclude Include="NeighbourQuadtree.hpp" />
+    <ClInclude Include="NeuralNetwork.hpp" />
+    <ClInclude Include="PerlinNoise.hpp" />
+    <ClInclude Include="PlanetSystemPlayer.hpp" />
+    <ClInclude Include="Player.hpp" />
+    <ClInclude Include="Plot.hpp" />
+    <ClInclude Include="PointCloud.hpp" />
+    <ClInclude Include="ProjectSnek.hpp" />
+    <ClInclude Include="SphereMeshing.hpp" />
+    <ClInclude Include="std-artery-font.h" />
+    <ClInclude Include="stdio-serialization.h" />
+    <ClInclude Include="stdio-serialization.hpp" />
+    <ClInclude Include="structures.h" />
+    <ClInclude Include="TLSFAllocator.h" />
+    <ClInclude Include="AIPlayground.hpp" />
+    <ClInclude Include="ASIONetworking.hpp" />
+    <ClInclude Include="AutoConstruct.hpp" />
+    <ClInclude Include="Basics.hpp" />
+    <ClInclude Include="BitmapTextRenderSystem.hpp" />
+    <ClInclude Include="CameraControllers.hpp" />
+    <ClInclude Include="Compiler.hpp" />
+    <ClInclude Include="Fonts.hpp" />
+    <ClInclude Include="Functor.hpp" />
+    <ClInclude Include="Game.hpp" />
+    <ClInclude Include="Intro.hpp" />
+    <ClInclude Include="Keymap.hpp" />
+    <ClInclude Include="Pong.hpp" />
+    <ClInclude Include="Queue.hpp" />
+    <ClInclude Include="MatrixSystem.hpp" />
+    <ClInclude Include="MindMap.hpp" />
+    <ClInclude Include="Mooncrash.hpp" />
+    <ClInclude Include="OctreeData.hpp" />
+    <ClInclude Include="OctreeID.hpp" />
+    <ClInclude Include="OctreeNode.hpp" />
+    <ClInclude Include="OctreeSystemRenderer.hpp" />
+    <ClInclude Include="Organizer.hpp" />
+    <ClInclude Include="Override.hpp" />
+    <ClInclude Include="Pixel.hpp" />
+    <ClInclude Include="PlanetCamera.hpp" />
+    <ClInclude Include="CPUMesh.hpp" />
+    <ClInclude Include="CPUTexture.hpp" />
+    <ClInclude Include="Debug.hpp" />
+    <ClInclude Include="ECS.hpp" />
+    <ClInclude Include="FileSystem.hpp" />
+    <ClInclude Include="Framebuffer.hpp" />
+    <ClInclude Include="FramebufferSystem.hpp" />
+    <ClInclude Include="GPUMesh.hpp" />
+    <ClInclude Include="GPUTexture.hpp" />
+    <ClInclude Include="GraphicsAPI.hpp" />
+    <ClInclude Include="Heightmap.hpp" />
+    <ClInclude Include="IndexBufferObject.hpp" />
+    <ClInclude Include="Math.hpp" />
+    <ClInclude Include="MeshSystem.hpp" />
+    <ClInclude Include="Networking.hpp" />
+    <ClInclude Include="PlanetRenderSystem.hpp" />
+    <ClInclude Include="PlanetSystem.hpp" />
+    <ClInclude Include="QuadtreeID.hpp" />
+    <ClInclude Include="QuadtreeSystemRenderer.hpp" />
+    <ClInclude Include="RayMarchedTerrain.hpp" />
+    <ClInclude Include="RelativeChunkOffset.hpp" />
+    <ClInclude Include="RenderRegion.hpp" />
+    <ClInclude Include="SDFTerrainRenderSystem.hpp" />
+    <ClInclude Include="Server.hpp" />
+    <ClInclude Include="Settings.hpp" />
+    <ClInclude Include="Shader.hpp" />
+    <ClInclude Include="ShaderProgram.hpp" />
+    <ClInclude Include="Camera.hpp" />
+    <ClInclude Include="SimplePlanetRenderer.hpp" />
+    <ClInclude Include="Sortr.hpp" />
+    <ClInclude Include="String.hpp" />
+    <ClInclude Include="TerrainRendering.hpp" />
+    <ClInclude Include="TerrainSystem.hpp" />
+    <ClInclude Include="Transform.hpp" />
+    <ClInclude Include="TransformationStack.hpp" />
+    <ClInclude Include="TreeSystem.hpp" />
+    <ClInclude Include="types.h" />
+    <ClInclude Include="UIButton.hpp" />
+    <ClInclude Include="UIConstraints.hpp" />
+    <ClInclude Include="UIElement.hpp" />
+    <ClInclude Include="UIFlatPanel.hpp" />
+    <ClInclude Include="UISandbox.hpp" />
+    <ClInclude Include="ULLUtil.hpp" />
+    <ClInclude Include="ProceduralMeshes.hpp" />
+    <ClInclude Include="Random.hpp" />
+    <ClInclude Include="TiledMath.hpp" />
+    <ClInclude Include="Renderer.hpp" />
+    <ClInclude Include="RenderObjectSystem.hpp" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="ShaderSystem.hpp" />
+    <ClInclude Include="QuadtreeSystem.hpp" />
+    <ClInclude Include="TextRenderSystem.hpp" />
+    <ClInclude Include="TextureSystem.hpp" />
+    <ClInclude Include="Threading.hpp" />
+    <ClInclude Include="Time.hpp" />
+    <ClInclude Include="UniformBuffer.hpp" />
+    <ClInclude Include="Uniforms.hpp" />
+    <ClInclude Include="UserInterface.hpp" />
+    <ClInclude Include="StaticAllocator.hpp" />
+    <ClInclude Include="VectorMath.hpp" />
+    <ClInclude Include="VertexArrayObject.hpp" />
+    <ClInclude Include="VertexBufferObject.hpp" />
+    <ClInclude Include="VoxelSystem.hpp" />
+    <ClInclude Include="Window.hpp" />
+    <ClInclude Include="WindowAPI.hpp" />
+    <ClInclude Include="OctreeSystem.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Data\shaders\debug.frag">
-      <Filter>Shaders\debug</Filter>
-    </None>
-    <None Include="Data\shaders\debug.vert">
-      <Filter>Shaders\debug</Filter>
-    </None>
-    <None Include="Data\shaders\primitive.frag">
-      <Filter>Games\Game\Mooncrash\shaders\primitive</Filter>
-    </None>
-    <None Include="Data\shaders\primitive.vert">
-      <Filter>Games\Game\Mooncrash\shaders\primitive</Filter>
-    </None>
-    <None Include="Data\shaders\postProcess.frag">
-      <Filter>Shaders\postProcess</Filter>
-    </None>
-    <None Include="Data\shaders\postProcess.vert">
-      <Filter>Shaders\postProcess</Filter>
-    </None>
-    <None Include="Data\shaders\terrain.frag">
-      <Filter>Games\Game\Mooncrash\shaders\terrain</Filter>
-    </None>
-    <None Include="Data\shaders\terrain.vert">
-      <Filter>Games\Game\Mooncrash\shaders\terrain</Filter>
-    </None>
-    <None Include="Data\shaders\unlit.frag">
-      <Filter>Shaders\unlit</Filter>
-    </None>
-    <None Include="Data\shaders\unlit.vert">
-      <Filter>Shaders\unlit</Filter>
-    </None>
-    <None Include="Data\shaders\ui.vert">
-      <Filter>Shaders\uiShader</Filter>
-    </None>
-    <None Include="Data\shaders\ui.frag">
-      <Filter>Shaders\uiShader</Filter>
-    </None>
-    <None Include="Data\shaders\text.frag">
-      <Filter>Shaders\text</Filter>
-    </None>
-    <None Include="Data\shaders\text.vert">
-      <Filter>Shaders\text</Filter>
-    </None>
-    <None Include="Data\shaders\blur.frag">
-      <Filter>Shaders\blur</Filter>
-    </None>
-    <None Include="Data\shaders\blur.vert">
-      <Filter>Shaders\blur</Filter>
-    </None>
-    <None Include="Data\shaders\sky.frag">
-      <Filter>Shaders\sky</Filter>
-    </None>
-    <None Include="Data\shaders\sky.vert">
-      <Filter>Shaders\sky</Filter>
-    </None>
-    <None Include="Data\shaders\depthCutter.frag">
-      <Filter>Games\Game\Mooncrash\shaders\depthCutter</Filter>
-    </None>
-    <None Include="Data\shaders\depthCutter.vert">
-      <Filter>Games\Game\Mooncrash\shaders\depthCutter</Filter>
-    </None>
-    <None Include="Data\shaders\sdfTerrain.frag">
-      <Filter>Games\Game\Mooncrash\shaders\sdfTerrain</Filter>
-    </None>
-    <None Include="Data\shaders\sdfTerrain.vert">
-      <Filter>Games\Game\Mooncrash\shaders\sdfTerrain</Filter>
-    </None>
-    <None Include="Data\shaders\water.frag">
-      <Filter>Games\Game\Mooncrash\shaders\water</Filter>
-    </None>
-    <None Include="Data\shaders\water.vert">
-      <Filter>Games\Game\Mooncrash\shaders\water</Filter>
-    </None>
-    <None Include="Data\shaders\color.frag">
-      <Filter>Shaders\color</Filter>
-    </None>
-    <None Include="Data\shaders\color.vert">
-      <Filter>Shaders\color</Filter>
-    </None>
-    <None Include="Data\shaders\atmosphere.frag">
-      <Filter>Shaders\atmosphere</Filter>
-    </None>
-    <None Include="Data\shaders\atmosphere.vert">
-      <Filter>Shaders\atmosphere</Filter>
-    </None>
-    <None Include="Data\shaders\uniforms.glsl">
-      <Filter>Shaders\COMMON</Filter>
-    </None>
-    <None Include="Data\shaders\sdfOctreeTerrain.frag">
-      <Filter>Games\Game\Mooncrash\shaders\sdfOctreeTerrainRender</Filter>
-    </None>
-    <None Include="Data\shaders\sdfOctreeTerrain.vert">
-      <Filter>Games\Game\Mooncrash\shaders\sdfOctreeTerrainRender</Filter>
-    </None>
-    <None Include="Data\shaders\normals.frag">
-      <Filter>Shaders\normals</Filter>
-    </None>
-    <None Include="Data\shaders\normals.vert">
-      <Filter>Shaders\normals</Filter>
-    </None>
-    <None Include="Data\shaders\final.frag">
-      <Filter>Shaders\final</Filter>
-    </None>
-    <None Include="Data\shaders\final.vert">
-      <Filter>Shaders\final</Filter>
-    </None>
-    <None Include="G:\DATA\PROJEKTE\ORKA\GAME ENGINE\SOURCE CODE\Project ORKA\Data\shaders\idShader.frag">
-      <Filter>Shaders\idShader</Filter>
-    </None>
-    <None Include="G:\DATA\PROJEKTE\ORKA\GAME ENGINE\SOURCE CODE\Project ORKA\Data\shaders\idShader.vert">
-      <Filter>Shaders\idShader</Filter>
-    </None>
-    <None Include="Data\shaders\dndUberShader.frag">
-      <Filter>Games\Game\Dungeons And Discord\DND UberShader</Filter>
-    </None>
-    <None Include="Data\shaders\dndUberShader.vert">
-      <Filter>Games\Game\Dungeons And Discord\DND UberShader</Filter>
-    </None>
-    <None Include="Data\shaders\MelonUberShader.frag">
-      <Filter>Games\Game\Project Melon\MelonUberShader</Filter>
-    </None>
-    <None Include="Data\shaders\MelonUberShader.vert">
-      <Filter>Games\Game\Project Melon\MelonUberShader</Filter>
-    </None>
-    <None Include="Data\shaders\sphereRendering.vert">
-      <Filter>Games\Game\Sandbox\shaders\sphereRendering</Filter>
-    </None>
-    <None Include="Data\shaders\sphereRendering.frag">
-      <Filter>Games\Game\Sandbox\shaders\sphereRendering</Filter>
-    </None>
-    <None Include="Data\shaders\blurredUI.frag">
-      <Filter>Games\Game\Mooncrash\shaders</Filter>
-    </None>
-    <None Include="Data\shaders\blurredUI.vert">
-      <Filter>Games\Game\Mooncrash\shaders</Filter>
-    </None>
-    <None Include="Data\shaders\simpleRTS.frag">
-      <Filter>Games\Game\SimpleRTS\shaders</Filter>
-    </None>
-    <None Include="Data\shaders\simpleRTS.vert">
-      <Filter>Games\Game\SimpleRTS\shaders</Filter>
-    </None>
-    <None Include="Data\shaders\mxAO.frag">
-      <Filter>Shaders\mxAO</Filter>
-    </None>
-    <None Include="Data\shaders\gpuSimShader.vert">
-      <Filter>Games\Game\GPUSim\gpuSimShader</Filter>
-    </None>
-    <None Include="Data\shaders\gpuSimShader.frag">
-      <Filter>Games\Game\GPUSim\gpuSimShader</Filter>
-    </None>
-    <None Include="Data\shaders\vertexColor.vert">
-      <Filter>Shaders\vertexColor</Filter>
-    </None>
-    <None Include="Data\shaders\vertexColor.frag">
-      <Filter>Shaders\vertexColor</Filter>
-    </None>
-    <None Include="Data\shaders\msdfFont.vert">
-      <Filter>Shaders\msdfFont</Filter>
-    </None>
-    <None Include="Data\shaders\msdfFont.frag">
-      <Filter>Shaders\msdfFont</Filter>
-    </None>
-    <None Include="..\..\..\..\..\..\Downloads\New folder (2)\Makefile">
-      <Filter>Common\Template Octree</Filter>
-    </None>
-    <None Include="..\..\..\..\..\..\Downloads\New folder (2)\octree.tcc">
-      <Filter>Common\Template Octree</Filter>
-    </None>
-    <None Include="..\..\..\..\..\..\Downloads\New folder (2)\octree.vcproj">
-      <Filter>Common\Template Octree</Filter>
-    </None>
+    <ResourceCompile Include="icon.rc" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="..\..\..\..\..\..\Downloads\New folder (2)\License.txt">
-      <Filter>Common\Template Octree</Filter>
-    </Text>
-    <Text Include="..\..\..\..\..\..\Downloads\New folder (2)\Readme.txt">
-      <Filter>Common\Template Octree</Filter>
-    </Text>
+    <None Include="..\..\..\..\..\..\Downloads\New folder (2)\Makefile" />
+    <None Include="..\..\..\..\..\..\Downloads\New folder (2)\octree.tcc" />
+    <None Include="..\..\..\..\..\..\Downloads\New folder (2)\octree.vcproj" />
+    <None Include="Data\shaders\atmosphere.frag" />
+    <None Include="Data\shaders\atmosphere.vert" />
+    <None Include="Data\shaders\blur.frag" />
+    <None Include="Data\shaders\blur.vert" />
+    <None Include="Data\shaders\blurredUI.frag" />
+    <None Include="Data\shaders\blurredUI.vert" />
+    <None Include="Data\shaders\debug.frag" />
+    <None Include="Data\shaders\debug.vert" />
+    <None Include="Data\shaders\depthCutter.frag" />
+    <None Include="Data\shaders\depthCutter.vert" />
+    <None Include="Data\shaders\dndUberShader.frag" />
+    <None Include="Data\shaders\dndUberShader.vert" />
+    <None Include="Data\shaders\gpuSimShader.frag" />
+    <None Include="Data\shaders\gpuSimShader.vert" />
+    <None Include="Data\shaders\MelonUberShader.frag" />
+    <None Include="Data\shaders\MelonUberShader.vert" />
+    <None Include="Data\shaders\mooncrashVertexColor.frag" />
+    <None Include="Data\shaders\mooncrashVertexColor.vert" />
+    <None Include="Data\shaders\msdfFont.frag" />
+    <None Include="Data\shaders\msdfFont.vert" />
+    <None Include="Data\shaders\mxAO.frag" />
+    <None Include="Data\shaders\normals.frag" />
+    <None Include="Data\shaders\normals.vert" />
+    <None Include="Data\shaders\postProcess.frag" />
+    <None Include="Data\shaders\postProcess.vert" />
+    <None Include="Data\shaders\primitive.frag" />
+    <None Include="Data\shaders\primitive.vert" />
+    <None Include="Data\shaders\sdfOctreeTerrain.frag" />
+    <None Include="Data\shaders\sdfOctreeTerrain.vert" />
+    <None Include="Data\shaders\sdfTerrain.frag" />
+    <None Include="Data\shaders\sdfTerrain.vert" />
+    <None Include="Data\shaders\simpleRTS.frag" />
+    <None Include="Data\shaders\simpleRTS.vert" />
+    <None Include="Data\shaders\sky.frag" />
+    <None Include="Data\shaders\sky.vert" />
+    <None Include="Data\shaders\sphereRendering.frag" />
+    <None Include="Data\shaders\sphereRendering.vert" />
+    <None Include="Data\shaders\terrain.frag" />
+    <None Include="Data\shaders\terrain.vert" />
+    <None Include="Data\shaders\text.frag" />
+    <None Include="Data\shaders\text.vert" />
+    <None Include="Data\shaders\final.frag" />
+    <None Include="Data\shaders\final.vert" />
+    <None Include="Data\shaders\ui.frag" />
+    <None Include="Data\shaders\ui.vert" />
+    <None Include="Data\shaders\uniforms.glsl" />
+    <None Include="Data\shaders\unlit.frag" />
+    <None Include="Data\shaders\unlit.vert" />
+    <None Include="Data\shaders\vertexColor.frag" />
+    <None Include="Data\shaders\vertexColor.vert" />
+    <None Include="Data\shaders\water.frag" />
+    <None Include="Data\shaders\water.vert" />
+    <None Include="Data\shaders\color.frag" />
+    <None Include="Data\shaders\color.vert" />
+    <None Include="G:\DATA\PROJEKTE\ORKA\GAME ENGINE\SOURCE CODE\Project ORKA\Data\shaders\idShader.frag" />
+    <None Include="G:\DATA\PROJEKTE\ORKA\GAME ENGINE\SOURCE CODE\Project ORKA\Data\shaders\idShader.vert" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\..\..\..\..\..\Downloads\New folder (2)\License.txt" />
+    <Text Include="..\..\..\..\..\..\Downloads\New folder (2)\Readme.txt" />
   </ItemGroup>
 </Project>

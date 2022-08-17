@@ -15,44 +15,31 @@ void PlanetRenderSystem::update(PlanetSystem& planetSystem, PlanetSystemPlayer& 
 	//update before rendering
 	quadtreeRenderSystem.update(player);
 }
-void PlanetRenderSystem::render(PlanetSystem& planetSystem, Renderer& renderer, PlanetSystemPlayer& player)
+void PlanetRenderSystem::renderAllLevels(PlanetSystem& planetSystem, Renderer& renderer, PlanetSystemPlayer& player)
 {
-	//set uniforms
 	renderer.uniforms().customInt1() = Int(renderer.planetRenderSystem.worldDistortion);
 	renderer.uniforms().mMatrix() = Matrix(1);
 	player.camera.renderOnlyRot(renderer);
-
 	renderer.setDepthTest(true);
 
 	for (UShort level = 0; level < MAX_CHUNK_LEVEL; level++) {
-
 		renderer.clearDepth();
-
-		//render terrain
-		//renderer.shaderSystem.use("terrain");
-		renderer.shaderSystem.use("MooncrashVertex");
+		if(vertexColors)renderer.shaderSystem.use("mooncrashVertexColor");
+		else renderer.shaderSystem.use("terrain");
 		renderer.textureSystem.use("terrainColor");
 		quadtreeRenderSystem.renderLevel(level, renderer);
 	}
 }
 void PlanetRenderSystem::renderLevel(PlanetSystem& planetSystem, Renderer& renderer, PlanetSystemPlayer& player, UShort level) {
 
-	//set uniforms
 	renderer.uniforms().customInt1() = Int(renderer.planetRenderSystem.worldDistortion);
 	renderer.uniforms().mMatrix() = Matrix(1);
 	player.camera.renderOnlyRot(renderer);
-
 	renderer.setDepthTest(true);
 
 	renderer.clearDepth();
-
-	//set shading
-	renderer.shaderSystem.use("terrain");
+	if (vertexColors)renderer.shaderSystem.use("mooncrashVertexColor");
+	else renderer.shaderSystem.use("terrain");
 	renderer.textureSystem.use("terrainColor");
-
 	quadtreeRenderSystem.renderLevel(level, renderer);
-
-	//set shading
-	renderer.shaderSystem.use("debug");
-	quadtreeRenderSystem.debugRenderLevel(level, renderer);
 }

@@ -193,6 +193,7 @@ void MooncrashRenderer::inputEvent(Window& window, InputEvent input) {
 	if (input == wireframeToggle) window.renderer.wireframeMode = !window.renderer.wireframeMode;
 	if (input == countNodesButton) window.renderer.planetRenderSystem.quadtreeRenderSystem.count();
 	if (input == worldDistortion) window.renderer.planetRenderSystem.worldDistortion = !window.renderer.planetRenderSystem.worldDistortion;
+	if (input == vertexColorToggle) window.renderer.planetRenderSystem.vertexColors = !window.renderer.planetRenderSystem.vertexColors;
 	if (input == rebuildShaders) {
 		window.renderer.mutex.lock();
 		window.renderer.shaderSystem.rebuild();
