@@ -35,6 +35,7 @@ struct MooncrashRenderer : public GameRenderer {
 	MooncrashPlayer player;
 
 	//input
+	InputEvent vertexColorToggle = InputEvent(InputType::KeyBoard, H, 0);
 	InputEvent wireframeToggle = InputEvent(InputType::KeyBoard, F, 0);
 	InputEvent countNodesButton = InputEvent(InputType::KeyBoard, G, 0);
 	InputEvent worldDistortion = InputEvent(InputType::KeyBoard, K, 1);

@@ -27,7 +27,7 @@ CPUMesh createTerrainMesh(AdvancedHeightMap & heightmap)
 				mesh.uvs.push_back(Vec2(position.x, position.y));
 
 				//create vertex colors
-				mesh.colors.push_back(Vec3(0,1,0));
+				mesh.colors.push_back(randomVec3());
 			}
 		}
 		
