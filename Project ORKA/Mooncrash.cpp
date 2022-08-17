@@ -188,6 +188,7 @@ void MooncrashRenderer::render(Window& window, TiledRectangle area) {
 
 	//renderUI(renderer, player);
 }
+
 void MooncrashRenderer::inputEvent(Window& window, InputEvent input) {
 	if (input == wireframeToggle) window.renderer.wireframeMode = !window.renderer.wireframeMode;
 	if (input == countNodesButton) window.renderer.planetRenderSystem.quadtreeRenderSystem.count();

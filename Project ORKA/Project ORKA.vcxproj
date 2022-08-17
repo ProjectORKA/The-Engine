@@ -374,6 +374,8 @@
     <None Include="Data\shaders\gpuSimShader.vert" />
     <None Include="Data\shaders\MelonUberShader.frag" />
     <None Include="Data\shaders\MelonUberShader.vert" />
+    <None Include="Data\shaders\MooncrashVertex.frag" />
+    <None Include="Data\shaders\MooncrashVertex.vert" />
     <None Include="Data\shaders\msdfFont.frag" />
     <None Include="Data\shaders\msdfFont.vert" />
     <None Include="Data\shaders\mxAO.frag" />

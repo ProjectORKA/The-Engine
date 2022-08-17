@@ -217,12 +217,12 @@ void QuakeMovementRenderer::render(Window& window, TiledRectangle area) {
 	//renderer.arrow(player.location, player.location + player.velocity);
 
 	renderer.screenSpace();
-	renderer.renderText(toString(player.speedControl), Vec2(50), fonts.heading);
-	renderer.renderText(toString(player.onGround), Vec2(50, 100), fonts.heading);
-	renderer.renderText("horizontal speed: " + toString(length(player.velocity * Vec3(1, 1, 0))), Vec2(50, 150), fonts.heading);
-	renderer.renderText("is moving: " + toString(player.isMoving), Vec2(50, 200), fonts.heading);
-	renderer.renderText("full body lean: " + toString(player.fullBodyLeanAngle), Vec2(50, 250), fonts.heading);
-	renderer.renderText("upper body lean: " + toString(player.upperBodyLeanAngle), Vec2(50, 300), fonts.heading);
+	//renderer.renderText(toString(player.speedControl), Vec2(50), fonts.heading);
+	//renderer.renderText(toString(player.onGround), Vec2(50, 100), fonts.heading);
+	//renderer.renderText("horizontal speed: " + toString(length(player.velocity * Vec3(1, 1, 0))), Vec2(50, 150), fonts.heading);
+	//renderer.renderText("is moving: " + toString(player.isMoving), Vec2(50, 200), fonts.heading);
+	//renderer.renderText("full body lean: " + toString(player.fullBodyLeanAngle), Vec2(50, 250), fonts.heading);
+	//renderer.renderText("upper body lean: " + toString(player.upperBodyLeanAngle), Vec2(50, 300), fonts.heading);
 }
 void QuakeMovementRenderer::inputEvent(Window& window, InputEvent input) {
 	if (input == enter) window.captureCursor();
