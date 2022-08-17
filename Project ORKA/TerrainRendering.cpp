@@ -1,5 +1,6 @@
 #include "TerrainRendering.hpp"
 #include "Math.hpp"
+#include "Random.hpp"
 
 CPUMesh createTerrainMesh(AdvancedHeightMap & heightmap)
 {
@@ -11,7 +12,7 @@ CPUMesh createTerrainMesh(AdvancedHeightMap & heightmap)
 
 		for (Int y = 0; y < TERRAIN_MAP_SIZE; y++) {
 			for (Int x = 0; x < TERRAIN_MAP_SIZE; x++) {
-				//create vertecies
+				//create vertices
 				Vec3 position;
 				position.x = Float(x) / Float(TERRAIN_MAP_SIZE - 1);
 				position.y = Float(y) / Float(TERRAIN_MAP_SIZE - 1);
