@@ -7,6 +7,10 @@ struct FontStyle {
 	Float relativeSize = 1;		//relative size of all fonts
 	Float letterSpacing = 0.6;
 
+	FontStyle() = default;
+	FontStyle(Float absoluteSize) {
+		this->absoluteSize = absoluteSize;
+	}
 	void setSize(Float size);
 };
 

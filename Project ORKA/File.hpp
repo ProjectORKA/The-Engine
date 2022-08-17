@@ -1,4 +1,4 @@
-
+#pragma once
 
 #include "Basics.hpp"
 
@@ -7,30 +7,12 @@ struct InFile {
 	Bool isOpen = false;
 	std::ifstream file;
 
-	InFile(Path location) {
-		fileLocation = location;
-		file = std::ifstream(fileLocation, std::ios::binary | std::ios::in);
-		if (file.is_open()) {
-			isOpen = true;
-		}
-		else {
-			isOpen = false;
-			logError(String("Could not create file at location (").append(fileLocation.string()).append(")!"));
-		}
-	}
+	~InFile();
+	InFile(Path location);
+	void read(char* data, SizeT size);
 
-	void read(char * data, SizeT size) {
-		if (isOpen) {
-			file.read(data, size);
-		}
-		else {
-			logError(String("The binary file").append(fileLocation.string()).append("could not be opened!"));
-		}
-	}
-
-	~InFile() {
-		file.close();
-	}
+	template <typename T>
+	void read(T& data) { read((char*)&data, sizeof(data));}
 };
 
 struct OutFile {
@@ -38,33 +20,10 @@ struct OutFile {
 	Bool isOpen = false;
 	std::ofstream file;
 
-	OutFile(Path location) {
-		fileLocation = location;
-		while (!std::filesystem::exists(fileLocation.parent_path())) {
-			logDebug(String("The directory (").append(fileLocation.parent_path().string()).append(") does not exist and will be created!"));
-			std::filesystem::create_directory(fileLocation.parent_path());
-		}
+	~OutFile();
+	OutFile(Path location);
+	void write(char* data, SizeT size);
 
-		file = std::ofstream(fileLocation, std::ios::trunc | std::ios::binary | std::ios::out);
-		if (file.is_open()) {
-			isOpen = true;
-		}
-		else {
-			isOpen = false;
-			logError(String("Could not create file at location (").append(fileLocation.string()).append(")!"));
-		}
-	}
-
-	void write(char* data, SizeT size) {
-		if (isOpen) {
-			file.write(data, size);
-		}
-		else {
-			logError(String("The binary file").append(fileLocation.string()).append("could not be opened!"));
-		}
-	}
-
-	~OutFile() {
-		file.close();
-	}
+	template <typename T>
+	void write(T& data) { write((char*)&data, sizeof(data)); }
 };

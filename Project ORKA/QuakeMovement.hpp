@@ -2,6 +2,7 @@
 
 #include "Game.hpp"
 #include "Player.hpp"
+#include "Profiler.hpp"
 
 //required
 //	physics
@@ -54,22 +55,22 @@ struct QuakePlayer : public Player {
 	Vec3 rightVector = Vec3(1, 0, 0);
 
 	//jump
-	const Float minJumpVelocity = 6 * unit;
-	const Float maxJumpVelocity = 6 * unit;
+	const Float minJumpVelocity = 3 * unit;
+	const Float maxJumpVelocity = 5 * unit;
 	Float jumpCharge = 0;
 	
 	//speed
 	const Float walkingSpeed = 1 * unit;	//
 	const Float runningSpeed = 5.5 * unit;
-	const Float speedControlAcceleration = 2;
+	const Float speedControlAcceleration = 100;
 	const Float speedControlDeceleration = 1;
 	Bool isMoving = false;
 	Float speedControl = 0;
 	Vec3 movementControl = Vec3(0);
 
 	//strafe
-	const Float maxStrafeSpeed = 1;
-	const Float maxStrafeAcceleration = 1000000;
+	const Float maxStrafeSpeed = 3;
+	const Float maxStrafeAcceleration = 100;
 	//Vec2 strafeControl = Vec2(0);
 
 	//player physique
@@ -139,7 +140,6 @@ struct QuakePlayer : public Player {
 	void releaseJump();
 	void collisionResponse();
 	void calculatePhysics(Float delta);
-	void calculateFriction(Float delta);
 	void calculateHeadPosition(Window & window, Float delta);
 
 	void update(Window & window) override;

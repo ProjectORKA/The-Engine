@@ -1,6 +1,5 @@
 #include "Intro.hpp"
 #include "Window.hpp"
-#include "GameSystem.hpp"
 
 Intro::Intro(GameRenderer* gameStartingAfterIntro) {
 	this->gameStartingAfterIntro = gameStartingAfterIntro;

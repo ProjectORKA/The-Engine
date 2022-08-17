@@ -97,10 +97,6 @@ QuadtreeNode& QuadtreeNode::nfr() {
 	}
 	return *cur->nf;
 }
-void QuadtreeNode::incrementUsers()
-{
-	users++;
-}
 void QuadtreeNode::decrementUsers()
 {
 	if (users) {
@@ -110,13 +106,17 @@ void QuadtreeNode::decrementUsers()
 		logError("Cant have less than 0 users, error must have happened!");
 	}
 }
+void QuadtreeNode::incrementUsers()
+{
+	users++;
+}
 void QuadtreeNode::removeSelfFromNeighbours() {
 	if (nf) nf->nb = nullptr;
 	if (nb) nb->nf = nullptr;
 	if (nr) nr->nl = nullptr;
 	if (nl) nl->nr = nullptr;
 }
-void QuadtreeNode::create(TerrainSystem & terrainSystem)
+void QuadtreeNode::createRootNode(TerrainSystem & terrainSystem)
 {
 	parent = nullptr;
 	id.level = 0;

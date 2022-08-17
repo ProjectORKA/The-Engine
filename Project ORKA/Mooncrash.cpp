@@ -49,9 +49,19 @@ void renderMooncrashAtmosphere(Renderer& renderer, MooncrashPlayer& player)
 	renderer.setDepthTest(true);
 }
 void renderPlanet(Renderer& renderer, PlanetSystem& planetSystem, PlanetSystemPlayer& player) {
-	renderer.setDepthTest(true);
+	//set modes
 	renderer.setAlphaBlending(false);
-	renderer.planetRenderSystem.render(planetSystem, renderer, player);
+	renderer.setDepthTest(true);
+
+	//set uniforms
+	renderer.uniforms().customInt1() = Int(renderer.planetRenderSystem.worldDistortion);
+	renderer.uniforms().mMatrix() = Matrix(1);
+	player.camera.renderOnlyRot(renderer);
+
+	//render meshes
+	for (UShort level = 0; level < MAX_CHUNK_LEVEL; level++) {
+		renderer.planetRenderSystem.renderLevel(planetSystem, renderer, player, level);
+	}
 };
 
 MooncrashPlayer::MooncrashPlayer() {
@@ -152,6 +162,11 @@ void MooncrashPlayer::render(Window & window) {
 
 void MooncrashRenderer::update(Window& window) {
 	player.update(window);
+	window.renderer.planetRenderSystem.update(simulation->planetSystem, player);
+}
+void MooncrashRenderer::init(MooncrashSimulation& simulation) {
+	player.speedExponent = 200;
+	this->simulation = &simulation;
 }
 void MooncrashRenderer::render(Window& window, TiledRectangle area) {
 	Renderer& renderer = window.renderer;
@@ -168,6 +183,9 @@ void MooncrashRenderer::render(Window& window, TiledRectangle area) {
 	//renderMooncrashAtmosphere(renderer, player);
 
 	renderPlanet(renderer, simulation->planetSystem, player);
+	
+
+
 	//renderUI(renderer, player);
 }
 void MooncrashRenderer::inputEvent(Window& window, InputEvent input) {
@@ -183,8 +201,4 @@ void MooncrashRenderer::inputEvent(Window& window, InputEvent input) {
 	if (input == exit) window.uncaptureCursor();
 
 	player.inputEvent(window, input);
-}
-MooncrashRenderer::MooncrashRenderer(MooncrashSimulation& simulation) {
-	player.speedExponent = 200;
-	this->simulation = &simulation;
 }

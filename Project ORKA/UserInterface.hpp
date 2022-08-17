@@ -14,17 +14,20 @@ struct UIImage : public UIElement {
 	Name name;
 
 	UIImage(Name name);
+	void update(Window& window) override;
 	void render(Window& window, TiledRectangle renderArea)override;
 };
 struct UITextBox : public UIElement {
 	String* data;
 
 	UITextBox(String& data);
+	void update(Window& window) override;
 	void render(Window& window, TiledRectangle renderArea) override;
 };
 struct UICheckBox : public UIElement {
 	Boolean* data;
 	UICheckBox(Boolean& data);
+	void update(Window& window) override;
 	void render(Window& window, TiledRectangle renderArea) override;
 };
 struct UIContainer : public UIElement {
@@ -35,12 +38,13 @@ struct UIContainer : public UIElement {
 	UIContainer& vertical();
 	UIContainer& horizontal();
 	UIContainer& insert(UIElement& element);
+	void update(Window& window) override;
 	void render(Window& window, TiledRectangle renderArea) override;
 	void renderInteractive(Window& window, TiledRectangle renderArea) override;
 };
 
 struct UserInterface {
-	
+
 	void run();
 
 	UIElement* currentlyActive = nullptr;

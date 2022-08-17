@@ -9,6 +9,9 @@ UIButton& UIButton::insert(UIElement& element) {
 	content = &element;
 	return *this;
 }
+void UIButton::update(Window& window) {
+	content->update(window);
+}
 void UIButton::inputEvent(Window& window, InputEvent input)
 {
 	if (input == InputEvent(InputType::Mouse,0,1)) pressed = window.renderer.idFramebuffer.objectID == id;

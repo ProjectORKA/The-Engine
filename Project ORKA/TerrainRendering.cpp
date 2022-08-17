@@ -17,11 +17,16 @@ CPUMesh createTerrainMesh(AdvancedHeightMap & heightmap)
 				position.y = Float(y) / Float(TERRAIN_MAP_SIZE - 1);
 				if (ULL(heightmap.upperLimit) == ULL(heightmap.lowerLimit)) position.z = 0;
 				else position.z = Float((heightmap.height[x][y] - heightmap.lowerLimit) / (heightmap.upperLimit - heightmap.lowerLimit));
-
 				mesh.vertices.push_back(position);
+				
+				//create normals
 				mesh.normals.push_back(Vec3(0,0,1));
-				//create uvs
+				
+				//create uvs	
 				mesh.uvs.push_back(Vec2(position.x, position.y));
+
+				//create vertex colors
+				mesh.colors.push_back(Vec3(0,1,0));
 			}
 		}
 		

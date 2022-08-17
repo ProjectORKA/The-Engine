@@ -78,6 +78,15 @@ UInt fibonacciSequence(UInt iterations) {
 	else return y;
 }
 
+UInt countBitsInFlags(Short flags) {
+	UInt count = 0;
+	while (flags) {
+		count++;
+		flags = flags >> 1;
+	}
+	return count;
+}
+
 Index idOfClosestPoint(Vec2 origin, Vector<Vec2>& positions) {
 	Index index = 0;
 	Float closestDistance = distance(origin, positions.front());
@@ -280,6 +289,14 @@ Orientation::Orientation(Vec3 direction, Vec3 up) {
 	y = cross(normalize(z), x);
 }
 
+Matrix matrixFromScale(Vec2 s) {
+	Matrix m;
+	m[0] = Vec4(s.x, 0, 0, 0);
+	m[1] = Vec4(0, s.y, 0, 0);
+	m[2] = Vec4(0, 0, 1, 0);
+	m[3] = Vec4(0, 0, 0, 1);
+	return m;
+}
 Matrix matrixFromScale(Vec3 s) {
 	Matrix m;
 	m[0] = Vec4(s.x, 0, 0, 0);

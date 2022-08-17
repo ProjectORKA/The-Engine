@@ -3,6 +3,7 @@
 #include "FramebufferSystem.hpp"
 #include "Renderer.hpp"
 #include "Window.hpp"
+#include "Profiler.hpp"
 
 void IdFramebuffer::read(Renderer& renderer)
 {
@@ -10,6 +11,7 @@ void IdFramebuffer::read(Renderer& renderer)
 }
 void IdFramebuffer::draw(Renderer& renderer)
 {
+	OPTICK_EVENT();
 	renderer.framebufferSystem.draw(renderer, framebufferID);
 }
 void IdFramebuffer::create(Renderer& renderer)

@@ -3,7 +3,6 @@
 #include "Window.hpp"
 #include "Random.hpp"
 #include "FileSystem.hpp"
-#include "GameSystem.hpp"
 
 Int diceRoll(Int diceCount) {
 	return 1 + randomInt(diceCount);
@@ -155,8 +154,8 @@ void DNDWorld::save() {
 void DNDWorld::load() {
 	Path saveGameLocation = "data/saves/dnd.save";
 
-	if (doesPathExist(saveGameLocation)) {
-		InFile save("data/saves/dnd.save");
+	InFile save("data/saves/dnd.save");
+	if (save.isOpen) {
 
 		save.read((Char*)&fieldOfView, sizeof(Float));
 		save.read((Char*)&nearClipValue, sizeof(Float));
@@ -169,9 +168,9 @@ void DNDWorld::load() {
 		save.read((Char*)&entityCount, sizeof(UInt));
 		entities.resize(entityCount);
 		save.read((Char*)&entities[0], sizeof(DNDEntity) * entityCount);
-	}
 
-	loaded = true;
+		loaded = true;
+	}
 }
 void DNDEntity::render(Renderer& renderer) {
 	transform.render(renderer);

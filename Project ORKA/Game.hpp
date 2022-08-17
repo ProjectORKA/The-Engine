@@ -1,17 +1,21 @@
 
 #pragma once
 
-#include "Renderer.hpp"
-#include "UIElement.hpp"
+#include "UserInterface.hpp"
 
-struct GameSimulation{
+struct GameSimulation {
+	Thread thread;
 	Bool loaded = false;
-	virtual void create() {};
-	virtual void destroy() {};
+	Float tickrate = 60;
+	Bool keepRunning = false;
+
+	virtual void init();
+	virtual void destroy();
 	virtual void update(Float delta) {};
 };
 
-struct GameRenderer : public UIElement{
-	virtual void destroy() {};
-	virtual void create(Window & window) {};
+void gameSimulationThread(GameSimulation& sim);
+
+struct GameRenderer : public UIElement {
+	//nothing lol
 };

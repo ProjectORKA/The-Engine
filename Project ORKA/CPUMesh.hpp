@@ -16,17 +16,30 @@ enum class VertexDataLocation {
 	Indices = 16,
 };
 
+enum MeshData : Short {
+	Positions = 1,
+	TextureCoords = 2,
+	Normals = 4,
+	Tangents = 8,
+	Bitangents = 16,
+	VertexColor = 32,
+};
+
 struct CPUMesh {
 	Name name = "empty";
+	Short dataFlags = 0;
+	Bool readyForUpload = false;
+	Int drawMode = MeshDrawMode::staticMode;
 	Int primitiveMode = PrimitiveMode::Triangles;
+	
 	Vector<Vec3> vertices;
 	Vector<Vec2> uvs;
 	Vector<Vec3> normals;
+	Vector<Vec3> tangents;
+	Vector<Vec3> bitangents;
 	Vector<Vec3> colors;
 
 	Vector<Index> indices;
-	Int drawMode = MeshDrawMode::staticMode;
-	Bool readyForUpload = false;
 
 	CPUMesh() {};
 	~CPUMesh() {};

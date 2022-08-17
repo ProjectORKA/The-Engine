@@ -49,3 +49,11 @@ void UISandbox::renderInteractive(Window& window, TiledRectangle area) {
 		saveButton.renderInteractive(window, area);
 	}
 }
+
+void Toggle::update(Window& window) {
+	content->update(window);
+}
+
+void Toggle::doThis() {
+	toggle = !toggle;
+}

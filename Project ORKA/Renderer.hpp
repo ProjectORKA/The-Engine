@@ -47,7 +47,8 @@ struct Renderer{
 	FramebufferSystem framebufferSystem;
 	InteractionSystem interactionSystem;
 	RenderObjectSystem renderObjectSystem;
-	PlanetRenderSystem planetRenderSystem;
+
+	PlanetRenderSystem planetRenderSystem; //[TODO] remove from renderer
 
 	Mutex mutex;
 	void sync(); //makes non renderer threads wait for the finished frame
@@ -67,19 +68,7 @@ struct Renderer{
 	void screenSpace();
 	void normalizedSpace();
 	void aspectCorrectNormalizedSpace();
-	void aspectRatioNormalizedSpace(Float aspectRatio) {
-		Area renderSize = getArea();
-		Float renderAspectRatio = getAspectRatio();
-			uniforms().vMatrix() = Matrix(1);
-			//scale the view up based on the target aspect ratio
-			Matrix pMatrix(1);
-			Float scaleUpFactor = max(aspectRatio, 1 / aspectRatio);
-			pMatrix = scale(pMatrix, Vec3(scaleUpFactor, scaleUpFactor, 1));
-
-
-			if (renderAspectRatio > 1) uniforms().pMatrix() = scale(pMatrix, Vec3(1 / renderAspectRatio, 1, 1));
-			else uniforms().pMatrix() = scale(pMatrix, Vec3(1, renderAspectRatio, 1));
-	}
+	void normalizedSpaceWithAspectRatio(Float aspectRatio);
 	
 	//meshes
 	void rerenderMesh();
@@ -125,11 +114,8 @@ struct Renderer{
 	void addRenderObject(RenderObjectNames renderObjectNames);
 	
 	Area getArea();
-	
 	Bool getCulling();
-
 	Float deltaTime();
 	Float getAspectRatio();
-
 	Uniforms& uniforms();
 };

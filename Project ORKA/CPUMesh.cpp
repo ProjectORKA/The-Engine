@@ -122,7 +122,17 @@ CPUMesh::CPUMesh(Graph& graph) {
 	checkIntegrity();
 }
 void CPUMesh::checkIntegrity() {
-	if (uvs.size() == vertices.size() && normals.size() == vertices.size()) readyForUpload = true;
+	dataFlags = MeshData::Positions; // we assume a mesh always has positions
+
+	if (uvs.size()) dataFlags += MeshData::TextureCoords;
+	if (normals.size()) dataFlags += MeshData::Normals;
+	if (tangents.size()) dataFlags += MeshData::Tangents;
+	if (bitangents.size()) dataFlags += MeshData::Bitangents;
+	if (colors.size()) dataFlags += MeshData::VertexColor;
+
+	UInt count = countBitsInFlags(dataFlags);
+
+	if (uvs.size() + vertices.size() + normals.size() + vertices.size()) readyForUpload = true;
 	else readyForUpload = false;
 }
 void CPUMesh::merge(CPUMesh source) {

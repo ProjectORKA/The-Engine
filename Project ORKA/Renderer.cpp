@@ -2,9 +2,11 @@
 #include "Random.hpp"
 #include "Player.hpp"
 #include "Camera.hpp"
+#include "Profiler.hpp"
 
 void Renderer::end()
 {
+	OPTICK_EVENT();
 	pollGraphicsAPIError();
 	mutex.unlock();
 	frameCount++;
@@ -26,7 +28,6 @@ void Renderer::begin()
 void Renderer::destroy()
 {
 	textRenderSystem.destroy();
-	planetRenderSystem.destroy();
 	renderObjectSystem.destroy();
 
 	meshSystem.destroy();
@@ -145,6 +146,40 @@ void Renderer::aspectCorrectNormalizedSpace() {
 	uniforms().vMatrix() = Matrix(1);
 	if (aspect > 1) uniforms().pMatrix() = scale(Matrix(1), Vec3(1 / getAspectRatio(), 1, 1));
 	else uniforms().pMatrix() = scale(Matrix(1), Vec3(1, getAspectRatio(), 1));
+}
+void Renderer::normalizedSpaceWithAspectRatio(Float aspectRatio) {
+	Float renderAspectRatio = getAspectRatio();
+
+	Vec2 view = Vec2(1);
+
+	if (aspectRatio >= 1.0f) {
+		view = Vec2(aspectRatio, 1);
+		if (renderAspectRatio >= aspectRatio) {
+			view.x = renderAspectRatio;
+			view.y = 1;
+		}
+		else {
+			view.x = aspectRatio;
+			view.y = 1 / renderAspectRatio * aspectRatio;
+		}
+	}
+	else {
+		view = Vec2(1, 1 / aspectRatio);
+		if (renderAspectRatio >= aspectRatio) {
+			view.x = renderAspectRatio * 1 / aspectRatio;
+			view.y = 1 / aspectRatio;
+		}
+		else {
+			view.x = 1;
+			view.y = 1 / renderAspectRatio;
+		}
+	}
+
+
+
+	uniforms().vMatrix() = Matrix(1);
+	Matrix pMatrix(1);
+	uniforms().pMatrix() = scale(pMatrix, Vec3(Vec2(1) / view, 1));
 }
 void Renderer::setDepthClamp(Bool depthClamp)
 {

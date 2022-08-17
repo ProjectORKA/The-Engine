@@ -11,10 +11,10 @@ struct PlanetSystemPlayer;
 struct PlanetRenderSystem {
 	Bool chunkBorders = true;
 	Bool worldDistortion = true;
-
-	OctreeRenderSystem octreeRenderSystem;
 	QuadtreeRenderSystem quadtreeRenderSystem;
 
 	void destroy();
+	void update(PlanetSystem& planetSystem, PlanetSystemPlayer& player);
 	void render(PlanetSystem& planetSystem, Renderer& renderer, PlanetSystemPlayer& player);
+	void renderLevel(PlanetSystem& planetSystem, Renderer& renderer, PlanetSystemPlayer& player, UShort level);
 };

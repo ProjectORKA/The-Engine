@@ -36,15 +36,9 @@
     <ClCompile Include="Collision.cpp" />
     <ClCompile Include="Compiler.cpp" />
     <ClCompile Include="EntityComponentSystem.cpp" />
+    <ClCompile Include="File.cpp" />
     <ClCompile Include="GPUBuffer.cpp" />
     <ClCompile Include="IdFramebuffer.cpp" />
-    <ClCompile Include="imgui\imgui.cpp" />
-    <ClCompile Include="imgui\imgui_demo.cpp" />
-    <ClCompile Include="imgui\imgui_draw.cpp" />
-    <ClCompile Include="imgui\imgui_impl_glfw.cpp" />
-    <ClCompile Include="imgui\imgui_impl_opengl3.cpp" />
-    <ClCompile Include="imgui\imgui_tables.cpp" />
-    <ClCompile Include="imgui\imgui_widgets.cpp" />
     <ClCompile Include="InfiniteDetailPrototype.cpp" />
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="Instancing.cpp" />
@@ -56,11 +50,21 @@
     <ClCompile Include="Name.cpp" />
     <ClCompile Include="NeighbourOctree.cpp" />
     <ClCompile Include="Molecules2D.cpp" />
+    <ClCompile Include="optik\optick_capi.cpp" />
+    <ClCompile Include="optik\optick_core.cpp" />
+    <ClCompile Include="optik\optick_gpu.cpp" />
+    <ClCompile Include="optik\optick_gpu.d3d12.cpp" />
+    <ClCompile Include="optik\optick_gpu.vulkan.cpp" />
+    <ClCompile Include="optik\optick_message.cpp" />
+    <ClCompile Include="optik\optick_miniz.cpp" />
+    <ClCompile Include="optik\optick_serialization.cpp" />
+    <ClCompile Include="optik\optick_server.cpp" />
     <ClCompile Include="ParticleSystem.cpp" />
     <ClCompile Include="Physics.cpp" />
     <ClCompile Include="PhysicsPlayground.cpp" />
     <ClCompile Include="PhysicsUtil.cpp" />
     <ClCompile Include="ProjectMelon.cpp" />
+    <ClCompile Include="QuadtreeNode.cpp" />
     <ClCompile Include="QuakeMovement.cpp" />
     <ClCompile Include="Random.cpp" />
     <ClCompile Include="RectangleRenderer.cpp" />
@@ -77,7 +81,6 @@
     <ClCompile Include="DynameshTerrain.cpp" />
     <ClCompile Include="Fonts.cpp" />
     <ClCompile Include="Game.cpp" />
-    <ClCompile Include="GameSystem.cpp" />
     <ClCompile Include="Intro.cpp" />
     <ClCompile Include="JobSystem.cpp" />
     <ClCompile Include="MathDNA.cpp" />
@@ -93,7 +96,6 @@
     <ClCompile Include="PointCloud.cpp" />
     <ClCompile Include="Pong.cpp" />
     <ClCompile Include="QuadtreeID.cpp" />
-    <ClCompile Include="QuadtreeNode.cpp" />
     <ClCompile Include="String.cpp" />
     <ClCompile Include="ProjectSnek.cpp" />
     <ClCompile Include="TLSFAllocator.cpp" />
@@ -157,6 +159,13 @@
     <ClCompile Include="OctreeSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\..\..\..\Downloads\New folder (2)\array.h" />
+    <ClInclude Include="..\..\..\..\..\..\Downloads\New folder (2)\array2d.h" />
+    <ClInclude Include="..\..\..\..\..\..\Downloads\New folder (2)\numtraits.h" />
+    <ClInclude Include="..\..\..\..\..\..\Downloads\New folder (2)\octree.h" />
+    <ClInclude Include="..\..\..\..\..\..\Downloads\New folder (2)\point3d.h" />
+    <ClInclude Include="..\..\..\..\..\..\Downloads\New folder (2)\shareddata.h" />
+    <ClInclude Include="..\..\..\..\..\..\Downloads\New folder (2)\tinyvector.h" />
     <ClInclude Include="Array2D.hpp" />
     <ClInclude Include="artery-font.h" />
     <ClInclude Include="BaseAllocator.hpp" />
@@ -166,25 +175,18 @@
     <ClInclude Include="Color.hpp" />
     <ClInclude Include="crc32.h" />
     <ClInclude Include="crc32.hpp" />
+    <ClInclude Include="cxxopts.hpp" />
     <ClInclude Include="DeadVector.hpp" />
     <ClInclude Include="EntityComponentSystem.hpp" />
     <ClInclude Include="enums.h" />
     <ClInclude Include="File.hpp" />
+    <ClInclude Include="FlappyBird.hpp" />
     <ClInclude Include="GeometryClipmapTerrain.hpp" />
     <ClInclude Include="GPUBuffer.hpp" />
     <ClInclude Include="GPUSim.hpp" />
     <ClInclude Include="GuessingGame.hpp" />
     <ClInclude Include="IdFramebuffer.hpp" />
     <ClInclude Include="ImguiWrapper.hpp" />
-    <ClInclude Include="imgui\imconfig.h" />
-    <ClInclude Include="imgui\imgui.h" />
-    <ClInclude Include="imgui\imgui_impl_glfw.h" />
-    <ClInclude Include="imgui\imgui_impl_opengl3.h" />
-    <ClInclude Include="imgui\imgui_impl_opengl3_loader.h" />
-    <ClInclude Include="imgui\imgui_internal.h" />
-    <ClInclude Include="imgui\imstb_rectpack.h" />
-    <ClInclude Include="imgui\imstb_textedit.h" />
-    <ClInclude Include="imgui\imstb_truetype.h" />
     <ClInclude Include="InfiniteDetailPrototype.hpp" />
     <ClInclude Include="Input.hpp" />
     <ClInclude Include="Instancing.hpp" />
@@ -198,14 +200,33 @@
     <ClInclude Include="MindMapper.hpp" />
     <ClInclude Include="MSDFText.hpp" />
     <ClInclude Include="Name.hpp" />
+    <ClInclude Include="NameGenerator.hpp" />
     <ClInclude Include="NeighbourOctree.hpp" />
     <ClInclude Include="Molecules2D.hpp" />
+    <ClInclude Include="optik\optick.config.h" />
+    <ClInclude Include="optik\optick.h" />
+    <ClInclude Include="optik\optick_capi.h" />
+    <ClInclude Include="optik\optick_common.h" />
+    <ClInclude Include="optik\optick_core.freebsd.h" />
+    <ClInclude Include="optik\optick_core.h" />
+    <ClInclude Include="optik\optick_core.linux.h" />
+    <ClInclude Include="optik\optick_core.macos.h" />
+    <ClInclude Include="optik\optick_core.platform.h" />
+    <ClInclude Include="optik\optick_core.win.h" />
+    <ClInclude Include="optik\optick_gpu.h" />
+    <ClInclude Include="optik\optick_memory.h" />
+    <ClInclude Include="optik\optick_message.h" />
+    <ClInclude Include="optik\optick_miniz.h" />
+    <ClInclude Include="optik\optick_serialization.h" />
+    <ClInclude Include="optik\optick_server.h" />
     <ClInclude Include="ParticleSystem.hpp" />
     <ClInclude Include="Physics.hpp" />
     <ClInclude Include="PhysicsPlayground.hpp" />
     <ClInclude Include="PhysicsUtil.hpp" />
     <ClInclude Include="PoolAllocator.hpp" />
+    <ClInclude Include="Profiler.hpp" />
     <ClInclude Include="ProjectMelon.hpp" />
+    <ClInclude Include="QuadtreeNode.hpp" />
     <ClInclude Include="QuakeMovement.hpp" />
     <ClInclude Include="RectangleRenderer.hpp" />
     <ClInclude Include="Renderable.hpp" />
@@ -251,7 +272,6 @@
     <ClInclude Include="Fonts.hpp" />
     <ClInclude Include="Functor.hpp" />
     <ClInclude Include="Game.hpp" />
-    <ClInclude Include="GameSystem.hpp" />
     <ClInclude Include="Intro.hpp" />
     <ClInclude Include="Keymap.hpp" />
     <ClInclude Include="Pong.hpp" />
@@ -284,9 +304,7 @@
     <ClInclude Include="Networking.hpp" />
     <ClInclude Include="PlanetRenderSystem.hpp" />
     <ClInclude Include="PlanetSystem.hpp" />
-    <ClInclude Include="QuadtreeData.hpp" />
     <ClInclude Include="QuadtreeID.hpp" />
-    <ClInclude Include="QuadtreeNode.hpp" />
     <ClInclude Include="QuadtreeSystemRenderer.hpp" />
     <ClInclude Include="RayMarchedTerrain.hpp" />
     <ClInclude Include="RelativeChunkOffset.hpp" />
@@ -337,6 +355,9 @@
     <ClInclude Include="OctreeSystem.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\..\..\..\..\..\Downloads\New folder (2)\Makefile" />
+    <None Include="..\..\..\..\..\..\Downloads\New folder (2)\octree.tcc" />
+    <None Include="..\..\..\..\..\..\Downloads\New folder (2)\octree.vcproj" />
     <None Include="Data\shaders\atmosphere.frag" />
     <None Include="Data\shaders\atmosphere.vert" />
     <None Include="Data\shaders\blur.frag" />
@@ -391,6 +412,10 @@
     <None Include="Data\shaders\color.vert" />
     <None Include="G:\DATA\PROJEKTE\ORKA\GAME ENGINE\SOURCE CODE\Project ORKA\Data\shaders\idShader.frag" />
     <None Include="G:\DATA\PROJEKTE\ORKA\GAME ENGINE\SOURCE CODE\Project ORKA\Data\shaders\idShader.vert" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\..\..\..\..\..\Downloads\New folder (2)\License.txt" />
+    <Text Include="..\..\..\..\..\..\Downloads\New folder (2)\Readme.txt" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>

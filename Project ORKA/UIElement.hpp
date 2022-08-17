@@ -6,6 +6,7 @@
 #include "TiledMath.hpp"
 #include "Renderer.hpp"
 #include "Input.hpp"
+#include "Profiler.hpp"
 
 extern Index nextInteractiveElementID;
 
@@ -40,8 +41,10 @@ struct UIElement {
 	~UIElement();
 	UIElement& padding(U16 width);
 
-	virtual void update(Window& window) {};
+	virtual void create(Window& window) {};
+	virtual void destroy(Window& window) {};
+	virtual void update(Window& window) = 0;
 	virtual void render(Window& window, TiledRectangle area) {};
 	virtual void inputEvent(Window& window, InputEvent input) {};
-	virtual void renderInteractive(Window& window, TiledRectangle area) {};
+	virtual void renderInteractive(Window& window, TiledRectangle area) { OPTICK_EVENT(); };
 };
