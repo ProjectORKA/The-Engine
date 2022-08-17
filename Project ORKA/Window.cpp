@@ -2,15 +2,24 @@
 #include "Window.hpp"
 #include "UserInterface.hpp"
 
+#include "Profiler.hpp"
+
 UShort nextWindowID = 0;
+
+void finish() {
+	OPTICK_EVENT();
+	glFinish();
+}
 
 //window thread
 void windowThread(Window& window)
 {
 	Renderer& renderer = window.renderer;
-	window.initializeGraphicsAPI();						//needs to be in this thread
+	window.initializeGraphicsAPI();					//needs to be in this thread
 	renderer.create(window.getContentSize());		//also needs to be in this thread
 	window.updateWindowState();
+
+	window.content->create(window);
 
 	if(window.windowState == WindowState::windowed) window.centerWindow();
 	if (window.windowState == WindowState::windowed || window.windowState == WindowState::maximized) window.updateDecorations();
@@ -19,10 +28,15 @@ void windowThread(Window& window)
 
 	MouseMovement prevPos = MouseMovement(0);
 
+OPTICK_THREAD("Window Thread");
+
 	//main render loop for the window
-	while (window.thread.keepThreadRunning) {
+	while (window.keeprunning) {
+OPTICK_FRAME("Window Frame");
 		if (window.isShown) {
 			
+OPTICK_PUSH("Setup");
+
 			window.mouseDelta = window.mousePosBotLeft - prevPos;
 			prevPos = window.mousePosBotLeft;
 
@@ -37,11 +51,15 @@ void windowThread(Window& window)
 			renderer.uniforms().width(renderer.framebufferSystem.currentDraw().size.x);
 			renderer.uniforms().height(renderer.framebufferSystem.currentDraw().size.y);
 
+OPTICK_POP();
+
 			if (window.content) {
 				//update ui
+
 				window.content->update(window);
 
 				//render interactibles
+OPTICK_PUSH("Interactive Draw");
 				renderer.idFramebuffer.draw(renderer);
 				renderer.useShader("idShader");
 				renderer.uniforms().reset();
@@ -53,14 +71,22 @@ void windowThread(Window& window)
 				renderer.setAlphaBlending(false);
 				window.content->renderInteractive(window, windowArea);
 				renderer.idFramebuffer.updateIdsUnderCursor(window);
+OPTICK_POP();
 
 				//render ui
+OPTICK_PUSH("Draw");
 				renderer.framebufferSystem.draw(renderer, 0);
 				renderer.clearColor(Color(Vec3(0), 0.0));
 				renderer.clearDepth();
 				renderer.setWireframeMode(renderer.wireframeMode);
 				window.content->render(window, windowArea);
+
+				renderer.aspectCorrectNormalizedSpace();
+				if (window.profiling) renderer.renderText("[R]", Vec2(0.9), FontStyle(0.02));
+OPTICK_POP();
 			}
+
+OPTICK_PUSH("Finalize");
 
 			renderer.setWireframeMode(false);
 			renderer.setAlphaBlending(false);
@@ -71,17 +97,24 @@ void windowThread(Window& window)
 
 			apiBindDrawFramebuffer(0);
 
+OPTICK_PUSH("Draw final quad");
 			renderer.useShader("final");
 			renderer.framebufferSystem.currentDraw().setAsTexture(0); //[TODO] might not work; check
 			renderer.uniforms().reset();
 			renderer.renderMesh("fullScreenQuad");
-
+OPTICK_POP();
 			renderer.end(); //checks errors and unlocks renderer
+
+			finish();
+			finish();
+			finish();
+
 			apiWindowSwapBuffers(window.apiWindow);
+OPTICK_POP();
 		}
 		window.mouseDelta = MouseMovement(0);
 	}
-
+	renderer.destroy();
 	window.destroyAPIWindow();
 }
 
@@ -103,6 +136,7 @@ void Window::uncaptureCursor() {
 
 //window member functions
 void Window::destroy() {
+	keeprunning = false;
 	thread.stop();
 }
 void Window::setWindowed()
@@ -254,7 +288,7 @@ void Window::createAPIWindow(String title, Area size) {
 		glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
 #endif
 
-		apiWindow = apiCreateWindow(size, title.c_str());
+		apiWindow = apiCreateWindow(size, title.c_str(), nullptr);
 
 		if (!apiWindow)logError("Window could not be created!");
 
@@ -272,7 +306,6 @@ void Window::create(String title, Area size, Bool decorated, WindowState state)
 {
 	this->decorated = decorated;
 	this->windowState = state;
-
 	id = nextWindowID++;
 	windowedModeSize = size;
 	createAPIWindow(title, size); //needs to be in this thread
@@ -330,15 +363,11 @@ void whenWindowWasMinimized(APIWindow apiWindow, Int minimized)
 void whenFramebufferIsResized(APIWindow apiWindow, Int width, Int height) {
 	Window& window = *static_cast<Window*>(glfwGetWindowUserPointer(apiWindow));
 
-	ULL current = window.renderer.frameCount;
-
 	if (!window.isFullScreen()) window.windowedModeSize = Area(width, height);
 
 	if (apiWindowKeyIsPressed(apiWindow, LEFT_SHIFT)) {
 		window.centerWindow();
 	}
-
-	while (current == window.renderer.frameCount) {}
 }
 void whenMouseIsMoving(APIWindow apiWindow, Double mouseX, Double mouseY) {
 	Window& window = *static_cast<Window*>(glfwGetWindowUserPointer(apiWindow));
@@ -382,15 +411,27 @@ void whenMouseIsPressed(APIWindow apiWindow, Int mouseButton, Int action, Int mo
 void whenButtonIsPressed(APIWindow apiWindow, Int key, Int scancode, Int action, Int modifiers)
 {
 	Window& window = *static_cast<Window*>(glfwGetWindowUserPointer(apiWindow));
-	
+
 	InputEvent input = InputEvent(InputType::KeyBoard, key, action);
 
-	if (input == window.escape) apiSetWindowShouldClose(apiWindow, true);
+	if (input == window.escape) {
+		window.keeprunning = false;
+		apiSetWindowShouldClose(apiWindow, true);
+	}
 	if (input == window.enter && window.pressed(window.altKey)) {
 		if (window.windowState == WindowState::windowed) window.windowState = WindowState::fullscreen;
 		else window.windowState = WindowState::windowed;
 		window.updateWindowState();
 	}
-
+	if (input == window.startProfiling) {
+		window.profiling = true;
+		OPTICK_START_CAPTURE();
+	}
+	if (input == window.stopProfiling) {
+		window.profiling = false;
+		OPTICK_STOP_CAPTURE();
+		OPTICK_SAVE_CAPTURE("profileDump");
+	}
+	
 	window.content->inputEvent(window, input);
 }

@@ -78,8 +78,6 @@ void QuadtreeNodeRenderData::renderTerrain(Renderer& renderer)
 {
 	QuadtreeNode& node = *equivalentQuadtreeNode;
 
-	//renderer.useShader("terrain");
-	//renderer.useTexture("terrainColor");
 	loadTerrainMesh();
 	
 	Matrix m = matrixFromScale(Vec3(1, 1, (node.data.terrain->heightmap.upperLimit - node.data.terrain->heightmap.lowerLimit) / LDouble(pow(2, 64 - node.id.level))));

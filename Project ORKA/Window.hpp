@@ -16,13 +16,22 @@ enum class WindowState {
 	fullscreen
 };
 
+enum WindowDecoration {
+	decorated = 1,
+	undecorated = 0,
+};
+
 struct Window {
+
+	Renderer renderer;
+
 	UShort id = 0;
 	Thread thread;
-	Renderer renderer;
 	Bool isShown = true;
 	IVec2 windowPosition;
 	Bool decorated = true;
+	Bool profiling = false;
+	Bool keeprunning = true;
 	APIWindow apiWindow = nullptr;
 	UIElement * content = nullptr;
 	Area windowedModeSize = Area(1);
@@ -31,19 +40,19 @@ struct Window {
 	
 	//mouse
 	MouseState mouseState;
-
-	//new shit
 	Bool capturing = false;
 	MouseMovement mousePos = MouseMovement(0);
 	MouseMovement mouseDelta = MouseMovement(0);
 	MouseMovement mousePosBotLeft = MouseMovement(0);
 
-	//generic inputs
+	//input
 	InputID altKey = InputID(InputType::KeyBoard, ALT);
 	InputEvent escape = InputEvent(InputType::KeyBoard, ESC, 1);
 	InputEvent enter = InputEvent(InputType::KeyBoard, ENTER, 1);
 
-	//windowstate
+	InputEvent startProfiling = InputEvent(InputType::KeyBoard, F8, 1);
+	InputEvent stopProfiling = InputEvent(InputType::KeyBoard, F8, 0);
+
 	void destroy();
 	void setWindowed();
 	void setMaximized();

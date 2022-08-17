@@ -22,8 +22,8 @@ struct SimplePlanetRenderer {
 	PlanetSystem* planetSystemPtr = nullptr;
 
 
-	void create(PlanetSystem & planetSystem) {
-		planetSystemPtr = &planetSystem;
+	void create(PlanetSystem * planetSystem) {
+		planetSystemPtr = planetSystem;
 	};
 	void render(PlanetCamera & camera) {
 

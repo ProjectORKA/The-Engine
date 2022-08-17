@@ -192,14 +192,27 @@ void QuakeMovementRenderer::update(Window& window) {
 	player.update(window);
 }
 void QuakeMovementRenderer::render(Window& window, TiledRectangle area) {
+	OPTICK_EVENT();
 	Renderer& renderer = window.renderer;
-	renderer.renderAtmosphere(player, sunDirection);
+	
+	//renderer.renderAtmosphere(player, sunDirection);
+	renderer.setCulling(true);
+	renderer.setDepthTest(true);
 
 	player.render(window);
 
 	renderer.useShader("unlit");
-	renderer.useTexture("lightmap");
-	renderer.renderMesh("quakeMap");
+	renderer.useTexture("quakeLightmapGround");
+	renderer.renderMesh("quakeMapGround");
+
+	renderer.useTexture("quakeLightmapSide1");
+	renderer.renderMesh("quakeMapSide1");
+	renderer.useTexture("quakeLightmapSide2");
+	renderer.renderMesh("quakeMapSide2");
+	renderer.useTexture("quakeLightmapSide3");
+	renderer.renderMesh("quakeMapSide3");
+	renderer.useTexture("quakeLightmapSide4");
+	renderer.renderMesh("quakeMapSide4");
 
 	//renderer.arrow(player.location, player.location + player.velocity);
 

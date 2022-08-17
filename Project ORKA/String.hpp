@@ -9,10 +9,20 @@ using Bool = bool;
 
 using String = std::string;
 
-String toString(bool b);
 String toString(Bool b);
 
 template<typename T>
 String toString(T t) {
 	return std::to_string(t);
 }
+
+//trim
+//trim end
+//trim front
+//to lower
+//to upper
+//replace
+//contains
+//starts with
+//ends with
+

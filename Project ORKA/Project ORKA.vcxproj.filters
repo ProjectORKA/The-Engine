@@ -272,9 +272,6 @@
     <Filter Include="Engine\UserInterface\ImGui">
       <UniqueIdentifier>{de2da536-787c-42ca-8c01-97da644955a6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Engine\UserInterface\ImGui\ImGui Source">
-      <UniqueIdentifier>{0ca77478-3a21-49e2-9049-6a7ca3100f23}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Engine\AudioSystem">
       <UniqueIdentifier>{bd09fb8e-2b3b-4b16-b698-9cfa7d6f9165}</UniqueIdentifier>
     </Filter>
@@ -337,12 +334,6 @@
     </Filter>
     <Filter Include="Engine\PlanetSystem\QuadtreeSystem\QuadtreeID">
       <UniqueIdentifier>{84045d38-c2e5-4710-a5cb-65234acec582}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\PlanetSystem\QuadtreeSystem\QuadtreeData">
-      <UniqueIdentifier>{ec965802-82ea-4efb-b292-18203ee16490}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\PlanetSystem\QuadtreeSystem\QuadtreeNode">
-      <UniqueIdentifier>{9cb62e2b-16bf-4876-bbfa-e971d74c65a8}</UniqueIdentifier>
     </Filter>
     <Filter Include="Engine\PlanetSystem\Heightmap">
       <UniqueIdentifier>{2f42e84e-7aa2-4972-bea8-b849c08c6b15}</UniqueIdentifier>
@@ -569,6 +560,24 @@
     <Filter Include="Engine\UserInterface\Window\Renderer\TextRenderSystem\SDFTextRenderSystem\Artery Format">
       <UniqueIdentifier>{2da8f64c-48cf-4861-b717-cd76bbb0a146}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Games\Game\Flappy Bird">
+      <UniqueIdentifier>{3980f6e6-1dbb-4224-bc17-bda55195b90c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Libraries">
+      <UniqueIdentifier>{d6d6de30-f3d2-4fc5-a342-1fd6260db708}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Tools">
+      <UniqueIdentifier>{7e39fe6d-377a-48b1-b11d-577482cde881}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Common\Template Octree">
+      <UniqueIdentifier>{4d3ddb05-0a57-46d0-b207-4e5ede569120}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Common\Interfaces">
+      <UniqueIdentifier>{9eddc00c-9bfd-4b7a-a989-42d44ce8d819}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\PlanetSystem\QuadtreeSystem\QuadtreeNode">
+      <UniqueIdentifier>{527b9d4e-31ef-4006-b5c9-039aeefd4b50}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -698,9 +707,6 @@
     <ClCompile Include="UIFlatPanel.cpp">
       <Filter>Engine\UserInterface\UIElement\UIFlatPanel</Filter>
     </ClCompile>
-    <ClCompile Include="QuadtreeNode.cpp">
-      <Filter>Engine\PlanetSystem\QuadtreeSystem\QuadtreeNode</Filter>
-    </ClCompile>
     <ClCompile Include="OctreeNode.cpp">
       <Filter>Engine\PlanetSystem\OctreeSystem\OctreeNode</Filter>
     </ClCompile>
@@ -721,9 +727,6 @@
     </ClCompile>
     <ClCompile Include="Game.cpp">
       <Filter>Games\Game</Filter>
-    </ClCompile>
-    <ClCompile Include="GameSystem.cpp">
-      <Filter>Games</Filter>
     </ClCompile>
     <ClCompile Include="Intro.cpp">
       <Filter>Games\Game\Intro</Filter>
@@ -861,27 +864,6 @@
     <ClCompile Include="UIButton.cpp">
       <Filter>Engine\UserInterface\UIButton</Filter>
     </ClCompile>
-    <ClCompile Include="imgui\imgui.cpp">
-      <Filter>Engine\UserInterface\ImGui\ImGui Source</Filter>
-    </ClCompile>
-    <ClCompile Include="imgui\imgui_demo.cpp">
-      <Filter>Engine\UserInterface\ImGui\ImGui Source</Filter>
-    </ClCompile>
-    <ClCompile Include="imgui\imgui_draw.cpp">
-      <Filter>Engine\UserInterface\ImGui\ImGui Source</Filter>
-    </ClCompile>
-    <ClCompile Include="imgui\imgui_impl_glfw.cpp">
-      <Filter>Engine\UserInterface\ImGui\ImGui Source</Filter>
-    </ClCompile>
-    <ClCompile Include="imgui\imgui_impl_opengl3.cpp">
-      <Filter>Engine\UserInterface\ImGui\ImGui Source</Filter>
-    </ClCompile>
-    <ClCompile Include="imgui\imgui_tables.cpp">
-      <Filter>Engine\UserInterface\ImGui\ImGui Source</Filter>
-    </ClCompile>
-    <ClCompile Include="imgui\imgui_widgets.cpp">
-      <Filter>Engine\UserInterface\ImGui\ImGui Source</Filter>
-    </ClCompile>
     <ClCompile Include="NeighbourOctree.cpp">
       <Filter>Games\Pototypes\NeighbourOctree</Filter>
     </ClCompile>
@@ -941,6 +923,37 @@
     </ClCompile>
     <ClCompile Include="Collision.cpp">
       <Filter>Engine\Physics\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="File.cpp" />
+    <ClCompile Include="optik\optick_core.cpp">
+      <Filter>Libraries</Filter>
+    </ClCompile>
+    <ClCompile Include="optik\optick_gpu.cpp">
+      <Filter>Libraries</Filter>
+    </ClCompile>
+    <ClCompile Include="optik\optick_gpu.d3d12.cpp">
+      <Filter>Libraries</Filter>
+    </ClCompile>
+    <ClCompile Include="optik\optick_gpu.vulkan.cpp">
+      <Filter>Libraries</Filter>
+    </ClCompile>
+    <ClCompile Include="optik\optick_message.cpp">
+      <Filter>Libraries</Filter>
+    </ClCompile>
+    <ClCompile Include="optik\optick_miniz.cpp">
+      <Filter>Libraries</Filter>
+    </ClCompile>
+    <ClCompile Include="optik\optick_serialization.cpp">
+      <Filter>Libraries</Filter>
+    </ClCompile>
+    <ClCompile Include="optik\optick_server.cpp">
+      <Filter>Libraries</Filter>
+    </ClCompile>
+    <ClCompile Include="optik\optick_capi.cpp">
+      <Filter>Libraries</Filter>
+    </ClCompile>
+    <ClCompile Include="QuadtreeNode.cpp">
+      <Filter>Engine\PlanetSystem\QuadtreeSystem\QuadtreeNode</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1117,12 +1130,6 @@
     <ClInclude Include="SimplePlanetRenderer.hpp">
       <Filter>Engine\UserInterface\Window\Renderer\SimplePlanetRenderer</Filter>
     </ClInclude>
-    <ClInclude Include="QuadtreeData.hpp">
-      <Filter>Engine\PlanetSystem\QuadtreeSystem\QuadtreeData</Filter>
-    </ClInclude>
-    <ClInclude Include="QuadtreeNode.hpp">
-      <Filter>Engine\PlanetSystem\QuadtreeSystem\QuadtreeNode</Filter>
-    </ClInclude>
     <ClInclude Include="OctreeNode.hpp">
       <Filter>Engine\PlanetSystem\OctreeSystem\OctreeNode</Filter>
     </ClInclude>
@@ -1161,9 +1168,6 @@
     </ClInclude>
     <ClInclude Include="Mooncrash.hpp">
       <Filter>Games\Game\Mooncrash</Filter>
-    </ClInclude>
-    <ClInclude Include="GameSystem.hpp">
-      <Filter>Games</Filter>
     </ClInclude>
     <ClInclude Include="Intro.hpp">
       <Filter>Games\Game\Intro</Filter>
@@ -1348,33 +1352,6 @@
     <ClInclude Include="ImguiWrapper.hpp">
       <Filter>Engine\UserInterface\ImGui</Filter>
     </ClInclude>
-    <ClInclude Include="imgui\imconfig.h">
-      <Filter>Engine\UserInterface\ImGui\ImGui Source</Filter>
-    </ClInclude>
-    <ClInclude Include="imgui\imgui.h">
-      <Filter>Engine\UserInterface\ImGui\ImGui Source</Filter>
-    </ClInclude>
-    <ClInclude Include="imgui\imgui_impl_glfw.h">
-      <Filter>Engine\UserInterface\ImGui\ImGui Source</Filter>
-    </ClInclude>
-    <ClInclude Include="imgui\imgui_impl_opengl3.h">
-      <Filter>Engine\UserInterface\ImGui\ImGui Source</Filter>
-    </ClInclude>
-    <ClInclude Include="imgui\imgui_internal.h">
-      <Filter>Engine\UserInterface\ImGui\ImGui Source</Filter>
-    </ClInclude>
-    <ClInclude Include="imgui\imstb_rectpack.h">
-      <Filter>Engine\UserInterface\ImGui\ImGui Source</Filter>
-    </ClInclude>
-    <ClInclude Include="imgui\imstb_textedit.h">
-      <Filter>Engine\UserInterface\ImGui\ImGui Source</Filter>
-    </ClInclude>
-    <ClInclude Include="imgui\imstb_truetype.h">
-      <Filter>Engine\UserInterface\ImGui\ImGui Source</Filter>
-    </ClInclude>
-    <ClInclude Include="imgui\imgui_impl_opengl3_loader.h">
-      <Filter>Engine\UserInterface\ImGui\ImGui Source</Filter>
-    </ClInclude>
     <ClInclude Include="NeighbourOctree.hpp">
       <Filter>Games\Pototypes\NeighbourOctree</Filter>
     </ClInclude>
@@ -1482,6 +1459,88 @@
     </ClInclude>
     <ClInclude Include="artery-font.h">
       <Filter>Engine\UserInterface\Window\Renderer\TextRenderSystem\SDFTextRenderSystem\Artery Format</Filter>
+    </ClInclude>
+    <ClInclude Include="FlappyBird.hpp">
+      <Filter>Games\Game\Flappy Bird</Filter>
+    </ClInclude>
+    <ClInclude Include="cxxopts.hpp" />
+    <ClInclude Include="optik\optick.config.h">
+      <Filter>Libraries</Filter>
+    </ClInclude>
+    <ClInclude Include="optik\optick.h">
+      <Filter>Libraries</Filter>
+    </ClInclude>
+    <ClInclude Include="optik\optick_core.freebsd.h">
+      <Filter>Libraries</Filter>
+    </ClInclude>
+    <ClInclude Include="optik\optick_core.h">
+      <Filter>Libraries</Filter>
+    </ClInclude>
+    <ClInclude Include="optik\optick_core.linux.h">
+      <Filter>Libraries</Filter>
+    </ClInclude>
+    <ClInclude Include="optik\optick_core.macos.h">
+      <Filter>Libraries</Filter>
+    </ClInclude>
+    <ClInclude Include="optik\optick_core.platform.h">
+      <Filter>Libraries</Filter>
+    </ClInclude>
+    <ClInclude Include="optik\optick_core.win.h">
+      <Filter>Libraries</Filter>
+    </ClInclude>
+    <ClInclude Include="optik\optick_gpu.h">
+      <Filter>Libraries</Filter>
+    </ClInclude>
+    <ClInclude Include="optik\optick_memory.h">
+      <Filter>Libraries</Filter>
+    </ClInclude>
+    <ClInclude Include="optik\optick_message.h">
+      <Filter>Libraries</Filter>
+    </ClInclude>
+    <ClInclude Include="optik\optick_miniz.h">
+      <Filter>Libraries</Filter>
+    </ClInclude>
+    <ClInclude Include="optik\optick_serialization.h">
+      <Filter>Libraries</Filter>
+    </ClInclude>
+    <ClInclude Include="optik\optick_server.h">
+      <Filter>Libraries</Filter>
+    </ClInclude>
+    <ClInclude Include="optik\optick_capi.h">
+      <Filter>Libraries</Filter>
+    </ClInclude>
+    <ClInclude Include="optik\optick_common.h">
+      <Filter>Libraries</Filter>
+    </ClInclude>
+    <ClInclude Include="Profiler.hpp">
+      <Filter>Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="NameGenerator.hpp">
+      <Filter>Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\..\Downloads\New folder (2)\numtraits.h">
+      <Filter>Common\Template Octree</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\..\Downloads\New folder (2)\octree.h">
+      <Filter>Common\Template Octree</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\..\Downloads\New folder (2)\point3d.h">
+      <Filter>Common\Template Octree</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\..\Downloads\New folder (2)\shareddata.h">
+      <Filter>Common\Template Octree</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\..\Downloads\New folder (2)\tinyvector.h">
+      <Filter>Common\Template Octree</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\..\Downloads\New folder (2)\array.h">
+      <Filter>Common\Template Octree</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\..\Downloads\New folder (2)\array2d.h">
+      <Filter>Common\Template Octree</Filter>
+    </ClInclude>
+    <ClInclude Include="QuadtreeNode.hpp">
+      <Filter>Engine\PlanetSystem\QuadtreeSystem\QuadtreeNode</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1647,5 +1706,22 @@
     <None Include="Data\shaders\msdfFont.frag">
       <Filter>Shaders\msdfFont</Filter>
     </None>
+    <None Include="..\..\..\..\..\..\Downloads\New folder (2)\Makefile">
+      <Filter>Common\Template Octree</Filter>
+    </None>
+    <None Include="..\..\..\..\..\..\Downloads\New folder (2)\octree.tcc">
+      <Filter>Common\Template Octree</Filter>
+    </None>
+    <None Include="..\..\..\..\..\..\Downloads\New folder (2)\octree.vcproj">
+      <Filter>Common\Template Octree</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\..\..\..\..\..\Downloads\New folder (2)\License.txt">
+      <Filter>Common\Template Octree</Filter>
+    </Text>
+    <Text Include="..\..\..\..\..\..\Downloads\New folder (2)\Readme.txt">
+      <Filter>Common\Template Octree</Filter>
+    </Text>
   </ItemGroup>
 </Project>

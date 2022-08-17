@@ -3,7 +3,6 @@
 #include "Renderer.hpp"
 #include "Window.hpp"
 #include "FileSystem.hpp"
-#include "GameSystem.hpp"
 
 UserInterface ui;
 
@@ -24,10 +23,13 @@ UIImage::UIImage(Name name) {
 	this->name = name;
 }
 
+void UIImage::update(Window& window) {}
+
 //TextBox
 UITextBox::UITextBox(String& data) {
 	this->data = &data;
 }
+void UITextBox::update(Window& window) {}
 void UITextBox::render(Window& window, TiledRectangle renderArea){
 	Renderer& renderer = window.renderer;
 
@@ -41,6 +43,7 @@ void UITextBox::render(Window& window, TiledRectangle renderArea){
 UICheckBox::UICheckBox(Boolean& data) {
 	this->data = &data;
 }
+void UICheckBox::update(Window& window) {}
 void UICheckBox::render(Window& window, TiledRectangle renderArea) {}
 
 //Container
@@ -56,6 +59,7 @@ UIContainer& UIContainer::insert(UIElement& element) {
 	contents.push_back(&element);
 	return *this;
 }
+void UIContainer::update(Window& window) {}
 void UIContainer::render(Window& window, TiledRectangle renderArea) {
 	for (UInt i = 0; i < contents.size(); i++) {
 		TiledRectangle a = renderArea;
@@ -122,12 +126,12 @@ void UserInterface::run() {
 		window.destroy();
 	}
 	windows.clear();
+
 	glfwTerminate();
 };
 UserInterface::UserInterface() {
 	assert(glfwInit() == GLFW_TRUE);
 	glfwSetErrorCallback(whenWindowAPIThrowsError);
-	/*glfwSetMonitorCallback(whenMonitorChanged);*/
 }
 
 UIButton& button() {

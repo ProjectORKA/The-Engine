@@ -9,9 +9,18 @@
 
 struct Renderer;
 
-struct RenderComponent {
-	Name meshName = "empty";
+struct Component {
+
+};
+
+struct TransformComponent : public Component {
 	Transform transform;
+};
+
+struct RenderComponent : public Component {
+	Name shaderName = "default";
+	Name meshName = "empty";
+
 	void render(Renderer& renderer);
 };
 
@@ -21,14 +30,17 @@ enum Components {
 
 struct Entity {
 	U16 archetypeID = 0;
-	U16 componentIDs [ENTITY_MAX_COMPONENT_NUMBER];
+	U16 * componentIDs = nullptr;
 };
 
 struct Archetype {
-	U64 components;
+	Vector<U16> components;
+	Vector<Entity> entities;
 };
 
 struct ECS {
-	Vector<Entity> entities;
+	Vector<Archetype> archetypes;
+
 	Vector<RenderComponent> renderComponents;
+	Vector<TransformComponent> transformComponents;
 };

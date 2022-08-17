@@ -40,82 +40,53 @@
 // easy to use algorithms
 // multiple window support
 
-//program includes
-#include "GameSystem.hpp"
-#include "UserInterface.hpp"
-
 //games
-#include "Pong.hpp"
-#include "Intro.hpp"
-#include "Sortr.hpp"
-#include "GPUSim.hpp"
-#include "Sandbox.hpp"
-#include "MSDFText.hpp"
-#include "UISandbox.hpp"
+//#include "Pong.hpp"
+//#include "Intro.hpp"
+//#include "Sortr.hpp"
+//#include "GPUSim.hpp"
+//#include "Sandbox.hpp"
+//#include "MSDFText.hpp"
+//#include "FlappyBird.hpp"
+//#include "UISandbox.hpp"
 #include "Mooncrash.hpp"
-#include "CheatTest.hpp"
-#include "SimpleRTS.hpp"
-#include "MindMapper.hpp"
-#include "ProjectSnek.hpp"
-#include "AIPlayground.hpp"
-#include "ProjectMelon.hpp"
-#include "QuakeMovement.hpp"
-#include "ResourceManager.hpp"
-#include "PhysicsPlayground.hpp"
-#include "DungeonsAndDiscord.hpp"
-#include "InfiniteDetailPrototype.hpp"
+//#include "CheatTest.hpp"
+//#include "SimpleRTS.hpp"
+//#include "MindMapper.hpp"
+//#include "ProjectSnek.hpp"
+//#include "AIPlayground.hpp"
+//#include "ProjectMelon.hpp"
+//#include "QuakeMovement.hpp"
+//#include "ResourceManager.hpp"
+//#include "PhysicsPlayground.hpp"
+//#include "DungeonsAndDiscord.hpp"
+//#include "InfiniteDetailPrototype.hpp"
 
 //#define TESTING
 
-#include "serialization.hpp"
+#include "Random.hpp"
 
 Int main(Int  argc, Char* argv[]) {
 #ifndef TESTING
 
-	//initializeResourcemanager();
-	//initializeGameSystem();
 
-	//DNDWorld sim;
-	//DNDRenderer game(sim);
-
-	//SimpleRTSSimulation sim;
-	//SimpleRTSRenderer game(sim);
-
-	//SandboxSimulation sim;
-	//Sandbox game(sim);
+	MooncrashSimulation sim;
+	sim.init();
 	
-	//MooncrashSimulation sim;
-	//MooncrashRenderer game(sim);
-
-	//PhysicsPlaygroundSimulation sim;
-	//PhysicsPlayGroundRenderer game(sim);
-	
-	//Pong game;
-	//SnakeGame game;
-	//UISandbox game;
-	//MindMapper game;
-	//AIPlayground game;
-	//MelonRenderer game;
-	//GPUSimRenderer game;
-	MSDFTextRenderer game;
-	//QuakeMovementRenderer game;
-
-	//gameSystem.add(sim);
+	MooncrashRenderer game;
+	game.init(sim);
 
 	Window& w = window(
 		"ORKA",
 		Area(1920, 1080),
-		true,
-		WindowState::windowed
+		WindowDecoration::decorated,
+		WindowState::windowed,
+		game
 	);
-	
-	w.content = &game;
-	game.create(w); //[TODO] clean this up
 
-	gameSystem.run();
 	ui.run();
-	gameSystem.stop();
 
+	sim.destroy();
 #else
 	//testing code
 	/////////////////////////////////////////////////////////////////////////////////////////////////

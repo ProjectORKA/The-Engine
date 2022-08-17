@@ -13,9 +13,8 @@ struct Window;
 struct Toggle : public UIButton {
 	Bool toggle = false;
 
-	void doThis() override {
-		toggle = !toggle;
-	}
+	void doThis() override;
+	void update(Window& window) override;;
 };
 
 struct UISandbox : public GameRenderer {

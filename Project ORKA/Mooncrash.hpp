@@ -42,8 +42,8 @@ struct MooncrashRenderer : public GameRenderer {
 	InputEvent exit = InputEvent(InputType::Mouse, RMB, 0);
 	InputEvent enter = InputEvent(InputType::Mouse, LMB, 1);
 
-	MooncrashRenderer(MooncrashSimulation & simulation);
 	void update(Window& window) override;
+	void init(MooncrashSimulation & simulation);
 	void render(Window& window, TiledRectangle area) override;
 	void inputEvent(Window& window, InputEvent input) override;
 };

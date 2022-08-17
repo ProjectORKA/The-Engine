@@ -9,7 +9,7 @@ ULLVec3 QuadtreeSystem::rayTrace(Ray ray) {
 }
 void QuadtreeSystem::create(TerrainSystem& terrainSystem) {
 	root = new QuadtreeNode();
-	root->create(terrainSystem);
+	root->createRootNode(terrainSystem);
 }
 void QuadtreeSystem::update(TerrainSystem& terrainSystem) {
 	root->update(*this, terrainSystem);

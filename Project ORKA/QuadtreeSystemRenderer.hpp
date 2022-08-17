@@ -34,9 +34,12 @@ struct QuadtreeNodeRenderData {
 
 struct QuadtreeRenderSystem {
 	QuadtreeNodeRenderData root;
-	
+
 	void count();
 	void destroy();
 	void update(PlanetSystemPlayer& player);
 	void renderLevel(UShort level, Renderer& renderer);
+	void debugRenderLevel(UShort level, Renderer& renderer) {
+		
+	}
 };

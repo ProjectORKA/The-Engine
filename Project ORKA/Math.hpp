@@ -35,6 +35,7 @@ Bool pointInsideSphereAtlocationWithRadius(Vec3 point, Vec3 position, Float radi
 
 UInt max(UInt a, UInt b);
 UInt nextPowerOfTwo(UInt& value);
+UInt countBitsInFlags(Short flags);
 UInt fibonacciSequence(UInt iterations);
 
 Index idOfClosestPoint(Vec2 origin, Vector<Vec2>& positions);
@@ -72,6 +73,7 @@ Vec3 quadraticInterpolation(Vec3 start, Vec3 control, Vec3 end, Float time);
 
 Rotation getRotationBetweenVectors(Vec3 start, Vec3 dest);
 
+Matrix matrixFromScale(Vec2 s);;
 Matrix matrixFromScale(Vec3 s);
 Matrix matrixFromScale(Float size);
 Matrix matrixFromLocation(Vec2 location);

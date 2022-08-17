@@ -1,5 +1,6 @@
 
 #include "WindowAPI.hpp"
+#include "Profiler.hpp"
 
 void apiWindowRestore(APIWindow apiWindow)
 {
@@ -21,6 +22,7 @@ void apiWindowUndecorate(APIWindow apiWindow)
 }
 void apiWindowSwapBuffers(APIWindow apiWindow)
 {
+	OPTICK_EVENT();
 	glfwSwapBuffers(apiWindow);
 }
 Bool apiWindowIsCapturing(APIWindow apiWindow)
@@ -85,8 +87,8 @@ Bool apiWindowKeyIsPressed(APIWindow apiWindow,Int key)
 {
 	return glfwGetKey(apiWindow, key) > 0;
 }
-APIWindow apiCreateWindow(Area size, const Char* title) {
-	return glfwCreateWindow(size.x, size.y, title, NULL, NULL);
+APIWindow apiCreateWindow(Area size, const Char* title, APIWindow shared) {
+	return glfwCreateWindow(size.x, size.y, title, NULL, shared);
 }
 void apiWindowSetExclusiveFullscreen(APIWindow apiWindow)
 {

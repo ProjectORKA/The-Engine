@@ -7,24 +7,20 @@
 
 struct Thread {
 	// its just here to hide some ugly stuff away
-	// what some threads do, is that they store a reference to this object
-	// they can then look at the "keepThreadRunning" value and exit any loop they are in
-	// this means the stop() function can do a bit more than just join
+    // threads usually keep track of one or more objects
+	// those objects should have a "keeprunning" value if you plan on using while loops
+	// other threads will execute and end by themselves
 
 	std::thread thread;
-	Bool keepThreadRunning = false;
 
 	template<class Function, class ...Args>
 	void start(Function&& f, Args && ...args)
 	{
-		keepThreadRunning = true;
 		thread = std::thread(f, std::ref(args)...);
 	}
 	void stop()
 	{
-		if (keepThreadRunning) {
-			keepThreadRunning = false;
-		}
-		thread.join();
+		if (thread.joinable())thread.join();
+		else logError("Thread not joinable!");
 	}
 };
