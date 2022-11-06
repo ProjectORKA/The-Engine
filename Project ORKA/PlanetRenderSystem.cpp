@@ -17,7 +17,7 @@ void PlanetRenderSystem::update(PlanetSystem& planetSystem, PlanetSystemPlayer& 
 }
 void PlanetRenderSystem::renderAllLevels(PlanetSystem& planetSystem, Renderer& renderer, PlanetSystemPlayer& player)
 {
-	renderer.uniforms().customInt1() = Int(renderer.planetRenderSystem.worldDistortion);
+	//renderer.uniforms().customInt1() = Int(renderer.planetRenderSystem.worldDistortion);
 	renderer.uniforms().mMatrix() = Matrix(1);
 	player.camera.renderOnlyRot(renderer);
 	renderer.setDepthTest(true);
@@ -32,7 +32,7 @@ void PlanetRenderSystem::renderAllLevels(PlanetSystem& planetSystem, Renderer& r
 }
 void PlanetRenderSystem::renderLevel(PlanetSystem& planetSystem, Renderer& renderer, PlanetSystemPlayer& player, UShort level) {
 
-	renderer.uniforms().customInt1() = Int(renderer.planetRenderSystem.worldDistortion);
+	//renderer.uniforms().customInt1() = Int(renderer.planetRenderSystem.worldDistortion);
 	renderer.uniforms().mMatrix() = Matrix(1);
 	player.camera.renderOnlyRot(renderer);
 	renderer.setDepthTest(true);

@@ -14,7 +14,7 @@ void Shader::create(Path path, String uniformBlock) {
 	else logError("Shadertype not supported!");
 
 	String shaderCode = uniformBlock;
-	shaderCode.append(loadString(path));
+	shaderCode.append(fileSystem.loadString(path));
 
 	loadShaderCode(shaderType, shaderCode);
 }

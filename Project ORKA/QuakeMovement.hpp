@@ -101,7 +101,7 @@ struct QuakePlayer : public Player {
 	
 	//lean
 	//upper body lean
-	const Float upperBodyLeanSpeed = 20;
+	const Float upperBodyLeanSpeed = 10;
 	const Float upperBodyMaxLeanAngle = 0.8;
 	const Float upperBodyLeanHeadTiltFactor = 0.4;
 	Float upperBodyLean = 0;
@@ -154,6 +154,10 @@ struct QuakeMovementRenderer : public GameRenderer {
 	InputEvent enter = InputEvent(InputType::Mouse, LMB, 1);
 	InputEvent exit = InputEvent(InputType::Mouse, RMB, 0);
 
+	void init() {
+		player.camera.nearClipValue = 0.01;
+		player.camera.farClipValue = 1000.0;
+	};
 	void update(Window& window) override;
 	void render(Window& window, TiledRectangle area) override;
 	void inputEvent(Window& window, InputEvent input) override;

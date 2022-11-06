@@ -19,23 +19,23 @@ void windowThread(Window& window)
 	renderer.create(window.getContentSize());		//also needs to be in this thread
 	window.updateWindowState();
 
-	window.content->create(window);
+	if (window.content)window.content->create(window);
 
-	if(window.windowState == WindowState::windowed) window.centerWindow();
+	if (window.windowState == WindowState::windowed) window.centerWindow();
 	if (window.windowState == WindowState::windowed || window.windowState == WindowState::maximized) window.updateDecorations();
 
 	window.setCallbacks();
 
 	MouseMovement prevPos = MouseMovement(0);
 
-OPTICK_THREAD("Window Thread");
+	OPTICK_THREAD("Window Thread");
 
 	//main render loop for the window
 	while (window.keeprunning) {
-OPTICK_FRAME("Window Frame");
+		OPTICK_FRAME("Window Frame");
 		if (window.isShown) {
-			
-OPTICK_PUSH("Setup");
+
+			OPTICK_PUSH("Setup");
 
 			window.mouseDelta = window.mousePosBotLeft - prevPos;
 			prevPos = window.mousePosBotLeft;
@@ -51,7 +51,7 @@ OPTICK_PUSH("Setup");
 			renderer.uniforms().width(renderer.framebufferSystem.currentDraw().size.x);
 			renderer.uniforms().height(renderer.framebufferSystem.currentDraw().size.y);
 
-OPTICK_POP();
+			OPTICK_POP();
 
 			if (window.content) {
 				//update ui
@@ -59,7 +59,7 @@ OPTICK_POP();
 				window.content->update(window);
 
 				//render interactibles
-OPTICK_PUSH("Interactive Draw");
+				OPTICK_PUSH("Interactive Draw");
 				renderer.idFramebuffer.draw(renderer);
 				renderer.useShader("idShader");
 				renderer.uniforms().reset();
@@ -71,11 +71,11 @@ OPTICK_PUSH("Interactive Draw");
 				renderer.setAlphaBlending(false);
 				window.content->renderInteractive(window, windowArea);
 				renderer.idFramebuffer.updateIdsUnderCursor(window);
-OPTICK_POP();
+				OPTICK_POP();
 
 				//render ui
-OPTICK_PUSH("Draw");
-				renderer.framebufferSystem.draw(renderer, 0);
+				OPTICK_PUSH("Draw");
+				renderer.draw("main");
 				renderer.clearColor(Color(Vec3(0), 0.0));
 				renderer.clearDepth();
 				renderer.setWireframeMode(renderer.wireframeMode);
@@ -83,10 +83,10 @@ OPTICK_PUSH("Draw");
 
 				renderer.aspectCorrectNormalizedSpace();
 				if (window.profiling) renderer.renderText("[R]", Vec2(0.9), FontStyle(0.02));
-OPTICK_POP();
+				OPTICK_POP();
 			}
 
-OPTICK_PUSH("Finalize");
+			OPTICK_PUSH("Finalize");
 
 			renderer.setWireframeMode(false);
 			renderer.setAlphaBlending(false);
@@ -95,22 +95,20 @@ OPTICK_PUSH("Finalize");
 
 			//renderer.framebufferSystem.current().blitFramebuffer();
 
-			apiBindDrawFramebuffer(0);
+			renderer.framebufferSystem.drawToWindow();
 
-OPTICK_PUSH("Draw final quad");
+			OPTICK_PUSH("Draw final quad");
 			renderer.useShader("final");
 			renderer.framebufferSystem.currentDraw().setAsTexture(0); //[TODO] might not work; check
 			renderer.uniforms().reset();
 			renderer.renderMesh("fullScreenQuad");
-OPTICK_POP();
+			OPTICK_POP();
 			renderer.end(); //checks errors and unlocks renderer
 
 			finish();
-			finish();
-			finish();
 
 			apiWindowSwapBuffers(window.apiWindow);
-OPTICK_POP();
+			OPTICK_POP();
 		}
 		window.mouseDelta = MouseMovement(0);
 	}
@@ -204,6 +202,8 @@ void Window::destroyAPIWindow() {
 }
 void Window::setIcon(Path path) {
 
+	path = std::filesystem::absolute(path);
+
 	Image logo = loadImage(path, 8, false);
 
 	if (logo.pixels && logo.channels == 4) {
@@ -214,7 +214,7 @@ void Window::setIcon(Path path) {
 		glfwSetWindowIcon(apiWindow, 1, &icon);
 	}
 	else {
-		logError("Logo could not be Loaded!");
+		logWarning("Logo could not be Loaded!");
 	}
 }
 void Window::updateWindowState() {
@@ -380,12 +380,15 @@ void whenMouseIsScrolling(APIWindow apiWindow, Double xAxis, Double yAxis) {
 	Int countX = abs(xAxis);
 	Int countY = abs(yAxis);
 
-	for (Int i = 0; i < countX; i++) {
-		window.content->inputEvent(window, InputEvent(InputType::Scroll, 0, xAxis > 0));
-	}
+	if (window.content) {
 
-	for (Int i = 0; i < countY; i++) {
-		window.content->inputEvent(window, InputEvent(InputType::Scroll, 1, yAxis > 0));
+		for (Int i = 0; i < countX; i++) {
+			window.content->inputEvent(window, InputEvent(InputType::Scroll, 0, xAxis > 0));
+		}
+
+		for (Int i = 0; i < countY; i++) {
+			window.content->inputEvent(window, InputEvent(InputType::Scroll, 1, yAxis > 0));
+		}
 	}
 }
 void whenWindowContentScaleChanged(APIWindow apiWindow, Float xScale, Float yScale)
@@ -406,7 +409,7 @@ void whenFilesDroppedOnWindow(APIWindow apiWindow, Int count, const Char** dropp
 void whenMouseIsPressed(APIWindow apiWindow, Int mouseButton, Int action, Int modifiers) {
 	Window& window = *static_cast<Window*>(glfwGetWindowUserPointer(apiWindow));
 	window.mouseState[mouseButton] = action > 0;
-	window.content->inputEvent(window, InputEvent(InputType::Mouse, mouseButton, action));
+	if (window.content)window.content->inputEvent(window, InputEvent(InputType::Mouse, mouseButton, action));
 }
 void whenButtonIsPressed(APIWindow apiWindow, Int key, Int scancode, Int action, Int modifiers)
 {
@@ -432,6 +435,6 @@ void whenButtonIsPressed(APIWindow apiWindow, Int key, Int scancode, Int action,
 		OPTICK_STOP_CAPTURE();
 		OPTICK_SAVE_CAPTURE("profileDump");
 	}
-	
-	window.content->inputEvent(window, input);
+
+	if(window.content)window.content->inputEvent(window, input);
 }

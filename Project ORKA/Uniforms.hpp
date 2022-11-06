@@ -43,6 +43,7 @@ struct Uniforms {
 	void reset();
 	void upload();
 	void destroy();
+	void resetMatrices();
 
 	Int& width();
 	Int& height();

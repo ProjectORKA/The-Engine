@@ -1,20 +1,25 @@
-#include "Intro.hpp"
+#include "ORKAIntroSequence.hpp"
 #include "Window.hpp"
+#include "Camera.hpp"
 
-Intro::Intro(GameRenderer* gameStartingAfterIntro) {
-	this->gameStartingAfterIntro = gameStartingAfterIntro;
+void ORKAIntroSequence::init(GameRenderer& game) {
+	gameStartingAfterIntro = &game;
 }
-void Intro::render(Window& window, TiledRectangle area)
+void ORKAIntroSequence::update(Window& window)
+{
+
+}
+void ORKAIntroSequence::render(Window& window, TiledRectangle area)
 {
 	Renderer& renderer = window.renderer;
 
-	//renderer.time.update();
+	window.undecorateWindow();
+
 	renderer.clearColor(Color(0));
 	renderer.clearDepth();
 
 	renderer.setCulling(true);
 	renderer.setDepthTest(true);
-	//renderer.setAlphaBlending(false);
 	renderer.setWireframeMode(false);
 
 	//camera stuff
@@ -33,16 +38,20 @@ void Intro::render(Window& window, TiledRectangle area)
 
 	renderer.useShader("unlit");
 	renderer.useTexture("ProjectORKABakedLogo");
-	renderer.renderMesh("ProjectORKALogo");
+	renderer.renderMesh("projectORKALogo");
 
+	renderer.postProcess("orkaIntroSequence");
+
+	//start the time when we actually start rendering
 	static Bool f = true;
 	if (f) {
 		renderer.time.reset();
 		f = false;
 	}
 
-	//[TODO] make work
-	//if ((renderer.time.total > 5) && (!selfReplace)) {
-		//selfReplace = gameStartingAfterIntro;
-	//}
+	//swap the intro scene with the followup
+	if ((renderer.time.total > 5)) {
+		window.content = gameStartingAfterIntro;
+		window.decorateWindow();
+	}
 }

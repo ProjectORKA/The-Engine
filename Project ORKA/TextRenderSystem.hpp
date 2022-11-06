@@ -10,7 +10,7 @@ struct Renderer;
 struct TextRenderSystem {
 	//SDFTextRenderSystem sdfTextRenderSystem;
 	BitmapTextRenderSystem bitmapTextRenderSystem;
-	GlyphTextRenderSystem glyphTextRenderSystem;
+	//GlyphTextRenderSystem glyphTextRenderSystem;
 	//MeshTextrenderSystem meshTextRenderSystem;
 
 	void destroy();

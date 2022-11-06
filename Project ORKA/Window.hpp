@@ -72,7 +72,6 @@ struct Window {
 	void initializeGraphicsAPI();
 	void setPosition(IVec2 position);
 	void resize(Int width, Int height);
-	Window& insert(UIElement& element);
 	void createAPIWindow(String title, Area size);
 	void create(String title, Area size, Bool decorated, WindowState state);
 
@@ -84,6 +83,8 @@ struct Window {
 
 	Area getFrameSize();
 	Area getContentSize();
+
+	Window& insert(UIElement& element);
 };
 
 void windowThread(Window& window);

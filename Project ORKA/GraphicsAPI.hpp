@@ -8,16 +8,15 @@
 #define GLEW_STATIC
 #include "GL/glew.h"
 
-namespace ShaderType {
-	enum {
-		vertex = GL_VERTEX_SHADER,
-		compute = GL_COMPUTE_SHADER,
-		geometry = GL_GEOMETRY_SHADER,
-		fragment = GL_FRAGMENT_SHADER,
-		tessellationControl = GL_TESS_CONTROL_SHADER,
-		tessellationEvaluation = GL_TESS_EVALUATION_SHADER
-	};
-}
+enum ShaderType : int {
+	vertex = GL_VERTEX_SHADER,
+	compute = GL_COMPUTE_SHADER,
+	geometry = GL_GEOMETRY_SHADER,
+	fragment = GL_FRAGMENT_SHADER,
+	tessellationControl = GL_TESS_CONTROL_SHADER,
+	tessellationEvaluation = GL_TESS_EVALUATION_SHADER
+};
+
 namespace MeshDrawMode{
 	enum {
 		staticMode = GL_STATIC_DRAW,

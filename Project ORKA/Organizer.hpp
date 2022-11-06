@@ -25,12 +25,14 @@ struct Task {
 	}
 };
 
-struct Organizer : public Game{
+struct Organizer : public GameRenderer{
 	Vector<Task> tasks;
 
-	void render(Renderer & renderer) override{
+	void update(Window& window) override {
 		for (Task& t : tasks) {
 			t.update();
 		}
+	}
+	void render(Window& window, TiledRectangle area) override {
 	};
 };

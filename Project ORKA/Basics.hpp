@@ -49,7 +49,7 @@ using WeakPointer = std::weak_ptr<T>;
 
 #include "Name.hpp"
 
-#include "VectorMath.hpp"
+#include "Vectors.hpp"
 
 #include "Color.hpp"
 

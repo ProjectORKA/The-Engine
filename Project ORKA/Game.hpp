@@ -17,5 +17,4 @@ struct GameSimulation {
 void gameSimulationThread(GameSimulation& sim);
 
 struct GameRenderer : public UIElement {
-	//nothing lol
 };

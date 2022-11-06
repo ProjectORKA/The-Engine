@@ -77,7 +77,7 @@ void CPUMesh::load(Name name) {
 
 		if (error) {
 			logEvent(String("The model (").append(path.filename().replace_extension().string()).append(") could not be loaded! (").append(path.string()).append(")"));
-			readyForUpload = false;
+			loaded = false;
 			return;
 		}
 		else {
@@ -85,7 +85,7 @@ void CPUMesh::load(Name name) {
 		}
 	}
 	else {
-		logError(String("Mesh (").append(name.data).append(") not found as resource!"));
+		logWarning(String("Mesh (").append(name.data).append(") not found as resource!"));
 	}
 };
 void CPUMesh::removeDoubles() {
@@ -132,8 +132,8 @@ void CPUMesh::checkIntegrity() {
 
 	UInt count = countBitsInFlags(dataFlags);
 
-	if (uvs.size() + vertices.size() + normals.size() + vertices.size()) readyForUpload = true;
-	else readyForUpload = false;
+	if (uvs.size() + vertices.size() + normals.size() + vertices.size()) loaded = true;
+	else loaded = false;
 }
 void CPUMesh::merge(CPUMesh source) {
 	for (Int i = 0; i < source.vertices.size(); i++) {

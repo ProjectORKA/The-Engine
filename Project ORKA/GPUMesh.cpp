@@ -11,7 +11,7 @@ void GPUMesh::unload() {
 }
 void GPUMesh::upload(CPUMesh cpuMesh) {
 	if (!loaded) {
-		if (cpuMesh.readyForUpload) {
+		if (cpuMesh.loaded) {
 			if (cpuMesh.vertices.size() > 0) {
 				primitiveMode = cpuMesh.primitiveMode;
 

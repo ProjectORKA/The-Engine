@@ -42,8 +42,8 @@
 
 //games
 //#include "Pong.hpp"
-//#include "Intro.hpp"
 //#include "Sortr.hpp"
+//#include "Snake.hpp"
 //#include "GPUSim.hpp"
 //#include "Sandbox.hpp"
 //#include "MSDFText.hpp"
@@ -53,40 +53,57 @@
 //#include "CheatTest.hpp"
 //#include "SimpleRTS.hpp"
 //#include "MindMapper.hpp"
-//#include "ProjectSnek.hpp"
+//#include "ImageViewer.hpp"
 //#include "AIPlayground.hpp"
 //#include "ProjectMelon.hpp"
 //#include "QuakeMovement.hpp"
 //#include "ResourceManager.hpp"
+//#include "ORKAIntroSequence.hpp"
 //#include "PhysicsPlayground.hpp"
 //#include "DungeonsAndDiscord.hpp"
 //#include "InfiniteDetailPrototype.hpp"
 
 //#define TESTING
 
-#include "Random.hpp"
+#include "Basics.hpp"
+#include "Time.hpp"
+#include "Debug.hpp"
+#include "Velox_Vector.hpp"
+
+#include "ResourceManager.hpp"
 
 Int main(Int  argc, Char* argv[]) {
 #ifndef TESTING
 
+	fileSystem.init(argv[0]);
+
+	resourceManager.init();
+
+	//ImageViewer app;
 
 	MooncrashSimulation sim;
 	sim.init();
-	
-	MooncrashRenderer game;
-	game.init(sim);
 
-	Window& w = window(
+	MooncrashRenderer app;
+	app.init(sim);
+
+	Window& win = window(
 		"ORKA",
 		Area(1920, 1080),
 		WindowDecoration::decorated,
-		WindowState::windowed,
-		game
+		WindowState::windowed
 	);
+
+	if (argc > 1) {
+		win.droppedFilePaths.push_back(Path(argv[1]));
+	}
+
+	win.content = &app;
 
 	ui.run();
 
 	sim.destroy();
+
 #else
 	//testing code
 	/////////////////////////////////////////////////////////////////////////////////////////////////

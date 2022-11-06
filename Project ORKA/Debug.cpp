@@ -1,4 +1,5 @@
 #include "Debug.hpp"
+#include "Time.hpp"
 
 bool showEvents = true;
 bool showDebug = true;
@@ -16,12 +17,14 @@ void logError(String message)
 #ifdef DEBUG
 	if(showError) std::cout <<	"Error: " << message << "\n";
 	beep();
+	sleep(3000);
 	__debugbreak();
 	pause();
 #endif // DEBUG
 }
 void logWarning(String message) {
 #ifdef DEBUG
+	beep();
 	if (showWarning) std::cout << "Warning: " << message << "\n";
 #endif // DEBUG
 }
@@ -113,4 +116,9 @@ void logDebug(glm::highp_dvec3 t) {
 #ifdef DEBUG
 	std::cout << "(" << t.x << "|" << t.y << "|" << t.z << ")" << "\n";
 #endif // DEBUG
+}
+void printLaunchProperties(Int  argc, Char* argv[]) {
+	for (Int i = 0; i < argc; i++) {
+		logDebug(argv[i]);
+	}
 }

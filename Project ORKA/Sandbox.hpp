@@ -35,7 +35,6 @@ struct Sandbox : public GameRenderer {
 	Float mouseSensitivity = 0.0015f;
 	SandboxSimulation * simulation = nullptr;
 
-
 	Sandbox(SandboxSimulation& sim);
 	void create(Window& window) override;
 	void update(Window& window) override;

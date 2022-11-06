@@ -1,14 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
-    <ProjectConfiguration Include="Copy Files Release|Win32">
-      <Configuration>Copy Files Release</Configuration>
-      <Platform>Win32</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="Copy Files Release|x64">
-      <Configuration>Copy Files Release</Configuration>
-      <Platform>x64</Platform>
-    </ProjectConfiguration>
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
       <Platform>Win32</Platform>
@@ -32,7 +24,8 @@
   <ItemGroup>
     <ClCompile Include="AIPlayground.cpp" />
     <ClCompile Include="C++ Cheatsheet.cpp" />
-    <ClCompile Include="CheatTest.cpp" />
+    <ClCompile Include="ImageViewer.cpp" />
+    <ClCompile Include="RedDotHack.cpp" />
     <ClCompile Include="Collision.cpp" />
     <ClCompile Include="Compiler.cpp" />
     <ClCompile Include="EntityComponentSystem.cpp" />
@@ -73,7 +66,6 @@
     <ClCompile Include="Sandbox.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="SimpleRTS.cpp" />
-    <ClCompile Include="Sky.cpp" />
     <ClCompile Include="BitmapTextRenderSystem.cpp" />
     <ClCompile Include="BranchStructure.cpp" />
     <ClCompile Include="Client.cpp" />
@@ -81,7 +73,7 @@
     <ClCompile Include="DynameshTerrain.cpp" />
     <ClCompile Include="Fonts.cpp" />
     <ClCompile Include="Game.cpp" />
-    <ClCompile Include="Intro.cpp" />
+    <ClCompile Include="ORKAIntroSequence.cpp" />
     <ClCompile Include="JobSystem.cpp" />
     <ClCompile Include="MathDNA.cpp" />
     <ClCompile Include="MatrixSystem.cpp" />
@@ -97,7 +89,7 @@
     <ClCompile Include="Pong.cpp" />
     <ClCompile Include="QuadtreeID.cpp" />
     <ClCompile Include="String.cpp" />
-    <ClCompile Include="ProjectSnek.cpp" />
+    <ClCompile Include="Snake.cpp" />
     <ClCompile Include="TLSFAllocator.cpp" />
     <ClCompile Include="SDFTerrainRenderSystem.cpp" />
     <ClCompile Include="Server.cpp" />
@@ -159,26 +151,14 @@
     <ClCompile Include="OctreeSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\..\..\..\Downloads\New folder (2)\array.h" />
-    <ClInclude Include="..\..\..\..\..\..\Downloads\New folder (2)\array2d.h" />
-    <ClInclude Include="..\..\..\..\..\..\Downloads\New folder (2)\numtraits.h" />
-    <ClInclude Include="..\..\..\..\..\..\Downloads\New folder (2)\octree.h" />
-    <ClInclude Include="..\..\..\..\..\..\Downloads\New folder (2)\point3d.h" />
-    <ClInclude Include="..\..\..\..\..\..\Downloads\New folder (2)\shareddata.h" />
-    <ClInclude Include="..\..\..\..\..\..\Downloads\New folder (2)\tinyvector.h" />
     <ClInclude Include="Array2D.hpp" />
-    <ClInclude Include="artery-font.h" />
     <ClInclude Include="BaseAllocator.hpp" />
-    <ClInclude Include="CheatTest.hpp" />
+    <ClInclude Include="ImageViewer.hpp" />
+    <ClInclude Include="RedDotHack.hpp" />
     <ClInclude Include="Colliders.hpp" />
     <ClInclude Include="Collision.hpp" />
     <ClInclude Include="Color.hpp" />
-    <ClInclude Include="crc32.h" />
-    <ClInclude Include="crc32.hpp" />
-    <ClInclude Include="cxxopts.hpp" />
-    <ClInclude Include="DeadVector.hpp" />
     <ClInclude Include="EntityComponentSystem.hpp" />
-    <ClInclude Include="enums.h" />
     <ClInclude Include="File.hpp" />
     <ClInclude Include="FlappyBird.hpp" />
     <ClInclude Include="GeometryClipmapTerrain.hpp" />
@@ -234,10 +214,7 @@
     <ClInclude Include="Sandbox.hpp" />
     <ClInclude Include="Scene.hpp" />
     <ClInclude Include="SDFTextRenderSystem.hpp" />
-    <ClInclude Include="serialization.h" />
-    <ClInclude Include="serialization.hpp" />
     <ClInclude Include="SimpleRTS.hpp" />
-    <ClInclude Include="Sky.hpp" />
     <ClInclude Include="AudioSystem.hpp" />
     <ClInclude Include="BranchStructure.hpp" />
     <ClInclude Include="Client.hpp" />
@@ -255,12 +232,8 @@
     <ClInclude Include="Player.hpp" />
     <ClInclude Include="Plot.hpp" />
     <ClInclude Include="PointCloud.hpp" />
-    <ClInclude Include="ProjectSnek.hpp" />
+    <ClInclude Include="Snake.hpp" />
     <ClInclude Include="SphereMeshing.hpp" />
-    <ClInclude Include="std-artery-font.h" />
-    <ClInclude Include="stdio-serialization.h" />
-    <ClInclude Include="stdio-serialization.hpp" />
-    <ClInclude Include="structures.h" />
     <ClInclude Include="TLSFAllocator.h" />
     <ClInclude Include="AIPlayground.hpp" />
     <ClInclude Include="ASIONetworking.hpp" />
@@ -272,7 +245,7 @@
     <ClInclude Include="Fonts.hpp" />
     <ClInclude Include="Functor.hpp" />
     <ClInclude Include="Game.hpp" />
-    <ClInclude Include="Intro.hpp" />
+    <ClInclude Include="ORKAIntroSequence.hpp" />
     <ClInclude Include="Keymap.hpp" />
     <ClInclude Include="Pong.hpp" />
     <ClInclude Include="Queue.hpp" />
@@ -306,7 +279,6 @@
     <ClInclude Include="PlanetSystem.hpp" />
     <ClInclude Include="QuadtreeID.hpp" />
     <ClInclude Include="QuadtreeSystemRenderer.hpp" />
-    <ClInclude Include="RayMarchedTerrain.hpp" />
     <ClInclude Include="RelativeChunkOffset.hpp" />
     <ClInclude Include="RenderRegion.hpp" />
     <ClInclude Include="SDFTerrainRenderSystem.hpp" />
@@ -323,7 +295,6 @@
     <ClInclude Include="Transform.hpp" />
     <ClInclude Include="TransformationStack.hpp" />
     <ClInclude Include="TreeSystem.hpp" />
-    <ClInclude Include="types.h" />
     <ClInclude Include="UIButton.hpp" />
     <ClInclude Include="UIConstraints.hpp" />
     <ClInclude Include="UIElement.hpp" />
@@ -346,7 +317,39 @@
     <ClInclude Include="Uniforms.hpp" />
     <ClInclude Include="UserInterface.hpp" />
     <ClInclude Include="StaticAllocator.hpp" />
-    <ClInclude Include="VectorMath.hpp" />
+    <ClInclude Include="Vectors.hpp" />
+    <ClInclude Include="Velox_AllocatorMisc.hpp" />
+    <ClInclude Include="Velox_ArrayView.hpp" />
+    <ClInclude Include="Velox_BasicVector.hpp" />
+    <ClInclude Include="bytell_hash_map.hpp" />
+    <ClInclude Include="Velox_Common.hpp" />
+    <ClInclude Include="Velox_CompilerIntrin.hpp" />
+    <ClInclude Include="Velox_Core.hpp" />
+    <ClInclude Include="Velox_DataStructure.hpp" />
+    <ClInclude Include="Velox_Debug.hpp" />
+    <ClInclude Include="flat_hash_map.hpp" />
+    <ClInclude Include="Velox_GenericAllocator.hpp" />
+    <ClInclude Include="Velox_HashMap.hpp" />
+    <ClInclude Include="Velox_HashMapHelper.hpp" />
+    <ClInclude Include="Velox_HashMapIterator.hpp" />
+    <ClInclude Include="Velox_HashMapLinkedList.hpp" />
+    <ClInclude Include="Velox_HashPolicies.hpp" />
+    <ClInclude Include="Velox_LocalAllocator.hpp" />
+    <ClInclude Include="Velox_Logging.hpp" />
+    <ClInclude Include="Velox_MathUtils.hpp" />
+    <ClInclude Include="Velox_Memory.hpp" />
+    <ClInclude Include="Platform.hpp" />
+    <ClInclude Include="Velox_PlatformInclude.hpp" />
+    <ClInclude Include="Velox_PlatformSIMDInclude.hpp" />
+    <ClInclude Include="Velox_RandomAccessIterator.hpp" />
+    <ClInclude Include="Velox_Singleton.hpp" />
+    <ClInclude Include="Velox_String.hpp" />
+    <ClInclude Include="Velox_StringView.hpp" />
+    <ClInclude Include="unordered_map.hpp" />
+    <ClInclude Include="Velox_UtilityConcepts.hpp" />
+    <ClInclude Include="Velox_Utils.hpp" />
+    <ClInclude Include="Velox_VecN.hpp" />
+    <ClInclude Include="Velox_Vector.hpp" />
     <ClInclude Include="VertexArrayObject.hpp" />
     <ClInclude Include="VertexBufferObject.hpp" />
     <ClInclude Include="VoxelSystem.hpp" />
@@ -355,9 +358,6 @@
     <ClInclude Include="OctreeSystem.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\..\..\..\..\Downloads\New folder (2)\Makefile" />
-    <None Include="..\..\..\..\..\..\Downloads\New folder (2)\octree.tcc" />
-    <None Include="..\..\..\..\..\..\Downloads\New folder (2)\octree.vcproj" />
     <None Include="Data\shaders\atmosphere.frag" />
     <None Include="Data\shaders\atmosphere.vert" />
     <None Include="Data\shaders\blur.frag" />
@@ -370,8 +370,14 @@
     <None Include="Data\shaders\depthCutter.vert" />
     <None Include="Data\shaders\dndUberShader.frag" />
     <None Include="Data\shaders\dndUberShader.vert" />
+    <None Include="Data\shaders\gammaCorrection.frag" />
+    <None Include="Data\shaders\gammaCorrection.vert" />
     <None Include="Data\shaders\gpuSimShader.frag" />
     <None Include="Data\shaders\gpuSimShader.vert" />
+    <None Include="Data\shaders\idShader.frag" />
+    <None Include="Data\shaders\idShader.vert" />
+    <None Include="Data\shaders\imageViewer.frag" />
+    <None Include="Data\shaders\imageViewer.vert" />
     <None Include="Data\shaders\MelonUberShader.frag" />
     <None Include="Data\shaders\MelonUberShader.vert" />
     <None Include="Data\shaders\mooncrashVertexColor.frag" />
@@ -381,6 +387,8 @@
     <None Include="Data\shaders\mxAO.frag" />
     <None Include="Data\shaders\normals.frag" />
     <None Include="Data\shaders\normals.vert" />
+    <None Include="Data\shaders\orkaIntroSequence.frag" />
+    <None Include="Data\shaders\orkaIntroSequence.vert" />
     <None Include="Data\shaders\postProcess.frag" />
     <None Include="Data\shaders\postProcess.vert" />
     <None Include="Data\shaders\primitive.frag" />
@@ -401,6 +409,8 @@
     <None Include="Data\shaders\text.vert" />
     <None Include="Data\shaders\final.frag" />
     <None Include="Data\shaders\final.vert" />
+    <None Include="Data\shaders\texture.frag" />
+    <None Include="Data\shaders\texture.vert" />
     <None Include="Data\shaders\ui.frag" />
     <None Include="Data\shaders\ui.vert" />
     <None Include="Data\shaders\uniforms.glsl" />
@@ -412,12 +422,9 @@
     <None Include="Data\shaders\water.vert" />
     <None Include="Data\shaders\color.frag" />
     <None Include="Data\shaders\color.vert" />
-    <None Include="G:\DATA\PROJEKTE\ORKA\GAME ENGINE\SOURCE CODE\Project ORKA\Data\shaders\idShader.frag" />
-    <None Include="G:\DATA\PROJEKTE\ORKA\GAME ENGINE\SOURCE CODE\Project ORKA\Data\shaders\idShader.vert" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="..\..\..\..\..\..\Downloads\New folder (2)\License.txt" />
-    <Text Include="..\..\..\..\..\..\Downloads\New folder (2)\Readme.txt" />
+    <Text Include="TODO.txt" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
@@ -439,13 +446,6 @@
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Copy Files Release|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
-    <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
-    <WholeProgramOptimization>true</WholeProgramOptimization>
-    <CharacterSet>MultiByte</CharacterSet>
-  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
@@ -453,13 +453,6 @@
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
-    <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
-    <WholeProgramOptimization>true</WholeProgramOptimization>
-    <CharacterSet>MultiByte</CharacterSet>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Copy Files Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
@@ -477,16 +470,10 @@
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Copy Files Release|Win32'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Copy Files Release|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
@@ -498,18 +485,12 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <IncludePath>G:\Daten\PROJEKTE\ORKA\CONCEPT\ENGINE\Project ORKA\External Libraries\asio-1.18.0\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Copy Files Release|Win32'">
-    <IncludePath>G:\Daten\PROJEKTE\ORKA\CONCEPT\ENGINE\Project ORKA\External Libraries\asio-1.18.0\include;$(IncludePath)</IncludePath>
-  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>
     </LinkIncremental>
     <IncludePath>G:\Daten\PROJEKTE\ORKA\CONCEPT\ENGINE\Project ORKA\External Libraries\asio-1.18.0\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>G:\Daten\PROJEKTE\ORKA\CONCEPT\ENGINE\Project ORKA\External Libraries\asio-1.18.0\include;$(IncludePath)</IncludePath>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Copy Files Release|x64'">
     <IncludePath>G:\Daten\PROJEKTE\ORKA\CONCEPT\ENGINE\Project ORKA\External Libraries\asio-1.18.0\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -535,8 +516,7 @@
       <SubSystem>Console</SubSystem>
     </Link>
     <PostBuildEvent>
-      <Command>
-      </Command>
+      <Command>XCOPY "$(SolutionDir)Project ORKA\Data" "$(TargetDir)Data" /S /Y /I</Command>
     </PostBuildEvent>
     <Manifest>
       <SuppressStartupBanner>true</SuppressStartupBanner>
@@ -569,8 +549,8 @@
       <StackReserveSize>4194304</StackReserveSize>
     </Link>
     <PostBuildEvent>
-      <Command>
-      </Command>
+      <Command>XCOPY "$(SolutionDir)Project ORKA\Data" "$(TargetDir)Data" /S /Y /I</Command>
+      <Message>XCOPY "$(SolutionDir)Project ORKA\Data" "$(TargetDir)Data" /S /Y /I</Message>
     </PostBuildEvent>
     <Manifest>
       <SuppressStartupBanner>true</SuppressStartupBanner>
@@ -605,40 +585,7 @@
       <GenerateDebugInformation>false</GenerateDebugInformation>
     </Link>
     <PostBuildEvent>
-      <Command>
-      </Command>
-    </PostBuildEvent>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Copy Files Release|Win32'">
-    <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
-      <Optimization>MaxSpeed</Optimization>
-      <FunctionLevelLinking>true</FunctionLevelLinking>
-      <IntrinsicFunctions>true</IntrinsicFunctions>
-      <SDLCheck>true</SDLCheck>
-      <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)\External Libraries\STBIMAGE;$(SolutionDir)\External Libraries\FREETYPE\include;$(SolutionDir)\External Libraries\ASIO\asio-1.18.1\include;$(SolutionDir)\External Libraries\freetype-2.10.4\include;$(SolutionDir)\External Libraries\STB IMAGE;$(SolutionDir)\External Libraries\ASSIMP\include;$(SolutionDir)\External Libraries\GLM;$(SolutionDir)\External Libraries\GLEW\include;$(SolutionDir)\External Libraries\GLFW 32 bit\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <FloatingPointModel>Fast</FloatingPointModel>
-      <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <LanguageStandard>stdcpp17</LanguageStandard>
-      <EnableModules>false</EnableModules>
-      <PreprocessorDefinitions>_MBCS;%(PreprocessorDefinitions);%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <LanguageStandard_C>stdc17</LanguageStandard_C>
-      <CompileAs>CompileAsCpp</CompileAs>
-    </ClCompile>
-    <Link>
-      <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>opengl32.lib;freetype.lib;assimp-vc141-mt.lib;glfw3.lib;glew32s.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)External Libraries\FREETYPE\release static\vs2015-2022\win32;$(SolutionDir)\External Libraries\ASSIMP\lib\lib 32\release;$(SolutionDir)\External Libraries\GLFW 32 bit\lib-vc2015;$(SolutionDir)\External Libraries\GLEW\lib\Release\Win32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <IgnoreSpecificDefaultLibraries>
-      </IgnoreSpecificDefaultLibraries>
-      <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
-      <SubSystem>Console</SubSystem>
-    </Link>
-    <PostBuildEvent>
-      <Command>XCOPY "$(SolutionDir)\Project ORKA\Data" "$(TargetDir)\Data" /S /Y /I
-XCOPY "$(SolutionDir)External Libraries\ASSIMP\lib\lib 32\release" "$(TargetDir)" /S /Y /I</Command>
+      <Command>XCOPY "$(SolutionDir)Project ORKA\Data" "$(TargetDir)Data" /S /Y /I</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -672,42 +619,7 @@ XCOPY "$(SolutionDir)External Libraries\ASSIMP\lib\lib 32\release" "$(TargetDir)
       <GenerateDebugInformation>false</GenerateDebugInformation>
     </Link>
     <PostBuildEvent>
-      <Command>
-      </Command>
-    </PostBuildEvent>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Copy Files Release|x64'">
-    <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
-      <Optimization>MaxSpeed</Optimization>
-      <FunctionLevelLinking>true</FunctionLevelLinking>
-      <IntrinsicFunctions>true</IntrinsicFunctions>
-      <SDLCheck>true</SDLCheck>
-      <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)External Libraries\STBIMAGE;$(SolutionDir)External Libraries\FREETYPE\include;$(SolutionDir)External Libraries\ASIO\asio-1.18.1\include;$(SolutionDir)External Libraries\STB IMAGE;$(SolutionDir)External Libraries\ASSIMP\include;$(SolutionDir)External Libraries\GLM;$(SolutionDir)External Libraries\GLEW\include;$(SolutionDir)External Libraries\GLFW 64 bit\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <FloatingPointModel>Fast</FloatingPointModel>
-      <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <PreprocessorDefinitions>%(PreprocessorDefinitions);%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <LanguageStandard>stdcpp17</LanguageStandard>
-      <EnableModules>false</EnableModules>
-      <LanguageStandard_C>stdc17</LanguageStandard_C>
-      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
-      <CompileAs>CompileAsCpp</CompileAs>
-    </ClCompile>
-    <Link>
-      <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>opengl32.lib;freetype.lib;assimp-vc141-mt.lib;glfw3.lib;glew32s.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>G:\DATA\PROJEKTE\ORKA\GAME ENGINE\SOURCE CODE\External Libraries\OpenAL\libs\Win64;$(SolutionDir)External Libraries\FREETYPE\release static\vs2015-2022\win64;$(SolutionDir)\External Libraries\FREETYPE\release static\vs2015-2022\win64;$(SolutionDir)\External Libraries\ASSIMP\lib\lib 64\release;$(SolutionDir)\External Libraries\GLFW 64 bit\lib-vc2015;$(SolutionDir)\External Libraries\GLEW\lib\Release\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
-      <IgnoreSpecificDefaultLibraries>
-      </IgnoreSpecificDefaultLibraries>
-      <SubSystem>Console</SubSystem>
-      <StackReserveSize>4194304</StackReserveSize>
-    </Link>
-    <PostBuildEvent>
-      <Command>XCOPY "$(SolutionDir)Project ORKA\Data" "$(TargetDir)Data" /S /Y /I
-XCOPY "$(SolutionDir)External Libraries\ASSIMP\lib\lib 64\release" "$(TargetDir)" /S /Y /I</Command>
+      <Command>XCOPY "$(SolutionDir)Project ORKA\Data" "$(TargetDir)Data" /S /Y /I</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

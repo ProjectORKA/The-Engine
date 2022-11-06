@@ -9,8 +9,8 @@ struct Area : public IVec2 {
 	Area(Int a);
 	Area(Int x, Int y);
 	Area center();
-	void clamp(Int a);
-	void clamp(Area minimumSize);
+	void setMinimum(Area minimumSize);
+	void setMinimum(Int minimumSize);
 };
 
 void logDebug(Area t);

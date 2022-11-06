@@ -1,5 +1,6 @@
 #pragma once
 
+#include <iostream>
 #include "Basics.hpp"
 
 #define DEBUG
@@ -33,8 +34,8 @@ void logDebug(Matrix t);
 void logDebug(ULLVec2 t);
 void logDebug(ULLVec3 t);
 void logDebug(glm::highp_dvec3 t);
+void printLaunchProperties(Int  argc, Char* argv[]);
 
-#include <iostream>
 
 template <typename T>
 void logDebug(T t) {

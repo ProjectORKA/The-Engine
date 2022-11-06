@@ -195,7 +195,7 @@ void QuakeMovementRenderer::render(Window& window, TiledRectangle area) {
 	OPTICK_EVENT();
 	Renderer& renderer = window.renderer;
 	
-	//renderer.renderAtmosphere(player, sunDirection);
+	renderer.renderAtmosphere(player, sunDirection);
 	renderer.setCulling(true);
 	renderer.setDepthTest(true);
 
@@ -215,6 +215,10 @@ void QuakeMovementRenderer::render(Window& window, TiledRectangle area) {
 	renderer.renderMesh("quakeMapSide4");
 
 	//renderer.arrow(player.location, player.location + player.velocity);
+
+	renderer.uniforms().reset();
+
+	renderer.postProcess("gammaCorrection");
 
 	renderer.screenSpace();
 	//renderer.renderText(toString(player.speedControl), Vec2(50), fonts.heading);

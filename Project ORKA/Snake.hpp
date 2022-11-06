@@ -1,3 +1,7 @@
+
+//written by deg
+//modified by Blendurian
+
 #pragma once
 
 #include "Basics.hpp"
@@ -7,10 +11,12 @@
 #include "Basics.hpp"
 #include "Math.hpp"
 
+#include "Velox_Vector.hpp"
+
 struct SnakeFood;
 
 struct Snake {
-	Float speed = 0.02;
+	Float speed = 1;
 	Float segmentRadius = 0.03;
 	Vec2 headPosition = Vec2(-1, 0);
 	Vec2 direction = Vec2(0, 0);
@@ -25,8 +31,8 @@ struct Snake {
 	void addSegment();
 	void dumbAI(SnakeFood& f);
 	void render(Window& window);
-	void update(SnakeFood& snakefood);
 	void inputEvent(Window& window, InputEvent input);
+	void update(SnakeFood& snakefood, Float deltaTime);
 };
 
 struct SnakeFood {

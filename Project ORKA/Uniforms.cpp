@@ -32,7 +32,7 @@ void Uniforms::create()
 {
 	reset();
 
-	uniformBlockShaderCode = loadString("data/shaders/uniforms.glsl");
+	uniformBlockShaderCode = fileSystem.loadString("data/shaders/uniforms.glsl");
 
 	apiGenBuffer(id);
 	apiBindBuffer(GL_UNIFORM_BUFFER, id);
@@ -57,6 +57,12 @@ Float& Uniforms::time() {
 void Uniforms::destroy()
 {
 	apiDeleteBuffer(id);
+}
+void Uniforms::resetMatrices() {
+	worldOffset(Vec4(0));
+	mMatrix(Matrix(1));
+	vMatrix(Matrix(1));
+	pMatrix(Matrix(1));
 }
 Vec4& Uniforms::sunDir() {
 	update = true;
