@@ -16,7 +16,7 @@ void IdFramebuffer::draw(Renderer& renderer)
 }
 void IdFramebuffer::create(Renderer& renderer)
 {
-	renderer.framebufferSystem.addIDBuffer();
+	renderer.framebufferSystem.addIDBuffer("idBuffer");
 
 	//idframebuffer
 	framebufferID = renderer.framebufferSystem.framebuffers.size() - 1;

@@ -47,7 +47,7 @@ void MeshSystem::use(Name meshName)
 	}
 }
 void MeshSystem::addMesh(CPUMesh cpuMesh) {
-	if (cpuMesh.readyForUpload) {
+	if (cpuMesh.loaded) {
 		GPUMesh gpuMesh;
 		gpuMesh.upload(cpuMesh);
 		gpuMeshes.push_back(gpuMesh);
@@ -55,7 +55,7 @@ void MeshSystem::addMesh(CPUMesh cpuMesh) {
 		meshNames.add(cpuMesh.name, currentMeshID);
 	}
 	else {
-		logError("Mesh could not be loaded properly!");
+		logWarning("Mesh could not be loaded!");
 	}
 }
 void MeshSystem::render(Uniforms& uniforms, Index meshID) {

@@ -190,6 +190,12 @@ LDouble clerp(LDouble a, LDouble b, LDouble alpha)
 Vec2 vectorFromAToB(Vec2 a, Vec2 b) {
 	return b - a;
 }
+Vec2 clerp(Vec2 a, Vec2 b, Float alpha) {
+	Vec2 c;
+	c.x = clerp(a.x, b.x, alpha);
+	c.y = clerp(a.y, b.y, alpha);
+	return c;
+}
 Vec2 deltaInLoopingSpace(Vec2 a, Vec2 b, Float extend) {
 	return Vec2(deltaInLoopingSpace(a.x, b.x, extend), deltaInLoopingSpace(a.y, b.y, extend));
 }

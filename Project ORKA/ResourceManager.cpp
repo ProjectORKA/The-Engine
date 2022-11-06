@@ -1,14 +1,20 @@
 
 #include "ResourceManager.hpp"
 #include "Scene.hpp"
+#include "FileSystem.hpp"
+
 
 ResourceManager resourceManager;
 
-ResourceManager::ResourceManager() {
+void ResourceManager::init() {
 	reloadAllResources();
 }
 
 void ResourceManager::loadResourcesFromFBXFiles() {
+	//set path to executable path
+	std::filesystem::current_path(fileSystem.executablePath.parent_path());
+	
+	
 	//get all paths to fbx files
 	Vector<Path> paths;
 	paths = getAllFilesInDirectory(std::filesystem::current_path(), { ".fbx" });
@@ -20,6 +26,9 @@ void ResourceManager::loadResourcesFromFBXFiles() {
 	FileTime recordedLastTimeFbxWasEdited;
 	//create a config file if necessary
 	if (!doesPathExist(resourceManagerConfigPath)) {
+
+		resourceManagerConfigPath = std::filesystem::absolute(resourceManagerConfigPath);
+
 		OutFile resourceManagerConfigFile(resourceManagerConfigPath);
 		if (resourceManagerConfigFile.isOpen) {
 			resourceManagerConfigFile.write((char*) &recordedLastTimeFbxWasEdited, sizeof(recordedLastTimeFbxWasEdited));

@@ -22,12 +22,9 @@ struct ResourceManager {
 	Map<Name, Path> vertexShaderResources;
 	Map<Name, Path> fragmentShaderResources;
 
-	ResourceManager();
+	void init();
 	void reloadAllResources();
 	void loadResourcesFromFBXFiles();
 };
 
 extern ResourceManager resourceManager;
-
-void destroyResourceManager();
-void initializeResourcemanager();

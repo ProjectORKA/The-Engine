@@ -67,6 +67,7 @@ struct Renderer{
 	//spaces
 	void screenSpace();
 	void normalizedSpace();
+	void normalizedScreenSpace();
 	void aspectCorrectNormalizedSpace();
 	void normalizedSpaceWithAspectRatio(Float aspectRatio);
 	
@@ -83,6 +84,44 @@ struct Renderer{
 
 	//shaders
 	Index useShader(Name name);
+	void postProcess(Name name) {
+
+		uniforms().resetMatrices();
+		uniforms().customColor(Color(1, 0, 0, 1));
+
+		read("main");
+		framebufferSystem.currentRead().setAsTexture(0);
+		draw("postProcess");
+
+		clearColor();
+		clearDepth();
+
+		/*framebufferSystem.drawToWindow();*/
+		useShader(name);
+		renderMesh("fullScreenQuad");
+
+		read("postProcess");
+		framebufferSystem.currentRead().setAsTexture(0);
+		draw("main");
+		/*framebufferSystem.drawToWindow();*/
+		useShader("texture");
+
+		renderMesh("fullScreenQuad");
+
+		//read("postProcess");
+		//draw("main");
+		//framebufferSystem.currentRead().setAsTexture(0);
+		//useShader("texture");
+		//renderMesh("fullScreenQuad");
+	}
+
+	//framebuffers
+	void read(Name name) {
+		framebufferSystem.read(*this, name);
+	}
+	void draw(Name name) {
+		framebufferSystem.draw(*this, name);
+	}
 
 	//colors
 	void fill(Vec4 color);
@@ -110,7 +149,6 @@ struct Renderer{
 	void setDepthTest(Bool isUsingDepth);
 	void setAlphaBlending(Bool blending);
 	void setWireframeMode(Bool isWireframeMode);
-	void createBlurTexture(Index from, Index to);
 	void addRenderObject(RenderObjectNames renderObjectNames);
 	
 	Area getArea();

@@ -98,7 +98,7 @@ void Scene::loadFBX(Path path) {
 						
 						if (errorMessage.size()) {
 							logError(String("The model (").append(path.stem().string()).append(") could not be loaded! (").append(path.string()).append(")").append(" Error: ").append(errorMessage));
-							mesh.readyForUpload = false;
+							mesh.loaded = false;
 							break;
 						}
 						else {

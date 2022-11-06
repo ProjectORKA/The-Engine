@@ -1,4 +1,4 @@
-#include "ProjectSnek.hpp"
+#include "Snake.hpp"
 
 void Snake::addSegment() {
 	bodySegments.push_back(Vec2(0, 0));
@@ -30,8 +30,9 @@ void Snake::inputEvent(Window& window, InputEvent input) {
 		direction = Vec2(speed, 0);
 	}
 }
-void Snake::update(SnakeFood& snakefood) {
-	headPosition = headPosition + direction;
+void Snake::update(SnakeFood& snakefood, Float deltaTime) {
+
+	headPosition += direction * deltaTime;
 	if (length(snakefood.foodPosition - headPosition) < 0.06) {
 		snakefood.foodPosition = randomVec2(-1, 1);
 		addSegment();
@@ -45,19 +46,11 @@ void Snake::update(SnakeFood& snakefood) {
 			bodySegments[i] = normalize(bodySegments[i] - bodySegments[i-1]) * Vec2(2* segmentRadius) + bodySegments[i-1];
 		}
 	}
-
-	//for (Int i = bodySegments.size() - 1; i > -1; i--) {
-	//	if (i != 0) bodySegments[i] = bodySegments[i - 1];
-	//	else bodySegments[i] = headPosition;
-	//}
 }
 
 void SnakeFood::update() {
 	foodPosition += randomVec2(-0.02, 0.02);
 	foodColor = randomVec4(0, 1);
-	//if (foodPosition.x >= 1 || foodPosition.x <= -1 || foodPosition.y >= 1 || foodPosition.y <= -1) {
-	//	foodPosition = randomVec2(-0.9, 0.9);
-	//}
 }
 void SnakeFood::render(Window& window) {
 	window.renderer.fill(Color(foodColor));
@@ -72,7 +65,7 @@ void SnakeGame::update(Window& window) {
 	totalTime += renderer.deltaTime();
 	if (totalTime > 0.0016666) {
 		snake.dumbAI(snakefood);
-		snake.update(snakefood);
+		snake.update(snakefood, renderer.deltaTime());
 		snakefood.update();
 		totalTime = 0;
 	}
@@ -86,8 +79,6 @@ void SnakeGame::render(Window& window, TiledRectangle area) {
 
 	snake.render(window);
 	snakefood.render(window);
-
-	logDebug(totalTime);
 }
 void SnakeGame::inputEvent(Window& window, InputEvent input) {
 	snake.inputEvent(window, input);

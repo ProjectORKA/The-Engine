@@ -28,7 +28,7 @@ enum MeshData : Short {
 struct CPUMesh {
 	Name name = "empty";
 	Short dataFlags = 0;
-	Bool readyForUpload = false;
+	Bool loaded = false;
 	Int drawMode = MeshDrawMode::staticMode;
 	Int primitiveMode = PrimitiveMode::Triangles;
 	

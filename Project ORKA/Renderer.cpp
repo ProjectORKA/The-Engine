@@ -52,6 +52,17 @@ void Renderer::screenSpace() {
 	uniforms().vMatrix() = Matrix(1);
 	uniforms().pMatrix() = matrix;
 }
+void Renderer::normalizedScreenSpace() {
+	Float width = renderRegion.region.size.x;
+	Float height = renderRegion.region.size.y;
+	Matrix matrix = Matrix(1);
+	matrix = glm::translate(matrix, Vec3(-1, -1, 0));
+	matrix = glm::scale(matrix, Vec3(2, 2, 0));
+	matrix = glm::scale(matrix, Vec3(1.0 / width, 1.0 / height, 0));
+
+	uniforms().vMatrix() = matrix;
+	uniforms().pMatrix() = Matrix(1);
+}
 void Renderer::rerenderMesh() {
 	//simply renders the previous mesh again (saves performance)
 	meshSystem.currentMesh().render(uniforms());
@@ -93,9 +104,6 @@ void Renderer::setWireframeMode() {
 void Renderer::renderMesh(Name name) {
 	meshSystem.render(uniforms(), name);
 }
-void Renderer::renderMesh(Index meshID) {
-	meshSystem.render(uniforms(), meshID);
-}
 void Renderer::useTexture(Name name) {
 	textureSystem.use(name);
 }
@@ -111,6 +119,9 @@ void Renderer::pollGraphicsAPIError() {
 void Renderer::clearColor(Color color) {
 	apiSetClearColor(color);
 	apiClearColor();
+}
+void Renderer::renderMesh(Index meshID) {
+	meshSystem.render(uniforms(), meshID);
 }
 void Renderer::renderSky(Camera& camera) {
 	setCulling(false);
@@ -147,40 +158,6 @@ void Renderer::aspectCorrectNormalizedSpace() {
 	if (aspect > 1) uniforms().pMatrix() = scale(Matrix(1), Vec3(1 / getAspectRatio(), 1, 1));
 	else uniforms().pMatrix() = scale(Matrix(1), Vec3(1, getAspectRatio(), 1));
 }
-void Renderer::normalizedSpaceWithAspectRatio(Float aspectRatio) {
-	Float renderAspectRatio = getAspectRatio();
-
-	Vec2 view = Vec2(1);
-
-	if (aspectRatio >= 1.0f) {
-		view = Vec2(aspectRatio, 1);
-		if (renderAspectRatio >= aspectRatio) {
-			view.x = renderAspectRatio;
-			view.y = 1;
-		}
-		else {
-			view.x = aspectRatio;
-			view.y = 1 / renderAspectRatio * aspectRatio;
-		}
-	}
-	else {
-		view = Vec2(1, 1 / aspectRatio);
-		if (renderAspectRatio >= aspectRatio) {
-			view.x = renderAspectRatio * 1 / aspectRatio;
-			view.y = 1 / aspectRatio;
-		}
-		else {
-			view.x = 1;
-			view.y = 1 / renderAspectRatio;
-		}
-	}
-
-
-
-	uniforms().vMatrix() = Matrix(1);
-	Matrix pMatrix(1);
-	uniforms().pMatrix() = scale(pMatrix, Vec3(Vec2(1) / view, 1));
-}
 void Renderer::setDepthClamp(Bool depthClamp)
 {
 	if (depthClamp) {
@@ -197,6 +174,10 @@ void Renderer::circle(Vec2 pos, Float radius)
 }
 void Renderer::rectangle(Vec2 pos, Vec2 size) {
 	rectangleRenderer.render(*this, pos, size);
+}
+void Renderer::renderMeshInstanced(Name name)
+{
+	meshSystem.renderInstanced(uniforms(), name, matrixSystem.modelMatrixArray);
 }
 void Renderer::setAlphaBlending(Bool blending)
 {
@@ -235,18 +216,39 @@ void Renderer::line(Vec3 start, Vec3 end, Float width) {
 void Renderer::line(Vec2 start, Vec2 end, Float width) {
 	lineRenderer.renderLine(*this, Vec3(start,0.0f), Vec3(end,0.0f), width);
 }
+void Renderer::normalizedSpaceWithAspectRatio(Float aspectRatio) {
+	Float renderAspectRatio = getAspectRatio();
 
-void Renderer::createBlurTexture(Index from, Index to)
-{
-	//this function renders a blurred version of a framebuffer to another framebuffer
-	Index originalFramebufferID = framebufferSystem.currentDrawFramebufferIndex;
+	Vec2 view = Vec2(1);
 
-	useShader("blur");
-	framebufferSystem.framebuffers[from].setAsTexture(0);
-	framebufferSystem.draw(*this, to);
-	renderMesh("fullScreenQuad");
+	if (aspectRatio >= 1.0f) {
+		view = Vec2(aspectRatio, 1);
+		if (renderAspectRatio >= aspectRatio) {
+			view.x = renderAspectRatio;
+			view.y = 1;
+		}
+		else {
+			view.x = aspectRatio;
+			view.y = 1 / renderAspectRatio * aspectRatio;
+		}
+	}
+	else {
+		view = Vec2(1, 1 / aspectRatio);
+		if (renderAspectRatio >= aspectRatio) {
+			view.x = renderAspectRatio * 1 / aspectRatio;
+			view.y = 1 / aspectRatio;
+		}
+		else {
+			view.x = 1;
+			view.y = 1 / renderAspectRatio;
+		}
+	}
 
-	framebufferSystem.draw(*this, originalFramebufferID);
+
+
+	uniforms().vMatrix() = Matrix(1);
+	Matrix pMatrix(1);
+	uniforms().pMatrix() = scale(pMatrix, Vec3(Vec2(1) / view, 1));
 }
 void Renderer::renderAtmosphere(Player& player, Vec3 sunDirection) {
 	Bool culling = getCulling();
@@ -265,26 +267,13 @@ void Renderer::addRenderObject(RenderObjectNames renderObjectNames)
 {
 	renderObjectSystem.addRenderObject(renderObjectNames);
 }
-Area Renderer::getArea() {
-	return framebufferSystem.framebufferSize;
-}
 void Renderer::renderText(String text, Vec2 position, FontStyle font) {
 	textRenderSystem.render(*this, text, position, font);
 }
-//void Renderer::renderMeshInstanced(Name name, Vector<Vec4>& transformations)
-//{
-//	if (transformations.size()) meshSystem.renderInstanced(uniforms(), name, transformations);
-//}
 
-void Renderer::renderMeshInstanced(Name name)
-{
-	meshSystem.renderInstanced(uniforms(), name, matrixSystem.modelMatrixArray);
+Area Renderer::getArea() {
+	return framebufferSystem.framebufferSize;
 }
-
-//void Renderer::renderMeshInstanced(Name name, Vector<Vec2>& positions)
-//{
-//	if (positions.size()) meshSystem.renderInstanced(uniforms(), name, positions);
-//}
 
 Bool Renderer::getCulling() {
 	return apiGetCullFace();
@@ -292,13 +281,16 @@ Bool Renderer::getCulling() {
 Float Renderer::deltaTime() {
 	return time.delta;
 }
+
 Float Renderer::getAspectRatio(){
 	return framebufferSystem.currentDraw().aspectRatio();
 }
+
 Uniforms& Renderer::uniforms()
 {
 	return shaderSystem.uniforms;
 }
+
 Index Renderer::useShader(Name name) {
 	return shaderSystem.use(name);
 }

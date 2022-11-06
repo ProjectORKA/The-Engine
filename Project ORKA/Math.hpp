@@ -61,6 +61,7 @@ LDouble lerp(LDouble a, LDouble b, LDouble alpha);
 LDouble clerp(LDouble a, LDouble b, LDouble alpha);
 
 Vec2 vectorFromAToB(Vec2 a, Vec2 b);
+Vec2 clerp(Vec2 a, Vec2 b, Float alpha);
 Vec2 deltaInLoopingSpace(Vec2 a, Vec2 b, Float extend);
 
 Vec3 max(Vec3 a, Vec3 b);
@@ -73,7 +74,7 @@ Vec3 quadraticInterpolation(Vec3 start, Vec3 control, Vec3 end, Float time);
 
 Rotation getRotationBetweenVectors(Vec3 start, Vec3 dest);
 
-Matrix matrixFromScale(Vec2 s);;
+Matrix matrixFromScale(Vec2 s);
 Matrix matrixFromScale(Vec3 s);
 Matrix matrixFromScale(Float size);
 Matrix matrixFromLocation(Vec2 location);

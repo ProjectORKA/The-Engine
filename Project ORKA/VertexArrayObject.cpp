@@ -16,7 +16,7 @@ void VertexArrayObject::select()
 }
 void VertexArrayObject::create(CPUMesh& mesh)
 {
-	if (mesh.readyForUpload) {
+	if (mesh.loaded) {
 		apiGenVertexArray(arrayObjectID);
 		apiBindVertexArray(arrayObjectID);
 

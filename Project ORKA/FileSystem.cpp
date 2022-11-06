@@ -1,35 +1,42 @@
 
 #include "FileSystem.hpp"
 
+FileSystem fileSystem;
+
 namespace stbi {
-	#define STBI_NO_JPEG
-	#define STBI_FAILURE_USERMSG
-	#define STB_IMAGE_IMPLEMENTATION
-	#include "stb_image.h"
+//#define STBI_NO_JPEG
+#define STBI_FAILURE_USERMSG
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
 }
-String loadString(Path path) {
+String FileSystem::loadString(Path path) {
 	String s;
 	std::ifstream stream(path, std::ios::in);
-	if(!stream.is_open()) logError(String("String Cant be read! (").append(path.string()).append(")"));
-	std::stringstream sstr;
-	sstr << stream.rdbuf();
-	s = sstr.str();
-	stream.close();
-	return s;
+	if (stream.is_open()) {
+		std::stringstream sstr;
+		sstr << stream.rdbuf();
+		s = sstr.str();
+		stream.close();
+		return s;
+	}
+	else {
+		logWarning(String("String Cant be read! (").append(path.string()).append(")"));
+		return "";
+	}
 }
 void copyFile(Path source, Path destination) {
 	logDebug(String("Copying file (").append(source.string()).append(") to (").append(destination.string()).append(")"));
-	
+
 	Path sourceFile = source;
 	Path targetParent = destination;
-	auto target = targetParent / sourceFile.filename(); // sourceFile.filename() returns "sourceFile.ext".
+	auto target = targetParent / sourceFile.filename();
 
-	try // If you want to avoid exception handling, then use the error code overload of the following functions.
+	try
 	{
-		std::filesystem::create_directories(targetParent); // Recursively create target directory if not existing.
+		std::filesystem::create_directories(targetParent);
 		std::filesystem::copy_file(sourceFile, target, std::filesystem::copy_options::overwrite_existing);
 	}
-	catch (std::exception& e) // Not using fs::filesystem_error since std::bad_alloc can throw too.  
+	catch (std::exception& e)
 	{
 		std::cout << e.what();
 	}
@@ -50,6 +57,9 @@ Image loadImage(Path path, Int bitcount, Bool inverted) {
 			logError("Bitcount not supported!");
 		}
 	}
+
+	if (!image.pixels)logWarning("Image not loaded!");
+
 	return image;
 }
 
