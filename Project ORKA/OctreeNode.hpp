@@ -4,7 +4,7 @@
 #include "OctreeData.hpp"
 #include "OctreeID.hpp"
 #include "Basics.hpp"
-#include "QuadtreeNode.hpp"
+#include "QuadtreeSystem.hpp"
 
 struct OctreeNode {
 	OctreeNodeData data;

@@ -14,7 +14,6 @@ struct Window;
 #include "NeighbourOctree.hpp"
 #include "DynameshTerrain.hpp"
 #include "SphereMeshing.hpp"
-#include "GeometryClipmapTerrain.hpp"
 #include "Molecules2D.hpp"
 #include "MindMap.hpp"
 

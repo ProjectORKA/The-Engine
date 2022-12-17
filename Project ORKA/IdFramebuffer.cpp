@@ -7,12 +7,12 @@
 
 void IdFramebuffer::read(Renderer& renderer)
 {
-	renderer.framebufferSystem.read(renderer, framebufferID);
+	renderer.framebufferSystem.read(framebufferID);
 }
 void IdFramebuffer::draw(Renderer& renderer)
 {
 	OPTICK_EVENT();
-	renderer.framebufferSystem.draw(renderer, framebufferID);
+	renderer.framebufferSystem.draw(framebufferID);
 }
 void IdFramebuffer::create(Renderer& renderer)
 {

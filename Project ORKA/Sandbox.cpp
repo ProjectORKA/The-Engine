@@ -45,7 +45,7 @@ void Sandbox::render(Window& window, TiledRectangle area) {
 
 	player.camera.renderOnlyRot(renderer);
 
-	system.render(renderer, player.camera.location);
+	//system.render(renderer, player.camera.location);
 
 	renderer.setDepthTest(false);
 	renderer.screenSpace();

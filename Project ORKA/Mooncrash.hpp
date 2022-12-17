@@ -8,6 +8,15 @@
 #define INITIAL_CAMERA_SPEED 200				//1 as fast as a human 400 as fast as light
 #define CAMERA_TERRAIN_LIMIT false
 
+//wolf
+//sheep
+//chicken
+//cows
+//birds
+
+
+//trebuchet
+
 struct MooncrashPlayer : public PlanetSystemPlayer {
 
 	Matrix skyRotation = Matrix(1);

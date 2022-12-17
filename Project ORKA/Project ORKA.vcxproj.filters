@@ -251,9 +251,6 @@
     <ClCompile Include="RelativeChunkOffset.cpp">
       <Filter>Engine</Filter>
     </ClCompile>
-    <ClCompile Include="QuadtreeNode.cpp">
-      <Filter>Engine</Filter>
-    </ClCompile>
     <ClCompile Include="QuadtreeID.cpp">
       <Filter>Engine</Filter>
     </ClCompile>
@@ -380,6 +377,7 @@
     <ClCompile Include="TextRenderSystem.cpp">
       <Filter>Engine\UserInterface\Window\Renderer\TextRenderSystem</Filter>
     </ClCompile>
+    <ClCompile Include="terrain generator.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AIPlayground.hpp">
@@ -431,9 +429,6 @@
       <Filter>Engine</Filter>
     </ClInclude>
     <ClInclude Include="FramebufferSystem.hpp">
-      <Filter>Engine</Filter>
-    </ClInclude>
-    <ClInclude Include="GeometryClipmapTerrain.hpp">
       <Filter>Engine</Filter>
     </ClInclude>
     <ClInclude Include="GPUBuffer.hpp">
@@ -725,9 +720,6 @@
       <Filter>Engine</Filter>
     </ClInclude>
     <ClInclude Include="RelativeChunkOffset.hpp">
-      <Filter>Engine</Filter>
-    </ClInclude>
-    <ClInclude Include="QuadtreeNode.hpp">
       <Filter>Engine</Filter>
     </ClInclude>
     <ClInclude Include="QuadtreeID.hpp">
@@ -1167,12 +1159,6 @@
     <None Include="Data\shaders\final.vert">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="Data\shaders\texture.vert">
-      <Filter>Apps\2D Apps\Image Viewer\Shader</Filter>
-    </None>
-    <None Include="Data\shaders\texture.frag">
-      <Filter>Apps\2D Apps\Image Viewer\Shader</Filter>
-    </None>
     <None Include="Data\shaders\orkaIntroSequence.frag">
       <Filter>Apps\3D Apps\Intro Sequence\Shader</Filter>
     </None>
@@ -1189,6 +1175,12 @@
       <Filter>Shaders</Filter>
     </None>
     <None Include="Data\shaders\imageViewer.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Data\shaders\texture.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Data\shaders\texture.vert">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>
@@ -1360,9 +1352,6 @@
     </Filter>
     <Filter Include="Apps\2D Apps\Image Viewer">
       <UniqueIdentifier>{a941cf82-06af-451a-b0a9-f46809bfeb16}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Apps\2D Apps\Image Viewer\Shader">
-      <UniqueIdentifier>{c7db1b32-ab96-417d-9a0d-147cb2bddc8b}</UniqueIdentifier>
     </Filter>
     <Filter Include="Engine\UserInterface">
       <UniqueIdentifier>{ed62bca1-a5f6-47a6-b13a-8cb725390d7c}</UniqueIdentifier>

@@ -72,8 +72,20 @@
 
 #include "ResourceManager.hpp"
 
+
+//generate 4 random values
+//get average
+//subtract average from all values
+//get max abs
+//divide all by absolute
+//multiply by half of max divided by level
+
+
+
 Int main(Int  argc, Char* argv[]) {
 #ifndef TESTING
+
+	freopen("output.txt", "w", stdout);
 
 	fileSystem.init(argv[0]);
 
@@ -107,6 +119,8 @@ Int main(Int  argc, Char* argv[]) {
 #else
 	//testing code
 	/////////////////////////////////////////////////////////////////////////////////////////////////
+
+
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////
 	pause();

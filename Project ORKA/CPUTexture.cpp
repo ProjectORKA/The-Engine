@@ -170,7 +170,7 @@ void CPUTexture::load(Path path, Name name)
 {
 	logDebug(String("Loading texture: (").append(name.data).append(" | ").append(path.string()).append(")"));
 
-	Image image = loadImage(path, 8, true);
+	Image image = fileSystem.loadImage(path, 8, true);
 
 	this->name = name;
 	this->bytePixels = image.pixels;

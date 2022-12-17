@@ -49,6 +49,7 @@ struct Renderer{
 	RenderObjectSystem renderObjectSystem;
 
 	PlanetRenderSystem planetRenderSystem; //[TODO] remove from renderer
+	PlanetRenderSystem2 planetRenderSystem2;
 
 	Mutex mutex;
 	void sync(); //makes non renderer threads wait for the finished frame
@@ -86,41 +87,48 @@ struct Renderer{
 	Index useShader(Name name);
 	void postProcess(Name name) {
 
-		uniforms().resetMatrices();
-		uniforms().customColor(Color(1, 0, 0, 1));
+		//uniforms().resetMatrices();
+		//uniforms().customColor(Color(1, 0, 0, 1));
 
-		read("main");
-		framebufferSystem.currentRead().setAsTexture(0);
-		draw("postProcess");
+		//read("main");
+		//framebufferSystem.currentDraw().setAsTexture(0);
+		//draw("postProcess");
 
-		clearColor();
-		clearDepth();
+		//clearColor();
+		//clearDepth();
 
-		/*framebufferSystem.drawToWindow();*/
-		useShader(name);
-		renderMesh("fullScreenQuad");
-
-		read("postProcess");
-		framebufferSystem.currentRead().setAsTexture(0);
-		draw("main");
-		/*framebufferSystem.drawToWindow();*/
-		useShader("texture");
-
-		renderMesh("fullScreenQuad");
+		///*framebufferSystem.drawToWindow();*/
+		//useShader(name);
+		//renderMesh("fullScreenQuad");
 
 		//read("postProcess");
-		//draw("main");
 		//framebufferSystem.currentRead().setAsTexture(0);
+		//draw("main");
+		///*framebufferSystem.drawToWindow();*/
+		//useShader("texture");
+
+		//renderMesh("fullScreenQuad");
+
+		////read("postProcess");
+		////draw("main");
+		////framebufferSystem.currentRead().setAsTexture(0);
+		////useShader("texture");
+		////renderMesh("fullScreenQuad");
+
+		//uniforms().resetMatrices();
+		//clearDepth();
+		////uniforms().customColor(Color(1, 0, 0, 0));
+		//framebufferSystem.currentDraw().setAsTexture(0);
 		//useShader("texture");
 		//renderMesh("fullScreenQuad");
 	}
 
 	//framebuffers
 	void read(Name name) {
-		framebufferSystem.read(*this, name);
+		framebufferSystem.read(name);
 	}
 	void draw(Name name) {
-		framebufferSystem.draw(*this, name);
+		framebufferSystem.draw(name);
 	}
 
 	//colors

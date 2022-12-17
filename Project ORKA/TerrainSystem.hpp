@@ -5,9 +5,7 @@
 #include "ULLUtil.hpp"
 #include "Heightmap.hpp"
 #include "CPUTexture.hpp"
-
-#define SEALEVEL 1677721600000
-#define TERRAIN_GENERATION_SEED 645123587412588622
+#include "Settings.hpp"
 
 struct QuadtreeSystem;
 struct QuadtreeNode;
@@ -31,3 +29,15 @@ struct TerrainSystem {
 	HeightTexture heightTextures[MAX_CHUNK_LEVEL];
 	TerrainSystem();
 };
+
+struct TerrainTile {
+	//Bool isOcean = false;
+	Short level = 0;
+	Double height = 0;
+	Float humidity = 0.5;
+	Float hardness = 0.5;
+	Float temperature = 25;
+};
+
+Vector<TerrainTile> generateTerrainTiles(TerrainTile input);
+Vector<TerrainTile> generateSmoothTerrainTiles(TerrainTile input, TerrainTile front, TerrainTile back, TerrainTile left, TerrainTile right);;

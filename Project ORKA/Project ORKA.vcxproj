@@ -57,7 +57,6 @@
     <ClCompile Include="PhysicsPlayground.cpp" />
     <ClCompile Include="PhysicsUtil.cpp" />
     <ClCompile Include="ProjectMelon.cpp" />
-    <ClCompile Include="QuadtreeNode.cpp" />
     <ClCompile Include="QuakeMovement.cpp" />
     <ClCompile Include="Random.cpp" />
     <ClCompile Include="RectangleRenderer.cpp" />
@@ -90,6 +89,7 @@
     <ClCompile Include="QuadtreeID.cpp" />
     <ClCompile Include="String.cpp" />
     <ClCompile Include="Snake.cpp" />
+    <ClCompile Include="terrain generator.cpp" />
     <ClCompile Include="TLSFAllocator.cpp" />
     <ClCompile Include="SDFTerrainRenderSystem.cpp" />
     <ClCompile Include="Server.cpp" />
@@ -161,7 +161,6 @@
     <ClInclude Include="EntityComponentSystem.hpp" />
     <ClInclude Include="File.hpp" />
     <ClInclude Include="FlappyBird.hpp" />
-    <ClInclude Include="GeometryClipmapTerrain.hpp" />
     <ClInclude Include="GPUBuffer.hpp" />
     <ClInclude Include="GPUSim.hpp" />
     <ClInclude Include="GuessingGame.hpp" />
@@ -206,7 +205,6 @@
     <ClInclude Include="PoolAllocator.hpp" />
     <ClInclude Include="Profiler.hpp" />
     <ClInclude Include="ProjectMelon.hpp" />
-    <ClInclude Include="QuadtreeNode.hpp" />
     <ClInclude Include="QuakeMovement.hpp" />
     <ClInclude Include="RectangleRenderer.hpp" />
     <ClInclude Include="Renderable.hpp" />
@@ -549,7 +547,8 @@
       <StackReserveSize>4194304</StackReserveSize>
     </Link>
     <PostBuildEvent>
-      <Command>XCOPY "$(SolutionDir)Project ORKA\Data" "$(TargetDir)Data" /S /Y /I</Command>
+      <Command>XCOPY "$(SolutionDir)Project ORKA\Data" "$(TargetDir)Data" /S /Y /I
+XCOPY "$(SolutionDir)External Libraries\ASSIMP\lib\lib 64\debug" "$(TargetDir)" /S /Y /I</Command>
       <Message>XCOPY "$(SolutionDir)Project ORKA\Data" "$(TargetDir)Data" /S /Y /I</Message>
     </PostBuildEvent>
     <Manifest>
@@ -619,7 +618,8 @@
       <GenerateDebugInformation>false</GenerateDebugInformation>
     </Link>
     <PostBuildEvent>
-      <Command>XCOPY "$(SolutionDir)Project ORKA\Data" "$(TargetDir)Data" /S /Y /I</Command>
+      <Command>XCOPY "$(SolutionDir)Project ORKA\Data" "$(TargetDir)Data" /S /Y /I
+XCOPY "$(SolutionDir)External Libraries\ASSIMP\lib\lib 64\release" "$(TargetDir)" /S /Y /I</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

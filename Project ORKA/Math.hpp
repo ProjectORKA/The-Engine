@@ -21,6 +21,11 @@ struct Orientation {
 	Orientation(Vec3 direction, Vec3 up);
 };
 
+template <typename T>
+Bool isIndexInArray(Index i, Vector<T> v) {
+	return i < v.size();
+}
+
 Bool isOdd(ULL a);
 Bool isEven(ULL a);
 Bool withinLength(Vec3 a, Float b);
@@ -58,6 +63,7 @@ Float distanceToPointInLoopingSpace(Vec2 a, Vec2 b, Float extend);
 
 LDouble dmod(LDouble x, LDouble y);
 LDouble lerp(LDouble a, LDouble b, LDouble alpha);
+LDouble dlerp(LDouble a, LDouble b, LDouble alpha);
 LDouble clerp(LDouble a, LDouble b, LDouble alpha);
 
 Vec2 vectorFromAToB(Vec2 a, Vec2 b);

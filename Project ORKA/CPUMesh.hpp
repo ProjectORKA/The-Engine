@@ -55,7 +55,8 @@ struct CPUMesh {
 	void merge(CPUMesh source);
 	void calculateSmoothNormals();
 	void render(Renderer& renderer);
-	void meshFromHeightmap(Array2D<Float>& heightmap, UInt size);
+	void triangleMeshFromHeightmap(Array2D<Float>& heightmap);
+	void triangleStripMeshFromHeightmap(Array2D<Float>& heightmap);
 };
 
 struct MeshHeader1 {

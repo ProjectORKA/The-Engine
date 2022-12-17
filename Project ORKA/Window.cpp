@@ -97,12 +97,12 @@ void windowThread(Window& window)
 
 			renderer.framebufferSystem.drawToWindow();
 
-			OPTICK_PUSH("Draw final quad");
+
 			renderer.useShader("final");
 			renderer.framebufferSystem.currentDraw().setAsTexture(0); //[TODO] might not work; check
 			renderer.uniforms().reset();
 			renderer.renderMesh("fullScreenQuad");
-			OPTICK_POP();
+
 			renderer.end(); //checks errors and unlocks renderer
 
 			finish();
@@ -204,7 +204,7 @@ void Window::setIcon(Path path) {
 
 	path = std::filesystem::absolute(path);
 
-	Image logo = loadImage(path, 8, false);
+	Image logo = fileSystem.loadImage(path, 8, false);
 
 	if (logo.pixels && logo.channels == 4) {
 		GLFWimage icon;

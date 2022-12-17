@@ -89,19 +89,24 @@ void CPUMesh::load(Name name) {
 	}
 };
 void CPUMesh::removeDoubles() {
-	for (Int i = 0; i < vertices.size(); i++) {
+	if (primitiveMode == PrimitiveMode::Triangles) {
+		for (Int i = 0; i < vertices.size(); i++) {
 
-		Vec3 current = vertices[i];
-		Index currentID = i;
+			Vec3 current = vertices[i];
+			Index currentID = i;
 
-		for (Int j = 0; j < vertices.size(); j++) {
-			if (vertices[j] == current) {
+			for (Int j = 0; j < vertices.size(); j++) {
+				if (vertices[j] == current) {
 
-				for (Int k = 0; k < indices.size(); k++) {
-					if (indices[k] == j)  indices[k] = currentID;
+					for (Int k = 0; k < indices.size(); k++) {
+						if (indices[k] == j)  indices[k] = currentID;
+					}
 				}
 			}
 		}
+	}
+	else {
+		logError("Double removal for non triangle meshes not supported yet!");
 	}
 }
 CPUMesh::CPUMesh(Graph& graph) {
@@ -134,18 +139,26 @@ void CPUMesh::checkIntegrity() {
 
 	if (uvs.size() + vertices.size() + normals.size() + vertices.size()) loaded = true;
 	else loaded = false;
+
+	if (!loaded) logError("Mesh is faulty!");
 }
 void CPUMesh::merge(CPUMesh source) {
-	for (Int i = 0; i < source.vertices.size(); i++) {
-		vertices.push_back(source.vertices[i]);
-		uvs.push_back(source.uvs[i]);
-		normals.push_back(source.normals[i]);
+	if (primitiveMode == PrimitiveMode::Triangles & source.primitiveMode == PrimitiveMode::Triangles) {
+		
+		Int indexOffset = vertices.size();
+		
+		for (Int i = 0; i < source.vertices.size(); i++) {
+			vertices.push_back(source.vertices[i]);
+			uvs.push_back(source.uvs[i]);
+			normals.push_back(source.normals[i]);
+		}
+
+		for (Int i = 0; i < source.indices.size(); i++) {
+			indices.push_back(source.indices[i] + indexOffset);
+		}
 	}
-
-	Int indexOffset = vertices.size();
-
-	for (Int i = 0; i < source.indices.size(); i++) {
-		indices.push_back(source.indices[i] + indexOffset);
+	else {
+		logError("Merging for non triangle meshes not supported yet!");
 	}
 }
 void CPUMesh::move(Vec3 moveVector) {
@@ -235,15 +248,15 @@ void CPUMesh::render(Renderer& renderer) {
 	mesh.render(renderer.uniforms());
 	mesh.unload();
 }
-void CPUMesh::meshFromHeightmap(Array2D<Float>& heightmap, UInt size) {
+void CPUMesh::triangleMeshFromHeightmap(Array2D<Float>& heightmap) {
 	name = "terrain";
-	primitiveMode = PrimitiveMode::TriangleStrip;
-
+	primitiveMode = PrimitiveMode::Triangles;
+	dataFlags = 1;
 	clearGeometry();
 
-	for (Int y = 0; y < size; y++) {
-		for (Int x = 0; x < size; x++) {
-			Vec3 position = Vec3(x, y, 0) / Vec3(size);
+	for (Int y = 0; y < heightmap.size; y++) {
+		for (Int x = 0; x < heightmap.size; x++) {
+			Vec3 position = Vec3(x * 2, y * 2, 0) / Vec3(heightmap.size);
 			position.z = heightmap.get(x, y);
 			vertices.push_back(position);
 			normals.push_back(Vec3(0, 0, 1));
@@ -252,12 +265,43 @@ void CPUMesh::meshFromHeightmap(Array2D<Float>& heightmap, UInt size) {
 	}
 
 	//create indices
-	for (UInt y = 0; y < size - 1; y++) {	//very top row doesn't have triangle strip
-		for (UInt x = 0; x < size; x++) {
-			if ((x == 0) && (y > 0))indices.push_back(x + size * (y + 1));
-			indices.push_back(x + (size * (y + 1)));
-			indices.push_back(x + (size * y));
-			if ((x == (size - 1)) && (y < (size - 1))) indices.push_back(x + size * y);
+	for (UInt y = 0; y < heightmap.size - 1; y++) {	//very top row doesn't have triangle strip
+		for (UInt x = 0; x < heightmap.size - 1; x++) {
+			indices.push_back(x + (heightmap.size * (y)));
+			indices.push_back(x + 1 + (heightmap.size * (y + 1)));
+			indices.push_back(x + (heightmap.size * (y + 1)));
+
+			indices.push_back(x + (heightmap.size * (y)));
+			indices.push_back(x + 1 + (heightmap.size * (y)));
+			indices.push_back(x + 1 + (heightmap.size * (y + 1)));
+		}
+	}
+
+	checkIntegrity();
+}
+void CPUMesh::triangleStripMeshFromHeightmap(Array2D<Float>& heightmap) {
+	name = "terrain";
+	primitiveMode = PrimitiveMode::TriangleStrip;
+	dataFlags = 1;
+	clearGeometry();
+
+	for (Int y = 0; y < heightmap.size; y++) {
+		for (Int x = 0; x < heightmap.size; x++) {
+			Vec3 position = Vec3(x * 2, y * 2, 0) / Vec3(heightmap.size);
+			position.z = heightmap.get(x, y);
+			vertices.push_back(position);
+			normals.push_back(Vec3(0, 0, 1));
+			uvs.push_back(Vec2(position.x, position.y));
+		}
+	}
+
+	//create indices
+	for (UInt y = 0; y < heightmap.size - 1; y++) {	//very top row doesn't have triangle strip
+		for (UInt x = 0; x < heightmap.size; x++) {
+			if ((x == 0) && (y > 0))indices.push_back(x + heightmap.size * (y + 1));
+			indices.push_back(x + (heightmap.size * (y + 1)));
+			indices.push_back(x + (heightmap.size * y));
+			if ((x == (heightmap.size - 1)) && (y < (heightmap.size - 1))) indices.push_back(x + heightmap.size * y);
 		}
 	}
 
