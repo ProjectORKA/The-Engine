@@ -59,8 +59,9 @@ void renderPlanet(Renderer& renderer, PlanetSystem& planetSystem, PlanetSystemPl
 	player.camera.renderOnlyRot(renderer);
 
 	//render meshes
-	for (UShort level = 0; level < MAX_CHUNK_LEVEL; level++) {
-		renderer.planetRenderSystem.renderLevel(planetSystem, renderer, player, level);
+	for (UShort level = 0; level < 1; level++) { //[TEMP] revert to max chunk level
+		//renderer.planetRenderSystem.renderLevel(planetSystem, renderer, player, level); //[TEMP]
+		renderer.planetRenderSystem2.render(renderer, player, level);
 	}
 };
 
@@ -161,8 +162,9 @@ void MooncrashPlayer::render(Window & window) {
 }
 
 void MooncrashRenderer::update(Window& window) {
-	player.update(window);
-	window.renderer.planetRenderSystem.update(simulation->planetSystem, player);
+	player.update(window);	
+	//window.renderer.planetRenderSystem.update(simulation->planetSystem, player);
+	window.renderer.planetRenderSystem2.update(simulation->planetSystem);
 }
 void MooncrashRenderer::init(MooncrashSimulation& simulation) {
 	player.speedExponent = 200;
@@ -184,7 +186,7 @@ void MooncrashRenderer::render(Window& window, TiledRectangle area) {
 
 	renderPlanet(renderer, simulation->planetSystem, player);
 	
-
+	renderer.postProcess("final");
 
 	//renderUI(renderer, player);
 }

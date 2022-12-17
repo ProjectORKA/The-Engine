@@ -18,4 +18,7 @@ struct Array2D {
 	T& get(UInt x, UInt y) {
 		return data[x + size * y];
 	}
+	void set(UInt x, UInt y, T value) {
+		data[x + size * y] = value;
+	}
 };

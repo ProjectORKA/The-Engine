@@ -14,18 +14,17 @@ void ResourceManager::loadResourcesFromFBXFiles() {
 	//set path to executable path
 	std::filesystem::current_path(fileSystem.executablePath.parent_path());
 	
-	
 	//get all paths to fbx files
 	Vector<Path> paths;
-	paths = getAllFilesInDirectory(std::filesystem::current_path(), { ".fbx" });
+	paths = fileSystem.getAllFilesInDirectory(std::filesystem::current_path(), { ".fbx" });
 
 	//get the last edited times and the stored value
-	FileTime lastTimeFbxWasEdited = getLastWrittenTimeOfFiles(paths);
+	FileTime lastTimeFbxWasEdited = fileSystem.getLastWrittenTimeOfFiles(paths);
 	Path resourceManagerConfigPath = "data/config/resourcemanager.bin";
 
 	FileTime recordedLastTimeFbxWasEdited;
 	//create a config file if necessary
-	if (!doesPathExist(resourceManagerConfigPath)) {
+	if (!fileSystem.doesPathExist(resourceManagerConfigPath)) {
 
 		resourceManagerConfigPath = std::filesystem::absolute(resourceManagerConfigPath);
 
@@ -50,7 +49,7 @@ void ResourceManager::loadResourcesFromFBXFiles() {
 
 	if (lastTimeFbxWasEdited > recordedLastTimeFbxWasEdited) {
 		for (auto filePath : paths) {
-			if (lastWrittenTime(filePath) > recordedLastTimeFbxWasEdited) {
+			if (fileSystem.lastWrittenTime(filePath) > recordedLastTimeFbxWasEdited) {
 				Scene scene;
 				scene.loadFBX(filePath);
 			}
@@ -80,28 +79,28 @@ void ResourceManager::reloadAllResources() {
 
 	//load mesh files
 	paths.clear();
-	paths = getAllFilesInDirectory(std::filesystem::current_path(), { ".mesh" });
+	paths = fileSystem.getAllFilesInDirectory(std::filesystem::current_path(), { ".mesh" });
 	for (auto p : paths) {
 		meshResources[Name(p.stem().string())] = p;
 	}
 
 	//load textures
 	paths.clear();
-	paths = getAllFilesInDirectory(std::filesystem::current_path(), { ".png", ".bmp", ".exr", ".hdr", ".jpg" });
+	paths = fileSystem.getAllFilesInDirectory(std::filesystem::current_path(), { ".png", ".bmp", ".exr", ".hdr", ".jpg" });
 	for (auto p : paths) {
 		textureResources[Name(p.stem().string())] = p;
 	}
 
 	//load vertex shaders
 	paths.clear();
-	paths = getAllFilesInDirectory(std::filesystem::current_path(), { ".vert" });
+	paths = fileSystem.getAllFilesInDirectory(std::filesystem::current_path(), { ".vert" });
 	for (auto p : paths) {
 		vertexShaderResources[Name(p.stem().string())] = p;
 	}
 
 	//load fragment shaders
 	paths.clear();
-	paths = getAllFilesInDirectory(std::filesystem::current_path(), { ".frag" });
+	paths = fileSystem.getAllFilesInDirectory(std::filesystem::current_path(), { ".frag" });
 	for (auto p : paths) {
 		fragmentShaderResources[Name(p.stem().string())] = p;
 	}

@@ -21,7 +21,7 @@ void Renderer::begin()
 	mutex.lock();						//used for syncronizing other threads
 	time.update();						//advances the time
 	uniforms().time() = time.total;		//makes time available to shaders
-	framebufferSystem.deselect();		//selects the backbuffer of the window
+	framebufferSystem.drawToWindow();		//selects the backbuffer of the window
 	clearColor(Color(Vec3(0), 0.0));	//and clears its contents
 	clearDepth();						//clears depth as to not accidentally hide geometry
 }

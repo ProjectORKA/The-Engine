@@ -5,7 +5,7 @@ InFile::~InFile() {
 	file.close();
 }
 InFile::InFile(Path location) {
-	if (doesPathExist(location)) {
+	if (fileSystem.doesPathExist(location)) {
 		fileLocation = location;
 		file = std::ifstream(fileLocation, std::ios::binary | std::ios::in);
 		if (file.is_open()) {

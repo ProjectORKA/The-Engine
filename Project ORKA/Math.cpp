@@ -181,6 +181,10 @@ LDouble lerp(LDouble a, LDouble b, LDouble alpha)
 {
 	return (a * (1 - alpha)) + (b * alpha);
 }
+LDouble dlerp(LDouble a, LDouble b, LDouble alpha)
+{
+	return (a * (1 - alpha)) + (b * alpha);
+}
 LDouble clerp(LDouble a, LDouble b, LDouble alpha)
 {
 	alpha = clamp(alpha, 0, 1);

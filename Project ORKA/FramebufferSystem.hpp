@@ -13,7 +13,6 @@ struct FramebufferSystem {
 	Index currentDrawFramebufferIndex = 0;
 
 	void destroy();
-	void deselect();
 	void drawToWindow();
 	void update(Area area);
 	Framebuffer& currentRead();
@@ -21,9 +20,9 @@ struct FramebufferSystem {
 	void addGbuffer(Name name);
 	void addIDBuffer(Name name);
 	void addFrameBuffer(Name name);
-	void read(Renderer& renderer, Name name);
-	void draw(Renderer& renderer, Name name);
+	void read(Name name);
+	void draw(Name name);
 	void create(Renderer& renderer, Area size);
-	void read(Renderer& renderer, Index framebufferIndex);
-	void draw(Renderer& renderer, Index framebufferIndex);
+	void read(Index framebufferIndex);
+	void draw(Index framebufferIndex);
 };
