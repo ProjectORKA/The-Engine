@@ -6,12 +6,12 @@
 #include "TerrainSystem.hpp"
 
 struct PlanetSystem {
-	OctreeSystem octreeSystem;
+	//OctreeSystem octreeSystem;
 	QuadtreeSystem quadtreeSystem;
 	TerrainSystem terrainSystem;
 
 	void count();
-	void update();
+	//void update();
 	PlanetSystem();
 	~PlanetSystem();
 };

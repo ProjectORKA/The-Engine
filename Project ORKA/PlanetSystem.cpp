@@ -4,20 +4,20 @@
 PlanetSystem::PlanetSystem()
 {
 	quadtreeSystem.create(terrainSystem);
-	octreeSystem.create(quadtreeSystem);
+	//octreeSystem.create(quadtreeSystem);
 }
 PlanetSystem::~PlanetSystem() {
-	octreeSystem.destroy();
+	//octreeSystem.destroy();
 }
 
 //planetSystem
 void PlanetSystem::count()
 {
-	octreeSystem.count();
+	//octreeSystem.count();
 	quadtreeSystem.count();
 }
-void PlanetSystem::update()
-{
-	quadtreeSystem.update(terrainSystem);
-	octreeSystem.update();
-}
+//void PlanetSystem::update()
+//{
+//	//quadtreeSystem.update(terrainSystem);
+//	//octreeSystem.update();
+//}

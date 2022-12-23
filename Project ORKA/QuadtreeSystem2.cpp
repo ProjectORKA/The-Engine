@@ -1,8 +1,7 @@
 
-#include "QuadtreeSystem.hpp"
-#include "Debug.hpp"
+#include "QuadtreeSystem2.hpp"
 
-void QuadtreeNode::count()
+void QuadtreeNode2::count()
 {
 	static Int nodeCount = 0;
 	if (id.level == 0) {
@@ -16,13 +15,13 @@ void QuadtreeNode::count()
 		c11->count();
 	}
 	if (id.level == 0) {
-		logDebug(String("QuadTreeNodeCount  : ").append(std::to_string(nodeCount)));
+		logDebug(String("QuadtreeNode2Count  : ").append(std::to_string(nodeCount)));
 	}
 }
-void QuadtreeNode::destroy() {
+void QuadtreeNode2::destroy() {
 	unsubdivide();
 }
-void QuadtreeNode::unsubdivide()
+void QuadtreeNode2::unsubdivide()
 {
 	if (subdivided) {
 		c00->destroy();
@@ -48,8 +47,8 @@ void QuadtreeNode::unsubdivide()
 		subdivided = false;
 	}
 }
-QuadtreeNode& QuadtreeNode::nwr() {
-	QuadtreeNode* cur = this;
+QuadtreeNode2& QuadtreeNode2::nwr() {
+	QuadtreeNode2* cur = this;
 	while (!cur->nw) {
 		if (cur->parent) {
 			cur = cur->parent;
@@ -62,8 +61,8 @@ QuadtreeNode& QuadtreeNode::nwr() {
 	}
 	return *cur->nw;
 }
-QuadtreeNode& QuadtreeNode::ner() {
-	QuadtreeNode* cur = this;
+QuadtreeNode2& QuadtreeNode2::ner() {
+	QuadtreeNode2* cur = this;
 	while (!cur->ne) {
 		if (cur->parent) {
 			cur = cur->parent;
@@ -76,8 +75,8 @@ QuadtreeNode& QuadtreeNode::ner() {
 	}
 	return *cur->ne;
 }
-QuadtreeNode& QuadtreeNode::nsr() {
-	QuadtreeNode* cur = this;
+QuadtreeNode2& QuadtreeNode2::nsr() {
+	QuadtreeNode2* cur = this;
 	while (!cur->ns) {
 		if (cur->parent) {
 			cur = cur->parent;
@@ -90,8 +89,8 @@ QuadtreeNode& QuadtreeNode::nsr() {
 	}
 	return *cur->ns;
 }
-QuadtreeNode& QuadtreeNode::nnr() {
-	QuadtreeNode* cur = this;
+QuadtreeNode2& QuadtreeNode2::nnr() {
+	QuadtreeNode2* cur = this;
 	while (!cur->nn) {
 		if (cur->parent) {
 			cur = cur->parent;
@@ -105,60 +104,60 @@ QuadtreeNode& QuadtreeNode::nnr() {
 	return *cur->nn;
 }
 
-QuadtreeNode& QuadtreeNode::nner() {
+QuadtreeNode2& QuadtreeNode2::nner() {
 	//get direct neighbour reference
-	QuadtreeNode& a = nnr();
-	QuadtreeNode& b = ner();
+	QuadtreeNode2& a = nnr();
+	QuadtreeNode2& b = ner();
 
 	//get diagonal neighnour reference
-	QuadtreeNode& c = a.ner();
-	QuadtreeNode& d = b.nnr();
+	QuadtreeNode2& c = a.ner();
+	QuadtreeNode2& d = b.nnr();
 
 	//figure out best if different
 	if (c.id.level >= d.id.level) return c;
 	else return d;
 }
-QuadtreeNode& QuadtreeNode::nnwr() {
+QuadtreeNode2& QuadtreeNode2::nnwr() {
 	//get direct neighbour reference
-	QuadtreeNode& a = nnr();
-	QuadtreeNode& b = nwr();
+	QuadtreeNode2& a = nnr();
+	QuadtreeNode2& b = nwr();
 
 	//get diagonal neighnour reference
-	QuadtreeNode& c = a.nwr();
-	QuadtreeNode& d = b.nnr();
+	QuadtreeNode2& c = a.nwr();
+	QuadtreeNode2& d = b.nnr();
 
 	//figure out best if different
 	if (c.id.level >= d.id.level) return c;
 	else return d;
 }
-QuadtreeNode& QuadtreeNode::nser() {
+QuadtreeNode2& QuadtreeNode2::nser() {
 	//get direct neighbour reference
-	QuadtreeNode& a = nsr();
-	QuadtreeNode& b = ner();
+	QuadtreeNode2& a = nsr();
+	QuadtreeNode2& b = ner();
 
 	//get diagonal neighnour reference
-	QuadtreeNode& c = a.ner();
-	QuadtreeNode& d = b.nsr();
+	QuadtreeNode2& c = a.ner();
+	QuadtreeNode2& d = b.nsr();
 
 	//figure out best if different
 	if (c.id.level >= d.id.level) return c;
 	else return d;
 }
-QuadtreeNode& QuadtreeNode::nswr() {
+QuadtreeNode2& QuadtreeNode2::nswr() {
 	//get direct neighbour reference
-	QuadtreeNode& a = nsr();
-	QuadtreeNode& b = nwr();
+	QuadtreeNode2& a = nsr();
+	QuadtreeNode2& b = nwr();
 
 	//get diagonal neighnour reference
-	QuadtreeNode& c = a.nwr();
-	QuadtreeNode& d = b.nsr();
+	QuadtreeNode2& c = a.nwr();
+	QuadtreeNode2& d = b.nsr();
 
 	//figure out best if different
 	if (c.id.level >= d.id.level) return c;
 	else return d;
 }
 
-void QuadtreeNode::decrementUsers()
+void QuadtreeNode2::decrementUsers()
 {
 	if (users) {
 		users--;
@@ -167,11 +166,11 @@ void QuadtreeNode::decrementUsers()
 		logError("Cant have less than 0 users, error must have happened!");
 	}
 }
-void QuadtreeNode::incrementUsers()
+void QuadtreeNode2::incrementUsers()
 {
 	users++;
 }
-void QuadtreeNode::removeSelfFromNeighbours() {
+void QuadtreeNode2::removeSelfFromNeighbours() {
 	//remove reference from north neighbour
 	if (nn) nn->ns = nullptr;
 	//remove reference from south neighbour
@@ -181,7 +180,7 @@ void QuadtreeNode::removeSelfFromNeighbours() {
 	//remove reference from west neighbour
 	if (nw) nw->ne = nullptr;
 }
-void QuadtreeNode::createRootNode(TerrainSystem& terrainSystem)
+void QuadtreeNode2::createRootNode(TerrainSystem& terrainSystem)
 {
 	parent = nullptr;
 	id.level = 0;
@@ -190,14 +189,14 @@ void QuadtreeNode::createRootNode(TerrainSystem& terrainSystem)
 	data.terrain = new Terrain(terrainSystem, id, nullptr, 0, 0);
 
 }
-void QuadtreeNode::subdivide(TerrainSystem& terrainSystem)
+void QuadtreeNode2::subdivide(TerrainSystem& terrainSystem)
 {
 	if ((!subdivided) && (id.level < MAX_CHUNK_LEVEL - 1)) {
 
-		c00 = new QuadtreeNode();
-		c01 = new QuadtreeNode();
-		c10 = new QuadtreeNode();
-		c11 = new QuadtreeNode();
+		c00 = new QuadtreeNode2();
+		c01 = new QuadtreeNode2();
+		c10 = new QuadtreeNode2();
+		c11 = new QuadtreeNode2();
 
 		c00->create(terrainSystem, this, 0, 0);
 		c01->create(terrainSystem, this, 0, 1);
@@ -217,7 +216,7 @@ void QuadtreeNode::subdivide(TerrainSystem& terrainSystem)
 		subdivided = true;
 	}
 }
-QuadtreeNode& QuadtreeNode::get(TerrainSystem& terrainSystem, QuadtreeID id)
+QuadtreeNode2& QuadtreeNode2::get(TerrainSystem& terrainSystem, QuadtreeID id)
 {
 	if (this->id.level = id.level) return *this;
 	else {
@@ -236,7 +235,7 @@ QuadtreeNode& QuadtreeNode::get(TerrainSystem& terrainSystem, QuadtreeID id)
 		}
 	}
 }
-void QuadtreeNode::update(QuadtreeSystem& quadtreeSystem, TerrainSystem& terrainSystem)
+void QuadtreeNode2::update(QuadtreeSystem& quadtreeSystem, TerrainSystem& terrainSystem)
 {
 	if (users) {
 		if (subdivided) {
@@ -253,7 +252,7 @@ void QuadtreeNode::update(QuadtreeSystem& quadtreeSystem, TerrainSystem& terrain
 		unsubdivide();
 	}
 }
-void QuadtreeNode::create(TerrainSystem& terrainSystem, QuadtreeNode* parent, Bool x, Bool y)
+void QuadtreeNode2::create(TerrainSystem& terrainSystem, QuadtreeNode2* parent, Bool x, Bool y)
 {
 	//set parent node
 	this->parent = parent;
@@ -294,22 +293,4 @@ void QuadtreeNode::create(TerrainSystem& terrainSystem, QuadtreeNode* parent, Bo
 	if (nw) nw->ne = this;
 	//generate terrain
 	//data.terrain = new Terrain(terrainSystem, id, parent->data.terrain, x, y);
-}
-
-void QuadtreeSystem::count() {
-	root->count();
-}
-ULLVec3 QuadtreeSystem::rayTrace(Ray ray) {
-	return ULLVec3(0);
-}
-void QuadtreeSystem::create(TerrainSystem& terrainSystem) {
-	root = new QuadtreeNode();
-	root->createRootNode(terrainSystem);
-}
-void QuadtreeSystem::update(TerrainSystem& terrainSystem) {
-	root->update(*this, terrainSystem);
-}
-QuadtreeNode& QuadtreeSystem::get(TerrainSystem& terrainSystem, QuadtreeID id)
-{
-	return root->get(terrainSystem, id);
 }

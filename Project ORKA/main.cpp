@@ -45,7 +45,7 @@
 //#include "Sortr.hpp"
 //#include "Snake.hpp"
 //#include "GPUSim.hpp"
-//#include "Sandbox.hpp"
+#include "Sandbox.hpp"
 //#include "MSDFText.hpp"
 //#include "FlappyBird.hpp"
 //#include "UISandbox.hpp"
@@ -63,14 +63,8 @@
 //#include "DungeonsAndDiscord.hpp"
 //#include "InfiniteDetailPrototype.hpp"
 
-//#define TESTING
-
-#include "Basics.hpp"
-#include "Time.hpp"
-#include "Debug.hpp"
-#include "Velox_Vector.hpp"
-
-#include "ResourceManager.hpp"
+#define TESTING
+#include "QuadtreeSystem2.hpp"
 
 
 //generate 4 random values
@@ -85,42 +79,28 @@
 Int main(Int  argc, Char* argv[]) {
 #ifndef TESTING
 
-	freopen("output.txt", "w", stdout);
-
 	fileSystem.init(argv[0]);
 
 	resourceManager.init();
 
-	//ImageViewer app;
+	Mooncrash game;
+	//Sandbox game;
 
-	MooncrashSimulation sim;
-	sim.init();
+	game.run();
 
-	MooncrashRenderer app;
-	app.init(sim);
 
-	Window& win = window(
-		"ORKA",
-		Area(1920, 1080),
-		WindowDecoration::decorated,
-		WindowState::windowed
-	);
-
-	if (argc > 1) {
-		win.droppedFilePaths.push_back(Path(argv[1]));
-	}
-
-	win.content = &app;
-
-	ui.run();
-
-	sim.destroy();
 
 #else
 	//testing code
 	/////////////////////////////////////////////////////////////////////////////////////////////////
 
+	QuadtreeSystem2 sys;
 
+	sys.count();
+
+	sys.subdivide(sys.levels[0][0]);
+
+	sys.count();
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////
 	pause();

@@ -3,6 +3,16 @@
 
 #include "Game.hpp"
 
+struct ImageViewerApp {
+	void run(Int  argc, Char* argv[]) {
+		
+		
+		//if (argc > 1) {
+		//	win.droppedFilePaths.push_back(Path(argv[1]));
+		//}
+	}
+};
+
 struct ImageViewer : public GameRenderer{
 	Path imagePath = "";
 	CPUTexture cimage;

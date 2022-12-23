@@ -107,9 +107,6 @@
     <ClCompile Include="ShaderSystem.cpp">
       <Filter>Engine\Systems</Filter>
     </ClCompile>
-    <ClCompile Include="TerrainSystem.cpp">
-      <Filter>Engine\Systems</Filter>
-    </ClCompile>
     <ClCompile Include="TextureSystem.cpp">
       <Filter>Engine\Systems</Filter>
     </ClCompile>
@@ -378,6 +375,15 @@
       <Filter>Engine\UserInterface\Window\Renderer\TextRenderSystem</Filter>
     </ClCompile>
     <ClCompile Include="terrain generator.cpp" />
+    <ClCompile Include="QuadtreeSystem2.cpp">
+      <Filter>Apps\3D Apps\Mooncrash\NewFilter1</Filter>
+    </ClCompile>
+    <ClCompile Include="TerrainSystem.cpp">
+      <Filter>Engine\Systems\Terrain\TerrainSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="TerrainTiles.cpp">
+      <Filter>Engine\Systems\Terrain\TerrainTiles</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AIPlayground.hpp">
@@ -516,9 +522,6 @@
       <Filter>Engine\Systems</Filter>
     </ClInclude>
     <ClInclude Include="ShaderSystem.hpp">
-      <Filter>Engine\Systems</Filter>
-    </ClInclude>
-    <ClInclude Include="TerrainSystem.hpp">
       <Filter>Engine\Systems</Filter>
     </ClInclude>
     <ClInclude Include="TextureSystem.hpp">
@@ -989,6 +992,15 @@
     <ClInclude Include="GlyphTextRenderSystem.hpp">
       <Filter>Engine\UserInterface\Window\Renderer\TextRenderSystem\GlyphTextRenderSystem</Filter>
     </ClInclude>
+    <ClInclude Include="QuadtreeSystem2.hpp">
+      <Filter>Apps\3D Apps\Mooncrash\NewFilter1</Filter>
+    </ClInclude>
+    <ClInclude Include="TerrainSystem.hpp">
+      <Filter>Engine\Systems\Terrain\TerrainSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="TerrainTiles.hpp">
+      <Filter>Engine\Systems\Terrain\TerrainTiles</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Data\shaders\debug.frag">
@@ -1388,6 +1400,18 @@
     </Filter>
     <Filter Include="Apps\3D Apps\Intro Sequence\Shader">
       <UniqueIdentifier>{34d232f4-6c53-48ee-bea6-3f008df0b2f5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Apps\3D Apps\Mooncrash\NewFilter1">
+      <UniqueIdentifier>{cd14fffc-dd1c-451c-b500-c3728434196d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Systems\Terrain">
+      <UniqueIdentifier>{afbb59a0-104d-4833-911f-27d7f6eea61d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Systems\Terrain\TerrainSystem">
+      <UniqueIdentifier>{3958f4ae-10b5-487d-b33a-870b4c5dae81}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Systems\Terrain\TerrainTiles">
+      <UniqueIdentifier>{5a257bce-4c00-4c06-8038-de850ee57cfb}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

@@ -11,7 +11,7 @@ struct OctreeNode {
 	OctreeID id;
 	Bool isValid = false;
 	Mutex mutex;
-	UInt users = 0;
+	//UInt users = 0;
 	Bool subdivided = false;
 	//parent node
 	OctreeNode* parent = nullptr;
@@ -32,10 +32,10 @@ struct OctreeNode {
 	OctreeNode(OctreeNode& parent, Bool x, Bool y, Bool z);
 
 	void count();
-	void update();
+	//void update();
 	void subdivide();
 	void unsubdivide();
-	void incrementUser();
-	void decrementUser();
+	//void incrementUser();
+	//void decrementUser();
 	ULLVec3 getLocation();
 };
