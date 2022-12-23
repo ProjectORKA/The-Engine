@@ -1,5 +1,6 @@
 
 #include "QuadtreeSystem.hpp"
+#include "Debug.hpp"
 
 void QuadtreeNode::count()
 {
@@ -307,22 +308,6 @@ void QuadtreeSystem::create(TerrainSystem& terrainSystem) {
 }
 void QuadtreeSystem::update(TerrainSystem& terrainSystem) {
 	root->update(*this, terrainSystem);
-
-	//for (int i = 0; i < 10; i++) {
-	//	if (nodesToUpdate.size() == 0) {
-	//		nodesToUpdate.push_back(root);
-	//	}
-	//	else {
-	//		nodesToUpdate.front()->update(*this, terrainSystem);
-	//		if (nodesToUpdate.front()->subdivided) {
-	//			nodesToUpdate.push_back(nodesToUpdate.front()->c00);
-	//			nodesToUpdate.push_back(nodesToUpdate.front()->c01);
-	//			nodesToUpdate.push_back(nodesToUpdate.front()->c10);
-	//			nodesToUpdate.push_back(nodesToUpdate.front()->c11);
-	//		}
-	//		nodesToUpdate.pop_front();
-	//	}
-	//}
 }
 QuadtreeNode& QuadtreeSystem::get(TerrainSystem& terrainSystem, QuadtreeID id)
 {

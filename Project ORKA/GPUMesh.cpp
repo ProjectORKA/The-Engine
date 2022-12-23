@@ -1,6 +1,7 @@
 
 #include "GPUMesh.hpp"
 #include "Uniforms.hpp"
+#include "Renderer.hpp"
 
 void GPUMesh::unload() {
 	//make unavailable for rendering
@@ -35,6 +36,9 @@ void GPUMesh::render(Uniforms& uniforms) {
 		vao.select();
 		apiDrawElements(primitiveMode, vao.indexBuffer.indexCount, GL_UNSIGNED_INT, nullptr);
 	}
+}
+void GPUMesh::render(Renderer& renderer) {
+	render(renderer.uniforms());
 }
 void GPUMesh::renderInstances(Uniforms& uniforms, UInt instanceCount) {
 	if (loaded) {

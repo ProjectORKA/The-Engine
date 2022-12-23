@@ -505,7 +505,7 @@ public:
 
     iterator begin()
     {
-        for (EntryPointer it = entries;; ++it)
+        for (EntryPointer it = entries; ++it)
         {
             if (it->has_value())
                 return { it };
@@ -513,7 +513,7 @@ public:
     }
     const_iterator begin() const
     {
-        for (EntryPointer it = entries;; ++it)
+        for (EntryPointer it = entries; ++it)
         {
             if (it->has_value())
                 return { it };
@@ -839,7 +839,7 @@ private:
         swap(distance_from_desired, current_entry->distance_from_desired);
         swap(to_insert, current_entry->value);
         iterator result = { current_entry };
-        for (++distance_from_desired, ++current_entry;; ++current_entry)
+        for (++distance_from_desired, ++current_entry; ++current_entry)
         {
             if (current_entry->is_empty())
             {

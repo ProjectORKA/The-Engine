@@ -25,6 +25,7 @@
     <ClCompile Include="AIPlayground.cpp" />
     <ClCompile Include="C++ Cheatsheet.cpp" />
     <ClCompile Include="ImageViewer.cpp" />
+    <ClCompile Include="QuadtreeSystem2.cpp" />
     <ClCompile Include="RedDotHack.cpp" />
     <ClCompile Include="Collision.cpp" />
     <ClCompile Include="Compiler.cpp" />
@@ -90,6 +91,7 @@
     <ClCompile Include="String.cpp" />
     <ClCompile Include="Snake.cpp" />
     <ClCompile Include="terrain generator.cpp" />
+    <ClCompile Include="TerrainTiles.cpp" />
     <ClCompile Include="TLSFAllocator.cpp" />
     <ClCompile Include="SDFTerrainRenderSystem.cpp" />
     <ClCompile Include="Server.cpp" />
@@ -154,6 +156,7 @@
     <ClInclude Include="Array2D.hpp" />
     <ClInclude Include="BaseAllocator.hpp" />
     <ClInclude Include="ImageViewer.hpp" />
+    <ClInclude Include="QuadtreeSystem2.hpp" />
     <ClInclude Include="RedDotHack.hpp" />
     <ClInclude Include="Colliders.hpp" />
     <ClInclude Include="Collision.hpp" />
@@ -232,6 +235,7 @@
     <ClInclude Include="PointCloud.hpp" />
     <ClInclude Include="Snake.hpp" />
     <ClInclude Include="SphereMeshing.hpp" />
+    <ClInclude Include="TerrainTiles.hpp" />
     <ClInclude Include="TLSFAllocator.h" />
     <ClInclude Include="AIPlayground.hpp" />
     <ClInclude Include="ASIONetworking.hpp" />

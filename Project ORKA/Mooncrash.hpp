@@ -17,6 +17,10 @@
 
 //trebuchet
 
+struct Mooncrash {
+	void run();
+};
+
 struct MooncrashPlayer : public PlanetSystemPlayer {
 
 	Matrix skyRotation = Matrix(1);

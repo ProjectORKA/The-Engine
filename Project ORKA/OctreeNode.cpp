@@ -98,26 +98,26 @@ void OctreeNode::count()
 		logDebug(String("OctreeNodeCount: ").append(toString(nodeCount)));
 	}
 }
-void OctreeNode::update() {
-	if (users) {
-		if (subdivided) {
-			c000->update();
-			c001->update();
-			c010->update();
-			c011->update();
-			c100->update();
-			c101->update();
-			c110->update();
-			c111->update();
-		}
-		else {
-			subdivide();
-		}
-	}
-	else {
-		unsubdivide();
-	}
-};
+//void OctreeNode::update() {
+//	if (users) {
+//		if (subdivided) {
+//			c000->update();
+//			c001->update();
+//			c010->update();
+//			c011->update();
+//			c100->update();
+//			c101->update();
+//			c110->update();
+//			c111->update();
+//		}
+//		else {
+//			subdivide();
+//		}
+//	}
+//	else {
+//		unsubdivide();
+//	}
+//};
 void OctreeNode::subdivide()
 {
 	if ((!subdivided) && (id.level < MAX_CHUNK_LEVEL - 1)) {
@@ -170,17 +170,17 @@ void OctreeNode::unsubdivide()
 		mutex.unlock();
 	}
 }
-void OctreeNode::incrementUser()
-{
-	users++;
-}
-void OctreeNode::decrementUser()
-{
-	if (users) users--;
-	else {
-		logError("User mismatch found!");
-	}
-}
+//void OctreeNode::incrementUser()
+//{
+//	users++;
+//}
+//void OctreeNode::decrementUser()
+//{
+//	if (users) users--;
+//	else {
+//		logError("User mismatch found!");
+//	}
+//}
 
 ULLVec3 OctreeNode::getLocation()
 {

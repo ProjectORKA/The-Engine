@@ -5,9 +5,9 @@
 void OctreeSystem::count() {
 	root->count();
 }
-void OctreeSystem::update() {
-	root->update();
-}
+//void OctreeSystem::update() {
+//	root->update();
+//}
 void OctreeSystem::destroy()
 {
 	delete  root;

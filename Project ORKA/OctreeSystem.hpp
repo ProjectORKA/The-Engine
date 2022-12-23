@@ -8,7 +8,7 @@ struct OctreeSystem {
 	OctreeNode * root = nullptr;
 
 	void count();
-	void update();
+	//void update();
 	void destroy();
 	void create(QuadtreeSystem& quadtreeSystem);
 };

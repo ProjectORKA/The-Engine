@@ -2,7 +2,7 @@
 #include "Window.hpp"
 
 void MooncrashSimulation::update(Float timeStep) {
-	planetSystem.update();
+	//planetSystem.update();
 }
 
 void renderUI(Renderer& renderer, MooncrashPlayer& player) {
@@ -205,4 +205,25 @@ void MooncrashRenderer::inputEvent(Window& window, InputEvent input) {
 	if (input == exit) window.uncaptureCursor();
 
 	player.inputEvent(window, input);
+}
+
+void Mooncrash::run() {
+	MooncrashSimulation sim;
+	sim.init();
+
+	MooncrashRenderer app;
+	app.init(sim);
+
+	Window& win = window(
+		"ORKA",
+		Area(1920, 1080),
+		WindowDecoration::decorated,
+		WindowState::windowed
+	);
+
+	win.content = &app;
+
+	ui.run();
+
+	sim.destroy();
 }

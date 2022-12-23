@@ -10,32 +10,32 @@
 struct Renderer;
 struct Window;
 
-#include "NeighbourQuadtree.hpp"
-#include "NeighbourOctree.hpp"
-#include "DynameshTerrain.hpp"
-#include "SphereMeshing.hpp"
-#include "Molecules2D.hpp"
-#include "MindMap.hpp"
+//#include "NeighbourQuadtree.hpp"
+//#include "NeighbourOctree.hpp"
+//#include "DynameshTerrain.hpp"
+//#include "SphereMeshing.hpp"
+//#include "Molecules2D.hpp"
+//#include "MindMap.hpp"
 
-struct SandboxSimulation : public GameSimulation {
-
-	Vec3 location = Vec3(0);
-
-	SandboxSimulation();
-	~SandboxSimulation();
-	void update(Float timestep) override;
+struct Sandbox {
+	void run();
 };
 
-struct Sandbox : public GameRenderer {
-	
+struct SandboxRenderer : public GameRenderer {
 	Mutex mutex;
-	ClipMap system;
 	DebugPlayer player;
 	Float mouseSensitivity = 0.0015f;
-	SandboxSimulation * simulation = nullptr;
+	Bool wireframeMode = false;
 
-	Sandbox(SandboxSimulation& sim);
+	GPUMesh gpuMesh;
+	CPUMesh cpuMesh;
+
+	InputEvent exit = InputEvent(InputType::Mouse, RMB, 0);
+	InputEvent enter = InputEvent(InputType::Mouse, LMB, 1);
+	InputEvent toggleWireframe = InputEvent(InputType::KeyBoard, F, 1);
+
 	void create(Window& window) override;
 	void update(Window& window) override;
 	void render(Window& window, TiledRectangle area) override;
+	void inputEvent(Window& window, InputEvent input) override;
 };

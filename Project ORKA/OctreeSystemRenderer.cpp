@@ -30,7 +30,7 @@ void OctreeNodeRenderData::count()
 void OctreeNodeRenderData::destroy()
 {
 	unsubdivide();
-	equivalentOctreeNode->decrementUser();
+	//equivalentOctreeNode->decrementUser();
 }
 void OctreeNodeRenderData::subdivide()
 {
@@ -99,7 +99,7 @@ void OctreeNodeRenderData::render(Renderer & renderer)
 void OctreeNodeRenderData::create(OctreeNode& octreeNode)
 {
 	equivalentOctreeNode = &octreeNode;
-	octreeNode.incrementUser();
+	//octreeNode.incrementUser();
 }
 void OctreeNodeRenderData::renderWater(Renderer &renderer){
 	

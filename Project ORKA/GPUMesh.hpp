@@ -15,5 +15,6 @@ struct GPUMesh
 	void unload();
 	void upload(CPUMesh cpuMesh);
 	void render(Uniforms& uniforms);
+	void render(Renderer& renderer);
 	void renderInstances(Uniforms& uniforms, UInt instanceCount);
 };

@@ -2,38 +2,21 @@
 #include "Sandbox.hpp"
 #include "Random.hpp"
 #include "Window.hpp"
+#include "Input.hpp"
 
-Sandbox::Sandbox(SandboxSimulation& sim) {
-	simulation = &sim;
-}
-
-void Sandbox::create(Window& window) {
-	//Input & input = window.input;
-	////setup keymap
-	//input.add("forward", ButtonType::Key, Key::W);
-	//input.add("backward", ButtonType::Key, Key::S);
-	//input.add("right", ButtonType::Key, Key::D);
-	//input.add("left", ButtonType::Key, Key::A);
-	//input.add("up", ButtonType::Key, Key::E);
-	//input.add("down", ButtonType::Key, Key::Q);
-}
-
-void Sandbox::update(Window& window) {
+void SandboxRenderer::create(Window& window) {
 	
-	player.update(window);
-
-	simulation->location = player.camera.location;
-
-	//system.update();
 }
-
-void Sandbox::render(Window& window, TiledRectangle area) {
+void SandboxRenderer::update(Window& window) {
+	player.update(window);
+}
+void SandboxRenderer::render(Window& window, TiledRectangle area) {
 	Renderer& renderer = window.renderer;
 	
 	mutex.lock();
 
-	renderer.setWireframeMode();
-	renderer.setCulling(true);
+	renderer.setWireframeMode(wireframeMode);
+	renderer.setCulling(false);
 	renderer.setDepthTest(true);
 	renderer.clearDepth();
 
@@ -43,9 +26,10 @@ void Sandbox::render(Window& window, TiledRectangle area) {
 
 	//////////////////////////////////////////////////////////////////////////////
 
-	player.camera.renderOnlyRot(renderer);
+	player.camera.render(renderer);
 
-	//system.render(renderer, player.camera.location);
+	renderer.useShader("normals");
+	renderer.renderMesh("sphere");
 
 	renderer.setDepthTest(false);
 	renderer.screenSpace();
@@ -56,12 +40,28 @@ void Sandbox::render(Window& window, TiledRectangle area) {
 	mutex.unlock();
 }
 
-void SandboxSimulation::update(Float timestep) {
-	//noct.update(location);
+void SandboxRenderer::inputEvent(Window& window, InputEvent input) {
+	if (input == enter) window.captureCursor();
+	if (input == exit) window.uncaptureCursor();
+	if (input == toggleWireframe) wireframeMode = !wireframeMode;
+	player.inputEvent(window, input);
 }
-SandboxSimulation::SandboxSimulation() {
-	//system.create();
-}
-SandboxSimulation::~SandboxSimulation() {
-	//noct.destroy();
+
+void Sandbox::run() {
+
+	SandboxRenderer app;
+
+	Window& win = window(
+		"ORKA",
+		Area(1920, 1080),
+		WindowDecoration::decorated,
+		WindowState::windowed
+	);
+
+	app.create(win);
+
+
+	win.content = &app;
+
+	ui.run();
 }
