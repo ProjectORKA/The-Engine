@@ -30,7 +30,7 @@ struct Snake {
 
 	void addSegment();
 	void dumbAI(SnakeFood& f);
-	void render(Window& window);
+	void render(Engine& engine, Window& window);
 	void inputEvent(Window& window, InputEvent input);
 	void update(SnakeFood& snakefood, Float deltaTime);
 };
@@ -41,7 +41,7 @@ struct SnakeFood {
 	Color foodColor = Color(0.5, 0.1, 0, 1);
 
 	void update();
-	void render(Window& window);
+	void render(Engine& engine, Window& window);
 };
 
 struct SnakeGame :public GameRenderer {
@@ -50,6 +50,6 @@ struct SnakeGame :public GameRenderer {
 	Float totalTime = 0;
 
 	void update(Window& window) override;
-	void render(Window& window, TiledRectangle area) override;
 	void inputEvent(Window& window, InputEvent input) override;
+	void render(Engine & engine, Window& window, TiledRectangle area) override;
 };

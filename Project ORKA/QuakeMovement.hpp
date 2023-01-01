@@ -159,6 +159,6 @@ struct QuakeMovementRenderer : public GameRenderer {
 		player.camera.farClipValue = 1000.0;
 	};
 	void update(Window& window) override;
-	void render(Window& window, TiledRectangle area) override;
 	void inputEvent(Window& window, InputEvent input) override;
+	void render(Engine & engine, Window& window, TiledRectangle area) override;
 };

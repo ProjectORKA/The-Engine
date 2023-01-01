@@ -1,54 +1,58 @@
 #include "Mooncrash.hpp"
 #include "Window.hpp"
 
+void MooncrashSimulation::init(Engine& engine) {
+	planetSystem.create(engine);
+}
+
 void MooncrashSimulation::update(Float timeStep) {
 	planetSystem.update();
 }
 
-void renderUI(Renderer& renderer, MooncrashPlayer& player) {
+void renderUI(Engine  & engine, Renderer& renderer, MooncrashPlayer& player) {
 	renderer.setWireframeMode(false);
 	renderer.setDepthTest(false);
 
 	renderer.screenSpace();
 
 	String s = String("FrameTime: ").append(toString(renderer.time.delta));
-	renderer.renderText(s, Vec2(0), fonts.debug);
+	renderer.renderText(engine, s, Vec2(0), fonts.debug);
 
 	s = String("FPS: ").append(toString(1.0f / renderer.time.delta));
-	renderer.renderText(s, Vec2(0, fonts.debug.absoluteSize), fonts.debug);
+	renderer.renderText(engine, s, Vec2(0, fonts.debug.absoluteSize), fonts.debug);
 
 	s = String("Speed: ").append(toString(player.speedExponent));
-	renderer.renderText(s, Vec2(0, 2 * fonts.debug.absoluteSize), fonts.debug);
+	renderer.renderText(engine, s, Vec2(0, 2 * fonts.debug.absoluteSize), fonts.debug);
 
 	s = String("Camera height float: ").append(toString(player.camera.location.z));
-	renderer.renderText(s, Vec2(0, 3 * fonts.debug.absoluteSize), fonts.debug);
+	renderer.renderText(engine, s, Vec2(0, 3 * fonts.debug.absoluteSize), fonts.debug);
 
 	s = String("Camera height ULL: ").append(toString(player.chunkLocation.z));
-	renderer.renderText(s, Vec2(0, 4 * fonts.debug.absoluteSize), fonts.debug);
+	renderer.renderText(engine, s, Vec2(0, 4 * fonts.debug.absoluteSize), fonts.debug);
 
 	s = String("SunDir: ").append(toString(renderer.uniforms().sunDir().x).append(toString(renderer.uniforms().sunDir().y)).append(toString(renderer.uniforms().sunDir().z)));
-	renderer.renderText(s, Vec2(0, 5 * fonts.debug.absoluteSize), fonts.debug);
+	renderer.renderText(engine, s, Vec2(0, 5 * fonts.debug.absoluteSize), fonts.debug);
 }
-void renderMooncrashAtmosphere(Renderer& renderer, MooncrashPlayer& player)
+void renderMooncrashAtmosphere(Engine& engine, Renderer& renderer, MooncrashPlayer& player)
 {
 	Bool culling = renderer.getCulling();
 	player.camera.renderOnlyRot(renderer);
 	renderer.uniforms().cameraPos() = Vec4(Vec3(0, 0, (Float(player.chunkLocation.z) + player.camera.location.z) / Float(ULLONG_MAX)), 1);
 	renderer.setCulling(false);
-	renderer.useShader("atmosphere");
+	renderer.useShader(engine, "atmosphere");
 	renderer.framebufferSystem.currentDraw().setAsTexture(0); //[TODO]might not work if draw doesent bind; check
 
 	//renderer.setAlphaBlending(true);
 	//glBlendFunc(GL_ONE, GL_ONE);
 	renderer.setDepthTest(false);
 
-	renderer.renderMesh("centeredCube");
+	renderer.renderMesh(engine, "centeredCube");
 	renderer.setCulling(culling);
 
 	//renderer.setAlphaBlending(false);
 	renderer.setDepthTest(true);
 }
-void renderPlanet(Renderer& renderer, PlanetSystem& planetSystem, PlanetSystemPlayer& player) {
+void renderPlanet(Engine& engine, Renderer& renderer, PlanetSystem& planetSystem, PlanetSystemPlayer& player) {
 	//set modes
 	renderer.setAlphaBlending(false);
 	renderer.setDepthTest(true);
@@ -60,7 +64,7 @@ void renderPlanet(Renderer& renderer, PlanetSystem& planetSystem, PlanetSystemPl
 
 	//render meshes
 	for (UShort level = 0; level < MAX_CHUNK_LEVEL; level++) {
-		renderer.planetRenderSystem.renderLevel(planetSystem, renderer, player, level);
+		renderer.planetRenderSystem.renderLevel(engine, planetSystem, renderer, player, level);
 	}
 };
 
@@ -154,7 +158,7 @@ void MooncrashPlayer::update(Window& window) {
 		}
 	}
 }
-void MooncrashPlayer::render(Window & window) {
+void MooncrashPlayer::render(Engine& engine, Window & window) {
 	Renderer& renderer = window.renderer;
 
 	camera.render(renderer);
@@ -168,21 +172,21 @@ void MooncrashRenderer::init(MooncrashSimulation& simulation) {
 	player.speedExponent = 200;
 	this->simulation = &simulation;
 }
-void MooncrashRenderer::render(Window& window, TiledRectangle area) {
+void MooncrashRenderer::render(Engine& engine, Window& window, TiledRectangle area) {
 	Renderer& renderer = window.renderer;
 
-	player.render(window);
+	player.render(engine, window);
 
 	renderer.uniforms().sunDir(player.skyRotation * Vec4(0, 0, 1, 0));
 
 	renderer.setWireframeMode(renderer.wireframeMode);
 
 	renderer.uniforms().mMatrix(player.skyRotation);
-	renderer.renderSky(player.camera);
+	renderer.renderSky(engine, player.camera);
 
 	//renderMooncrashAtmosphere(renderer, player);
 
-	renderPlanet(renderer, simulation->planetSystem, player);
+	renderPlanet(engine, renderer, simulation->planetSystem, player);
 	
 
 

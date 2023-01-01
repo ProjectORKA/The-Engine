@@ -1,68 +1,46 @@
 
 #include "Sandbox.hpp"
-#include "Random.hpp"
-#include "Window.hpp"
-#include "Fonts.hpp"
+#include "UserInterface.hpp"
 
-Sandbox::Sandbox(SandboxSimulation& sim) {
-	simulation = &sim;
-}
-
-void Sandbox::create(Window& window) {
-	//Input & input = window.input;
-	////setup keymap
-	//input.add("forward", ButtonType::Key, Key::W);
-	//input.add("backward", ButtonType::Key, Key::S);
-	//input.add("right", ButtonType::Key, Key::D);
-	//input.add("left", ButtonType::Key, Key::A);
-	//input.add("up", ButtonType::Key, Key::E);
-	//input.add("down", ButtonType::Key, Key::Q);
-}
-
-void Sandbox::update(Window& window) {
-	
+void SandboxRenderer::update(Window& window) {
 	player.update(window);
-
-	simulation->location = player.camera.location;
-
-	//system.update();
 }
 
-void Sandbox::render(Engine& engine, Window& window, TiledRectangle area) {
-	Renderer& renderer = window.renderer;
+void SandboxRenderer::inputEvent(Window& window, InputEvent input) {
 	
-	mutex.lock();
+	if (input == enter) window.captureCursor();
+	if (input == exit) window.uncaptureCursor();
+	if (input == wireframeToogle) window.renderer.wireframeMode = !window.renderer.wireframeMode;
 
-	renderer.setWireframeMode();
-	renderer.setCulling(true);
-	renderer.setDepthTest(true);
-	renderer.clearDepth();
 
-	player.render(window);
-	renderer.uniforms().mMatrix() = Matrix(1);
-	renderer.shaderSystem.use(engine, "debug");
-
-	//////////////////////////////////////////////////////////////////////////////
-
-	player.camera.renderOnlyRot(renderer);
-
-	system.render(renderer, player.camera.location);
-
-	renderer.setDepthTest(false);
-	renderer.screenSpace();
-	renderer.renderText(engine, String(toString(1.0f / renderer.time.delta)), Vec2(50), fonts.heading);
-
-	////////////////////////
-
-	mutex.unlock();
+	player.inputEvent(window, input);
 }
 
-void SandboxSimulation::update(Float timestep) {
-	//noct.update(location);
+void SandboxRenderer::render(Engine& e, Window& window, TiledRectangle area) {
+	Renderer& r = window.renderer;
+
+	r.draw("main");
+	r.clearColor(Color(Vec3(0), 1.0));
+	r.setWireframeMode();
+	r.setCulling(true);
+	r.setDepthTest(true);
+	r.clearDepth();
+
+	//render scene
+	player.render(e, window); // sets the location, rotation and projection
+	r.useShader(e, "normals"); //sets the color / material for the rendered objects
+	r.uniforms().mMatrix(matrixFromRotation(0, 0, r.time.total)); //sets the objetcs transformation within the world
+	r.renderMesh(e, "suzanne"); // renders the objects 3D data to the screen
+
+	r.postProcess(e, "blur"); // applies a blur effect to the image
+
+	//text rendering
+	r.setDepthTest(false); //disables depth to always draw on top
+	r.screenSpace(); // aligns coordinate system with screenspace
+	r.renderText(e, String("FPS: ").append(toString(1.0f / r.time.delta)), Vec2(50), fonts.heading); // renders current framerate to the screen
 }
-SandboxSimulation::SandboxSimulation() {
-	//system.create();
-}
-SandboxSimulation::~SandboxSimulation() {
-	//noct.destroy();
+
+Sandbox::Sandbox(Engine& engine) {
+	Window& w = window("ORKA Sandbox", Area(1920, 1080), true, WindowState::windowed, sandboxRenderer, engine);
+	ui.run();
 }

@@ -4,7 +4,7 @@
 #include "MelonPlayer.hpp"
 #include "Random.hpp"
 
-void MelonWorld::render(Renderer& renderer) {
+void MelonWorld::render(Engine& engine, Renderer& renderer) {
 	m.lock();
 
 	Vector<Vec4> arr;
@@ -16,7 +16,7 @@ void MelonWorld::render(Renderer& renderer) {
 	}
 	renderer.uniforms().customColor(Vec4(0.1, 0.1, 0.1, 1));
 	renderer.matrixSystem.matrixArray(arr);
-	renderer.renderMeshInstanced("stone");
+	renderer.renderMeshInstanced(engine, "stone");
 
 	m.unlock();
 };

@@ -14,7 +14,7 @@ void MelonRenderer::update(Window& window) {
 	player.update(window);
 	//world.update(player);
 }
-void MelonRenderer::render(Window& window, TiledRectangle area) {
+void MelonRenderer::render(Engine& engine, Window& window, TiledRectangle area) {
 	Renderer& renderer = window.renderer;
 
 	//setup
@@ -27,15 +27,15 @@ void MelonRenderer::render(Window& window, TiledRectangle area) {
 
 	//render scene
 	renderer.uniforms().sunDir(Vec4(normalize(Vec3(-0.666, 0.333, 1)), 1));
-	player.render(window);
+	player.render(engine, window);
 
 	renderer.uniforms().mMatrix(Matrix(1));
-	renderer.renderMesh("centeredCube");
+	renderer.renderMesh(engine, "centeredCube");
 
 	//world.render(renderer);
 	
 	//ui
 	renderer.setDepthTest(false);
 	renderer.screenSpace();
-	renderer.renderText(toString(1 / renderer.time.delta), Vec2(30), fonts.heading);
+	renderer.renderText(engine, toString(1 / renderer.time.delta), Vec2(30), fonts.heading);
 }

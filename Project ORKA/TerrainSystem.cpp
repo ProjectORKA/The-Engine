@@ -4,13 +4,13 @@
 #include "PerlinNoise.hpp"
 #include "Random.hpp"
 
-TerrainSystem::TerrainSystem() {
+void TerrainSystem::create(Engine& engine) {
 
 	for (Int i = 0; i < MAX_CHUNK_LEVEL; i++) {
 		CPUTexture h;
 
-		if(i == 0) h.load("blah");
-		else h.load("terrainNoise");
+		if(i == 0) h.load(engine,"blah");
+		else h.load(engine, "terrainNoise");
 
 		for (UInt x = 0; x < TERRAIN_TEXTURE_SIZE; x++) {
 			for (UInt y = 0; y < TERRAIN_TEXTURE_SIZE; y++) {

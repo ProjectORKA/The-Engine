@@ -1,7 +1,7 @@
 #include "PlanetSystemPlayer.hpp"
 #include "Window.hpp"
 
-void PlanetSystemPlayer::render(Window & window) {
+void PlanetSystemPlayer::render(Engine& engine, Window & window) {
 	Float cameraHeight = chunkLocation.z + camera.location.z;
 	window.renderer.uniforms().custom1() = cameraHeight;
 	window.renderer.uniforms().cameraVec() = Vec4(camera.forwardVector, 1);

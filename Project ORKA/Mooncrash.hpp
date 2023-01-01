@@ -14,14 +14,14 @@ struct MooncrashPlayer : public PlanetSystemPlayer {
 
 	MooncrashPlayer();
 	void update(Window& window) override;
-	void render(Window& window) override;
+	void render(Engine& engine, Window& window) override;
 };
 
 struct MooncrashSimulation : public GameSimulation {
 	Time time;
 	PlanetSystem planetSystem;
-
 	void update(Float delta) override;
+	void init(Engine& engine) override;
 };
 
 struct MooncrashRenderer : public GameRenderer {
@@ -45,9 +45,9 @@ struct MooncrashRenderer : public GameRenderer {
 
 	void update(Window& window) override;
 	void init(MooncrashSimulation & simulation);
-	void render(Window& window, TiledRectangle area) override;
 	void inputEvent(Window& window, InputEvent input) override;
+	void render(Engine& engine, Window& window, TiledRectangle area) override;
 };
 
-void renderMooncrashAtmosphere(Renderer& renderer, MooncrashPlayer& player);
-void renderPlanet(Renderer& renderer, PlanetSystem& planetSystem, PlanetSystemPlayer& player);
+void renderMooncrashAtmosphere(Engine& engine, Renderer& renderer, MooncrashPlayer& player);
+void renderPlanet(Engine& engine, Renderer& renderer, PlanetSystem& planetSystem, PlanetSystemPlayer& player);

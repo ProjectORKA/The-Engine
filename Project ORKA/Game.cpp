@@ -12,7 +12,7 @@ void gameSimulationThread(GameSimulation& sim) {
 	logDebug("Game simulation stopped!");
 }
 
-void GameSimulation::init() {
+void GameSimulation::init(Engine& engine) {
 	logDebug("Starting game simulation thread!");
 	keepRunning = true;
 	thread.start(gameSimulationThread, *this);

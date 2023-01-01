@@ -16,6 +16,7 @@
 #include "FramebufferSystem.hpp"
 #include "InteractionSystem.hpp"
 #include "RenderObjectSystem.hpp"
+#include "PlanetRenderSystem.hpp"
 
 struct Camera;
 struct Player;
@@ -45,6 +46,7 @@ struct Renderer{
 	FramebufferSystem framebufferSystem;
 	InteractionSystem interactionSystem;
 	RenderObjectSystem renderObjectSystem;
+	PlanetRenderSystem planetRenderSystem;
 
 	Mutex mutex;
 	void sync(); //makes non renderer threads wait for the finished frame

@@ -18,6 +18,10 @@ struct Thread {
 	{
 		thread = std::thread(f, std::ref(args)...);
 	}
-	void stop();
+	void stop()
+	{
+		if (thread.joinable())thread.join();
+		else logError("Thread not joinable!");
+	}
 };
 

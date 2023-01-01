@@ -37,6 +37,6 @@ struct MelonRenderer : public GameRenderer {
 	InputEvent enter = InputEvent(InputType::Mouse, LMB, 1);
 
 	void update(Window& window) override;
-	void render(Window& window, TiledRectangle area) override;
 	void inputEvent(Window& window, InputEvent input) override;
+	void render(Engine& engine, Window& window, TiledRectangle area) override;
 };
