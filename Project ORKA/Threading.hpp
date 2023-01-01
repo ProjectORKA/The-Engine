@@ -7,7 +7,7 @@
 
 struct Thread {
 	// its just here to hide some ugly stuff away
-    // threads usually keep track of one or more objects
+	// threads usually keep track of one or more objects
 	// those objects should have a "keeprunning" value if you plan on using while loops
 	// other threads will execute and end by themselves
 
@@ -18,9 +18,6 @@ struct Thread {
 	{
 		thread = std::thread(f, std::ref(args)...);
 	}
-	void stop()
-	{
-		if (thread.joinable())thread.join();
-		else logError("Thread not joinable!");
-	}
+	void stop();
 };
+

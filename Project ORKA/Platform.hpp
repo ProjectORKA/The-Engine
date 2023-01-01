@@ -1,9 +1,8 @@
 
-//written by Omarito
-//	modified by Blendurian
-
 #pragma once
 
+//written by Omarito
+//	modified by Blendurian
 
 //Defines for SIMD-enabled CPU architectures, and supported
 //feature levels

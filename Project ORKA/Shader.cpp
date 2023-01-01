@@ -1,11 +1,13 @@
 #include "Shader.hpp"
 
+#include "GraphicsAPI.hpp"
+
 void Shader::destroy() {
 	isLoaded = false;
 	apiDeleteShader(shaderID);
 }
 void Shader::create(Path path, String uniformBlock) {
-	Int shaderType;
+	Int shaderType = -1;
 	String extension = path.extension().string();
 	
 	if (extension == ".vert") shaderType = ShaderType::vertex;
@@ -14,13 +16,12 @@ void Shader::create(Path path, String uniformBlock) {
 	else logError("Shadertype not supported!");
 
 	String shaderCode = uniformBlock;
-	shaderCode.append(fileSystem.loadString(path));
+	shaderCode.append(loadString(path));
 
 	loadShaderCode(shaderType, shaderCode);
 }
 void Shader::loadShaderCode(Int shaderType, String shaderCode)
 {
-
 	shaderID = apiCreateShader(shaderType);
 
 	char const* SourcePointer = shaderCode.c_str();

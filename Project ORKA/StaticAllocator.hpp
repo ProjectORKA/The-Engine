@@ -1,4 +1,6 @@
 
+#pragma once
+
 #include "Basics.hpp"
 #include "Debug.hpp"
 #include "BaseAllocator.hpp"

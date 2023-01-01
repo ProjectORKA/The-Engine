@@ -2,7 +2,7 @@
 #include "MeshSystem.hpp"
 #include "Uniforms.hpp"
 
-void MeshSystem::create() {
+void MeshSystem::create(Engine& engine) {
 	CPUMesh standard;
 	standard.name = "default";
 	proceduralPlaneMesh(standard, 1, 1);
@@ -13,9 +13,7 @@ void MeshSystem::create() {
 	proceduralWireframeAxisLines(boundingBox);
 	addMesh(boundingBox);
 
-	CPUMesh fullScreenQuad;
-	fullScreenQuad.load("fullScreenQuad");
-	addMesh(fullScreenQuad);
+	basicMeshes.create(engine);
 }
 void MeshSystem::destroy()
 {
@@ -23,12 +21,13 @@ void MeshSystem::destroy()
 		gpuMesh.unload();
 	}
 	gpuMeshes.clear();
+	basicMeshes.destroy();
 }
 void MeshSystem::use(Index meshID)
 {
 	currentMeshID = meshID;
 }
-void MeshSystem::use(Name meshName)
+void MeshSystem::use(Engine& engine, Name meshName)
 {
 	Index id;
 	if (meshNames.find(meshName, id)) {
@@ -36,7 +35,7 @@ void MeshSystem::use(Name meshName)
 	}
 	else {
 		CPUMesh mesh;
-		mesh.load(meshName);
+		mesh.load(engine, meshName);
 		addMesh(mesh);
 		if (meshNames.find(meshName, id)) {
 			currentMeshID = id;
@@ -62,12 +61,12 @@ void MeshSystem::render(Uniforms& uniforms, Index meshID) {
 	use(meshID);
 	currentMesh().render(uniforms);
 }
-void MeshSystem::render(Uniforms& uniforms, Name meshName) {
-	use(meshName);
+void MeshSystem::render(Engine & engine, Uniforms& uniforms, Name meshName) {
+	use(engine, meshName);
 	currentMesh().render(uniforms);
 }
-void MeshSystem::renderInstanced(Uniforms& uniforms, Name meshName, Vector<Matrix>& data) {
-	use(meshName);
+void MeshSystem::renderInstanced(Engine& engine, Uniforms& uniforms, Name meshName, Vector<Matrix>& data) {
+	use(engine, meshName);
 
 	const UInt transformPos = 4;
 
@@ -104,6 +103,10 @@ void MeshSystem::renderInstanced(Uniforms& uniforms, Name meshName, Vector<Matri
 	}
 
 	currentMesh().renderInstances(uniforms, data.size());
+}
+
+void MeshSystem::renderFullscreen(Uniforms& uniforms) {
+	basicMeshes.fullscreenMesh.render(uniforms);
 }
 
 GPUMesh& MeshSystem::currentMesh()

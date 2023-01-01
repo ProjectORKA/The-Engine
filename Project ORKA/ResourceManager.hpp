@@ -1,6 +1,8 @@
+
 #pragma once
 
 #include "Basics.hpp"
+#include "FileSystem.hpp"
 
 using ResourceID = Index;
 
@@ -17,14 +19,15 @@ struct Resource {
 };
 
 struct ResourceManager {
+	Path orkaDataLocation;
+	Path orkaBinariesLocation;
+
 	Map<Name, Path> meshResources;
 	Map<Name, Path> textureResources;
 	Map<Name, Path> vertexShaderResources;
 	Map<Name, Path> fragmentShaderResources;
 
-	void init();
-	void reloadAllResources();
-	void loadResourcesFromFBXFiles();
+	ResourceManager(FileSystem& fileSystem);
+	void reloadAllResources(FileSystem& fileSystem);
+	void loadResourcesFromFBXFiles(FileSystem& fileSystem);
 };
-
-extern ResourceManager resourceManager;

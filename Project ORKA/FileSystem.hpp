@@ -9,8 +9,10 @@
 using FileTime = std::filesystem::file_time_type;
 
 
+String loadString(Path path);
 Path makeAbsolute(Path path);
 Bool doesPathExist(Path path);
+void createDirectory(Path path);
 FileTime lastWrittenTime(Path path);
 Path nameToPath(Name name, String filetype);
 void copyFile(Path source, Path destination);
@@ -20,15 +22,8 @@ FileTime getLastWrittenTimeOfFiles(Vector<Path> paths);
 Image loadImage(Path path, Int bitcount, Bool inverted);
 Vector<Path> getAllFilesInDirectory(Path path, Vector<String> filter);
 
-
 struct FileSystem {
 	Path executablePath = "";
 
-	void init(String path) {
-		executablePath = path;
-	}
-
-	String loadString(Path path);
+	FileSystem();
 };
-
-extern FileSystem fileSystem;

@@ -2,12 +2,11 @@
 #include "CPUMesh.hpp"
 #include "GPUMesh.hpp"
 #include "Renderer.hpp"
-#include "ResourceManager.hpp"
 
-CPUMesh::CPUMesh(Name name) {
-	load(name);
+CPUMesh::CPUMesh(Engine& engine, Name name) {
+	load(engine, name);
 }
-void CPUMesh::saveMeshFile()
+void CPUMesh::saveMeshFile(ResourceManager& resourceManager)
 {
 	MeshHeader2 header;
 	header.version = 2;
@@ -19,7 +18,12 @@ void CPUMesh::saveMeshFile()
 	header.colorCount = colors.size();
 	header.indexCount = indices.size();
 
-	OutFile mesh(String("Data/meshes/").append(name.data).append(".mesh"));
+	Path meshPath = resourceManager.orkaBinariesLocation;
+	String meshName = String(name.data).append(".mesh");
+
+	meshPath.append("meshes").append(meshName);
+
+	OutFile mesh(meshPath);
 	mesh.write((Char*)&header, sizeof(MeshHeader2));
 	mesh.write((Char*)&vertices[0], vertices.size() * sizeof(Vec3));
 	mesh.write((Char*)&uvs[0], uvs.size() * sizeof(Vec2));
@@ -34,9 +38,9 @@ void CPUMesh::clearGeometry() {
 	colors.clear();
 	indices.clear();
 }
-void CPUMesh::load(Name name) {
-	auto it{ resourceManager.meshResources.find(name) };
-	if (it != std::end(resourceManager.meshResources))
+void CPUMesh::load(Engine& engine, Name name) {
+	auto it{ engine.resourceManager.meshResources.find(name) };
+	if (it != std::end(engine.resourceManager.meshResources))
 	{
 		Path path = it->second;
 

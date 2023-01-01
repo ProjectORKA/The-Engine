@@ -22,11 +22,11 @@ void RenderObjectSystem::render(Index id) {
 	select(id);
 	renderCurrent();
 }
-void RenderObjectSystem::render(Name name) {
-	select(name);
+void RenderObjectSystem::render(Engine& engine, Name name) {
+	select(engine, name);
 	renderCurrent();
 }
-void RenderObjectSystem::select(Name name)
+void RenderObjectSystem::select(Engine& engine, Name name)
 {
 	auto it = nameToIndex.find(name);
 	if (it != nameToIndex.end()) {
@@ -39,9 +39,9 @@ void RenderObjectSystem::select(Name name)
 			if (renderObjectNamesQueue[i].renderObjectName == name) {
 				
 				
-				shaderSystemPtr->use(renderObjectNamesQueue[i].shaderName);
-				textureSystemPtr->use(renderObjectNamesQueue[i].textureName);
-				meshSystemPtr->use(renderObjectNamesQueue[i].meshName);
+				shaderSystemPtr->use(engine, renderObjectNamesQueue[i].shaderName);
+				textureSystemPtr->use(engine, renderObjectNamesQueue[i].textureName);
+				meshSystemPtr->use(engine, renderObjectNamesQueue[i].meshName);
 
 				if (shaderSystemPtr->currentShaderProgram().isLoaded && textureSystemPtr->currentTexture().loaded && meshSystemPtr->currentMesh().loaded) {
 

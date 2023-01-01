@@ -2,6 +2,7 @@
 #pragma once
 
 #include "Basics.hpp"
+#include "Engine.hpp"
 
 struct Renderer;
 
@@ -16,8 +17,8 @@ struct NeuralNet {
 	void propagateForward();
 	void input(Vector<Float> input);
 	UInt neuronCountAtLayer(UInt layerID);
-	void render(Vec2 area, Renderer& renderer);
 	void propagateBackward(Vector<Float> target);
+	void render(Engine& engine, Vec2 area, Renderer& renderer);
 	Vec2 getNeuronPosition(Vec2 area, UInt layerID, UInt neuronID);
 
 	NeuralNet() {};

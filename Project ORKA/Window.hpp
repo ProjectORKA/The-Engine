@@ -1,13 +1,10 @@
+
 #pragma once
 
-#include "Basics.hpp"
-#include "TiledMath.hpp"
 #include "Threading.hpp"
 #include "Renderer.hpp"
 #include "WindowAPI.hpp" //needs to be below the rendering stuff, e.g. "Renderer.hpp"
 #include "UIElement.hpp"
-#include "ECS.hpp"
-#include "Input.hpp"
 
 enum class WindowState {
 	minimized,
@@ -33,11 +30,11 @@ struct Window {
 	Bool profiling = false;
 	Bool keeprunning = true;
 	APIWindow apiWindow = nullptr;
-	UIElement * content = nullptr;
+	UIElement* content = nullptr;
 	Area windowedModeSize = Area(1);
 	Vector<Path> droppedFilePaths = {};
 	WindowState windowState = WindowState::windowed;
-	
+
 	//mouse
 	MouseState mouseState;
 	Bool capturing = false;
@@ -73,7 +70,7 @@ struct Window {
 	void setPosition(IVec2 position);
 	void resize(Int width, Int height);
 	void createAPIWindow(String title, Area size);
-	void create(String title, Area size, Bool decorated, WindowState state);
+	void create(String title, Area size, Bool decorated, WindowState state, Engine& engine);
 
 	Bool shouldClose();
 	Bool isCapturing();
@@ -87,7 +84,7 @@ struct Window {
 	Window& insert(UIElement& element);
 };
 
-void windowThread(Window& window);
+void windowThread(Engine& engine, Window& window);
 
 //window callbacks
 void whenWindowCloseRequest(APIWindow apiWindow);

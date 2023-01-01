@@ -1,7 +1,9 @@
+
 #pragma once
 
 #include "ShaderProgram.hpp"
 #include "GPUBuffer.hpp"
+#include "Engine.hpp"
 
 struct ShaderSystem {
 	Uniforms uniforms;
@@ -9,14 +11,14 @@ struct ShaderSystem {
 	Index currentShaderProgramID = 0;
 	Vector<ShaderProgram> shaderPrograms;
 
-	void create();
 	void destroy();
 	void rebuild();
-	void add(Name name);
-	Index use(Name name);
 	void loadDefaultShader();
 	Index use(Index shaderID);
-	Index getShaderID(Name name);
+	void create(Engine& engine);
+	void add(Engine engine, Name name);
+	Index use(Engine engine, Name name);
 	ShaderProgram& currentShaderProgram();
+	Index getShaderID(Engine& engine, Name name);
 	void add(Shader& vertexShader, Shader& fragmentShader, Name name);
 };

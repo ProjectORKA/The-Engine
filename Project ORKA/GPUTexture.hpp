@@ -1,9 +1,7 @@
 
 #pragma once
 
-#include "Basics.hpp"
 #include "CPUTexture.hpp"
-#include "GraphicsAPI.hpp"
 #include "TiledMath.hpp"
 
 struct GPUTexture {
@@ -18,10 +16,12 @@ struct GPUTexture {
 	Int farFilter = Filter::linearMM;
 
 	void unload();
-	void load(Name name);
 	void resize(Area size);
-	void use(Index textireID);
+	void generateMipMaps();
+	void use(Index textureID);
 	void attachTexture(Int slot);
 	void load(CPUTexture& cpuTexture);
+	void load(Engine& engine, Name name);
 	void load(Vec2 size, Int channels, DataType type);
+	void generateMipMaps(Int nearFilter, Int farFilter);
 };

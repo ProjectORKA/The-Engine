@@ -1,9 +1,9 @@
 
+#pragma once
+
 //written by Omarito
 //modified by
 //  Blendurian
-
-#pragma once
 
 #include <initializer_list>
 #include <iterator>

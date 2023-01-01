@@ -1,3 +1,4 @@
+
 #pragma once
 
 //standard
@@ -45,7 +46,7 @@ using SharedPointer = std::shared_ptr<T>;
 template<typename T>
 using WeakPointer = std::weak_ptr<T>;
 
-#include "String.hpp";
+#include "String.hpp"
 
 #include "Name.hpp"
 

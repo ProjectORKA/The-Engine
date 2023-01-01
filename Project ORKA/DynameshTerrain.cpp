@@ -46,7 +46,7 @@ void DynameshTerrain::update(Camera camera) {
 		lastIndex = end;
 	}
 }
-void DynameshNode::render(Renderer& renderer) {
+void DynameshNode::render(Engine& engine, Renderer& renderer) {
 	if (distance(Vec3(1.5), position +Vec3(size /2)) < 0.5) {
 		Transform t;
 
@@ -54,12 +54,12 @@ void DynameshNode::render(Renderer& renderer) {
 		t.location = position;
 		t.scale = size;
 		t.render(renderer);
-		renderer.renderMesh("cube");
+		renderer.renderMesh(engine, "cube");
 	}
 }
-void DynameshTerrain::render(Renderer& renderer) {
-	renderer.useShader("debug");
+void DynameshTerrain::render(Engine& engine, Renderer& renderer) {
+	renderer.useShader(engine, "debug");
 	for (DynameshNode& node : nodes) {
-		node.render(renderer);
+		node.render(engine, renderer);
 	}
 }

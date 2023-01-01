@@ -1,8 +1,9 @@
+
 #pragma once
 
 #include "Basics.hpp"
 #include "GraphicsAPI.hpp"
-#include "FileSystem.hpp"
+#include "Engine.hpp"
 
 struct GlobalUniformData {
 	//values have to be layed out in blocks of 16 bytes in memory
@@ -22,10 +23,10 @@ struct GlobalUniformData {
 	float custom2 = 0.0f;
 	float custom3 = 0.0f;
 	
-	Int width = 0;									//16
-	Int height = 0;
-	Int posX = 0;
-	Int posY = 0;
+	Int windowWidth = 0;									//16
+	Int windowHeight = 0;
+	Int framebufferWidth = 0;
+	Int framebufferHeight = 0;
 	
 	Int materialID = 0;								//16
 	Int objectID = 0;
@@ -39,14 +40,12 @@ struct Uniforms {
 
 	Bool update = true;
 
-	void create();
 	void reset();
 	void upload();
 	void destroy();
 	void resetMatrices();
+	void create(Engine& engine);
 
-	Int& width();
-	Int& height();
 	Float& time();
 	Vec4& sunDir();
 	Int& objectID();
@@ -58,11 +57,13 @@ struct Uniforms {
 	Matrix& mMatrix();
 	Matrix& vMatrix();
 	Matrix& pMatrix();
+	Int& windowWidth();
+	Int& windowHeight();
+	Int& framebufferWidth();
+	Int& framebufferHeight();
 	Vec4& customColor();
 	Vec4& worldOffset();
 
-	Int& width(Int value);
-	Int& height(Int value);
 	Float& time(Float value);
 	Vec4& sunDir(Vec4 value);
 	Int& objectID(UInt value);
@@ -71,6 +72,10 @@ struct Uniforms {
 	Float& custom1(Float value);
 	Vec4& cameraPos(Vec4 value);
 	Vec4& cameraVec(Vec4 value);
+	Int& windowWidth(Int value);
+	Int& windowHeight(Int value);
+	Int& framebufferWidth(Int value);
+	Int& framebufferHeight(Int value);
 	Vec4& customColor(Vec4 value);
 	Vec4& worldOffset(Vec4 value);
 	Matrix& mMatrix(Matrix value);

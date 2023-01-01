@@ -12,11 +12,11 @@ void finish() {
 }
 
 //window thread
-void windowThread(Window& window)
+void windowThread(Engine& engine, Window& window)
 {
 	Renderer& renderer = window.renderer;
 	window.initializeGraphicsAPI();					//needs to be in this thread
-	renderer.create(window.getContentSize());		//also needs to be in this thread
+	renderer.create(engine, window.getContentSize());		//also needs to be in this thread
 	window.updateWindowState();
 
 	if (window.content)window.content->create(window);
@@ -41,35 +41,35 @@ void windowThread(Window& window)
 			prevPos = window.mousePosBotLeft;
 
 			renderer.begin(); //resets and syncronizes the renderer
-			TiledRectangle windowArea;
-			windowArea.position = IVec2(0);
-			windowArea.size = window.getContentSize();
-			renderer.framebufferSystem.update(windowArea.size);
-			renderer.renderRegion.set(windowArea);
+			
+			Area windowSize = window.getContentSize();
 
-			//gpu needs frameSize
-			renderer.uniforms().width(renderer.framebufferSystem.currentDraw().size.x);
-			renderer.uniforms().height(renderer.framebufferSystem.currentDraw().size.y);
+			TiledRectangle windowArea(windowSize);
+			renderer.framebufferSystem.update(windowSize);
+	
+
+			//gpu needs window size
+			renderer.uniforms().windowWidth(windowSize.x);
+			renderer.uniforms().windowHeight(windowSize.y);
 
 			OPTICK_POP();
 
 			if (window.content) {
 				//update ui
-
 				window.content->update(window);
 
 				//render interactibles
 				OPTICK_PUSH("Interactive Draw");
 				renderer.idFramebuffer.draw(renderer);
-				renderer.useShader("idShader");
+				renderer.useShader(engine, "idShader");
 				renderer.uniforms().reset();
-				renderer.renderMesh("fullScreenQuad");
+				renderer.renderMesh(engine, "fullScreenQuad");
 				renderer.clearDepth();
 				renderer.setWireframeMode(false);
 				renderer.setCulling(false);
-				renderer.useShader("idShader");
+				renderer.useShader(engine, "idShader");
 				renderer.setAlphaBlending(false);
-				window.content->renderInteractive(window, windowArea);
+				window.content->renderInteractive(engine, window, windowArea);
 				renderer.idFramebuffer.updateIdsUnderCursor(window);
 				OPTICK_POP();
 
@@ -79,10 +79,10 @@ void windowThread(Window& window)
 				renderer.clearColor(Color(Vec3(0), 0.0));
 				renderer.clearDepth();
 				renderer.setWireframeMode(renderer.wireframeMode);
-				window.content->render(window, windowArea);
+				window.content->render(engine, window, windowArea);
 
 				renderer.aspectCorrectNormalizedSpace();
-				if (window.profiling) renderer.renderText("[R]", Vec2(0.9), FontStyle(0.02));
+				if (window.profiling) renderer.renderText(engine, "[R]", Vec2(0.9), FontStyle(0.02));
 				OPTICK_POP();
 			}
 
@@ -91,17 +91,15 @@ void windowThread(Window& window)
 			renderer.setWireframeMode(false);
 			renderer.setAlphaBlending(false);
 
-			renderer.renderRegion.set(windowArea);
-
-			//renderer.framebufferSystem.current().blitFramebuffer();
+			renderer.renderRegion.set(windowSize);
 
 			renderer.framebufferSystem.drawToWindow();
 
 			OPTICK_PUSH("Draw final quad");
-			renderer.useShader("final");
+			renderer.useShader(engine, "final");
 			renderer.framebufferSystem.currentDraw().setAsTexture(0); //[TODO] might not work; check
 			renderer.uniforms().reset();
-			renderer.renderMesh("fullScreenQuad");
+			renderer.renderMesh(engine, "fullScreenQuad");
 			OPTICK_POP();
 			renderer.end(); //checks errors and unlocks renderer
 
@@ -302,7 +300,7 @@ void Window::createAPIWindow(String title, Area size) {
 		logError("Window already exists!");
 	}
 }
-void Window::create(String title, Area size, Bool decorated, WindowState state)
+void Window::create(String title, Area size, Bool decorated, WindowState state, Engine& engine)
 {
 	this->decorated = decorated;
 	this->windowState = state;
@@ -310,7 +308,7 @@ void Window::create(String title, Area size, Bool decorated, WindowState state)
 	windowedModeSize = size;
 	createAPIWindow(title, size); //needs to be in this thread
 
-	thread.start(windowThread, *this);
+	thread.start(windowThread, engine, *this);
 	logEvent("Created Window in Main Thread!");
 }
 

@@ -44,7 +44,7 @@ struct UIElement {
 	virtual void create(Window& window) {};
 	virtual void update(Window& window) {};
 	virtual void destroy(Window& window) {};
-	virtual void render(Window& window, TiledRectangle area) {};
 	virtual void inputEvent(Window& window, InputEvent input) {};
-	virtual void renderInteractive(Window& window, TiledRectangle area) { OPTICK_EVENT(); };
+	virtual void render(Engine& engine, Window& window, TiledRectangle area) {};
+	virtual void renderInteractive(Engine& engine, Window& window, TiledRectangle area) { OPTICK_EVENT(); };
 };

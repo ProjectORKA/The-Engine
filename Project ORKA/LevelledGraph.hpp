@@ -3,6 +3,7 @@
 
 #include "Basics.hpp"
 #include "Random.hpp"
+#include "Engine.hpp"
 
 struct Renderer;
 
@@ -29,7 +30,7 @@ struct LevelledGraph {
 	void update();
 	void addNode();
 	Vec3 getPos(Index x, Index y);
-	void render(Renderer& renderer);
 	void addForce(Index a, Vec2 force);
 	Vec3 getPos(Index x, Index y, Float z);
+	void render(Engine& engine, Renderer& renderer);
 };

@@ -24,12 +24,12 @@ void UIButton::inputEvent(Window& window, InputEvent input)
 
 	if(content)content->inputEvent(window, input);
 }
-void UIButton::render(Window& window, TiledRectangle renderArea) {
+void UIButton::render(Engine& engine, Window& window, TiledRectangle renderArea) {
 	Renderer& renderer = window.renderer;
 
 	constraints.update(renderArea);
 
-	renderer.useShader("color");
+	renderer.useShader(engine, "color");
 	if (pressed) {
 		renderer.uniforms().customColor(Color(1, 1, 0, 1));
 	}
@@ -46,18 +46,18 @@ void UIButton::render(Window& window, TiledRectangle renderArea) {
 
 	renderer.screenSpace();
 	renderer.uniforms().mMatrix(matrixFromTiledRectangle(renderArea));
-	renderer.renderMesh("plane");
+	renderer.renderMesh(engine, "plane");
 
-	if (content) content->render(window, renderArea);
+	if (content) content->render(engine, window, renderArea);
 }
-void UIButton::renderInteractive(Window& window, TiledRectangle renderArea) {
+void UIButton::renderInteractive(Engine& engine, Window& window, TiledRectangle renderArea) {
 	
 	constraints.update(renderArea);
 	
-	window.renderer.useShader("idShader");
+	window.renderer.useShader(engine, "idShader");
 	window.renderer.screenSpace();
 	window.renderer.uniforms().objectID(id);
 	window.renderer.uniforms().mMatrix(matrixFromTiledRectangle(renderArea));
 
-	window.renderer.renderMesh("plane");
+	window.renderer.renderMesh(engine, "plane");
 }

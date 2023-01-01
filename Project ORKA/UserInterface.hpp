@@ -1,11 +1,9 @@
 
 #pragma once
 
-#include "Basics.hpp"
-#include "GPUTexture.hpp"
-#include "ImguiWrapper.hpp"
-#include "Window.hpp"
+#include "UIElement.hpp"
 #include "UIButton.hpp"
+#include "Window.hpp"
 
 struct Renderer;
 struct Window;
@@ -15,20 +13,20 @@ struct UIImage : public UIElement {
 
 	UIImage(Name name);
 	void update(Window& window) override;
-	void render(Window& window, TiledRectangle renderArea)override;
+	void render(Engine& engine, Window& window, TiledRectangle renderArea)override;
 };
 struct UITextBox : public UIElement {
 	String* data;
 
 	UITextBox(String& data);
 	void update(Window& window) override;
-	void render(Window& window, TiledRectangle renderArea) override;
+	void render(Engine& engine, Window& window, TiledRectangle renderArea) override;
 };
 struct UICheckBox : public UIElement {
 	Boolean* data;
 	UICheckBox(Boolean& data);
 	void update(Window& window) override;
-	void render(Window& window, TiledRectangle renderArea) override;
+	void render(Engine& engine, Window& window, TiledRectangle renderArea) override;
 };
 struct UIContainer : public UIElement {
 	Boolean renderVertical = false;
@@ -39,8 +37,8 @@ struct UIContainer : public UIElement {
 	UIContainer& horizontal();
 	UIContainer& insert(UIElement& element);
 	void update(Window& window) override;
-	void render(Window& window, TiledRectangle renderArea) override;
-	void renderInteractive(Window& window, TiledRectangle renderArea) override;
+	void render(Engine& engine, Window& window, TiledRectangle renderArea) override;
+	void renderInteractive(Engine& engine, Window& window, TiledRectangle renderArea) override;
 };
 
 struct UserInterface {
@@ -66,5 +64,5 @@ UIContainer& container();
 UIImage& image(Name name);
 UICheckBox& checkBox(Bool& data);
 UITextBox& textBox(String& data);
-Window& window(String title, Area size, Bool decorated, WindowState state);
-Window& window(String title, Area size, Bool decorated, WindowState state, UIElement& element);
+Window& window(String title, Area size, Bool decorated, WindowState state, Engine& engine);
+Window& window(String title, Area size, Bool decorated, WindowState state, UIElement& element, Engine& engine);

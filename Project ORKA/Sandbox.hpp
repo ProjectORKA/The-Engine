@@ -10,13 +10,8 @@
 struct Renderer;
 struct Window;
 
-#include "NeighbourQuadtree.hpp"
-#include "NeighbourOctree.hpp"
 #include "DynameshTerrain.hpp"
-#include "SphereMeshing.hpp"
 #include "GeometryClipmapTerrain.hpp"
-#include "Molecules2D.hpp"
-#include "MindMap.hpp"
 
 struct SandboxSimulation : public GameSimulation {
 
@@ -38,5 +33,5 @@ struct Sandbox : public GameRenderer {
 	Sandbox(SandboxSimulation& sim);
 	void create(Window& window) override;
 	void update(Window& window) override;
-	void render(Window& window, TiledRectangle area) override;
+	void render(Engine & engine, Window& window, TiledRectangle area) override;
 };

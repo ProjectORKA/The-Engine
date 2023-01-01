@@ -1,9 +1,9 @@
 
+#pragma once
+
 //written by Omarito
 //modified by
 //  Blendurian
-
-#pragma once
 
 #include "Velox_Common.hpp"
 #include "Velox_Debug.hpp"

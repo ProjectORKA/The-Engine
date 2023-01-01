@@ -1,3 +1,4 @@
+
 #pragma once
 
 #include "Math.hpp"
@@ -18,10 +19,12 @@ struct FramebufferTexture {
 };
 
 struct Framebuffer {
-	Bool resizeable = false;
 	Area size = Area(1);
-	Index framebufferID = 0;
+	Index framebufferID = -1;
 	Vector<FramebufferTexture> frameBufferTextures;
+
+	Bool dynamicResize = true;
+	Float relativeScale = 1;
 
 	void read();
 	void draw();
@@ -30,7 +33,7 @@ struct Framebuffer {
 	void blitFramebuffer();
 	void create(Area size);
 	void resize(Area resolution);
-	void setAsTexture(Index slot);
+	void setAsTexture(Index slot = 0);
 	void add(UInt components, DataType type, UInt slot);
 	Vector<UInt> readPixelsAtCenterUIntRGB(UInt attachment);
 	Vector<UInt> readPixelsUIntRGB(UInt x, UInt y, UInt attachment);

@@ -1,10 +1,8 @@
+
 #pragma once
 
-#include "Basics.hpp"
-#include "FileSystem.hpp"
-#include "Debug.hpp"
 #include "GraphicsAPI.hpp"
-#include "Math.hpp"
+#include "Engine.hpp"
 
 enum DataType {
 	dataTypeByte = GL_UNSIGNED_BYTE,
@@ -55,8 +53,8 @@ struct CPUTexture {
 	Float getAlpha(Float x, Float y);
 
 	void unload();
-	void load(Name name);
 	void load(Path path, Name name);
+	void load(Engine& engine, Name name);
 
 	Index xyToIndex(Int x, Int y, Int channel);
 
