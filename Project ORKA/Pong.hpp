@@ -34,9 +34,8 @@ struct Ball {
 	Bool stuckToPaddle = true;
 	Bool stuckToPaddle1 = true;
 
-	void render(Renderer& renderer);
+	void render(Engine& engine, Renderer& renderer);
 	void update(Float deltaTime, PongPlayer players[2]);
-
 };
 
 struct Pong : public GameRenderer {
@@ -55,7 +54,7 @@ struct Pong : public GameRenderer {
 	Vector<Ball> balls;
 	void create(Window& window) override;
 	void update(Window& window) override;
-	void render(Window& window, TiledRectangle area) override;
+	void render(Engine& engine, Window& window, TiledRectangle area) override;
 };
 
 Ball* getClosestBall(PongPlayer& player, Vector<Ball>& balls);

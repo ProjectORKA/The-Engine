@@ -1,6 +1,7 @@
 
 #include "NeighbourOctree.hpp"
 #include "Renderer.hpp"
+#include "PerlinNoise.hpp"
 
 void NeighbourOctree::create() {
 	root.nl = &root;
@@ -330,24 +331,24 @@ void NeighbourOctreeNode::create(NeighbourOctreeNode& parent, Bool x, Bool y, Bo
 	updateIsSurface();
 }
 
-void renderNeighbourOctreeNode(NeighbourOctreeNode & node, Renderer& renderer) {
+void renderNeighbourOctreeNode(Engine& engine, NeighbourOctreeNode & node, Renderer& renderer) {
 	if (!node.inRenderDistance || !node.subdivided) {
 		if (node.isTerrain) {
 			Transform t;
 			t.location = node.position;
 			t.scale = pow(2, -node.level + 2);
 			t.render(renderer);
-			renderer.renderMesh("centeredCube");
+			renderer.renderMesh(engine, "centeredCube");
 		}
 	}
 	else {
-		renderNeighbourOctreeNode(*node.c000,renderer);
-		renderNeighbourOctreeNode(*node.c001,renderer);
-		renderNeighbourOctreeNode(*node.c010,renderer);
-		renderNeighbourOctreeNode(*node.c011,renderer);
-		renderNeighbourOctreeNode(*node.c100,renderer);
-		renderNeighbourOctreeNode(*node.c101,renderer);
-		renderNeighbourOctreeNode(*node.c110,renderer);
-		renderNeighbourOctreeNode(*node.c111,renderer);
+		renderNeighbourOctreeNode(engine, *node.c000, renderer);
+		renderNeighbourOctreeNode(engine, *node.c001, renderer);
+		renderNeighbourOctreeNode(engine, *node.c010, renderer);
+		renderNeighbourOctreeNode(engine, *node.c011, renderer);
+		renderNeighbourOctreeNode(engine, *node.c100, renderer);
+		renderNeighbourOctreeNode(engine, *node.c101, renderer);
+		renderNeighbourOctreeNode(engine, *node.c110, renderer);
+		renderNeighbourOctreeNode(engine, *node.c111, renderer);
 	}
 }

@@ -11,5 +11,5 @@ struct AIPlayground : public GameRenderer {
 	NeuralNet network;
 
 	AIPlayground();
-	void render(Window& window, TiledRectangle area) override;
+	void render(Engine& engine, Window& window, TiledRectangle area) override;
 };

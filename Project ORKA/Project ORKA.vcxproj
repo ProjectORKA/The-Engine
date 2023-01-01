@@ -153,6 +153,7 @@
   <ItemGroup>
     <ClInclude Include="Array2D.hpp" />
     <ClInclude Include="BaseAllocator.hpp" />
+    <ClInclude Include="Engine.hpp" />
     <ClInclude Include="ImageViewer.hpp" />
     <ClInclude Include="RedDotHack.hpp" />
     <ClInclude Include="Colliders.hpp" />
@@ -358,10 +359,10 @@
     <ClInclude Include="OctreeSystem.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\..\..\..\..\..\..\ORKA\Data\shaders\blur.frag" />
+    <None Include="..\..\..\..\..\..\..\ORKA\Data\shaders\blur.vert" />
     <None Include="Data\shaders\atmosphere.frag" />
     <None Include="Data\shaders\atmosphere.vert" />
-    <None Include="Data\shaders\blur.frag" />
-    <None Include="Data\shaders\blur.vert" />
     <None Include="Data\shaders\blurredUI.frag" />
     <None Include="Data\shaders\blurredUI.vert" />
     <None Include="Data\shaders\debug.frag" />
@@ -516,7 +517,9 @@
       <SubSystem>Console</SubSystem>
     </Link>
     <PostBuildEvent>
-      <Command>XCOPY "$(SolutionDir)Project ORKA\Data" "$(TargetDir)Data" /S /Y /I</Command>
+      <Command>
+      </Command>
+      <Message>XCOPY "$(SolutionDir)Project ORKA\Data" "$(TargetDir)Data" /S /Y /I</Message>
     </PostBuildEvent>
     <Manifest>
       <SuppressStartupBanner>true</SuppressStartupBanner>
@@ -549,7 +552,8 @@
       <StackReserveSize>4194304</StackReserveSize>
     </Link>
     <PostBuildEvent>
-      <Command>XCOPY "$(SolutionDir)Project ORKA\Data" "$(TargetDir)Data" /S /Y /I</Command>
+      <Command>
+      </Command>
       <Message>XCOPY "$(SolutionDir)Project ORKA\Data" "$(TargetDir)Data" /S /Y /I</Message>
     </PostBuildEvent>
     <Manifest>
@@ -585,7 +589,9 @@
       <GenerateDebugInformation>false</GenerateDebugInformation>
     </Link>
     <PostBuildEvent>
-      <Command>XCOPY "$(SolutionDir)Project ORKA\Data" "$(TargetDir)Data" /S /Y /I</Command>
+      <Command>
+      </Command>
+      <Message>XCOPY "$(SolutionDir)Project ORKA\Data" "$(TargetDir)Data" /S /Y /I</Message>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -619,7 +625,9 @@
       <GenerateDebugInformation>false</GenerateDebugInformation>
     </Link>
     <PostBuildEvent>
-      <Command>XCOPY "$(SolutionDir)Project ORKA\Data" "$(TargetDir)Data" /S /Y /I</Command>
+      <Command>
+      </Command>
+      <Message>XCOPY "$(SolutionDir)Project ORKA\Data" "$(TargetDir)Data" /S /Y /I</Message>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

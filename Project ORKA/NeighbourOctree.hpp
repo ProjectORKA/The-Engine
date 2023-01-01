@@ -5,6 +5,7 @@
 #include "Random.hpp"
 #include "Transform.hpp"
 #include "PointCloud.hpp"
+#include "Threading.hpp"
 
 struct Renderer;
 struct NeighbourOctreeNode;
@@ -59,4 +60,4 @@ struct NeighbourOctree {
 	void update(Vec3 location);
 };
 
-void renderNeighbourOctreeNode(NeighbourOctreeNode& node, Renderer& renderer);
+void renderNeighbourOctreeNode(Engine& engine, NeighbourOctreeNode& node, Renderer& renderer);

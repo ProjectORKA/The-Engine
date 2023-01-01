@@ -4,6 +4,7 @@
 #include "Basics.hpp"
 #include "Random.hpp"
 #include "Transform.hpp"
+#include "Engine.hpp"
 
 struct Renderer;
 
@@ -30,12 +31,12 @@ struct NeighbourQuadtreeNode {
 	NeighbourQuadtreeNode& nbr();
 	NeighbourQuadtreeNode& nfr();
 
-	void subdivide();//
-	void unsubdivide();//
+	void subdivide();
+	void unsubdivide();
 	void update(Vec3 location);
-	void render(Renderer& renderer);
-	void removeSelfFromNeighbours();//
-	void create(NeighbourQuadtreeNode& parent, Bool x, Bool y);//
+	void removeSelfFromNeighbours();
+	void render(Engine& engine, Renderer& renderer);
+	void create(NeighbourQuadtreeNode& parent, Bool x, Bool y);
 };
 
 struct NeighbourQuadtree {
@@ -43,5 +44,5 @@ struct NeighbourQuadtree {
 	void create();
 	void destroy();
 	void update(Vec3 location);
-	void render(Renderer& renderer);
+	void render(Engine& engine, Renderer& renderer);
 };

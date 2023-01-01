@@ -9,7 +9,7 @@ void SimpleRTSRenderer::update(Window& window) {
 SimpleRTSRenderer::SimpleRTSRenderer(SimpleRTSSimulation& sim) {
 	this->sim = &sim;
 }
-void SimpleRTSRenderer::render(Window& window, TiledRectangle area) {
+void SimpleRTSRenderer::render(Engine& engine, Window& window, TiledRectangle area) {
 	Renderer& renderer = window.renderer;
 	
 	mutex.lock();
@@ -20,24 +20,24 @@ void SimpleRTSRenderer::render(Window& window, TiledRectangle area) {
 
 	//sky
 	renderer.setDepthTest(false);
-	renderer.useShader("color");
+	renderer.useShader(engine, "color");
 	renderer.fill(Color(0.207143, 0.722031, 1.0f, 1));
 	renderer.uniforms().sunDir(Vec4(normalize(Vec3(1)),1));
-	renderer.renderMesh("fullScreenQuad");
+	renderer.renderMesh(engine, "fullScreenQuad");
 	renderer.setDepthTest(true);
 
 	renderer.fill(Color(1.0f));
 
 	//prepare rendering scene
 	renderer.uniforms().mMatrix() = Matrix(1);
-	renderer.useShader("simpleRTS");
-	player.render(window);
+	renderer.useShader(engine, "simpleRTS");
+	player.render(engine, window);
 
 
 
 	//ground plane
 	renderer.uniforms().mMatrix(matrixFromScale(SIMPLERTS_MAPSIZE));
-	renderer.renderMesh("FloatingIsland");
+	renderer.renderMesh(engine, "FloatingIsland");
 
 	////render trees that are about to be cut
 	//for (UInt i = 0; i < sim->humanCount; i++) {
@@ -51,7 +51,7 @@ void SimpleRTSRenderer::render(Window& window, TiledRectangle area) {
 	renderer.uniforms().mMatrix(Matrix(1));
 
 
-	sim->render(renderer);
+	sim->render(engine, renderer);
 
 	////berry bushes
 	//renderer.matrixSystem.matrixArray(sim->bushPosition, sim->bushDirection);
@@ -80,7 +80,7 @@ void SimpleRTSRenderer::render(Window& window, TiledRectangle area) {
 	//ui
 	renderer.setDepthTest(false);
 	renderer.screenSpace();
-	renderer.renderText(String(toString(1.0f / renderer.time.delta)), Vec2(50), fonts.heading);
+	renderer.renderText(engine, String(toString(1.0f / renderer.time.delta)), Vec2(50), fonts.heading);
 
 	////////////////////////
 

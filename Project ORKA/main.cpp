@@ -40,70 +40,16 @@
 // easy to use algorithms
 // multiple window support
 
-//games
-//#include "Pong.hpp"
-//#include "Sortr.hpp"
-//#include "Snake.hpp"
-//#include "GPUSim.hpp"
-//#include "Sandbox.hpp"
-//#include "MSDFText.hpp"
-//#include "FlappyBird.hpp"
-//#include "UISandbox.hpp"
-#include "Mooncrash.hpp"
-//#include "CheatTest.hpp"
-//#include "SimpleRTS.hpp"
-//#include "MindMapper.hpp"
-//#include "ImageViewer.hpp"
-//#include "AIPlayground.hpp"
-//#include "ProjectMelon.hpp"
-//#include "QuakeMovement.hpp"
-//#include "ResourceManager.hpp"
-//#include "ORKAIntroSequence.hpp"
-//#include "PhysicsPlayground.hpp"
-//#include "DungeonsAndDiscord.hpp"
-//#include "InfiniteDetailPrototype.hpp"
-
 //#define TESTING
 
 #include "Basics.hpp"
-#include "Time.hpp"
-#include "Debug.hpp"
-#include "Velox_Vector.hpp"
-
-#include "ResourceManager.hpp"
+#include "Engine.hpp"
+#include "Sandbox.hpp"
 
 Int main(Int  argc, Char* argv[]) {
 #ifndef TESTING
-
-	fileSystem.init(argv[0]);
-
-	resourceManager.init();
-
-	//ImageViewer app;
-
-	MooncrashSimulation sim;
-	sim.init();
-
-	MooncrashRenderer app;
-	app.init(sim);
-
-	Window& win = window(
-		"ORKA",
-		Area(1920, 1080),
-		WindowDecoration::decorated,
-		WindowState::windowed
-	);
-
-	if (argc > 1) {
-		win.droppedFilePaths.push_back(Path(argv[1]));
-	}
-
-	win.content = &app;
-
-	ui.run();
-
-	sim.destroy();
-
+	Engine engine;
+	Sandbox sandbox(engine);
 #else
 	//testing code
 	/////////////////////////////////////////////////////////////////////////////////////////////////

@@ -16,9 +16,9 @@ void PhysicsParticle::collisionCheck() {
 
 }
 
-void PhysicsParticle::render(Window& window) {
+void PhysicsParticle::render(Engine& engine, Window& window) {
 	Renderer& renderer = window.renderer;
-	renderer.circle(position, particleSize);
+	renderer.circle(engine, position, particleSize);
 }
 
 PhysicsPlayGroundRenderer::PhysicsPlayGroundRenderer(PhysicsPlaygroundSimulation& simulation) {
@@ -29,7 +29,7 @@ void PhysicsPlayGroundRenderer::update(Window& window) {
 
 }
 
-void PhysicsPlayGroundRenderer::render(Window& window, TiledRectangle area) {
+void PhysicsPlayGroundRenderer::render(Engine& engine, Window& window, TiledRectangle area) {
 	Renderer& renderer = window.renderer;
 
 	renderer.clearColor(Color(0));
@@ -37,10 +37,10 @@ void PhysicsPlayGroundRenderer::render(Window& window, TiledRectangle area) {
 	renderer.screenSpace();
 
 	renderer.fill(Color(1));
-	renderer.useShader("color");
+	renderer.useShader(engine, "color");
 
 	for (PhysicsParticle& p : sim->particles) {
-		p.render(window);
+		p.render(engine, window);
 	}
 
 }

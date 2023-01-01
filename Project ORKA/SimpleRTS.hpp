@@ -81,9 +81,9 @@ struct Trees {
 		return fullyGrownSize[id] * (treeAge[id]/ lifeExpectancy[id]);
 	}
 	void update(SimpleRTSSimulation& simulation);
-	void render(Renderer& renderer) {
+	void render(Engine& engine, Renderer& renderer) {
 		renderer.matrixSystem.matrixArray(treePosition, treeDirection, treeSize);
-		renderer.renderMeshInstanced("Tree");
+		renderer.renderMeshInstanced(engine, "Tree");
 	}
 	void create(SimpleRTSSimulation& simulation) {
 		while (treeCount < minTreeCount) {
@@ -162,8 +162,8 @@ struct SimpleRTSSimulation : public GameSimulation {
 
 	SimpleRTSSimulation();
 	void update(Float timestep) override;
-	void render(Renderer& renderer) {
-		trees.render(renderer);
+	void render(Engine& engine, Renderer& renderer) {
+		trees.render(engine, renderer);
 	};
 };
 
@@ -179,6 +179,6 @@ struct SimpleRTSRenderer : public GameRenderer {
 	SimpleRTSRenderer(SimpleRTSSimulation& sim);
 	void create(Window& window) {};
 	void update(Window& window) override;
-	void render(Window& window, TiledRectangle area) override;
+	void render(Engine& engine, Window& window, TiledRectangle area) override;
 	void inputEvent(Window& window, InputEvent input) override;
 };

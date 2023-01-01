@@ -2,6 +2,7 @@
 
 #include "Game.hpp"
 #include "Random.hpp"
+#include "Engine.hpp"
 
 const Float particleSize = 30;
 
@@ -12,7 +13,7 @@ struct PhysicsParticle {
 
 	void collisionCheck();
 	void update(Float delta);
-	void render(Window& window);
+	void render(Engine& engine, Window& window);
 };
 
 struct PhysicsPlaygroundSimulation : public GameSimulation {
@@ -26,8 +27,8 @@ struct PhysicsPlayGroundRenderer : public GameRenderer {
 	PhysicsPlaygroundSimulation* sim = nullptr;
 
 	PhysicsPlayGroundRenderer(PhysicsPlaygroundSimulation& simulation);
-	virtual void update(Window& window);
-	virtual void render(Window& window, TiledRectangle area);
-	virtual void inputEvent(Window& window, InputEvent input) {};
-	virtual void renderInteractive(Window& window, TiledRectangle area) {};
+	void update(Window& window) override;
+	void inputEvent(Window& window, InputEvent input) override {};
+	void render(Engine& engine, Window& window, TiledRectangle area) override;
+	void renderInteractive(Engine & engine, Window& window, TiledRectangle area) override {};
 };

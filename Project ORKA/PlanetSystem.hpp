@@ -12,6 +12,6 @@ struct PlanetSystem {
 
 	void count();
 	void update();
-	PlanetSystem();
+	void create(Engine& engine);
 	~PlanetSystem();
 };

@@ -16,6 +16,6 @@ struct PlanetRenderSystem {
 
 	void destroy();
 	void update(PlanetSystem& planetSystem, PlanetSystemPlayer& player);
-	void renderAllLevels(PlanetSystem& planetSystem, Renderer& renderer, PlanetSystemPlayer& player);
-	void renderLevel(PlanetSystem& planetSystem, Renderer& renderer, PlanetSystemPlayer& player, UShort level);
+	void renderLevel(Engine& engine, PlanetSystem& planetSystem, Renderer& renderer, PlanetSystemPlayer& player, UShort level);
+	void renderAllLevels(Engine & engine, PlanetSystem& planetSystem, Renderer& renderer, PlanetSystemPlayer& player);
 };

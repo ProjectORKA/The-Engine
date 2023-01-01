@@ -6,10 +6,10 @@
 Float ballSpeedReduction = 1.5;
 Float paddleSpeed = 2.5;
 
-void Ball::render(Renderer& renderer) {
+void Ball::render(Engine& engine, Renderer& renderer) {
 	renderer.uniforms().mMatrix() =
 		scale(translate(Matrix(1), Vec3(position, 0)), Vec3(0.01, 0.01, 0.5));
-	renderer.renderMesh("centeredCube");
+	renderer.renderMesh(engine, "centeredCube");
 }
 void Ball::update(Float deltaTime, PongPlayer players[2]) {
 	if (stuckToPaddle) {
@@ -141,7 +141,7 @@ void Pong::create(Window& window) {
 	//window.input.add("player2down", ButtonType::Key, Key::DOWN);
 	//window.input.add("spawnBall", ButtonType::Key, Key::P);
 }
-void Pong::render(Window& window, TiledRectangle area) {
+void Pong::render(Engine& engine, Window& window, TiledRectangle area) {
 	Renderer& renderer = window.renderer;
 
 	////input
@@ -162,7 +162,7 @@ void Pong::render(Window& window, TiledRectangle area) {
 	if (balls.size() <= 10)balls.emplace_back();
 
 	renderer.aspectCorrectNormalizedSpace();
-	Vec2 normalizedCursorPosition = Vec2(2) * ((Vec2(window.mousePosBotLeft) / Vec2(renderer.framebufferSystem.framebufferSize)) - Vec2(0.5));
+	Vec2 normalizedCursorPosition = Vec2(2) * ((Vec2(window.mousePosBotLeft) / Vec2(renderer.framebufferSystem.windowSize)) - Vec2(0.5));
 	Vec3 cursorWorldPos = inverse(renderer.uniforms().pMatrix()) * Vec4(normalizedCursorPosition, 0, 1);
 
 	//players[1].ballLocationInput(ball);
@@ -183,47 +183,47 @@ void Pong::render(Window& window, TiledRectangle area) {
 	renderer.clearColor(Color(0, 0, 0, 1));
 
 	renderer.aspectCorrectNormalizedSpace();
-	renderer.useShader("color");
+	renderer.useShader(engine,"color");
 	renderer.uniforms().customColor() = Vec4(1);
 
 	//paddle 1
 	renderer.uniforms().mMatrix() =
 		scale(translate(Matrix(1), Vec3(players[0].position, 0)), Vec3(0.01, 0.2, 0.5));
-	renderer.renderMesh("centeredCube");
+	renderer.renderMesh(engine, "centeredCube");
 	//paddle 2
 	renderer.uniforms().mMatrix() =
 		scale(translate(Matrix(1), Vec3(players[1].position, 0)), Vec3(0.01, 0.2, 0.5));
-	renderer.renderMesh("centeredCube");
+	renderer.renderMesh(engine, "centeredCube");
 	//ball
-	for (Ball& ball : balls)ball.render(renderer);
+	for (Ball& ball : balls)ball.render(engine, renderer);
 
 	//walls
 	renderer.uniforms().mMatrix() = scale(translate(Matrix(1), Vec3(0, 1, 0)), Vec3(2, 0.01, 0.5));
-	renderer.renderMesh("centeredCube");
+	renderer.renderMesh(engine, "centeredCube");
 
 	renderer.uniforms().mMatrix() = scale(translate(Matrix(1), Vec3(0, -1, 0)), Vec3(2, 0.01, 0.5));
-	renderer.renderMesh("centeredCube");
+	renderer.renderMesh(engine, "centeredCube");
 
 	renderer.uniforms().mMatrix() = scale(translate(Matrix(1), Vec3(1, 0, 0)), Vec3(0.01, 2, 0.5));
-	renderer.renderMesh("centeredCube");
+	renderer.renderMesh(engine, "centeredCube");
 
 	renderer.uniforms().mMatrix() = scale(translate(Matrix(1), Vec3(-1, 0, 0)), Vec3(0.01, 2, 0.5));
-	renderer.renderMesh("centeredCube");
+	renderer.renderMesh(engine, "centeredCube");
 
-	Float height = renderer.framebufferSystem.framebufferSize.y;
-	Float width = renderer.framebufferSystem.framebufferSize.x;
+	Float height = renderer.framebufferSystem.windowSize.y;
+	Float width = renderer.framebufferSystem.windowSize.x;
 
 	//text
 	FontStyle style;
 	style.absoluteSize = 50;
 
 	renderer.screenSpace();
-	renderer.renderText(toString(players[0].score), Vec2(10, height - 100), style);
-	renderer.renderText(toString(players[1].score), Vec2(width - 100, height - 100), style);
-	renderer.renderText(toString(players[1].difficulty), Vec2(10, height - 200), style);
-	renderer.renderText(toString(balls[0].desiredSpeed), Vec2(10, height - 300), style);
-	renderer.renderText(toString(balls[0].desiredSpeed), Vec2(10, height - 300), style);
-	renderer.renderText(toString(1.0f / renderer.time.delta), Vec2(50, 50), fonts.paragraph);
+	renderer.renderText(engine, toString(players[0].score), Vec2(10, height - 100), style);
+	renderer.renderText(engine, toString(players[1].score), Vec2(width - 100, height - 100), style);
+	renderer.renderText(engine, toString(players[1].difficulty), Vec2(10, height - 200), style);
+	renderer.renderText(engine, toString(balls[0].desiredSpeed), Vec2(10, height - 300), style);
+	renderer.renderText(engine, toString(balls[0].desiredSpeed), Vec2(10, height - 300), style);
+	renderer.renderText(engine, toString(1.0f / renderer.time.delta), Vec2(50, 50), fonts.paragraph);
 }
 
 void Pong::update(Window& window) {

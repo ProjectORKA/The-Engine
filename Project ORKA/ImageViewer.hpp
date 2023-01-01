@@ -38,7 +38,7 @@ struct ImageViewer : public GameRenderer{
 		}
 	}
 
-	void render(Window& window, TiledRectangle area) override {
+	void render(Engine& engine, Window& window, TiledRectangle area) override {
 		Renderer& renderer = window.renderer;
 
 		renderer.clearColor(Color(0,0,0,1));
@@ -48,12 +48,12 @@ struct ImageViewer : public GameRenderer{
 		}
 
 		gimage.use(0);
-		renderer.useShader("imageViewer");
+		renderer.useShader(engine, "imageViewer");
 		renderer.normalizedScreenSpace();
 
 		//calculate image size and position
-		Float winX = window.renderer.framebufferSystem.framebufferSize.x;
-		Float winY = window.renderer.framebufferSystem.framebufferSize.y;
+		Float winX = window.renderer.framebufferSystem.windowSize.x;
+		Float winY = window.renderer.framebufferSystem.windowSize.y;
 
 		Float imgX = cimage.width;
 		Float imgY = cimage.height;
@@ -89,7 +89,7 @@ struct ImageViewer : public GameRenderer{
 
 		renderer.uniforms().mMatrix(finalMatrix);
 
-		renderer.renderMesh("centeredPlane");
+		renderer.renderMesh(engine, "centeredPlane");
 	};
 
 	void inputEvent(Window& window, InputEvent input) override {

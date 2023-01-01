@@ -31,7 +31,7 @@ void DNDRenderer::update(Window& window)
 	}
 	window.droppedFilePaths.clear();
 }
-void DNDRenderer::render(Window& window, TiledRectangle area) {
+void DNDRenderer::render(Engine& engine, Window& window, TiledRectangle area) {
 	Renderer& renderer = window.renderer;
 	
 	//preprocess
@@ -42,7 +42,7 @@ void DNDRenderer::render(Window& window, TiledRectangle area) {
 	renderer.clearDepth();
 	//renderer.renderSky(player.camera);
 
-	renderer.renderAtmosphere(player, normalize(Vec3(1)));
+	renderer.renderAtmosphere(engine, player, normalize(Vec3(1)));
 
 	renderer.fill(Color(1));
 
@@ -50,16 +50,16 @@ void DNDRenderer::render(Window& window, TiledRectangle area) {
 	renderer.setCulling(true);
 
 
-	player.render(window);
+	player.render(engine, window);
 
 	//scene
 	renderer.setDepthTest(false);
 
-	renderer.useShader("dndUberShader");
+	renderer.useShader(engine, "dndUberShader");
 	renderer.uniforms().mMatrix(matrixFromLocationAndSize(Vec4(0, 0, 0, 10000)));
-	renderer.renderMesh("dndGroundPlane");
+	renderer.renderMesh(engine, "dndGroundPlane");
 	renderer.uniforms().mMatrix(matrixFromLocationAndSize(Vec4(0, 0, 0, 1000000)));
-	renderer.renderMesh("dndGroundPlane");
+	renderer.renderMesh(engine, "dndGroundPlane");
 
 	renderer.clearDepth();
 	renderer.setDepthTest(true);
@@ -77,7 +77,7 @@ void DNDRenderer::render(Window& window, TiledRectangle area) {
 			}
 			else renderer.setColor(Color(0, 0, 0, 0));
 
-			world->entities[i].render(renderer);
+			world->entities[i].render(engine, renderer);
 		}
 
 		//text
@@ -123,14 +123,14 @@ void DNDRenderer::inputEvent(Window& window, InputEvent input) {
 
 	player.inputEvent(window, input);
 }
-void DNDRenderer::renderInteractive(Window& window, TiledRectangle area)
+void DNDRenderer::renderInteractive(Engine& engine, Window& window, TiledRectangle area)
 {
-	player.render(window);
+	player.render(engine, window);
 
 	if (world->loaded) {
 		for (Int i = 0; i < world->entities.size(); i++) {
 			window.renderer.uniforms().objectID() = i;
-			world->entities[i].render(window.renderer);
+			world->entities[i].render(engine, window.renderer);
 		}
 	}
 }
@@ -172,7 +172,7 @@ void DNDWorld::load() {
 		loaded = true;
 	}
 }
-void DNDEntity::render(Renderer& renderer) {
+void DNDEntity::render(Engine& engine, Renderer& renderer) {
 	transform.render(renderer);
-	renderer.renderMesh(meshName);
+	renderer.renderMesh(engine, meshName);
 }

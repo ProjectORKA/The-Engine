@@ -2,36 +2,26 @@
 #pragma once
 
 #include "Game.hpp"
-#include "Basics.hpp"
-#include "KeyMap.hpp"
 #include "Player.hpp"
 
-//#include "Renderer.hpp"
-struct Renderer;
-struct Window;
+#include "KeyMap.hpp"
 
-#include "DynameshTerrain.hpp"
-#include "GeometryClipmapTerrain.hpp"
+struct SandboxRenderer : public GameRenderer {
+	Mutex mutex;
+	Player player;
+	Float mouseSensitivity = 0.0015f;
 
-struct SandboxSimulation : public GameSimulation {
+	InputEvent enter = InputEvent(InputType::Mouse, LMB, 1);
+	InputEvent exit = InputEvent(InputType::Mouse, RMB, 0);
+	InputEvent wireframeToogle = InputEvent(InputType::KeyBoard, F, 1);
 
-	Vec3 location = Vec3(0);
-
-	SandboxSimulation();
-	~SandboxSimulation();
-	void update(Float timestep) override;
+	void update(Window& window) override;
+	void inputEvent(Window& window, InputEvent input) override;
+	void render(Engine & engine, Window& window, TiledRectangle area) override;
 };
 
-struct Sandbox : public GameRenderer {
-	
-	Mutex mutex;
-	ClipMap system;
-	DebugPlayer player;
-	Float mouseSensitivity = 0.0015f;
-	SandboxSimulation * simulation = nullptr;
+struct Sandbox {
+	SandboxRenderer sandboxRenderer;
 
-	Sandbox(SandboxSimulation& sim);
-	void create(Window& window) override;
-	void update(Window& window) override;
-	void render(Engine & engine, Window& window, TiledRectangle area) override;
+	Sandbox(Engine& engine);
 };

@@ -9,7 +9,7 @@ void MindMapper::update(Window& window) {
 	if (grow) system.addNode();
 	system.update();
 }
-void MindMapper::render(Window& window, TiledRectangle area) {
+void MindMapper::render(Engine& engine, Window& window, TiledRectangle area) {
 	Renderer& renderer = window.renderer;
 	
 	mutex.lock();
@@ -19,13 +19,13 @@ void MindMapper::render(Window& window, TiledRectangle area) {
 	renderer.setDepthTest(true);
 	renderer.clearDepth();
 
-	player.render(window);
+	player.render(engine, window);
 	renderer.uniforms().mMatrix() = Matrix(1);
-	renderer.shaderSystem.use("debug");
+	renderer.shaderSystem.use(engine, "debug");
 
 	//////////////////////////////////////////////////////////////////////////////
 
-	system.render(renderer);
+	system.render(engine, renderer);
 
 	//renderer.setDepthTest(false);
 	//renderer.screenSpace();

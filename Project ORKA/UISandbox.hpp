@@ -23,8 +23,8 @@ struct UISandbox : public GameRenderer {
 	UIButton saveButton;
 
 	UISandbox();
-	void update(Window& window)override;;
-	void render(Window& window, TiledRectangle area) override;
+	void update(Window& window)override;
 	void inputEvent(Window& window, InputEvent input) override;
-	void renderInteractive(Window& window, TiledRectangle area) override;
+	void render(Engine& engine, Window& window, TiledRectangle area) override;
+	void renderInteractive(Engine& engine, Window& window, TiledRectangle area) override;
 };

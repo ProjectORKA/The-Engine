@@ -19,7 +19,7 @@ struct Window;
 struct DNDEntity {
 	Name meshName = "empty";
 	Transform transform;
-	void render(Renderer& renderer);
+	void render(Engine& engine, Renderer& renderer);
 };
 
 struct DNDWorld : public GameSimulation {
@@ -58,9 +58,9 @@ struct DNDRenderer : public GameRenderer {
 
 	DNDRenderer(DNDWorld& world);
 	void update(Window& window) override;
-	void render(Window& window, TiledRectangle area) override;
 	void inputEvent(Window& window, InputEvent input) override;
-	void renderInteractive(Window& window, TiledRectangle area) override;
+	void render(Engine& engine, Window& window, TiledRectangle area) override;
+	void renderInteractive(Engine& engine, Window& window, TiledRectangle area) override;
 };
 
 Int diceRoll(Int diceCount);

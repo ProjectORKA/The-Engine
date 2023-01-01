@@ -191,34 +191,34 @@ void QuakePlayer::calculateHeadPosition(Window& window, Float delta) {
 void QuakeMovementRenderer::update(Window& window) {
 	player.update(window);
 }
-void QuakeMovementRenderer::render(Window& window, TiledRectangle area) {
+void QuakeMovementRenderer::render(Engine& engine, Window& window, TiledRectangle area) {
 	OPTICK_EVENT();
 	Renderer& renderer = window.renderer;
 	
-	renderer.renderAtmosphere(player, sunDirection);
+	renderer.renderAtmosphere(engine, player, sunDirection);
 	renderer.setCulling(true);
 	renderer.setDepthTest(true);
 
-	player.render(window);
+	player.render(engine, window);
 
-	renderer.useShader("unlit");
-	renderer.useTexture("quakeLightmapGround");
-	renderer.renderMesh("quakeMapGround");
+	renderer.useShader(engine, "unlit");
+	renderer.useTexture(engine, "quakeLightmapGround");
+	renderer.renderMesh(engine, "quakeMapGround");
 
-	renderer.useTexture("quakeLightmapSide1");
-	renderer.renderMesh("quakeMapSide1");
-	renderer.useTexture("quakeLightmapSide2");
-	renderer.renderMesh("quakeMapSide2");
-	renderer.useTexture("quakeLightmapSide3");
-	renderer.renderMesh("quakeMapSide3");
-	renderer.useTexture("quakeLightmapSide4");
-	renderer.renderMesh("quakeMapSide4");
+	renderer.useTexture(engine, "quakeLightmapSide1");
+	renderer.renderMesh(engine, "quakeMapSide1");
+	renderer.useTexture(engine, "quakeLightmapSide2");
+	renderer.renderMesh(engine, "quakeMapSide2");
+	renderer.useTexture(engine, "quakeLightmapSide3");
+	renderer.renderMesh(engine, "quakeMapSide3");
+	renderer.useTexture(engine, "quakeLightmapSide4");
+	renderer.renderMesh(engine, "quakeMapSide4");
 
 	//renderer.arrow(player.location, player.location + player.velocity);
 
 	renderer.uniforms().reset();
 
-	renderer.postProcess("gammaCorrection");
+	renderer.postProcess(engine, "gammaCorrection");
 
 	renderer.screenSpace();
 	//renderer.renderText(toString(player.speedControl), Vec2(50), fonts.heading);

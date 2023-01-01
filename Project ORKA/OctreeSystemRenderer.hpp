@@ -26,14 +26,13 @@ struct OctreeNodeRenderData {
 	void destroy();
 	void subdivide();
 	void unsubdivide();
-	void render(Renderer & renderer);
 	void create(OctreeNode & octreeNode);
 	void update(PlanetSystemPlayer& player);
-	void renderLevel(UShort level, Renderer & renderer);
+	void render(Engine& engine, Renderer & renderer);
+	void renderWater(Engine& engine, Renderer & renderer);
 	void updateWithoutSubdivision(PlanetSystemPlayer & player);
-	//
-	void renderWater(Renderer & renderer);
-	void renderWaterLevel(UShort level, Renderer& renderer);
+	void renderLevel(Engine& engine, UShort level, Renderer & renderer);
+	void renderWaterLevel(Engine& engine, UShort level, Renderer& renderer);
 };
 
 struct OctreeRenderSystem {
@@ -45,5 +44,5 @@ struct OctreeRenderSystem {
 	void destroy();
 	void create(Renderer& renderer);
 	void update(PlanetSystemPlayer& player);
-	void renderLevel(UShort level, Renderer& renderer);
+	void renderLevel(Engine& engine, UShort level, Renderer& renderer);
 };

@@ -75,10 +75,6 @@ void windowThread(Engine& engine, Window& window)
 
 				//render ui
 				OPTICK_PUSH("Draw");
-				renderer.draw("main");
-				renderer.clearColor(Color(Vec3(0), 0.0));
-				renderer.clearDepth();
-				renderer.setWireframeMode(renderer.wireframeMode);
 				window.content->render(engine, window, windowArea);
 
 				renderer.aspectCorrectNormalizedSpace();

@@ -9,7 +9,7 @@ struct Sortr : public GameRenderer {
 	
 	Vector<Path> sortFolders;
 
-	void render(Window& window, TiledRectangle area) override {};
+	void render(Engine & engine, Window& window, TiledRectangle area) override {};
 };
 
 void removeDoubleQuotes(String& s);
