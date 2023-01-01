@@ -1,19 +1,21 @@
 
 #include "BitmapTextRenderSystem.hpp"
+
 #include "Renderer.hpp"
+#include "Engine.hpp"
 
 void BitmapTextRenderSystem::destroy() {
 	gpuText.unload();
 	textTexture.unload();
 }
-void BitmapTextRenderSystem::create(Renderer& renderer) {
+void BitmapTextRenderSystem::create(Engine & engine, Renderer& renderer) {
 	CPUTexture cpuTextTexture;
-	cpuTextTexture.load("fontSDF");
+	cpuTextTexture.load(engine, "fontSDF");
 	textTexture.load(cpuTextTexture);
-	renderer.shaderSystem.add("text");
+	renderer.shaderSystem.add(engine, "text");
 
 }
-void BitmapTextRenderSystem::render(Renderer & renderer, String text, Vec2 position, FontStyle style) {
+void BitmapTextRenderSystem::render(Engine& engine, Renderer & renderer, String text, Vec2 position, FontStyle style) {
 	
 	renderer.setDepthTest(false);
 	UInt length = text.size();
@@ -80,7 +82,7 @@ void BitmapTextRenderSystem::render(Renderer & renderer, String text, Vec2 posit
 	gpuText.unload();
 	gpuText.upload(cpuText);
 
-	renderer.useShader("text");
+	renderer.useShader(engine, "text");
 	textTexture.use(0);
 
 	renderer.setAlphaBlending(true);

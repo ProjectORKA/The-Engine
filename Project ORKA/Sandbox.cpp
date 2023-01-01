@@ -2,6 +2,7 @@
 #include "Sandbox.hpp"
 #include "Random.hpp"
 #include "Window.hpp"
+#include "Fonts.hpp"
 
 Sandbox::Sandbox(SandboxSimulation& sim) {
 	simulation = &sim;
@@ -27,7 +28,7 @@ void Sandbox::update(Window& window) {
 	//system.update();
 }
 
-void Sandbox::render(Window& window, TiledRectangle area) {
+void Sandbox::render(Engine& engine, Window& window, TiledRectangle area) {
 	Renderer& renderer = window.renderer;
 	
 	mutex.lock();
@@ -39,7 +40,7 @@ void Sandbox::render(Window& window, TiledRectangle area) {
 
 	player.render(window);
 	renderer.uniforms().mMatrix() = Matrix(1);
-	renderer.shaderSystem.use("debug");
+	renderer.shaderSystem.use(engine, "debug");
 
 	//////////////////////////////////////////////////////////////////////////////
 
@@ -49,7 +50,7 @@ void Sandbox::render(Window& window, TiledRectangle area) {
 
 	renderer.setDepthTest(false);
 	renderer.screenSpace();
-	renderer.renderText(String(toString(1.0f / renderer.time.delta)), Vec2(50), fonts.heading);
+	renderer.renderText(engine, String(toString(1.0f / renderer.time.delta)), Vec2(50), fonts.heading);
 
 	////////////////////////
 

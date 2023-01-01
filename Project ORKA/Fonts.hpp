@@ -1,17 +1,16 @@
+
 #pragma once
 
 #include "Basics.hpp"
 
 struct FontStyle {
-	Float absoluteSize = 20;	//size in pixels
-	Float relativeSize = 1;		//relative size of all fonts
-	Float letterSpacing = 0.6;
+	Float absoluteSize = 20.0f;	//size in pixels
+	Float relativeSize = 1.0f;	//relative size of all fonts
+	Float letterSpacing = 0.6f;
 
 	FontStyle() = default;
-	FontStyle(Float absoluteSize) {
-		this->absoluteSize = absoluteSize;
-	}
 	void setSize(Float size);
+	FontStyle(Float absoluteSize);
 };
 
 struct Fonts {

@@ -2,10 +2,10 @@
 #pragma once
 
 #include "BitmapTextRenderSystem.hpp"
-#include "GlyphTextRenderSystem.hpp"
-//#include "SDFTextRenderSystem.hpp"
 
 struct Renderer;
+struct Engine;
+struct FontStyle;
 
 struct TextRenderSystem {
 	//SDFTextRenderSystem sdfTextRenderSystem;
@@ -14,6 +14,6 @@ struct TextRenderSystem {
 	//MeshTextrenderSystem meshTextRenderSystem;
 
 	void destroy();
-	void create(Renderer& renderer);
-	void render(Renderer& renderer, String text, Vec2 position, FontStyle style);
+	void create(Engine& engine, Renderer& renderer);
+	void render(Engine& engine, Renderer& renderer, String text, Vec2 position, FontStyle style);
 };

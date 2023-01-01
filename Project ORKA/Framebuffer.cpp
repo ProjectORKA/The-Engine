@@ -15,6 +15,8 @@ void Framebuffer::read()
 void Framebuffer::draw()
 {
 	apiBindDrawFramebuffer(framebufferID);
+	apiViewport(0, 0, size.x, size.y);
+	apiScissor(0, 0, size.x, size.y);
 }
 void Framebuffer::destroy()
 {
@@ -26,7 +28,6 @@ void Framebuffer::create(Area size)
 	this->size = size;
 	apiGenFramebuffer(framebufferID);
 	glBindFramebuffer(GL_FRAMEBUFFER, framebufferID);
-	//apiBindDrawFramebuffer(framebufferID); //[TODO] if you set it to just draw it might not actually bind the framebuffer for modification; check this
 }
 void Framebuffer::blitFramebuffer()
 {

@@ -1,15 +1,18 @@
 
 #include "FileSystem.hpp"
 
-FileSystem fileSystem;
-
 namespace stbi {
-//#define STBI_NO_JPEG
+	//#define STBI_NO_JPEG
 #define STBI_FAILURE_USERMSG
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 }
-String FileSystem::loadString(Path path) {
+
+FileSystem::FileSystem() {
+	executablePath = std::filesystem::current_path();
+}
+
+String loadString(Path path) {
 	String s;
 	std::ifstream stream(path, std::ios::in);
 	if (stream.is_open()) {
@@ -20,9 +23,27 @@ String FileSystem::loadString(Path path) {
 		return s;
 	}
 	else {
-		logWarning(String("String Cant be read! (").append(path.string()).append(")"));
+		logError(String("String Cant be read! (").append(path.string()).append(")"));
 		return "";
 	}
+}
+Path makeAbsolute(Path path) {
+	return std::filesystem::absolute(path);
+}
+Bool doesPathExist(Path path)
+{
+	return std::filesystem::exists(path);
+}
+void createDirectory(Path path) {
+	std::filesystem::create_directory(path);
+}
+FileTime lastWrittenTime(Path path) {
+	return std::filesystem::last_write_time(path);
+}
+Path nameToPath(Name name, String filetype) {
+	if (filetype == ".fbx") return Path(String("data/objects/").append(name.data).append(".fbx"));
+	if (filetype == ".mesh") return Path(String("data/meshes/").append(name.data).append(".mesh"));
+	logError("Filetype not supported!");
 }
 void copyFile(Path source, Path destination) {
 	logDebug(String("Copying file (").append(source.string()).append(") to (").append(destination.string()).append(")"));
@@ -40,6 +61,31 @@ void copyFile(Path source, Path destination) {
 	{
 		std::cout << e.what();
 	}
+}
+Vector<Path> getAllPathsInDirectory(Path path) {
+	Vector<Path> paths;
+	for (const auto& file : std::filesystem::recursive_directory_iterator(path)) {
+		paths.push_back(file.path());
+	}
+	return paths;
+}
+Vector<Path> getAllFilesInDirectory(Path path) {
+	Vector<Path> paths;
+	for (const auto& file : std::filesystem::recursive_directory_iterator(path)) {
+		if (file.is_regular_file()) paths.push_back(file.path());
+	}
+	return paths;
+}
+FileTime getLastWrittenTimeOfFiles(Vector<Path> paths) {
+
+	FileTime t1;
+
+	for (auto p : paths) {
+		FileTime t2 = lastWrittenTime(p);
+		if (t2 > t1) t1 = t2;
+	}
+
+	return t1;
 }
 Image loadImage(Path path, Int bitcount, Bool inverted) {
 	stbi::stbi_set_flip_vertically_on_load(inverted);
@@ -62,23 +108,6 @@ Image loadImage(Path path, Int bitcount, Bool inverted) {
 
 	return image;
 }
-
-Vector<Path> getAllPathsInDirectory(Path path) {
-	Vector<Path> paths;
-	for (const auto& file : std::filesystem::recursive_directory_iterator(path)) {
-		paths.push_back(file.path());
-	}
-	return paths;
-}
-
-Vector<Path> getAllFilesInDirectory(Path path) {
-	Vector<Path> paths;
-	for (const auto& file : std::filesystem::recursive_directory_iterator(path)) {
-		if (file.is_regular_file()) paths.push_back(file.path());
-	}
-	return paths;
-}
-
 Vector<Path> getAllFilesInDirectory(Path path, Vector<String> filter) {
 	Vector<Path> paths;
 	for (const auto& file : std::filesystem::recursive_directory_iterator(path)) {
@@ -93,34 +122,4 @@ Vector<Path> getAllFilesInDirectory(Path path, Vector<String> filter) {
 		}
 	}
 	return paths;
-}
-
-Path makeAbsolute(Path path) {
-	return std::filesystem::absolute(path);
-}
-
-FileTime getLastWrittenTimeOfFiles(Vector<Path> paths) {
-
-	FileTime t1;
-
-	for (auto p : paths) {
-		FileTime t2 = lastWrittenTime(p);
-		if (t2 > t1) t1 = t2;
-	}
-
-	return t1;
-}
-
-FileTime lastWrittenTime(Path path) {
-	return std::filesystem::last_write_time(path);
-}
-
-Path nameToPath(Name name, String filetype) {
-	if (filetype == ".fbx") return Path(String("data/objects/").append(name.data).append(".fbx"));
-	if (filetype == ".mesh") return Path(String("data/meshes/").append(name.data).append(".mesh"));
-	logError("Filetype not supported!");
-}
-
-Bool doesPathExist(Path path) {
-	return std::filesystem::exists(path);
 }

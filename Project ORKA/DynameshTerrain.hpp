@@ -2,6 +2,7 @@
 #pragma once
 
 #include "Basics.hpp"
+#include "Engine.hpp"
 
 struct Renderer;
 struct Camera;
@@ -18,7 +19,7 @@ struct DynameshNode {
 		exists = false;
 	}
 
-	void render(Renderer& renderer);
+	void render(Engine& engine, Renderer& renderer);
 };
 
 struct DynameshTerrain {
@@ -27,5 +28,5 @@ struct DynameshTerrain {
 	Bool loaded = false;
 
 	void update(Camera camera);
-	void render(Renderer& renderer);
+	void render(Engine& engine, Renderer& renderer);
 };

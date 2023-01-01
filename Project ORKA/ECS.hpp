@@ -1,9 +1,11 @@
+
 #pragma once
 
 #include "Time.hpp"
 #include "Basics.hpp"
 #include "Math.hpp"
 #include "Transform.hpp"
+#include "Engine.hpp"
 
 #define ENTITY_MAX_COMPONENT_NUMBER 7
 
@@ -21,7 +23,7 @@ struct RenderComponent : public Component {
 	Name shaderName = "default";
 	Name meshName = "empty";
 
-	void render(Renderer& renderer);
+	void render(Engine& engine, Renderer& renderer);
 };
 
 enum Components {

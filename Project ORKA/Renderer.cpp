@@ -1,8 +1,10 @@
+
 #include "Renderer.hpp"
-#include "Random.hpp"
-#include "Player.hpp"
-#include "Camera.hpp"
 #include "Profiler.hpp"
+#include "Random.hpp"
+#include "Camera.hpp" // remove
+#include "Player.hpp" //remove
+#include "Fonts.hpp"
 
 void Renderer::end()
 {
@@ -74,38 +76,38 @@ void Renderer::normalizedSpace() {
 	uniforms().vMatrix() = Matrix(1);
 	uniforms().pMatrix() = Matrix(1);
 }
-void Renderer::create(Area size)
+void Renderer::create(Engine& engine, Area size)
 {
 	randomizeSeed();
 	//basic systems
 	time.reset();
 	textureSystem.create();
-	meshSystem.create();
-	shaderSystem.create();
+	meshSystem.create(engine);
+	shaderSystem.create(engine);
 	lineRenderer.create();
 	
 	//advanced systems
 	framebufferSystem.create(*this, size);
-	textRenderSystem.create(*this);
+	textRenderSystem.create(engine, *this);
 	renderObjectSystem.create(*this);
 	idFramebuffer.create(*this); //needs to be below framebuffer system
-	rectangleRenderer.create(*this);
+	rectangleRenderer.create(engine, *this);
 
 	apiClipControl(GL_LOWER_LEFT, GL_ZERO_TO_ONE);
 	apiEnable(GL_SCISSOR_TEST);
 }
-void Renderer::useMesh(Name name) {
+void Renderer::useMesh(Engine& engine, Name name) {
 	//selects a mesh to be rendered but doesent render it
-	meshSystem.use(name);
+	meshSystem.use(engine,name);
 }
 void Renderer::setWireframeMode() {
 	setWireframeMode(wireframeMode);
 }
-void Renderer::renderMesh(Name name) {
-	meshSystem.render(uniforms(), name);
+void Renderer::renderMesh(Engine& engine, Name name) {
+	meshSystem.render(engine, uniforms(), name);
 }
-void Renderer::useTexture(Name name) {
-	textureSystem.use(name);
+void Renderer::useTexture(Engine& engine, Name name) {
+	textureSystem.use(engine, name);
 }
 void Renderer::setColor(Color color) {
 	uniforms().customColor(color);
@@ -123,13 +125,13 @@ void Renderer::clearColor(Color color) {
 void Renderer::renderMesh(Index meshID) {
 	meshSystem.render(uniforms(), meshID);
 }
-void Renderer::renderSky(Camera& camera) {
+void Renderer::renderSky(Engine& engine, Camera& camera) {
 	setCulling(false);
 	setDepthTest(false);
 	camera.renderOnlyRot(*this);
-	useShader("sky");
-	useTexture("sky");
-	renderMesh("sky");
+	useShader(engine, "sky");
+	useTexture(engine, "sky");
+	renderMesh(engine, "sky");
 	setCulling(true);
 	setDepthTest(true);
 }
@@ -142,15 +144,15 @@ void Renderer::setCulling(Bool isCulling) {
 		apiDisable(GL_CULL_FACE);
 	}
 }
-void Renderer::arrow(Vec3 start, Vec3 end) {
-	useShader("color");
+void Renderer::arrow(Engine& engine, Vec3 start, Vec3 end) {
+	useShader(engine, "color");
 	uniforms().customColor(Vec4(1, 0, 0, 1));
 	Float length = distance(start, end) / 20;
 	//if (length >= 0.075) return; //[TODO] erase this
 	Vec3 direction = end - start;
 	Orientation o(direction, Vec3(0, 0, 1));
 	uniforms().mMatrix() = matrixFromOrientation(o, start, length);
-	renderMesh("arrow");
+	renderMesh(engine, "arrow");
 }
 void Renderer::aspectCorrectNormalizedSpace() {
 	Float aspect = getAspectRatio();
@@ -167,17 +169,17 @@ void Renderer::setDepthClamp(Bool depthClamp)
 		apiDisable(GL_DEPTH_CLAMP);
 	}
 }
-void Renderer::circle(Vec2 pos, Float radius)
+void Renderer::circle(Engine& engine, Vec2 pos, Float radius)
 {
 	uniforms().mMatrix(matrixFromLocationAndSize(pos,radius));
-	renderMesh("circle");
+	renderMesh(engine, "circle");
 }
-void Renderer::rectangle(Vec2 pos, Vec2 size) {
-	rectangleRenderer.render(*this, pos, size);
+void Renderer::rectangle(Engine& engine, Vec2 pos, Vec2 size) {
+	rectangleRenderer.render(engine, *this, pos, size);
 }
-void Renderer::renderMeshInstanced(Name name)
+void Renderer::renderMeshInstanced(Engine& engine, Name name)
 {
-	meshSystem.renderInstanced(uniforms(), name, matrixSystem.modelMatrixArray);
+	meshSystem.renderInstanced(engine, uniforms(), name, matrixSystem.modelMatrixArray);
 }
 void Renderer::setAlphaBlending(Bool blending)
 {
@@ -207,8 +209,8 @@ void Renderer::setWireframeMode(Bool wireframeMode) {
 		apiPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	}
 }
-void Renderer::useTexture(Name name, Index location) {
-	textureSystem.use(name, location);
+void Renderer::useTexture(Engine& engine, Name name, Index location) {
+	textureSystem.use(engine, name, location);
 }
 void Renderer::line(Vec3 start, Vec3 end, Float width) {
 	lineRenderer.renderLine(*this, start, end, width);
@@ -250,16 +252,16 @@ void Renderer::normalizedSpaceWithAspectRatio(Float aspectRatio) {
 	Matrix pMatrix(1);
 	uniforms().pMatrix() = scale(pMatrix, Vec3(Vec2(1) / view, 1));
 }
-void Renderer::renderAtmosphere(Player& player, Vec3 sunDirection) {
+void Renderer::renderAtmosphere(Engine& engine, Player& player, Vec3 sunDirection) {
 	Bool culling = getCulling();
 	setDepthTest(false);
 	player.camera.renderOnlyRot(*this);
 	uniforms().cameraPos() = Vec4(Vec3(0), 1);
 	setCulling(false);
 	uniforms().sunDir() = Vec4(sunDirection, 1);
-	useShader("atmosphere");
+	useShader(engine, "atmosphere");
 	/*framebufferSystem.current().colorTexture.use(0);*/
-	renderMesh("centeredCube");
+	renderMesh(engine, "centeredCube");
 	setCulling(culling);
 	setDepthTest(true);
 }
@@ -267,12 +269,12 @@ void Renderer::addRenderObject(RenderObjectNames renderObjectNames)
 {
 	renderObjectSystem.addRenderObject(renderObjectNames);
 }
-void Renderer::renderText(String text, Vec2 position, FontStyle font) {
-	textRenderSystem.render(*this, text, position, font);
+void Renderer::renderText(Engine& engine, String text, Vec2 position, FontStyle font) {
+	textRenderSystem.render(engine, *this, text, position, font);
 }
 
 Area Renderer::getArea() {
-	return framebufferSystem.framebufferSize;
+	return framebufferSystem.windowSize;
 }
 
 Bool Renderer::getCulling() {
@@ -291,6 +293,40 @@ Uniforms& Renderer::uniforms()
 	return shaderSystem.uniforms;
 }
 
-Index Renderer::useShader(Name name) {
-	return shaderSystem.use(name);
+Index Renderer::useShader(Engine& engine, Name name) {
+	return shaderSystem.use(engine, name);
+}
+
+void Renderer::postProcess(Engine& engine, Name name) {
+	//draw to second buffer
+	uniforms().resetMatrices();
+	uniforms().customColor(Color(1, 0, 0, 1));
+	read("main");
+	framebufferSystem.currentRead().setAsTexture(0);
+	draw("postProcess");
+	clearColor();
+	clearDepth();
+	useShader(engine, name);
+	renderMesh(engine, "fullScreenQuad");
+
+	read("postProcess");
+	framebufferSystem.currentRead().setAsTexture(0);
+	draw("main");
+	useShader(engine, "texture");
+	renderMesh(engine, "fullScreenQuad");
+}
+
+void Renderer::fullScreenShader(Engine& engine, Name name) {
+	useShader(engine, name);
+	meshSystem.renderFullscreen(uniforms());
+}
+
+//framebuffers
+
+void Renderer::read(Name name) {
+	framebufferSystem.read(*this, name);
+}
+
+void Renderer::draw(Name name) {
+	framebufferSystem.draw(*this, name);
 }

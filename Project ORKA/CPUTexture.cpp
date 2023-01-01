@@ -1,6 +1,6 @@
 
 #include "CPUTexture.hpp"
-#include "FileSystem.hpp"
+#include "Math.hpp"
 
 Float CPUTexture::getRed(UInt x, UInt y) {
 	x = x % width;
@@ -159,13 +159,6 @@ void CPUTexture::unload()
 		pixels = nullptr;
 	}
 }
-void CPUTexture::load(Name name) {
-	if (!loaded)load(String("Data/textures/").append(name.data).append(".png"), name);
-	if (!loaded)load(String("Data/textures/").append(name.data).append(".hdr"), name);
-	if (!loaded)load(String("Data/textures/").append(name.data).append(".jpg"), name);
-	if (!loaded)load(String("Data/textures/").append(name.data).append(".bmp"), name);
-	//etc
-}
 void CPUTexture::load(Path path, Name name)
 {
 	logDebug(String("Loading texture: (").append(name.data).append(" | ").append(path.string()).append(")"));
@@ -179,6 +172,21 @@ void CPUTexture::load(Path path, Name name)
 	this->channels = image.channels;
 
 	if (pixels) loaded = true; else logEvent("Texture not loaded! Searching for different file format...");
+}
+void CPUTexture::load(Engine & engine, Name name) {
+	if (!loaded) {
+		//search in resource manager
+		auto it = engine.resourceManager.textureResources.find(name);
+		if (it != std::end(engine.resourceManager.textureResources)) {
+			load(it->second, name);
+		}
+		else {
+			logError(String("Texture ").append(name.data).append(" could not be found"));
+		}
+	}
+	else {
+		logWarning("Texture already loaded, you are trying to load it again, something must be wrong!");
+	}
 }
 
 Index CPUTexture::xyToIndex(Int x, Int y, Int channel)

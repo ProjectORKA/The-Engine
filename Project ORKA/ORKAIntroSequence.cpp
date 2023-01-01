@@ -5,11 +5,7 @@
 void ORKAIntroSequence::init(GameRenderer& game) {
 	gameStartingAfterIntro = &game;
 }
-void ORKAIntroSequence::update(Window& window)
-{
-
-}
-void ORKAIntroSequence::render(Window& window, TiledRectangle area)
+void ORKAIntroSequence::render(Engine& engine, Window& window, TiledRectangle area)
 {
 	Renderer& renderer = window.renderer;
 
@@ -36,11 +32,11 @@ void ORKAIntroSequence::render(Window& window, TiledRectangle area)
 	modelMatrix = glm::rotate(modelMatrix, 20 / (pow(renderer.time.total, 4.0f) + 1), Vec3(0, 0, 1));
 	renderer.uniforms().mMatrix() = modelMatrix;
 
-	renderer.useShader("unlit");
-	renderer.useTexture("ProjectORKABakedLogo");
-	renderer.renderMesh("projectORKALogo");
+	renderer.useShader(engine, "unlit");
+	renderer.useTexture(engine, "ProjectORKABakedLogo");
+	renderer.renderMesh(engine, "projectORKALogo");
 
-	renderer.postProcess("orkaIntroSequence");
+	renderer.postProcess(engine, "orkaIntroSequence");
 
 	//start the time when we actually start rendering
 	static Bool f = true;

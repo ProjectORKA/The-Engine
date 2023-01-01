@@ -1,3 +1,4 @@
+
 #pragma once
 
 #include "Basics.hpp"
@@ -6,6 +7,8 @@
 #include "Array2D.hpp"
 #include "FileSystem.hpp"
 #include "GraphicsAPI.hpp"
+#include "Engine.hpp"
+#include "ResourceManager.hpp"
 
 struct Renderer;
 
@@ -43,18 +46,18 @@ struct CPUMesh {
 
 	CPUMesh() {};
 	~CPUMesh() {};
-	CPUMesh(Name name);
 	CPUMesh(Graph& graph);
+	CPUMesh(Engine& engine, Name name);
 
-	void saveMeshFile();
 	void clearGeometry();
 	void removeDoubles();
-	void load(Name name);
 	void checkIntegrity();
 	void move(Vec3 moveVector);
 	void merge(CPUMesh source);
 	void calculateSmoothNormals();
 	void render(Renderer& renderer);
+	void load(Engine& engine, Name name);
+	void saveMeshFile(ResourceManager& resourceManager);
 	void meshFromHeightmap(Array2D<Float>& heightmap, UInt size);
 };
 

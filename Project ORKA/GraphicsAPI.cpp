@@ -1,6 +1,8 @@
 
 #include "GraphicsAPI.hpp"
 
+OpenGLStateCopy openglState;
+
 Int viewportX = -1;
 Int viewportY = -1;
 Int viewportW = -1;
@@ -34,20 +36,20 @@ void apiDepthFunc(Enum func) {
 void apiDrawBuffer(Enum mode) {
 	glDrawBuffer(mode);
 }
+void apiGenVertexArray(UInt& id) {
+	glGenVertexArrays(1, &id);
+}
 void apiDeleteBuffer(UInt buffer) {
 	glDeleteBuffers(1, &buffer);
 }
-void apiGenVertexArray(UInt& id) {
-	glGenVertexArrays(1, &id);
+void apiGenBuffer(UInt& bufferID) {
+	glGenBuffers(1, &bufferID);
 }
 void apiSetClearColor(Color color) {
 	if (clearColor != color) glClearColor(color.r, color.g, color.b, color.a);
 }
 void apiUseProgram(UInt programID) {
 	glUseProgram(programID);
-}
-void apiGenBuffer(UInt& bufferID) {
-	glGenBuffers(1, &bufferID);
 }
 void apiGenTexture(UInt& textureID) {
 	glGenTextures(1, &textureID);
@@ -89,14 +91,14 @@ void apiUniform1i(Int location, Int value) {
 void apiEnableVertexAttribArray(UInt index) {
 	glEnableVertexAttribArray(index);
 }
+void apiGenFramebuffer(UInt& framebufferID) {
+	glGenFramebuffers(1, &framebufferID);
+}
 void apiDisableVertexAttribArray(UInt index) {
 	glDisableVertexAttribArray(index);
 }
 void apiClipControl(Enum origin, Enum depth) {
 	glClipControl(origin, depth);
-}
-void apiGenFramebuffer(UInt& framebufferID) {
-	glGenFramebuffers(1, &framebufferID);
 }
 void apiDeleteFramebuffer(UInt framebufferID) {
 	glDeleteFramebuffers(1, &framebufferID); //doesent work. ask Nvidia
@@ -109,9 +111,15 @@ void apiBindBuffer(Enum target, UInt bufferID) {
 }
 void apiBindDrawFramebuffer(UInt framebufferID) {
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, framebufferID);
+#ifdef OPENGLSTATE
+	openglState.currentDrawFramebuffer = framebufferID;
+#endif // OPENGLSTATE
 }
 void apiBindReadFramebuffer(UInt framebufferID) {
 	glBindFramebuffer(GL_READ_FRAMEBUFFER, framebufferID);
+#ifdef OPENGLSTATE
+	openglState.currentReadFramebuffer = framebufferID;
+#endif // OPENGLSTATE
 }
 void apiScissor(Int x, Int y, SizeI w, SizeI h) {
 	if ((scissorX != x) ||
@@ -159,26 +167,35 @@ void apiTexParameterf(Enum target, Enum name, Float param) {
 void apiBlendEquationSeparate(Enum modeRGB, Enum modeAlpha) {
 	glBlendEquationSeparate(modeRGB, modeAlpha);
 }
+void apiBlitFramebuffer(Int width, Int height, Enum filter) {
+	glBlitFramebuffer(0, 0, width, height, 0, 0, width, height, GL_COLOR_BUFFER_BIT, filter);
+}
 void apiBindBufferBase(Enum target, UInt index, UInt buffer) {
 	glBindBufferBase(target, index, buffer);
 }
 void apiTexParameterfv(Enum target, Enum name, const Float* param) {
 	glTexParameterfv(target, name, param);
 }
-void apiBlitFramebuffer(Int width, Int height, UInt mask, Enum filter) {
-	glBlitFramebuffer(0, 0, width, height, 0, 0, width, height, mask, filter);
-}
 void apiBufferData(Enum target, SizeIPtr size, void* data, Enum usage) {
 	glBufferData(target, size, data, usage);
 }
-void apiDrawElements(Enum mode, SizeI count, Enum type, const void* indices) {
-	glDrawElements(mode, count, type, indices);
+void apiBlitFramebuffer(UInt width, UInt height, UInt mask, UInt filter) {
+	glBlitFramebuffer(0, 0, width, height, 0, 0, width, height, mask, filter);
 }
 void apiDebugMessageCallback(GLDEBUGPROC callback, const void* userParam) {
 	glDebugMessageCallback(callback, userParam);
 }
+void apiDrawElements(Enum mode, SizeI count, Enum type, const void* indices) {
+	glDrawElements(mode, count, type, indices);
+}
 void apiUniformBlockBinding(UInt programID, UInt uniformBlockIndex, UInt value) {
 	glUniformBlockBinding(programID, uniformBlockIndex, value);
+}
+void apiBlitFramebuffer(UInt srcX, UInt srcY, UInt dstX, UInt dstY, UInt filter) {
+	glBlitFramebuffer(0, 0, srcX, srcY, 0, 0, dstX, dstY, GL_COLOR_BUFFER_BIT, filter);
+}
+void apiBlitFramebuffer(UInt srcX, UInt srcY, UInt dstX, UInt dstY, UInt mask, UInt filter) {
+	glBlitFramebuffer(0, 0, srcX, srcY, 0, 0, dstX, dstY, mask, filter);
 }
 void apiShaderSource(UInt shaderID, SizeI count, const Char* const* string, const Int* length) {
 	glShaderSource(shaderID, count, string, length);
@@ -186,11 +203,11 @@ void apiShaderSource(UInt shaderID, SizeI count, const Char* const* string, cons
 void apiBlendFuncSeparate(Enum sfactorRGB, Enum dfactorRGB, Enum sfactorAlpha, Enum dfactorAlpha) {
 	glBlendFuncSeparate(sfactorRGB, dfactorRGB, sfactorAlpha, dfactorAlpha);
 }
-void apiFramebufferTexture2D(Enum target, Enum attachment, Enum textarget, UInt texture, Int level) {
-	glFramebufferTexture2D(target, attachment, textarget, texture, level);
-}
 void apiDrawElementsInstanced(Enum mode, SizeI size, Enum type, void* data, SizeI primitiveCount) {
 	glDrawElementsInstanced(mode, size, type, data, primitiveCount);
+}
+void apiFramebufferTexture2D(Enum target, Enum attachment, Enum textarget, UInt texture, Int level) {
+	glFramebufferTexture2D(target, attachment, textarget, texture, level);
 }
 void apiVertexAttribPointer(UInt index, Int size, Enum type, Bool normalized, SizeI stride, const void* pointer) {
 	glVertexAttribPointer(index, size, type, normalized, stride, pointer);
@@ -252,13 +269,13 @@ Int apiGetShaderiv(UInt shaderID, Enum valueType) {
 	glGetShaderiv(shaderID, valueType, &result);
 	return result;
 }
+Int apiGetUniformLocation(UInt programID, const Char* name) {
+	return glGetUniformLocation(programID, name);
+}
 Int apiGetProgramIntegerValue(UInt programID, Enum valueType) {
 	Int value;
 	glGetProgramiv(programID, valueType, &value);
 	return value;
-}
-Int apiGetUniformLocation(UInt programID, const Char* name) {
-	return glGetUniformLocation(programID, name);
 }
 Int apiGetUniformBlockIndex(UInt programID, const Char* name) {
 	return glGetUniformBlockIndex(programID, name);
@@ -273,4 +290,9 @@ String apiGetProgramInfoLog(UInt programID, SizeI infoLogLength) {
 	Vector<Char> log(infoLogLength++);
 	glGetProgramInfoLog(programID, infoLogLength, 0, &log[0]);
 	return String(log.begin(), log.end());
+}
+
+void OpenGLStateCopy::print() {
+	logDebug(String("Current Draw: ").append(toString(currentDrawFramebuffer)));
+	logDebug(String("Current Read: ").append(toString(currentReadFramebuffer)));
 }

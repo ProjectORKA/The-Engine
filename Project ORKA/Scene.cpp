@@ -5,11 +5,11 @@
 #include <assimp/postprocess.h>
 #include <assimp/scene.h>
 
-void Scene::loadFBX(Path path) {
+void Scene::loadFBX(Path path, ResourceManager& resourceManager) {
 	//check if file is valid
 	String errorMessage = "";
 
-	if (std::filesystem::exists(path.parent_path())) {
+	if (doesPathExist(path.parent_path())) {
 
 		logEvent(String("Loading mesh: (").append(path.stem().string()).append(") from (").append(path.string()).append(")"));
 
@@ -103,7 +103,7 @@ void Scene::loadFBX(Path path) {
 						}
 						else {
 							mesh.checkIntegrity();
-							mesh.saveMeshFile();
+							mesh.saveMeshFile(resourceManager);
 						}
 						meshes.push_back(mesh);
 					}

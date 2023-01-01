@@ -1,8 +1,10 @@
+
 #pragma once
 
 #include "Uniforms.hpp"
 #include "Shader.hpp"
 #include "AutoConstruct.hpp"
+#include "Engine.hpp"
 
 struct ShaderProgram {
 	Bool isLoaded = false;
@@ -11,6 +13,6 @@ struct ShaderProgram {
 
 	void select();
 	void destroy();
-	void create(Name name, Uniforms& uniforms);
+	void create(Engine engine, Name name, Uniforms& uniforms);
 	void create(Shader& vertexShader, Shader& fragmentShader, Uniforms& uniforms);
 };

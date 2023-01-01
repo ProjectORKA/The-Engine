@@ -13,25 +13,28 @@ void FramebufferSystem::deselect()
 }
 void FramebufferSystem::drawToWindow() {
 	apiBindDrawFramebuffer(0);
+	apiViewport(0, 0, windowSize.x, windowSize.y);
+	apiScissor(0, 0, windowSize.x, windowSize.y);
 }
 void FramebufferSystem::update(Area area)
 {
 	area.setMinimum(1);
-	framebufferSize = area;
+	windowSize = area;
 	for (Framebuffer& f : framebuffers) {
-		if(f.resizeable) f.resize(area);
+		if (f.dynamicResize) f.resize(area * f.relativeScale);
 	}
 }
-void FramebufferSystem::addGbuffer(Name name) {
-	framebuffers.emplace_back();
-	framebuffers.back().create(Area(1));
-	framebuffers.back().resizeable = true;
-	framebuffers.back().add(4, dataTypeFloat, 0);	//color
-	framebuffers.back().add(3, dataTypeFloat, 1);	//
-	framebuffers.back().add(3, dataTypeFloat, 2);	//
-	framebuffers.back().add(1, dataTypeUInt, 3);	//
-	framebuffers.back().add(5, dataTypeFloat, 4);	//depth
+Framebuffer& FramebufferSystem::addGbuffer(Name name, Float relativeSize) {
+	Framebuffer & f = framebuffers.emplace_back();
+	f.create(Area(1));
+	f.add(4, dataTypeFloat, 0);	//color
+	f.add(3, dataTypeFloat, 1);	//
+	f.add(3, dataTypeFloat, 2);	//
+	f.add(1, dataTypeUInt, 3);	//
+	f.add(5, dataTypeFloat, 4);	//depth
+	f.relativeScale = relativeSize;
 	nametoID[name] = framebuffers.size() - 1;
+	return f;
 }
 Framebuffer& FramebufferSystem::currentRead()
 {
@@ -41,21 +44,23 @@ Framebuffer& FramebufferSystem::currentDraw()
 {
 	return framebuffers[currentDrawFramebufferIndex];
 }
-void FramebufferSystem::addIDBuffer(Name name) {
-	framebuffers.emplace_back();
-	framebuffers.back().resizeable = true;
-	framebuffers.back().create(Area(1));
-	framebuffers.back().add(3, dataTypeUInt, 0);	//ids
-	framebuffers.back().add(5, dataTypeFloat, 1);	//depth
+Framebuffer& FramebufferSystem::addIDBuffer(Name name, Float relativeSize) {
+	Framebuffer& f = framebuffers.emplace_back();
+	f.create(Area(1));
+	f.add(3, dataTypeUInt, 0);	//ids
+	f.add(5, dataTypeFloat, 1);	//depth
+	f.relativeScale = relativeSize;
 	nametoID[name] = framebuffers.size() - 1;
+	return f;
 }
-void FramebufferSystem::addFrameBuffer(Name name) {
-	framebuffers.emplace_back();
-	framebuffers.back().create(Area(1));
-	framebuffers.back().resizeable = true;
-	framebuffers.back().add(4, dataTypeFloat, 0);	//color
-	framebuffers.back().add(5, dataTypeFloat, 1);	//depth
+Framebuffer& FramebufferSystem::addFrameBuffer(Name name, Float relativeSize) {
+	Framebuffer& f = framebuffers.emplace_back();
+	f.create(Area(1));
+	f.add(4, dataTypeFloat, 0);	//color
+	f.add(5, dataTypeFloat, 1);	//depth
+	f.relativeScale = relativeSize;
 	nametoID[name] = framebuffers.size() - 1;
+	return f;
 }
 void FramebufferSystem::draw(Renderer& renderer, Name name) {
 	draw(renderer, nametoID[name]);
@@ -83,4 +88,6 @@ void  FramebufferSystem::draw(Renderer& renderer, Index framebufferIndex) {
 	}
 	currentDrawFramebufferIndex = framebufferIndex;
 	currentDraw().draw();
+	renderer.uniforms().framebufferWidth(currentDraw().size.x);
+	renderer.uniforms().framebufferHeight(currentDraw().size.y);
 }

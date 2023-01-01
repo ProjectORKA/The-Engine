@@ -1,3 +1,4 @@
+
 #pragma once
 
 #include "CPUMesh.hpp"
@@ -8,5 +9,5 @@ struct Scene {
 	//textures
 	//animations
 	//etc
-	void loadFBX(Path path);
+	void loadFBX(Path path, ResourceManager& resourceManager);
 };

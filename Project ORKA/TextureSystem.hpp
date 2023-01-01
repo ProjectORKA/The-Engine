@@ -1,3 +1,4 @@
+
 #pragma once
 
 #include "GPUTexture.hpp"
@@ -11,9 +12,8 @@ struct TextureSystem {
 	void destroy();
 	void resize(Area size);
 	void use(Index textureID);
-	void use(Name name, Index slot);
-	void add(CPUTexture& cpuTexture);
-
-	Index use(Name name);
 	GPUTexture& currentTexture();
+	void add(CPUTexture& cpuTexture);
+	Index use(Engine& engine, Name name);
+	void use(Engine& engine, Name name, Index slot);
 };

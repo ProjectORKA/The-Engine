@@ -4,6 +4,7 @@
 InFile::~InFile() {
 	file.close();
 }
+
 InFile::InFile(Path location) {
 	if (doesPathExist(location)) {
 		fileLocation = location;
@@ -17,6 +18,7 @@ InFile::InFile(Path location) {
 		logDebug(String("Could not create file at location (").append(fileLocation.string()).append(")!"));
 	}
 }
+
 void InFile::read(char* data, SizeT size) {
 	if (isOpen) {
 		file.read(data, size);
@@ -29,12 +31,18 @@ void InFile::read(char* data, SizeT size) {
 OutFile::~OutFile() {
 	file.close();
 }
+
 OutFile::OutFile(Path location) {
 
 	fileLocation = location;
-	while (!std::filesystem::exists(fileLocation.parent_path())) {
-		logDebug(String("The directory (").append(fileLocation.parent_path().string()).append(") does not exist and will be created!"));
-		std::filesystem::create_directory(fileLocation.parent_path());
+
+	Path parentPath = fileLocation.parent_path();
+
+	while (!doesPathExist(parentPath)) {
+
+		logDebug(String("The directory (").append(parentPath.string()).append(") does not exist and will be created!"));
+
+		std::filesystem::create_directory(parentPath);
 	}
 
 	file = std::ofstream(fileLocation, std::ios::trunc | std::ios::binary | std::ios::out);
@@ -46,6 +54,7 @@ OutFile::OutFile(Path location) {
 		logError(String("Could not create file at location (").append(fileLocation.string()).append(")!"));
 	}
 }
+
 void OutFile::write(char* data, SizeT size) {
 	if (isOpen) {
 		file.write(data, size);

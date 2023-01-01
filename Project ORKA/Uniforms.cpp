@@ -1,9 +1,9 @@
 
 #include "Uniforms.hpp"
 
-Int& Uniforms::width() {
+Int& Uniforms::windowWidth() {
 	update = true;
-	return data.width;
+	return data.windowWidth;
 }
 void Uniforms::reset()
 {
@@ -28,11 +28,12 @@ void Uniforms::reset()
 	data.materialID = -1;
 	sampler2Ds["texture0"] = 0;
 }
-void Uniforms::create()
+void Uniforms::create(Engine& engine)
 {
 	reset();
 
-	uniformBlockShaderCode = fileSystem.loadString("data/shaders/uniforms.glsl");
+	Path uniformShaderCodePath = Path(engine.resourceManager.orkaDataLocation).append("shaders").append("uniforms.glsl");
+	uniformBlockShaderCode = loadString(uniformShaderCodePath);
 
 	apiGenBuffer(id);
 	apiBindBuffer(GL_UNIFORM_BUFFER, id);
@@ -46,9 +47,17 @@ void Uniforms::upload()
 	apiBindBuffer(GL_UNIFORM_BUFFER, id);
 	apiBufferData(GL_UNIFORM_BUFFER, sizeof(GlobalUniformData), &data, GL_DYNAMIC_DRAW);
 }
-Int& Uniforms::height() {
+Int& Uniforms::windowHeight() {
 	update = true;
-	return data.height;
+	return data.windowHeight;
+}
+Int& Uniforms::framebufferHeight() {
+	update = true;
+	return data.framebufferHeight;
+}
+Int& Uniforms::framebufferWidth() {
+	update = true;
+	return data.framebufferWidth;
 }
 Float& Uniforms::time() {
 	update = true;
@@ -113,20 +122,35 @@ Vec4& Uniforms::customColor() {
 	return data.customColor;
 }
 
-Int& Uniforms::width(Int value) {
-	if (value != data.width) {
-		data.width = value;
+Int& Uniforms::windowWidth(Int value) {
+	if (value != data.windowWidth) {
+		data.windowWidth = value;
 		update = true;
 	}
-	return data.width;
+	return data.windowWidth;
 }
-Int& Uniforms::height(Int value) {
-	if (value != data.height) {
-		data.height = value;
+Int& Uniforms::windowHeight(Int value) {
+	if (value != data.windowHeight) {
+		data.windowHeight = value;
 		update = true;
 	}
-	return data.height;
+	return data.windowHeight;
 }
+Int& Uniforms::framebufferWidth(Int value) {
+	if (value != data.framebufferWidth) {
+		data.framebufferWidth = value;
+		update = true;
+	}
+	return data.framebufferWidth;
+}
+Int& Uniforms::framebufferHeight(Int value) {
+	if (value != data.framebufferHeight) {
+		data.framebufferHeight = value;
+		update = true;
+	}
+	return data.framebufferHeight;
+}
+
 Vec4& Uniforms::sunDir(Vec4 value) {
 	if (value != data.sunDir) {
 		data.sunDir = value;

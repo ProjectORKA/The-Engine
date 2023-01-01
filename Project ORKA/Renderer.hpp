@@ -1,26 +1,25 @@
 
 #pragma once
 
-#include "Settings.hpp"
 #include "Time.hpp"
-//sub systems
-#include "TextRenderSystem.hpp"
-#include "FramebufferSystem.hpp"
-#include "MeshSystem.hpp"
-#include "MatrixSystem.hpp"
-#include "ShaderSystem.hpp"
-#include "RenderObjectSystem.hpp"
-#include "PlanetRenderSystem.hpp"
+#include "Basics.hpp"
+#include "Settings.hpp"
 #include "RenderRegion.hpp"
-#include "SDFTerrainRenderSystem.hpp"
-#include "VoxelSystem.hpp"
+#include "MeshSystem.hpp"
+#include "ShaderSystem.hpp"
+#include "MatrixSystem.hpp"
 #include "LineRenderer.hpp"
-#include "InteractionSystem.hpp"
-#include "RectangleRenderer.hpp"
+#include "TextureSystem.hpp"
 #include "IdFramebuffer.hpp"
+#include "TextRenderSystem.hpp"
+#include "RectangleRenderer.hpp"
+#include "FramebufferSystem.hpp"
+#include "InteractionSystem.hpp"
+#include "RenderObjectSystem.hpp"
 
-struct Player;
 struct Camera;
+struct Player;
+
 
 struct Renderer{
 	Time time;
@@ -40,7 +39,6 @@ struct Renderer{
 	MatrixSystem matrixSystem;
 	LineRenderer lineRenderer;
 	TextureSystem textureSystem;
-	VoxelRenderer voxelRenderer;
 	IdFramebuffer idFramebuffer;
 	TextRenderSystem textRenderSystem;
 	RectangleRenderer rectangleRenderer;
@@ -48,12 +46,10 @@ struct Renderer{
 	InteractionSystem interactionSystem;
 	RenderObjectSystem renderObjectSystem;
 
-	PlanetRenderSystem planetRenderSystem; //[TODO] remove from renderer
-
 	Mutex mutex;
 	void sync(); //makes non renderer threads wait for the finished frame
 
-	void create(Area size);
+	void create(Engine& engine, Area size);
 	void destroy();
 
 	//drawing a frame
@@ -73,73 +69,41 @@ struct Renderer{
 	
 	//meshes
 	void rerenderMesh();
-	void useMesh(Name name);
-	void renderMesh(Name name);
 	void renderMesh(Index meshID);
-	void renderMeshInstanced(Name name);
+	void useMesh(Engine& engine, Name name);
+	void renderMesh(Engine& engine, Name name);
+	void renderMeshInstanced(Engine& engine, Name name);
 
 	//textures
-	void useTexture(Name name);
-	void useTexture(Name name, Index location);
+	void useTexture(Engine& engine, Name name);
+	void useTexture(Engine& engine, Name name, Index location);
 
 	//shaders
-	Index useShader(Name name);
-	void postProcess(Name name) {
-
-		uniforms().resetMatrices();
-		uniforms().customColor(Color(1, 0, 0, 1));
-
-		read("main");
-		framebufferSystem.currentRead().setAsTexture(0);
-		draw("postProcess");
-
-		clearColor();
-		clearDepth();
-
-		/*framebufferSystem.drawToWindow();*/
-		useShader(name);
-		renderMesh("fullScreenQuad");
-
-		read("postProcess");
-		framebufferSystem.currentRead().setAsTexture(0);
-		draw("main");
-		/*framebufferSystem.drawToWindow();*/
-		useShader("texture");
-
-		renderMesh("fullScreenQuad");
-
-		//read("postProcess");
-		//draw("main");
-		//framebufferSystem.currentRead().setAsTexture(0);
-		//useShader("texture");
-		//renderMesh("fullScreenQuad");
-	}
+	Index useShader(Engine& engine, Name name);
+	void postProcess(Engine& engine, Name name);
+	void fullScreenShader(Engine& engine, Name name);
 
 	//framebuffers
-	void read(Name name) {
-		framebufferSystem.read(*this, name);
-	}
-	void draw(Name name) {
-		framebufferSystem.draw(*this, name);
-	}
+	void read(Name name);
+	void draw(Name name);
 
 	//colors
 	void fill(Vec4 color);
 	void clearColor(Color color);
 
 	//primitives
-	void arrow(Vec3 start, Vec3 end);
-	void circle(Vec2 pos, Float radius);
-	void rectangle(Vec2 pos, Vec2 size);
 	void line(Vec3 start, Vec3 end, Float width);
 	void line(Vec2 start, Vec2 end, Float width);
+	void arrow(Engine& engine, Vec3 start, Vec3 end);
+	void rectangle(Engine& engine, Vec2 pos, Vec2 size);
+	void circle(Engine& engine, Vec2 pos, Float radius);
 
 	//text
-	void renderText(String text, Vec2 position, FontStyle font);
+	void renderText(Engine& engine, String text, Vec2 position, FontStyle font);
 
 	//sky
-	void renderSky(Camera& camera);
-	void renderAtmosphere(Player& player, Vec3 sunDirection);
+	void renderSky(Engine& engine, Camera& camera);
+	void renderAtmosphere(Engine& engine, Player& player, Vec3 sunDirection);
 
 	void setWireframeMode();
 	void setColor(Color color);

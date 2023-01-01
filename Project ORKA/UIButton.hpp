@@ -13,6 +13,6 @@ struct UIButton : public UIElement {
 
 	void update(Window& window) override;
 	void inputEvent(Window& window, InputEvent input) override;
-	void render(Window& window, TiledRectangle renderArea) override;
-	void renderInteractive(Window& window, TiledRectangle renderArea) override;
+	void renderInteractive(Engine& engine, Window& window, TiledRectangle renderArea) override;
+	void render(Engine& engine, Window& window, TiledRectangle renderArea) override;
 };

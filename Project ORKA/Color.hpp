@@ -1,4 +1,6 @@
 
+#pragma once
+
 #include "Vectors.hpp"
 #include "Map.hpp"
 #include "Name.hpp"

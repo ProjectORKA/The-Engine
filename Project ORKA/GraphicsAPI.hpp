@@ -1,3 +1,4 @@
+
 #pragma once
 
 #include "Basics.hpp"
@@ -33,6 +34,16 @@ namespace PrimitiveMode {
 		TriangleStrip = GL_TRIANGLE_STRIP
 	};
 }
+
+//debug opengl by simulating state
+#define OPENGLSTATE
+struct OpenGLStateCopy {
+	Int currentDrawFramebuffer = -1;
+	Int currentReadFramebuffer = -1;
+	void print();
+};
+
+extern OpenGLStateCopy openglState;
 
 using Enum = UInt;
 using SizeI = Int;
@@ -81,13 +92,16 @@ void apiNamedFramebufferDrawBuffer(UInt framebufferID);
 void apiTexParameteri(Enum target, Enum name, Int param);
 void apiTexParameterf(Enum target, Enum name, Float param);
 void apiBlendEquationSeparate(Enum modeRGB, Enum modeAlpha);
+void apiBlitFramebuffer(Int width, Int height, Enum filter);
 void apiBindBufferBase(Enum target, UInt index, UInt buffer);
 void apiTexParameterfv(Enum target, Enum name, const Float* param);
 void apiBufferData(Enum target, SizeIPtr size, void* data, Enum usage);
-void apiBlitFramebuffer(Int width, Int height, UInt mask, Enum filter);
+void apiBlitFramebuffer(UInt width, UInt height, UInt mask, UInt filter);
 void apiDebugMessageCallback(GLDEBUGPROC callback, const void* userParam);
 void apiDrawElements(Enum mode, SizeI count, Enum type, const void* indices);
 void apiUniformBlockBinding(UInt programID, UInt uniformBlockIndex, UInt value);
+void apiBlitFramebuffer(UInt srcX, UInt srcY, UInt dstX, UInt dstY, UInt filter);
+void apiBlitFramebuffer(UInt srcX, UInt srcY, UInt dstX, UInt dstY, UInt mask, UInt filter);
 void apiShaderSource(UInt shaderID, SizeI count, const Char* const* string, const Int* length);
 void apiBlendFuncSeparate(Enum sfactorRGB, Enum dfactorRGB, Enum sfactorAlpha, Enum dfactorAlpha);
 void apiDrawElementsInstanced(Enum mode, SizeI size, Enum type, void* data, SizeI primitiveCount);

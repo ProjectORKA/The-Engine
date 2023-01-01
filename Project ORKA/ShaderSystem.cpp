@@ -3,9 +3,8 @@
 
 String uniformName = "/uniforms.glsl";
 
-void ShaderSystem::create() {
-	uniforms.create();
-
+void ShaderSystem::create(Engine & engine) {
+	uniforms.create(engine);
 	loadDefaultShader();
 }
 void ShaderSystem::rebuild()
@@ -22,32 +21,6 @@ void ShaderSystem::destroy() {
 	shaderPrograms.clear();
 	shaderNames.clear();
 	uniforms.destroy();
-}
-void ShaderSystem::add(Name name)
-{
-	shaderPrograms.emplace_back();
-	shaderPrograms.back().create(name, uniforms);
-	currentShaderProgramID = shaderPrograms.size() - 1;
-	shaderNames[name] = currentShaderProgramID;
-}
-Index ShaderSystem::use(Name name)
-{
-	auto it = shaderNames.find(name);
-	if (it != shaderNames.end()) {
-		use(it->second);
-	}
-	else {
-		//try loading the shader
-		add(name);
-		it = shaderNames.find(name);
-		if (it != shaderNames.end()) {
-			use(it->second);
-		}
-		else {
-			logError("Shader could not be found!");
-		}
-	}
-	return currentShaderProgramID;
 }
 void ShaderSystem::loadDefaultShader()
 {
@@ -83,19 +56,45 @@ void main()\n\
 	vertexShader.destroy();
 	fragmentShader.destroy();
 }
-Index ShaderSystem::getShaderID(Name name) {
-	use(name);
-	return currentShaderProgramID;
-}
 Index ShaderSystem::use(Index shaderProgramID)
 {
 	currentShaderProgramID = shaderProgramID;
 	currentShaderProgram().select();
 	return currentShaderProgramID;
 }
+void ShaderSystem::add(Engine engine, Name name)
+{
+	shaderPrograms.emplace_back();
+	shaderPrograms.back().create(engine, name, uniforms);
+	currentShaderProgramID = shaderPrograms.size() - 1;
+	shaderNames[name] = currentShaderProgramID;
+}
+Index ShaderSystem::use(Engine engine, Name name)
+{
+	auto it = shaderNames.find(name);
+	if (it != shaderNames.end()) {
+		use(it->second);
+	}
+	else {
+		//try loading the shader
+		add(engine, name);
+		it = shaderNames.find(name);
+		if (it != shaderNames.end()) {
+			use(it->second);
+		}
+		else {
+			logError("Shader could not be found!");
+		}
+	}
+	return currentShaderProgramID;
+}
 ShaderProgram& ShaderSystem::currentShaderProgram()
 {
 	return shaderPrograms[currentShaderProgramID];
+}
+Index ShaderSystem::getShaderID(Engine& engine, Name name) {
+	use(engine,name);
+	return currentShaderProgramID;
 }
 void ShaderSystem::add(Shader& vertexShader, Shader& fragmentShader, Name name)
 {

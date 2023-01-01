@@ -1,5 +1,5 @@
-#pragma once
 
+#pragma once
 
 template <typename T>
 struct Override {

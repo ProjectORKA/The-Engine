@@ -10,9 +10,13 @@ void Fonts::setFontSize(Float size) {
 }
 
 Fonts::Fonts() {
-	debug.relativeSize = 4;
-	heading.relativeSize = 3;
+	debug.relativeSize = 4.0f;
+	heading.relativeSize = 3.0f;
 	setFontSize(20);
+}
+
+FontStyle::FontStyle(Float absoluteSize) {
+	this->absoluteSize = absoluteSize;
 }
 
 void FontStyle::setSize(Float size) {

@@ -1,3 +1,4 @@
+
 #pragma once
 
 #include "Basics.hpp"
@@ -10,4 +11,5 @@
 //#define DEFAULT_WINDOW_HEIGHT 1080
 #define ONE_METER_CHUNK_LEVEL 39	//at this level 1 unit = 1 meter
 #define CHUNK_USAGE_TICK_COUNT 180	//amount of ticks that a chunk will stay active before it will be deleted (needs to be updated regularly)
+
 extern Float drawDistance;

@@ -3,10 +3,6 @@
 #include "Math.hpp"
 
 void createTexture(UInt channels, DataType dataType, UInt width, UInt height, void* pixels) {
-	
-	
-
-	
 	switch (channels) {
 	case 1:
 		switch (dataType) {
@@ -52,9 +48,9 @@ void GPUTexture::unload() {
 		loaded = false;
 	}
 }
-void GPUTexture::load(Name name) {
+void GPUTexture::load(Engine& engine, Name name) {
 	CPUTexture t;
-	t.load(name);
+	t.load(engine, name);
 	load(t);
 }
 void GPUTexture::resize(Area size)
@@ -72,7 +68,6 @@ void GPUTexture::resize(Area size)
 }
 void GPUTexture::use(Index textureSlot)
 {
-
 	if (loaded) {
 		switch (textureSlot) {
 		case 0:	 apiActiveTexture(GL_TEXTURE0);  break;
@@ -147,13 +142,7 @@ void GPUTexture::load(CPUTexture& cpuTexture) {
 		apiTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrapping);
 		if (wrapping == border) apiTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, glm::value_ptr(Color(0.0f, 0.0f, 0.0f, 1.0f)));
 
-		//set texture filter
-		apiTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, nearFilter);
-		apiTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, farFilter);
-		apiTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY, 1.0f);
-
-		//set up mip mapping
-		if (farFilter == Filter::linearMM || farFilter == Filter::nearestMM) apiGenerateMipmap(GL_TEXTURE_2D);
+		generateMipMaps(nearFilter, farFilter);
 
 		loaded = true;
 	}
@@ -169,9 +158,32 @@ void GPUTexture::load(Vec2 size, Int channels, DataType type) {
 	cpuTexture.channels = channels;
 	cpuTexture.dataType = type;
 	cpuTexture.pixels = nullptr;
-	cpuTexture.nearFilter = Filter::nearest;
-	cpuTexture.farFilter = Filter::nearest;
+	cpuTexture.nearFilter = Filter::linear;
+	cpuTexture.farFilter = Filter::linear;
 	cpuTexture.wrapping = clamped;
 	cpuTexture.loaded = true;
 	load(cpuTexture);
+}
+
+void GPUTexture::generateMipMaps() {
+	//select tecture
+	apiBindTexture(GL_TEXTURE_2D, textureID);
+
+	apiTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	apiTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+
+	//set up mip mapping
+	apiGenerateMipmap(GL_TEXTURE_2D);
+}
+void GPUTexture::generateMipMaps(Int nearFilter, Int farFilter) {
+	//select tecture
+	apiBindTexture(GL_TEXTURE_2D, textureID);
+
+	//set texture filter
+	apiTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, nearFilter);
+	apiTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, farFilter);
+	apiTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY, 1.0f);
+
+	//set up mip mapping
+	apiGenerateMipmap(GL_TEXTURE_2D);
 }

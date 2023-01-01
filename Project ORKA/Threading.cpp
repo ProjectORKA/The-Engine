@@ -2,8 +2,6 @@
 
 void Thread::stop()
 {
-	if (keepThreadRunning) {
-		keepThreadRunning = false;
-	}
-	if(thread.joinable())thread.join();
+	if (thread.joinable())thread.join();
+	else logError("Thread not joinable!");
 }

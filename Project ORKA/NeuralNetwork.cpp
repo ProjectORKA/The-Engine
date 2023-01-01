@@ -47,7 +47,7 @@ void NeuralNet::propagateBackward(Vector<Float> target)
 {
 }
 
-void NeuralNet::render(Vec2 area, Renderer& renderer) {
+void NeuralNet::render(Engine& engine, Vec2 area, Renderer& renderer) {
 	renderer.fill(Color(1, 1, 1, 0.1));
 	//render connections
 	for (UInt layerID = 0; layerID < layerCount()-1; layerID++) {
@@ -64,7 +64,7 @@ void NeuralNet::render(Vec2 area, Renderer& renderer) {
 		for (Int neuronID = 0; neuronID < structure[layerID]; neuronID++) {
 			renderer.uniforms().mMatrix() = matrixFromLocationAndSize(getNeuronPosition(area, layerID, neuronID), 10);
 			renderer.fill(Color(1,1,1,neuronActivation[layerID][neuronID]));
-			renderer.renderMesh("sphere");
+			renderer.renderMesh(engine, "sphere");
 		}
 	}
 }
