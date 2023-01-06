@@ -94,6 +94,7 @@ struct Renderer{
 	//primitives
 	void line(Vec3 start, Vec3 end, Float width);
 	void line(Vec2 start, Vec2 end, Float width);
+	void arrow(Engine& engine, Vec2 start, Vec2 end);
 	void arrow(Engine& engine, Vec3 start, Vec3 end);
 	void rectangle(Engine& engine, Vec2 pos, Vec2 size);
 	void circle(Engine& engine, Vec2 pos, Float radius);
@@ -105,13 +106,16 @@ struct Renderer{
 	void renderSky(Engine& engine, Camera& camera);
 	void renderAtmosphere(Engine& engine, Player& player, Vec3 sunDirection);
 
+	//blending
+	void blendModeAdditive();
+	void setAlphaBlending(Bool blending);
+
 	void setWireframeMode();
 	void setColor(Color color);
 	void pollGraphicsAPIError();
 	void setCulling(Bool isCulling);
 	void setDepthClamp(Bool depthClamp);
 	void setDepthTest(Bool isUsingDepth);
-	void setAlphaBlending(Bool blending);
 	void setWireframeMode(Bool isWireframeMode);
 	void addRenderObject(RenderObjectNames renderObjectNames);
 	

@@ -282,6 +282,8 @@
     <None Include="..\..\..\..\..\..\..\ORKA\Data\shaders\bloom.vert" />
     <None Include="..\..\..\..\..\..\..\ORKA\Data\shaders\bloomDownsample.frag" />
     <None Include="..\..\..\..\..\..\..\ORKA\Data\shaders\bloomDownsample.vert" />
+    <None Include="..\..\..\..\..\..\..\ORKA\Data\shaders\bloomPrefilter.frag" />
+    <None Include="..\..\..\..\..\..\..\ORKA\Data\shaders\bloomPrefilter.vert" />
     <None Include="..\..\..\..\..\..\..\ORKA\Data\shaders\bloomUpsample.frag" />
     <None Include="..\..\..\..\..\..\..\ORKA\Data\shaders\bloomUpsample.vert" />
     <None Include="..\..\..\..\..\..\..\ORKA\Data\shaders\blur.frag" />
@@ -306,6 +308,8 @@
     <None Include="..\..\..\..\..\..\..\ORKA\Data\shaders\idShader.vert" />
     <None Include="..\..\..\..\..\..\..\ORKA\Data\shaders\imageViewer.frag" />
     <None Include="..\..\..\..\..\..\..\ORKA\Data\shaders\imageViewer.vert" />
+    <None Include="..\..\..\..\..\..\..\ORKA\Data\shaders\lastBloomUpsample.frag" />
+    <None Include="..\..\..\..\..\..\..\ORKA\Data\shaders\lastBloomUpsample.vert" />
     <None Include="..\..\..\..\..\..\..\ORKA\Data\shaders\MelonUberShader.frag" />
     <None Include="..\..\..\..\..\..\..\ORKA\Data\shaders\MelonUberShader.vert" />
     <None Include="..\..\..\..\..\..\..\ORKA\Data\shaders\mooncrashVertexColor.frag" />

@@ -21,6 +21,10 @@ void apiClearColor() {
 void apiClearDepth() {
 	glClear(GL_DEPTH_BUFFER_BIT);
 }
+
+void apiEnableBlend() {
+	apiEnable(GL_BLEND);
+}
 void apiEnable(Enum cap) {
 	glEnable(cap);
 }
@@ -81,6 +85,9 @@ void apiDeleteProgram(UInt programID) {
 }
 void apiDeleteVertexArray(UInt arrayID) {
 	glDeleteVertexArrays(1, &arrayID);
+}
+void apiBlendEquation(BlendEquation equation) {
+	glBlendEquation(equation);
 }
 void apiPolygonMode(Enum face, Enum mode) {
 	glPolygonMode(face, mode);

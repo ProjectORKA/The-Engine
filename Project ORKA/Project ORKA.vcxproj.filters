@@ -926,6 +926,18 @@
     <None Include="..\..\..\..\..\..\..\ORKA\Data\shaders\bloomUpsample.vert">
       <Filter>Apps\Orbital Oblivion\Shaders</Filter>
     </None>
+    <None Include="..\..\..\..\..\..\..\ORKA\Data\shaders\lastBloomUpsample.frag">
+      <Filter>Apps\Orbital Oblivion\Shaders</Filter>
+    </None>
+    <None Include="..\..\..\..\..\..\..\ORKA\Data\shaders\lastBloomUpsample.vert">
+      <Filter>Apps\Orbital Oblivion\Shaders</Filter>
+    </None>
+    <None Include="..\..\..\..\..\..\..\ORKA\Data\shaders\bloomPrefilter.vert">
+      <Filter>Apps\Orbital Oblivion\Shaders</Filter>
+    </None>
+    <None Include="..\..\..\..\..\..\..\ORKA\Data\shaders\bloomPrefilter.frag">
+      <Filter>Apps\Orbital Oblivion\Shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Engine">

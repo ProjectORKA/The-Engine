@@ -3,8 +3,7 @@
 
 void OrbitalOblivion::run(Engine& engine) {
 
-	OrbitalOblivionSimulation sim;
-	OrbitalOblivionRenderer game(sim);
+	OrbitalOblivionRenderer game;
 	
 	window("Orbital Oblivion", Area(1920, 1080), true, WindowState::windowed, game, engine);
 
@@ -23,40 +22,17 @@ void OrbitalOblivionRenderer::create(Window& window) {
 	fs.addFrameBuffer("bloom8", pow(0.5,8));
 	fs.addFrameBuffer("bloom9", pow(0.5,9));
 }
-
-OrbitalOblivionRenderer::OrbitalOblivionRenderer(OrbitalOblivionSimulation& sim) {
-	this->sim = &sim;
-}
 void OrbitalOblivionRenderer::inputEvent(Window& window, InputEvent input) {
 	if (input == enter) window.captureCursor();
 	if (input == exit) window.uncaptureCursor();
 	if (input == toogleWireframe) window.renderer.wireframeMode = !window.renderer.wireframeMode;
+	if (input == toggleBloom) bloom = !bloom;
+	if (input == pause) {
+		if (window.renderer.time.paused) window.renderer.time.unpause();
+		else window.renderer.time.pause();
+	}
+	player.inputEvent(window, input);
 }
-void OrbitalOblivionRenderer::render(Engine& engine, Window& window, TiledRectangle area) {
-
-	Renderer& r  = window.renderer;
-
-	r.draw("main");
-
-	r.setWireframeMode(r.wireframeMode);
-
-	r.clearColor(Color(0,0,0,1));
-	r.clearDepth();
-	r.setDepthTest(true);
-	r.setCulling(true);
-	
-	player.update(window);
-	player.render(window);
-
-	r.useTexture(engine, "orbitalOblivionReflection");
-	r.useShader(engine, "orbitalOblivion");
-	r.renderMesh(engine, "unit");
-
-
-	renderBloom(engine, r);
-
-}
-
 void OrbitalOblivionRenderer::renderBloom(Engine& e, Renderer & r) {
 	//get common variables
 	FramebufferSystem& fs = r.framebufferSystem;
@@ -64,99 +40,127 @@ void OrbitalOblivionRenderer::renderBloom(Engine& e, Renderer & r) {
 	//setup rendering
 	r.setDepthTest(false);
 	r.setWireframeMode(false);
+	r.setAlphaBlending(false);
 
-	r.postProcess(e, "bloomDownsample");
+	//prefilter (remove fireflies)
+	r.read("main");
+	fs.currentRead().setAsTexture();
+	r.draw("postProcess");
+	r.fullScreenShader(e, "bloomPrefilter");
 
 	//downsample pass
-	//1
-	//r.read("main");
-	//fs.currentRead().setAsTexture();
-	//r.draw("bloom1");
-	//r.clearColor();
-	//r.fullScreenShader(e, "bloomDownsample");
+	r.read("postProcess");
+	fs.currentRead().setAsTexture();
+	r.draw("bloom1");
+	r.fullScreenShader(e, "bloomDownsample");
 
-	//r.read("bloom1");
-	//fs.currentRead().setAsTexture();
-	//r.draw("bloom2");
-	//r.clearColor();
-	//r.fullScreenShader(e, "bloomDownsample");
+	r.read("bloom1");
+	fs.currentRead().setAsTexture();
+	r.draw("bloom2");
+	r.fullScreenShader(e, "bloomDownsample");
 
-	//r.read("bloom2");
-	//fs.currentRead().setAsTexture();
-	//r.draw("bloom3");
-	//r.clearColor();
-	//r.fullScreenShader(e, "bloomDownsample");
+	r.read("bloom2");
+	fs.currentRead().setAsTexture();
+	r.draw("bloom3");
+	r.fullScreenShader(e, "bloomDownsample");
 
-	//r.read("bloom3");
-	//fs.currentRead().setAsTexture();
-	//r.draw("bloom4");
-	//r.clearColor();
-	//r.fullScreenShader(e, "bloomDownsample");
+	r.read("bloom3");
+	fs.currentRead().setAsTexture();
+	r.draw("bloom4");
+	r.fullScreenShader(e, "bloomDownsample");
 
-	//r.read("bloom4");
-	//fs.currentRead().setAsTexture();
-	//r.draw("bloom5");
-	//r.clearColor();
-	//r.fullScreenShader(e, "bloomDownsample");
+	r.read("bloom4");
+	fs.currentRead().setAsTexture();
+	r.draw("bloom5");
+	r.fullScreenShader(e, "bloomDownsample");
 
-	//r.read("bloom5");
-	//fs.currentRead().setAsTexture();
-	//r.draw("bloom6");
-	//r.clearColor();
-	//r.fullScreenShader(e, "bloomDownsample");
+	r.read("bloom5");
+	fs.currentRead().setAsTexture();
+	r.draw("bloom6");
+	r.fullScreenShader(e, "bloomDownsample");
 
-	//r.read("bloom6");
-	//fs.currentRead().setAsTexture();
-	//r.draw("bloom7");
-	//r.clearColor();
-	//r.fullScreenShader(e, "bloomDownsample");
+	r.read("bloom6");
+	fs.currentRead().setAsTexture();
+	r.draw("bloom7");
+	r.fullScreenShader(e, "bloomDownsample");
 
-	//r.read("bloom7");
-	//fs.currentRead().setAsTexture();
-	//r.draw("bloom8");
-	//r.clearColor();
-	//r.fullScreenShader(e, "bloomDownsample");
+	r.read("bloom7");
+	fs.currentRead().setAsTexture();
+	r.draw("bloom8");
+	r.fullScreenShader(e, "bloomDownsample");
 
 	//r.read("bloom8");
 	//fs.currentRead().setAsTexture();
 	//r.draw("bloom9");
-	//r.clearColor();
 	//r.fullScreenShader(e, "bloomDownsample");
 
-	//fs.setAsTexture("main", 0);
-	//fs.setAsTexture("bloom1", 1);
-	//fs.setAsTexture("bloom2", 1);
-	//fs.setAsTexture("bloom3", 2);
-	//fs.setAsTexture("bloom4", 3);
-	//fs.setAsTexture("bloom5", 4);
-	//fs.setAsTexture("bloom6", 5);
-	//fs.setAsTexture("bloom7", 6);
-	//fs.setAsTexture("bloom8", 7);
-	//fs.setAsTexture("bloom9", 8);
-	//r.draw("main");
+	r.blendModeAdditive();
+
+	//r.read("bloom9");
+	//fs.currentRead().setAsTexture();
+	//r.draw("bloom8");
 	//r.fullScreenShader(e, "bloomUpsample");
 
-	//r.postProcess(e, "bloomDownsample");
+	r.read("bloom8");
+	fs.currentRead().setAsTexture();
+	r.draw("bloom7");
+	r.fullScreenShader(e, "bloomUpsample");
 
-	
-	//r.useShader(e, "bloomDownsample");
-	//r.renderMesh(e, "fullScreenQuad");
+	r.read("bloom7");
+	fs.currentRead().setAsTexture();
+	r.draw("bloom6");
+	r.fullScreenShader(e, "bloomUpsample");
 
+	r.read("bloom6");
+	fs.currentRead().setAsTexture();
+	r.draw("bloom5");
+	r.fullScreenShader(e, "bloomUpsample");
 
+	r.read("bloom5");
+	fs.currentRead().setAsTexture();
+	r.draw("bloom4");
+	r.fullScreenShader(e, "bloomUpsample");
 
+	r.read("bloom4");
+	fs.currentRead().setAsTexture();
+	r.draw("bloom3");
+	r.fullScreenShader(e, "bloomUpsample");
 
-	//r.uniforms().reset();
+	r.read("bloom3");
+	fs.currentRead().setAsTexture();
+	r.draw("bloom2");
+	r.fullScreenShader(e, "bloomUpsample");
 
-	//r.read("postProcess");
-	//r.framebufferSystem.currentRead().setAsTexture(0);
-	//r.draw("main");
-	//r.useShader(e, "texture");
-	//r.renderMesh(e, "fullScreenQuad");
+	r.read("bloom2");
+	fs.currentRead().setAsTexture();
+	r.draw("bloom1");
+	r.fullScreenShader(e, "bloomUpsample");
+
+	r.read("bloom1");
+	fs.currentRead().setAsTexture();
+	r.draw("postProcess");
+	r.fullScreenShader(e, "bloomUpsample");
+
+	r.read("postProcess");
+	fs.currentRead().setAsTexture();
+	r.draw("main");
+	//r.clearColor();
+	r.fullScreenShader(e, "lastBloomUpsample");
+
+	r.postProcess(e, "gammaCorrection");
+
+	//r.screenSpace();
+	//fonts.setFontSize(100);
+	//r.textRenderSystem.render(e, r, toString(mod(r.time.total / 10, 0.2) + 0.8), Vec2(50), fonts.heading);
 };
 
 OOTeam::OOTeam(Index id, Color color) {
 	this->id = id;
 	this->color = color;
+}
+
+OOUnit::OOUnit(Index team) {
+	this->team = team;
 }
 
 OOUnit::OOUnit(Index team, Vec2 location, Vec2 direction) {
@@ -165,12 +169,35 @@ OOUnit::OOUnit(Index team, Vec2 location, Vec2 direction) {
 	this->direction = direction;
 }
 
-OrbitalOblivionSimulation::OrbitalOblivionSimulation() {
-	//create teams
-	teams.emplace_back(0, Color(0, 0.33333333333, 1, 1));
-	teams.emplace_back(1, Color(0.65098039215, 0, 0, 1));
+//overrides update and inputEvent to work
 
-	//create units
-	units.emplace_back(0, Vec2(-1, 0), Vec2(+1, 0));
-	units.emplace_back(1, Vec2(+1, 0), Vec2(-1, 0));
+void OrbitalOblivionPlayer::update(Window& window) {
+	//get frequently used info
+	Float delta = window.renderer.deltaTime();
+
+	//set up temporary data
+	Vec3 movementVector = Vec3(0);
+	Float desiredSpeed = 0;
+
+	//process input
+	if (window.capturing) camera.rotate(window.mouseDelta * MouseMovement(mouseSensitivity));
+	if (window.pressed(forward)) movementVector += camera.forwardVector;
+	if (window.pressed(backward)) movementVector -= camera.forwardVector;
+	if (window.pressed(right)) movementVector += camera.rightVector;
+	if (window.pressed(left)) movementVector -= camera.rightVector;
+	if (window.pressed(up)) movementVector += camera.upVector;
+	if (window.pressed(down)) movementVector -= camera.upVector;
+
+	//calculate movement
+	if (length(movementVector) > 0) {					//if there is movement input
+		desiredSpeed = pow(baseNumber, speedExponent);	//calculate speed
+		movementVector = normalize(movementVector);		//get direction of movement (just direction)
+		movementVector *= desiredSpeed * delta;			//add speed to direction
+		camera.location += movementVector;				//add it to cameras location
+	}
+}
+
+void OrbitalOblivionPlayer::inputEvent(Window& window, InputEvent input) {
+	if (input == faster) speedExponent++;
+	if (input == slower) speedExponent--;
 }
