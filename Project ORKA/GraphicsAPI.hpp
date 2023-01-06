@@ -9,6 +9,33 @@
 #define GLEW_STATIC
 #include "GL/glew.h"
 
+enum BlendEquation : int {
+	add = GL_FUNC_ADD,
+	subtract = GL_FUNC_SUBTRACT,
+	reverse_subtract = GL_FUNC_REVERSE_SUBTRACT,
+	minimum = GL_MIN,
+	maximum = GL_MAX,
+};
+
+enum BlendFunction : int {
+	one = GL_ONE,
+	zero = GL_ZERO,
+	srcColor = GL_SRC_COLOR,
+	dstColor = GL_DST_COLOR,
+	srcAlpha = GL_SRC_ALPHA,
+	dstAlpha = GL_DST_ALPHA,
+	constantColor = GL_CONSTANT_COLOR,
+	constantAlpha = GL_CONSTANT_ALPHA,
+	srcAlphaSaturate = GL_SRC_ALPHA_SATURATE,
+
+	oneMinusSrcColor = GL_ONE_MINUS_SRC_COLOR,
+	oneMinusDstColor = GL_ONE_MINUS_DST_COLOR,
+	oneMinusSrcAlpha = GL_ONE_MINUS_SRC_ALPHA,
+	oneMinusDstAlpha = GL_ONE_MINUS_DST_ALPHA,
+	oneMinusConstantColor = GL_ONE_MINUS_CONSTANT_COLOR,
+	oneMinusConstantAlpha = GL_ONE_MINUS_CONSTANT_ALPHA,
+};
+
 enum ShaderType : int {
 	vertex = GL_VERTEX_SHADER,
 	compute = GL_COMPUTE_SHADER,
@@ -51,6 +78,7 @@ using SizeIPtr = __int64;
 
 void apiClearColor();
 void apiClearDepth();
+void apiEnableBlend();
 Bool apiGetCullFace();
 void apiEnable(Enum cap);
 void apiDisable(Enum cap);
@@ -73,6 +101,7 @@ void apiBindVertexArray(UInt arrayID);
 void apiDeleteProgram(UInt programID);
 void apiDeleteVertexArray(UInt arrayID);
 void apiPolygonMode(Enum face, Enum mode);
+void apiBlendEquation(BlendEquation equation);
 void apiUniform1i(Int location, Int value);
 void apiGenFramebuffer(UInt& framebufferID);
 void apiEnableVertexAttribArray(UInt index);

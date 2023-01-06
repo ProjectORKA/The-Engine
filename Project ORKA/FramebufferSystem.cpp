@@ -70,7 +70,7 @@ void FramebufferSystem::read(Renderer& renderer, Name name) {
 }
 void FramebufferSystem::create(Renderer& renderer, Area size) {
 	//gbuffer
-	addGbuffer("main");
+	addGbuffer("main", 1);
 	addGbuffer("postProcess");
 }
 void  FramebufferSystem::read(Renderer& renderer, Index framebufferIndex) {

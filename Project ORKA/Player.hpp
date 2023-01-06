@@ -31,7 +31,7 @@ struct Player {
 
 struct DebugPlayer : public Player {
 	//speed is calculated exponentially which is perfect for debugging purposes 
-	//you can zoom around at lightspeed or be slow as a snake
+	//you can zoom around at lightspeed or be slow as a snail
 	Int speedExponent = 0; //how fast are we going
 	Float baseNumber = 1.2; //how much does speed change
 
