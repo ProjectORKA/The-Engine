@@ -6,18 +6,16 @@
 #include "Player.hpp"
 #include "Input.hpp"
 #include "Random.hpp"
+#include "Velox_Vector.hpp"
 
 #define ORBITAL_OBLIVION_PLAYFIELD_SIZE 500
 
 struct OOPlanet {
 	Vec2 location;
 
-	void render(Renderer& r) {
-		r.uniforms().mMatrix(matrixFromLocationAndSize(location, 10));
-		r.rerenderMesh();
-	};
+	void render(Renderer& r);
 };
-struct OOWhale {};
+
 struct OrbitalOblivionPlayer : public DebugPlayer {
 	bool debugMode = true;
 
@@ -48,67 +46,11 @@ struct OOUnit {
 	Vec2 target = randomVec2(ORBITAL_OBLIVION_PLAYFIELD_SIZE);
 
 	OOUnit(Index team);
-	void updatePosition() {
-		location = location + direction * speed;
-	}
+	void updatePosition();
+	void render(Engine& engine, Renderer& r);
 	OOUnit(Index team, Vec2 location, Vec2 direction);
-
-	OOPlanet& getClosestPlanet(Vector<OOPlanet>& planets) {
-
-		Float shortestDistance = 10000000000000000000;
-		OOPlanet * current = &planets[0];
-
-		for (OOPlanet& p : planets) {
-			Float dist = distance(location, p.location);
-			if (dist < shortestDistance) {
-				current = &p;
-				shortestDistance = dist;
-			}
-		}
-
-		return *current;
-	}
-
-	void render(Engine& engine, Renderer& r) {
-		r.uniforms().mMatrix(matrixFromPositionAndDirection(location, -direction));
-		r.renderMesh(engine, "unit");
-		//r.arrow(engine, location, location + direction);
-	}
-	void updateDirection(Vector<OOUnit>& neighbours, Vector<OOPlanet>& planets) {
-
-		Int count = 1;
-
-		target = getClosestPlanet(planets).location;
-
-		Vec2 targetDelta = vectorFromAToB(location, target);
-
-		Vec2 influence = direction + targetDelta;
-
-		for (OOPlanet& p : planets) {
-			Vec2 delta = vectorFromAToB(p.location, location);
-			Float distance = length(delta);
-			Float factor = (viewDistance * 800) / (distance * distance);
-
-			influence += Vec2(factor) * normalize(delta);
-		}
-
-
-
-		for (OOUnit& n : neighbours) {
-
-			Vec2 delta = vectorFromAToB(n.location, location);
-			Float distance = length(delta);
-			//if (distance > viewDistance)
-			if(distance == 0) continue;
-
-			Float factor = viewDistance / (distance * distance);
-
-			influence += Vec2(factor / 2) * n.direction;
-			influence += Vec2(factor * 2) * normalize(delta);
-		}
-
-		direction = normalize(direction + Vec2(turnrate) * normalize(influence));
-	}
+	OOPlanet& getClosestPlanet(Vector<OOPlanet>& planets);
+	void updateDirection(Vector<OOUnit>& neighbours, Vector<OOPlanet>& planets);
 };
 
 struct OrbitalOblivionSimulation : GameSimulation {
@@ -140,7 +82,7 @@ struct OrbitalOblivionSimulation : GameSimulation {
 		}
 
 		//create units
-		for (UInt i = 0; i < 10000; i++) {
+		for (UInt i = 0; i < 1000; i++) {
 			units.emplace_back(0);
 			units.emplace_back(1);
 		}
@@ -165,48 +107,19 @@ struct OrbitalOblivionRenderer : GameRenderer {
 	OrbitalOblivionPlayer player;
 	OrbitalOblivionSimulation sim;
 
+	GPUMesh * unitMesh;
+
 	InputEvent enter = InputEvent(InputType::Mouse, LMB, 1);
 	InputEvent exit = InputEvent(InputType::Mouse, RMB, 0);
 	InputEvent toogleWireframe = InputEvent(InputType::KeyBoard, F, 1);
 	InputEvent toggleBloom = InputEvent(InputType::KeyBoard, T, 1);
 	InputEvent pause = InputEvent(InputType::KeyBoard, P, 1);
 
-	void create(Window& window)override;
+	void update(Window& window) override;
 	void renderBloom(Engine& e, Renderer& r);
+	void create(Engine& engine, Window& window)override;
 	void inputEvent(Window& window, InputEvent input) override;
-	void update(Window& window) override {
-		sim.update(window.renderer);
-	}
-	void render(Engine& e, Window& window, TiledRectangle area) override {
-
-		Renderer& r = window.renderer;
-
-		r.draw("main");
-
-		r.setWireframeMode(r.wireframeMode);
-
-		r.clearColor(Color(0, 0, 0, 1));
-		r.clearDepth();
-		r.setDepthTest(true);
-		r.setCulling(true);
-
-		player.update(window);
-		player.render(window);
-
-		r.useTexture(e, "orbitalOblivionReflection");
-		r.useShader(e, "orbitalOblivion");
-		for (OOUnit& u : sim.units) {
-			u.render(e, r);
-		}
-
-		r.useMesh(e, "sphere");
-		for (OOPlanet& p : sim.planets) {
-			p.render(r);
-		}
-
-		if (bloom)renderBloom(e, r);
-
-	}
+	void render(Engine& e, Window& window, TiledRectangle area) override;
 };
 
 struct OrbitalOblivion {

@@ -19,7 +19,7 @@ void windowThread(Engine& engine, Window& window)
 	renderer.create(engine, window.getContentSize());		//also needs to be in this thread
 	window.updateWindowState();
 
-	if (window.content)window.content->create(window);
+	if (window.content)window.content->create(engine, window);
 
 	if (window.windowState == WindowState::windowed) window.centerWindow();
 	if (window.windowState == WindowState::windowed || window.windowState == WindowState::maximized) window.updateDecorations();

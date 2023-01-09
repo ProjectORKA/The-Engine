@@ -41,9 +41,9 @@ struct UIElement {
 	~UIElement();
 	UIElement& padding(U16 width);
 
-	virtual void create(Window& window) {};
 	virtual void update(Window& window) {};
 	virtual void destroy(Window& window) {};
+	virtual void create(Engine& engine, Window& window) {};
 	virtual void inputEvent(Window& window, InputEvent input) {};
 	virtual void render(Engine& engine, Window& window, TiledRectangle area) {};
 	virtual void renderInteractive(Engine& engine, Window& window, TiledRectangle area) { OPTICK_EVENT(); };

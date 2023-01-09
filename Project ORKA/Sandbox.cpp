@@ -8,7 +8,7 @@ Sandbox::Sandbox(SandboxSimulation& sim) {
 	simulation = &sim;
 }
 
-void Sandbox::create(Window& window) {
+void Sandbox::create(Engine& engine, Window& window) {
 	//Input & input = window.input;
 	////setup keymap
 	//input.add("forward", ButtonType::Key, Key::W);

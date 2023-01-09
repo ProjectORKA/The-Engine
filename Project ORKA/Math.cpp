@@ -362,8 +362,8 @@ Matrix matrixFromLocationAndSize2D(Vec2 pos, Vec2 size) {
 }
 Matrix matrixFromPositionAndDirection(Vec2 pos, Vec2 dir) {
 	Matrix m(1);
-	m[0] = Vec4(-dir.y, dir.x, 0, 0);
-	m[1] = Vec4(-dir.x, -dir.y, 0, 0);
+	m[0] = Vec4(dir.y, -dir.x, 0, 0);
+	m[1] = Vec4(dir.x, dir.y, 0, 0);
 	m[2] = Vec4(0, 0, 1, 0);
 	m[3] = Vec4(pos.x, pos.y, 0, 1);
 	return m;
