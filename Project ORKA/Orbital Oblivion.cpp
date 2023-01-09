@@ -10,7 +10,7 @@ void OrbitalOblivion::run(Engine& engine) {
 	ui.run();
 }
 
-void OrbitalOblivionRenderer::create(Window& window) {
+void OrbitalOblivionRenderer::create(Engine & engine, Window& window) {
 	FramebufferSystem& fs = window.renderer.framebufferSystem;
 	fs.addFrameBuffer("bloom1", pow(0.5,1));
 	fs.addFrameBuffer("bloom2", pow(0.5,2));
@@ -21,6 +21,9 @@ void OrbitalOblivionRenderer::create(Window& window) {
 	fs.addFrameBuffer("bloom7", pow(0.5,7));
 	fs.addFrameBuffer("bloom8", pow(0.5,8));
 	fs.addFrameBuffer("bloom9", pow(0.5,9));
+	window.renderer.meshSystem.use(engine, "unit");
+	unitMesh = &window.renderer.meshSystem.currentMesh();
+
 }
 void OrbitalOblivionRenderer::inputEvent(Window& window, InputEvent input) {
 	if (input == enter) window.captureCursor();
@@ -32,6 +35,46 @@ void OrbitalOblivionRenderer::inputEvent(Window& window, InputEvent input) {
 		else window.renderer.time.pause();
 	}
 	player.inputEvent(window, input);
+}
+void OrbitalOblivionRenderer::update(Window& window) {
+	sim.update(window.renderer);
+}
+void OrbitalOblivionRenderer::render(Engine& e, Window& window, TiledRectangle area) {
+
+	Renderer& r = window.renderer;
+
+	r.draw("main");
+
+	r.setWireframeMode(r.wireframeMode);
+
+	r.clearColor(Color(0, 0, 0, 1));
+	r.clearDepth();
+	r.setDepthTest(true);
+	r.setCulling(true);
+
+	player.update(window);
+	player.render(window);
+
+	r.useTexture(e, "orbitalOblivionReflection");
+	r.useShader(e, "orbitalOblivion");
+	r.matrixSystem.modelMatrixArray.resize(sim.units.size());
+	for (Int i = 0; i < sim.units.size(); i++) {
+		r.matrixSystem.modelMatrixArray[i] = matrixFromPositionAndDirection(sim.units[i].location, sim.units[i].direction);
+	}
+	r.renderMeshInstanced(e, "unit");
+
+	r.useMesh(e, "sphere");
+	for (OOPlanet& p : sim.planets) {
+		p.render(r);
+	}
+
+	if (bloom)renderBloom(e, r);
+
+
+	r.setWireframeMode(false);
+	r.screenSpace();
+	fonts.setFontSize(16);
+	r.textRenderSystem.render(e, r, toString(1 / r.time.delta), Vec2(50), fonts.heading);
 }
 void OrbitalOblivionRenderer::renderBloom(Engine& e, Renderer & r) {
 	//get common variables
@@ -163,10 +206,69 @@ OOUnit::OOUnit(Index team) {
 	this->team = team;
 }
 
+void OOUnit::updatePosition() {
+	location = location + direction * speed;
+}
+
 OOUnit::OOUnit(Index team, Vec2 location, Vec2 direction) {
 	this->team = team;
 	this->location = location;
 	this->direction = direction;
+}
+
+OOPlanet& OOUnit::getClosestPlanet(Vector<OOPlanet>& planets) {
+
+	Float shortestDistance = 10000000000000000000;
+	OOPlanet* current = &planets[0];
+
+	for (OOPlanet& p : planets) {
+		Float dist = distance(location, p.location);
+		if (dist < shortestDistance) {
+			current = &p;
+			shortestDistance = dist;
+		}
+	}
+
+	return *current;
+}
+
+void OOUnit::render(Engine& engine, Renderer& r) {
+	r.uniforms().mMatrix(matrixFromPositionAndDirection(location, direction));
+	r.renderMesh(engine, "unit");
+}
+
+void OOUnit::updateDirection(Vector<OOUnit>& neighbours, Vector<OOPlanet>& planets) {
+
+	Int count = 1;
+
+	target = getClosestPlanet(planets).location;
+
+	Vec2 targetDelta = vectorFromAToB(location, target);
+
+	Vec2 influence = direction + targetDelta;
+
+	for (OOPlanet& p : planets) {
+		Vec2 delta = vectorFromAToB(p.location, location);
+		Float distance = length(delta);
+		Float factor = (viewDistance * 800) / (distance * distance);
+
+		influence += Vec2(factor) * normalize(delta);
+	}
+
+	for (OOUnit& n : neighbours) {
+
+		Vec2 delta = vectorFromAToB(n.location, location);
+		Float distance = length(delta);
+		//if (distance > viewDistance)
+		if (distance == 0) continue;
+
+		Float factor = viewDistance / (distance * distance);
+
+		influence += Vec2(factor / 2) * n.direction;
+		influence += Vec2(factor * 2) * normalize(delta);
+	}
+
+	direction = normalize(direction + Vec2(turnrate) * normalize(influence));
 }
 
 //overrides update and inputEvent to work
@@ -200,4 +302,9 @@ void OrbitalOblivionPlayer::update(Window& window) {
 void OrbitalOblivionPlayer::inputEvent(Window& window, InputEvent input) {
 	if (input == faster) speedExponent++;
 	if (input == slower) speedExponent--;
+}
+
+void OOPlanet::render(Renderer& r) {
+	r.uniforms().mMatrix(matrixFromLocationAndSize(location, 10));
+	r.rerenderMesh();
 }

@@ -86,9 +86,6 @@ void apiDeleteProgram(UInt programID) {
 void apiDeleteVertexArray(UInt arrayID) {
 	glDeleteVertexArrays(1, &arrayID);
 }
-void apiBlendEquation(BlendEquation equation) {
-	glBlendEquation(equation);
-}
 void apiPolygonMode(Enum face, Enum mode) {
 	glPolygonMode(face, mode);
 }
@@ -112,6 +109,9 @@ void apiDeleteFramebuffer(UInt framebufferID) {
 }
 void apiBlendFunc(Enum sfactor, Enum dfactor) {
 	glBlendFunc(sfactor, dfactor);
+}
+void apiBlendEquation(BlendEquation equation) {
+	glBlendEquation(equation);
 }
 void apiBindBuffer(Enum target, UInt bufferID) {
 	glBindBuffer(target, bufferID);
@@ -160,6 +160,9 @@ void apiAttachShader(UInt programID, UInt shaderID) {
 }
 void apiDetachShader(UInt programID, UInt shaderID) {
 	glDetachShader(programID, shaderID);
+}
+void apiVertexAttribDivisor(UInt index, UInt divisor) {
+	glVertexAttribDivisor(index, divisor);
 }
 void apiNamedFramebufferDrawBuffer(UInt framebufferID) {
 

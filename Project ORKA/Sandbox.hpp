@@ -31,7 +31,7 @@ struct Sandbox : public GameRenderer {
 	SandboxSimulation * simulation = nullptr;
 
 	Sandbox(SandboxSimulation& sim);
-	void create(Window& window) override;
 	void update(Window& window) override;
-	void render(Engine & engine, Window& window, TiledRectangle area) override;
+	void create(Engine& engine, Window& window) override;
+	void render(Engine& engine, Window& window, TiledRectangle area) override;
 };
