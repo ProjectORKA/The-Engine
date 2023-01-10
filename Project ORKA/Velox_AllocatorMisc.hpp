@@ -20,8 +20,8 @@ struct AllocTraits
 template<typename T>
 concept AllocConcept = requires(T t, usize sz, usize al, void* ptr) {
     typename T::Traits;
-    { t.AllocateBytes(sz, al) };
-    { t.FreeMemory(ptr) };
+    { t.allocateBytes(sz, al) };
+    { t.freeMemory(ptr) };
 };
 
 TRE_NS_END

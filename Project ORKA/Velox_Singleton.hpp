@@ -21,10 +21,10 @@ protected:
 
 
 public:
-	static T& Instance()
+	static T& instance()
 	{
-		static T Instance;
-		return Instance;
+		static T instance;
+		return instance;
 	}
 };
 

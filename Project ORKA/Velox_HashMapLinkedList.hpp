@@ -34,68 +34,68 @@ struct LinkedListItr
     {
     }
 
-    FORCEINLINE iterator Iterator() const
+    FORCEINLINE iterator iterator() const
     {
         return { block, index };
     }
 
-    FORCEINLINE uint32 IndexInBlock() const
+    FORCEINLINE uint32 indexInBlock() const
     {
         return index % BLOCK_SIZE;
     }
 
-    FORCEINLINE bool IsDirectHit() const
+    FORCEINLINE bool isDirectHit() const
     {
-        return (this->GetMetadata() & Constants::BITS_FOR_DIRECT_HIT) == Constants::MAGIC_FOR_DIRECT_HIT;
+        return (this->getMetadata() & Constants::BITS_FOR_DIRECT_HIT) == Constants::MAGIC_FOR_DIRECT_HIT;
     }
 
-    FORCEINLINE bool IsEmpty() const
+    FORCEINLINE bool isEmpty() const
     {
-        return this->GetMetadata() == Constants::MAGIC_FOR_EMPTY;
+        return this->getMetadata() == Constants::MAGIC_FOR_EMPTY;
     }
 
-    FORCEINLINE bool HasNext() const
+    FORCEINLINE bool hasNext() const
     {
-        return this->JumpIndex() != 0;
+        return this->jumpIndex() != 0;
     }
 
-    FORCEINLINE uint8 JumpIndex() const
+    FORCEINLINE uint8 jumpIndex() const
     {
-        return Constants::DistanceFromMetadata(this->GetMetadata());
+        return Constants::distanceFromMetadata(this->getMetadata());
     }
 
-    FORCEINLINE uint8 GetMetadata() const
+    FORCEINLINE uint8 getMetadata() const
     {
-        return block->controlBytes[this->IndexInBlock()];
+        return block->controlBytes[this->indexInBlock()];
     }
 
-    FORCEINLINE void SetMetadata(uint8 metadata)
+    FORCEINLINE void setMetadata(uint8 metadata)
     {
-        block->controlBytes[this->IndexInBlock()] = metadata;
+        block->controlBytes[this->indexInBlock()] = metadata;
     }
 
-    FORCEINLINE LinkedListItr Next(HashMapType& table) const
+    FORCEINLINE LinkedListItr next(HashMapType& table) const
     {
-        uint8 distance = this->JumpIndex();
-        usize nextIdx = table.m_HashPolicy.KeepInRange(index + Constants::JUMP_DISTANCES[distance], table.m_SlotsCount);
+        uint8 distance = this->jumpIndex();
+        usize nextIdx = table.m_HashPolicy.keepInRange(index + Constants::JUMP_DISTANCES[distance], table.m_SlotsCount);
         return { nextIdx, table.m_Entries + nextIdx / BLOCK_SIZE };
     }
 
-    FORCEINLINE void SetNext(uint8 jumpIdx)
+    FORCEINLINE void setNext(uint8 jumpIdx)
     {
-        uint8& metadata = block->controlBytes[this->IndexInBlock()];
+        uint8& metadata = block->controlBytes[this->indexInBlock()];
         metadata = (metadata & ~Constants::BITS_FOR_DISTANCE) | jumpIdx;
     }
 
-    FORCEINLINE void ClearNext()
+    FORCEINLINE void clearNext()
     {
-        this->SetNext(0);
+        this->setNext(0);
     }
 
     FORCEINLINE value_type& operator*() const
     {
-        usize idx = this->IndexInBlock();
-        value_type* pair = block->GetPair(idx);
+        usize idx = this->indexInBlock();
+        value_type* pair = block->getPair(idx);
         return *pair;
     }
 

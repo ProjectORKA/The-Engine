@@ -37,19 +37,19 @@ public:
 
     constexpr FORCEINLINE BasicStringView& operator=(BasicStringView&& other) noexcept = default;
 
-    constexpr FORCEINLINE BasicStringView SubString(usize start, usize end) const noexcept;
+    constexpr FORCEINLINE BasicStringView subString(usize start, usize end) const noexcept;
 
-    constexpr FORCEINLINE bool StartsWith(const T* str, usize sz = 0) const noexcept;
+    constexpr FORCEINLINE bool startsWith(const T* str, usize sz = 0) const noexcept;
 
-    constexpr FORCEINLINE bool StartsWith(const BasicStringView& str) const noexcept;
+    constexpr FORCEINLINE bool startsWith(const BasicStringView& str) const noexcept;
 
-    constexpr FORCEINLINE bool EndsWith(const T* str, usize sz = 0) const noexcept;
+    constexpr FORCEINLINE bool endsWith(const T* str, usize sz = 0) const noexcept;
 
-    constexpr FORCEINLINE bool EndsWith(const BasicStringView& str) const noexcept;
+    constexpr FORCEINLINE bool endsWith(const BasicStringView& str) const noexcept;
 
-    constexpr FORCEINLINE usize Find(const T* str, usize sz = 0) const noexcept;
+    constexpr FORCEINLINE usize find(const T* str, usize sz = 0) const noexcept;
 
-    constexpr FORCEINLINE usize Find(const BasicStringView& str) const noexcept;
+    constexpr FORCEINLINE usize find(const BasicStringView& str) const noexcept;
 };
 
 template<typename T>
@@ -61,7 +61,7 @@ constexpr FORCEINLINE BasicStringView<T>::BasicStringView(T* data, usize size) n
 
 template<typename T>
 constexpr FORCEINLINE BasicStringView<T>::BasicStringView(const BasicString<T>& str) noexcept
-    : BasicStringView(str.Data(), str.Size())
+    : BasicStringView(str.data(), str.size())
 {
 
 }
@@ -75,58 +75,58 @@ constexpr FORCEINLINE BasicStringView<T>::BasicStringView(const T(&str)[S]) noex
 }
 
 template<typename T>
-constexpr FORCEINLINE BasicStringView<T> BasicStringView<T>::SubString(usize index, usize count) const noexcept
+constexpr FORCEINLINE BasicStringView<T> BasicStringView<T>::subString(usize index, usize count) const noexcept
 {
-    return this->SubArray(index, count);
+    return this->subArray(index, count);
 }
 
 template<typename T>
-constexpr FORCEINLINE bool BasicStringView<T>::StartsWith(const T* str, usize sz) const noexcept
+constexpr FORCEINLINE bool BasicStringView<T>::startsWith(const T* str, usize sz) const noexcept
 {
     if (str != nullptr && sz == 0)
-        sz = Utils::Strlen(str);
+        sz = Utils::strlen(str);
 
     if (sz > this->m_Size)
         return false;
 
-    return Utils::MemCmp(this->m_Data, str, sz);
+    return Utils::memCmp(this->m_Data, str, sz);
 }
 
 template<typename T>
-constexpr FORCEINLINE bool BasicStringView<T>::StartsWith(const BasicStringView& str) const noexcept
+constexpr FORCEINLINE bool BasicStringView<T>::startsWith(const BasicStringView& str) const noexcept
 {
-    return this->StartsWith(str.m_Data, str.m_Size);
+    return this->startsWith(str.m_Data, str.m_Size);
 }
 
 template<typename T>
-constexpr FORCEINLINE bool BasicStringView<T>::EndsWith(const T* str, usize sz) const noexcept
+constexpr FORCEINLINE bool BasicStringView<T>::endsWith(const T* str, usize sz) const noexcept
 {
     if (str != nullptr && sz == 0)
-        sz = Utils::Strlen(str);
+        sz = Utils::strlen(str);
 
     if (sz > this->m_Size)
         return false;
 
-    return Utils::MemCmp(this->m_Data + this->m_Size - sz, str, sz);
+    return Utils::memCmp(this->m_Data + this->m_Size - sz, str, sz);
 }
 
 template<typename T>
-constexpr FORCEINLINE bool BasicStringView<T>::EndsWith(const BasicStringView& str) const noexcept
+constexpr FORCEINLINE bool BasicStringView<T>::endsWith(const BasicStringView& str) const noexcept
 {
-    return this->EndsWith(str.m_Data, str.m_Size);
+    return this->endsWith(str.m_Data, str.m_Size);
 }
 
 template<typename T>
-constexpr FORCEINLINE usize BasicStringView<T>::Find(const T* str, usize sz) const noexcept
+constexpr FORCEINLINE usize BasicStringView<T>::find(const T* str, usize sz) const noexcept
 {
     // TODO : Implement this
     return std::numeric_limits<usize>::max();
 }
 
 template<typename T>
-constexpr FORCEINLINE usize BasicStringView<T>::Find(const BasicStringView& str) const noexcept
+constexpr FORCEINLINE usize BasicStringView<T>::find(const BasicStringView& str) const noexcept
 {
-    return this->Find(str.m_Data, str.m_Size);
+    return this->find(str.m_Data, str.m_Size);
 }
 
 using StringView = BasicStringView<char>;

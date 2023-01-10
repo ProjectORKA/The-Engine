@@ -17,39 +17,39 @@ public:
     using Traits = AllocTraits<true, 0>;
 
 public:
-    FORCEINLINE void* AllocateBytes(usize sz, usize al = 1)
+    FORCEINLINE void* allocateBytes(usize sz, usize al = 1)
     {
         // FIXME : this is a temp hack
         if (al == 1)
-            return Utils::AllocateBytes(sz);
-        return Utils::AllocateBytes(sz, al);
+            return Utils::allocateBytes(sz);
+        return Utils::allocateBytes(sz, al);
     }
 
     template<typename T>
-    FORCEINLINE T* Allocate(usize count)
+    FORCEINLINE T* allocate(usize count)
     {
-        void* data = this->AllocateBytes(sizeof(T) * count);
+        void* data = this->allocateBytes(sizeof(T) * count);
         return static_cast<T*>(data);
     }
 
-    FORCEINLINE void* ReallocateBytes(void* ptr, usize sz, usize al = 1)
+    FORCEINLINE void* reallocateBytes(void* ptr, usize sz, usize al = 1)
     {
-        return this->AllocateBytes(sz, al);
+        return this->allocateBytes(sz, al);
     }
 
     template<typename T>
-    FORCEINLINE T* Reallocate(T* ptr, usize count)
+    FORCEINLINE T* reallocate(T* ptr, usize count)
     {
-        void* data = this->AllocateBytes(sizeof(T) * count);
+        void* data = this->allocateBytes(sizeof(T) * count);
         return static_cast<T*>(data);
     }
 
-    FORCEINLINE void FreeMemory(void* ptr) noexcept
+    FORCEINLINE void freeMemory(void* ptr) noexcept
     {
-        return Utils::FreeMemory(ptr);
+        return Utils::freeMemory(ptr);
     }
 
-    constexpr FORCEINLINE friend void Swap(GenericAllocator& /*first*/, GenericAllocator& /*second*/) noexcept
+    constexpr FORCEINLINE friend void swap(GenericAllocator& /*first*/, GenericAllocator& /*second*/) noexcept
     {
 
     }

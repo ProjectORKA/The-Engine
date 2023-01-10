@@ -12,7 +12,7 @@ TRE_NS_START
 namespace Utils
 {
     template<typename T>
-    constexpr usize Strlen(const T* str)
+    constexpr usize strlen(const T* str)
     {
         usize size = 0;
         while (*str) {
