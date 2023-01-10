@@ -37,6 +37,6 @@ void GPUFont::load() {
 }
 
 GlyphTextRenderSystem::GlyphTextRenderSystem() {
-	fonts.emplace_back();
-	fonts.back().load();
+	fonts.emplaceBack();
+	fonts.last().load();
 }

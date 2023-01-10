@@ -64,8 +64,8 @@ Index ShaderSystem::use(Index shaderProgramID)
 }
 void ShaderSystem::add(Engine engine, Name name)
 {
-	shaderPrograms.emplace_back();
-	shaderPrograms.back().create(engine, name, uniforms);
+	shaderPrograms.emplaceBack();
+	shaderPrograms.last().create(engine, name, uniforms);
 	currentShaderProgramID = shaderPrograms.size() - 1;
 	shaderNames[name] = currentShaderProgramID;
 }
@@ -98,8 +98,8 @@ Index ShaderSystem::getShaderID(Engine& engine, Name name) {
 }
 void ShaderSystem::add(Shader& vertexShader, Shader& fragmentShader, Name name)
 {
-	shaderPrograms.emplace_back();
-	shaderPrograms.back().create(vertexShader, fragmentShader, uniforms);
+	shaderPrograms.emplaceBack();
+	shaderPrograms.last().create(vertexShader, fragmentShader, uniforms);
 	currentShaderProgramID = shaderPrograms.size() - 1;
 	shaderNames[name] = currentShaderProgramID;
 }

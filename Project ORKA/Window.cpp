@@ -398,8 +398,8 @@ void whenFilesDroppedOnWindow(APIWindow apiWindow, Int count, const Char** dropp
 	Vector<Path> paths;
 
 	for (Int i = 0; i < count; i++) {
-		paths.push_back(droppedPaths[i]);
-		logDebug(String("File dropped: ").append(paths.back().string()));
+		paths.pushBack(droppedPaths[i]);
+		logDebug(String("File dropped: ").append(paths.last().string()));
 	}
 
 	window.droppedFilePaths = paths;

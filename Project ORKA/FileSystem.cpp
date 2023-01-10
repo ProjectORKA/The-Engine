@@ -65,14 +65,14 @@ void copyFile(Path source, Path destination) {
 Vector<Path> getAllPathsInDirectory(Path path) {
 	Vector<Path> paths;
 	for (const auto& file : std::filesystem::recursive_directory_iterator(path)) {
-		paths.push_back(file.path());
+		paths.pushBack(file.path());
 	}
 	return paths;
 }
 Vector<Path> getAllFilesInDirectory(Path path) {
 	Vector<Path> paths;
 	for (const auto& file : std::filesystem::recursive_directory_iterator(path)) {
-		if (file.is_regular_file()) paths.push_back(file.path());
+		if (file.is_regular_file()) paths.pushBack(file.path());
 	}
 	return paths;
 }
@@ -116,7 +116,7 @@ Vector<Path> getAllFilesInDirectory(Path path, Vector<String> filter) {
 		for (String& fileType : filter) {
 
 			if (file.path().extension() == fileType) {
-				paths.push_back(file.path());
+				paths.pushBack(file.path());
 				break;
 			}
 		}

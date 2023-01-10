@@ -49,7 +49,7 @@ void MeshSystem::addMesh(CPUMesh cpuMesh) {
 	if (cpuMesh.loaded) {
 		GPUMesh gpuMesh;
 		gpuMesh.upload(cpuMesh);
-		gpuMeshes.push_back(gpuMesh);
+		gpuMeshes.pushBack(gpuMesh);
 		use(gpuMeshes.size() - 1);
 		meshNames.add(cpuMesh.name, currentMeshID);
 	}
@@ -115,8 +115,8 @@ GPUMesh& MeshSystem::currentMesh()
 }
 
 void NameTable::add(Name name, Index id) {
-	names.push_back(name);
-	indices.push_back(id);
+	names.pushBack(name);
+	indices.pushBack(id);
 }
 Bool NameTable::find(Name name, Index& id) {
 	id = -1;

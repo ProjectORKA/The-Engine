@@ -82,9 +82,10 @@ using Mutex = std::shared_mutex;
 template<typename T>
 using List = std::list<T>;
 
-#include <vector>
+#include "Velox_Vector.hpp"
 template<typename T>
-using Vector = std::vector<T>;
+using Vector = TRE::Vector<T>;
+//using Vector = std::vector<T>;
 
 #include <set>
 template<typename T>
