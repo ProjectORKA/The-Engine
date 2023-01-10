@@ -8,8 +8,6 @@
 #include "Velox_Common.hpp"
 #include "Velox_MathUtils.hpp"
 
-TRE_NS_START
-
 struct FibonacciHashPolicy
 {
     usize indexForHash(usize hash, usize /*slotsCount*/) const noexcept
@@ -69,5 +67,3 @@ struct PowerOfTwoHashPolicy
     {
     }
 };
-
-TRE_NS_END

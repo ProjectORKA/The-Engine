@@ -7,8 +7,6 @@
 
 #include "Velox_Common.hpp"
 
-TRE_NS_START
-
 namespace Utils
 {
     template<typename T>
@@ -22,5 +20,3 @@ namespace Utils
         return size;
     }
 }
-
-TRE_NS_END

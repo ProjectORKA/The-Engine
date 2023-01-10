@@ -7,8 +7,6 @@
 
 #include "Velox_Common.hpp"
 
-TRE_NS_START
-
 template<typename T>
 class Singleton
 {
@@ -27,6 +25,3 @@ public:
 		return instance;
 	}
 };
-
-TRE_NS_END
-

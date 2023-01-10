@@ -9,8 +9,6 @@
 #include "Velox_Memory.hpp"
 #include "Velox_AllocatorMisc.hpp"
 
-TRE_NS_START
-
 template<usize SIZE = 4096>
 class LocalAllocator
 {
@@ -76,5 +74,3 @@ private:
     usize m_Reserved = 0;
     usize m_LatestSize = 0;
 };
-
-TRE_NS_END

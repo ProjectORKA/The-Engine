@@ -9,8 +9,6 @@
 #include "Velox_Memory.hpp"
 #include "Velox_AllocatorMisc.hpp"
 
-TRE_NS_START
-
 class GenericAllocator
 {
 public:
@@ -56,5 +54,3 @@ public:
 private:
 
 };
-
-TRE_NS_END

@@ -11,8 +11,6 @@
 #include <time.h>
 #include "Velox_Common.hpp"
 
-TRE_NS_START
-
 class Log
 {
 public:
@@ -92,5 +90,3 @@ private:
 #endif
 	}
 };
-
-TRE_NS_END

@@ -8,8 +8,6 @@
 #include "Velox_Common.hpp"
 #include <iterator>
 
-TRE_NS_START
-
 template<typename DataType>
 class RandomAccessIterator : public std::iterator<std::random_access_iterator_tag, DataType, ptrdiff_t, DataType*, DataType&>
 {
@@ -63,5 +61,3 @@ public:
 private:
     DataType* m_Current;
 };
-
-TRE_NS_END

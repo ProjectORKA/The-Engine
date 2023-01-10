@@ -17,8 +17,6 @@
 #include "Velox_RandomAccessIterator.hpp"
 #include "Velox_BasicVector.hpp"
 
-TRE_NS_START
-
 template<typename T, AllocConcept Alloc = GenericAllocator>
 class Vector : public Alloc, public BasicVector<T>
 {
@@ -448,5 +446,3 @@ constexpr FORCEINLINE Vector<T, Alloc>& Vector<T, Alloc>::operator=(Vector<T, Al
     swap(*this, tmp);
     return *this;
 }
-
-TRE_NS_END

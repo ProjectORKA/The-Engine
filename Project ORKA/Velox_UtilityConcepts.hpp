@@ -8,8 +8,6 @@
 #include "Velox_Common.hpp"
 #include <type_traits>
 
-TRE_NS_START
-
 template<typename T>
 concept SwappableConcept = requires(T& t1, T& t2) {
     { swap(t1, t2) };
@@ -30,5 +28,3 @@ concept ContainerConcept = requires(C& c)
 
 template<typename T>
 concept POD = (std::is_standard_layout_v<T> && std::is_trivial_v<T>) || (std::is_trivially_copyable_v<T> && std::is_trivially_destructible_v<T>);
-
-TRE_NS_END

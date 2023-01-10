@@ -10,8 +10,6 @@
 #include "Velox_RandomAccessIterator.hpp"
 #include "Velox_ArrayView.hpp"
 
-TRE_NS_START
-
 template<typename T>
 class BasicStringView : public ArrayView<T>
 {
@@ -130,6 +128,3 @@ constexpr FORCEINLINE usize BasicStringView<T>::find(const BasicStringView& str)
 }
 
 using StringView = BasicStringView<char>;
-
-
-TRE_NS_END
