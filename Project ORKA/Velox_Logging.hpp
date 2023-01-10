@@ -27,17 +27,17 @@ public:
 		OTHER = 7,
 	};
 
-	static void Write(LogType logtype, const char* msg, ...) {
+	static void write(LogType logtype, const char* msg, ...) {
 		va_list arg;
 		va_start(arg, msg);
-		Log::WriteHelper(logtype, msg, arg);
+		Log::writeHelper(logtype, msg, arg);
 		va_end(arg);
 	}
 
-	static void Write(const char* msg, ...) {
+	static void write(const char* msg, ...) {
 		va_list arg;
 		va_start(arg, msg);
-		Log::WriteHelper(INFO, msg, arg);
+		Log::writeHelper(INFO, msg, arg);
 		va_end(arg);
 	}
 
@@ -47,36 +47,36 @@ private:
 	CONSTEXPR static const uint8 logtype2color[] = { 10, 14, 12, 4, 13, 8, 11, 15}; 
 	CONSTEXPR static const usize MAX_MESSAGE_BUFFER = 1024;
 
-	static void WriteHelper(LogType logtype, const char* msg, va_list ap)
+	static void writeHelper(LogType logtype, const char* msg, va_list ap)
 	{
 		char text_message_buffer[MAX_MESSAGE_BUFFER];
 		char log_message[MAX_MESSAGE_BUFFER];
 		char date_str[26];
-		Log::GetDateString(date_str, 26);
-		snprintf(text_message_buffer, MAX_MESSAGE_BUFFER, "[%s] [TrikytaEngine][%s]: ", date_str, Log::GetStringFromLogType(logtype));
+		Log::getDateString(date_str, 26);
+		snprintf(text_message_buffer, MAX_MESSAGE_BUFFER, "[%s] [TrikytaEngine][%s]: ", date_str, Log::getStringFromLogType(logtype));
 		vsnprintf(log_message, MAX_MESSAGE_BUFFER, msg, ap);
 		strcat(text_message_buffer, log_message);
 
-		Log::SetColor(Log::GetColorFromLogType(logtype));
+		Log::setColor(Log::getColorFromLogType(logtype));
 		printf("%s\n", text_message_buffer);
 	}
 
-	FORCEINLINE static const char* GetStringFromLogType(LogType v) {
+	FORCEINLINE static const char* getStringFromLogType(LogType v) {
 		return logtype2str[v];
 	}
 
-	FORCEINLINE static uint8 GetColorFromLogType(LogType v) {
+	FORCEINLINE static uint8 getColorFromLogType(LogType v) {
 		return logtype2color[v];
 	}
 
-	FORCEINLINE static void GetDateString(char* buffer, [[maybe_unused]] uint32 size)
+	FORCEINLINE static void getDateString(char* buffer, [[maybe_unused]] uint32 size)
 	{
 		time_t t = time(NULL);
 		struct tm tm = *localtime(&t);
 		strftime(buffer, 26, "%Y-%m-%d %H:%M:%S", &tm);
 	}
 
-	FORCEINLINE static void SetColor([[maybe_unused]] uint8 color_code)
+	FORCEINLINE static void setColor([[maybe_unused]] uint8 color_code)
 	{
 #if defined(OS_WINDOWS)
 		// const HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -84,7 +84,7 @@ private:
 #endif
 	}
 
-	FORCEINLINE static void ResetColors()
+	FORCEINLINE static void resetColors()
 	{
 #if defined(OS_WINDOWS)
 		// const HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);

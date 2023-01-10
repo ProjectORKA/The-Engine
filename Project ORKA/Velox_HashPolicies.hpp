@@ -12,28 +12,28 @@ TRE_NS_START
 
 struct FibonacciHashPolicy
 {
-    usize IndexForHash(usize hash, usize /*slotsCount*/) const noexcept
+    usize indexForHash(usize hash, usize /*slotsCount*/) const noexcept
     {
         return (11400714819323198485ull * hash) >> shift;
     }
 
-    usize KeepInRange(usize index, usize slotsCount) const noexcept
+    usize keepInRange(usize index, usize slotsCount) const noexcept
     {
         return index & slotsCount;
     }
 
-    uint8 NextSize(usize& size) const noexcept
+    uint8 nextSize(usize& size) const noexcept
     {
         size = std::max(usize(2), Math::NextPow2(size));
         return (NB_BITS + 1) - Math::Log2OfPow2(size);
     }
 
-    void Commit(uint8 shift) noexcept
+    void commit(uint8 shift) noexcept
     {
         this->shift = shift;
     }
 
-    void Reset() noexcept
+    void reset() noexcept
     {
         shift = NB_BITS;
     }
@@ -45,27 +45,27 @@ private:
 
 struct PowerOfTwoHashPolicy
 {
-    usize IndexForHash(usize hash, usize slotsCount) const
+    usize indexForHash(usize hash, usize slotsCount) const
     {
         return hash & slotsCount;
     }
 
-    usize KeepInRange(usize index, usize slotsCount) const
+    usize keepInRange(usize index, usize slotsCount) const
     {
-        return IndexForHash(index, slotsCount);
+        return indexForHash(index, slotsCount);
     }
 
-    uint8 NextSize(usize& size) const
+    uint8 nextSize(usize& size) const
     {
         size = Math::NextPow2(size);
         return 0;
     }
 
-    void Commit(uint8)
+    void commit(uint8)
     {
     }
 
-    void Reset()
+    void reset()
     {
     }
 };

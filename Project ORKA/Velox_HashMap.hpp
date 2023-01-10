@@ -15,7 +15,7 @@
 TRE_NS_START
 
 template<typename K, typename V>
-struct HashMap : public HashMapHelper<K, V, std::hash<K>, FibonacciHashPolicy, std::equal_to<K>>
+struct HashMap : public hashMapHelper<K, V, std::hash<K>, FibonacciHashPolicy, std::equal_to<K>>
 {
     using size_type = size_t;
     using pointer = value_type*;

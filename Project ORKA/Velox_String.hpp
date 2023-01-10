@@ -20,7 +20,7 @@ template<typename T>
 class BasicString : public BasicVector<T>
 {
 public:
-    using Iterator          = RandomAccessIterator<T>;
+    using iterator          = RandomAccessIterator<T>;
     using CIterator         = RandomAccessIterator<const T>;
     using value_type        = T;
     using pointer           = value_type*;
@@ -55,55 +55,55 @@ public:
 
     constexpr FORCEINLINE BasicString& operator=(BasicString<T>&& other) noexcept;
 
-    constexpr FORCEINLINE void Append(T ch);
+    constexpr FORCEINLINE void append(T ch);
 
-    constexpr FORCEINLINE void Append(const T* str, usize sz = 0);
+    constexpr FORCEINLINE void append(const T* str, usize sz = 0);
 
-    constexpr FORCEINLINE void Append(const BasicString<T>& str);
+    constexpr FORCEINLINE void append(const BasicString<T>& str);
 
-    constexpr void Insert(usize pos, T ch);
+    constexpr void insert(usize pos, T ch);
 
-    constexpr void Insert(usize pos, const T* str, usize otherSize = 0);
+    constexpr void insert(usize pos, const T* str, usize otherSize = 0);
 
-    constexpr FORCEINLINE void Insert(usize pos, const BasicString<T>& str);
+    constexpr FORCEINLINE void insert(usize pos, const BasicString<T>& str);
 
-    constexpr FORCEINLINE void PushBack(T ch);
+    constexpr FORCEINLINE void pushBack(T ch);
 
-    constexpr FORCEINLINE void PopBack() noexcept;
+    constexpr FORCEINLINE void popBack() noexcept;
 
-    constexpr FORCEINLINE void Erase(Iterator itr, usize count) noexcept;
+    constexpr FORCEINLINE void erase(iterator itr, usize count) noexcept;
 
-    constexpr FORCEINLINE void EraseRange(usize index, usize count) noexcept;
+    constexpr FORCEINLINE void eraseRange(usize index, usize count) noexcept;
 
-    constexpr FORCEINLINE bool StartsWith(const T* str, usize sz = 0) const noexcept;
+    constexpr FORCEINLINE bool startsWith(const T* str, usize sz = 0) const noexcept;
 
-    constexpr FORCEINLINE bool StartsWith(const BasicString<T>& str) const noexcept;
+    constexpr FORCEINLINE bool startsWith(const BasicString<T>& str) const noexcept;
 
-    constexpr FORCEINLINE bool EndsWith(const T* str, usize sz = 0) const noexcept;
+    constexpr FORCEINLINE bool endsWith(const T* str, usize sz = 0) const noexcept;
 
-    constexpr FORCEINLINE bool EndsWith(const BasicString<T>& str) const noexcept;
+    constexpr FORCEINLINE bool endsWith(const BasicString<T>& str) const noexcept;
 
-    constexpr FORCEINLINE bool Reserve(usize size);
+    constexpr FORCEINLINE bool reserve(usize size);
 
-    constexpr FORCEINLINE BasicString<T> SubString(usize index, usize count) const;
+    constexpr FORCEINLINE BasicString<T> subString(usize index, usize count) const;
 
-    constexpr FORCEINLINE bool IsSmall() const noexcept { return this->m_Data == m_Buffer; }
+    constexpr FORCEINLINE bool isSmall() const noexcept { return this->m_Data == m_Buffer; }
 
-    constexpr FORCEINLINE usize Capacity() const noexcept { return this->IsSmall() ? NB_CHAR_SMALL : m_Capacity; }
+    constexpr FORCEINLINE usize capacity() const noexcept { return this->isSmall() ? NB_CHAR_SMALL : m_Capacity; }
 
-    constexpr friend void Swap(BasicString<T>& first, BasicString<T>& second) noexcept
+    constexpr friend void swap(BasicString<T>& first, BasicString<T>& second) noexcept
     {
-        if (first.IsSmall() && second.IsSmall()) {
+        if (first.isSmall() && second.isSmall()) {
             T buffer[NB_ELEMENTS];
-            Utils::Copy(buffer, first.m_Data, NB_ELEMENTS);
-            Utils::Copy(first.m_Data, second.m_Data, NB_ELEMENTS);
-            Utils::Copy(second.m_Data, buffer, NB_ELEMENTS);
+            Utils::copy(buffer, first.m_Data, NB_ELEMENTS);
+            Utils::copy(first.m_Data, second.m_Data, NB_ELEMENTS);
+            Utils::copy(second.m_Data, buffer, NB_ELEMENTS);
             std::swap(first.m_Length, second.m_Length);
-        }else if ((first.IsSmall() && !second.IsSmall()) || (second.IsSmall() && !first.IsSmall())) {
-            BasicString<T>* small = first.IsSmall() ? &first : &second;
+        }else if ((first.isSmall() && !second.isSmall()) || (second.isSmall() && !first.isSmall())) {
+            BasicString<T>* small = first.isSmall() ? &first : &second;
             BasicString<T>* notSmall = small == &first ? &second : &first;
             auto notSmallCap = notSmall->m_Capacity;
-            Utils::Copy(notSmall->m_Buffer, small->m_Data, small->m_Length);
+            Utils::copy(notSmall->m_Buffer, small->m_Data, small->m_Length);
             small->m_Data = notSmall->m_Data;
             small->m_Capacity = notSmallCap;
             notSmall->m_Data = notSmall->m_Buffer;
@@ -115,13 +115,8 @@ public:
         }
     }
 
-    constexpr FORCEINLINE friend void swap(BasicString<T>& first, BasicString<T>& second) noexcept
-    {
-        Swap(first, second);
-    }
-
 private:
-    constexpr FORCEINLINE void Reallocate(usize nCap);
+    constexpr FORCEINLINE void reallocate(usize nCap);
 
 private:
     constexpr static const auto SSO_SIZE        = 2 * sizeof(usize);
@@ -148,11 +143,11 @@ constexpr FORCEINLINE BasicString<T>::BasicString(const T* data, usize size)
     : Base(m_Buffer, size)
 {
     if (size >= NB_CHAR_SMALL) {
-        this->m_Data = Utils::Allocate<T>(size + 1);
+        this->m_Data = Utils::allocate<T>(size + 1);
         this->m_Capacity = size;
     }
 
-    this->CopyFrom(data, size + 1);
+    this->copyFrom(data, size + 1);
 }
 
 template<typename T>
@@ -174,27 +169,27 @@ template<typename T>
 constexpr FORCEINLINE BasicString<T>::~BasicString() noexcept
 {
     T* data = this->m_Data;
-    if (data && !this->IsSmall()) {
-        Utils::FreeMemory(data);
+    if (data && !this->isSmall()) {
+        Utils::freeMemory(data);
     }
 }
 
 template<typename T>
-constexpr FORCEINLINE void BasicString<T>::Append(T ch)
+constexpr FORCEINLINE void BasicString<T>::append(T ch)
 {
-    this->Reserve(this->m_Length + 2);
+    this->reserve(this->m_Length + 2);
     this->EmplaceBack(ch);
     this->m_Data[this->m_Length] = NULL_TERMINATOR;
 }
 
 template<typename T>
-constexpr FORCEINLINE void BasicString<T>::Append(const T* str, usize sz)
+constexpr FORCEINLINE void BasicString<T>::append(const T* str, usize sz)
 {
     if (str != nullptr && sz == 0)
         sz = strlen(str);
 
     auto len = this->m_Length;
-    this->Reserve(len + sz + 1);
+    this->reserve(len + sz + 1);
 
     for (usize i = 0; i < sz; i++) {
         this->m_Data[len++] = str[i];
@@ -205,44 +200,44 @@ constexpr FORCEINLINE void BasicString<T>::Append(const T* str, usize sz)
 }
 
 template<typename T>
-constexpr FORCEINLINE void BasicString<T>::Append(const BasicString<T>& str)
+constexpr FORCEINLINE void BasicString<T>::append(const BasicString<T>& str)
 {
-    return this->Append(str.Data(), str.Size());
+    return this->append(str.data(), str.size());
 }
 
 template<typename T>
-constexpr FORCEINLINE void BasicString<T>::PushBack(T ch)
+constexpr FORCEINLINE void BasicString<T>::pushBack(T ch)
 {
-    return this->Append(ch);
+    return this->append(ch);
 }
 
 template<typename T>
-constexpr FORCEINLINE void BasicString<T>::PopBack() noexcept
+constexpr FORCEINLINE void BasicString<T>::popBack() noexcept
 {
     if (this->m_Length)
         this->m_Data[--this->m_Length] = NULL_TERMINATOR;
 }
 
 template<typename T>
-constexpr void BasicString<T>::Insert(usize pos, T ch)
+constexpr void BasicString<T>::insert(usize pos, T ch)
 {
     auto size = this->m_Length;
     TRE_ASSERTF(pos <= size, "Given index is out of bound. Index must be in  [0..%" SZu "[", size);
-    usize cap = this->Capacity();
+    usize cap = this->capacity();
     T* oldData = this->m_Data;
 
     if (size + 2 >= cap) {
-        bool isSmall = this->IsSmall();
+        bool isSmall = this->isSmall();
         usize nCap = cap * DEFAULT_GROW_SIZE;
-        this->m_Data = Utils::Allocate<T>(nCap);
-        this->CopyFrom(oldData, pos);
-        this->Base::Emplace(oldData, pos, ch);
+        this->m_Data = Utils::allocate<T>(nCap);
+        this->copyFrom(oldData, pos);
+        this->Base::emplace(oldData, pos, ch);
         // Utils::Copy(newData, m_Data, pos);
         // newData[pos] = ch;
         // Utils::Copy(newData + pos + 1, m_Data + pos, size - pos);
 
         if (!isSmall)
-            Utils::FreeMemory(oldData);
+            Utils::freeMemory(oldData);
 
         m_Capacity = nCap;
         this->m_Data[this->m_Length] = NULL_TERMINATOR;
@@ -257,7 +252,7 @@ constexpr void BasicString<T>::Insert(usize pos, T ch)
 }
 
 template<typename T>
-constexpr void BasicString<T>::Insert(usize pos, const T* str, usize otherSize)
+constexpr void BasicString<T>::insert(usize pos, const T* str, usize otherSize)
 {
     auto size = this->m_Length;
     TRE_ASSERTF(pos <= size, "Given index is out of bound. Index must be in  [0..%" SZu "[", size);
@@ -265,19 +260,19 @@ constexpr void BasicString<T>::Insert(usize pos, const T* str, usize otherSize)
     if (str != nullptr && otherSize == 0)
         otherSize = strlen(str);
 
-    usize cap = this->Capacity();
+    usize cap = this->capacity();
     T* oldData = this->m_Data;
 
     if (size + otherSize + 1 >= cap) {
-        bool isSmall = this->IsSmall();
+        bool isSmall = this->isSmall();
         usize nCap = (size + otherSize) * DEFAULT_GROW_SIZE;
-        this->m_Data = Utils::Allocate<T>(nCap);
+        this->m_Data = Utils::allocate<T>(nCap);
         Utils::Copy(this->m_Data, oldData, pos);
         Utils::Copy(this->m_Data + pos, str, otherSize);
         Utils::Copy(this->m_Data + pos + otherSize, oldData + pos, size - pos);
 
         if (!isSmall)
-            Utils::FreeMemory(oldData);
+            Utils::freeMemory(oldData);
 
         m_Capacity = nCap;
         this->m_Length += otherSize;
@@ -292,20 +287,20 @@ constexpr void BasicString<T>::Insert(usize pos, const T* str, usize otherSize)
 }
 
 template<typename T>
-constexpr FORCEINLINE void BasicString<T>::Insert(usize pos, const BasicString<T>& str)
+constexpr FORCEINLINE void BasicString<T>::insert(usize pos, const BasicString<T>& str)
 {
-    return this->Insert(pos, str.Data(), str.Size());
+    return this->Insert(pos, str.data(), str.size());
 }
 
 template<typename T>
-constexpr FORCEINLINE void BasicString<T>::Erase(Iterator itr, usize count) noexcept
+constexpr FORCEINLINE void BasicString<T>::erase(iterator itr, usize count) noexcept
 {
-    usize index = itr.GetPointer() - this->m_Data;
-    return this->EraseRange(index, count);
+    usize index = itr.getPointer() - this->m_Data;
+    return this->eraseRange(index, count);
 }
 
 template<typename T>
-constexpr FORCEINLINE void BasicString<T>::EraseRange(usize index, usize count) noexcept
+constexpr FORCEINLINE void BasicString<T>::eraseRange(usize index, usize count) noexcept
 {
     auto size = this->m_Length;
     TRE_ASSERTF(index < size, "Given index is out of bound. Index must be in  [0..%" SZu "[", size);
@@ -324,10 +319,10 @@ constexpr FORCEINLINE void BasicString<T>::EraseRange(usize index, usize count) 
 }
 
 template<typename T>
-constexpr FORCEINLINE bool BasicString<T>::StartsWith(const T* str, usize sz) const noexcept
+constexpr FORCEINLINE bool BasicString<T>::startsWith(const T* str, usize sz) const noexcept
 {
     if (str != nullptr && sz == 0)
-        sz = Utils::Strlen(str);
+        sz = Utils::strlen(str);
 
     if (sz > this->m_Length)
         return false;
@@ -337,16 +332,16 @@ constexpr FORCEINLINE bool BasicString<T>::StartsWith(const T* str, usize sz) co
 }
 
 template<typename T>
-constexpr FORCEINLINE bool BasicString<T>::StartsWith(const BasicString<T>& str) const noexcept
+constexpr FORCEINLINE bool BasicString<T>::startsWith(const BasicString<T>& str) const noexcept
 {
-    return this->StartsWith(str.Data(), str.Size());
+    return this->startsWith(str.data(), str.size());
 }
 
 template<typename T>
-constexpr FORCEINLINE bool BasicString<T>::EndsWith(const T* str, usize sz) const noexcept
+constexpr FORCEINLINE bool BasicString<T>::endsWith(const T* str, usize sz) const noexcept
 {
     if (str != nullptr && sz == 0)
-        sz = Utils::Strlen(str);
+        sz = Utils::strlen(str);
 
     if (sz > this->m_Length)
         return false;
@@ -356,13 +351,13 @@ constexpr FORCEINLINE bool BasicString<T>::EndsWith(const T* str, usize sz) cons
 }
 
 template<typename T>
-constexpr FORCEINLINE bool BasicString<T>::EndsWith(const BasicString<T>& str) const noexcept
+constexpr FORCEINLINE bool BasicString<T>::endsWith(const BasicString<T>& str) const noexcept
 {
-    return this->StartsWith(str.Data(), str.Size());
+    return this->startsWith(str.data(), str.size());
 }
 
 template<typename T>
-constexpr FORCEINLINE BasicString<T> BasicString<T>::SubString(usize index, usize count) const
+constexpr FORCEINLINE BasicString<T> BasicString<T>::subString(usize index, usize count) const
 {
     auto sz = this->m_Length;
     if (count > sz - index)
@@ -371,28 +366,28 @@ constexpr FORCEINLINE BasicString<T> BasicString<T>::SubString(usize index, usiz
 }
 
 template<typename T>
-constexpr FORCEINLINE bool BasicString<T>::Reserve(usize size)
+constexpr FORCEINLINE bool BasicString<T>::reserve(usize size)
 {
-    usize cap = this->Capacity();
+    usize cap = this->capacity();
 
     if (size < cap)
         return false;
 
     size = size * DEFAULT_GROW_SIZE;
-    this->Reallocate(size);
+    this->reallocate(size);
     return true;
 }
 
 template<typename T>
-constexpr FORCEINLINE void BasicString<T>::Reallocate(usize nCap)
+constexpr FORCEINLINE void BasicString<T>::reallocate(usize nCap)
 {
-    bool isSmall = this->IsSmall();
+    bool isSmall = this->isSmall();
     T* oldData = this->m_Data;
-    this->m_Data = Utils::Allocate<T>(nCap);
-    this->CopyFrom(oldData, this->m_Length + 1);
+    this->m_Data = Utils::allocate<T>(nCap);
+    this->copyFrom(oldData, this->m_Length + 1);
 
     if (!isSmall)
-        Utils::FreeMemory(oldData);
+        Utils::freeMemory(oldData);
 
     m_Capacity = nCap;
 }
@@ -402,20 +397,20 @@ constexpr FORCEINLINE BasicString<T>::BasicString(const BasicString<T>& other)
     : Base(nullptr, other.m_Length)
 {
     auto sz = this->m_Length;
-    if (other.IsSmall()) {
+    if (other.isSmall()) {
         this->m_Data = m_Buffer;
     }else{
         m_Capacity = other.m_Capacity;
-        this->m_Data = Utils::Allocate<T>(m_Capacity);
+        this->m_Data = Utils::allocate<T>(m_Capacity);
     }
-    this->CopyFrom(other.m_Data, sz + 1);
+    this->copyFrom(other.m_Data, sz + 1);
 }
 
 template<typename T>
 constexpr FORCEINLINE BasicString<T>& BasicString<T>::operator=(const BasicString<T>& other)
 {
     BasicString<T> tmp(other);
-    Swap(*this, tmp);
+    swap(*this, tmp);
     return *this;
 }
 
@@ -423,10 +418,10 @@ template<typename T>
 constexpr FORCEINLINE BasicString<T>::BasicString(BasicString<T>&& other) noexcept
     : Base(nullptr, other.m_Length)
 {
-    if (other.IsSmall()) {
+    if (other.isSmall()) {
         auto sz = this->m_Length;
         this->m_Data = m_Buffer;
-        this->CopyFrom(other.m_Data, sz + 1);
+        this->copyFrom(other.m_Data, sz + 1);
     }else{
         m_Capacity = other.m_Capacity;
         this->m_Data = other.m_Data;
@@ -438,7 +433,7 @@ template<typename T>
 constexpr FORCEINLINE BasicString<T>& BasicString<T>::operator=(BasicString<T>&& other) noexcept
 {
     BasicString<T> tmp(std::move(other));
-    Swap(*this, tmp);
+    swap(*this, tmp);
     return *this;
 }
 
