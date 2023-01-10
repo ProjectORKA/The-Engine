@@ -45,6 +45,9 @@ public:
     CONSTEXPR const static usize STATIC_ELEMENTS_COUNT  = Alloc::Traits::STATIC_CAP / sizeof(T);
 
 public:
+
+    constexpr FORCEINLINE Vector(std::initializer_list<T> list);
+
     constexpr FORCEINLINE Vector() noexcept;
 
     constexpr FORCEINLINE Vector(usize sz);
@@ -69,9 +72,9 @@ public:
     constexpr FORCEINLINE bool Reserve(usize sz);
 
     template<typename... Args>
-    constexpr FORCEINLINE T& EmplaceBack(Args&&... args);
+    constexpr FORCEINLINE T& emplaceBack(Args&&... args);
 
-    constexpr FORCEINLINE T& PushBack(const T& obj);
+    constexpr FORCEINLINE T& pushBack(const T& obj);
 
     template<typename... Args>
     constexpr FORCEINLINE T& EmplaceFront(Args&&... args);
@@ -95,7 +98,7 @@ public:
 
     constexpr FORCEINLINE void Fill(usize length, const T& obj = {}) noexcept;
 
-    constexpr FORCEINLINE void Resize(usize newSize);
+    constexpr FORCEINLINE void resize(usize newSize);
 
     constexpr FORCEINLINE void Append(const Vector<T, Alloc>& other);
 
@@ -164,6 +167,14 @@ private:
 };
 
 template<typename T, AllocConcept Alloc>
+constexpr FORCEINLINE Vector<T, Alloc>::Vector(std::initializer_list<T> list)
+    : Base(this->template Allocate<T>(list.size()), list.size()),
+    m_Capacity(GetAllocCapIfSizeIsLessThan(list.size()))
+{
+    this->Base::CopyFrom(list.begin(), list.size());
+}
+
+template<typename T, AllocConcept Alloc>
 constexpr FORCEINLINE Vector<T, Alloc>::Vector() noexcept
     : Base(GetInitialData(), 0), m_Capacity(STATIC_ELEMENTS_COUNT)
 {
@@ -221,17 +232,17 @@ constexpr FORCEINLINE void Vector<T, Alloc>::Fill(usize length, const T& obj) no
 
 template<typename T, AllocConcept Alloc>
 template<typename... Args>
-constexpr FORCEINLINE T& Vector<T, Alloc>::EmplaceBack(Args&&... args)
+constexpr FORCEINLINE T& Vector<T, Alloc>::emplaceBack(Args&&... args)
 {
     auto newLen = this->m_Length + 1;
     this->Reserve(newLen);
-    return this->Base::EmplaceBack(std::forward<Args>(args)...);
+    return this->Base::emplaceBack(std::forward<Args>(args)...);
 }
 
 template<typename T, AllocConcept Alloc>
-constexpr FORCEINLINE T& Vector<T, Alloc>::PushBack(const T& obj)
+constexpr FORCEINLINE T& Vector<T, Alloc>::pushBack(const T& obj)
 {
-    return this->EmplaceBack(obj);
+    return this->emplaceBack(obj);
 }
 
 template<typename T, AllocConcept Alloc>
@@ -269,7 +280,7 @@ constexpr FORCEINLINE void Vector<T, Alloc>::Free(T* data, usize sz)
 }
 
 template<typename T, AllocConcept Alloc>
-constexpr FORCEINLINE void Vector<T, Alloc>::Resize(usize newSize)
+constexpr FORCEINLINE void Vector<T, Alloc>::resize(usize newSize)
 {
     auto len = this->m_Length;
 

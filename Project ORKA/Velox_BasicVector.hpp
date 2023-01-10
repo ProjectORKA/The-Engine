@@ -37,21 +37,21 @@ public:
     using difference_type	= ptrdiff_t;
 
 public:
-    constexpr FORCEINLINE void Erease(Iterator start, Iterator end) noexcept;
+    constexpr FORCEINLINE void erase(Iterator start, Iterator end) noexcept;
 
-    constexpr FORCEINLINE void Erease(usize start, usize end) noexcept;
+    constexpr FORCEINLINE void erase(usize start, usize end) noexcept;
 
-    constexpr FORCEINLINE void Erease(Iterator itr) noexcept;
+    constexpr FORCEINLINE void erase(Iterator itr) noexcept;
 
-    constexpr FORCEINLINE void Erease(usize index) noexcept;
+    constexpr FORCEINLINE void erase(usize index) noexcept;
 
-    constexpr FORCEINLINE void Clear() noexcept
+    constexpr FORCEINLINE void clear() noexcept
     {
         Utils::Destroy(m_Data, m_Length);
         m_Length = 0;
     }
 
-    constexpr FORCEINLINE bool PopBack() noexcept
+    constexpr FORCEINLINE bool popBack() noexcept
     {
         if (m_Length <= 0)
             return false;
@@ -76,11 +76,11 @@ public:
 
     constexpr FORCEINLINE bool FastPopFront() noexcept;
 
-    constexpr FORCEINLINE usize Size() const noexcept { return m_Length; }
+    constexpr FORCEINLINE usize size() const noexcept { return m_Length; }
 
-    constexpr FORCEINLINE usize Length() const noexcept { return this->Size(); }
+    constexpr FORCEINLINE usize Length() const noexcept { return this->size(); }
 
-    constexpr FORCEINLINE bool IsEmpty() const noexcept { return this->Size() == 0; }
+    constexpr FORCEINLINE bool IsEmpty() const noexcept { return this->size() == 0; }
 
     constexpr FORCEINLINE T* Back() noexcept
     {
@@ -106,15 +106,15 @@ public:
         return &m_Data[0];
     }
 
-    constexpr FORCEINLINE T& Last() noexcept { return *this->Back(); }
+    constexpr FORCEINLINE T& last() noexcept { return *this->Back(); }
 
-    constexpr FORCEINLINE T& First() noexcept { return *this->Front(); }
+    constexpr FORCEINLINE T& first() noexcept { return *this->Front(); }
 
-    constexpr FORCEINLINE const T& Last() const noexcept { return *this->Back(); }
+    constexpr FORCEINLINE const T& last() const noexcept { return *this->Back(); }
 
-    constexpr FORCEINLINE const T& First() const noexcept { return *this->Front(); }
+    constexpr FORCEINLINE const T& first() const noexcept { return *this->Front(); }
 
-    constexpr FORCEINLINE T* Data() noexcept { return this->Front(); }
+    constexpr FORCEINLINE T* data() noexcept { return this->Front(); }
 
     constexpr FORCEINLINE T Get(usize i) const noexcept
     {
@@ -184,18 +184,19 @@ public:
         return const_reverse_iterator(this->begin());
     }
 
-    constexpr FORCEINLINE friend void Swap(BasicVector<T>& first, BasicVector<T>& second) noexcept
+    constexpr FORCEINLINE friend void Swap(BasicVector<T>& primary, BasicVector<T>& secondary) noexcept
     {
-        std::swap(first.m_Data, second.m_Data);
-        std::swap(first.m_Length, second.m_Length);
+        std::swap(primary.m_Data, secondary.m_Data);
+        std::swap(primary.m_Length, secondary.m_Length);
     }
 
-    constexpr FORCEINLINE friend void swap(BasicVector<T>& first, BasicVector<T>& second) noexcept
+    constexpr FORCEINLINE friend void swap(BasicVector<T>& primary, BasicVector<T>& secondary) noexcept
     {
-        Swap(first, second);
+        Swap(primary, secondary);
     }
 
 protected:
+
     constexpr FORCEINLINE BasicVector() noexcept
         : m_Data(nullptr), m_Length(0)
     {
@@ -226,11 +227,11 @@ protected:
     constexpr FORCEINLINE T& Emplace(usize i, Args&&... args) noexcept;
 
     template<typename... Args>
-    constexpr FORCEINLINE T& EmplaceBack(Args&&... args) noexcept;
+    constexpr FORCEINLINE T& emplaceBack(Args&&... args) noexcept;
 
-    constexpr FORCEINLINE T& PushBack(const T& obj) noexcept
+    constexpr FORCEINLINE T& pushBack(const T& obj) noexcept
     {
-        return this->EmplaceBack(obj);
+        return this->emplaceBack(obj);
     }
 
     constexpr FORCEINLINE void CopyFrom(const T* data, usize length)
@@ -264,7 +265,7 @@ protected:
 
 template<typename T>
 template<typename... Args>
-constexpr FORCEINLINE T& BasicVector<T>::EmplaceBack(Args&&... args) noexcept
+constexpr FORCEINLINE T& BasicVector<T>::emplaceBack(Args&&... args) noexcept
 {
     T* data = m_Data;
     auto newLen = m_Length++;
@@ -307,7 +308,7 @@ constexpr FORCEINLINE T& BasicVector<T>::Emplace(usize i, Args&&... args) noexce
 }
 
 template<typename T>
-constexpr FORCEINLINE void BasicVector<T>::Erease(Iterator start, Iterator end) noexcept
+constexpr FORCEINLINE void BasicVector<T>::erase(Iterator start, Iterator end) noexcept
 {
     auto len = m_Length;
     T* data = m_Data;
@@ -326,14 +327,14 @@ constexpr FORCEINLINE void BasicVector<T>::Erease(Iterator start, Iterator end) 
 }
 
 template<typename T>
-constexpr FORCEINLINE void BasicVector<T>::Erease(usize start, usize end) noexcept
+constexpr FORCEINLINE void BasicVector<T>::erase(usize start, usize end) noexcept
 {
     auto begin = this->begin();
-    return this->Erease(begin + start, begin + end);
+    return this->erase(begin + start, begin + end);
 }
 
 template<typename T>
-constexpr FORCEINLINE void BasicVector<T>::Erease(Iterator itr) noexcept
+constexpr FORCEINLINE void BasicVector<T>::erase(Iterator itr) noexcept
 {
     auto len = m_Length;
     T* data = m_Data;
@@ -347,9 +348,9 @@ constexpr FORCEINLINE void BasicVector<T>::Erease(Iterator itr) noexcept
 }
 
 template<typename T>
-constexpr FORCEINLINE void BasicVector<T>::Erease(usize index) noexcept
+constexpr FORCEINLINE void BasicVector<T>::erase(usize index) noexcept
 {
-    this->Erease(this->begin() + index);
+    this->erase(this->begin() + index);
 }
 
 template<typename T>

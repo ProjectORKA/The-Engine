@@ -40,7 +40,7 @@ void ParticleSystem::render(Engine& engine, Renderer& renderer) {
 	static Vector<Vec4> pos;
 	pos.clear();
 	for (Int i = 0; i < particleCount; i++) {
-		if (alive[i])pos.push_back(Vec4(transformation[i]));
+		if (alive[i])pos.pushBack(Vec4(transformation[i]));
 	}
 	renderer.matrixSystem.matrixArray(pos);
 	renderer.renderMeshInstanced(engine, "melonSmokeParticle");

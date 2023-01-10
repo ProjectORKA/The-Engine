@@ -30,6 +30,6 @@ void VertexArrayObject::create(CPUMesh& mesh)
 }
 void VertexArrayObject::add(Index location, float* data, UInt byteSize, UInt usage, Index components)
 {
-	buffers.emplace_back().create(location, data, byteSize, usage, components);
-	buffers.back().attach();
+	buffers.emplaceBack().create(location, data, byteSize, usage, components);
+	buffers.last().attach();
 }

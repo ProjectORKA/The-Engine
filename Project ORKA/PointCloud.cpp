@@ -4,7 +4,7 @@
 #include "CPUMesh.hpp"
 
 void PointCloud::add(Vec3 point) {
-	points.push_back(point);
+	points.pushBack(point);
 }
 
 void PointCloudRenderer::update(PointCloud& pointCloud) {
@@ -16,10 +16,10 @@ void PointCloudRenderer::update(PointCloud& pointCloud) {
 
 	Int i = 0;
 	for (Vec3& point : pointCloud.points) {
-		mesh.indices.push_back(i);
-		mesh.normals.push_back(Vec3(0, 0, 1));
-		mesh.uvs.push_back(Vec2(point.x, point.y));
-		mesh.vertices.push_back(point);
+		mesh.indices.pushBack(i);
+		mesh.normals.pushBack(Vec3(0, 0, 1));
+		mesh.uvs.pushBack(Vec2(point.x, point.y));
+		mesh.vertices.pushBack(point);
 		i++;
 	}
 	mesh.checkIntegrity();

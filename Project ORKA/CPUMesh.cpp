@@ -116,11 +116,11 @@ CPUMesh::CPUMesh(Graph& graph) {
 	for (UInt index = 0; index < graph.points.size(); index++) {
 		Vec2 pointPos = Vec2(Float(index) / Float(graph.points.size()), graph.points[index]);
 
-		vertices.push_back(Vec3(pointPos, 0));
-		uvs.push_back(pointPos);
-		normals.push_back(Vec3(0, 0, 1));
+		vertices.pushBack(Vec3(pointPos, 0));
+		uvs.pushBack(pointPos);
+		normals.pushBack(Vec3(0, 0, 1));
 
-		indices.push_back(index);
+		indices.pushBack(index);
 	}
 
 	checkIntegrity();
@@ -141,15 +141,15 @@ void CPUMesh::checkIntegrity() {
 }
 void CPUMesh::merge(CPUMesh source) {
 	for (Int i = 0; i < source.vertices.size(); i++) {
-		vertices.push_back(source.vertices[i]);
-		uvs.push_back(source.uvs[i]);
-		normals.push_back(source.normals[i]);
+		vertices.pushBack(source.vertices[i]);
+		uvs.pushBack(source.uvs[i]);
+		normals.pushBack(source.normals[i]);
 	}
 
 	Int indexOffset = vertices.size();
 
 	for (Int i = 0; i < source.indices.size(); i++) {
-		indices.push_back(source.indices[i] + indexOffset);
+		indices.pushBack(source.indices[i] + indexOffset);
 	}
 }
 void CPUMesh::move(Vec3 moveVector) {
@@ -249,19 +249,19 @@ void CPUMesh::meshFromHeightmap(Array2D<Float>& heightmap, UInt size) {
 		for (Int x = 0; x < size; x++) {
 			Vec3 position = Vec3(x, y, 0) / Vec3(size);
 			position.z = heightmap.get(x, y);
-			vertices.push_back(position);
-			normals.push_back(Vec3(0, 0, 1));
-			uvs.push_back(Vec2(position.x, position.y));
+			vertices.pushBack(position);
+			normals.pushBack(Vec3(0, 0, 1));
+			uvs.pushBack(Vec2(position.x, position.y));
 		}
 	}
 
 	//create indices
 	for (UInt y = 0; y < size - 1; y++) {	//very top row doesn't have triangle strip
 		for (UInt x = 0; x < size; x++) {
-			if ((x == 0) && (y > 0))indices.push_back(x + size * (y + 1));
-			indices.push_back(x + (size * (y + 1)));
-			indices.push_back(x + (size * y));
-			if ((x == (size - 1)) && (y < (size - 1))) indices.push_back(x + size * y);
+			if ((x == 0) && (y > 0))indices.pushBack(x + size * (y + 1));
+			indices.pushBack(x + (size * (y + 1)));
+			indices.pushBack(x + (size * y));
+			if ((x == (size - 1)) && (y < (size - 1))) indices.pushBack(x + size * y);
 		}
 	}
 

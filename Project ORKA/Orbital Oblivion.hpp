@@ -66,8 +66,8 @@ struct OrbitalOblivionSimulation : GameSimulation {
 
 	OrbitalOblivionSimulation() {
 		//create teams
-		teams.emplace_back(0, Color(0, 0.33333333333, 1, 1));
-		teams.emplace_back(1, Color(0.65098039215, 0, 0, 1));
+		teams.emplaceBack(0, Color(0, 0.33333333333, 1, 1));
+		teams.emplaceBack(1, Color(0.65098039215, 0, 0, 1));
 
 		//create planets
 		while (planets.size() < planetCount) {
@@ -77,14 +77,14 @@ struct OrbitalOblivionSimulation : GameSimulation {
 				if (distance(p.location, testLocation) < planetDistance) goto skip;
 			}
 
-			planets.emplace_back(testLocation);
+			planets.emplaceBack(testLocation);
 		skip:;
 		}
 
 		//create units
 		for (UInt i = 0; i < 1000; i++) {
-			units.emplace_back(0);
-			units.emplace_back(1);
+			units.emplaceBack(0);
+			units.emplaceBack(1);
 		}
 	}
 	void update(Renderer& renderer) {

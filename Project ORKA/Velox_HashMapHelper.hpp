@@ -263,13 +263,13 @@ public:
 
     constexpr FORCEINLINE bool Erase(const K& key) noexcept;
 
-    constexpr FORCEINLINE void Clear() noexcept;
+    constexpr FORCEINLINE void clear() noexcept;
 
     constexpr void Reinit(usize count);
 
     constexpr FORCEINLINE void Reserve(usize size);
 
-    constexpr FORCEINLINE usize Size() const noexcept { return m_ElementsCount; }
+    constexpr FORCEINLINE usize size() const noexcept { return m_ElementsCount; }
 
     constexpr FORCEINLINE usize BucketCount() const noexcept { return m_SlotsCount ? m_SlotsCount + 1 : 0 ; }
 
@@ -413,7 +413,7 @@ constexpr HashMapHelper<K, V, H, HP , KE>::HashMapHelper()
 template<typename K, typename V, typename H, typename HP, typename KE>
 constexpr HashMapHelper<K, V, H, HP , KE>::~HashMapHelper()
 {
-    this->Clear();
+    this->clear();
     this->DeallocateData(m_Entries, m_SlotsCount);
 }
 
@@ -614,7 +614,7 @@ constexpr FORCEINLINE bool HashMapHelper<K, V, H, HP , KE>::Erase(const K& key) 
 }
 
 template<typename K, typename V, typename H, typename HP, typename KE>
-constexpr FORCEINLINE void HashMapHelper<K, V, H, HP , KE>::Clear() noexcept
+constexpr FORCEINLINE void HashMapHelper<K, V, H, HP , KE>::clear() noexcept
 {
     if (!m_SlotsCount)
         return;

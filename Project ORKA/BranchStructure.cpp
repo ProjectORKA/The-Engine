@@ -12,12 +12,12 @@ void BranchStructure::render(Renderer& renderer, Vector<Vec3> points) {
 	mesh.vertices = points;
 
 	for (int i = 0; i < connections.size(); i++) {
-		mesh.indices.push_back(i);
-		mesh.indices.push_back(connections[i]);
+		mesh.indices.pushBack(i);
+		mesh.indices.pushBack(connections[i]);
 	}
 
 	for (int i = 0; i < points.size(); i++) {
-		mesh.uvs.push_back(Vec2(points[i].x, points[i].y));
+		mesh.uvs.pushBack(Vec2(points[i].x, points[i].y));
 	}
 
 	mesh.checkIntegrity();

@@ -77,7 +77,7 @@ NeuralNet::NeuralNet(Vector<UInt> structure) {
 	for (auto neuronCount : structure) {
 		Vector<Float> layer;
 		layer.resize(neuronCount + 1);
-		neuronActivation.push_back(layer);
+		neuronActivation.pushBack(layer);
 	}
 
 	weights.resize(layerCount());
