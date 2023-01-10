@@ -14,8 +14,6 @@
 #include "Velox_HashMapLinkedList.hpp"
 #include"Velox_HashPolicies.hpp"
 
-TRE_NS_START
-
 template<typename K, typename V, typename H, typename HP, typename KE>
 class hashMapHelper : private H, private KE
 {
@@ -716,5 +714,3 @@ constexpr void hashMapHelper<K, V, H, HP , KE>::deallocateData(hashMapHelper::Bl
     // usize mem = this->CalculateMemorySize(blocksCount);
     Utils::freeMemory(begin);
 }
-
-TRE_NS_END

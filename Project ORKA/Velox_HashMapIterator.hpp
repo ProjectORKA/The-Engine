@@ -8,8 +8,6 @@
 #include <iterator>
 #include "Velox_Common.hpp"
 
-TRE_NS_START
-
 template<typename HashMapType, typename VT>
 struct TemplatedIterator
 {
@@ -89,5 +87,3 @@ public:
         return { current, index };
     }
 };
-
-TRE_NS_END

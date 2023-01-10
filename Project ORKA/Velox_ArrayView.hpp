@@ -11,8 +11,6 @@
 #include "Velox_UtilityConcepts.hpp"
 #include "Velox_RandomAccessIterator.hpp"
 
-TRE_NS_START
-
 template<typename T>
 class ArrayView
 {
@@ -167,5 +165,3 @@ constexpr FORCEINLINE ArrayView<T> ArrayView<T>::subArray(usize index, usize cou
         count = m_Size - index;
     return ArrayView(m_Data + index, count);
 }
-
-TRE_NS_END

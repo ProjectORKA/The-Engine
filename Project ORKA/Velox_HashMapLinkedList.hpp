@@ -9,8 +9,6 @@
 #include "Velox_Common.hpp"
 #include "Velox_MathUtils.hpp"
 
-TRE_NS_START
-
 template<typename HashMapType>
 struct LinkedListItr
 {
@@ -119,5 +117,3 @@ struct LinkedListItr
         return !(*this == other);
     }
 };
-
-TRE_NS_END

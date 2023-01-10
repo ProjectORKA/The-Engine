@@ -8,8 +8,6 @@
 #include "Velox_Common.hpp"
 #include "Velox_CompilerIntrin.hpp"
 
-TRE_NS_START
-
 namespace Math
 {
     FORCEINLINE static uint32 NextPow2(uint32 v)
@@ -77,5 +75,3 @@ namespace Math
     }*/
 
 };
-
-TRE_NS_END

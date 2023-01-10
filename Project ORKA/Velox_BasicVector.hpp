@@ -16,8 +16,6 @@
 #include "Velox_GenericAllocator.hpp"
 #include "Velox_RandomAccessIterator.hpp"
 
-TRE_NS_START
-
 template<typename T>
 class BasicVector
 {
@@ -410,5 +408,3 @@ constexpr FORCEINLINE void BasicVector<T>::fill(usize length, const T& obj) noex
     Utils::memSet(m_Data, obj, length);
     this->m_Length = length;
 }
-
-TRE_NS_END

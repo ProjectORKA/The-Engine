@@ -13,7 +13,7 @@
 #include "Velox_Common.hpp"
 #include "Velox_UtilityConcepts.hpp"
 
-namespace TRE::Utils
+namespace Utils
 {
     template<typename integral>
     FORCEINLINE constexpr bool isAligned(integral x, usize a) noexcept

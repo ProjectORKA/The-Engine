@@ -14,8 +14,6 @@
 #include "Velox_Utils.hpp"
 #include "Velox_BasicVector.hpp"
 
-TRE_NS_START
-
 template<typename T>
 class BasicString : public BasicVector<T>
 {
@@ -438,5 +436,3 @@ constexpr FORCEINLINE BasicString<T>& BasicString<T>::operator=(BasicString<T>&&
 }
 
 using String = BasicString<char>;
-
-TRE_NS_END

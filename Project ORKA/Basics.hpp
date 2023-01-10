@@ -83,8 +83,6 @@ template<typename T>
 using List = std::list<T>;
 
 #include "Velox_Vector.hpp"
-template<typename T>
-using Vector = TRE::Vector<T>;
 
 #include <set>
 template<typename T>
