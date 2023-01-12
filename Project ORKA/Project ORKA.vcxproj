@@ -63,6 +63,7 @@
     <ClCompile Include="ParticleSystem.cpp" />
     <ClCompile Include="Physics.cpp" />
     <ClCompile Include="PhysicsUtil.cpp" />
+    <ClCompile Include="Quadtree.cpp" />
     <ClCompile Include="Random.cpp" />
     <ClCompile Include="Ray.cpp" />
     <ClCompile Include="RectangleRenderer.cpp" />
@@ -173,6 +174,7 @@
     <ClInclude Include="PhysicsUtil.hpp" />
     <ClInclude Include="PoolAllocator.hpp" />
     <ClInclude Include="Profiler.hpp" />
+    <ClInclude Include="Quadtree.hpp" />
     <ClInclude Include="Ray.hpp" />
     <ClInclude Include="RectangleRenderer.hpp" />
     <ClInclude Include="Renderable.hpp" />

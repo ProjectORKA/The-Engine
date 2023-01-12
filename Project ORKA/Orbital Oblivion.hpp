@@ -8,6 +8,8 @@
 #include "Random.hpp"
 #include "Velox_Vector.hpp"
 
+#include "Quadtree.hpp"
+
 #define ORBITAL_OBLIVION_PLAYFIELD_SIZE 500
 
 struct OOPlanet {

@@ -261,6 +261,9 @@
     <ClCompile Include="Threading.cpp">
       <Filter>Common\Threading</Filter>
     </ClCompile>
+    <ClCompile Include="Quadtree.cpp">
+      <Filter>Common\Datastructures\Quadtree</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Basics.hpp">
@@ -707,6 +710,9 @@
     <ClInclude Include="Threading.hpp">
       <Filter>Common\Threading</Filter>
     </ClInclude>
+    <ClInclude Include="Quadtree.hpp">
+      <Filter>Common\Datastructures\Quadtree</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\..\..\..\..\..\ORKA\Data\shaders\orbitalOblivion.frag">
@@ -1143,6 +1149,9 @@
     </Filter>
     <Filter Include="Common\Threading">
       <UniqueIdentifier>{21617ee6-d932-4d16-a698-f368962a3185}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Common\Datastructures\Quadtree">
+      <UniqueIdentifier>{f3d68cc9-575c-416d-aae3-483338901965}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
