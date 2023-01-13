@@ -2,13 +2,8 @@
 #pragma once
 
 #include "Game.hpp"
-#include "Engine.hpp"
 #include "Player.hpp"
-#include "Input.hpp"
 #include "Random.hpp"
-#include "Velox_Vector.hpp"
-
-#include "Quadtree.hpp"
 
 #define ORBITAL_OBLIVION_PLAYFIELD_SIZE 500
 
