@@ -5,15 +5,8 @@
 //modified by
 //  Blendurian
 
-#include <initializer_list>
-#include <iterator>
-#include <utility>
-
-#include "Velox_Common.hpp"
 #include "Velox_Debug.hpp"
-#include "Velox_UtilityConcepts.hpp"
 #include "Velox_Memory.hpp"
-#include "Velox_GenericAllocator.hpp"
 #include "Velox_RandomAccessIterator.hpp"
 
 template<typename T>

@@ -242,7 +242,7 @@
     <ClInclude Include="Vectors.hpp" />
     <ClInclude Include="Velox_AllocatorMisc.hpp" />
     <ClInclude Include="Velox_ArrayView.hpp" />
-    <ClInclude Include="Velox_BasicVector.hpp" />
+    <ClInclude Include="BasicVector.hpp" />
     <ClInclude Include="bytell_hash_map.hpp" />
     <ClInclude Include="Velox_Common.hpp" />
     <ClInclude Include="Velox_CompilerIntrin.hpp" />
@@ -271,7 +271,7 @@
     <ClInclude Include="Velox_UtilityConcepts.hpp" />
     <ClInclude Include="Velox_Utils.hpp" />
     <ClInclude Include="Velox_VecN.hpp" />
-    <ClInclude Include="Velox_Vector.hpp" />
+    <ClInclude Include="Vector.hpp" />
     <ClInclude Include="VertexArrayObject.hpp" />
     <ClInclude Include="VertexBufferObject.hpp" />
     <ClInclude Include="Window.hpp" />
