@@ -1224,12 +1224,6 @@
     <None Include="Data\shaders\MelonUberShader.vert">
       <Filter>Apps\3D Apps\Project Melon</Filter>
     </None>
-    <None Include="..\..\..\..\..\..\..\ORKA\Data\shaders\imageViewer.frag">
-      <Filter>Apps\2D Apps\Image Viewer</Filter>
-    </None>
-    <None Include="..\..\..\..\..\..\..\ORKA\Data\shaders\imageViewer.vert">
-      <Filter>Apps\2D Apps\Image Viewer</Filter>
-    </None>
     <None Include="..\..\..\..\..\..\..\ORKA\Data\shaders\bloomDownsample.frag">
       <Filter>Shaders\High Quality Bloom</Filter>
     </None>
@@ -1253,6 +1247,12 @@
     </None>
     <None Include="Data\shaders\uniforms.glsl">
       <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\..\..\..\..\..\ORKA\Data\shaders\imageViewer.frag">
+      <Filter>Apps\2D Apps\Image Viewer\Shaders</Filter>
+    </None>
+    <None Include="..\..\..\..\..\..\..\ORKA\Data\shaders\imageViewer.vert">
+      <Filter>Apps\2D Apps\Image Viewer\Shaders</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -1498,6 +1498,9 @@
     </Filter>
     <Filter Include="Apps\ORKA Intro Sequence">
       <UniqueIdentifier>{45238f7d-2d78-4f15-873e-4800033c59c3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Apps\2D Apps\Image Viewer\Shaders">
+      <UniqueIdentifier>{8324659d-5bfc-46b4-b803-0ef6270be6b1}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
