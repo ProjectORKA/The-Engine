@@ -31,8 +31,8 @@ void Molecule2D::render(Engine& engine, Renderer& renderer) {
 
 void Molecules2D::update(Vec3 location) {
 	while (molecules.size() < 2000) {
-		molecules.emplace_back();
-		molecules.back().pos = randomVec2(-1,1);
+		molecules.emplaceBack();
+		molecules.last().pos = randomVec2(-1,1);
 	}
 
 	for (UInt i = 0; i < molecules.size(); i++) {
@@ -45,7 +45,7 @@ void Molecules2D::update(Vec3 location) {
 		m.move();
 	}
 
-	molecules.front().pos = location;
+	molecules.first().pos = location;
 }
 void Molecules2D::render(Engine& engine, Renderer& renderer) {
 	

@@ -53,6 +53,6 @@ void PhysicsPlaygroundSimulation::update(Float delta) {
 
 PhysicsPlaygroundSimulation::PhysicsPlaygroundSimulation() {
 	while (particles.size() < 100) {
-		particles.emplace_back();
+		particles.emplaceBack();
 	}
 }

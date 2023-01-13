@@ -1,7 +1,7 @@
 #include "Snake.hpp"
 
 void Snake::addSegment() {
-	bodySegments.push_back(Vec2(0, 0));
+	bodySegments.pushBack(Vec2(0, 0));
 }
 void Snake::dumbAI(SnakeFood& f) {
 	direction = speed * normalize(f.foodPosition - headPosition);

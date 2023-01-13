@@ -13,7 +13,7 @@ template<typename T, AllocConcept Alloc = GenericAllocator>
 class Vector : public Alloc, public BasicVector<T>
 {
 public:
-    using iterator          = RandomAccessIterator<T>;
+    using Iterator          = RandomAccessIterator<T>;
     using CIterator         = RandomAccessIterator<const T>;
     using value_type        = T;
     using pointer           = value_type*;
@@ -21,7 +21,6 @@ public:
     using reference         = value_type&;
     using const_reference	= const value_type&;
     using const_iterator	= CIterator;
-    using iterator          = iterator;
     using const_reverse_iterator = std::reverse_iterator<const_iterator>;
     using reverse_iterator  = const_reverse_iterator;
     using size_type         = size_t;

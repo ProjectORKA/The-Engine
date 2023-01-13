@@ -32,8 +32,6 @@ void SandboxRenderer::render(Engine& e, Window& window, TiledRectangle area) {
 	r.uniforms().mMatrix(matrixFromRotation(0, 0, r.time.total)); //sets the objetcs transformation within the world
 	r.renderMesh(e, "suzanne"); // renders the objects 3D data to the screen
 
-	r.postProcess(e, "blur"); // applies a blur effect to the image
-
 	//text rendering
 	r.setDepthTest(false); //disables depth to always draw on top
 	r.screenSpace(); // aligns coordinate system with screenspace

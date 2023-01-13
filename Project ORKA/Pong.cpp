@@ -132,15 +132,6 @@ void PongPlayer::update(Window& window) {
 	position.y = clamp(position.y, -0.9f, 0.9f);
 }
 
-void Pong::create(Window& window) {
-	//window.input.add("player1shoot", ButtonType::Key, Key::SPACE);
-	//window.input.add("player1up", ButtonType::Key, Key::W);
-	//window.input.add("player1down", ButtonType::Key, Key::S);
-	//window.input.add("player2shoot", ButtonType::Key, Key::LEFT);
-	//window.input.add("player2up", ButtonType::Key, Key::UP);
-	//window.input.add("player2down", ButtonType::Key, Key::DOWN);
-	//window.input.add("spawnBall", ButtonType::Key, Key::P);
-}
 void Pong::render(Engine& engine, Window& window, TiledRectangle area) {
 	Renderer& renderer = window.renderer;
 
@@ -159,7 +150,7 @@ void Pong::render(Engine& engine, Window& window, TiledRectangle area) {
 	players[0].position.x = -0.9;
 	players[1].position.x = +0.9;
 
-	if (balls.size() <= 10)balls.emplace_back();
+	if (balls.size() <= 10)balls.emplaceBack();
 
 	renderer.aspectCorrectNormalizedSpace();
 	Vec2 normalizedCursorPosition = Vec2(2) * ((Vec2(window.mousePosBotLeft) / Vec2(renderer.framebufferSystem.windowSize)) - Vec2(0.5));

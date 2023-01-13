@@ -5,6 +5,79 @@
 void Graph::add(Float value) {
 	points.pushBack(value);
 }
+void loopWithin(Vec2& point, Float extend) {
+	while (point.x < -extend) point.x += extend * 2;
+	while (point.x > +extend) point.x -= extend * 2;
+	while (point.y < -extend) point.y += extend * 2;
+	while (point.y > +extend) point.y -= extend * 2;
+}
+void removePointsInRadius(Vec3 point, Vector<Vec3>& points, Float radius) {
+	Vector<Vec3> available;
+
+	for (Vec3 current : points) {
+		if (distance(point, current) > radius) {
+			available.pushBack(current);
+		}
+	}
+
+	points = available;
+}
+void getClosestPoint(Vec3 point, Vector<Vec3>& points, Index& closestID, Vec3& closestPoint) {
+
+	Float minimalDistance = distance(point, points[0]);
+	Index closestPointID = 0;
+
+	for (Int i = 0; i < points.size(); i++) {
+		Float currentDistance = distance(point, points[i]);
+		if (currentDistance < minimalDistance) {
+			minimalDistance = currentDistance;
+			closestPointID = i;
+		}
+	}
+
+	closestID = closestPointID;
+	closestPoint = points[closestPointID];
+}
+void spaceColonization(Vector<Vec3>& points, Vector<Vec3>& branches, Vector<Index>& connections, Float segmentSize, Float killRadius) {
+	if (points.size() == 0) return;
+	if (branches.size() == 0) branches.pushBack(Vec3(0));
+	if (connections.size() == 0) connections.pushBack(0);
+
+	Vector<Vec3> pull(branches.size(), Vec3(0));
+
+	//check every space
+	for (Vec3& point : points) {
+		Index closestID;
+		Vec3 closestPoint;
+		getClosestPoint(point, branches, closestID, closestPoint);
+		//add pull force to branches
+		pull[closestID] += vectorFromAToB(closestPoint, point);
+	}
+
+	Vector<Vec3> newBranches;
+
+	//calculate branches
+	for (int i = 0; i < pull.size(); i++) {
+		if (pull[i] != Vec3(0)) {
+			//calculate direction
+			pull[i] = normalize(pull[i]);
+			//add branch
+			Vec3 newBranchSegment = branches[i] + segmentSize * pull[i];
+			newBranches.pushBack(newBranchSegment);
+			connections.pushBack(i);
+		}
+	}
+
+	//kill points
+	for (Vec3 node : newBranches) {
+		removePointsInRadius(node, points, killRadius);
+	}
+
+	//add branches
+	for (Vec3 node : newBranches) {
+		branches.pushBack(node);
+	}
+}
 
 Bool isOdd(ULL a) {
 	return a % 2 != 0;
@@ -18,6 +91,9 @@ Bool withinLength(Vec3 a, Float b) {
 Bool withinDiamondArea(Vec3 a, Float b) {
 	return (abs(a.x) + abs(a.y) + abs(a.z)) < 2 * b;
 };
+Bool isNear(Vec3 a, Vec3 b, Float error) {
+	return isNear(a.x, b.x, error) && isNear(a.y, b.y, error) && isNear(a.z, b.z, error);
+}
 Bool isNear(Float a, Float b, Float error) {
 	return fabsf(a - b) < error;
 }
@@ -49,10 +125,6 @@ Bool pointInsideSphereAtlocationWithRadius(Vec3 point, Vec3 position, Float radi
 	return distance(point, position) < radius;
 }
 
-Bool isNear(Vec3 a, Vec3 b, Float error) {
-	return isNear(a.x, b.x, error) && isNear(a.y, b.y, error) && isNear(a.z, b.z, error);
-}
-
 UInt max(UInt a, UInt b) {
 	if (a > b) return a;
 	else return b;
@@ -62,6 +134,14 @@ UInt nextPowerOfTwo(UInt& value)
 	UInt powerOfTwo = 1;
 	while (powerOfTwo < value) powerOfTwo <<= 1;
 	return powerOfTwo;
+}
+UInt countBitsInFlags(Short flags) {
+	UInt count = 0;
+	while (flags) {
+		count++;
+		flags = flags >> 1;
+	}
+	return count;
 }
 UInt fibonacciSequence(UInt iterations) {
 	Bool isX = true;
@@ -76,15 +156,6 @@ UInt fibonacciSequence(UInt iterations) {
 
 	if (isX) return x;
 	else return y;
-}
-
-UInt countBitsInFlags(Short flags) {
-	UInt count = 0;
-	while (flags) {
-		count++;
-		flags = flags >> 1;
-	}
-	return count;
 }
 
 Index idOfClosestPoint(Vec2 origin, Vector<Vec2>& positions) {
@@ -161,6 +232,9 @@ Float deltaInLoopingSpace(Float a, Float b, Float extend) {
 	if (abs(delta1) < abs(delta2)) return delta1;
 	else return delta2;
 }
+Float distanceToPointInLoopingSpace(Vec2 a, Vec2 b, Float extend) {
+	return length(deltaInLoopingSpace(a, b, extend));
+}
 Float getDistanceToClosestPoint(Vec3 point, Vector<Vec3>& points) {
 	Float minimalDistance = distance(point, points[0]);
 
@@ -169,9 +243,6 @@ Float getDistanceToClosestPoint(Vec3 point, Vector<Vec3>& points) {
 	}
 
 	return minimalDistance;
-}
-Float distanceToPointInLoopingSpace(Vec2 a, Vec2 b, Float extend) {
-	return length(deltaInLoopingSpace(a, b, extend));
 }
 
 LDouble dmod(LDouble x, LDouble y) {
@@ -414,78 +485,4 @@ Matrix matrixFromLocationDirectionAndSize(Vec2 pos, Vec2 dir, Float size) {
 	m[2] = Vec4(0, 0, size, 0);
 	m[3] = Vec4(pos.x, pos.y, 0, 1);
 	return m;
-}
-
-void loopWithin(Vec2& point, Float extend) {
-	while (point.x < -extend) point.x += extend * 2;
-	while (point.x > +extend) point.x -= extend * 2;
-	while (point.y < -extend) point.y += extend * 2;
-	while (point.y > +extend) point.y -= extend * 2;
-}
-void removePointsInRadius(Vec3 point, Vector<Vec3>& points, Float radius) {
-	Vector<Vec3> available;
-
-	for (Vec3 current : points) {
-		if (distance(point, current) > radius) {
-			available.pushBack(current);
-		}
-	}
-
-	points = available;
-}
-void getClosestPoint(Vec3 point, Vector<Vec3>& points, Index& closestID, Vec3& closestPoint) {
-
-	Float minimalDistance = distance(point, points[0]);
-	Index closestPointID = 0;
-
-	for (Int i = 0; i < points.size(); i++) {
-		Float currentDistance = distance(point, points[i]);
-		if (currentDistance < minimalDistance) {
-			minimalDistance = currentDistance;
-			closestPointID = i;
-		}
-	}
-
-	closestID = closestPointID;
-	closestPoint = points[closestPointID];
-}
-void spaceColonization(Vector<Vec3>& points, Vector<Vec3>& branches, Vector<Index>& connections, Float segmentSize, Float killRadius) {
-	if (points.size() == 0) return;
-	if (branches.size() == 0) branches.pushBack(Vec3(0));
-	if (connections.size() == 0) connections.pushBack(0);
-
-	Vector<Vec3> pull(branches.size(), Vec3(0));
-
-	//check every space
-	for (Vec3& point : points) {
-		Index closestID;
-		Vec3 closestPoint;
-		getClosestPoint(point, branches, closestID, closestPoint);
-		//add pull force to branches
-		pull[closestID] += vectorFromAToB(closestPoint, point);
-	}
-
-	Vector<Vec3> newBranches;
-
-	//calculate branches
-	for (int i = 0; i < pull.size(); i++) {
-		if (pull[i] != Vec3(0)) {
-			//calculate direction
-			pull[i] = normalize(pull[i]);
-			//add branch
-			Vec3 newBranchSegment = branches[i] + segmentSize * pull[i];
-			newBranches.pushBack(newBranchSegment);
-			connections.pushBack(i);
-		}
-	}
-
-	//kill points
-	for (Vec3 node : newBranches) {
-		removePointsInRadius(node, points, killRadius);
-	}
-
-	//add branches
-	for (Vec3 node : newBranches) {
-		branches.pushBack(node);
-	}
 }

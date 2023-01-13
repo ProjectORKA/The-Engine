@@ -19,7 +19,7 @@ void AIPlayground::render(Engine& engine, Window& window, TiledRectangle area)
 	Vector<Float> targetVector;
 
 	for (UInt i = 0; i < network.structure[0]; i++) {
-		inputVector.push_back(randomFloat());
+		inputVector.pushBack(randomFloat());
 	}
 
 	network.input(inputVector);

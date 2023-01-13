@@ -52,7 +52,6 @@ struct Pong : public GameRenderer {
 	InputID shootButton2 = InputID(InputType::KeyBoard, LEFT);
 
 	Vector<Ball> balls;
-	void create(Window& window) override;
 	void update(Window& window) override;
 	void render(Engine& engine, Window& window, TiledRectangle area) override;
 };
