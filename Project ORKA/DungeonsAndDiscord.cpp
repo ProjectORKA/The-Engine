@@ -27,7 +27,7 @@ void DNDRenderer::update(Window& window)
 		DNDEntity e;
 		e.meshName = name;
 		e.transform = Transform();
-		world->entities.push_back(e);
+		world->entities.pushBack(e);
 	}
 	window.droppedFilePaths.clear();
 }
@@ -110,7 +110,7 @@ void DNDRenderer::inputEvent(Window& window, InputEvent input) {
 
 		if (objectID != -1) {
 			if (!window.pressed(selectMultiple)) selectedObjects.clear();
-			selectedObjects.push_back(objectID);
+			selectedObjects.pushBack(objectID);
 			lastSelectedObject = objectID;
 		}
 		else {

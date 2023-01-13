@@ -91,12 +91,12 @@ struct Trees {
 		}
 	}
 	void spawnTree(SimpleRTSSimulation& simulation) {
-		lifeExpectancy.push_back(random(minTreeLifeExpectancyInSeconds, maxTreeLifeExpectancyInSeconds));
-		treeAge.push_back(randomFloat(minTreeLifeExpectancyInSeconds, lifeExpectancy.back()));
-		treeDirection.push_back(randomUnitVec2());
-		treePosition.push_back(randomVec2(-SIMPLERTS_MAPSIZE, SIMPLERTS_MAPSIZE));
-		fullyGrownSize.push_back(random(fullyGrownMinTreeSize, fullyGrownMaxTreeSize));
-		treeSize.push_back(calculateTreeSize(treeCount));
+		lifeExpectancy.pushBack(random(minTreeLifeExpectancyInSeconds, maxTreeLifeExpectancyInSeconds));
+		treeAge.pushBack(randomFloat(minTreeLifeExpectancyInSeconds, lifeExpectancy.last()));
+		treeDirection.pushBack(randomUnitVec2());
+		treePosition.pushBack(randomVec2(-SIMPLERTS_MAPSIZE, SIMPLERTS_MAPSIZE));
+		fullyGrownSize.pushBack(random(fullyGrownMinTreeSize, fullyGrownMaxTreeSize));
+		treeSize.pushBack(calculateTreeSize(treeCount));
 		treeCount++;
 	};
 	void cutTree(UInt id) {
@@ -131,13 +131,13 @@ struct HumanitySimulation {
 
 	};
 	void spawnHuman(Vec2 position) {
-		humanTargetID.push_back(0);
-		humanSpeed.push_back(randomFloat(8.1, 15));
-		humanDirection.push_back(randomUnitVec2());
-		humanPositions.push_back(position);
-		humanCarriedItem.push_back(SimpleRTSItem::Nothing);
-		humanTargetpositions.push_back(position);
-		humanState.push_back(SimpleRTSHumanState::LookingForWood);
+		humanTargetID.pushBack(0);
+		humanSpeed.pushBack(randomFloat(8.1, 15));
+		humanDirection.pushBack(randomUnitVec2());
+		humanPositions.pushBack(position);
+		humanCarriedItem.pushBack(SimpleRTSItem::Nothing);
+		humanTargetpositions.pushBack(position);
+		humanState.pushBack(SimpleRTSHumanState::LookingForWood);
 		humanCount++;
 	}
 	void updateHumans();

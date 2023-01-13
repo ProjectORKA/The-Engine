@@ -4,8 +4,8 @@
 
 void treeGeneration(Vector<Vec3>& leaves, Vector<Vec3>& branches, Vector<Index>& connections, Float segmentSize, Float killRadius, Float leafPull) {
 	if (leaves.size() == 0) return;
-	if (branches.size() == 0) branches.push_back(Vec3(0));
-	if (connections.size() == 0) connections.push_back(0);
+	if (branches.size() == 0) branches.pushBack(Vec3(0));
+	if (connections.size() == 0) connections.pushBack(0);
 
 	Vector<Vec3> pullBranches(branches.size(), Vec3(0));
 	Vector<Vec3> pullLeaves(leaves.size(), Vec3(0));
@@ -30,8 +30,8 @@ void treeGeneration(Vector<Vec3>& leaves, Vector<Vec3>& branches, Vector<Index>&
 			pullBranches[i] = normalize(pullBranches[i]) + Vec3(0.001) * pullBranches[i];
 			//add branch
 			Vec3 newBranchSegment = branches[i] + segmentSize * pullBranches[i];
-			newBranches.push_back(newBranchSegment);
-			connections.push_back(i);
+			newBranches.pushBack(newBranchSegment);
+			connections.pushBack(i);
 		}
 	}
 
@@ -49,7 +49,7 @@ void treeGeneration(Vector<Vec3>& leaves, Vector<Vec3>& branches, Vector<Index>&
 
 	//add branches
 	for (Vec3 node : newBranches) {
-		branches.push_back(node);
+		branches.pushBack(node);
 	}
 }
 
@@ -60,8 +60,8 @@ void TreeGenerator::run() {
 		Float treeHeight = 2;
 		Float currentBranchHeight = -1;
 		for (int i = 0; i < 100; i++) {
-			branches.points.push_back(Vec3(0, 0, currentBranchHeight));
-			tree.connections.push_back(max(0, i - 1));
+			branches.points.pushBack(Vec3(0, 0, currentBranchHeight));
+			tree.connections.pushBack(max(0, i - 1));
 			currentBranchHeight += 0.01 * treeHeight;
 			currentBranchHeight /= 1.01;
 		}

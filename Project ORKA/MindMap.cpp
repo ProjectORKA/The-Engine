@@ -66,11 +66,11 @@ void MindMap::update()
 }
 void MindMap::addNode()
 {
-	forces.emplace_back();
-	numforces.emplace_back();
-	for (Int i = 0; i < random(1) + 1; i++) connections.emplace_back(random(nodeCount), nodeCount);
-	if (nodeCount) positions.push_back(randomVec2(-1, 1) + positions[connections.back().a]);
-	else positions.push_back(Vec2(0));
+	forces.emplaceBack();
+	numforces.emplaceBack();
+	for (Int i = 0; i < random(1) + 1; i++) connections.emplaceBack(random(nodeCount), nodeCount);
+	if (nodeCount) positions.pushBack(randomVec2(-1, 1) + positions[connections.last().a]);
+	else positions.pushBack(Vec2(0));
 	nodeCount++;
 }
 void MindMap::render(Engine& engine, Renderer& renderer)

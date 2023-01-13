@@ -1,5 +1,6 @@
 #include "Random.hpp"
 #include "PointCloud.hpp"
+#include "PerlinNoise.hpp"
 
 using Face = Index[3];
 
@@ -25,12 +26,11 @@ struct SphereMeshing {
 	PointCloud terrain;
 	Vector<Vec3> air;
 	Vector<Vec4> spheres;
-	PointCloudRenderer pcRenderer;
-	GPUBuffer sphereBuffer;
+	PointCloudRenderer pcRenderer; 
 
 	void render(Renderer& renderer) {
 
-		if (!sphereBuffer.loaded)sphereBuffer.create(spheres, 0);
+		//if (!sphereBuffer.loaded)sphereBuffer.create(spheres, 0);
 
 		//sphereBuffer.use(0);
 		//renderer.useShader("sphereRendering");
@@ -42,22 +42,22 @@ struct SphereMeshing {
 
 	};
 
-	void rebuildMesh() {
+	void rebuildMesh(Engine& engine) {
 		spheres.clear();
 		for (auto t : terrain.points) {
 			Float size = getDistanceToClosestPoint(t, air);
-			spheres.push_back(Vec4(t, size));
+			spheres.pushBack(Vec4(t, size));
 		}
 
 		CPUMesh icoSphere;
-		icoSphere.load("lowPolyIcoSphere");
+		icoSphere.load(engine, "lowPolyIcoSphere");
 
 		Mesh m;
 		m.positions = icoSphere.vertices;
 		m.faces = icoSphere.indices;
 	};
 
-	void update() {
+	void update(Engine & engine) {
 		if (!loaded) {
 			UInt gridSize = 64;
 			Float noiseSize = 4;
@@ -66,13 +66,13 @@ struct SphereMeshing {
 					for (UInt z = 0; z < gridSize; z++) {
 						//Vec3 point = (Vec3(x, y, z) + randomVec3(-0.5, 0.5)) / Vec3(gridSize);
 						Vec3 point = Vec3(x, y, z) / Vec3(gridSize);
-						if (noise.octaveNoise0_1(point.x * noiseSize, point.y * noiseSize, point.z * noiseSize, 8) + point.z - 0.5 > 0.5) air.push_back(point);
+						if (noise.octaveNoise0_1(point.x * noiseSize, point.y * noiseSize, point.z * noiseSize, 8) + point.z - 0.5 > 0.5) air.pushBack(point);
 						else terrain.add(point);
 					}
 				}
 			}
 
-			if (terrain.points.size() && air.size()) rebuildMesh();
+			if (terrain.points.size() && air.size()) rebuildMesh(engine);
 			loaded = true;
 		}
 

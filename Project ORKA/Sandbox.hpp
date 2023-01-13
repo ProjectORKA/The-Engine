@@ -15,6 +15,9 @@ struct SandboxRenderer : public GameRenderer {
 	InputEvent exit = InputEvent(InputType::Mouse, RMB, 0);
 	InputEvent wireframeToogle = InputEvent(InputType::KeyBoard, F, 1);
 
+	void create(Engine& engine, Window& window) {
+		player.camera.location = Vec3(0, -5, 0);
+	};
 	void update(Window& window) override;
 	void inputEvent(Window& window, InputEvent input) override;
 	void render(Engine & engine, Window& window, TiledRectangle area) override;

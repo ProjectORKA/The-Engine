@@ -1,3 +1,0 @@
-
-- remove file loading from Shader
-- remove ShaderType from GraphicsAPI.hpp and add to Shader.hpp

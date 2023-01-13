@@ -31,10 +31,10 @@ struct ImageViewer : public GameRenderer{
 	void update(Window& window) override{
 		if (window.droppedFilePaths.size()) {
 			cimage.unload();
-			cimage.load(window.droppedFilePaths.back(), "imageViewerImage");
+			cimage.load(window.droppedFilePaths.last(), "imageViewerImage");
 			cimage.nearFilter = Filter::nearest;
 			gimage.load(cimage);
-			window.droppedFilePaths.pop_back();
+			window.droppedFilePaths.popBack();
 		}
 	}
 

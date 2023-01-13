@@ -11,8 +11,6 @@
 #include "Basics.hpp"
 #include "Math.hpp"
 
-#include "Velox_Vector.hpp"
-
 struct SnakeFood;
 
 struct Snake {

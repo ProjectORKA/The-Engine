@@ -14,7 +14,7 @@ struct QuadtreeID {
 	QuadtreeID parent();
 	Vector<QuadtreeID> parents() {
 		Vector<QuadtreeID> vp;
-		vp.push_back(parent());
+		vp.pushBack(parent());
 
 		Bool x = getX();
 		Bool y = getY();
