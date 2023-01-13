@@ -25,7 +25,7 @@ void FramebufferSystem::update(Area area)
 	}
 }
 Framebuffer& FramebufferSystem::addGbuffer(Name name, Float relativeSize) {
-	Framebuffer & f = framebuffers.emplace_back();
+	Framebuffer & f = framebuffers.emplaceBack();
 	f.create(Area(1));
 	f.add(4, dataTypeFloat, 0);	//color
 	f.add(3, dataTypeFloat, 1);	//
@@ -45,7 +45,7 @@ Framebuffer& FramebufferSystem::currentDraw()
 	return framebuffers[currentDrawFramebufferIndex];
 }
 Framebuffer& FramebufferSystem::addIDBuffer(Name name, Float relativeSize) {
-	Framebuffer& f = framebuffers.emplace_back();
+	Framebuffer& f = framebuffers.emplaceBack();
 	f.create(Area(1));
 	f.add(3, dataTypeUInt, 0);	//ids
 	f.add(5, dataTypeFloat, 1);	//depth
@@ -54,7 +54,7 @@ Framebuffer& FramebufferSystem::addIDBuffer(Name name, Float relativeSize) {
 	return f;
 }
 Framebuffer& FramebufferSystem::addFrameBuffer(Name name, Float relativeSize) {
-	Framebuffer& f = framebuffers.emplace_back();
+	Framebuffer& f = framebuffers.emplaceBack();
 	f.create(Area(1));
 	f.add(4, dataTypeFloat, 0);	//color
 	f.add(5, dataTypeFloat, 1);	//depth
@@ -70,7 +70,7 @@ void FramebufferSystem::read(Renderer& renderer, Name name) {
 }
 void FramebufferSystem::create(Renderer& renderer, Area size) {
 	//gbuffer
-	addGbuffer("main");
+	addGbuffer("main", 1);
 	addGbuffer("postProcess");
 }
 void  FramebufferSystem::read(Renderer& renderer, Index framebufferIndex) {

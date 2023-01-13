@@ -8,8 +8,6 @@
 #include "Velox_Common.hpp"
 #include <iterator>
 
-TRE_NS_START
-
 template<typename DataType>
 class RandomAccessIterator : public std::iterator<std::random_access_iterator_tag, DataType, ptrdiff_t, DataType*, DataType&>
 {
@@ -33,8 +31,8 @@ public:
     DataType* operator->() noexcept { return m_Current; }
     const DataType* operator->() const noexcept { return m_Current; }
 
-    DataType* GetPointer() const noexcept { return m_Current; }
-    const DataType* GetConstPtr() const noexcept { return m_Current; }
+    DataType* getPointer() const noexcept { return m_Current; }
+    const DataType* getConstPtr() const noexcept { return m_Current; }
 
     RandomAccessIterator<DataType>& operator+=(const ptrdiff_t& movement) noexcept { m_Current += movement; return (*this); }
     RandomAccessIterator<DataType>& operator-=(const ptrdiff_t& movement) noexcept { m_Current -= movement; return (*this); }
@@ -63,5 +61,3 @@ public:
 private:
     DataType* m_Current;
 };
-
-TRE_NS_END

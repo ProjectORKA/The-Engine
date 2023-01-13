@@ -49,7 +49,7 @@ void RenderObjectSystem::select(Engine& engine, Name name)
 					renderObject.shaderID = shaderSystemPtr->currentShaderProgramID;
 					renderObject.textureID = textureSystemPtr->currentTextureID;
 					renderObject.meshID = meshSystemPtr->currentMeshID;
-					renderObjects.push_back(renderObject);
+					renderObjects.pushBack(renderObject);
 					
 					currentRenderobjectID = renderObjects.size() - 1;
 					nameToIndex[name] = currentRenderobjectID;
@@ -77,7 +77,7 @@ void RenderObjectSystem::create(Renderer & renderer)
 	shaderSystemPtr = &renderer.shaderSystem;
 }
 Index RenderObjectSystem::addRenderObject(RenderObject& renderObject) {
-	renderObjects.push_back(renderObject);
+	renderObjects.pushBack(renderObject);
 	currentRenderobjectID = renderObjects.size() - 1;
 	return currentRenderobjectID;
 }
@@ -99,5 +99,5 @@ void RenderObjectSystem::addRenderObject(Name name, Name meshName, Name textureN
 	renderObjectNames.shaderName = shaderName;
 	renderObjectNames.textureName = textureName;
 	
-	renderObjectNamesQueue.push_back(renderObjectNames);
+	renderObjectNamesQueue.pushBack(renderObjectNames);
 }

@@ -3,7 +3,7 @@
 #include"Renderer.hpp"
 
 void Plot::add(Vec2 value) {
-	points.push_back(value);
+	points.pushBack(value);
 }
 CPUMesh Plot::createMesh() {
 	CPUMesh mesh;
@@ -15,11 +15,11 @@ CPUMesh Plot::createMesh() {
 	for (UInt index = 0; index < points.size(); index++) {
 		Vec2 pointPos = points[index];
 
-		mesh.vertices.push_back(Vec3(pointPos, 0));
-		mesh.uvs.push_back(pointPos);
-		mesh.normals.push_back(Vec3(0, 0, 1));
+		mesh.vertices.pushBack(Vec3(pointPos, 0));
+		mesh.uvs.pushBack(pointPos);
+		mesh.normals.pushBack(Vec3(0, 0, 1));
 
-		mesh.indices.push_back(index);
+		mesh.indices.pushBack(index);
 	}
 
 	mesh.checkIntegrity();

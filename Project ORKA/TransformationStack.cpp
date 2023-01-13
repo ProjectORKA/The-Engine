@@ -3,14 +3,14 @@
 
 Matrix TransformationStack::get() {
 	if (matrices.size() == 0) return Matrix(1);
-	else return matrices.back();
+	else return matrices.last();
 }
 void TransformationStack::popMatrix() {
-	matrices.pop_back();
+	matrices.popBack();
 }
 void TransformationStack::pushMatrix(Matrix matrix) {
-	matrices.push_back(matrix * get());
+	matrices.pushBack(matrix * get());
 }
 void TransformationStack::overridePush(Matrix matrix) {
-	matrices.push_back(matrix);
+	matrices.pushBack(matrix);
 }

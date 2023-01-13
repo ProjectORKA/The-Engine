@@ -49,7 +49,7 @@ void MeshSystem::addMesh(CPUMesh cpuMesh) {
 	if (cpuMesh.loaded) {
 		GPUMesh gpuMesh;
 		gpuMesh.upload(cpuMesh);
-		gpuMeshes.push_back(gpuMesh);
+		gpuMeshes.pushBack(gpuMesh);
 		use(gpuMeshes.size() - 1);
 		meshNames.add(cpuMesh.name, currentMeshID);
 	}
@@ -83,20 +83,20 @@ void MeshSystem::renderInstanced(Engine& engine, Uniforms& uniforms, Name meshNa
 			}
 			apiBindBuffer(GL_ARRAY_BUFFER, transforms.bufferID);
 
-			glEnableVertexAttribArray(transformPos + 0);
-			glEnableVertexAttribArray(transformPos + 1);
-			glEnableVertexAttribArray(transformPos + 2);
-			glEnableVertexAttribArray(transformPos + 3);
+			apiEnableVertexAttribArray(transformPos + 0);
+			apiEnableVertexAttribArray(transformPos + 1);
+			apiEnableVertexAttribArray(transformPos + 2);
+			apiEnableVertexAttribArray(transformPos + 3);
 
-			glVertexAttribPointer(transformPos + 0, 4, GL_FLOAT, GL_FALSE, sizeof(Matrix), (void*)0);
-			glVertexAttribPointer(transformPos + 1, 4, GL_FLOAT, GL_FALSE, sizeof(Matrix), (void*)(1 * sizeof(Vec4)));
-			glVertexAttribPointer(transformPos + 2, 4, GL_FLOAT, GL_FALSE, sizeof(Matrix), (void*)(2 * sizeof(Vec4)));
-			glVertexAttribPointer(transformPos + 3, 4, GL_FLOAT, GL_FALSE, sizeof(Matrix), (void*)(3 * sizeof(Vec4)));
+			apiVertexAttribPointer(transformPos + 0, 4, GL_FLOAT, GL_FALSE, sizeof(Matrix), (void*)0);
+			apiVertexAttribPointer(transformPos + 1, 4, GL_FLOAT, GL_FALSE, sizeof(Matrix), (void*)(1 * sizeof(Vec4)));
+			apiVertexAttribPointer(transformPos + 2, 4, GL_FLOAT, GL_FALSE, sizeof(Matrix), (void*)(2 * sizeof(Vec4)));
+			apiVertexAttribPointer(transformPos + 3, 4, GL_FLOAT, GL_FALSE, sizeof(Matrix), (void*)(3 * sizeof(Vec4)));
 
-			glVertexAttribDivisor(transformPos + 0, 1);
-			glVertexAttribDivisor(transformPos + 1, 1);
-			glVertexAttribDivisor(transformPos + 2, 1);
-			glVertexAttribDivisor(transformPos + 3, 1);
+			apiVertexAttribDivisor(transformPos + 0, 1);
+			apiVertexAttribDivisor(transformPos + 1, 1);
+			apiVertexAttribDivisor(transformPos + 2, 1);
+			apiVertexAttribDivisor(transformPos + 3, 1);
 
 			currentMesh().vao.instanced = true;
 		}
@@ -115,8 +115,8 @@ GPUMesh& MeshSystem::currentMesh()
 }
 
 void NameTable::add(Name name, Index id) {
-	names.push_back(name);
-	indices.push_back(id);
+	names.pushBack(name);
+	indices.pushBack(id);
 }
 Bool NameTable::find(Name name, Index& id) {
 	id = -1;

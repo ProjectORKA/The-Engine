@@ -8,8 +8,8 @@
 void DynameshTerrain::update(Camera camera) {
 	
 	if (!loaded) {
-		nodes.push_back(DynameshNode());
-		nodes.back().position = Vec3(1);
+		nodes.pushBack(DynameshNode());
+		nodes.last().position = Vec3(1);
 		loaded = true;
 	}
 	
@@ -23,19 +23,19 @@ void DynameshTerrain::update(Camera camera) {
 			DynameshNode child;
 			child.size = nodes[i].size;
 			child.position = nodes[i].position + Vec3(0, 0, nodes[i].size);
-			nodes.push_back(child);
+			nodes.pushBack(child);
 			child.position = nodes[i].position + Vec3(0, nodes[i].size, 0);
-			nodes.push_back(child);
+			nodes.pushBack(child);
 			child.position = nodes[i].position + Vec3(nodes[i].size, 0, 0);
-			nodes.push_back(child);
+			nodes.pushBack(child);
 			child.position = nodes[i].position + Vec3(0, nodes[i].size, nodes[i].size);
-			nodes.push_back(child);
+			nodes.pushBack(child);
 			child.position = nodes[i].position + Vec3(nodes[i].size, 0, nodes[i].size);
-			nodes.push_back(child);
+			nodes.pushBack(child);
 			child.position = nodes[i].position + Vec3(nodes[i].size, nodes[i].size, 0);
-			nodes.push_back(child);
+			nodes.pushBack(child);
 			child.position = nodes[i].position + Vec3(nodes[i].size, nodes[i].size, nodes[i].size);
-			nodes.push_back(child);
+			nodes.pushBack(child);
 		}
 	}
 

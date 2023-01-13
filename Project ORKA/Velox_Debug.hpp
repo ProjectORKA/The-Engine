@@ -56,13 +56,13 @@
         if (!(bool)(condition)){ \
             char assert_msg[512]; \
             snprintf(assert_msg, 512, __VA_ARGS__); \
-            TRE::Log::Write(TRE::Log::ASSERT, "[%s::%d::%s] %s.", __FILENAME__, __LINE__, __FUNCTION__, assert_msg); \
+            Log::write(Log::ASSERT, "[%s::%d::%s] %s.", __FILENAME__, __LINE__, __FUNCTION__, assert_msg); \
             DEBUG_BREAK(); \
         }\
 
     #define TRE_ASSERT(condition) \
         if (!(bool)(condition)){ \
-            TRE::Log::Write(TRE::Log::ASSERT, "[%s::%d::%s] Assert occured (Condition: %s).", __FILENAME__, __LINE__, __FUNCTION__, #condition); \
+            Log::write(Log::ASSERT, "[%s::%d::%s] Assert occured (Condition: %s).", __FILENAME__, __LINE__, __FUNCTION__, #condition); \
             DEBUG_BREAK(); \
         } \
 
@@ -70,7 +70,7 @@
         if (!(bool)(condition)){ \
             char assert_msg[512]; \
             snprintf(assert_msg, 512, ##__VA_ARGS__); \
-            TRE::Log::Write(TRE::Log::ASSERT, "[%s::%d::%s] %s.", __FILENAME__, __LINE__, __FUNCTION__, assert_msg); \
+            Log::write(Log::ASSERT, "[%s::%d::%s] %s.", __FILENAME__, __LINE__, __FUNCTION__, assert_msg); \
             DEBUG_BREAK(); \
         }\
 

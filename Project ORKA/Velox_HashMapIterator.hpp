@@ -8,8 +8,6 @@
 #include <iterator>
 #include "Velox_Common.hpp"
 
-TRE_NS_START
-
 template<typename HashMapType, typename VT>
 struct TemplatedIterator
 {
@@ -73,14 +71,14 @@ public:
     value_type& operator*() const noexcept
     {
         usize idx = index % BLOCK_SIZE;
-        value_type* pair = current->GetPair(idx);
+        value_type* pair = current->getPair(idx);
         return *pair;
     }
 
     value_type* operator->() const noexcept
     {
         usize idx = index % BLOCK_SIZE;
-        value_type* pair = current->GetPair(idx);
+        value_type* pair = current->getPair(idx);
         return pair;
     }
 
@@ -89,5 +87,3 @@ public:
         return { current, index };
     }
 };
-
-TRE_NS_END

@@ -11,13 +11,11 @@
 #include "Velox_UtilityConcepts.hpp"
 #include "Velox_RandomAccessIterator.hpp"
 
-TRE_NS_START
-
 template<typename T>
 class ArrayView
 {
 public:
-    using Iterator          = RandomAccessIterator<T>;
+    using iterator          = RandomAccessIterator<T>;
     using CIterator         = RandomAccessIterator<const T>;
     using value_type        = T;
     using pointer           = value_type*;
@@ -52,31 +50,31 @@ public:
     template<usize S>
     constexpr FORCEINLINE ArrayView(const T(&arr)[S]) noexcept;
 
-    constexpr FORCEINLINE void RemovePrefix(usize skip) { m_Data += skip; }
+    constexpr FORCEINLINE void removePrefix(usize skip) { m_Data += skip; }
 
-    constexpr FORCEINLINE void RemoveSuffix(usize skip) { m_Size -= skip; }
+    constexpr FORCEINLINE void removeSuffix(usize skip) { m_Size -= skip; }
 
-    constexpr FORCEINLINE ArrayView SubArray(usize start, usize end) const noexcept;
+    constexpr FORCEINLINE ArrayView subArray(usize start, usize end) const noexcept;
 
-    constexpr FORCEINLINE const T* Data() const { return m_Data; }
+    constexpr FORCEINLINE const T* data() const { return m_Data; }
 
-    constexpr FORCEINLINE usize Length() const { return m_Size; }
+    constexpr FORCEINLINE usize length() const { return m_Size; }
 
-    constexpr FORCEINLINE usize Size() const { return m_Size; }
+    constexpr FORCEINLINE usize size() const { return m_Size; }
 
-    constexpr FORCEINLINE T Get(usize i) const noexcept
+    constexpr FORCEINLINE T get(usize i) const noexcept
     {
         TRE_ASSERTF(i < m_Size, "Can't access the %" SZu " th element, out of range [0..%" SZu ") !", i, m_Size);
         return m_Data[i];
     }
 
-    constexpr FORCEINLINE T& At(usize i) noexcept
+    constexpr FORCEINLINE T& at(usize i) noexcept
     {
         TRE_ASSERTF(i < m_Size, "Can't access the %" SZu " th element, out of range [0..%" SZu ") !", i, m_Size);
         return m_Data[i];
     }
 
-    constexpr FORCEINLINE const T& At(usize i) const noexcept
+    constexpr FORCEINLINE const T& at(usize i) const noexcept
     {
         TRE_ASSERTF(i < m_Size, "Can't access the %" SZu " th element, out of range [0..%" SZu ") !", i, m_Size);
         return m_Data[i];
@@ -84,22 +82,22 @@ public:
 
     constexpr FORCEINLINE T& operator[](usize i) noexcept
     {
-        return this->At(i);
+        return this->at(i);
     }
 
     constexpr FORCEINLINE const T& operator[](usize i) const noexcept
     {
-        return this->At(i);
+        return this->at(i);
     }
 
     constexpr iterator begin() const noexcept
     {
-        return Iterator(m_Data);
+        return iterator(m_Data);
     }
 
     constexpr iterator end() const noexcept
     {
-        return Iterator(m_Data + m_Size);
+        return iterator(m_Data + m_Size);
     }
 
     constexpr const_iterator cbegin() const noexcept
@@ -147,7 +145,7 @@ constexpr FORCEINLINE ArrayView<T>::ArrayView(T* data, usize size) noexcept
 template<typename T>
 template<ContainerConcept ContainerType>
 constexpr FORCEINLINE ArrayView<T>::ArrayView(const ContainerType& arr) noexcept
-    : ArrayView(arr.Data(), arr.Size())
+    : ArrayView(arr.data(), arr.size())
 {
 
 }
@@ -161,11 +159,9 @@ constexpr FORCEINLINE ArrayView<T>::ArrayView(const T(&arr)[S]) noexcept
 }
 
 template<typename T>
-constexpr FORCEINLINE ArrayView<T> ArrayView<T>::SubArray(usize index, usize count) const noexcept
+constexpr FORCEINLINE ArrayView<T> ArrayView<T>::subArray(usize index, usize count) const noexcept
 {
     if (count > m_Size - index)
         count = m_Size - index;
     return ArrayView(m_Data + index, count);
 }
-
-TRE_NS_END

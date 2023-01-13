@@ -3,24 +3,24 @@
 
 void LineRenderer::create() {
 	cpuMesh.drawMode = MeshDrawMode::dynamicMode;
-	cpuMesh.indices.push_back(0);
-	cpuMesh.indices.push_back(1);
-	cpuMesh.indices.push_back(2);
-	cpuMesh.indices.push_back(3);
+	cpuMesh.indices.pushBack(0);
+	cpuMesh.indices.pushBack(1);
+	cpuMesh.indices.pushBack(2);
+	cpuMesh.indices.pushBack(3);
 	cpuMesh.name = "line";
-	cpuMesh.normals.push_back(Vec3(0, 0, 1));
-	cpuMesh.normals.push_back(Vec3(0, 0, 1));
-	cpuMesh.normals.push_back(Vec3(0, 0, 1));
-	cpuMesh.normals.push_back(Vec3(0, 0, 1));
+	cpuMesh.normals.pushBack(Vec3(0, 0, 1));
+	cpuMesh.normals.pushBack(Vec3(0, 0, 1));
+	cpuMesh.normals.pushBack(Vec3(0, 0, 1));
+	cpuMesh.normals.pushBack(Vec3(0, 0, 1));
 	cpuMesh.primitiveMode = PrimitiveMode::TriangleStrip;
-	cpuMesh.uvs.push_back(Vec2(0, 1));
-	cpuMesh.uvs.push_back(Vec2(0, 0));
-	cpuMesh.uvs.push_back(Vec2(1, 0));
-	cpuMesh.uvs.push_back(Vec2(1, 1));
-	cpuMesh.colors.push_back(Vec3(1));
-	cpuMesh.colors.push_back(Vec3(1));
-	cpuMesh.colors.push_back(Vec3(1));
-	cpuMesh.colors.push_back(Vec3(1));
+	cpuMesh.uvs.pushBack(Vec2(0, 1));
+	cpuMesh.uvs.pushBack(Vec2(0, 0));
+	cpuMesh.uvs.pushBack(Vec2(1, 0));
+	cpuMesh.uvs.pushBack(Vec2(1, 1));
+	cpuMesh.colors.pushBack(Vec3(1));
+	cpuMesh.colors.pushBack(Vec3(1));
+	cpuMesh.colors.pushBack(Vec3(1));
+	cpuMesh.colors.pushBack(Vec3(1));
 	cpuMesh.vertices.resize(4);
 }
 void LineRenderer::renderLine(Renderer& renderer, Vec3 start, Vec3 end, Float width) {

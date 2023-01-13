@@ -11,9 +11,9 @@
 #include FT_FREETYPE_H
 
 struct CharData {
-	IVec2   Size;       //size of glyph texture
-	IVec2   Bearing;    //top left corner of glyph
-	UInt	Advance;	//offset to next glyph
+	IVec2   size;       //size of glyph texture
+	IVec2   bearing;    //top left corner of glyph
+	UInt	advance;	//offset to next glyph
 };
 
 struct GPUFont {

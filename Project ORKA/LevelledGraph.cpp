@@ -3,10 +3,10 @@
 #include "Renderer.hpp"
 
 void LevelledGraph::addNode() {
-	positions.push_back(randomVec2(-1,1));
-	forces.emplace_back();
-	numforces.emplace_back();
-	for(Int i = 0; i < random(2)+1; i++) connections.emplace_back(random(nodeCount), nodeCount);
+	positions.pushBack(randomVec2(-1,1));
+	forces.emplaceBack();
+	numforces.emplaceBack();
+	for(Int i = 0; i < random(2)+1; i++) connections.emplaceBack(random(nodeCount), nodeCount);
 	nodeCount++;
 }
 

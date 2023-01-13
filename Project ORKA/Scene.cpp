@@ -63,29 +63,29 @@ void Scene::loadFBX(Path path, ResourceManager& resourceManager) {
 									vertex.x = assimpScene->mMeshes[meshID]->mVertices[i].x;
 									vertex.y = assimpScene->mMeshes[meshID]->mVertices[i].y;
 									vertex.z = assimpScene->mMeshes[meshID]->mVertices[i].z;
-									mesh.vertices.push_back(vertex);
+									mesh.vertices.pushBack(vertex);
 
 									Vec2 texCoord = Vec2(0);
 									if (assimpScene->mMeshes[meshID]->mTextureCoords[0]) {
 									texCoord.x = assimpScene->mMeshes[meshID]->mTextureCoords[0][i].x;
 									texCoord.y = assimpScene->mMeshes[meshID]->mTextureCoords[0][i].y;
 									}
-									mesh.uvs.push_back(texCoord);
+									mesh.uvs.pushBack(texCoord);
 
 									Vec3 normal;
 									normal.x = assimpScene->mMeshes[meshID]->mNormals[i].x;
 									normal.y = assimpScene->mMeshes[meshID]->mNormals[i].y;
 									normal.z = assimpScene->mMeshes[meshID]->mNormals[i].z;
-									mesh.normals.push_back(normal);
+									mesh.normals.pushBack(normal);
 
-									mesh.colors.push_back(color);
+									mesh.colors.pushBack(color);
 								}
 
 								if (assimpScene->mMeshes[meshID]->HasFaces()) {
 									for (UInt i = 0; i < assimpScene->mMeshes[meshID]->mNumFaces; i++) {
 										for (UInt j = 0; j < assimpScene->mMeshes[meshID]->mFaces->mNumIndices; j++) { //should always be 3 (0 -> 1 -> 2 <<)
 											Index index = lastIndex + assimpScene->mMeshes[meshID]->mFaces[i].mIndices[j];
-											mesh.indices.push_back(index);
+											mesh.indices.pushBack(index);
 										}
 									}
 								}
@@ -105,7 +105,7 @@ void Scene::loadFBX(Path path, ResourceManager& resourceManager) {
 							mesh.checkIntegrity();
 							mesh.saveMeshFile(resourceManager);
 						}
-						meshes.push_back(mesh);
+						meshes.pushBack(mesh);
 					}
 					else logDebug(String("Object (").append(assimpScene->mRootNode->mChildren[objectID]->mName.C_Str()).append("in scene does not have meshes!"));
 				}

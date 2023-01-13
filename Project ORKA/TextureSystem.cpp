@@ -89,8 +89,8 @@ void TextureSystem::use(Engine& engine, Name name, Index slot) {
 }
 void TextureSystem::add(CPUTexture & cpuTexture)
 {
-	gpuTextures.emplace_back();
-	gpuTextures.back().load(cpuTexture);
+	gpuTextures.emplaceBack();
+	gpuTextures.last().load(cpuTexture);
 	currentTextureID = gpuTextures.size() - 1;
 	textureNames[cpuTexture.name] = currentTextureID;
 }

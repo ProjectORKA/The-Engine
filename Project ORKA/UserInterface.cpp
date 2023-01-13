@@ -56,7 +56,7 @@ UIContainer& UIContainer::vertical() {
 	return *this;
 }
 UIContainer& UIContainer::insert(UIElement& element) {
-	contents.push_back(&element);
+	contents.pushBack(&element);
 	return *this;
 }
 void UIContainer::update(Window& window) {}

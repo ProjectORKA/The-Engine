@@ -9,6 +9,33 @@
 #define GLEW_STATIC
 #include "GL/glew.h"
 
+enum BlendEquation : int {
+	add = GL_FUNC_ADD,
+	subtract = GL_FUNC_SUBTRACT,
+	reverse_subtract = GL_FUNC_REVERSE_SUBTRACT,
+	minimum = GL_MIN,
+	maximum = GL_MAX,
+};
+
+enum BlendFunction : int {
+	one = GL_ONE,
+	zero = GL_ZERO,
+	srcColor = GL_SRC_COLOR,
+	dstColor = GL_DST_COLOR,
+	srcAlpha = GL_SRC_ALPHA,
+	dstAlpha = GL_DST_ALPHA,
+	constantColor = GL_CONSTANT_COLOR,
+	constantAlpha = GL_CONSTANT_ALPHA,
+	srcAlphaSaturate = GL_SRC_ALPHA_SATURATE,
+
+	oneMinusSrcColor = GL_ONE_MINUS_SRC_COLOR,
+	oneMinusDstColor = GL_ONE_MINUS_DST_COLOR,
+	oneMinusSrcAlpha = GL_ONE_MINUS_SRC_ALPHA,
+	oneMinusDstAlpha = GL_ONE_MINUS_DST_ALPHA,
+	oneMinusConstantColor = GL_ONE_MINUS_CONSTANT_COLOR,
+	oneMinusConstantAlpha = GL_ONE_MINUS_CONSTANT_ALPHA,
+};
+
 enum ShaderType : int {
 	vertex = GL_VERTEX_SHADER,
 	compute = GL_COMPUTE_SHADER,
@@ -51,6 +78,7 @@ using SizeIPtr = __int64;
 
 void apiClearColor();
 void apiClearDepth();
+void apiEnableBlend();
 Bool apiGetCullFace();
 void apiEnable(Enum cap);
 void apiDisable(Enum cap);
@@ -80,6 +108,7 @@ void apiDisableVertexAttribArray(UInt index);
 void apiClipControl(Enum origin, Enum depth);
 void apiBlendFunc(Enum sfactor, Enum dfactor);
 void apiDeleteFramebuffer(UInt framebufferID);
+void apiBlendEquation(BlendEquation equation);
 void apiBindBuffer(Enum target, UInt bufferID);
 void apiBindDrawFramebuffer(UInt framebufferID);
 void apiBindReadFramebuffer(UInt framebufferID);
@@ -88,6 +117,7 @@ void apiBindTexture(Enum target, UInt textureID);
 void apiViewport(Int x, Int y, SizeI w, SizeI h);
 void apiAttachShader(UInt programID, UInt shaderID);
 void apiDetachShader(UInt programID, UInt shaderID);
+void apiVertexAttribDivisor(UInt index, UInt divisor);
 void apiNamedFramebufferDrawBuffer(UInt framebufferID);
 void apiTexParameteri(Enum target, Enum name, Int param);
 void apiTexParameterf(Enum target, Enum name, Float param);

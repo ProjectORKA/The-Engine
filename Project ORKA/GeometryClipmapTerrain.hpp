@@ -29,8 +29,6 @@ struct ClipMap {
 		heightmap.wrapping = Wrapping::repeat;
 		heightmap.floatPixels = new Float[CLIPMAPSIZE * CLIPMAPSIZE];
 
-		//heightmap.getRed();
-
 		heightmap.loaded = true;
 	}
 };
