@@ -21,6 +21,10 @@ void apiClearColor() {
 void apiClearDepth() {
 	glClear(GL_DEPTH_BUFFER_BIT);
 }
+
+void apiEnableBlend() {
+	apiEnable(GL_BLEND);
+}
 void apiEnable(Enum cap) {
 	glEnable(cap);
 }
@@ -106,6 +110,9 @@ void apiDeleteFramebuffer(UInt framebufferID) {
 void apiBlendFunc(Enum sfactor, Enum dfactor) {
 	glBlendFunc(sfactor, dfactor);
 }
+void apiBlendEquation(BlendEquation equation) {
+	glBlendEquation(equation);
+}
 void apiBindBuffer(Enum target, UInt bufferID) {
 	glBindBuffer(target, bufferID);
 }
@@ -153,6 +160,9 @@ void apiAttachShader(UInt programID, UInt shaderID) {
 }
 void apiDetachShader(UInt programID, UInt shaderID) {
 	glDetachShader(programID, shaderID);
+}
+void apiVertexAttribDivisor(UInt index, UInt divisor) {
+	glVertexAttribDivisor(index, divisor);
 }
 void apiNamedFramebufferDrawBuffer(UInt framebufferID) {
 

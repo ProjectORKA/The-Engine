@@ -82,9 +82,7 @@ using Mutex = std::shared_mutex;
 template<typename T>
 using List = std::list<T>;
 
-#include <vector>
-template<typename T>
-using Vector = std::vector<T>;
+#include "Vector.hpp"
 
 #include <set>
 template<typename T>

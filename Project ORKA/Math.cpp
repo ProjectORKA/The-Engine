@@ -3,7 +3,7 @@
 #include "TiledMath.hpp"
 
 void Graph::add(Float value) {
-	points.push_back(value);
+	points.pushBack(value);
 }
 
 Bool isOdd(ULL a) {
@@ -89,7 +89,7 @@ UInt countBitsInFlags(Short flags) {
 
 Index idOfClosestPoint(Vec2 origin, Vector<Vec2>& positions) {
 	Index index = 0;
-	Float closestDistance = distance(origin, positions.front());
+	Float closestDistance = distance(origin, positions.first());
 	for (Index i = 1; i < positions.size(); i++) {
 		Float currentDistance = distance(origin, positions[i]);
 		if (currentDistance < closestDistance) {
@@ -101,7 +101,7 @@ Index idOfClosestPoint(Vec2 origin, Vector<Vec2>& positions) {
 }
 Index idOfClosestPointInLoopingSpace(Vec2 origin, Vector<Vec2>& positions, Float extend) {
 	Index index = 0;
-	Float closestDistance = distanceToPointInLoopingSpace(origin, positions.front(),extend);
+	Float closestDistance = distanceToPointInLoopingSpace(origin, positions.first(),extend);
 	for (Index i = 1; i < positions.size(); i++) {
 		Float currentDistance = distanceToPointInLoopingSpace(origin, positions[i], extend);
 		if (currentDistance < closestDistance) {
@@ -362,8 +362,8 @@ Matrix matrixFromLocationAndSize2D(Vec2 pos, Vec2 size) {
 }
 Matrix matrixFromPositionAndDirection(Vec2 pos, Vec2 dir) {
 	Matrix m(1);
-	m[0] = Vec4(-dir.y, dir.x, 0, 0);
-	m[1] = Vec4(-dir.x, -dir.y, 0, 0);
+	m[0] = Vec4(dir.y, -dir.x, 0, 0);
+	m[1] = Vec4(dir.x, dir.y, 0, 0);
 	m[2] = Vec4(0, 0, 1, 0);
 	m[3] = Vec4(pos.x, pos.y, 0, 1);
 	return m;
@@ -427,7 +427,7 @@ void removePointsInRadius(Vec3 point, Vector<Vec3>& points, Float radius) {
 
 	for (Vec3 current : points) {
 		if (distance(point, current) > radius) {
-			available.push_back(current);
+			available.pushBack(current);
 		}
 	}
 
@@ -451,8 +451,8 @@ void getClosestPoint(Vec3 point, Vector<Vec3>& points, Index& closestID, Vec3& c
 }
 void spaceColonization(Vector<Vec3>& points, Vector<Vec3>& branches, Vector<Index>& connections, Float segmentSize, Float killRadius) {
 	if (points.size() == 0) return;
-	if (branches.size() == 0) branches.push_back(Vec3(0));
-	if (connections.size() == 0) connections.push_back(0);
+	if (branches.size() == 0) branches.pushBack(Vec3(0));
+	if (connections.size() == 0) connections.pushBack(0);
 
 	Vector<Vec3> pull(branches.size(), Vec3(0));
 
@@ -474,8 +474,8 @@ void spaceColonization(Vector<Vec3>& points, Vector<Vec3>& branches, Vector<Inde
 			pull[i] = normalize(pull[i]);
 			//add branch
 			Vec3 newBranchSegment = branches[i] + segmentSize * pull[i];
-			newBranches.push_back(newBranchSegment);
-			connections.push_back(i);
+			newBranches.pushBack(newBranchSegment);
+			connections.pushBack(i);
 		}
 	}
 
@@ -486,6 +486,6 @@ void spaceColonization(Vector<Vec3>& points, Vector<Vec3>& branches, Vector<Inde
 
 	//add branches
 	for (Vec3 node : newBranches) {
-		branches.push_back(node);
+		branches.pushBack(node);
 	}
 }

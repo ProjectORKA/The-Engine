@@ -144,6 +144,11 @@ void Renderer::setCulling(Bool isCulling) {
 		apiDisable(GL_CULL_FACE);
 	}
 }
+
+void Renderer::arrow(Engine& engine, Vec2 start, Vec2 end) {
+	arrow(engine, Vec3(start, 0), Vec3(end, 0));
+}
+
 void Renderer::arrow(Engine& engine, Vec3 start, Vec3 end) {
 	useShader(engine, "color");
 	uniforms().customColor(Vec4(1, 0, 0, 1));
@@ -186,11 +191,14 @@ void Renderer::setAlphaBlending(Bool blending)
 	if (blending) {
 		apiEnable(GL_BLEND);
 		apiBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		glBlendEquation(GL_FUNC_ADD);
-		//apiBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA, GL_DST_ALPHA);
-		//apiBlendEquationSeparate(GL_FUNC_ADD, GL_MAX);
+		apiBlendEquation(BlendEquation::add);
 	}
 	else apiDisable(GL_BLEND);
+}
+void Renderer::blendModeAdditive() {
+	apiEnable(GL_BLEND);
+	apiBlendFunc(BlendFunction::one, BlendFunction::one);
+	apiBlendEquation(BlendEquation::add);
 }
 void Renderer::setDepthTest(Bool isUsingDepth) {
 	if (isUsingDepth) {

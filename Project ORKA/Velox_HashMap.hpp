@@ -12,10 +12,8 @@
 #include "Velox_UtilityConcepts.hpp"
 #include "Velox_HashMapHelper.hpp"
 
-TRE_NS_START
-
 template<typename K, typename V>
-struct HashMap : public HashMapHelper<K, V, std::hash<K>, FibonacciHashPolicy, std::equal_to<K>>
+struct HashMap : public hashMapHelper<K, V, std::hash<K>, FibonacciHashPolicy, std::equal_to<K>>
 {
     using size_type = size_t;
     using pointer = value_type*;
@@ -25,5 +23,3 @@ struct HashMap : public HashMapHelper<K, V, std::hash<K>, FibonacciHashPolicy, s
     using const_pointer = const value_type*;
     using const_reference = const value_type&;
 };
-
-TRE_NS_END

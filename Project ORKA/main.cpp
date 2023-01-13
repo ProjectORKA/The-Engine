@@ -40,11 +40,8 @@
 // easy to use algorithms
 // multiple window support
 
-//#define TESTING
-
-#include "Basics.hpp"
-#include "Engine.hpp"
 #include "Sandbox.hpp"
+//#define TESTING
 
 Int main(Int  argc, Char* argv[]) {
 #ifndef TESTING

@@ -62,13 +62,13 @@ void Framebuffer::add(UInt components, DataType type, UInt slot)
 	t.texture.load(size, components, type);
 	t.texture.attachTexture(slot);
 	t.slot = slot;
-	frameBufferTextures.push_back(t);
+	frameBufferTextures.pushBack(t);
 
 	//set up framebuffer for drawing
 	UInt a = 0;
 	Vector<UInt> drawBuffers;
 	for (auto t : frameBufferTextures) {
-		if (t.isColor) drawBuffers.push_back(GL_COLOR_ATTACHMENT0 + a++);
+		if (t.isColor) drawBuffers.pushBack(GL_COLOR_ATTACHMENT0 + a++);
 	}
 
 	glDrawBuffers(drawBuffers.size(), drawBuffers.data());
@@ -85,7 +85,7 @@ Vector<UInt> Framebuffer::readPixelsUIntRGB(UInt x, UInt y, UInt attachment)
 	//read();
 	glBindFramebuffer(GL_READ_FRAMEBUFFER, framebufferID);
 	glReadBuffer(GL_COLOR_ATTACHMENT0 + attachment);
-	Vector<UInt> data = { 0,0,0,0,0,0,0,0,0,0,0,0,0};
+	Vector<UInt> data = { 0,0,0,0,0,0,0,0,0,0,0,0,0}; //[TODO] check why i did this
 	glReadPixels(x, y, 1, 1, GL_RGB_INTEGER, GL_UNSIGNED_INT, &data[0]);
 	return data;
 }
