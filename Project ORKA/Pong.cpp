@@ -107,7 +107,7 @@ void PongPlayer::ballLocationInput(Vector<Ball>& balls) {
 void PongPlayer::aiInput(Vector<Ball>& balls, Float deltaTime) {
 
 	shoot = random(1000) < 1;
-
+	logDebug(shoot);
 	Ball* ball = getClosestBall(*this, balls);
 	if (ball) {
 		//if ((ball.velocity.x > 0 && ball.position.x > randomFloat(-4, 0)) || (ball.velocity.x < 0 && ball.position.x < randomFloat(-4, 0))) {
@@ -132,8 +132,8 @@ void PongPlayer::update(Window& window) {
 	position.y = clamp(position.y, -0.9f, 0.9f);
 }
 
-void Pong::render(Engine& engine, Window& window, TiledRectangle area) {
-	Renderer& renderer = window.renderer;
+void PongRenderer::render(Engine& engine, Window& window, TiledRectangle area) {
+	Renderer& r = window.renderer;
 
 	////input
 	//players[0].shoot = window.input.holding("player1shoot");
@@ -150,15 +150,15 @@ void Pong::render(Engine& engine, Window& window, TiledRectangle area) {
 	players[0].position.x = -0.9;
 	players[1].position.x = +0.9;
 
-	if (balls.size() <= 10)balls.emplaceBack();
+	if (balls.size() <= 1)balls.emplaceBack();
 
-	renderer.aspectCorrectNormalizedSpace();
-	Vec2 normalizedCursorPosition = Vec2(2) * ((Vec2(window.mousePosBotLeft) / Vec2(renderer.framebufferSystem.windowSize)) - Vec2(0.5));
-	Vec3 cursorWorldPos = inverse(renderer.uniforms().pMatrix()) * Vec4(normalizedCursorPosition, 0, 1);
+	r.aspectCorrectNormalizedSpace();
+	Vec2 normalizedCursorPosition = Vec2(2) * ((Vec2(window.mousePosBotLeft) / Vec2(r.framebufferSystem.windowSize)) - Vec2(0.5));
+	Vec3 cursorWorldPos = inverse(r.uniforms().pMatrix()) * Vec4(normalizedCursorPosition, 0, 1);
 
 	//players[1].ballLocationInput(ball);
 
-	for (Ball& ball : balls) ball.update(renderer.time.delta, players);
+	for (Ball& ball : balls) ball.update(r.time.delta, players);
 
 	//players[0].keyboardInput(renderer.renderTime.delta);
 	players[0].mouseInput(cursorWorldPos);
@@ -166,69 +166,69 @@ void Pong::render(Engine& engine, Window& window, TiledRectangle area) {
 	//players[0].ballLocationInput(balls);
 
 	//players[1].ballLocationInput(balls);
-	players[1].aiInput(balls, renderer.time.delta);
+	players[1].aiInput(balls, r.time.delta);
 
 
 	///////////////////////////////////////////////////////////////////////
 
-	renderer.clearColor(Color(0, 0, 0, 1));
+	r.clearColor(Color(0, 0, 0, 1));
 
-	renderer.aspectCorrectNormalizedSpace();
-	renderer.useShader(engine,"color");
-	renderer.uniforms().customColor() = Vec4(1);
+	r.aspectCorrectNormalizedSpace();
+	r.useShader(engine,"color");
+	r.uniforms().customColor() = Vec4(1);
 
 	//paddle 1
-	renderer.uniforms().mMatrix() =
+	r.uniforms().mMatrix() =
 		scale(translate(Matrix(1), Vec3(players[0].position, 0)), Vec3(0.01, 0.2, 0.5));
-	renderer.renderMesh(engine, "centeredCube");
+	r.renderMesh(engine, "centeredCube");
 	//paddle 2
-	renderer.uniforms().mMatrix() =
+	r.uniforms().mMatrix() =
 		scale(translate(Matrix(1), Vec3(players[1].position, 0)), Vec3(0.01, 0.2, 0.5));
-	renderer.renderMesh(engine, "centeredCube");
+	r.renderMesh(engine, "centeredCube");
 	//ball
-	for (Ball& ball : balls)ball.render(engine, renderer);
+	for (Ball& ball : balls)ball.render(engine, r);
 
 	//walls
-	renderer.uniforms().mMatrix() = scale(translate(Matrix(1), Vec3(0, 1, 0)), Vec3(2, 0.01, 0.5));
-	renderer.renderMesh(engine, "centeredCube");
+	r.uniforms().mMatrix() = scale(translate(Matrix(1), Vec3(0, 1, 0)), Vec3(2, 0.01, 0.5));
+	r.renderMesh(engine, "centeredCube");
 
-	renderer.uniforms().mMatrix() = scale(translate(Matrix(1), Vec3(0, -1, 0)), Vec3(2, 0.01, 0.5));
-	renderer.renderMesh(engine, "centeredCube");
+	r.uniforms().mMatrix() = scale(translate(Matrix(1), Vec3(0, -1, 0)), Vec3(2, 0.01, 0.5));
+	r.renderMesh(engine, "centeredCube");
 
-	renderer.uniforms().mMatrix() = scale(translate(Matrix(1), Vec3(1, 0, 0)), Vec3(0.01, 2, 0.5));
-	renderer.renderMesh(engine, "centeredCube");
+	r.uniforms().mMatrix() = scale(translate(Matrix(1), Vec3(1, 0, 0)), Vec3(0.01, 2, 0.5));
+	r.renderMesh(engine, "centeredCube");
 
-	renderer.uniforms().mMatrix() = scale(translate(Matrix(1), Vec3(-1, 0, 0)), Vec3(0.01, 2, 0.5));
-	renderer.renderMesh(engine, "centeredCube");
+	r.uniforms().mMatrix() = scale(translate(Matrix(1), Vec3(-1, 0, 0)), Vec3(0.01, 2, 0.5));
+	r.renderMesh(engine, "centeredCube");
 
-	Float height = renderer.framebufferSystem.windowSize.y;
-	Float width = renderer.framebufferSystem.windowSize.x;
+	Float height = r.framebufferSystem.windowSize.y;
+	Float width = r.framebufferSystem.windowSize.x;
 
 	//text
 	FontStyle style;
 	style.absoluteSize = 50;
 
-	renderer.screenSpace();
-	renderer.renderText(engine, toString(players[0].score), Vec2(10, height - 100), style);
-	renderer.renderText(engine, toString(players[1].score), Vec2(width - 100, height - 100), style);
-	renderer.renderText(engine, toString(players[1].difficulty), Vec2(10, height - 200), style);
-	renderer.renderText(engine, toString(balls[0].desiredSpeed), Vec2(10, height - 300), style);
-	renderer.renderText(engine, toString(balls[0].desiredSpeed), Vec2(10, height - 300), style);
-	renderer.renderText(engine, toString(1.0f / renderer.time.delta), Vec2(50, 50), fonts.paragraph);
+	r.screenSpace();
+	r.renderText(engine, toString(players[0].score), Vec2(10, height - 100), style);
+	r.renderText(engine, toString(players[1].score), Vec2(width - 100, height - 100), style);
+	r.renderText(engine, toString(players[1].difficulty), Vec2(10, height - 200), style);
+	//renderer.renderText(engine, toString(balls[0].desiredSpeed), Vec2(10, height - 300), style);
+	//renderer.renderText(engine, toString(balls[0].desiredSpeed), Vec2(10, height - 300), style);
+	//renderer.renderText(engine, toString(1.0f / renderer.time.delta), Vec2(50, 50), fonts.paragraph);
 }
 
-void Pong::update(Window& window) {
-	Float delta = window.renderer.deltaTime();
-	if (window.pressed(moveUpButton1)) players[0].position.y += paddleSpeed * delta;
-	if (window.pressed(moveDownButton1)) players[0].position.y -= paddleSpeed * delta;
-	players[0].shoot = window.pressed(shootButton1) || window.pressed(shootButton1secondary);
+void PongRenderer::update(Window& w) {
+	Float delta = w.renderer.deltaTime();
+	if (w.pressed(moveUpButton1)) players[0].position.y += paddleSpeed * delta;
+	if (w.pressed(moveDownButton1)) players[0].position.y -= paddleSpeed * delta;
+	players[0].shoot = w.pressed(shootButton1) || w.pressed(shootButton1secondary);
 
-	if (window.pressed(moveUpButton2)) players[1].position.y += paddleSpeed * delta;
-	if (window.pressed(moveDownButton2)) players[1].position.y -= paddleSpeed * delta;
-	players[1].shoot = window.pressed(shootButton2);
+	if (w.pressed(moveUpButton2)) players[1].position.y += paddleSpeed * delta;
+	if (w.pressed(moveDownButton2)) players[1].position.y -= paddleSpeed * delta;
+	//players[1].shoot = w.pressed(shootButton2);
 
 	for (PongPlayer& p : players) {
-		p.update(window);
+		p.update(w);
 	}
 }
 
@@ -249,4 +249,9 @@ Ball* getClosestBall(PongPlayer& player, Vector<Ball>& balls) {
 	}
 
 	return closestBall;
+}
+
+Pong::Pong(Engine& engine) {
+	Window& w = window("Pong", Area(1920, 1080), true, WindowState::fullscreen, pongRenderer, engine);
+	ui.run();
 }

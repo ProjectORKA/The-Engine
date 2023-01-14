@@ -4,6 +4,12 @@
 //written by Omarito
 //	modified by Blendurian
 
+#pragma comment(lib,"user32.lib") 
+
+#define NOMINMAX
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+
 //Defines for SIMD-enabled CPU architectures, and supported
 //feature levels
 #define CPU_ARCH_OTHER  0

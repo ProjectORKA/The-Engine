@@ -5,8 +5,8 @@
 #include "Debug.hpp"
 
 //opengl/glew
-#define GLAPI
-#define GLEW_STATIC
+//#define GLAPI
+//#define GLEW_STATIC
 #include "GL/glew.h"
 
 enum BlendEquation : int {

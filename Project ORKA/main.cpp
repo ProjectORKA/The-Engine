@@ -46,7 +46,7 @@
 Int main(Int  argc, Char* argv[]) {
 #ifndef TESTING
 	Engine engine;
-	Sandbox sandbox(engine);
+	Sandbox pong(engine);
 #else
 	//testing code
 	/////////////////////////////////////////////////////////////////////////////////////////////////

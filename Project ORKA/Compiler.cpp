@@ -1,6 +1,6 @@
 
 #include "Compiler.hpp"
-#include <Windows.h>
+#include "Platform.hpp"
 
 ULong compileFromSource(const char* args)
 {

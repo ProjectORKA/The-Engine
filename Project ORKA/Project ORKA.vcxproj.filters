@@ -11,33 +11,6 @@
     <ClCompile Include="Networking.cpp">
       <Filter>Engine</Filter>
     </ClCompile>
-    <ClCompile Include="optik\optick_capi.cpp">
-      <Filter>Libraries\Optick</Filter>
-    </ClCompile>
-    <ClCompile Include="optik\optick_core.cpp">
-      <Filter>Libraries\Optick</Filter>
-    </ClCompile>
-    <ClCompile Include="optik\optick_gpu.cpp">
-      <Filter>Libraries\Optick</Filter>
-    </ClCompile>
-    <ClCompile Include="optik\optick_gpu.d3d12.cpp">
-      <Filter>Libraries\Optick</Filter>
-    </ClCompile>
-    <ClCompile Include="optik\optick_gpu.vulkan.cpp">
-      <Filter>Libraries\Optick</Filter>
-    </ClCompile>
-    <ClCompile Include="optik\optick_message.cpp">
-      <Filter>Libraries\Optick</Filter>
-    </ClCompile>
-    <ClCompile Include="optik\optick_miniz.cpp">
-      <Filter>Libraries\Optick</Filter>
-    </ClCompile>
-    <ClCompile Include="optik\optick_serialization.cpp">
-      <Filter>Libraries\Optick</Filter>
-    </ClCompile>
-    <ClCompile Include="optik\optick_server.cpp">
-      <Filter>Libraries\Optick</Filter>
-    </ClCompile>
     <ClCompile Include="Physics.cpp">
       <Filter>Engine</Filter>
     </ClCompile>
@@ -257,14 +230,11 @@
     <ClCompile Include="DynameshTerrain.cpp">
       <Filter>Systems</Filter>
     </ClCompile>
-    <ClCompile Include="AIPlayground.cpp">
-      <Filter>Apps\AIPlayground</Filter>
-    </ClCompile>
     <ClCompile Include="DungeonsAndDiscord.cpp">
-      <Filter>Apps\DungeonsAndDiscord</Filter>
+      <Filter>Apps\3D Apps\DungeonsAndDiscord</Filter>
     </ClCompile>
     <ClCompile Include="GPUSim.cpp">
-      <Filter>Apps\GPUSim</Filter>
+      <Filter>Apps\2D Apps\GPUSim</Filter>
     </ClCompile>
     <ClCompile Include="InfiniteDetailPrototype.cpp">
       <Filter>Apps\Console Apps</Filter>
@@ -312,10 +282,7 @@
       <Filter>Apps\3D Apps\Mooncrash</Filter>
     </ClCompile>
     <ClCompile Include="ORKAIntroSequence.cpp">
-      <Filter>Apps\ORKA Intro Sequence</Filter>
-    </ClCompile>
-    <ClCompile Include="PhysicsPlayground.cpp">
-      <Filter>Apps</Filter>
+      <Filter>Apps\3D Apps\ORKA Intro Sequence</Filter>
     </ClCompile>
     <ClCompile Include="PlanetCamera.cpp">
       <Filter>Apps\3D Apps\Mooncrash</Filter>
@@ -329,12 +296,6 @@
     <ClCompile Include="PlanetSystemPlayer.cpp">
       <Filter>Apps\3D Apps\Mooncrash</Filter>
     </ClCompile>
-    <ClCompile Include="Pong.cpp">
-      <Filter>Apps</Filter>
-    </ClCompile>
-    <ClCompile Include="ProjectMelon.cpp">
-      <Filter>Apps</Filter>
-    </ClCompile>
     <ClCompile Include="QuadtreeID.cpp">
       <Filter>Apps\3D Apps\Mooncrash</Filter>
     </ClCompile>
@@ -347,20 +308,11 @@
     <ClCompile Include="QuadtreeSystemRenderer.cpp">
       <Filter>Apps\3D Apps\Mooncrash</Filter>
     </ClCompile>
-    <ClCompile Include="QuakeMovement.cpp">
-      <Filter>Apps</Filter>
-    </ClCompile>
-    <ClCompile Include="RedDotHack.cpp">
-      <Filter>Apps</Filter>
-    </ClCompile>
     <ClCompile Include="RelativeChunkOffset.cpp">
       <Filter>Apps\3D Apps\Mooncrash</Filter>
     </ClCompile>
     <ClCompile Include="SDFTerrainRenderSystem.cpp">
       <Filter>Systems</Filter>
-    </ClCompile>
-    <ClCompile Include="Sandbox.cpp">
-      <Filter>Apps</Filter>
     </ClCompile>
     <ClCompile Include="TerrainRendering.cpp">
       <Filter>Apps\3D Apps\Mooncrash</Filter>
@@ -380,20 +332,68 @@
     <ClCompile Include="UIFlatPanel.cpp">
       <Filter>Engine</Filter>
     </ClCompile>
-    <ClCompile Include="UISandbox.cpp">
-      <Filter>Apps</Filter>
-    </ClCompile>
     <ClCompile Include="TreeSystem.cpp">
       <Filter>Systems</Filter>
     </ClCompile>
-    <ClCompile Include="Sortr.cpp">
-      <Filter>Apps\2D Apps</Filter>
+    <ClCompile Include="Sandbox.cpp">
+      <Filter>Apps\3D Apps\Sandbox</Filter>
     </ClCompile>
-    <ClCompile Include="Snake.cpp">
-      <Filter>Apps</Filter>
+    <ClCompile Include="AIPlayground.cpp">
+      <Filter>Apps\2D Apps\AIPlayground</Filter>
+    </ClCompile>
+    <ClCompile Include="Sortr.cpp">
+      <Filter>Apps\2D Apps\Sortr</Filter>
+    </ClCompile>
+    <ClCompile Include="PhysicsPlayground.cpp">
+      <Filter>Apps\2D Apps\Physics Playground</Filter>
+    </ClCompile>
+    <ClCompile Include="Pong.cpp">
+      <Filter>Apps\2D Apps\Pong</Filter>
+    </ClCompile>
+    <ClCompile Include="ProjectMelon.cpp">
+      <Filter>Apps\3D Apps\Project Melon</Filter>
+    </ClCompile>
+    <ClCompile Include="QuakeMovement.cpp">
+      <Filter>Apps\3D Apps\Quake Movement</Filter>
     </ClCompile>
     <ClCompile Include="SimpleRTS.cpp">
-      <Filter>Apps</Filter>
+      <Filter>Apps\3D Apps\Simple RTS</Filter>
+    </ClCompile>
+    <ClCompile Include="Snake.cpp">
+      <Filter>Apps\3D Apps\Snake</Filter>
+    </ClCompile>
+    <ClCompile Include="UISandbox.cpp">
+      <Filter>Apps\2D Apps\UISandbox</Filter>
+    </ClCompile>
+    <ClCompile Include="optick\optick_capi.cpp">
+      <Filter>Libraries\Optick</Filter>
+    </ClCompile>
+    <ClCompile Include="optick\optick_core.cpp">
+      <Filter>Libraries\Optick</Filter>
+    </ClCompile>
+    <ClCompile Include="optick\optick_gpu.cpp">
+      <Filter>Libraries\Optick</Filter>
+    </ClCompile>
+    <ClCompile Include="optick\optick_gpu.d3d12.cpp">
+      <Filter>Libraries\Optick</Filter>
+    </ClCompile>
+    <ClCompile Include="optick\optick_gpu.vulkan.cpp">
+      <Filter>Libraries\Optick</Filter>
+    </ClCompile>
+    <ClCompile Include="optick\optick_message.cpp">
+      <Filter>Libraries\Optick</Filter>
+    </ClCompile>
+    <ClCompile Include="optick\optick_miniz.cpp">
+      <Filter>Libraries\Optick</Filter>
+    </ClCompile>
+    <ClCompile Include="optick\optick_serialization.cpp">
+      <Filter>Libraries\Optick</Filter>
+    </ClCompile>
+    <ClCompile Include="optick\optick_server.cpp">
+      <Filter>Libraries\Optick</Filter>
+    </ClCompile>
+    <ClCompile Include="RedDotHack.cpp">
+      <Filter>Apps\Console Apps\Red Dot Hack</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -429,54 +429,6 @@
     </ClInclude>
     <ClInclude Include="Networking.hpp">
       <Filter>Engine</Filter>
-    </ClInclude>
-    <ClInclude Include="optik\optick.config.h">
-      <Filter>Libraries\Optick</Filter>
-    </ClInclude>
-    <ClInclude Include="optik\optick.h">
-      <Filter>Libraries\Optick</Filter>
-    </ClInclude>
-    <ClInclude Include="optik\optick_capi.h">
-      <Filter>Libraries\Optick</Filter>
-    </ClInclude>
-    <ClInclude Include="optik\optick_common.h">
-      <Filter>Libraries\Optick</Filter>
-    </ClInclude>
-    <ClInclude Include="optik\optick_core.freebsd.h">
-      <Filter>Libraries\Optick</Filter>
-    </ClInclude>
-    <ClInclude Include="optik\optick_core.h">
-      <Filter>Libraries\Optick</Filter>
-    </ClInclude>
-    <ClInclude Include="optik\optick_core.linux.h">
-      <Filter>Libraries\Optick</Filter>
-    </ClInclude>
-    <ClInclude Include="optik\optick_core.macos.h">
-      <Filter>Libraries\Optick</Filter>
-    </ClInclude>
-    <ClInclude Include="optik\optick_core.platform.h">
-      <Filter>Libraries\Optick</Filter>
-    </ClInclude>
-    <ClInclude Include="optik\optick_core.win.h">
-      <Filter>Libraries\Optick</Filter>
-    </ClInclude>
-    <ClInclude Include="optik\optick_gpu.h">
-      <Filter>Libraries\Optick</Filter>
-    </ClInclude>
-    <ClInclude Include="optik\optick_memory.h">
-      <Filter>Libraries\Optick</Filter>
-    </ClInclude>
-    <ClInclude Include="optik\optick_message.h">
-      <Filter>Libraries\Optick</Filter>
-    </ClInclude>
-    <ClInclude Include="optik\optick_miniz.h">
-      <Filter>Libraries\Optick</Filter>
-    </ClInclude>
-    <ClInclude Include="optik\optick_serialization.h">
-      <Filter>Libraries\Optick</Filter>
-    </ClInclude>
-    <ClInclude Include="optik\optick_server.h">
-      <Filter>Libraries\Optick</Filter>
     </ClInclude>
     <ClInclude Include="Physics.hpp">
       <Filter>Engine</Filter>
@@ -554,82 +506,82 @@
       <Filter>Engine</Filter>
     </ClInclude>
     <ClInclude Include="Velox_HashMapHelper.hpp">
-      <Filter>Velox</Filter>
+      <Filter>Engine\Velox</Filter>
     </ClInclude>
     <ClInclude Include="Velox_HashMap.hpp">
-      <Filter>Velox</Filter>
+      <Filter>Engine\Velox</Filter>
     </ClInclude>
     <ClInclude Include="Velox_GenericAllocator.hpp">
-      <Filter>Velox</Filter>
+      <Filter>Engine\Velox</Filter>
     </ClInclude>
     <ClInclude Include="Velox_Debug.hpp">
-      <Filter>Velox</Filter>
+      <Filter>Engine\Velox</Filter>
     </ClInclude>
     <ClInclude Include="Velox_DataStructure.hpp">
-      <Filter>Velox</Filter>
+      <Filter>Engine\Velox</Filter>
     </ClInclude>
     <ClInclude Include="Velox_Core.hpp">
-      <Filter>Velox</Filter>
+      <Filter>Engine\Velox</Filter>
     </ClInclude>
     <ClInclude Include="Velox_CompilerIntrin.hpp">
-      <Filter>Velox</Filter>
+      <Filter>Engine\Velox</Filter>
     </ClInclude>
     <ClInclude Include="Velox_Common.hpp">
-      <Filter>Velox</Filter>
+      <Filter>Engine\Velox</Filter>
     </ClInclude>
     <ClInclude Include="Velox_ArrayView.hpp">
-      <Filter>Velox</Filter>
+      <Filter>Engine\Velox</Filter>
     </ClInclude>
     <ClInclude Include="Velox_AllocatorMisc.hpp">
-      <Filter>Velox</Filter>
+      <Filter>Engine\Velox</Filter>
     </ClInclude>
     <ClInclude Include="Velox_VecN.hpp">
-      <Filter>Velox</Filter>
+      <Filter>Engine\Velox</Filter>
     </ClInclude>
     <ClInclude Include="Velox_Utils.hpp">
-      <Filter>Velox</Filter>
+      <Filter>Engine\Velox</Filter>
     </ClInclude>
     <ClInclude Include="Velox_UtilityConcepts.hpp">
-      <Filter>Velox</Filter>
+      <Filter>Engine\Velox</Filter>
     </ClInclude>
     <ClInclude Include="Velox_StringView.hpp">
-      <Filter>Velox</Filter>
+      <Filter>Engine\Velox</Filter>
     </ClInclude>
     <ClInclude Include="Velox_String.hpp">
-      <Filter>Velox</Filter>
+      <Filter>Engine\Velox</Filter>
     </ClInclude>
     <ClInclude Include="Velox_Singleton.hpp">
-      <Filter>Velox</Filter>
+      <Filter>Engine\Velox</Filter>
     </ClInclude>
     <ClInclude Include="Velox_RandomAccessIterator.hpp">
-      <Filter>Velox</Filter>
+      <Filter>Engine\Velox</Filter>
     </ClInclude>
     <ClInclude Include="Velox_PlatformSIMDInclude.hpp">
-      <Filter>Velox</Filter>
+      <Filter>Engine\Velox</Filter>
     </ClInclude>
     <ClInclude Include="Velox_PlatformInclude.hpp">
-      <Filter>Velox</Filter>
+      <Filter>Engine\Velox</Filter>
     </ClInclude>
     <ClInclude Include="Velox_Memory.hpp">
-      <Filter>Velox</Filter>
+      <Filter>Engine\Velox</Filter>
     </ClInclude>
     <ClInclude Include="Velox_MathUtils.hpp">
-      <Filter>Velox</Filter>
+      <Filter>Engine\Velox</Filter>
     </ClInclude>
     <ClInclude Include="Velox_Logging.hpp">
-      <Filter>Velox</Filter>
+      <Filter>Engine\Velox</Filter>
     </ClInclude>
     <ClInclude Include="Velox_LocalAllocator.hpp">
-      <Filter>Velox</Filter>
+      <Filter>Engine\Velox</Filter>
     </ClInclude>
     <ClInclude Include="Velox_HashPolicies.hpp">
-      <Filter>Velox</Filter>
+      <Filter>Engine\Velox</Filter>
     </ClInclude>
     <ClInclude Include="Velox_HashMapLinkedList.hpp">
-      <Filter>Velox</Filter>
+      <Filter>Engine\Velox</Filter>
     </ClInclude>
     <ClInclude Include="Velox_HashMapIterator.hpp">
-      <Filter>Velox</Filter>
+      <Filter>Engine\Velox</Filter>
     </ClInclude>
     <ClInclude Include="Platform.hpp">
       <Filter>Common</Filter>
@@ -835,20 +787,14 @@
     <ClInclude Include="DynameshTerrain.hpp">
       <Filter>Systems</Filter>
     </ClInclude>
-    <ClInclude Include="Engine.hpp">
-      <Filter>Engine</Filter>
-    </ClInclude>
     <ClInclude Include="EntityComponentSystem.hpp">
       <Filter>Engine</Filter>
     </ClInclude>
-    <ClInclude Include="AIPlayground.hpp">
-      <Filter>Apps\AIPlayground</Filter>
-    </ClInclude>
     <ClInclude Include="DungeonsAndDiscord.hpp">
-      <Filter>Apps\DungeonsAndDiscord</Filter>
+      <Filter>Apps\3D Apps\DungeonsAndDiscord</Filter>
     </ClInclude>
     <ClInclude Include="GPUSim.hpp">
-      <Filter>Apps\GPUSim</Filter>
+      <Filter>Apps\2D Apps\GPUSim</Filter>
     </ClInclude>
     <ClInclude Include="GeometryClipmapTerrain.hpp">
       <Filter>Systems</Filter>
@@ -889,9 +835,6 @@
     <ClInclude Include="MindMap.hpp">
       <Filter>Systems\Mind Map</Filter>
     </ClInclude>
-    <ClInclude Include="NameGenerator.hpp">
-      <Filter>Apps</Filter>
-    </ClInclude>
     <ClInclude Include="NeighbourQuadtree.hpp">
       <Filter>Systems</Filter>
     </ClInclude>
@@ -913,14 +856,8 @@
     <ClInclude Include="OctreeSystemRenderer.hpp">
       <Filter>Apps\3D Apps\Mooncrash</Filter>
     </ClInclude>
-    <ClInclude Include="Organizer.hpp">
-      <Filter>Apps</Filter>
-    </ClInclude>
     <ClInclude Include="ORKAIntroSequence.hpp">
-      <Filter>Apps\ORKA Intro Sequence</Filter>
-    </ClInclude>
-    <ClInclude Include="PhysicsPlayground.hpp">
-      <Filter>Apps</Filter>
+      <Filter>Apps\3D Apps\ORKA Intro Sequence</Filter>
     </ClInclude>
     <ClInclude Include="PlanetCamera.hpp">
       <Filter>Apps\3D Apps\Mooncrash</Filter>
@@ -933,12 +870,6 @@
     </ClInclude>
     <ClInclude Include="PlanetSystemPlayer.hpp">
       <Filter>Apps\3D Apps\Mooncrash</Filter>
-    </ClInclude>
-    <ClInclude Include="Pong.hpp">
-      <Filter>Apps</Filter>
-    </ClInclude>
-    <ClInclude Include="ProjectMelon.hpp">
-      <Filter>Apps</Filter>
     </ClInclude>
     <ClInclude Include="QuadtreeData.hpp">
       <Filter>Apps\3D Apps\Mooncrash</Filter>
@@ -955,26 +886,14 @@
     <ClInclude Include="QuadtreeSystemRenderer.hpp">
       <Filter>Apps\3D Apps\Mooncrash</Filter>
     </ClInclude>
-    <ClInclude Include="QuakeMovement.hpp">
-      <Filter>Apps</Filter>
-    </ClInclude>
-    <ClInclude Include="RedDotHack.hpp">
-      <Filter>Apps</Filter>
-    </ClInclude>
     <ClInclude Include="RelativeChunkOffset.hpp">
       <Filter>Apps\3D Apps\Mooncrash</Filter>
     </ClInclude>
     <ClInclude Include="SDFTerrainRenderSystem.hpp">
       <Filter>Systems</Filter>
     </ClInclude>
-    <ClInclude Include="Sandbox.hpp">
-      <Filter>Apps</Filter>
-    </ClInclude>
     <ClInclude Include="Server.hpp">
       <Filter>Engine</Filter>
-    </ClInclude>
-    <ClInclude Include="SimplePlanetRenderer.hpp">
-      <Filter>Apps\3D Apps</Filter>
     </ClInclude>
     <ClInclude Include="TerrainSystem.hpp">
       <Filter>Apps\3D Apps\Mooncrash</Filter>
@@ -1000,26 +919,101 @@
     <ClInclude Include="UIFlatPanel.hpp">
       <Filter>Engine</Filter>
     </ClInclude>
-    <ClInclude Include="UISandbox.hpp">
-      <Filter>Apps</Filter>
-    </ClInclude>
     <ClInclude Include="UIConstraints.hpp">
       <Filter>Engine</Filter>
     </ClInclude>
     <ClInclude Include="TreeSystem.hpp">
       <Filter>Systems</Filter>
     </ClInclude>
-    <ClInclude Include="Sortr.hpp">
-      <Filter>Apps\2D Apps</Filter>
-    </ClInclude>
-    <ClInclude Include="Snake.hpp">
-      <Filter>Apps</Filter>
-    </ClInclude>
-    <ClInclude Include="SimpleRTS.hpp">
-      <Filter>Apps</Filter>
-    </ClInclude>
     <ClInclude Include="SphereMeshing.hpp">
       <Filter>Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="Sandbox.hpp">
+      <Filter>Apps\3D Apps\Sandbox</Filter>
+    </ClInclude>
+    <ClInclude Include="NameGenerator.hpp">
+      <Filter>Apps\Console Apps</Filter>
+    </ClInclude>
+    <ClInclude Include="AIPlayground.hpp">
+      <Filter>Apps\2D Apps\AIPlayground</Filter>
+    </ClInclude>
+    <ClInclude Include="Sortr.hpp">
+      <Filter>Apps\2D Apps\Sortr</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysicsPlayground.hpp">
+      <Filter>Apps\2D Apps\Physics Playground</Filter>
+    </ClInclude>
+    <ClInclude Include="Organizer.hpp">
+      <Filter>Apps\2D Apps</Filter>
+    </ClInclude>
+    <ClInclude Include="Pong.hpp">
+      <Filter>Apps\2D Apps\Pong</Filter>
+    </ClInclude>
+    <ClInclude Include="ProjectMelon.hpp">
+      <Filter>Apps\3D Apps\Project Melon</Filter>
+    </ClInclude>
+    <ClInclude Include="QuakeMovement.hpp">
+      <Filter>Apps\3D Apps\Quake Movement</Filter>
+    </ClInclude>
+    <ClInclude Include="SimpleRTS.hpp">
+      <Filter>Apps\3D Apps\Simple RTS</Filter>
+    </ClInclude>
+    <ClInclude Include="Snake.hpp">
+      <Filter>Apps\3D Apps\Snake</Filter>
+    </ClInclude>
+    <ClInclude Include="UISandbox.hpp">
+      <Filter>Apps\2D Apps\UISandbox</Filter>
+    </ClInclude>
+    <ClInclude Include="optick\optick.config.h">
+      <Filter>Libraries\Optick</Filter>
+    </ClInclude>
+    <ClInclude Include="optick\optick.h">
+      <Filter>Libraries\Optick</Filter>
+    </ClInclude>
+    <ClInclude Include="optick\optick_capi.h">
+      <Filter>Libraries\Optick</Filter>
+    </ClInclude>
+    <ClInclude Include="optick\optick_common.h">
+      <Filter>Libraries\Optick</Filter>
+    </ClInclude>
+    <ClInclude Include="optick\optick_core.freebsd.h">
+      <Filter>Libraries\Optick</Filter>
+    </ClInclude>
+    <ClInclude Include="optick\optick_core.h">
+      <Filter>Libraries\Optick</Filter>
+    </ClInclude>
+    <ClInclude Include="optick\optick_core.linux.h">
+      <Filter>Libraries\Optick</Filter>
+    </ClInclude>
+    <ClInclude Include="optick\optick_core.macos.h">
+      <Filter>Libraries\Optick</Filter>
+    </ClInclude>
+    <ClInclude Include="optick\optick_core.platform.h">
+      <Filter>Libraries\Optick</Filter>
+    </ClInclude>
+    <ClInclude Include="optick\optick_core.win.h">
+      <Filter>Libraries\Optick</Filter>
+    </ClInclude>
+    <ClInclude Include="optick\optick_gpu.h">
+      <Filter>Libraries\Optick</Filter>
+    </ClInclude>
+    <ClInclude Include="optick\optick_memory.h">
+      <Filter>Libraries\Optick</Filter>
+    </ClInclude>
+    <ClInclude Include="optick\optick_message.h">
+      <Filter>Libraries\Optick</Filter>
+    </ClInclude>
+    <ClInclude Include="optick\optick_miniz.h">
+      <Filter>Libraries\Optick</Filter>
+    </ClInclude>
+    <ClInclude Include="optick\optick_serialization.h">
+      <Filter>Libraries\Optick</Filter>
+    </ClInclude>
+    <ClInclude Include="optick\optick_server.h">
+      <Filter>Libraries\Optick</Filter>
+    </ClInclude>
+    <ClInclude Include="RedDotHack.hpp">
+      <Filter>Apps\Console Apps\Red Dot Hack</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1203,9 +1197,6 @@
     <None Include="..\..\..\..\..\..\..\ORKA\Data\shaders\atmosphere.vert">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="..\..\..\..\..\..\..\ORKA\Data\shaders\blur.vert">
-      <Filter>Shaders</Filter>
-    </None>
     <None Include="..\..\..\..\..\..\..\ORKA\Data\shaders\lastBloomUpsample.frag">
       <Filter>Shaders</Filter>
     </None>
@@ -1271,17 +1262,8 @@
     <Filter Include="Libraries\Optick">
       <UniqueIdentifier>{840e4262-c80d-471b-b655-748d534cd7c8}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Software">
-      <UniqueIdentifier>{ddb1a07c-ab40-4d39-b34b-5322d789bdd8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Software\Red Dot Hack">
-      <UniqueIdentifier>{d38fd067-26a3-41e6-b226-631c47430093}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Systems">
       <UniqueIdentifier>{b4f2b5de-70d4-4e92-ae12-f3bd645a0851}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Velox">
-      <UniqueIdentifier>{bafa1ffc-371a-4d73-947d-d68f8435e14e}</UniqueIdentifier>
     </Filter>
     <Filter Include="Common\Datastructures">
       <UniqueIdentifier>{5a5dae91-e254-40ff-b04f-2df22cfa42e4}</UniqueIdentifier>
@@ -1451,15 +1433,6 @@
     <Filter Include="Common\Datastructures\Quadtree">
       <UniqueIdentifier>{f3d68cc9-575c-416d-aae3-483338901965}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Apps\AIPlayground">
-      <UniqueIdentifier>{564395c3-0f99-4e89-8609-ad76d6584f51}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Apps\DungeonsAndDiscord">
-      <UniqueIdentifier>{ebbd9fca-c677-46f3-a2de-fde6a20596a1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Apps\GPUSim">
-      <UniqueIdentifier>{84328004-b992-475d-8539-0521798a23d9}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Apps\3D Apps">
       <UniqueIdentifier>{ffa1286d-e51d-41fd-9b65-ae4859444c80}</UniqueIdentifier>
     </Filter>
@@ -1496,11 +1469,50 @@
     <Filter Include="Engine\Networking\Client">
       <UniqueIdentifier>{ada16b33-b356-462b-be2e-ad44eeab9eed}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Apps\ORKA Intro Sequence">
-      <UniqueIdentifier>{45238f7d-2d78-4f15-873e-4800033c59c3}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Apps\2D Apps\Image Viewer\Shaders">
       <UniqueIdentifier>{8324659d-5bfc-46b4-b803-0ef6270be6b1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Apps\3D Apps\Sandbox">
+      <UniqueIdentifier>{bd50c161-7534-41c6-a301-22dcabb6890b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Apps\3D Apps\DungeonsAndDiscord">
+      <UniqueIdentifier>{ebbd9fca-c677-46f3-a2de-fde6a20596a1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Apps\2D Apps\AIPlayground">
+      <UniqueIdentifier>{798dbce9-2905-4389-ba9c-164500ed75c2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Apps\2D Apps\Sortr">
+      <UniqueIdentifier>{6a0b9ee0-382c-4236-be84-24fd20b1163d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Apps\2D Apps\Physics Playground">
+      <UniqueIdentifier>{a354b02b-001e-4a9d-b69c-f86fe4de8387}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Apps\2D Apps\Pong">
+      <UniqueIdentifier>{01b93929-944e-4b23-b89e-7e66d62c4848}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Apps\2D Apps\GPUSim">
+      <UniqueIdentifier>{84328004-b992-475d-8539-0521798a23d9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Apps\3D Apps\ORKA Intro Sequence">
+      <UniqueIdentifier>{45238f7d-2d78-4f15-873e-4800033c59c3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Apps\3D Apps\Quake Movement">
+      <UniqueIdentifier>{fb747f81-4d70-4141-8c82-ceadf2a4d0f1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Apps\3D Apps\Simple RTS">
+      <UniqueIdentifier>{c518507f-af21-4f12-943d-7fc3faf54b9c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Apps\3D Apps\Snake">
+      <UniqueIdentifier>{278e34ba-bb32-495a-b4dd-d94d2f665ce4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Apps\2D Apps\UISandbox">
+      <UniqueIdentifier>{2647ab04-846e-4d7e-af69-330fd4b2dedb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Apps\Console Apps\Red Dot Hack">
+      <UniqueIdentifier>{d38fd067-26a3-41e6-b226-631c47430093}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Velox">
+      <UniqueIdentifier>{bafa1ffc-371a-4d73-947d-d68f8435e14e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
