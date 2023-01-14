@@ -8,7 +8,7 @@
 
 struct SandboxRenderer : public GameRenderer {
 	Mutex mutex;
-	Player player;
+	DebugPlayer player;
 	Float mouseSensitivity = 0.0015f;
 
 	InputEvent enter = InputEvent(InputType::Mouse, LMB, 1);

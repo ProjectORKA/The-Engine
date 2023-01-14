@@ -35,7 +35,11 @@ void SandboxRenderer::render(Engine& e, Window& window, TiledRectangle area) {
 	//text rendering
 	r.setDepthTest(false); //disables depth to always draw on top
 	r.screenSpace(); // aligns coordinate system with screenspace
-	r.renderText(e, String("FPS: ").append(toString(1.0f / r.time.delta)), Vec2(50), fonts.heading); // renders current framerate to the screen
+
+	r.renderText(e, String("W A S D Q E to move"), Vec2(50, 250), fonts.paragraph);
+	r.renderText(e, String("F for wireframe mode"), Vec2(50, 200), fonts.paragraph);
+	r.renderText(e, String("Scroll to change speed"), Vec2(50,150), fonts.paragraph);
+	r.renderText(e, String("FPS: ").append(toString(Int(1.0f / r.time.delta))), Vec2(50), fonts.heading); // renders current framerate to the screen
 }
 
 Sandbox::Sandbox(Engine& engine) {

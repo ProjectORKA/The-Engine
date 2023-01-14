@@ -38,7 +38,7 @@ struct Ball {
 	void update(Float deltaTime, PongPlayer players[2]);
 };
 
-struct Pong : public GameRenderer {
+struct PongRenderer : public GameRenderer {
 	//players
 	PongPlayer players[2];
 
@@ -54,6 +54,12 @@ struct Pong : public GameRenderer {
 	Vector<Ball> balls;
 	void update(Window& window) override;
 	void render(Engine& engine, Window& window, TiledRectangle area) override;
+};
+
+struct Pong {
+	PongRenderer pongRenderer;
+
+	Pong(Engine& engine);
 };
 
 Ball* getClosestBall(PongPlayer& player, Vector<Ball>& balls);

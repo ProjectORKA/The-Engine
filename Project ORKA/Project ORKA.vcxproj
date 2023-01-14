@@ -1,14 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
-    <ProjectConfiguration Include="Debug NoCopy|Win32">
-      <Configuration>Debug NoCopy</Configuration>
-      <Platform>Win32</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="Debug NoCopy|x64">
-      <Configuration>Debug NoCopy</Configuration>
-      <Platform>x64</Platform>
-    </ProjectConfiguration>
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
       <Platform>Win32</Platform>
@@ -67,15 +59,15 @@
     <ClCompile Include="OctreeNode.cpp" />
     <ClCompile Include="OctreeSystem.cpp" />
     <ClCompile Include="OctreeSystemRenderer.cpp" />
-    <ClCompile Include="optik\optick_capi.cpp" />
-    <ClCompile Include="optik\optick_core.cpp" />
-    <ClCompile Include="optik\optick_gpu.cpp" />
-    <ClCompile Include="optik\optick_gpu.d3d12.cpp" />
-    <ClCompile Include="optik\optick_gpu.vulkan.cpp" />
-    <ClCompile Include="optik\optick_message.cpp" />
-    <ClCompile Include="optik\optick_miniz.cpp" />
-    <ClCompile Include="optik\optick_serialization.cpp" />
-    <ClCompile Include="optik\optick_server.cpp" />
+    <ClCompile Include="optick\optick_capi.cpp" />
+    <ClCompile Include="optick\optick_core.cpp" />
+    <ClCompile Include="optick\optick_gpu.cpp" />
+    <ClCompile Include="optick\optick_gpu.d3d12.cpp" />
+    <ClCompile Include="optick\optick_gpu.vulkan.cpp" />
+    <ClCompile Include="optick\optick_message.cpp" />
+    <ClCompile Include="optick\optick_miniz.cpp" />
+    <ClCompile Include="optick\optick_serialization.cpp" />
+    <ClCompile Include="optick\optick_server.cpp" />
     <ClCompile Include="ORKAIntroSequence.cpp" />
     <ClCompile Include="ParticleSystem.cpp" />
     <ClCompile Include="Physics.cpp" />
@@ -194,6 +186,22 @@
     <ClInclude Include="OctreeNode.hpp" />
     <ClInclude Include="OctreeSystem.hpp" />
     <ClInclude Include="OctreeSystemRenderer.hpp" />
+    <ClInclude Include="optick\optick.config.h" />
+    <ClInclude Include="optick\optick.h" />
+    <ClInclude Include="optick\optick_capi.h" />
+    <ClInclude Include="optick\optick_common.h" />
+    <ClInclude Include="optick\optick_core.freebsd.h" />
+    <ClInclude Include="optick\optick_core.h" />
+    <ClInclude Include="optick\optick_core.linux.h" />
+    <ClInclude Include="optick\optick_core.macos.h" />
+    <ClInclude Include="optick\optick_core.platform.h" />
+    <ClInclude Include="optick\optick_core.win.h" />
+    <ClInclude Include="optick\optick_gpu.h" />
+    <ClInclude Include="optick\optick_memory.h" />
+    <ClInclude Include="optick\optick_message.h" />
+    <ClInclude Include="optick\optick_miniz.h" />
+    <ClInclude Include="optick\optick_serialization.h" />
+    <ClInclude Include="optick\optick_server.h" />
     <ClInclude Include="Organizer.hpp" />
     <ClInclude Include="PhysicsPlayground.hpp" />
     <ClInclude Include="PlanetCamera.hpp" />
@@ -231,22 +239,6 @@
     <ClInclude Include="Memory.hpp" />
     <ClInclude Include="MSDFText.hpp" />
     <ClInclude Include="Name.hpp" />
-    <ClInclude Include="optik\optick.config.h" />
-    <ClInclude Include="optik\optick.h" />
-    <ClInclude Include="optik\optick_capi.h" />
-    <ClInclude Include="optik\optick_common.h" />
-    <ClInclude Include="optik\optick_core.freebsd.h" />
-    <ClInclude Include="optik\optick_core.h" />
-    <ClInclude Include="optik\optick_core.linux.h" />
-    <ClInclude Include="optik\optick_core.macos.h" />
-    <ClInclude Include="optik\optick_core.platform.h" />
-    <ClInclude Include="optik\optick_core.win.h" />
-    <ClInclude Include="optik\optick_gpu.h" />
-    <ClInclude Include="optik\optick_memory.h" />
-    <ClInclude Include="optik\optick_message.h" />
-    <ClInclude Include="optik\optick_miniz.h" />
-    <ClInclude Include="optik\optick_serialization.h" />
-    <ClInclude Include="optik\optick_server.h" />
     <ClInclude Include="ORKAIntroSequence.hpp" />
     <ClInclude Include="ParticleSystem.hpp" />
     <ClInclude Include="Physics.hpp" />
@@ -273,7 +265,6 @@
     <ClInclude Include="SDFTerrainRenderSystem.hpp" />
     <ClInclude Include="Server.hpp" />
     <ClInclude Include="ShaderSystem.hpp" />
-    <ClInclude Include="SimplePlanetRenderer.hpp" />
     <ClInclude Include="SimpleRTS.hpp" />
     <ClInclude Include="Snake.hpp" />
     <ClInclude Include="Sortr.hpp" />
@@ -467,12 +458,6 @@
     <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug NoCopy|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
-    <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
-    <CharacterSet>MultiByte</CharacterSet>
-  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
@@ -481,12 +466,6 @@
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
-    <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
-    <CharacterSet>MultiByte</CharacterSet>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug NoCopy|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
@@ -507,16 +486,10 @@
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug NoCopy|Win32'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug NoCopy|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -528,20 +501,12 @@
     </LinkIncremental>
     <IncludePath>G:\Daten\PROJEKTE\ORKA\CONCEPT\ENGINE\Project ORKA\External Libraries\asio-1.18.0\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug NoCopy|Win32'">
-    <LinkIncremental />
-    <IncludePath>G:\Daten\PROJEKTE\ORKA\CONCEPT\ENGINE\Project ORKA\External Libraries\asio-1.18.0\include;$(IncludePath)</IncludePath>
-  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <IncludePath>G:\Daten\PROJEKTE\ORKA\CONCEPT\ENGINE\Project ORKA\External Libraries\asio-1.18.0\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>
     </LinkIncremental>
-    <IncludePath>G:\Daten\PROJEKTE\ORKA\CONCEPT\ENGINE\Project ORKA\External Libraries\asio-1.18.0\include;$(IncludePath)</IncludePath>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug NoCopy|x64'">
-    <LinkIncremental />
     <IncludePath>G:\Daten\PROJEKTE\ORKA\CONCEPT\ENGINE\Project ORKA\External Libraries\asio-1.18.0\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -578,35 +543,6 @@
       <SuppressStartupBanner>true</SuppressStartupBanner>
     </Manifest>
   </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug NoCopy|Win32'">
-    <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
-      <Optimization>Disabled</Optimization>
-      <SDLCheck>true</SDLCheck>
-      <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)\External Libraries\STBIMAGE;$(SolutionDir)\External Libraries\FREETYPE\include;$(SolutionDir)\External Libraries\ASIO\asio-1.18.1\include;$(SolutionDir)\External Libraries\freetype-2.10.4\include;$(SolutionDir)\External Libraries\STB IMAGE;$(SolutionDir)\External Libraries\ASSIMP\include;$(SolutionDir)\External Libraries\GLM;$(SolutionDir)\External Libraries\GLEW\include;$(SolutionDir)\External Libraries\GLFW 32 bit\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <LanguageStandard>stdcpp20</LanguageStandard>
-      <EnableModules>false</EnableModules>
-      <LanguageStandard_C>stdc17</LanguageStandard_C>
-      <BasicRuntimeChecks>UninitializedLocalUsageCheck</BasicRuntimeChecks>
-      <CompileAs>CompileAsCpp</CompileAs>
-    </ClCompile>
-    <Link>
-      <AdditionalDependencies>opengl32.lib;freetype.lib;assimp-vc141-mtd.lib;glfw3.lib;glew32s.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)External Libraries\FREETYPE\release static\vs2015-2022\win32;$(SolutionDir)\External Libraries\ASSIMP\lib\lib 32\debug;$(SolutionDir)\External Libraries\GLFW 32 bit\lib-vc2015;$(SolutionDir)\External Libraries\GLEW\lib\Release\Win32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <IgnoreSpecificDefaultLibraries>
-      </IgnoreSpecificDefaultLibraries>
-      <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
-      <SubSystem>Console</SubSystem>
-    </Link>
-    <PostBuildEvent>
-      <Command>XCOPY "$(SolutionDir)Project ORKA\Data" "$(TargetDir)Data" /S /Y /I</Command>
-    </PostBuildEvent>
-    <Manifest>
-      <SuppressStartupBanner>true</SuppressStartupBanner>
-    </Manifest>
-  </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -637,42 +573,6 @@
       <Command>
       </Command>
       <Message>XCOPY "$(SolutionDir)Project ORKA\Data" "$(TargetDir)Data" /S /Y /I</Message>
-    </PostBuildEvent>
-    <Manifest>
-      <SuppressStartupBanner>true</SuppressStartupBanner>
-    </Manifest>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug NoCopy|x64'">
-    <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
-      <Optimization>Disabled</Optimization>
-      <SDLCheck>true</SDLCheck>
-      <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)External Libraries\STBIMAGE;$(SolutionDir)External Libraries\FREETYPE\include;$(SolutionDir)External Libraries\ASIO\asio-1.18.1\include;$(SolutionDir)External Libraries\STB IMAGE;$(SolutionDir)External Libraries\ASSIMP\include;$(SolutionDir)External Libraries\GLM;$(SolutionDir)External Libraries\GLEW\include;$(SolutionDir)External Libraries\GLFW 64 bit\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <SupportJustMyCode>true</SupportJustMyCode>
-      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
-      <LanguageStandard>stdcpp20</LanguageStandard>
-      <EnableModules>false</EnableModules>
-      <LanguageStandard_C>stdc17</LanguageStandard_C>
-      <BasicRuntimeChecks>UninitializedLocalUsageCheck</BasicRuntimeChecks>
-      <CompileAs>CompileAsCpp</CompileAs>
-    </ClCompile>
-    <Link>
-      <AdditionalLibraryDirectories>G:\DATA\PROJEKTE\ORKA\GAME ENGINE\SOURCE CODE\External Libraries\OpenAL\libs\Win64;$(SolutionDir)External Libraries\FREETYPE\release static\vs2015-2022\win64;G:\DATA\PROJEKTE\ORKA\GAME ENGINE\SOURCE CODE\External Libraries\FREETYPE\release static\vs2015-2022\win64;$(SolutionDir)\External Libraries\ASSIMP\lib\lib 64\debug;$(SolutionDir)\External Libraries\GLFW 64 bit\lib-vc2015;$(SolutionDir)\External Libraries\GLEW\lib\Release\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
-      <AdditionalDependencies>opengl32.lib;freetype.lib;assimp-vc141-mtd.lib;glfw3.lib;glew32s.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <IgnoreSpecificDefaultLibraries>
-      </IgnoreSpecificDefaultLibraries>
-      <SubSystem>Console</SubSystem>
-      <StackReserveSize>4194304</StackReserveSize>
-    </Link>
-    <PostBuildEvent>
-      <Command>
-      </Command>
-      <Message>
-      </Message>
     </PostBuildEvent>
     <Manifest>
       <SuppressStartupBanner>true</SuppressStartupBanner>
@@ -733,8 +633,9 @@
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>opengl32.lib;freetype.lib;assimp-vc141-mt.lib;glfw3.lib;glew32s.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>G:\DATA\PROJEKTE\ORKA\GAME ENGINE\SOURCE CODE\External Libraries\OpenAL\libs\Win64;$(SolutionDir)External Libraries\FREETYPE\release static\vs2015-2022\win64;$(SolutionDir)\External Libraries\FREETYPE\release static\vs2015-2022\win64;$(SolutionDir)\External Libraries\ASSIMP\lib\lib 64\release;$(SolutionDir)\External Libraries\GLFW 64 bit\lib-vc2015;$(SolutionDir)\External Libraries\GLEW\lib\Release\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>
+      </AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <IgnoreSpecificDefaultLibraries>
       </IgnoreSpecificDefaultLibraries>

@@ -7,12 +7,17 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Project ORKA", "Project ORK
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug NoCopy|x64 = Debug NoCopy|x64
+		Debug NoCopy|x86 = Debug NoCopy|x86
 		Debug|x64 = Debug|x64
 		Debug|x86 = Debug|x86
 		Release|x64 = Release|x64
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{AD44ABC9-E10E-485B-A111-65EE96C2FFC1}.Debug NoCopy|x64.ActiveCfg = Release|x64
+		{AD44ABC9-E10E-485B-A111-65EE96C2FFC1}.Debug NoCopy|x64.Build.0 = Release|x64
+		{AD44ABC9-E10E-485B-A111-65EE96C2FFC1}.Debug NoCopy|x86.ActiveCfg = Debug NoCopy|x64
 		{AD44ABC9-E10E-485B-A111-65EE96C2FFC1}.Debug|x64.ActiveCfg = Debug|x64
 		{AD44ABC9-E10E-485B-A111-65EE96C2FFC1}.Debug|x64.Build.0 = Debug|x64
 		{AD44ABC9-E10E-485B-A111-65EE96C2FFC1}.Debug|x86.ActiveCfg = Debug|Win32
