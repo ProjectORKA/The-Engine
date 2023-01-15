@@ -6,6 +6,8 @@
 #include "WindowAPI.hpp" //needs to be below the rendering stuff, e.g. "Renderer.hpp"
 #include "UIElement.hpp"
 
+//#define DEBUG_ID_BUFFER
+
 enum class WindowState {
 	minimized,
 	windowed,

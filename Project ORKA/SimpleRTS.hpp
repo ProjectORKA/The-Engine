@@ -10,7 +10,7 @@
 
 struct SimpleRTSSimulation;
 
-namespace SimpleRTS {
+
 
 enum class SimpleRTSItem {
 	Nothing,
@@ -146,7 +146,6 @@ struct HumanitySimulation {
 	void huntRabbit(Index id);
 	void deliverItem(Index id);
 };
-}
 
 struct SimpleRTSSimulation : public GameSimulation {
 	Float time = 0;
@@ -154,11 +153,11 @@ struct SimpleRTSSimulation : public GameSimulation {
 
 	Float dimensions = 200;
 
-	SimpleRTS::Trees trees;
-	SimpleRTS::HumanitySimulation humanitySimulation;
-	SimpleRTS::BushSimulation bushSimulation;
-	SimpleRTS::HouseSimulation houseSimulation;
-	SimpleRTS::RabbitSimulation rabbitSimulation;
+	Trees trees;
+	HumanitySimulation humanitySimulation;
+	BushSimulation bushSimulation;
+	HouseSimulation houseSimulation;
+	RabbitSimulation rabbitSimulation;
 
 	SimpleRTSSimulation();
 	void update(Float timestep) override;
@@ -176,9 +175,19 @@ struct SimpleRTSRenderer : public GameRenderer {
 	InputEvent exit = InputEvent(InputType::Mouse, RMB, 0);
 	InputEvent enter = InputEvent(InputType::Mouse, LMB, 1);
 
-	SimpleRTSRenderer(SimpleRTSSimulation& sim);
 	void create(Window& window) {};
 	void update(Window& window) override;
 	void render(Engine& engine, Window& window, TiledRectangle area) override;
 	void inputEvent(Window& window, InputEvent input) override;
+};
+
+struct SimpleRTS {
+	SimpleRTSSimulation sim;
+	SimpleRTSRenderer renderer;
+
+	SimpleRTS(Engine& engine) {
+		renderer.sim = &sim;
+		Window& w = window("Simple RTS", Area(1920, 1080), true, WindowState::maximized, renderer, engine);
+		ui.run();
+	}
 };

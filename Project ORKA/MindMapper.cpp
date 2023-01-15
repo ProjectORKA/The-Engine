@@ -1,6 +1,6 @@
 #include "MindMapper.hpp"
 
-void MindMapper::update(Window& window) {
+void MindMapperRenderer::update(Window& window) {
 	player.update(window);
 
 	logDebug(player.camera.location);
@@ -9,7 +9,7 @@ void MindMapper::update(Window& window) {
 	if (grow) system.addNode();
 	system.update();
 }
-void MindMapper::render(Engine& engine, Window& window, TiledRectangle area) {
+void MindMapperRenderer::render(Engine& engine, Window& window, TiledRectangle area) {
 	Renderer& renderer = window.renderer;
 	
 	mutex.lock();
@@ -35,7 +35,7 @@ void MindMapper::render(Engine& engine, Window& window, TiledRectangle area) {
 
 	mutex.unlock();
 }
-void MindMapper::inputEvent(Window& window, InputEvent input) {
+void MindMapperRenderer::inputEvent(Window& window, InputEvent input) {
 	if (input == growToggle)grow = !grow;
 	if (input == exit) window.uncaptureCursor();
 	if (input == enter) window.captureCursor();

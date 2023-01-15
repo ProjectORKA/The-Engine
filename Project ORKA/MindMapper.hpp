@@ -5,7 +5,7 @@
 #include "MindMap.hpp"
 #include "Player.hpp"
 
-struct MindMapper : public GameRenderer {
+struct MindMapperRenderer : public GameRenderer {
 	Mutex mutex;
 	DebugPlayer player;
 
@@ -17,8 +17,17 @@ struct MindMapper : public GameRenderer {
 	InputEvent enter = InputEvent(InputType::Mouse, 0, 1);
 	InputEvent growToggle = InputEvent(InputType::KeyBoard, SPACE, 0);
 
-	MindMapper() {};
+	MindMapperRenderer() {};
 	void update(Window& window) override;
 	void inputEvent(Window& window, InputEvent input) override;
 	void render(Engine& engine, Window& window, TiledRectangle area) override;
+};
+
+struct MindMapper {
+	MindMapperRenderer mindMapperRenderer;
+
+	MindMapper(Engine& engine) {
+		Window& w = window("ORKA Sandbox", Area(1920, 1080), true, WindowState::windowed, mindMapperRenderer, engine);
+		ui.run();
+	}
 };

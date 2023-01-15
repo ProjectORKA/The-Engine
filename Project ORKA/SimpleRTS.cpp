@@ -6,9 +6,6 @@
 void SimpleRTSRenderer::update(Window& window) {
 	player.update(window);
 }
-SimpleRTSRenderer::SimpleRTSRenderer(SimpleRTSSimulation& sim) {
-	this->sim = &sim;
-}
 void SimpleRTSRenderer::render(Engine& engine, Window& window, TiledRectangle area) {
 	Renderer& renderer = window.renderer;
 	
@@ -305,7 +302,7 @@ void SimpleRTSSimulation::update(Float timestep) {
 	//rabbitSimulation;
 }
 
-void SimpleRTS::Trees::update(SimpleRTSSimulation& simulation) {
+void Trees::update(SimpleRTSSimulation& simulation) {
 	for (UInt i = 0; i < treeCount; i++) {
 		treeAge[i] += simulation.timestep;
 		treeSize[i] = calculateTreeSize(i);

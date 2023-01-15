@@ -401,6 +401,8 @@
     <None Include="..\..\..\..\..\..\..\ORKA\Data\shaders\msdfFont.frag" />
     <None Include="..\..\..\..\..\..\..\ORKA\Data\shaders\msdfFont.vert" />
     <None Include="..\..\..\..\..\..\..\ORKA\Data\shaders\mxAO.frag" />
+    <None Include="..\..\..\..\..\..\..\ORKA\Data\shaders\debugID.frag" />
+    <None Include="..\..\..\..\..\..\..\ORKA\Data\shaders\debugID.vert" />
     <None Include="..\..\..\..\..\..\..\ORKA\Data\shaders\normals.frag" />
     <None Include="..\..\..\..\..\..\..\ORKA\Data\shaders\normals.vert" />
     <None Include="..\..\..\..\..\..\..\ORKA\Data\shaders\orkaIntroSequence.frag" />
@@ -439,7 +441,6 @@
     <None Include="Data\shaders\MelonUberShader.vert" />
     <None Include="Data\shaders\mooncrashVertexColor.frag" />
     <None Include="Data\shaders\mooncrashVertexColor.vert" />
-    <None Include="Data\shaders\uniforms.glsl" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="icon.ico" />

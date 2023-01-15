@@ -253,13 +253,11 @@ void Renderer::normalizedSpaceWithAspectRatio(Float aspectRatio) {
 			view.y = 1 / renderAspectRatio;
 		}
 	}
-
-
-
 	uniforms().vMatrix() = Matrix(1);
 	Matrix pMatrix(1);
 	uniforms().pMatrix() = scale(pMatrix, Vec3(Vec2(1) / view, 1));
 }
+
 void Renderer::renderAtmosphere(Engine& engine, Player& player, Vec3 sunDirection) {
 	Bool culling = getCulling();
 	setDepthTest(false);
@@ -337,4 +335,14 @@ void Renderer::read(Name name) {
 
 void Renderer::draw(Name name) {
 	framebufferSystem.draw(*this, name);
+}
+
+//colors
+
+void Renderer::fill(Float r, Float g, Float b) {
+	fill(Vec4(r, g, b, 1));
+}
+
+void Renderer::fill(Vec3 color) {
+	fill(Vec4(color, 1));
 }
