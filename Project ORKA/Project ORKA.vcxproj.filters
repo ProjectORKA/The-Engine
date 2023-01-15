@@ -1236,14 +1236,17 @@
     <None Include="imgui.ini">
       <Filter>Engine</Filter>
     </None>
-    <None Include="Data\shaders\uniforms.glsl">
-      <Filter>Shaders</Filter>
-    </None>
     <None Include="..\..\..\..\..\..\..\ORKA\Data\shaders\imageViewer.frag">
       <Filter>Apps\2D Apps\Image Viewer\Shaders</Filter>
     </None>
     <None Include="..\..\..\..\..\..\..\ORKA\Data\shaders\imageViewer.vert">
       <Filter>Apps\2D Apps\Image Viewer\Shaders</Filter>
+    </None>
+    <None Include="..\..\..\..\..\..\..\ORKA\Data\shaders\debugID.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\..\..\..\..\..\ORKA\Data\shaders\debugID.vert">
+      <Filter>Shaders</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

@@ -7,7 +7,6 @@
 #pragma comment(lib,"user32.lib") 
 
 #define NOMINMAX
-#define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 
 //Defines for SIMD-enabled CPU architectures, and supported

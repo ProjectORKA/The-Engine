@@ -61,6 +61,7 @@ void windowThread(Engine& engine, Window& window)
 				//render interactibles
 				OPTICK_PUSH("Interactive Draw");
 				renderer.idFramebuffer.draw(renderer);
+				renderer.clearColor();
 				renderer.useShader(engine, "idShader");
 				renderer.uniforms().reset();
 				renderer.renderMesh(engine, "fullScreenQuad");
@@ -91,12 +92,16 @@ void windowThread(Engine& engine, Window& window)
 
 			renderer.framebufferSystem.drawToWindow();
 
+#ifdef DEBUG_ID_BUFFER
+			renderer.framebufferSystem.framebuffers[renderer.idFramebuffer.framebufferID].setAsTexture(0);
+			renderer.fullScreenShader(engine, "debugID");
+#else
 			OPTICK_PUSH("Draw final quad");
-			renderer.useShader(engine, "final");
-			renderer.framebufferSystem.currentDraw().setAsTexture(0); //[TODO] might not work; check
 			renderer.uniforms().reset();
-			renderer.renderMesh(engine, "fullScreenQuad");
+			renderer.framebufferSystem.currentDraw().setAsTexture(0); //[TODO] might not work; check
+			renderer.fullScreenShader(engine, "final");
 			OPTICK_POP();
+#endif
 			renderer.end(); //checks errors and unlocks renderer
 
 			finish();
@@ -226,7 +231,9 @@ void Window::updateDecorations() {
 }
 void Window::initializeGraphicsAPI() {
 	glfwMakeContextCurrent(apiWindow);
+	
 	glewExperimental = true;
+
 	if (glewInit() == GLEW_OK) {
 		logEvent("GLEW successfully initialized!");
 	}

@@ -43,6 +43,6 @@ void SandboxRenderer::render(Engine& e, Window& window, TiledRectangle area) {
 }
 
 Sandbox::Sandbox(Engine& engine) {
-	Window& w = window("ORKA Sandbox", Area(1920, 1080), true, WindowState::windowed, sandboxRenderer, engine);
+	Window& w = window("ORKA Sandbox", Area(1920, 1080), true, WindowState::maximized, sandboxRenderer, engine);
 	ui.run();
 }

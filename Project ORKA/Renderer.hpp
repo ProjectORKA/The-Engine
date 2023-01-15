@@ -90,8 +90,10 @@ struct Renderer{
 	void draw(Name name);
 
 	//colors
+	void fill(Vec3 color);
 	void fill(Vec4 color);
 	void clearColor(Color color);
+	void fill(Float r, Float g, Float b);
 
 	//primitives
 	void line(Vec3 start, Vec3 end, Float width);

@@ -40,13 +40,15 @@
 // easy to use algorithms
 // multiple window support
 
-#include "Sandbox.hpp"
+
 //#define TESTING
+
+#include "QuakeMovement.hpp"
 
 Int main(Int  argc, Char* argv[]) {
 #ifndef TESTING
 	Engine engine;
-	Sandbox pong(engine);
+	QuakeMovement game(engine);
 #else
 	//testing code
 	/////////////////////////////////////////////////////////////////////////////////////////////////
