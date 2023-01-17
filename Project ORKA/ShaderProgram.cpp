@@ -58,7 +58,7 @@ void ShaderProgram::create(Shader& vertexShader, Shader& fragmentShader, Uniform
 		Int result = apiGetProgramIntegerValue(programID, GL_LINK_STATUS);
 		Int infoLogLength = apiGetProgramIntegerValue(programID, GL_INFO_LOG_LENGTH);
 
-		if (infoLogLength > 0) {
+		if (infoLogLength > 1) {
 			logError(apiGetProgramInfoLog(programID, infoLogLength));
 		}
 
