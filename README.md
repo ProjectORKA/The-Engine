@@ -6,6 +6,7 @@ This is a game engine and software playground for creating the things you want.
 Use it for Visualizations, Simulations, Games, Tools and whatever you can come up with, just make sure to upload your creations so others can enjoy them too.
 
 Want to know more? [Heres our Discord](https://discord.gg/NUH4bRzqwJ)
+Or take a look at our website: [project-orka.com](https://project-orka.com)
 
 ## Features
 * Clean and easy to read
