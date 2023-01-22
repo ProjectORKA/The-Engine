@@ -21,11 +21,11 @@
 	extern Index enemyID;
 
 	struct QuakeEnemy : UIElement{
-		Vec3 position = Vec3(randomVec2(-50, 50), 0);
+		Vec3 position = Vec3(randomVec2(-85, 85), 0);
 		Index id = -1;
 
 		void die() {
-			position = Vec3(randomVec2(-50, 50), 0);
+			position = Vec3(randomVec2(-85, 85), 0);
 		}
 		void render(Engine& engine, Renderer& renderer);
 		void renderInteractive(Engine& engine, Window& window, TiledRectangle area) override;
@@ -52,11 +52,25 @@
 		InputID run = InputID(InputType::KeyBoard, SHIFT);
 		InputID shoot = InputID(InputType::Mouse, LMB);
 		InputID aim = InputID(InputType::Mouse, RMB);
-		InputID chargeJump = InputID(InputType::KeyBoard, SPACE);
+		InputID holdJump = InputID(InputType::KeyBoard, SPACE);
 		InputID crouch = InputID(InputType::KeyBoard, CTRL);
 		InputID precision = InputID(InputType::KeyBoard, ALT);
 		//event input
-		InputEvent jumpRelease = InputEvent(InputType::KeyBoard, SPACE, 0);
+		InputEvent jumpTrigger = InputEvent(InputType::KeyBoard, SPACE, 1);
+		//InputEvent jumpRelease = InputEvent(InputType::KeyBoard, SPACE, 0);
+
+		enum class State {
+			standing,		// ground
+			walking,		// ground, slowmove
+			sprinting,		// ground, fastmove
+			crouching,		// ground, crouch
+			sneaking,		// ground, crouch, slowmove
+			sliding,		// ground, crouch, fastmove
+			proning,		// ground, holding jump and crouch
+			crawling,		// ground, holding jump and crouch, slowmove
+			jumping,		// air, positive z velocity
+			falling,		// air, negative z velocity
+		};
 
 		//global scale
 		const Float unit = 1;
@@ -66,27 +80,30 @@
 		Float inputTurnX = 0;
 		Bool movementInput = false;
 
+		State state = State::standing;
+
 		//player vectors
 		Vec3 forwardVector = Vec3(0, 1, 0);
 		Vec3 rightVector = Vec3(1, 0, 0);
 
 		//jump
-		const Float minJumpVelocity = 3 * unit;
-		const Float maxJumpVelocity = 5 * unit;
+		const Float minJumpVelocity = 10 * unit;
+		const Float maxJumpVelocity = 15 * unit;
 		Float jumpCharge = 0;
+		Bool queueJump = false;
 
 		//speed
-		const Float walkingSpeed = 1 * unit;	//
-		const Float runningSpeed = 5.5 * unit;
-		const Float speedControlAcceleration = 100;
+		const Float walkingSpeed = 2 * unit;	//
+		const Float runningSpeed = 8 * unit;
+		const Float speedControlAcceleration = 200;
 		const Float speedControlDeceleration = 1;
 		Bool isMoving = false;
 		Float speedControl = 0;
 		Vec3 movementControl = Vec3(0);
 
 		//strafe
-		const Float maxStrafeSpeed = 3;
-		const Float maxStrafeAcceleration = 100;
+		const Float maxStrafeSpeed = 5;
+		const Float maxStrafeAcceleration = 55;
 		//Vec2 strafeControl = Vec2(0);
 
 		//player physique
@@ -101,17 +118,19 @@
 		//height
 
 		const Float eyeHeightNormal = height * eyeHeightMultilpier;				//standing
-		const Float eyeHeightFlying = height * 0.6 * eyeHeightMultilpier;		//off ground
+		const Float eyeHeightFlying = height * 1.1 * eyeHeightMultilpier;		//off ground
 		const Float eyeHeightWalking = height * 0.9 * eyeHeightMultilpier;		//walking
-		const Float eyeHeightCrouching = height * 0.3 * eyeHeightMultilpier;	//charging jump
+		const Float eyeHeightCrouching = height * 0.5 * eyeHeightMultilpier;	//charging jump
 		const Float eyeHeightRunning = height * 0.75 * eyeHeightMultilpier;		//running
+		const Float eyeHeightProning = height * 0.2 * eyeHeightMultilpier;		//proning
+		const Float eyeHeightSliding = height * 0.3 * eyeHeightMultilpier;		//sliding
 
 		const Float eyeMovementSpeed = 10;
 
 		Float eyeHeight = 0;
 
 		//headbob
-		const Float headBobSpeed = 2.6;
+		const Float headBobSpeed = 1.4;
 		const Float headBobIntensity = 0.01;
 		Float headBob = 0;
 
@@ -144,7 +163,10 @@
 		Float mass = 80; //kg
 		Vec3 velocity = Vec3(0);
 		Vec3 location = Vec3(0, 0, 0);
-		const Vec3 acceleration = Vec3(0, 0, -9.81);
+		Vec3 acceleration = Vec3(0, 0, 0);
+		const Float gravity = 30;	//gravity of player is more than 10 because it makes it feel snappier
+		const Float airTimeGravity = 16; //makes gravity less impactful when holding space in the air
+		const Float airResistance = 0.99;
 
 		//friction
 		const Float iceFrictionFactor = 0.1;
@@ -153,18 +175,19 @@
 		Float movementFriction = 0;
 		Float actualFriction = stopFriction;
 
-		void releaseJump();
+		void jump();
 		void collisionResponse();
-		void calculatePhysics(Float delta);
-		void calculateHeadPosition(Window& window, Float delta);
-
+		Bool isCollidingWithGround();
 		void update(Window& window) override;
+		void calculatePhysics(Window& window);
+		void calculateHeadPosition(Window& window, Float delta);
 		void inputEvent(Window& window, InputEvent input) override;
 	};
 
 	struct QuakeMovementRenderer : public GameRenderer {
 		Vec3 sunDirection = normalize(Vec3(1, 0, 0.6));
 		QuakePlayer player;
+		Float mapSize = 0.85;
 
 		Vector<QuakeEnemy> enemies;
 

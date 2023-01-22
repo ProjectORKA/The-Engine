@@ -8,14 +8,17 @@
 //	https://project-orka.com
 
 //	Legal stuff:
-//	This code can not be used commercially!
+//	You can do whatever you want as long as its not used commercially!
+//	Modify, hack, tinker around
 
 //	About the code:
 //	The following C++ code is meant to be as clean and humanly readable as possible.
+//	If you are a human and you find that you can not read it please contect me :)
 //	The "Project ORKA" engine is divided into
 //		1. data stored in structs (yes everything is public)
 //		2. functions that act on that data in form of void or member functions
 //	We are trying to avoid con/destructors and inheritance and advanced features like macros, lambdas, templates, etc...
+//	Ideally a beginner programmer will be able to get started very quickly.
 //	Everything is written in camelCase and datatypes starts with upper case while variables and functions start with lower case
 //	For example "ThisIsADataType" vs "thisIsAFunction"
 
@@ -40,7 +43,6 @@
 // easy to use algorithms
 // multiple window support
 
-
 //#define TESTING
 
 #include "QuakeMovement.hpp"
@@ -52,6 +54,8 @@ Int main(Int  argc, Char* argv[]) {
 #else
 	//testing code
 	/////////////////////////////////////////////////////////////////////////////////////////////////
+
+
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////
 	pause();

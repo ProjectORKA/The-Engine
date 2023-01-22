@@ -56,13 +56,13 @@ using WeakPointer = std::weak_ptr<T>;
 
 using Sphere = Vec4;
 
-#include "glm/gtc/matrix_transform.hpp"
+#include "glm/glm.hpp"
 using Matrix = glm::mat4;
 
 #include "glm/gtc/quaternion.hpp"
 #include "glm/gtx/quaternion.hpp"
-#include <glm/gtx/euler_angles.hpp>
-#include <glm/gtx/projection.hpp>
+#include "glm/gtx/euler_angles.hpp"
+#include "glm/gtx/projection.hpp"
 
 using Quat = glm::quat;
 using Quaternion = glm::quat;
