@@ -380,7 +380,6 @@ void QuakeEnemy::renderInteractive(Engine& engine, Window& window, TiledRectangl
 	window.renderer.renderMesh(engine, "quakeMovementEnemy");
 }
 
-
 QuakeMovement::QuakeMovement(Engine& engine) {
 	Window& w = window("ORKA Sandbox", Area(1920, 1080), true, WindowState::fullscreen, quakeMovementRenderer, engine);
 	ui.run();
