@@ -416,6 +416,9 @@ void whenButtonIsPressed(APIWindow apiWindow, Int key, Int scancode, Int action,
 {
 	Window& window = *static_cast<Window*>(glfwGetWindowUserPointer(apiWindow));
 
+	if (action == 2) return; //we do not process repeat button presses
+	//[TODO] make sure that "typing events use them"
+
 	InputEvent input = InputEvent(InputType::KeyBoard, key, action);
 
 	if (input == window.escape) {
