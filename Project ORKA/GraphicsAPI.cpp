@@ -292,12 +292,12 @@ Int apiGetUniformBlockIndex(UInt programID, const Char* name) {
 }
 
 String apiGetShaderInfoLog(UInt shaderID, SizeI infoLogLength) {
-	Vector<Char> log(infoLogLength++);
+	std::vector<Char> log(1024);
 	glGetShaderInfoLog(shaderID, infoLogLength, 0, &log[0]);
 	return String(log.begin(), log.end());
 }
 String apiGetProgramInfoLog(UInt programID, SizeI infoLogLength) {
-	Vector<Char> log(infoLogLength++);
+	std::vector<Char> log(1024);
 	glGetProgramInfoLog(programID, infoLogLength, 0, &log[0]);
 	return String(log.begin(), log.end());
 }
