@@ -310,8 +310,8 @@ void QuakeMovementRenderer::render(Engine& e, Window& window, TiledRectangle are
 	//r.useTexture(e, "quakeLightmapSide4");
 	//r.renderMesh(e, "quakeMapSide4");
 	r.uniforms().mMatrix(matrixFromScale(mapSize));
-	r.useTexture(e, "moonolith");
-	r.renderMesh(e, "moonolith");
+	r.useTexture(e, "tripleNineMap");
+	r.renderMesh(e, "tripleNineMap");
 	r.uniforms().mMatrix(Matrix(1));
 
 
@@ -350,7 +350,7 @@ void QuakeMovementRenderer::renderInteractive(Engine& e, Window& window, TiledRe
 
 	r.setDepthTest(true);
 	r.uniforms().mMatrix(matrixFromScale(mapSize));
-	r.renderMesh(e, "moonolith");
+	r.renderMesh(e, "tripleNineMap");
 	r.uniforms().mMatrix(Matrix(1));
 
 	for (QuakeEnemy& enemy : enemies) {
@@ -371,13 +371,13 @@ void QuakeMovementRenderer::inputEvent(Window& window, InputEvent input) {
 }
 
 void QuakeEnemy::render(Engine& engine, Renderer& renderer) {
-	renderer.uniforms().mMatrix(matrixFromLocationAndSize(position, 0.5));
-	renderer.renderMesh(engine, "quakeMovementEnemy");
+	renderer.uniforms().mMatrix(matrixFromLocationAndSize(position, 1));
+	renderer.renderMesh(engine, "tripleNineTarget");
 }
 void QuakeEnemy::renderInteractive(Engine& engine, Window& window, TiledRectangle area) {
-	window.renderer.uniforms().mMatrix(matrixFromLocationAndSize(position, 0.5));
+	window.renderer.uniforms().mMatrix(matrixFromLocationAndSize(position, 1));
 	window.renderer.uniforms().objectID(id);
-	window.renderer.renderMesh(engine, "quakeMovementEnemy");
+	window.renderer.renderMesh(engine, "tripleNineTarget");
 }
 
 QuakeMovement::QuakeMovement(Engine& engine) {

@@ -18,10 +18,10 @@ void CPUMesh::saveMeshFile(ResourceManager& resourceManager)
 	header.colorCount = colors.size();
 	header.indexCount = indices.size();
 
-	Path meshPath = resourceManager.orkaBinariesLocation;
 	String meshName = String(name.data).append(".mesh");
 
-	meshPath.append("meshes").append(meshName);
+	Path meshPath = resourceManager.orkaCachedMeshLocation;
+	meshPath.append(meshName);
 
 	OutFile mesh(meshPath);
 	mesh.write((Char*)&header, sizeof(MeshHeader2));

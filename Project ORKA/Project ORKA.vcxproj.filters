@@ -1017,192 +1017,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\..\..\..\..\..\ORKA\Data\shaders\blurredUI.frag">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="..\..\..\..\..\..\..\ORKA\Data\shaders\blurredUI.vert">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="..\..\..\..\..\..\..\ORKA\Data\shaders\color.frag">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="..\..\..\..\..\..\..\ORKA\Data\shaders\color.vert">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="..\..\..\..\..\..\..\ORKA\Data\shaders\debug.frag">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="..\..\..\..\..\..\..\ORKA\Data\shaders\debug.vert">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="..\..\..\..\..\..\..\ORKA\Data\shaders\depthCutter.frag">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="..\..\..\..\..\..\..\ORKA\Data\shaders\depthCutter.vert">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="..\..\..\..\..\..\..\ORKA\Data\shaders\dndUberShader.frag">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="..\..\..\..\..\..\..\ORKA\Data\shaders\dndUberShader.vert">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="..\..\..\..\..\..\..\ORKA\Data\shaders\final.frag">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="..\..\..\..\..\..\..\ORKA\Data\shaders\final.vert">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="..\..\..\..\..\..\..\ORKA\Data\shaders\gammaCorrection.frag">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="..\..\..\..\..\..\..\ORKA\Data\shaders\gammaCorrection.vert">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="..\..\..\..\..\..\..\ORKA\Data\shaders\gpuSimShader.frag">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="..\..\..\..\..\..\..\ORKA\Data\shaders\gpuSimShader.vert">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="..\..\..\..\..\..\..\ORKA\Data\shaders\idShader.frag">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="..\..\..\..\..\..\..\ORKA\Data\shaders\idShader.vert">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="..\..\..\..\..\..\..\ORKA\Data\shaders\MelonUberShader.frag">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="..\..\..\..\..\..\..\ORKA\Data\shaders\MelonUberShader.vert">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="..\..\..\..\..\..\..\ORKA\Data\shaders\mooncrashVertexColor.frag">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="..\..\..\..\..\..\..\ORKA\Data\shaders\mooncrashVertexColor.vert">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="..\..\..\..\..\..\..\ORKA\Data\shaders\msdfFont.frag">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="..\..\..\..\..\..\..\ORKA\Data\shaders\msdfFont.vert">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="..\..\..\..\..\..\..\ORKA\Data\shaders\mxAO.frag">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="..\..\..\..\..\..\..\ORKA\Data\shaders\normals.frag">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="..\..\..\..\..\..\..\ORKA\Data\shaders\normals.vert">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="..\..\..\..\..\..\..\ORKA\Data\shaders\orkaIntroSequence.frag">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="..\..\..\..\..\..\..\ORKA\Data\shaders\orkaIntroSequence.vert">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="..\..\..\..\..\..\..\ORKA\Data\shaders\postProcess.frag">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="..\..\..\..\..\..\..\ORKA\Data\shaders\postProcess.vert">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="..\..\..\..\..\..\..\ORKA\Data\shaders\primitive.frag">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="..\..\..\..\..\..\..\ORKA\Data\shaders\primitive.vert">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="..\..\..\..\..\..\..\ORKA\Data\shaders\sdfOctreeTerrain.frag">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="..\..\..\..\..\..\..\ORKA\Data\shaders\sdfOctreeTerrain.vert">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="..\..\..\..\..\..\..\ORKA\Data\shaders\sdfTerrain.frag">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="..\..\..\..\..\..\..\ORKA\Data\shaders\sdfTerrain.vert">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="..\..\..\..\..\..\..\ORKA\Data\shaders\simpleRTS.frag">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="..\..\..\..\..\..\..\ORKA\Data\shaders\simpleRTS.vert">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="..\..\..\..\..\..\..\ORKA\Data\shaders\sky.frag">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="..\..\..\..\..\..\..\ORKA\Data\shaders\sky.vert">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="..\..\..\..\..\..\..\ORKA\Data\shaders\sphereRendering.frag">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="..\..\..\..\..\..\..\ORKA\Data\shaders\sphereRendering.vert">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="..\..\..\..\..\..\..\ORKA\Data\shaders\terrain.frag">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="..\..\..\..\..\..\..\ORKA\Data\shaders\terrain.vert">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="..\..\..\..\..\..\..\ORKA\Data\shaders\text.frag">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="..\..\..\..\..\..\..\ORKA\Data\shaders\text.vert">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="..\..\..\..\..\..\..\ORKA\Data\shaders\texture.frag">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="..\..\..\..\..\..\..\ORKA\Data\shaders\texture.vert">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="..\..\..\..\..\..\..\ORKA\Data\shaders\ui.frag">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="..\..\..\..\..\..\..\ORKA\Data\shaders\ui.vert">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="..\..\..\..\..\..\..\ORKA\Data\shaders\uniforms.glsl">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="..\..\..\..\..\..\..\ORKA\Data\shaders\unlit.frag">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="..\..\..\..\..\..\..\ORKA\Data\shaders\unlit.vert">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="..\..\..\..\..\..\..\ORKA\Data\shaders\vertexColor.frag">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="..\..\..\..\..\..\..\ORKA\Data\shaders\vertexColor.vert">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="..\..\..\..\..\..\..\ORKA\Data\shaders\water.frag">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="..\..\..\..\..\..\..\ORKA\Data\shaders\water.vert">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="..\..\..\..\..\..\..\ORKA\Data\shaders\atmosphere.frag">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="..\..\..\..\..\..\..\ORKA\Data\shaders\atmosphere.vert">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="..\..\..\..\..\..\..\ORKA\Data\shaders\lastBloomUpsample.frag">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="..\..\..\..\..\..\..\ORKA\Data\shaders\lastBloomUpsample.vert">
-      <Filter>Shaders</Filter>
-    </None>
     <None Include="Data\shaders\mooncrashVertexColor.vert">
       <Filter>Apps\3D Apps\Mooncrash</Filter>
     </None>
@@ -1215,24 +1029,6 @@
     <None Include="Data\shaders\MelonUberShader.vert">
       <Filter>Apps\3D Apps\Project Melon</Filter>
     </None>
-    <None Include="..\..\..\..\..\..\..\ORKA\Data\shaders\bloomDownsample.frag">
-      <Filter>Shaders\High Quality Bloom</Filter>
-    </None>
-    <None Include="..\..\..\..\..\..\..\ORKA\Data\shaders\bloomDownsample.vert">
-      <Filter>Shaders\High Quality Bloom</Filter>
-    </None>
-    <None Include="..\..\..\..\..\..\..\ORKA\Data\shaders\bloomPrefilter.frag">
-      <Filter>Shaders\High Quality Bloom</Filter>
-    </None>
-    <None Include="..\..\..\..\..\..\..\ORKA\Data\shaders\bloomPrefilter.vert">
-      <Filter>Shaders\High Quality Bloom</Filter>
-    </None>
-    <None Include="..\..\..\..\..\..\..\ORKA\Data\shaders\bloomUpsample.frag">
-      <Filter>Shaders\High Quality Bloom</Filter>
-    </None>
-    <None Include="..\..\..\..\..\..\..\ORKA\Data\shaders\bloomUpsample.vert">
-      <Filter>Shaders\High Quality Bloom</Filter>
-    </None>
     <None Include="imgui.ini">
       <Filter>Engine</Filter>
     </None>
@@ -1242,11 +1038,233 @@
     <None Include="..\..\..\..\..\..\..\ORKA\Data\shaders\imageViewer.vert">
       <Filter>Apps\2D Apps\Image Viewer\Shaders</Filter>
     </None>
-    <None Include="..\..\..\..\..\..\..\ORKA\Data\shaders\debugID.frag">
+    <None Include="Files\Data\Shaders\atmosphere.frag">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="..\..\..\..\..\..\..\ORKA\Data\shaders\debugID.vert">
+    <None Include="Files\Data\Shaders\atmosphere.vert">
       <Filter>Shaders</Filter>
+    </None>
+    <None Include="Files\Data\Shaders\blur.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Files\Data\Shaders\blur.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Files\Data\Shaders\blurredUI.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Files\Data\Shaders\blurredUI.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Files\Data\Shaders\color.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Files\Data\Shaders\color.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Files\Data\Shaders\debug.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Files\Data\Shaders\debug.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Files\Data\Shaders\debugID.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Files\Data\Shaders\debugID.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Files\Data\Shaders\depthCutter.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Files\Data\Shaders\depthCutter.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Files\Data\Shaders\dndUberShader.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Files\Data\Shaders\dndUberShader.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Files\Data\Shaders\final.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Files\Data\Shaders\final.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Files\Data\Shaders\gammaCorrection.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Files\Data\Shaders\gammaCorrection.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Files\Data\Shaders\gpuSimShader.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Files\Data\Shaders\gpuSimShader.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Files\Data\Shaders\idShader.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Files\Data\Shaders\idShader.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Files\Data\Shaders\imageViewer.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Files\Data\Shaders\imageViewer.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Files\Data\Shaders\lastBloomUpsample.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Files\Data\Shaders\lastBloomUpsample.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Files\Data\Shaders\MelonUberShader.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Files\Data\Shaders\MelonUberShader.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Files\Data\Shaders\mooncrashVertexColor.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Files\Data\Shaders\mooncrashVertexColor.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Files\Data\Shaders\msdfFont.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Files\Data\Shaders\msdfFont.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Files\Data\Shaders\mxAO.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Files\Data\Shaders\normals.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Files\Data\Shaders\normals.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Files\Data\Shaders\orbitalOblivion.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Files\Data\Shaders\orbitalOblivion.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Files\Data\Shaders\orkaIntroSequence.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Files\Data\Shaders\orkaIntroSequence.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Files\Data\Shaders\postProcess.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Files\Data\Shaders\postProcess.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Files\Data\Shaders\primitive.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Files\Data\Shaders\primitive.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Files\Data\Shaders\sdfOctreeTerrain.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Files\Data\Shaders\sdfOctreeTerrain.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Files\Data\Shaders\sdfTerrain.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Files\Data\Shaders\sdfTerrain.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Files\Data\Shaders\simpleRTS.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Files\Data\Shaders\simpleRTS.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Files\Data\Shaders\sky.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Files\Data\Shaders\sky.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Files\Data\Shaders\sphereRendering.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Files\Data\Shaders\sphereRendering.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Files\Data\Shaders\terrain.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Files\Data\Shaders\terrain.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Files\Data\Shaders\text.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Files\Data\Shaders\text.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Files\Data\Shaders\texture.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Files\Data\Shaders\texture.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Files\Data\Shaders\ui.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Files\Data\Shaders\ui.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Files\Data\Shaders\uniforms.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Files\Data\Shaders\unlit.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Files\Data\Shaders\unlit.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Files\Data\Shaders\vertexColor.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Files\Data\Shaders\vertexColor.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Files\Data\Shaders\water.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Files\Data\Shaders\water.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Files\Data\Shaders\bloomUpsample.vert">
+      <Filter>Shaders\High Quality Bloom</Filter>
+    </None>
+    <None Include="Files\Data\Shaders\bloomDownsample.frag">
+      <Filter>Shaders\High Quality Bloom</Filter>
+    </None>
+    <None Include="Files\Data\Shaders\bloomDownsample.vert">
+      <Filter>Shaders\High Quality Bloom</Filter>
+    </None>
+    <None Include="Files\Data\Shaders\bloomPrefilter.frag">
+      <Filter>Shaders\High Quality Bloom</Filter>
+    </None>
+    <None Include="Files\Data\Shaders\bloomPrefilter.vert">
+      <Filter>Shaders\High Quality Bloom</Filter>
+    </None>
+    <None Include="Files\Data\Shaders\bloomUpsample.frag">
+      <Filter>Shaders\High Quality Bloom</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
