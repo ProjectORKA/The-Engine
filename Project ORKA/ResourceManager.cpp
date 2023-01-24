@@ -5,18 +5,24 @@
 
 
 ResourceManager::ResourceManager(FileSystem& fileSystem) {
-	//get default ORKA folder which is always in the root drive of the executable
-	Path orkaLocation = makeAbsolute(fileSystem.executablePath.root_directory()).append("ORKA");
+	//the "ORKA" location is the folder that contains the executable
+	orkaLocation = makeAbsolute(fileSystem.executablePath);
 	
-	//setup data folder
+	//in in we will always have a "Data" and "Cache" folder
+	//"Data" contains all resources like meshes, shaders, levels, textures, scrips, etc
 	orkaDataLocation = orkaLocation;
 	orkaDataLocation.append("Data");
-	if (!doesPathExist(orkaDataLocation))createDirectory(orkaDataLocation);
+	//"Cache" contains data that ORKA will create itself, so things like uncompressed or encrypted files, configs, logs, temporary data, etc
+	orkaCacheLocation = orkaLocation;
+	orkaCacheLocation.append("Cache");
 
-	//setup binary folder
-	orkaBinariesLocation = orkaLocation;
-	orkaBinariesLocation.append("Bin");
-	if (!doesPathExist(orkaBinariesLocation))createDirectory(orkaBinariesLocation);
+	orkaCachedMeshLocation = orkaCacheLocation;
+	orkaCachedMeshLocation.append("Meshes");
+
+	//setup data folder
+	if (!doesPathExist(orkaDataLocation))createDirectory(orkaDataLocation);
+	//setup cache folder
+	if (!doesPathExist(orkaCacheLocation))createDirectory(orkaCacheLocation);
 
 	reloadAllResources(fileSystem);
 }
@@ -26,32 +32,32 @@ void ResourceManager::reloadAllResources(FileSystem & fileSystem) {
 
 	Vector<Path> paths;
 
-	//load mesh files
+	//load all supported files
 	paths.clear();
-	paths = getAllFilesInDirectory(orkaBinariesLocation, { ".mesh" });
+	paths = getAllFilesInDirectory(orkaLocation, { ".mesh", ".png", ".bmp", ".exr", ".hdr", ".jpg", ".vert", ".frag" });
+	
 	for (auto p : paths) {
-		meshResources[Name(p.stem().string())] = p;
-	}
+		String extension = p.extension().string();
+		
+		if (extension == ".mesh") {
+			meshResources[Name(p.stem().string())] = p;
+			continue;
+		}
 
-	//load textures
-	paths.clear();
-	paths = getAllFilesInDirectory(orkaDataLocation, { ".png", ".bmp", ".exr", ".hdr", ".jpg" });
-	for (auto p : paths) {
-		textureResources[Name(p.stem().string())] = p;
-	}
+		if (extension == ".png" || extension == ".bmp" || extension == ".exr" || extension == ".hdr" || extension == ".jpg") {
+			textureResources[Name(p.stem().string())] = p;
+			continue;
+		}
 
-	//load vertex shaders
-	paths.clear();
-	paths = getAllFilesInDirectory(orkaDataLocation, { ".vert" });
-	for (auto p : paths) {
-		vertexShaderResources[Name(p.stem().string())] = p;
-	}
+		if (extension == ".vert") {
+			vertexShaderResources[Name(p.stem().string())] = p;
+			continue;
+		}
 
-	//load fragment shaders
-	paths.clear();
-	paths = getAllFilesInDirectory(orkaDataLocation, { ".frag" });
-	for (auto p : paths) {
-		fragmentShaderResources[Name(p.stem().string())] = p;
+		if (extension == ".frag") {
+			fragmentShaderResources[Name(p.stem().string())] = p;
+			continue;
+		}
 	}
 
 }
@@ -63,7 +69,7 @@ void ResourceManager::loadResourcesFromFBXFiles(FileSystem& fileSystem) {
 
 	//get the last edited times and the stored value
 	FileTime lastTimeFbxWasEdited = getLastWrittenTimeOfFiles(paths);
-	Path resourceManagerConfigPath = makeAbsolute(Path(orkaBinariesLocation).append("config").append("resourceManager.bin"));
+	Path resourceManagerConfigPath = makeAbsolute(Path(orkaCacheLocation).append("config").append("resourceManager.bin"));
 
 	FileTime recordedLastTimeFbxWasEdited;
 	//create a config file if necessary

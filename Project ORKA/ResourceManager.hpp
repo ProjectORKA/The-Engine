@@ -19,8 +19,12 @@ struct Resource {
 };
 
 struct ResourceManager {
+	Path orkaLocation;
+
 	Path orkaDataLocation;
-	Path orkaBinariesLocation;
+	Path orkaCacheLocation;
+
+	Path orkaCachedMeshLocation;
 
 	Map<Name, Path> meshResources;
 	Map<Name, Path> textureResources;
