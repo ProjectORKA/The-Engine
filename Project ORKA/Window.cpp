@@ -1,7 +1,6 @@
 
 #include "Window.hpp"
 #include "UserInterface.hpp"
-
 #include "Profiler.hpp"
 
 UShort nextWindowID = 0;

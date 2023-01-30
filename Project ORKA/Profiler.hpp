@@ -7,6 +7,6 @@
 #define OPTICK_ENABLE_TRACING 0
 
 //enable optick
-#define USE_OPTICK 1
+#define USE_OPTICK (0)
 
 #include "optick/optick.h"

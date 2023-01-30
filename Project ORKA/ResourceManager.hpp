@@ -4,28 +4,18 @@
 #include "Basics.hpp"
 #include "FileSystem.hpp"
 
-using ResourceID = Index;
-
-enum class ResourceType {
-	Mesh,
-	Texture,
-	Shader
-};
-
-struct Resource {
-	Name name;
-	Path path;
-	ResourceType type;
-};
+// TODO
+// add file watcher that reloads resources if they were changed
 
 struct ResourceManager {
+	//paths
 	Path orkaLocation;
-
 	Path orkaDataLocation;
 	Path orkaCacheLocation;
-
 	Path orkaCachedMeshLocation;
+	Path resourceManagerConfigPath;
 
+	//resources
 	Map<Name, Path> meshResources;
 	Map<Name, Path> textureResources;
 	Map<Name, Path> vertexShaderResources;

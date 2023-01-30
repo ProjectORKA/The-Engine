@@ -95,16 +95,16 @@ Image loadImage(Path path, Int bitcount, Bool inverted) {
 		image.pixels = stbi::stbi_load(path.string().c_str(), &image.width, &image.height, &image.channels, 0);
 	}
 	else {
-		if (bitcount == 16) {
-			image.pixels = reinterpret_cast <Byte*>(stbi::stbi_load_16(path.string().c_str(), &image.width, &image.height, &image.channels, 0));
-			image.bitcount = 16;
+		if (bitcount == 32) {
+			image.pixels = reinterpret_cast <Byte*>(stbi::stbi_loadf(path.string().c_str(), &image.width, &image.height, &image.channels, 0));
+			image.bitcount = 32;
 		}
 		else {
 			logError("Bitcount not supported!");
 		}
 	}
 
-	if (!image.pixels)logWarning("Image not loaded!");
+	if (!image.pixels)logError("Image not loaded!");
 
 	return image;
 }

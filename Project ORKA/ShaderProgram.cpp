@@ -25,6 +25,7 @@ void ShaderProgram::create(Engine engine, Name name, Uniforms& uniforms) {
 	auto vertIt = engine.resourceManager.vertexShaderResources.find(name);
 	Shader vertexShader;
 	if (vertIt != engine.resourceManager.vertexShaderResources.end()) {
+		logDebug(String("Loading Shader: ").append(vertIt->second.string()));
 		vertexShader.create(vertIt->second, uniforms.uniformBlockShaderCode);
 	}
 	else {
@@ -34,6 +35,7 @@ void ShaderProgram::create(Engine engine, Name name, Uniforms& uniforms) {
 	auto fragIt = engine.resourceManager.fragmentShaderResources.find(name);
 	Shader fragmentShader;
 	if (fragIt != engine.resourceManager.fragmentShaderResources.end()) {
+		logDebug(String("Loading Shader: ").append(fragIt->second.string()));
 		fragmentShader.create(fragIt->second, uniforms.uniformBlockShaderCode);
 	}
 	else {
