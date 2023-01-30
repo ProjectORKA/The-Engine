@@ -45,13 +45,12 @@
 
 
 //#define TESTING
-
-#include "QuakeMovement.hpp"
+#include "TripleNine.hpp"
 
 Int main(Int  argc, Char* argv[]) {
 #ifndef TESTING
 	Engine engine;
-	QuakeMovement game(engine);
+	TripleNine game(engine);
 #else
 	//testing code
 	/////////////////////////////////////////////////////////////////////////////////////////////////

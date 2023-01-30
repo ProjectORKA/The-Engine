@@ -353,8 +353,8 @@
     <ClCompile Include="ProjectMelon.cpp">
       <Filter>Apps\3D Apps\Project Melon</Filter>
     </ClCompile>
-    <ClCompile Include="QuakeMovement.cpp">
-      <Filter>Apps\3D Apps\Quake Movement</Filter>
+    <ClCompile Include="TripleNine.cpp">
+      <Filter>Apps\3D Apps\TripleNine</Filter>
     </ClCompile>
     <ClCompile Include="SimpleRTS.cpp">
       <Filter>Apps\3D Apps\Simple RTS</Filter>
@@ -952,8 +952,8 @@
     <ClInclude Include="ProjectMelon.hpp">
       <Filter>Apps\3D Apps\Project Melon</Filter>
     </ClInclude>
-    <ClInclude Include="QuakeMovement.hpp">
-      <Filter>Apps\3D Apps\Quake Movement</Filter>
+    <ClInclude Include="TripleNine.hpp">
+      <Filter>Apps\3D Apps\TripleNine</Filter>
     </ClInclude>
     <ClInclude Include="SimpleRTS.hpp">
       <Filter>Apps\3D Apps\Simple RTS</Filter>
@@ -1246,16 +1246,16 @@
       <Filter>Shaders</Filter>
     </None>
     <None Include="Data\Shaders\tripleNineSky.vert">
-      <Filter>Apps\3D Apps\Quake Movement\Shaders</Filter>
+      <Filter>Apps\3D Apps\TripleNine\Shaders</Filter>
     </None>
     <None Include="Data\Shaders\tripleNineSky.frag">
-      <Filter>Apps\3D Apps\Quake Movement\Shaders</Filter>
+      <Filter>Apps\3D Apps\TripleNine\Shaders</Filter>
     </None>
     <None Include="Data\Shaders\tripleNineMap.frag">
-      <Filter>Apps\3D Apps\Quake Movement\Shaders</Filter>
+      <Filter>Apps\3D Apps\TripleNine\Shaders</Filter>
     </None>
     <None Include="Data\Shaders\tripleNineMap.vert">
-      <Filter>Apps\3D Apps\Quake Movement\Shaders</Filter>
+      <Filter>Apps\3D Apps\TripleNine\Shaders</Filter>
     </None>
     <None Include="Data\Shaders\tonemapping.frag">
       <Filter>Shaders</Filter>
@@ -1522,9 +1522,6 @@
     <Filter Include="Apps\3D Apps\ORKA Intro Sequence">
       <UniqueIdentifier>{45238f7d-2d78-4f15-873e-4800033c59c3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Apps\3D Apps\Quake Movement">
-      <UniqueIdentifier>{fb747f81-4d70-4141-8c82-ceadf2a4d0f1}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Apps\3D Apps\Simple RTS">
       <UniqueIdentifier>{c518507f-af21-4f12-943d-7fc3faf54b9c}</UniqueIdentifier>
     </Filter>
@@ -1540,7 +1537,10 @@
     <Filter Include="Engine\Velox">
       <UniqueIdentifier>{bafa1ffc-371a-4d73-947d-d68f8435e14e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Apps\3D Apps\Quake Movement\Shaders">
+    <Filter Include="Apps\3D Apps\TripleNine">
+      <UniqueIdentifier>{fb747f81-4d70-4141-8c82-ceadf2a4d0f1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Apps\3D Apps\TripleNine\Shaders">
       <UniqueIdentifier>{2a34102a-7e08-4419-9157-911604061529}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
