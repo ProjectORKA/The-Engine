@@ -83,7 +83,7 @@
     <ClCompile Include="QuadtreeNode.cpp" />
     <ClCompile Include="QuadtreeSystem.cpp" />
     <ClCompile Include="QuadtreeSystemRenderer.cpp" />
-    <ClCompile Include="QuakeMovement.cpp" />
+    <ClCompile Include="TripleNine.cpp" />
     <ClCompile Include="Random.cpp" />
     <ClCompile Include="Ray.cpp" />
     <ClCompile Include="RectangleRenderer.cpp" />
@@ -215,7 +215,7 @@
     <ClInclude Include="QuadtreeNode.hpp" />
     <ClInclude Include="QuadtreeSystem.hpp" />
     <ClInclude Include="QuadtreeSystemRenderer.hpp" />
-    <ClInclude Include="QuakeMovement.hpp" />
+    <ClInclude Include="TripleNine.hpp" />
     <ClInclude Include="RedDotHack.hpp" />
     <ClInclude Include="Colliders.hpp" />
     <ClInclude Include="Collision.hpp" />

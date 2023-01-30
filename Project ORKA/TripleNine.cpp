@@ -1,9 +1,9 @@
-#include "QuakeMovement.hpp"
+#include "TripleNine.hpp"
 #include "Window.hpp"
 #include "Debug.hpp"
 
 Index enemyID = 0;
-void QuakePlayer::jump() {
+void TripleNinePlayer::jump() {
 	if (isMoving) {
 		velocity.z = 0;
 		velocity += Vec3(0, 0, minJumpVelocity);
@@ -17,14 +17,14 @@ void QuakePlayer::jump() {
 	onGround = false;
 	state = State::jumping;
 }
-void QuakePlayer::collisionResponse() {
+void TripleNinePlayer::collisionResponse() {
 	if (velocity.z < 0) velocity.z = 0;
 	if (location.z < 0) location.z = 0;
 }
-Bool QuakePlayer::isCollidingWithGround() {
+Bool TripleNinePlayer::isCollidingWithGround() {
 	return location.z <= 0;
 }
-void QuakePlayer::update(Window& window) {
+void TripleNinePlayer::update(Window& window) {
 	//set up temporary data
 	Renderer& renderer = window.renderer;
 	Float delta = renderer.deltaTime();
@@ -172,7 +172,7 @@ void QuakePlayer::update(Window& window) {
 	//reset delta
 	targetCameraRotation = DVec2(0);
 }
-void QuakePlayer::calculatePhysics(Window& window) {
+void TripleNinePlayer::calculatePhysics(Window& window) {
 	//step 1
 	Vec3 velocity1 = velocity + acceleration * window.renderer.deltaTime() / Vec3(2);
 
@@ -189,7 +189,7 @@ void QuakePlayer::calculatePhysics(Window& window) {
 
 	velocity = velocity2 * pow(airResistance, window.renderer.deltaTime());
 }
-void QuakePlayer::inputEvent(Window& window, InputEvent input) {
+void TripleNinePlayer::inputEvent(Window& window, InputEvent input) {
 	if (input == jumpTrigger) {
 		if (onGround) {
 			jump();
@@ -204,7 +204,7 @@ void QuakePlayer::inputEvent(Window& window, InputEvent input) {
 		}
 	}
 }
-void QuakePlayer::calculateHeadPosition(Window& window, Float delta) {
+void TripleNinePlayer::calculateHeadPosition(Window& window, Float delta) {
 
 	Float eyeHeightTarget = eyeHeightNormal;
 
@@ -265,14 +265,14 @@ void QuakePlayer::calculateHeadPosition(Window& window, Float delta) {
 	camera.location = location + sway3D + headHeight3D + lean3D;
 }
 
-void QuakeMovementRenderer::createEnemy() {
+void TripleNineRenderer::createEnemy() {
 	enemies.emplaceBack();
 	enemies.last().id = enemies.size() - 1;
 }
-void QuakeMovementRenderer::update(Window& window) {
+void TripleNineRenderer::update(Window& window) {
 	player.update(window);
 }
-void QuakeMovementRenderer::renderBloom(Engine& e, Renderer & r) {
+void TripleNineRenderer::renderBloom(Engine& e, Renderer & r) {
 	FramebufferSystem& fs = r.framebufferSystem;
 
 	//setup rendering
@@ -376,7 +376,7 @@ void QuakeMovementRenderer::renderBloom(Engine& e, Renderer & r) {
 
 	r.setAlphaBlending(false);
 }
-void QuakeMovementRenderer::create(Engine& engine, Window& window) {
+void TripleNineRenderer::create(Engine& engine, Window& window) {
 	
 	//create framebuffers for bloom
 	FramebufferSystem& fs = window.renderer.framebufferSystem;
@@ -399,7 +399,7 @@ void QuakeMovementRenderer::create(Engine& engine, Window& window) {
 		createEnemy();
 	}
 }
-void QuakeMovementRenderer::inputEvent(Window& window, InputEvent input) {
+void TripleNineRenderer::inputEvent(Window& window, InputEvent input) {
 	if (input == enter) {
 		if (!window.capturing)window.captureCursor();
 		else {
@@ -416,7 +416,7 @@ void QuakeMovementRenderer::inputEvent(Window& window, InputEvent input) {
 
 	player.inputEvent(window, input);
 }
-void QuakeMovementRenderer::render(Engine& e, Window& window, TiledRectangle area) {
+void TripleNineRenderer::render(Engine& e, Window& window, TiledRectangle area) {
 	//track performance using optick
 	OPTICK_EVENT();
 	
@@ -449,8 +449,8 @@ void QuakeMovementRenderer::render(Engine& e, Window& window, TiledRectangle are
 	r.uniforms().mMatrix(Matrix(1));
 
 	r.useShader(e, "unlit");
-	r.useTexture(e, "quakeMovementEnemy");
-	for (QuakeEnemy& enemy : enemies) enemy.render(e, r);
+	r.useTexture(e, "tripleNineTarget");
+	for (TripleNineEnemy& enemy : enemies) enemy.render(e, r);
 
 	r.useShader(e, "color");
 	r.uniforms().customColor(Vec4(1000000));
@@ -491,7 +491,7 @@ void QuakeMovementRenderer::render(Engine& e, Window& window, TiledRectangle are
 	//r.renderText(e, "max jump height: " + toString(player.debugCurrentMaxJumpHeight), Vec2(spacing, i++ * spacing), fonts.paragraph);
 	//r.renderText(e, "fps: " + toString(1 / r.time.delta), Vec2(spacing, i++ * spacing), fonts.paragraph);
 }
-void QuakeMovementRenderer::renderInteractive(Engine& e, Window& window, TiledRectangle area) {
+void TripleNineRenderer::renderInteractive(Engine& e, Window& window, TiledRectangle area) {
 	Renderer& r = window.renderer;
 
 	player.render(e, window);
@@ -502,23 +502,23 @@ void QuakeMovementRenderer::renderInteractive(Engine& e, Window& window, TiledRe
 	r.renderMesh(e, "tripleNineMap");
 	r.uniforms().mMatrix(Matrix(1));
 
-	for (QuakeEnemy& enemy : enemies) {
+	for (TripleNineEnemy& enemy : enemies) {
 		enemy.renderInteractive(e, window, area);
 	}
 	r.setDepthTest(false);
 }
 
-void QuakeEnemy::render(Engine& engine, Renderer& renderer) {
+void TripleNineEnemy::render(Engine& engine, Renderer& renderer) {
 	renderer.uniforms().mMatrix(matrixFromLocationAndSize(position, 1));
 	renderer.renderMesh(engine, "tripleNineTarget");
 }
-void QuakeEnemy::renderInteractive(Engine& engine, Window& window, TiledRectangle area) {
+void TripleNineEnemy::renderInteractive(Engine& engine, Window& window, TiledRectangle area) {
 	window.renderer.uniforms().mMatrix(matrixFromLocationAndSize(position, 1));
 	window.renderer.uniforms().objectID(id);
 	window.renderer.renderMesh(engine, "tripleNineTarget");
 }
 
-QuakeMovement::QuakeMovement(Engine& engine) {
-	Window& w = window("ORKA Sandbox", Area(1920, 1080), true, WindowState::fullscreen, quakeMovementRenderer, engine);
+TripleNine::TripleNine(Engine& engine) {
+	Window& w = window("ORKA Sandbox", Area(1920, 1080), true, WindowState::fullscreen, gameRenderer, engine);
 	ui.run();
 }

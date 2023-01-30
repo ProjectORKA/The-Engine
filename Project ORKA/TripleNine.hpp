@@ -5,10 +5,13 @@
 #include "Profiler.hpp"
 #include "Random.hpp"
 
-
 //required
 //	physics
-
+//	crouch walking
+//	sliding
+//  bullet traces
+//  targets explode
+//		decal splatter on objects
 
 	enum class PlayerState {
 		standing,
@@ -20,7 +23,7 @@
 
 	extern Index enemyID;
 
-	struct QuakeEnemy : UIElement{
+	struct TripleNineEnemy : UIElement{
 		Vec3 position = Vec3(randomVec2(-85, 85), 0);
 		Index id = -1;
 
@@ -31,7 +34,7 @@
 		void renderInteractive(Engine& engine, Window& window, TiledRectangle area) override;
 	};
 
-	struct QuakePlayer : public Player {
+	struct TripleNinePlayer : public Player {
 		// [TODO]
 		// implement direction vectors separate from camera
 		// crouching
@@ -186,13 +189,13 @@
 		void inputEvent(Window& window, InputEvent input) override;
 	};
 
-	struct QuakeMovementRenderer : public GameRenderer {
+	struct TripleNineRenderer : public GameRenderer {
 		Bool bloom = true;
-		QuakePlayer player;
+		TripleNinePlayer player;
 		Float mapSize = 0.85;
 		Vec3 sunDirection = normalize(Vec3(1, 0, 0.6));
 
-		Vector<QuakeEnemy> enemies;
+		Vector<TripleNineEnemy> enemies;
 
 		InputEvent enter = InputEvent(InputType::Mouse, LMB, 1);
 		InputEvent exit = InputEvent(InputType::Mouse, RMB, 0);
@@ -209,7 +212,7 @@
 	};
 
 
-struct QuakeMovement {
-	QuakeMovementRenderer quakeMovementRenderer;
-	QuakeMovement(Engine& engine);
+struct TripleNine {
+	TripleNineRenderer gameRenderer;
+	TripleNine(Engine& engine);
 };
