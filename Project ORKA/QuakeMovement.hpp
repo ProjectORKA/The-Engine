@@ -33,8 +33,6 @@
 
 	struct QuakePlayer : public Player {
 		// [TODO]
-		// fix speed
-		// queue up jump
 		// implement direction vectors separate from camera
 		// crouching
 		// proning
@@ -90,7 +88,8 @@
 		const Float minJumpVelocity = 10 * unit;
 		const Float maxJumpVelocity = 15 * unit;
 		Float jumpCharge = 0;
-		Bool queueJump = false;
+		//Bool queueJump = false;
+		Bool doubleJumpCharge = false;
 
 		//speed
 		const Float walkingSpeed = 2 * unit;	//
@@ -175,6 +174,9 @@
 		Float movementFriction = 0;
 		Float actualFriction = stopFriction;
 
+		//debug
+		Float debugCurrentMaxJumpHeight = 0;
+
 		void jump();
 		void collisionResponse();
 		Bool isCollidingWithGround();
@@ -185,17 +187,21 @@
 	};
 
 	struct QuakeMovementRenderer : public GameRenderer {
-		Vec3 sunDirection = normalize(Vec3(1, 0, 0.6));
+		Bool bloom = true;
 		QuakePlayer player;
 		Float mapSize = 0.85;
+		Vec3 sunDirection = normalize(Vec3(1, 0, 0.6));
 
 		Vector<QuakeEnemy> enemies;
 
 		InputEvent enter = InputEvent(InputType::Mouse, LMB, 1);
 		InputEvent exit = InputEvent(InputType::Mouse, RMB, 0);
+		InputEvent toggleBloom = InputEvent(InputType::KeyBoard, B, 0);
+		InputEvent reloadShaders = InputEvent(InputType::KeyBoard, T, 0);
 
 		void createEnemy();
 		void update(Window& window) override;
+		void renderBloom(Engine& e, Renderer& r);
 		void create(Engine& engine, Window& window) override;
 		void inputEvent(Window& window, InputEvent input) override;
 		void render(Engine& engine, Window& window, TiledRectangle area) override;

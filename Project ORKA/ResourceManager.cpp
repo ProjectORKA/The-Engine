@@ -15,9 +15,11 @@ ResourceManager::ResourceManager(FileSystem& fileSystem) {
 	//"Cache" contains data that ORKA will create itself, so things like uncompressed or encrypted files, configs, logs, temporary data, etc
 	orkaCacheLocation = orkaLocation;
 	orkaCacheLocation.append("Cache");
-
+	//meshes are uncompressed 3d objects that can be loaded straight into memory
 	orkaCachedMeshLocation = orkaCacheLocation;
 	orkaCachedMeshLocation.append("Meshes");
+	//the resource manager config keeps track of file updates
+	resourceManagerConfigPath = makeAbsolute(Path(orkaCacheLocation).append("config").append("resourceManager.bin"));
 
 	//setup data folder
 	if (!doesPathExist(orkaDataLocation))createDirectory(orkaDataLocation);
@@ -69,7 +71,6 @@ void ResourceManager::loadResourcesFromFBXFiles(FileSystem& fileSystem) {
 
 	//get the last edited times and the stored value
 	FileTime lastTimeFbxWasEdited = getLastWrittenTimeOfFiles(paths);
-	Path resourceManagerConfigPath = makeAbsolute(Path(orkaCacheLocation).append("config").append("resourceManager.bin"));
 
 	FileTime recordedLastTimeFbxWasEdited;
 	//create a config file if necessary

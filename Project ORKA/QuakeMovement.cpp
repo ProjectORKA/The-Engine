@@ -2,8 +2,6 @@
 #include "Window.hpp"
 #include "Debug.hpp"
 
-
-
 Index enemyID = 0;
 void QuakePlayer::jump() {
 	if (isMoving) {
@@ -15,7 +13,7 @@ void QuakePlayer::jump() {
 		velocity += Vec3(0, 0, lerp(minJumpVelocity, maxJumpVelocity, jumpCharge));
 		jumpCharge = 0;
 	}
-	queueJump = false;
+	//queueJump = false;
 	onGround = false;
 	state = State::jumping;
 }
@@ -116,21 +114,19 @@ void QuakePlayer::update(Window& window) {
 
 	camera.rotate(targetCameraRotation);
 
-	//jumping
-	//when player stands still he can charge a high jump
-	//if (window.pressed(holdJump) && onGround && velocity == Vec3(0))jumpCharge += delta;
-	//else jumpCharge = 0;
-
-
 	calculatePhysics(window);
 
 	if (isCollidingWithGround()) {
 		onGround = true;
+		doubleJumpCharge = true;
 
-		if (queueJump) {
-			queueJump = false;
+		if (window.pressed(holdJump)){
 			jump();
 		}
+
+		//if (queueJump) {
+		//	queueJump = false;
+		//}
 
 		collisionResponse();
 		if (movementInput) actualFriction = movementFriction;
@@ -140,6 +136,8 @@ void QuakePlayer::update(Window& window) {
 
 	}
 	else onGround = false;
+
+	if (state == State::jumping) debugCurrentMaxJumpHeight = location.z;
 
 	isMoving = movementControl != Vec3(0);
 
@@ -196,7 +194,13 @@ void QuakePlayer::inputEvent(Window& window, InputEvent input) {
 		if (onGround) {
 			jump();
 		} else {
-			queueJump = true;
+			if (doubleJumpCharge) {
+				doubleJumpCharge = false;
+				jump();
+			}
+			//else {
+			//	if(state == State::falling) queueJump = true;
+			//}
 		}
 	}
 }
@@ -265,82 +269,227 @@ void QuakeMovementRenderer::createEnemy() {
 	enemies.emplaceBack();
 	enemies.last().id = enemies.size() - 1;
 }
+void QuakeMovementRenderer::update(Window& window) {
+	player.update(window);
+}
+void QuakeMovementRenderer::renderBloom(Engine& e, Renderer & r) {
+	FramebufferSystem& fs = r.framebufferSystem;
+
+	//setup rendering
+	r.setDepthTest(false);
+	r.setWireframeMode(false);
+	r.setAlphaBlending(false);
+
+	//prefilter (remove fireflies)
+	r.read("main");
+	fs.currentRead().setAsTexture();
+	r.draw("bloom1");
+	r.fullScreenShader(e, "bloomPrefilter");
+
+	//downsample pass
+	//r.read("postProcess");
+	//fs.currentRead().setAsTexture();
+	//r.draw("bloom1");
+	//r.fullScreenShader(e, "bloomDownsample");
+
+	r.read("bloom1");
+	fs.currentRead().setAsTexture();
+	r.draw("bloom2");
+	r.fullScreenShader(e, "bloomDownsample");
+
+	r.read("bloom2");
+	fs.currentRead().setAsTexture();
+	r.draw("bloom3");
+	r.fullScreenShader(e, "bloomDownsample");
+
+	r.read("bloom3");
+	fs.currentRead().setAsTexture();
+	r.draw("bloom4");
+	r.fullScreenShader(e, "bloomDownsample");
+
+	r.read("bloom4");
+	fs.currentRead().setAsTexture();
+	r.draw("bloom5");
+	r.fullScreenShader(e, "bloomDownsample");
+
+	r.read("bloom5");
+	fs.currentRead().setAsTexture();
+	r.draw("bloom6");
+	r.fullScreenShader(e, "bloomDownsample");
+
+	r.read("bloom6");
+	fs.currentRead().setAsTexture();
+	r.draw("bloom7");
+	r.fullScreenShader(e, "bloomDownsample");
+
+	//r.read("bloom7");
+	//fs.currentRead().setAsTexture();
+	//r.draw("bloom8");
+	//r.fullScreenShader(e, "bloomDownsample");
+
+	r.blendModeAdditive();
+
+	//r.read("bloom8");
+	//fs.currentRead().setAsTexture();
+	//r.draw("bloom7");
+	//r.fullScreenShader(e, "bloomUpsample");
+
+	r.read("bloom7");
+	fs.currentRead().setAsTexture();
+	r.draw("bloom6");
+	r.fullScreenShader(e, "bloomUpsample");
+
+	r.read("bloom6");
+	fs.currentRead().setAsTexture();
+	r.draw("bloom5");
+	r.fullScreenShader(e, "bloomUpsample");
+
+	r.read("bloom5");
+	fs.currentRead().setAsTexture();
+	r.draw("bloom4");
+	r.fullScreenShader(e, "bloomUpsample");
+
+	r.read("bloom4");
+	fs.currentRead().setAsTexture();
+	r.draw("bloom3");
+	r.fullScreenShader(e, "bloomUpsample");
+
+	r.read("bloom3");
+	fs.currentRead().setAsTexture();
+	r.draw("bloom2");
+	r.fullScreenShader(e, "bloomUpsample");
+
+	r.read("bloom2");
+	fs.currentRead().setAsTexture();
+	r.draw("bloom1");
+	r.fullScreenShader(e, "bloomUpsample");
+
+	r.read("bloom1");
+	fs.currentRead().setAsTexture();
+	r.draw("main");
+	r.fullScreenShader(e, "lastBloomUpsample");
+
+	//r.read("postProcess");
+	//fs.currentRead().setAsTexture();
+	//r.draw("main");
+	//r.fullScreenShader(e, "lastBloomUpsample");
+
+	r.setAlphaBlending(false);
+}
 void QuakeMovementRenderer::create(Engine& engine, Window& window) {
+	
+	//create framebuffers for bloom
+	FramebufferSystem& fs = window.renderer.framebufferSystem;
+	fs.addFrameBuffer("bloom1", pow(0.5, 1));
+	fs.addFrameBuffer("bloom2", pow(0.5, 2));
+	fs.addFrameBuffer("bloom3", pow(0.5, 3));
+	fs.addFrameBuffer("bloom4", pow(0.5, 4));
+	fs.addFrameBuffer("bloom5", pow(0.5, 5));
+	fs.addFrameBuffer("bloom6", pow(0.5, 6));
+	fs.addFrameBuffer("bloom7", pow(0.5, 7));
+	fs.addFrameBuffer("bloom8", pow(0.5, 8));
+	fs.addFrameBuffer("bloom9", pow(0.5, 9));
+	
+	//set near and far clip distance for player
 	player.camera.nearClipValue = 0.01;
 	player.camera.farClipValue = 1000.0;
 
+	//create targets
 	for (Int i = 0; i < 100; i++) {
 		createEnemy();
 	}
 }
+void QuakeMovementRenderer::inputEvent(Window& window, InputEvent input) {
+	if (input == enter) {
+		if (!window.capturing)window.captureCursor();
+		else {
+			if (window.renderer.idFramebuffer.objectID != -1) enemies[window.renderer.idFramebuffer.objectID].die();
+		}
+	}
+	if (input == exit) window.uncaptureCursor();
 
-void QuakeMovementRenderer::update(Window& window) {
-	player.update(window);
+	if (input == reloadShaders) {
+		window.renderer.shaderSystem.rebuild();
+	}
+
+	if (input == toggleBloom)bloom = !bloom;
+
+	player.inputEvent(window, input);
 }
 void QuakeMovementRenderer::render(Engine& e, Window& window, TiledRectangle area) {
+	//track performance using optick
 	OPTICK_EVENT();
+	
+	//set up variables for convenience
 	Renderer& r = window.renderer;
+	FramebufferSystem& fs = r.framebufferSystem;
 
-	r.setAlphaBlending(false);
-	r.setCulling(true);
-	r.setDepthTest(true);
-
+	//default everything
 	r.draw("main");
-	r.clearColor(Color(0, 0, 0, 0));
 	r.clearDepth();
-
-	//r.blendModeAdditive();
-	r.renderAtmosphere(e, player, sunDirection);
-	//r.setAlphaBlending(false);
-
 	r.uniforms().reset();
+	r.setCulling(false);
+	r.setDepthTest(false);
+	r.setAlphaBlending(false);
+
+	//render sky
+	player.camera.renderOnlyRot(r);
+	r.useTexture(e, "tripleNineSky");
+	r.useShader(e, "tripleNineSky");
+	r.renderMesh(e, "tripleNineSky");
+	r.setDepthTest(true);
+	r.setCulling(true);
 
 	player.render(e, window);
 
-	r.useShader(e, "unlit");
-	//r.useTexture(e, "quakeLightmapGround");
-	//r.renderMesh(e, "quakeMapGround");
-
-	//r.useTexture(e, "quakeLightmapSide1");
-	//r.renderMesh(e, "quakeMapSide1");
-	//r.useTexture(e, "quakeLightmapSide2");
-	//r.renderMesh(e, "quakeMapSide2");
-	//r.useTexture(e, "quakeLightmapSide3");
-	//r.renderMesh(e, "quakeMapSide3");
-	//r.useTexture(e, "quakeLightmapSide4");
-	//r.renderMesh(e, "quakeMapSide4");
+	r.useShader(e, "tripleNineMap");
 	r.uniforms().mMatrix(matrixFromScale(mapSize));
 	r.useTexture(e, "tripleNineMap");
 	r.renderMesh(e, "tripleNineMap");
 	r.uniforms().mMatrix(Matrix(1));
 
-
+	r.useShader(e, "unlit");
 	r.useTexture(e, "quakeMovementEnemy");
 	for (QuakeEnemy& enemy : enemies) enemy.render(e, r);
 
+	r.useShader(e, "color");
+	r.uniforms().customColor(Vec4(1000000));
+	r.uniforms().mMatrix(matrixFromLocation(Vec3(160, 50, 15 * pow(abs(sin(r.time.total*2)),0.5) + 1)));
+	r.renderMesh(e, "sphere");
+
 	//r.arrow(e,player.location, player.location + player.velocity);
 
+	if (bloom)renderBloom(e,r);
+
+	r.postProcess(e, "tonemapping");
+
 	//ui
+
+	//crosshair
+	r.uniforms().reset();
 	r.screenSpace();
+	r.fill(0.1, 0.1, 0.1);
 	r.useShader(e, "color");
+	r.uniforms().mMatrix(matrixFromLocationAndSize(Vec2(window.getFrameSize() / 2), 3));
+	r.renderMesh(e, "circle");
 	r.fill(1, 1, 1);
 	r.uniforms().mMatrix(matrixFromLocationAndSize(Vec2(window.getFrameSize() / 2), 2));
-	r.renderMesh(e, "circle");
-	r.fill(0.1, 0.1, 0.1);
-	r.uniforms().mMatrix(matrixFromLocationAndSize(Vec2(window.getFrameSize() / 2), 3));
 	r.renderMesh(e, "circle");
 
 	r.screenSpace();
 	Int i = 1;
 	Float spacing = 30;
-	r.renderText(e, "on Ground: " + toString(player.onGround), Vec2(spacing, i++ * spacing), fonts.paragraph);
-	r.renderText(e, "horizontal speed: " + toString(length(player.velocity * Vec3(1, 1, 0))), Vec2(spacing, i++ * spacing), fonts.paragraph);
-	r.renderText(e, "is moving: " + toString(player.isMoving), Vec2(spacing, i++ * spacing), fonts.paragraph);
-	r.renderText(e, "full body lean: " + toString(player.fullBodyLeanAngle), Vec2(spacing, i++ * spacing), fonts.paragraph);
-	r.renderText(e, "upper body lean: " + toString(player.upperBodyLeanAngle), Vec2(spacing, i++ * spacing), fonts.paragraph);
-	r.renderText(e, "target id: " + toString(r.idFramebuffer.objectID), Vec2(spacing, i++ * spacing), fonts.paragraph);
-	r.renderText(e, "vertical speed: " + toString(player.velocity.z), Vec2(spacing, i++ * spacing), fonts.paragraph);
-	r.renderText(e, "queue up jump: " + toString(player.queueJump), Vec2(spacing, i++ * spacing), fonts.paragraph);
+	//r.renderText(e, "on Ground: " + toString(player.onGround), Vec2(spacing, i++ * spacing), fonts.paragraph);
+	//r.renderText(e, "horizontal speed: " + toString(length(player.velocity * Vec3(1, 1, 0))), Vec2(spacing, i++ * spacing), fonts.paragraph);
+	//r.renderText(e, "is moving: " + toString(player.isMoving), Vec2(spacing, i++ * spacing), fonts.paragraph);
+	//r.renderText(e, "full body lean: " + toString(player.fullBodyLeanAngle), Vec2(spacing, i++ * spacing), fonts.paragraph);
+	//r.renderText(e, "upper body lean: " + toString(player.upperBodyLeanAngle), Vec2(spacing, i++ * spacing), fonts.paragraph);
+	//r.renderText(e, "target id: " + toString(r.idFramebuffer.objectID), Vec2(spacing, i++ * spacing), fonts.paragraph);
+	//r.renderText(e, "vertical speed: " + toString(player.velocity.z), Vec2(spacing, i++ * spacing), fonts.paragraph);
+	//r.renderText(e, "queue up jump: " + toString(player.queueJump), Vec2(spacing, i++ * spacing), fonts.paragraph);
+	//r.renderText(e, "double jump: " + toString(player.doubleJumpCharge), Vec2(spacing, i++ * spacing), fonts.paragraph);
+	//r.renderText(e, "max jump height: " + toString(player.debugCurrentMaxJumpHeight), Vec2(spacing, i++ * spacing), fonts.paragraph);
+	//r.renderText(e, "fps: " + toString(1 / r.time.delta), Vec2(spacing, i++ * spacing), fonts.paragraph);
 }
 void QuakeMovementRenderer::renderInteractive(Engine& e, Window& window, TiledRectangle area) {
 	Renderer& r = window.renderer;
@@ -357,17 +506,6 @@ void QuakeMovementRenderer::renderInteractive(Engine& e, Window& window, TiledRe
 		enemy.renderInteractive(e, window, area);
 	}
 	r.setDepthTest(false);
-}
-void QuakeMovementRenderer::inputEvent(Window& window, InputEvent input) {
-	if (input == enter) {
-		if (!window.capturing)window.captureCursor();
-		else {
-			if (window.renderer.idFramebuffer.objectID != -1) enemies[window.renderer.idFramebuffer.objectID].die();
-		}
-	}
-	if (input == exit) window.uncaptureCursor();
-
-	player.inputEvent(window, input);
 }
 
 void QuakeEnemy::render(Engine& engine, Renderer& renderer) {

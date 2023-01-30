@@ -163,7 +163,14 @@ void CPUTexture::load(Path path, Name name)
 {
 	logDebug(String("Loading texture: (").append(name.data).append(" | ").append(path.string()).append(")"));
 
-	Image image = loadImage(path, 8, true);
+	UInt bitcount = 8;
+
+	if (path.extension() == ".hdr" || path.extension() == ".exr") {
+		dataType = DataType::dataTypeFloat;
+		bitcount = 32;
+	}
+
+	Image image = loadImage(path, bitcount, true);
 
 	this->name = name;
 	this->bytePixels = image.pixels;
