@@ -4,8 +4,6 @@
 #include "Window.hpp"
 #include "FileSystem.hpp"
 
-UserInterface ui;
-
 //UIImage
 void UIImage::render(Engine& engine, Window& window, TiledRectangle renderArea) {
 	Renderer& renderer = window.renderer;
@@ -90,21 +88,42 @@ void UIContainer::renderInteractive(Engine& engine, Window& window, TiledRectang
 	}
 }
 
-//Window
-Window& window(String title, Area size, Bool decorated, WindowState state, Engine& engine) {
-	ui.windows.emplace_back();
-	ui.windows.back().create(title, size, decorated, state, engine);
-	ui.windows.back().content = nullptr;
-	return ui.windows.back();
+//User Interface
+//elements
+UIButton& UserInterface::button() {
+	buttons.emplace_back();
+	return buttons.back();
+}
+UIContainer& UserInterface::container() {
+	containers.emplace_back();
+	return containers.back();
+}
+UIImage& UserInterface::image(Name name) {
+	images.emplace_back(name);
+	return images.back();
+}
+UICheckBox& UserInterface::checkBox(Bool& data) {
+	checkBoxes.emplace_back(data);
+	return checkBoxes.back();
+}
+UITextBox& UserInterface::textBox(String& data) {
+	textBoxes.emplace_back(data);
+	return textBoxes.back();
+}
+Window& UserInterface::window(String title, Area size, Bool decorated, WindowState state, Engine& engine) {
+	windows.emplace_back();
+	windows.back().create(title, size, decorated, state, engine);
+	windows.back().content = nullptr;
+	return windows.back();
 };
-Window& window(String title, Area size, Bool decorated, WindowState state, UIElement& element, Engine& engine) {
-	ui.windows.emplace_back();
-	ui.windows.back().create(title, size, decorated, state, engine);
-	ui.windows.back().content = &element;
-	return ui.windows.back();
+Window& UserInterface::window(String title, Area size, Bool decorated, WindowState state, UIElement& element, Engine& engine) {
+	
+	windows.emplace_back();
+	windows.back().create(title, size, decorated, state, engine);
+	windows.back().content = &element;
+	return windows.back();
 };
 
-//User Interface
 void UserInterface::run() {
 	if (windows.size() > 0) {
 		while (windows.size() > 0) {
@@ -128,29 +147,11 @@ void UserInterface::run() {
 	windows.clear();
 
 	glfwTerminate();
-};
+}
 UserInterface::UserInterface() {
 	assert(glfwInit() == GLFW_TRUE);
 	glfwSetErrorCallback(whenWindowAPIThrowsError);
 }
-
-UIButton& button() {
-	ui.buttons.emplace_back();
-	return ui.buttons.back();
-}
-UIContainer& container() {
-	ui.containers.emplace_back();
-	return ui.containers.back();
-}
-UIImage& image(Name name) {
-	ui.images.emplace_back(name);
-	return ui.images.back();
-}
-UICheckBox& checkBox(Bool& data) {
-	ui.checkBoxes.emplace_back(data);
-	return ui.checkBoxes.back();
-}
-UITextBox& textBox(String& data) {
-	ui.textBoxes.emplace_back(data);
-	return ui.textBoxes.back();
+UserInterface::~UserInterface() {
+	glfwTerminate();
 }

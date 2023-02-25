@@ -1,8 +1,8 @@
 
 #pragma once
-
 #include <cstring>
 #include <string>
+#include "Vectors.hpp"
 
 using Bool = bool;
 
@@ -11,6 +11,7 @@ using Bool = bool;
 using String = std::string;
 
 String toString(Bool b);
+String toString(Vec3 v);
 
 template<typename T>
 String toString(T t) {

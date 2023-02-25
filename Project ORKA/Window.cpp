@@ -45,7 +45,6 @@ void windowThread(Engine& engine, Window& window)
 
 			TiledRectangle windowArea(windowSize);
 			renderer.framebufferSystem.update(windowSize);
-	
 
 			//gpu needs window size
 			renderer.uniforms().windowWidth(windowSize.x);
@@ -75,6 +74,8 @@ void windowThread(Engine& engine, Window& window)
 
 				//render ui
 				OPTICK_PUSH("Draw");
+				renderer.draw("main");
+				renderer.clearColor();
 				window.content->render(engine, window, windowArea);
 
 				renderer.aspectCorrectNormalizedSpace();
@@ -242,9 +243,7 @@ void Window::initializeGraphicsAPI() {
 
 	glfwSwapInterval(0);
 
-	apiDebugMessageCallback(DebugOutputCallback, 0);
-	apiEnable(GL_DEBUG_OUTPUT);
-	apiEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+	apiSetDebugging(true);
 }
 void Window::setPosition(IVec2 position)
 {

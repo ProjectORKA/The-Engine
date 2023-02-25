@@ -12,7 +12,7 @@ void GPUMesh::unload() {
 void GPUMesh::upload(CPUMesh cpuMesh) {
 	if (!loaded) {
 		if (cpuMesh.loaded) {
-			if (cpuMesh.vertices.size() > 0) {
+			if (cpuMesh.positions.size() > 0) {
 				primitiveMode = cpuMesh.primitiveMode;
 
 				vao.create(cpuMesh);

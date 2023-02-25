@@ -23,22 +23,50 @@ void apiClearDepth() {
 }
 
 void apiEnableBlend() {
-	apiEnable(GL_BLEND);
-}
-void apiEnable(Enum cap) {
-	glEnable(cap);
-}
-void apiDisable(Enum cap) {
-	glDisable(cap);
+	glEnable(GL_BLEND);
 }
 void apiCullFace(Enum mode) {
 	glCullFace(mode);
 }
 void apiDepthFunc(Enum func) {
+	if (!openglState.depthTest)logError("Depth is not being tested!");
 	glDepthFunc(func);
 }
 void apiDrawBuffer(Enum mode) {
 	glDrawBuffer(mode);
+}
+void apiSetDebugging(Bool value) {
+	if (value) {
+		glDebugMessageCallback(DebugOutputCallback, 0);
+		glEnable(GL_DEBUG_OUTPUT);
+		glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+	}
+	else {
+		glDebugMessageCallback(nullptr, 0);
+		glDisable(GL_DEBUG_OUTPUT);
+		glDisable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+	}
+	openglState.debugging = value;
+}
+void apiSetScissorTest(Bool value) {
+	if (value && !openglState.scissorTest) glEnable(GL_SCISSOR_TEST);
+	if (!value && openglState.scissorTest) glDisable(GL_SCISSOR_TEST);
+	openglState.scissorTest = value;
+}
+void apiSetCulling(Bool value) {
+	if (value && !openglState.culling) glEnable(GL_CULL_FACE);
+	if (!value && openglState.culling) glDisable(GL_CULL_FACE);
+	openglState.culling = value;
+}
+void apiSetBlending(Bool value) {
+	if (value && !openglState.blending) glEnable(GL_BLEND);
+	if (!value && openglState.blending) glDisable(GL_BLEND);
+	openglState.blending = value;
+}
+void apiSetDepthTest(Bool value) {
+	if (value && !openglState.depthTest) glEnable(GL_DEPTH_TEST);
+	if (!value && openglState.depthTest) glDisable(GL_DEPTH_TEST);
+	openglState.depthTest = value;
 }
 void apiGenVertexArray(UInt& id) {
 	glGenVertexArrays(1, &id);
@@ -96,7 +124,7 @@ void apiEnableVertexAttribArray(UInt index) {
 	glEnableVertexAttribArray(index);
 }
 void apiGenFramebuffer(UInt& framebufferID) {
-	glGenFramebuffers(1, &framebufferID);
+	glCreateFramebuffers(1, &framebufferID);
 }
 void apiDisableVertexAttribArray(UInt index) {
 	glDisableVertexAttribArray(index);
@@ -192,9 +220,6 @@ void apiBufferData(Enum target, SizeIPtr size, void* data, Enum usage) {
 void apiBlitFramebuffer(UInt width, UInt height, UInt mask, UInt filter) {
 	glBlitFramebuffer(0, 0, width, height, 0, 0, width, height, mask, filter);
 }
-void apiDebugMessageCallback(GLDEBUGPROC callback, const void* userParam) {
-	glDebugMessageCallback(callback, userParam);
-}
 void apiDrawElements(Enum mode, SizeI count, Enum type, const void* indices) {
 	glDrawElements(mode, count, type, indices);
 }
@@ -258,10 +283,6 @@ void apiTexImage2D(Enum target, Int level, Int internalFormat, SizeI width, UInt
 	glTexImage2D(target, level, internalFormat, width, height, border, format, type, pixels);
 }
 
-Bool apiGetCullFace() {
-	return glIsEnabled(GL_CULL_FACE);
-}
-
 Int apiGetError() {
 	return glGetError();
 }
@@ -303,6 +324,9 @@ String apiGetProgramInfoLog(UInt programID, SizeI infoLogLength) {
 }
 
 void OpenGLStateCopy::print() {
+	logDebug(String("Culling: ").append(toString(culling)));
+	logDebug(String("Blending: ").append(toString(blending)));
+	logDebug(String("Depth Test: ").append(toString(depthTest)));
 	logDebug(String("Current Draw: ").append(toString(currentDrawFramebuffer)));
 	logDebug(String("Current Read: ").append(toString(currentReadFramebuffer)));
 }

@@ -1,7 +1,7 @@
 
 #include "SimpleRTS.hpp"
-#include "Scene.hpp"
-#include "Window.hpp"
+#include "Engine.hpp"
+#include "UserInterface.hpp"
 
 void SimpleRTSRenderer::update(Window& window) {
 	player.update(window);
@@ -293,7 +293,6 @@ SimpleRTSSimulation::SimpleRTSSimulation() {
 }
 void SimpleRTSSimulation::update(Float timestep) {
 	trees.update(*this);
-
 
 	//treeSimulation.update();
 	//humanitySimulation;

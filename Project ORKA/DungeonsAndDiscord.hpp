@@ -34,12 +34,6 @@ struct DNDWorld : public GameSimulation {
 	
 	Vector<DNDEntity> entities;
 
-	DNDWorld() {
-		load();
-	}
-	~DNDWorld() {
-		save();
-	}
 	void load();
 	void save();
 };
@@ -56,11 +50,25 @@ struct DNDRenderer : public GameRenderer {
 	InputEvent exit = InputEvent(InputType::Mouse, RMB, 0);
 	InputEvent enter = InputEvent(InputType::Mouse, LMB, 1);
 
-	DNDRenderer(DNDWorld& world);
 	void update(Window& window) override;
+	void destroy(Window& window) override;
+	void create(Engine& engine, Window& window) override;
 	void inputEvent(Window& window, InputEvent input) override;
 	void render(Engine& engine, Window& window, TiledRectangle area) override;
 	void renderInteractive(Engine& engine, Window& window, TiledRectangle area) override;
+};
+
+struct DungeonsAndDiscord {
+	DNDWorld sim;
+	Engine engine;
+	UserInterface ui;
+	DNDRenderer renderer;
+
+	void run() {
+		renderer.world = &sim;
+		ui.window("Simple RTS", Area(1920, 1080), true, WindowState::windowed, renderer, engine);
+		ui.run();
+	}
 };
 
 Int diceRoll(Int diceCount);

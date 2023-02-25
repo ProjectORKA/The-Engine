@@ -28,8 +28,8 @@ Framebuffer& FramebufferSystem::addGbuffer(Name name, Float relativeSize) {
 	Framebuffer & f = framebuffers.emplaceBack();
 	f.create(Area(1));
 	f.add(4, dataTypeFloat, 0);	//color
-	f.add(3, dataTypeFloat, 1);	//
-	f.add(3, dataTypeFloat, 2);	//
+	f.add(3, dataTypeFloat, 1);	//normal
+	f.add(3, dataTypeFloat, 2);	//world position
 	f.add(1, dataTypeUInt, 3);	//
 	f.add(5, dataTypeFloat, 4);	//depth
 	f.relativeScale = relativeSize;
@@ -70,7 +70,7 @@ void FramebufferSystem::read(Renderer& renderer, Name name) {
 }
 void FramebufferSystem::create(Renderer& renderer, Area size) {
 	//gbuffer
-	addGbuffer("main", 1);
+	addGbuffer("main");
 	addGbuffer("postProcess");
 }
 void  FramebufferSystem::read(Renderer& renderer, Index framebufferIndex) {

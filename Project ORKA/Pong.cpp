@@ -250,8 +250,3 @@ Ball* getClosestBall(PongPlayer& player, Vector<Ball>& balls) {
 
 	return closestBall;
 }
-
-Pong::Pong(Engine& engine) {
-	Window& w = window("Pong", Area(1920, 1080), true, WindowState::fullscreen, pongRenderer, engine);
-	ui.run();
-}

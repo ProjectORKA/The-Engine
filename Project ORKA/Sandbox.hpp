@@ -24,7 +24,12 @@ struct SandboxRenderer : public GameRenderer {
 };
 
 struct Sandbox {
+	Engine engine;
+	UserInterface ui;
 	SandboxRenderer sandboxRenderer;
 
-	Sandbox(Engine& engine);
+	void run() {
+		ui.window("ORKA Sandbox", Area(1920, 1080), true, WindowState::maximized, sandboxRenderer, engine);
+		ui.run();
+	};
 };

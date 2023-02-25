@@ -118,7 +118,7 @@ struct Renderer{
 	void setColor(Color color);
 	void pollGraphicsAPIError();
 	void setCulling(Bool isCulling);
-	void setDepthClamp(Bool depthClamp);
+	//void setDepthClamp(Bool depthClamp); //[TODO] maybe use depth clamp by default, it should allow for infinite range with proper depth testing in the desired range
 	void setDepthTest(Bool isUsingDepth);
 	void setWireframeMode(Bool isWireframeMode);
 	void addRenderObject(RenderObjectNames renderObjectNames);
@@ -128,4 +128,18 @@ struct Renderer{
 	Float deltaTime();
 	Float getAspectRatio();
 	Uniforms& uniforms();
+};
+
+struct DepthTestOverride {
+	Bool stored = false;
+	Renderer* renderer = nullptr;
+	DepthTestOverride(Bool value, Renderer& renderer) {
+		this->renderer = &renderer;
+		stored = openglState.depthTest;
+		this->renderer->setDepthTest(value);
+	};
+
+	~DepthTestOverride() {
+		this->renderer->setDepthTest(stored);
+	};
 };

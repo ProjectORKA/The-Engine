@@ -18,8 +18,8 @@ void PointCloudRenderer::update(PointCloud& pointCloud) {
 	for (Vec3& point : pointCloud.points) {
 		mesh.indices.pushBack(i);
 		mesh.normals.pushBack(Vec3(0, 0, 1));
-		mesh.uvs.pushBack(Vec2(point.x, point.y));
-		mesh.vertices.pushBack(point);
+		mesh.textureCoordinates.pushBack(Vec2(point.x, point.y));
+		mesh.positions.pushBack(point);
 		i++;
 	}
 	mesh.checkIntegrity();

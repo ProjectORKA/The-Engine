@@ -116,7 +116,7 @@ void NeighbourQuadtreeNode::render(Engine& engine, Renderer& renderer) {
 	else {
 		Transform t;
 		t.location = position;
-		t.scale = pow(2, -level+1);
+		t.scale = Vec3(pow(2, -level+1));
 		t.render(renderer);
 		renderer.fill(color);
 		renderer.useShader(engine, "color");

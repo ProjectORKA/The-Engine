@@ -5,6 +5,5 @@
 #include "ResourceManager.hpp"
 
 struct Engine {
-	FileSystem fileSystem;
-	ResourceManager resourceManager = ResourceManager(fileSystem);
+	ResourceManager resourceManager;
 };

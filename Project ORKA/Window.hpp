@@ -24,6 +24,9 @@ struct Window {
 
 	Renderer renderer;
 
+	APIWindow apiWindow = nullptr;
+
+
 	UShort id = 0;
 	Thread thread;
 	Bool isShown = true;
@@ -31,7 +34,6 @@ struct Window {
 	Bool decorated = true;
 	Bool profiling = false;
 	Bool keeprunning = true;
-	APIWindow apiWindow = nullptr;
 	UIElement* content = nullptr;
 	Area windowedModeSize = Area(1);
 	Vector<Path> droppedFilePaths = {};

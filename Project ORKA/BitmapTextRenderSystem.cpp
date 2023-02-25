@@ -40,20 +40,20 @@ void BitmapTextRenderSystem::render(Engine& engine, Renderer & renderer, String 
 		Float uvRight = uvLeft + 1.0 / 16.0;
 		Float uvDown = uvUp - 1.0 / 16.0;
 
-		cpuText.vertices.pushBack(Vec3(left, up, 0));
-		cpuText.vertices.pushBack(Vec3(left, down, 0));
-		cpuText.vertices.pushBack(Vec3(right, up, 0));
-		cpuText.vertices.pushBack(Vec3(left, down, 0));
-		cpuText.vertices.pushBack(Vec3(right, down, 0));
-		cpuText.vertices.pushBack(Vec3(right, up, 0));
+		cpuText.positions.pushBack(Vec3(left, up, 0));
+		cpuText.positions.pushBack(Vec3(left, down, 0));
+		cpuText.positions.pushBack(Vec3(right, up, 0));
+		cpuText.positions.pushBack(Vec3(left, down, 0));
+		cpuText.positions.pushBack(Vec3(right, down, 0));
+		cpuText.positions.pushBack(Vec3(right, up, 0));
 
 
-		cpuText.uvs.pushBack(Vec2(uvLeft, uvUp));
-		cpuText.uvs.pushBack(Vec2(uvLeft, uvDown));
-		cpuText.uvs.pushBack(Vec2(uvRight, uvUp));
-		cpuText.uvs.pushBack(Vec2(uvLeft, uvDown));
-		cpuText.uvs.pushBack(Vec2(uvRight, uvDown));
-		cpuText.uvs.pushBack(Vec2(uvRight, uvUp));
+		cpuText.textureCoordinates.pushBack(Vec2(uvLeft, uvUp));
+		cpuText.textureCoordinates.pushBack(Vec2(uvLeft, uvDown));
+		cpuText.textureCoordinates.pushBack(Vec2(uvRight, uvUp));
+		cpuText.textureCoordinates.pushBack(Vec2(uvLeft, uvDown));
+		cpuText.textureCoordinates.pushBack(Vec2(uvRight, uvDown));
+		cpuText.textureCoordinates.pushBack(Vec2(uvRight, uvUp));
 
 		cpuText.normals.pushBack(Vec3(0, 0, 1));
 		cpuText.normals.pushBack(Vec3(0, 0, 1));
@@ -62,12 +62,12 @@ void BitmapTextRenderSystem::render(Engine& engine, Renderer & renderer, String 
 		cpuText.normals.pushBack(Vec3(0, 0, 1));
 		cpuText.normals.pushBack(Vec3(0, 0, 1));
 
-		cpuText.colors.pushBack(Vec3(1.0f, 1.0f, 1.0f));
-		cpuText.colors.pushBack(Vec3(1.0f, 1.0f, 1.0f));
-		cpuText.colors.pushBack(Vec3(1.0f, 1.0f, 1.0f));
-		cpuText.colors.pushBack(Vec3(1.0f, 1.0f, 1.0f));
-		cpuText.colors.pushBack(Vec3(1.0f, 1.0f, 1.0f));
-		cpuText.colors.pushBack(Vec3(1.0f, 1.0f, 1.0f));
+		cpuText.vertexColors.pushBack(Vec3(1.0f, 1.0f, 1.0f));
+		cpuText.vertexColors.pushBack(Vec3(1.0f, 1.0f, 1.0f));
+		cpuText.vertexColors.pushBack(Vec3(1.0f, 1.0f, 1.0f));
+		cpuText.vertexColors.pushBack(Vec3(1.0f, 1.0f, 1.0f));
+		cpuText.vertexColors.pushBack(Vec3(1.0f, 1.0f, 1.0f));
+		cpuText.vertexColors.pushBack(Vec3(1.0f, 1.0f, 1.0f));
 
 		cpuText.indices.pushBack(i * 6);
 		cpuText.indices.pushBack(i * 6 + 1);

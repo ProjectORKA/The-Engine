@@ -65,8 +65,14 @@ namespace PrimitiveMode {
 //debug opengl by simulating state
 #define OPENGLSTATE
 struct OpenGLStateCopy {
+	Bool culling = false;
+	Bool blending = false;
+	Bool depthTest = false;
+	Bool debugging = false;
+	Bool scissorTest = false;
 	Int currentDrawFramebuffer = -1;
 	Int currentReadFramebuffer = -1;
+
 	void print();
 };
 
@@ -79,12 +85,18 @@ using SizeIPtr = __int64;
 void apiClearColor();
 void apiClearDepth();
 void apiEnableBlend();
-Bool apiGetCullFace();
-void apiEnable(Enum cap);
-void apiDisable(Enum cap);
+void apiEnable(Enum cap) = delete;
+void apiDisable(Enum cap) = delete;
 void apiCullFace(Enum mode);
 void apiDepthFunc(Enum func);
 void apiDrawBuffer(Enum mode);
+
+
+void apiSetScissorTest(Bool value);
+void apiSetCulling(Bool value);
+void apiSetBlending(Bool value);
+void apiSetDebugging(Bool value);
+void apiSetDepthTest(Bool value);
 void apiGenVertexArray(UInt& id);
 void apiDeleteBuffer(UInt buffer);
 void apiGenBuffer(UInt& bufferID);
@@ -127,7 +139,6 @@ void apiBindBufferBase(Enum target, UInt index, UInt buffer);
 void apiTexParameterfv(Enum target, Enum name, const Float* param);
 void apiBufferData(Enum target, SizeIPtr size, void* data, Enum usage);
 void apiBlitFramebuffer(UInt width, UInt height, UInt mask, UInt filter);
-void apiDebugMessageCallback(GLDEBUGPROC callback, const void* userParam);
 void apiDrawElements(Enum mode, SizeI count, Enum type, const void* indices);
 void apiUniformBlockBinding(UInt programID, UInt uniformBlockIndex, UInt value);
 void apiBlitFramebuffer(UInt srcX, UInt srcY, UInt dstX, UInt dstY, UInt filter);

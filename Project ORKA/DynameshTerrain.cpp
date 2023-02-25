@@ -52,7 +52,7 @@ void DynameshNode::render(Engine& engine, Renderer& renderer) {
 
 		t.rotation = Vec3(0, 0, 15.6);
 		t.location = position;
-		t.scale = size;
+		t.scale = Vec3(size);
 		t.render(renderer);
 		renderer.renderMesh(engine, "cube");
 	}

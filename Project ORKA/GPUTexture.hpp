@@ -12,8 +12,8 @@ struct GPUTexture {
 	Bool loaded = false;
 	Int wrapping = repeat;
 	DataType dataType = dataTypeByte;
-	Int nearFilter = Filter::linear;
-	Int farFilter = Filter::linearMM;
+	Filter nearFilter = Filter::linear;
+	Filter farFilter = Filter::linearMM;
 
 	void unload();
 	void resize(Area size);
@@ -22,6 +22,13 @@ struct GPUTexture {
 	void attachTexture(Int slot);
 	void load(CPUTexture& cpuTexture);
 	void load(Engine& engine, Name name);
+	void setFilters(Filter nearFilter, Filter farFilter) {
+		this->nearFilter = nearFilter;
+		this->farFilter = farFilter;
+		apiBindTexture(GL_TEXTURE_2D, textureID);
+		apiTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, nearFilter);
+		apiTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, farFilter);
+	};
 	void load(Vec2 size, Int channels, DataType type);
 	void generateMipMaps(Int nearFilter, Int farFilter);
 };

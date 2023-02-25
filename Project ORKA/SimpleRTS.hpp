@@ -181,13 +181,13 @@ struct SimpleRTSRenderer : public GameRenderer {
 	void inputEvent(Window& window, InputEvent input) override;
 };
 
-struct SimpleRTS {
-	SimpleRTSSimulation sim;
-	SimpleRTSRenderer renderer;
-
-	SimpleRTS(Engine& engine) {
-		renderer.sim = &sim;
-		Window& w = window("Simple RTS", Area(1920, 1080), true, WindowState::maximized, renderer, engine);
-		ui.run();
-	}
-};
+//struct SimpleRTS {
+//	SimpleRTSSimulation sim;
+//	SimpleRTSRenderer renderer;
+//
+//	SimpleRTS(Engine& engine) {
+//		renderer.sim = &sim;
+//		Window& w = window("Simple RTS", Area(1920, 1080), true, WindowState::windowed, renderer, engine);
+//		ui.run();
+//	}
+//};

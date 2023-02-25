@@ -8,6 +8,8 @@
 // add file watcher that reloads resources if they were changed
 
 struct ResourceManager {
+	FileSystem fileSystem;
+
 	//paths
 	Path orkaLocation;
 	Path orkaDataLocation;
@@ -21,7 +23,7 @@ struct ResourceManager {
 	Map<Name, Path> vertexShaderResources;
 	Map<Name, Path> fragmentShaderResources;
 
-	ResourceManager(FileSystem& fileSystem);
+	ResourceManager();
 	void reloadAllResources(FileSystem& fileSystem);
 	void loadResourcesFromFBXFiles(FileSystem& fileSystem);
 };

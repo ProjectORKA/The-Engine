@@ -35,12 +35,12 @@ struct CPUMesh {
 	Int drawMode = MeshDrawMode::staticMode;
 	Int primitiveMode = PrimitiveMode::Triangles;
 	
-	Vector<Vec3> vertices;
-	Vector<Vec2> uvs;
+	Vector<Vec3> positions;
+	Vector<Vec2> textureCoordinates;
 	Vector<Vec3> normals;
 	Vector<Vec3> tangents;
 	Vector<Vec3> bitangents;
-	Vector<Vec3> colors;
+	Vector<Vec3> vertexColors;
 
 	Vector<Index> indices;
 

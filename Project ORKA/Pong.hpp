@@ -57,9 +57,14 @@ struct PongRenderer : public GameRenderer {
 };
 
 struct Pong {
+	Engine engine;
+	UserInterface ui;
 	PongRenderer pongRenderer;
 
-	Pong(Engine& engine);
+	Pong() {
+		ui.window("Pong", Area(1920, 1080), true, WindowState::fullscreen, pongRenderer, engine);
+		ui.run();
+	};
 };
 
 Ball* getClosestBall(PongPlayer& player, Vector<Ball>& balls);

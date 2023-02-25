@@ -27,7 +27,7 @@ void main(){
 
     //calculate the incoming light
     //get the ambient light
-	vec3 ambient = skyColor / 5;
+	vec3 ambient = skyColor / 4;
 	float sunlight = max(dot(normal,normalize(vec3(sunDir))),0);
     vec3 light = vec3(sunColor * sunlight + ambient);
 

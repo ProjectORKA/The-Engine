@@ -53,7 +53,7 @@ struct SphereMeshing {
 		icoSphere.load(engine, "lowPolyIcoSphere");
 
 		Mesh m;
-		m.positions = icoSphere.vertices;
+		m.positions = icoSphere.positions;
 		m.faces = icoSphere.indices;
 	};
 

@@ -2,11 +2,9 @@
 #include "ResourceManager.hpp"
 #include "Scene.hpp"
 
-
-
-ResourceManager::ResourceManager(FileSystem& fileSystem) {
+ResourceManager::ResourceManager() {
 	//the "ORKA" location is the folder that contains the executable
-	orkaLocation = makeAbsolute(fileSystem.executablePath);
+	orkaLocation = makeAbsolute(executablePath);
 	
 	//in in we will always have a "Data" and "Cache" folder
 	//"Data" contains all resources like meshes, shaders, levels, textures, scrips, etc

@@ -45,12 +45,19 @@
 
 
 //#define TESTING
+
 #include "TripleNine.hpp"
+//#include "Pong.hpp"
+//#include "SimpleRTS.hpp"
+//#include "DungeonsAndDiscord.hpp"
+//#include "Mooncrash.hpp"
+//#include "SceneSystem.hpp"
+//#include "Blob.hpp"
 
 Int main(Int  argc, Char* argv[]) {
 #ifndef TESTING
-	Engine engine;
-	TripleNine game(engine);
+	TripleNine game;
+	game.run();
 #else
 	//testing code
 	/////////////////////////////////////////////////////////////////////////////////////////////////
