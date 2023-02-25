@@ -15,8 +15,8 @@ CPUMesh Plot::createMesh() {
 	for (UInt index = 0; index < points.size(); index++) {
 		Vec2 pointPos = points[index];
 
-		mesh.vertices.pushBack(Vec3(pointPos, 0));
-		mesh.uvs.pushBack(pointPos);
+		mesh.positions.pushBack(Vec3(pointPos, 0));
+		mesh.textureCoordinates.pushBack(pointPos);
 		mesh.normals.pushBack(Vec3(0, 0, 1));
 
 		mesh.indices.pushBack(index);

@@ -1,7 +1,7 @@
 #include "Mooncrash.hpp"
 #include "Window.hpp"
 
-void MooncrashSimulation::init(Engine& engine) {
+void MooncrashSimulation::create(Engine& engine) {
 	planetSystem.create(engine);
 }
 
@@ -167,10 +167,6 @@ void MooncrashPlayer::render(Engine& engine, Window & window) {
 void MooncrashRenderer::update(Window& window) {
 	player.update(window);
 	window.renderer.planetRenderSystem.update(simulation->planetSystem, player);
-}
-void MooncrashRenderer::init(MooncrashSimulation& simulation) {
-	player.speedExponent = 200;
-	this->simulation = &simulation;
 }
 void MooncrashRenderer::render(Engine& engine, Window& window, TiledRectangle area) {
 	Renderer& renderer = window.renderer;

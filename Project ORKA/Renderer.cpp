@@ -23,8 +23,7 @@ void Renderer::begin()
 	mutex.lock();						//used for syncronizing other threads
 	time.update();						//advances the time
 	uniforms().time() = time.total;		//makes time available to shaders
-	framebufferSystem.deselect();		//selects the backbuffer of the window
-	clearColor(Color(Vec3(0), 0.0));	//and clears its contents
+	clearColor(Color(0, 0 ,0, 1));		//and clears its contents
 	clearDepth();						//clears depth as to not accidentally hide geometry
 }
 void Renderer::destroy()
@@ -54,6 +53,50 @@ void Renderer::screenSpace() {
 	uniforms().vMatrix() = Matrix(1);
 	uniforms().pMatrix() = matrix;
 }
+void Renderer::rerenderMesh() {
+	//simply renders the previous mesh again (saves performance)
+	meshSystem.currentMesh().render(uniforms());
+}
+void Renderer::read(Name name) {
+	framebufferSystem.read(*this, name);
+}
+void Renderer::draw(Name name) {
+	framebufferSystem.draw(*this, name);
+}
+void Renderer::fill(Vec3 color) {
+	fill(Vec4(color, 1));
+}
+void Renderer::fill(Vec4 color) {
+	uniforms().customColor(color);
+}
+void Renderer::normalizedSpace() {
+	uniforms().vMatrix() = Matrix(1);
+	uniforms().pMatrix() = Matrix(1);
+}
+void Renderer::setWireframeMode() {
+	setWireframeMode(wireframeMode);
+}
+void Renderer::blendModeAdditive() {
+	apiSetBlending(true);
+	apiBlendFunc(BlendFunction::one, BlendFunction::one);
+	apiBlendEquation(BlendEquation::add);
+}
+void Renderer::setColor(Color color) {
+	uniforms().customColor(color);
+}
+void Renderer::pollGraphicsAPIError() {
+	Int error = apiGetError();
+	if (error) {
+		logError(String("Opengl Error: ").append(toString(error)));
+	}
+}
+void Renderer::setCulling(Bool value) {
+	apiSetCulling(value);
+}
+void Renderer::clearColor(Color color) {
+	apiSetClearColor(color);
+	apiClearColor();
+}
 void Renderer::normalizedScreenSpace() {
 	Float width = renderRegion.region.size.x;
 	Float height = renderRegion.region.size.y;
@@ -65,16 +108,29 @@ void Renderer::normalizedScreenSpace() {
 	uniforms().vMatrix() = matrix;
 	uniforms().pMatrix() = Matrix(1);
 }
-void Renderer::rerenderMesh() {
-	//simply renders the previous mesh again (saves performance)
-	meshSystem.currentMesh().render(uniforms());
+void Renderer::renderMesh(Index meshID) {
+	meshSystem.render(uniforms(), meshID);
 }
-void Renderer::fill(Vec4 color) {
-	uniforms().customColor(color);
+void Renderer::setDepthTest(Bool value) {
+	apiSetDepthTest(value);
 }
-void Renderer::normalizedSpace() {
+void Renderer::aspectCorrectNormalizedSpace() {
+	Float aspect = getAspectRatio();
 	uniforms().vMatrix() = Matrix(1);
-	uniforms().pMatrix() = Matrix(1);
+	if (aspect > 1) uniforms().pMatrix() = scale(Matrix(1), Vec3(1 / getAspectRatio(), 1, 1));
+	else uniforms().pMatrix() = scale(Matrix(1), Vec3(1, getAspectRatio(), 1));
+}
+void Renderer::setAlphaBlending(Bool blending)
+{
+	if (blending) {
+		apiSetBlending(true);
+		apiBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		apiBlendEquation(BlendEquation::add);
+	}
+	else apiSetBlending(false);
+}
+void Renderer::fill(Float r, Float g, Float b) {
+	fill(Vec4(r, g, b, 1));
 }
 void Renderer::create(Engine& engine, Area size)
 {
@@ -94,14 +150,19 @@ void Renderer::create(Engine& engine, Area size)
 	rectangleRenderer.create(engine, *this);
 
 	apiClipControl(GL_LOWER_LEFT, GL_ZERO_TO_ONE);
-	apiEnable(GL_SCISSOR_TEST);
+	apiSetScissorTest(true);
 }
 void Renderer::useMesh(Engine& engine, Name name) {
 	//selects a mesh to be rendered but doesent render it
 	meshSystem.use(engine,name);
 }
-void Renderer::setWireframeMode() {
-	setWireframeMode(wireframeMode);
+void Renderer::setWireframeMode(Bool wireframeMode) {
+	if (wireframeMode) {
+		apiPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	}
+	else {
+		apiPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	}
 }
 void Renderer::renderMesh(Engine& engine, Name name) {
 	meshSystem.render(engine, uniforms(), name);
@@ -109,21 +170,30 @@ void Renderer::renderMesh(Engine& engine, Name name) {
 void Renderer::useTexture(Engine& engine, Name name) {
 	textureSystem.use(engine, name);
 }
-void Renderer::setColor(Color color) {
-	uniforms().customColor(color);
+void Renderer::postProcess(Engine& engine, Name name) {
+	//draw to second buffer
+	DepthTestOverride(false,*this);
+
+	uniforms().resetMatrices();
+	read("main");
+	framebufferSystem.currentRead().setAsTexture(0);
+	draw("postProcess");
+	clearColor();
+	clearDepth();
+	useShader(engine, name);
+	renderMesh(engine, "fullScreenQuad");
+
+	read("postProcess");
+	framebufferSystem.currentRead().setAsTexture(0);
+	draw("main");
+	useShader(engine, "texture");
+	renderMesh(engine, "fullScreenQuad");
 }
-void Renderer::pollGraphicsAPIError() {
-	Int error = apiGetError();
-	if (error) {
-		logError(String("Opengl Error: ").append(toString(error)));
-	}
+void Renderer::line(Vec3 start, Vec3 end, Float width) {
+	lineRenderer.renderLine(*this, start, end, width);
 }
-void Renderer::clearColor(Color color) {
-	apiSetClearColor(color);
-	apiClearColor();
-}
-void Renderer::renderMesh(Index meshID) {
-	meshSystem.render(uniforms(), meshID);
+void Renderer::line(Vec2 start, Vec2 end, Float width) {
+	lineRenderer.renderLine(*this, Vec3(start,0.0f), Vec3(end,0.0f), width);
 }
 void Renderer::renderSky(Engine& engine, Camera& camera) {
 	setCulling(false);
@@ -135,20 +205,13 @@ void Renderer::renderSky(Engine& engine, Camera& camera) {
 	setCulling(true);
 	setDepthTest(true);
 }
-void Renderer::setCulling(Bool isCulling) {
-	if (isCulling) {
-		apiEnable(GL_CULL_FACE);
-		apiCullFace(GL_BACK);
-	}
-	else {
-		apiDisable(GL_CULL_FACE);
-	}
+void Renderer::fullScreenShader(Engine& engine, Name name) {
+	useShader(engine, name);
+	meshSystem.renderFullscreen(uniforms());
 }
-
 void Renderer::arrow(Engine& engine, Vec2 start, Vec2 end) {
 	arrow(engine, Vec3(start, 0), Vec3(end, 0));
 }
-
 void Renderer::arrow(Engine& engine, Vec3 start, Vec3 end) {
 	useShader(engine, "color");
 	uniforms().customColor(Vec4(1, 0, 0, 1));
@@ -158,21 +221,6 @@ void Renderer::arrow(Engine& engine, Vec3 start, Vec3 end) {
 	Orientation o(direction, Vec3(0, 0, 1));
 	uniforms().mMatrix() = matrixFromOrientation(o, start, length);
 	renderMesh(engine, "arrow");
-}
-void Renderer::aspectCorrectNormalizedSpace() {
-	Float aspect = getAspectRatio();
-	uniforms().vMatrix() = Matrix(1);
-	if (aspect > 1) uniforms().pMatrix() = scale(Matrix(1), Vec3(1 / getAspectRatio(), 1, 1));
-	else uniforms().pMatrix() = scale(Matrix(1), Vec3(1, getAspectRatio(), 1));
-}
-void Renderer::setDepthClamp(Bool depthClamp)
-{
-	if (depthClamp) {
-		apiEnable(GL_DEPTH_CLAMP);
-	}
-	else {
-		apiDisable(GL_DEPTH_CLAMP);
-	}
 }
 void Renderer::circle(Engine& engine, Vec2 pos, Float radius)
 {
@@ -185,46 +233,6 @@ void Renderer::rectangle(Engine& engine, Vec2 pos, Vec2 size) {
 void Renderer::renderMeshInstanced(Engine& engine, Name name)
 {
 	meshSystem.renderInstanced(engine, uniforms(), name, matrixSystem.modelMatrixArray);
-}
-void Renderer::setAlphaBlending(Bool blending)
-{
-	if (blending) {
-		apiEnable(GL_BLEND);
-		apiBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		apiBlendEquation(BlendEquation::add);
-	}
-	else apiDisable(GL_BLEND);
-}
-void Renderer::blendModeAdditive() {
-	apiEnable(GL_BLEND);
-	apiBlendFunc(BlendFunction::one, BlendFunction::one);
-	apiBlendEquation(BlendEquation::add);
-}
-void Renderer::setDepthTest(Bool isUsingDepth) {
-	if (isUsingDepth) {
-		apiEnable(GL_DEPTH_TEST);
-		apiDepthFunc(GL_LESS);
-	}
-	else {
-		apiDisable(GL_DEPTH_TEST);
-	}
-}
-void Renderer::setWireframeMode(Bool wireframeMode) {
-	if (wireframeMode) {
-		apiPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	}
-	else {
-		apiPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	}
-}
-void Renderer::useTexture(Engine& engine, Name name, Index location) {
-	textureSystem.use(engine, name, location);
-}
-void Renderer::line(Vec3 start, Vec3 end, Float width) {
-	lineRenderer.renderLine(*this, start, end, width);
-}
-void Renderer::line(Vec2 start, Vec2 end, Float width) {
-	lineRenderer.renderLine(*this, Vec3(start,0.0f), Vec3(end,0.0f), width);
 }
 void Renderer::normalizedSpaceWithAspectRatio(Float aspectRatio) {
 	Float renderAspectRatio = getAspectRatio();
@@ -257,7 +265,13 @@ void Renderer::normalizedSpaceWithAspectRatio(Float aspectRatio) {
 	Matrix pMatrix(1);
 	uniforms().pMatrix() = scale(pMatrix, Vec3(Vec2(1) / view, 1));
 }
-
+void Renderer::addRenderObject(RenderObjectNames renderObjectNames)
+{
+	renderObjectSystem.addRenderObject(renderObjectNames);
+}
+void Renderer::useTexture(Engine& engine, Name name, Index location) {
+	textureSystem.use(engine, name, location);
+}
 void Renderer::renderAtmosphere(Engine& engine, Player& player, Vec3 sunDirection) {
 	Bool culling = getCulling();
 	setDepthTest(false);
@@ -271,10 +285,6 @@ void Renderer::renderAtmosphere(Engine& engine, Player& player, Vec3 sunDirectio
 	setCulling(culling);
 	setDepthTest(true);
 }
-void Renderer::addRenderObject(RenderObjectNames renderObjectNames)
-{
-	renderObjectSystem.addRenderObject(renderObjectNames);
-}
 void Renderer::renderText(Engine& engine, String text, Vec2 position, FontStyle font) {
 	textRenderSystem.render(engine, *this, text, position, font);
 }
@@ -282,67 +292,19 @@ void Renderer::renderText(Engine& engine, String text, Vec2 position, FontStyle 
 Area Renderer::getArea() {
 	return framebufferSystem.windowSize;
 }
-
 Bool Renderer::getCulling() {
-	return apiGetCullFace();
+	return openglState.culling;
 }
 Float Renderer::deltaTime() {
 	return time.delta;
 }
-
-Float Renderer::getAspectRatio(){
-	return framebufferSystem.currentDraw().aspectRatio();
-}
-
 Uniforms& Renderer::uniforms()
 {
 	return shaderSystem.uniforms;
 }
-
+Float Renderer::getAspectRatio(){
+	return framebufferSystem.currentDraw().aspectRatio();
+}
 Index Renderer::useShader(Engine& engine, Name name) {
 	return shaderSystem.use(engine, name);
-}
-
-void Renderer::postProcess(Engine& engine, Name name) {
-	//draw to second buffer
-	uniforms().resetMatrices();
-	uniforms().customColor(Color(1, 0, 0, 1));
-	read("main");
-	framebufferSystem.currentRead().setAsTexture(0);
-	draw("postProcess");
-	clearColor();
-	clearDepth();
-	useShader(engine, name);
-	renderMesh(engine, "fullScreenQuad");
-
-	read("postProcess");
-	framebufferSystem.currentRead().setAsTexture(0);
-	draw("main");
-	useShader(engine, "texture");
-	renderMesh(engine, "fullScreenQuad");
-}
-
-void Renderer::fullScreenShader(Engine& engine, Name name) {
-	useShader(engine, name);
-	meshSystem.renderFullscreen(uniforms());
-}
-
-//framebuffers
-
-void Renderer::read(Name name) {
-	framebufferSystem.read(*this, name);
-}
-
-void Renderer::draw(Name name) {
-	framebufferSystem.draw(*this, name);
-}
-
-//colors
-
-void Renderer::fill(Float r, Float g, Float b) {
-	fill(Vec4(r, g, b, 1));
-}
-
-void Renderer::fill(Vec3 color) {
-	fill(Vec4(color, 1));
 }

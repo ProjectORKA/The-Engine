@@ -35,5 +35,5 @@ vec4 downsampleBox13Tap(sampler2D sampler, vec2 uv, vec2 texelSize)
 
 void main(){
     vec2 texelSize = 1/vec2(framebufferWidth,framebufferHeight);
-    fragmentColor = 0.7 * downsampleBox13Tap(texture0,textureCoordinate,texelSize);
+    fragmentColor = max(0.7 * downsampleBox13Tap(texture0,textureCoordinate,texelSize),0);
 };

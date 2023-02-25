@@ -1,6 +1,8 @@
 
 #include "FileSystem.hpp"
 
+Path executablePath = "";
+
 namespace stbi {
 	//#define STBI_NO_JPEG
 #define STBI_FAILURE_USERMSG
@@ -9,7 +11,7 @@ namespace stbi {
 }
 
 FileSystem::FileSystem() {
-	executablePath = std::filesystem::current_path();
+	if(executablePath == "") executablePath = std::filesystem::current_path();
 }
 
 String loadString(Path path) {
@@ -27,14 +29,21 @@ String loadString(Path path) {
 		return "";
 	}
 }
+Path removeFileName(Path path) {
+	return std::filesystem::absolute(path).remove_filename();
+}
+Path getDirectory(Path path) {
+	return std::filesystem::absolute(path).remove_filename();
+}
 Path makeAbsolute(Path path) {
 	return std::filesystem::absolute(path);
 }
 Bool doesPathExist(Path path)
 {
-	return std::filesystem::exists(path);
+	return std::filesystem::exists(makeAbsolute(path));
 }
 void createDirectory(Path path) {
+	path = removeFileName(path);
 	std::filesystem::create_directory(path);
 }
 FileTime lastWrittenTime(Path path) {

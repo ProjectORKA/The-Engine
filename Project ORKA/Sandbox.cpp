@@ -12,7 +12,6 @@ void SandboxRenderer::inputEvent(Window& window, InputEvent input) {
 	if (input == exit) window.uncaptureCursor();
 	if (input == wireframeToogle) window.renderer.wireframeMode = !window.renderer.wireframeMode;
 
-
 	player.inputEvent(window, input);
 }
 
@@ -40,9 +39,4 @@ void SandboxRenderer::render(Engine& e, Window& window, TiledRectangle area) {
 	r.renderText(e, String("F for wireframe mode"), Vec2(50, 200), fonts.paragraph);
 	r.renderText(e, String("Scroll to change speed"), Vec2(50,150), fonts.paragraph);
 	r.renderText(e, String("FPS: ").append(toString(Int(1.0f / r.time.delta))), Vec2(50), fonts.heading); // renders current framerate to the screen
-}
-
-Sandbox::Sandbox(Engine& engine) {
-	Window& w = window("ORKA Sandbox", Area(1920, 1080), true, WindowState::maximized, sandboxRenderer, engine);
-	ui.run();
 }

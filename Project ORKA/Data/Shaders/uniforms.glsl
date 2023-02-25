@@ -29,22 +29,22 @@ layout(std140, binding = 0) uniform GlobalUniforms
 	uint customInt1;
 };
 
-uniform sampler2D texture0;
-uniform sampler2D texture1;
-uniform sampler2D texture2;
-uniform sampler2D texture3;
-uniform sampler2D texture4;
-uniform sampler2D texture5;
-uniform sampler2D texture6;
-uniform sampler2D texture7;
-uniform sampler2D texture8;
-uniform sampler2D texture9;
-uniform sampler2D texture10;
-uniform sampler2D texture11;
-uniform sampler2D texture12;
-uniform sampler2D texture13;
-uniform sampler2D texture14;
-uniform sampler2D texture15;
+layout(binding = 0) uniform sampler2D texture0;
+layout(binding = 1) uniform sampler2D texture1;
+layout(binding = 2) uniform sampler2D texture2;
+layout(binding = 3) uniform sampler2D texture3;
+layout(binding = 4) uniform sampler2D texture4;
+layout(binding = 5) uniform sampler2D texture5;
+layout(binding = 6) uniform sampler2D texture6;
+layout(binding = 7) uniform sampler2D texture7;
+layout(binding = 8) uniform sampler2D texture8;
+layout(binding = 9) uniform sampler2D texture9;
+layout(binding = 10) uniform sampler2D texture10;
+layout(binding = 11) uniform sampler2D texture11;
+layout(binding = 12) uniform sampler2D texture12;
+layout(binding = 13) uniform sampler2D texture13;
+layout(binding = 14) uniform sampler2D texture14;
+layout(binding = 15) uniform sampler2D texture15;
 
 layout(location = 0) in vec3 vertex;
 layout(location = 1) in vec2 uvs;

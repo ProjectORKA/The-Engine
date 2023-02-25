@@ -9,7 +9,7 @@ void BranchStructure::render(Renderer& renderer, Vector<Vec3> points) {
 	mesh.name = "branchStructure";
 	mesh.normals = Vector<Vec3>(points.size(), Vec3(0, 0, 1));
 	mesh.primitiveMode = PrimitiveMode::Lines;
-	mesh.vertices = points;
+	mesh.positions = points;
 
 	for (int i = 0; i < connections.size(); i++) {
 		mesh.indices.pushBack(i);
@@ -17,7 +17,7 @@ void BranchStructure::render(Renderer& renderer, Vector<Vec3> points) {
 	}
 
 	for (int i = 0; i < points.size(); i++) {
-		mesh.uvs.pushBack(Vec2(points[i].x, points[i].y));
+		mesh.textureCoordinates.pushBack(Vec2(points[i].x, points[i].y));
 	}
 
 	mesh.checkIntegrity();

@@ -21,5 +21,5 @@ void main(){
 
     if(brightness(c) > brightness(g)) c = c / brightness(c) * brightness(g);
 
-    fragmentColor = vec4(pow(c,vec3(0.4))/10,1);
+    fragmentColor = max(vec4(pow(c,vec3(0.4))/10,1),0);
 };

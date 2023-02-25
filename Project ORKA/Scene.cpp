@@ -1,5 +1,8 @@
 
 #include "Scene.hpp"
+#include "Transform.hpp"
+
+using TReal = Float;
 
 #include <assimp/Importer.hpp>
 #include <assimp/postprocess.h>
@@ -9,7 +12,7 @@ void Scene::loadFBX(Path path, ResourceManager& resourceManager) {
 	//check if file is valid
 	String errorMessage = "";
 
-	if (doesPathExist(path.parent_path())) {
+	if (doesPathExist(getDirectory(path))) {
 
 		logEvent(String("Loading mesh: (").append(path.stem().string()).append(") from (").append(path.string()).append(")"));
 
@@ -63,14 +66,14 @@ void Scene::loadFBX(Path path, ResourceManager& resourceManager) {
 									vertex.x = assimpScene->mMeshes[meshID]->mVertices[i].x;
 									vertex.y = assimpScene->mMeshes[meshID]->mVertices[i].y;
 									vertex.z = assimpScene->mMeshes[meshID]->mVertices[i].z;
-									mesh.vertices.pushBack(vertex);
+									mesh.positions.pushBack(vertex);
 
 									Vec2 texCoord = Vec2(0);
 									if (assimpScene->mMeshes[meshID]->mTextureCoords[0]) {
-									texCoord.x = assimpScene->mMeshes[meshID]->mTextureCoords[0][i].x;
-									texCoord.y = assimpScene->mMeshes[meshID]->mTextureCoords[0][i].y;
+										texCoord.x = assimpScene->mMeshes[meshID]->mTextureCoords[0][i].x;
+										texCoord.y = assimpScene->mMeshes[meshID]->mTextureCoords[0][i].y;
 									}
-									mesh.uvs.pushBack(texCoord);
+									mesh.textureCoordinates.pushBack(texCoord);
 
 									Vec3 normal;
 									normal.x = assimpScene->mMeshes[meshID]->mNormals[i].x;
@@ -78,7 +81,7 @@ void Scene::loadFBX(Path path, ResourceManager& resourceManager) {
 									normal.z = assimpScene->mMeshes[meshID]->mNormals[i].z;
 									mesh.normals.pushBack(normal);
 
-									mesh.colors.pushBack(color);
+									mesh.vertexColors.pushBack(color);
 								}
 
 								if (assimpScene->mMeshes[meshID]->HasFaces()) {
@@ -95,7 +98,7 @@ void Scene::loadFBX(Path path, ResourceManager& resourceManager) {
 
 							lastIndex += assimpScene->mMeshes[meshID]->mNumVertices;
 						}
-						
+
 						if (errorMessage.size()) {
 							logError(String("The model (").append(path.stem().string()).append(") could not be loaded! (").append(path.string()).append(")").append(" Error: ").append(errorMessage));
 							mesh.loaded = false;
@@ -107,7 +110,6 @@ void Scene::loadFBX(Path path, ResourceManager& resourceManager) {
 						}
 						meshes.pushBack(mesh);
 					}
-					else logDebug(String("Object (").append(assimpScene->mRootNode->mChildren[objectID]->mName.C_Str()).append("in scene does not have meshes!"));
 				}
 			}
 			else errorMessage = "No meshes in fbx scene!";

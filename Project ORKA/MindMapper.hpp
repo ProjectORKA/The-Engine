@@ -24,10 +24,11 @@ struct MindMapperRenderer : public GameRenderer {
 };
 
 struct MindMapper {
+	UserInterface ui;
 	MindMapperRenderer mindMapperRenderer;
 
 	MindMapper(Engine& engine) {
-		Window& w = window("ORKA Sandbox", Area(1920, 1080), true, WindowState::windowed, mindMapperRenderer, engine);
+		ui.window("ORKA Sandbox", Area(1920, 1080), true, WindowState::windowed, mindMapperRenderer, engine);
 		ui.run();
 	}
 };

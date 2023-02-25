@@ -21,7 +21,7 @@ struct MooncrashSimulation : public GameSimulation {
 	Time time;
 	PlanetSystem planetSystem;
 	void update(Float delta) override;
-	void init(Engine& engine) override;
+	void create(Engine& engine) override;
 };
 
 struct MooncrashRenderer : public GameRenderer {
@@ -43,11 +43,19 @@ struct MooncrashRenderer : public GameRenderer {
 	InputEvent exit = InputEvent(InputType::Mouse, RMB, 0);
 	InputEvent enter = InputEvent(InputType::Mouse, LMB, 1);
 
+
+
 	void update(Window& window) override;
-	void init(MooncrashSimulation & simulation);
+	void create() {
+		player.speedExponent = 200;
+	};
 	void inputEvent(Window& window, InputEvent input) override;
 	void render(Engine& engine, Window& window, TiledRectangle area) override;
 };
 
 void renderMooncrashAtmosphere(Engine& engine, Renderer& renderer, MooncrashPlayer& player);
 void renderPlanet(Engine& engine, Renderer& renderer, PlanetSystem& planetSystem, PlanetSystemPlayer& player);
+
+struct Mooncrash{
+	MooncrashRenderer renderer;
+};

@@ -34,10 +34,10 @@ struct BasicMeshes {
 };
 
 struct MeshSystem {
-	BasicMeshes basicMeshes;
-	VertexBufferObject transforms;
-	Vector<GPUMesh> gpuMeshes;	//uploaded meshes ready to be drawn
 	NameTable meshNames;
+	BasicMeshes basicMeshes;
+	Vector<GPUMesh> gpuMeshes;	//uploaded meshes ready to be drawn
+	VertexBufferObject transforms;
 
 	Index currentMeshID = 0;
 

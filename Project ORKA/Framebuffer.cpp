@@ -27,7 +27,11 @@ void Framebuffer::create(Area size)
 {
 	this->size = size;
 	apiGenFramebuffer(framebufferID);
+
+	//[TODO] actually make use of this for debugging
+	String name = "Framebuffer";
 	glBindFramebuffer(GL_FRAMEBUFFER, framebufferID);
+	glObjectLabel(GL_FRAMEBUFFER, framebufferID, name.size(), name.data());
 }
 void Framebuffer::blitFramebuffer()
 {

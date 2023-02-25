@@ -38,7 +38,6 @@ struct UIElement {
 	Constraints constraints;
 	Index id = nextInteractiveElementID++;
 
-	~UIElement();
 	UIElement& padding(U16 width);
 
 	virtual void update(Window& window) {};

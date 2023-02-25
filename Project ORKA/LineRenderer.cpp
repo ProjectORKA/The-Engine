@@ -13,24 +13,24 @@ void LineRenderer::create() {
 	cpuMesh.normals.pushBack(Vec3(0, 0, 1));
 	cpuMesh.normals.pushBack(Vec3(0, 0, 1));
 	cpuMesh.primitiveMode = PrimitiveMode::TriangleStrip;
-	cpuMesh.uvs.pushBack(Vec2(0, 1));
-	cpuMesh.uvs.pushBack(Vec2(0, 0));
-	cpuMesh.uvs.pushBack(Vec2(1, 0));
-	cpuMesh.uvs.pushBack(Vec2(1, 1));
-	cpuMesh.colors.pushBack(Vec3(1));
-	cpuMesh.colors.pushBack(Vec3(1));
-	cpuMesh.colors.pushBack(Vec3(1));
-	cpuMesh.colors.pushBack(Vec3(1));
-	cpuMesh.vertices.resize(4);
+	cpuMesh.textureCoordinates.pushBack(Vec2(0, 1));
+	cpuMesh.textureCoordinates.pushBack(Vec2(0, 0));
+	cpuMesh.textureCoordinates.pushBack(Vec2(1, 0));
+	cpuMesh.textureCoordinates.pushBack(Vec2(1, 1));
+	cpuMesh.vertexColors.pushBack(Vec3(1));
+	cpuMesh.vertexColors.pushBack(Vec3(1));
+	cpuMesh.vertexColors.pushBack(Vec3(1));
+	cpuMesh.vertexColors.pushBack(Vec3(1));
+	cpuMesh.positions.resize(4);
 }
 void LineRenderer::renderLine(Renderer& renderer, Vec3 start, Vec3 end, Float width) {
 	renderer.uniforms().mMatrix(Matrix(1));
 	Vec3 dir = normalize(start - end);
 	Vec3 extend = cross(dir, Vec3(0, 0, 1));
-	cpuMesh.vertices[0] = (start + extend * width);
-	cpuMesh.vertices[1] = (start - extend * width);
-	cpuMesh.vertices[2] = (end + extend * width);
-	cpuMesh.vertices[3] = (end - extend * width);
+	cpuMesh.positions[0] = (start + extend * width);
+	cpuMesh.positions[1] = (start - extend * width);
+	cpuMesh.positions[2] = (end + extend * width);
+	cpuMesh.positions[3] = (end - extend * width);
 
 	cpuMesh.checkIntegrity();
 	gpuMesh.upload(cpuMesh);

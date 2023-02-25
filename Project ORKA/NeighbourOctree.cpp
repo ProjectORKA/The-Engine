@@ -336,7 +336,7 @@ void renderNeighbourOctreeNode(Engine& engine, NeighbourOctreeNode & node, Rende
 		if (node.isTerrain) {
 			Transform t;
 			t.location = node.position;
-			t.scale = pow(2, -node.level + 2);
+			t.scale = Vec3(pow(2, -node.level + 2));
 			t.render(renderer);
 			renderer.renderMesh(engine, "centeredCube");
 		}

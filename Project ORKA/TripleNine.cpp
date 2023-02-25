@@ -265,12 +265,33 @@ void TripleNinePlayer::calculateHeadPosition(Window& window, Float delta) {
 	camera.location = location + sway3D + headHeight3D + lean3D;
 }
 
-void TripleNineRenderer::createEnemy() {
+void TripleNineSimulation::createEnemy() {
 	enemies.emplaceBack();
 	enemies.last().id = enemies.size() - 1;
 }
+
 void TripleNineRenderer::update(Window& window) {
 	player.update(window);
+}
+void TripleNineRenderer::create(Engine& e, Window& window) {
+	
+	Renderer& r = window.renderer;
+	FramebufferSystem& fs = window.renderer.framebufferSystem;
+	
+	//create framebuffers for bloom
+	fs.addFrameBuffer("bloom1", pow(0.5, 1));
+	fs.addFrameBuffer("bloom2", pow(0.5, 2));
+	fs.addFrameBuffer("bloom3", pow(0.5, 3));
+	fs.addFrameBuffer("bloom4", pow(0.5, 4));
+	fs.addFrameBuffer("bloom5", pow(0.5, 5));
+	fs.addFrameBuffer("bloom6", pow(0.5, 6));
+	fs.addFrameBuffer("bloom7", pow(0.5, 7));
+	fs.addFrameBuffer("bloom8", pow(0.5, 8));
+	fs.addFrameBuffer("bloom9", pow(0.5, 9));
+
+	//set near and far clip distance for player
+	player.camera.nearClipValue = 0.01;
+	player.camera.farClipValue = 1000.0;
 }
 void TripleNineRenderer::renderBloom(Engine& e, Renderer & r) {
 	FramebufferSystem& fs = r.framebufferSystem;
@@ -322,17 +343,17 @@ void TripleNineRenderer::renderBloom(Engine& e, Renderer & r) {
 	r.draw("bloom7");
 	r.fullScreenShader(e, "bloomDownsample");
 
-	//r.read("bloom7");
-	//fs.currentRead().setAsTexture();
-	//r.draw("bloom8");
-	//r.fullScreenShader(e, "bloomDownsample");
+	r.read("bloom7");
+	fs.currentRead().setAsTexture();
+	r.draw("bloom8");
+	r.fullScreenShader(e, "bloomDownsample");
 
 	r.blendModeAdditive();
 
-	//r.read("bloom8");
-	//fs.currentRead().setAsTexture();
-	//r.draw("bloom7");
-	//r.fullScreenShader(e, "bloomUpsample");
+	r.read("bloom8");
+	fs.currentRead().setAsTexture();
+	r.draw("bloom7");
+	r.fullScreenShader(e, "bloomUpsample");
 
 	r.read("bloom7");
 	fs.currentRead().setAsTexture();
@@ -376,34 +397,11 @@ void TripleNineRenderer::renderBloom(Engine& e, Renderer & r) {
 
 	r.setAlphaBlending(false);
 }
-void TripleNineRenderer::create(Engine& engine, Window& window) {
-	
-	//create framebuffers for bloom
-	FramebufferSystem& fs = window.renderer.framebufferSystem;
-	fs.addFrameBuffer("bloom1", pow(0.5, 1));
-	fs.addFrameBuffer("bloom2", pow(0.5, 2));
-	fs.addFrameBuffer("bloom3", pow(0.5, 3));
-	fs.addFrameBuffer("bloom4", pow(0.5, 4));
-	fs.addFrameBuffer("bloom5", pow(0.5, 5));
-	fs.addFrameBuffer("bloom6", pow(0.5, 6));
-	fs.addFrameBuffer("bloom7", pow(0.5, 7));
-	fs.addFrameBuffer("bloom8", pow(0.5, 8));
-	fs.addFrameBuffer("bloom9", pow(0.5, 9));
-	
-	//set near and far clip distance for player
-	player.camera.nearClipValue = 0.01;
-	player.camera.farClipValue = 1000.0;
-
-	//create targets
-	for (Int i = 0; i < 100; i++) {
-		createEnemy();
-	}
-}
 void TripleNineRenderer::inputEvent(Window& window, InputEvent input) {
 	if (input == enter) {
 		if (!window.capturing)window.captureCursor();
 		else {
-			if (window.renderer.idFramebuffer.objectID != -1) enemies[window.renderer.idFramebuffer.objectID].die();
+			if (window.renderer.idFramebuffer.objectID != -1) sim->enemies[window.renderer.idFramebuffer.objectID].die();
 		}
 	}
 	if (input == exit) window.uncaptureCursor();
@@ -434,37 +432,54 @@ void TripleNineRenderer::render(Engine& e, Window& window, TiledRectangle area) 
 
 	//render sky
 	player.camera.renderOnlyRot(r);
+	r.uniforms().sunDir(Vec4(sunDirection, 1));
 	r.useTexture(e, "tripleNineSky");
 	r.useShader(e, "tripleNineSky");
 	r.renderMesh(e, "tripleNineSky");
 	r.setDepthTest(true);
 	r.setCulling(true);
 
-	player.render(e, window);
 
+	//render scene
+	player.render(e, window);
+	
+	r.fill(Vec3(1));
 	r.useShader(e, "tripleNineMap");
+	r.useTexture(e, "tripleNineReflection");
 	r.uniforms().mMatrix(matrixFromScale(mapSize));
-	r.useTexture(e, "tripleNineMap");
-	r.renderMesh(e, "tripleNineMap");
+
+	r.renderMesh(e, "tripleNineMap1");
+	r.renderMesh(e, "tripleNineMap2");
+	r.renderMesh(e, "tripleNineMap3");
 	r.uniforms().mMatrix(Matrix(1));
 
-	r.useShader(e, "unlit");
-	r.useTexture(e, "tripleNineTarget");
-	for (TripleNineEnemy& enemy : enemies) enemy.render(e, r);
+	//global illumination test
+	//r.useShader(e, "tripleNineFirstBounce");
+	//r.renderMesh(e, "giTest");
 
+	//render targets
+	r.fill(Vec3(1,0.2,0));
+	for (TripleNineEnemy& enemy : sim->enemies) enemy.render(e, r);
+
+	//render sphere
 	r.useShader(e, "color");
 	r.uniforms().customColor(Vec4(1000000));
 	r.uniforms().mMatrix(matrixFromLocation(Vec3(160, 50, 15 * pow(abs(sin(r.time.total*2)),0.5) + 1)));
 	r.renderMesh(e, "sphere");
 
-	//r.arrow(e,player.location, player.location + player.velocity);
+	//r.useShader(e, "normals");
+	//r.renderMesh(e, "cube");
 
-	if (bloom)renderBloom(e,r);
+
+	r.setDepthTest(false);
+	/*r.framebufferSystem.currentDraw().frameBufferTextures[2].texture.use(0);*/
+	if (bloom) {
+		renderBloom(e, r);
+	}
 
 	r.postProcess(e, "tonemapping");
 
 	//ui
-
 	//crosshair
 	r.uniforms().reset();
 	r.screenSpace();
@@ -479,17 +494,17 @@ void TripleNineRenderer::render(Engine& e, Window& window, TiledRectangle area) 
 	r.screenSpace();
 	Int i = 1;
 	Float spacing = 30;
-	//r.renderText(e, "on Ground: " + toString(player.onGround), Vec2(spacing, i++ * spacing), fonts.paragraph);
-	//r.renderText(e, "horizontal speed: " + toString(length(player.velocity * Vec3(1, 1, 0))), Vec2(spacing, i++ * spacing), fonts.paragraph);
-	//r.renderText(e, "is moving: " + toString(player.isMoving), Vec2(spacing, i++ * spacing), fonts.paragraph);
-	//r.renderText(e, "full body lean: " + toString(player.fullBodyLeanAngle), Vec2(spacing, i++ * spacing), fonts.paragraph);
-	//r.renderText(e, "upper body lean: " + toString(player.upperBodyLeanAngle), Vec2(spacing, i++ * spacing), fonts.paragraph);
-	//r.renderText(e, "target id: " + toString(r.idFramebuffer.objectID), Vec2(spacing, i++ * spacing), fonts.paragraph);
-	//r.renderText(e, "vertical speed: " + toString(player.velocity.z), Vec2(spacing, i++ * spacing), fonts.paragraph);
-	//r.renderText(e, "queue up jump: " + toString(player.queueJump), Vec2(spacing, i++ * spacing), fonts.paragraph);
-	//r.renderText(e, "double jump: " + toString(player.doubleJumpCharge), Vec2(spacing, i++ * spacing), fonts.paragraph);
-	//r.renderText(e, "max jump height: " + toString(player.debugCurrentMaxJumpHeight), Vec2(spacing, i++ * spacing), fonts.paragraph);
-	//r.renderText(e, "fps: " + toString(1 / r.time.delta), Vec2(spacing, i++ * spacing), fonts.paragraph);
+	r.renderText(e, "on Ground: " + toString(player.onGround), Vec2(spacing, i++ * spacing), fonts.paragraph);
+	r.renderText(e, "horizontal speed: " + toString(length(player.velocity * Vec3(1, 1, 0))), Vec2(spacing, i++ * spacing), fonts.paragraph);
+	r.renderText(e, "is moving: " + toString(player.isMoving), Vec2(spacing, i++ * spacing), fonts.paragraph);
+	r.renderText(e, "full body lean: " + toString(player.fullBodyLeanAngle), Vec2(spacing, i++ * spacing), fonts.paragraph);
+	r.renderText(e, "upper body lean: " + toString(player.upperBodyLeanAngle), Vec2(spacing, i++ * spacing), fonts.paragraph);
+	r.renderText(e, "target id: " + toString(r.idFramebuffer.objectID), Vec2(spacing, i++ * spacing), fonts.paragraph);
+	r.renderText(e, "vertical speed: " + toString(player.velocity.z), Vec2(spacing, i++ * spacing), fonts.paragraph);
+	r.renderText(e, "double jump: " + toString(player.doubleJumpCharge), Vec2(spacing, i++ * spacing), fonts.paragraph);
+	r.renderText(e, "max jump height: " + toString(player.debugCurrentMaxJumpHeight), Vec2(spacing, i++ * spacing), fonts.paragraph);
+	r.renderText(e, "fps: " + toString(1 / r.time.delta), Vec2(spacing, i++ * spacing), fonts.paragraph);
+	r.renderText(e, "cameraForwardVector: " + toString(player.camera.forwardVector), Vec2(spacing, i++ * spacing), fonts.paragraph);
 }
 void TripleNineRenderer::renderInteractive(Engine& e, Window& window, TiledRectangle area) {
 	Renderer& r = window.renderer;
@@ -502,7 +517,7 @@ void TripleNineRenderer::renderInteractive(Engine& e, Window& window, TiledRecta
 	r.renderMesh(e, "tripleNineMap");
 	r.uniforms().mMatrix(Matrix(1));
 
-	for (TripleNineEnemy& enemy : enemies) {
+	for (TripleNineEnemy& enemy : sim->enemies) {
 		enemy.renderInteractive(e, window, area);
 	}
 	r.setDepthTest(false);
@@ -516,9 +531,4 @@ void TripleNineEnemy::renderInteractive(Engine& engine, Window& window, TiledRec
 	window.renderer.uniforms().mMatrix(matrixFromLocationAndSize(position, 1));
 	window.renderer.uniforms().objectID(id);
 	window.renderer.renderMesh(engine, "tripleNineTarget");
-}
-
-TripleNine::TripleNine(Engine& engine) {
-	Window& w = window("ORKA Sandbox", Area(1920, 1080), true, WindowState::fullscreen, gameRenderer, engine);
-	ui.run();
 }

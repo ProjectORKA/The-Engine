@@ -54,15 +54,14 @@ struct UserInterface {
 	List<UICheckBox> checkBoxes;
 	List<UIContainer> containers;
 
+	UIButton& button();
+	UIContainer& container();
+	UIImage& image(Name name);
+	UICheckBox& checkBox(Bool& data);
+	UITextBox& textBox(String& data);
+	Window& window(String title, Area size, Bool decorated, WindowState state, Engine& engine);
+	Window& window(String title, Area size, Bool decorated, WindowState state, UIElement& element, Engine& engine);
+
 	UserInterface();
+	~UserInterface();
 };
-
-extern UserInterface ui;
-
-UIButton& button();
-UIContainer& container();
-UIImage& image(Name name);
-UICheckBox& checkBox(Bool& data);
-UITextBox& textBox(String& data);
-Window& window(String title, Area size, Bool decorated, WindowState state, Engine& engine);
-Window& window(String title, Area size, Bool decorated, WindowState state, UIElement& element, Engine& engine);

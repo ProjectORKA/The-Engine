@@ -6,7 +6,7 @@ Matrix Transform::matrix() {
 	Matrix m = Matrix(1);
 	m = glm::translate(m, location);
 	m = glm::toMat4(Quat(rotation)) * m;
-	m = glm::scale(m, Vec3(scale));
+	m = glm::scale(m, scale);
 	return m;
 }
 

@@ -16,14 +16,14 @@ enum Wrapping
 	clamped = GL_CLAMP_TO_EDGE,
 	border = GL_CLAMP_TO_BORDER
 };
-namespace Filter {
-	enum {
+//namespace Filter {
+	enum Filter : Int {
 		nearest = GL_NEAREST,
 		nearestMM = GL_NEAREST_MIPMAP_NEAREST,
 		linear = GL_LINEAR,
 		linearMM = GL_LINEAR_MIPMAP_LINEAR
 	};
-}
+//}
 
 struct CPUTexture {
 	Int width = 0;
@@ -32,8 +32,8 @@ struct CPUTexture {
 	Name name = "NULL";
 	Bool loaded = false;
 	Int wrapping = repeat;
-	Int farFilter = Filter::linear;
-	Int nearFilter = Filter::linear;
+	Filter farFilter = Filter::linear;
+	Filter nearFilter = Filter::linear;
 	DataType dataType = dataTypeByte;
 	union {
 		void* pixels = nullptr;

@@ -4,14 +4,14 @@ void proceduralWireframeAxisLines(CPUMesh& cpuMesh)
 {
 	cpuMesh.primitiveMode = PrimitiveMode::Lines;
 
-	cpuMesh.vertices = {
+	cpuMesh.positions = {
 		Vec3(0.0f, 0.0f, 0.0f),
 		Vec3(1.0f, 0.0f, 0.0f),
 		Vec3(0.0f, 1.0f, 0.0f),
 		Vec3(0.0f, 0.0f, 1.0f)
 	};
 
-	cpuMesh.uvs = {
+	cpuMesh.textureCoordinates = {
 		Vec2(0.0f, 0.0f),
 		Vec2(1.0f, 0.0f),
 		Vec2(0.0f, 1.0f),
@@ -25,7 +25,7 @@ void proceduralWireframeAxisLines(CPUMesh& cpuMesh)
 		Vec3(0.0f, 0.0f, 1.0f)
 	};
 
-	cpuMesh.colors = {
+	cpuMesh.vertexColors = {
 		Vec3(1.0f, 1.0f, 1.0f),
 		Vec3(1.0f, 1.0f, 1.0f),
 		Vec3(1.0f, 1.0f, 1.0f),
@@ -40,7 +40,7 @@ void proceduralWireframeAxisLines(CPUMesh& cpuMesh)
 }
 void proceduralPlaneMesh(CPUMesh& cpuMesh, Float width, Float height) {
 
-	cpuMesh.vertices =
+	cpuMesh.positions =
 	{
 		Vec3(+width, +height, 0.0f),
 		Vec3(+width, -height, 0.0f),
@@ -48,7 +48,7 @@ void proceduralPlaneMesh(CPUMesh& cpuMesh, Float width, Float height) {
 		Vec3(-width, -height, 0.0f)
 	};
 
-	cpuMesh.uvs = {
+	cpuMesh.textureCoordinates = {
 		Vec2(1.0f, 1.0f),
 		Vec2(1.0f, 0.0f),
 		Vec2(0.0f, 1.0f),
@@ -62,7 +62,7 @@ void proceduralPlaneMesh(CPUMesh& cpuMesh, Float width, Float height) {
 		Vec3(0.0f, 0.0f, 1.0f)
 	};
 
-	cpuMesh.colors = {
+	cpuMesh.vertexColors = {
 		Vec3(1.0f, 1.0f, 1.0f),
 		Vec3(1.0f, 1.0f, 1.0f),
 		Vec3(1.0f, 1.0f, 1.0f),
@@ -80,7 +80,7 @@ void proceduralWireframeCubeMesh(CPUMesh& cpuMesh, Float size, Float size2)
 {
 	cpuMesh.primitiveMode = PrimitiveMode::Lines;
 
-	cpuMesh.vertices = {
+	cpuMesh.positions = {
 		Vec3(size,size,1),
 		Vec3(size,size,0),
 		Vec3(size,size2,1),
@@ -91,7 +91,7 @@ void proceduralWireframeCubeMesh(CPUMesh& cpuMesh, Float size, Float size2)
 		Vec3(size2,size2,0)
 	};
 
-	cpuMesh.uvs = {
+	cpuMesh.textureCoordinates = {
 		Vec2(1.0f, 1.0f),
 		Vec2(1.0f, 1.0f),
 		Vec2(1.0f, 0.0f),
@@ -113,7 +113,7 @@ void proceduralWireframeCubeMesh(CPUMesh& cpuMesh, Float size, Float size2)
 		Vec3(0.0f, 0.0f, 1.0f)
 	};
 
-	cpuMesh.colors = {
+	cpuMesh.vertexColors = {
 	Vec3(1.0f, 1.0f, 1.0f),
 	Vec3(1.0f, 1.0f, 1.0f),
 	Vec3(1.0f, 1.0f, 1.0f),
