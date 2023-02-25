@@ -13,7 +13,7 @@
 
 //	About the code:
 //	The following C++ code is meant to be as clean and humanly readable as possible.
-//	If you are a human and you find that you can not read it please contect me :)
+//	If you are a human and you find that you can not read it please contact me :)
 //	The "Project ORKA" engine is divided into
 //		1. data stored in structs (yes everything is public)
 //		2. functions that act on that data in form of void or member functions
