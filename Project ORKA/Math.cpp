@@ -5,11 +5,11 @@
 void Graph::add(Float value) {
 	points.pushBack(value);
 }
-void loopWithin(Vec2& point, Float extend) {
+void loopWithinCentered(Vec2& point, Float extend) {
 	while (point.x < -extend) point.x += extend * 2;
-	while (point.x > +extend) point.x -= extend * 2;
+	while (point.x >= extend) point.x -= extend * 2;
 	while (point.y < -extend) point.y += extend * 2;
-	while (point.y > +extend) point.y -= extend * 2;
+	while (point.y >= extend) point.y -= extend * 2;
 }
 void removePointsInRadius(Vec3 point, Vector<Vec3>& points, Float radius) {
 	Vector<Vec3> available;
@@ -172,7 +172,7 @@ Index idOfClosestPoint(Vec2 origin, Vector<Vec2>& positions) {
 }
 Index idOfClosestPointInLoopingSpace(Vec2 origin, Vector<Vec2>& positions, Float extend) {
 	Index index = 0;
-	Float closestDistance = distanceToPointInLoopingSpace(origin, positions.first(),extend);
+	Float closestDistance = distanceToPointInLoopingSpace(origin, positions.first(), extend);
 	for (Index i = 1; i < positions.size(); i++) {
 		Float currentDistance = distanceToPointInLoopingSpace(origin, positions[i], extend);
 		if (currentDistance < closestDistance) {
@@ -212,12 +212,13 @@ Float approach(Float input, Float maxValue) {
 }
 Float lerp(Float a, Float b, Float alpha)
 {
+	if (isnan(b)) b = 0;
 	return (a * (1 - alpha)) + (b * alpha);
 }
 Float clerp(Float a, Float b, Float alpha)
 {
 	alpha = clamp(alpha, 0, 1);
-	return lerp(a,b,alpha);
+	return lerp(a, b, alpha);
 }
 Float deltaInLoopingSpace(Float a, Float b, Float extend) {
 	Float delta1 = b - a;
@@ -255,7 +256,7 @@ LDouble lerp(LDouble a, LDouble b, LDouble alpha)
 LDouble clerp(LDouble a, LDouble b, LDouble alpha)
 {
 	alpha = clamp(alpha, 0, 1);
-	return lerp(a,b,alpha);
+	return lerp(a, b, alpha);
 }
 
 Vec2 vectorFromAToB(Vec2 a, Vec2 b) {
@@ -366,6 +367,19 @@ Orientation::Orientation(Vec3 direction, Vec3 up) {
 	y = cross(normalize(z), x);
 }
 
+Matrix clerp(Matrix a, Matrix b, Float alpha) {
+	alpha = clamp(alpha, 0, 1);
+
+	Matrix m = Matrix(
+		lerp(a[0].x, b[0].x, alpha), lerp(a[0].y, b[0].y, alpha), lerp(a[0].z, b[0].z, alpha), lerp(a[0].w, b[0].w, alpha),
+		lerp(a[1].x, b[1].x, alpha), lerp(a[1].y, b[1].y, alpha), lerp(a[1].z, b[1].z, alpha), lerp(a[1].w, b[1].w, alpha),
+		lerp(a[2].x, b[2].x, alpha), lerp(a[2].y, b[2].y, alpha), lerp(a[2].z, b[2].z, alpha), lerp(a[2].w, b[2].w, alpha),
+		lerp(a[3].x, b[3].x, alpha), lerp(a[3].y, b[3].y, alpha), lerp(a[3].z, b[3].z, alpha), lerp(a[3].w, b[3].w, alpha)
+	);
+
+	return m;
+}
+
 Matrix matrixFromScale(Vec2 s) {
 	Matrix m;
 	m[0] = Vec4(s.x, 0, 0, 0);
@@ -452,6 +466,7 @@ Matrix matrixFromLocationAndSize(Vec3 location, Float size)
 	m[3] = Vec4(location, 1);
 	return m;
 }
+
 Matrix matrixFromLocationAndSize(Vec2 location, Float size)
 {
 	Matrix m(size);

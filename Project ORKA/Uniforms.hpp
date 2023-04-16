@@ -3,7 +3,7 @@
 
 #include "Basics.hpp"
 #include "GraphicsAPI.hpp"
-#include "Engine.hpp"
+#include "ResourceManager.hpp"
 
 struct GlobalUniformData {
 	//values have to be layed out in blocks of 16 bytes in memory
@@ -44,7 +44,7 @@ struct Uniforms {
 	void upload();
 	void destroy();
 	void resetMatrices();
-	void create(Engine& engine);
+	void create(ResourceManager& resourceManager);
 
 	Float& time();
 	Vec4& sunDir();

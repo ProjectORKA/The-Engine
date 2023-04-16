@@ -4,8 +4,7 @@
 #include <iostream>
 #include "Basics.hpp"
 
-#define DEBUG
-
+//#define DEBUG
 //#define MEMORY_LEAK_DETECTION //slows down the program a lot
 
 #ifdef MEMORY_LEAK_DETECTION
@@ -44,3 +43,10 @@ void logDebug(T t) {
 	std::cout << "Debug: " << t << "\n";
 #endif // DEBUG
 }
+
+template <typename T>
+void logDebug(Vector<T> vec) {
+#ifdef DEBUG
+	for (auto v : vec) logDebug(v);
+#endif // DEBUG
+};

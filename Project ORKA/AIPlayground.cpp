@@ -7,13 +7,13 @@ AIPlayground::AIPlayground() {
 	network = NeuralNet(structure);
 }
 
-void AIPlayground::render(Engine& engine, Window& window, TiledRectangle area)
+void AIPlayground::render(ResourceManager& resourceManager, Window& window, TiledRectangle area)
 {
-	Renderer& renderer = window.renderer;
+	Renderer& r = window.renderer;
 
-	renderer.screenSpace();
-	renderer.useShader(engine, "color");
-	renderer.setAlphaBlending(true);
+	r.screenSpace();
+	r.useShader(resourceManager, "color");
+	r.setAlphaBlending(true);
 
 	Vector<Float> inputVector;
 	Vector<Float> targetVector;
@@ -24,8 +24,8 @@ void AIPlayground::render(Engine& engine, Window& window, TiledRectangle area)
 
 	network.input(inputVector);
 	network.propagateForward();
-	network.render(engine, area.size, renderer);
+	network.render(resourceManager, r, area.size);
 	network.propagateBackward(targetVector);
 
-	renderer.renderText(engine, String(toString(1.0f / renderer.time.delta)), Vec2(50), fonts.heading);
+	r.textRenderSystem.render(resourceManager, r, String(toString(1.0f / r.time.delta)), Vec2(50));
 }

@@ -7,8 +7,8 @@ MelonPlayer::MelonPlayer() {
 	camera.nearClipValue = 0.125;
 	camera.farClipValue = 256;
 }
-void MelonPlayer::update(Window & window) {
 
+void MelonPlayer::update(Window & window) {
 	//mouse input
 	if (window.capturing) {
 		Vec3 delta = Vec3(Vec2(window.mouseDelta) * Vec2(mouseSensitivity), 0);
@@ -50,7 +50,8 @@ void MelonPlayer::update(Window & window) {
 	Vec3 cameraDesiredDelta = cameraTargetLocation - camera.location;
 	camera.location += cameraDesiredDelta * delta * 10.0f;
 }
-void MelonPlayer::render(Engine& engine, Window & window) {
+
+void MelonPlayer::render(ResourceManager& resourceManager, Window & window) {
 	Renderer& renderer = window.renderer;
 	
 	camera.setRotation(DVec3(PI/2,0,0));
@@ -58,16 +59,16 @@ void MelonPlayer::render(Engine& engine, Window & window) {
 	camera.render(renderer);
 
 	//render player
-	renderer.useShader(engine, "MelonUberShader");
+	renderer.useShader(resourceManager, "MelonUberShader");
 	renderer.uniforms().mMatrix(matrixFromOrientation(orientation, location, 0.5) * rotate(Matrix(1), -2 * distanceInRadians, Vec3(1, 0, 0)));
 	renderer.uniforms().customColor(Vec4(1));
-	renderer.renderMesh(engine, "melonPlayerRolling");
+	renderer.renderMesh(resourceManager, "melonPlayerRolling");
 
-	smoke.render(engine, renderer);
+	smoke.render(resourceManager, renderer);
 }
+
 void MelonPlayer::inputEvent(Window& window, InputEvent input) {
 	if (input == zoomIn)zoomFactor++;
 	if (input == zoomOut)zoomFactor--;
 	zoomFactor = clamp(zoomFactor, -3, 30);
-	logDebug(zoomFactor);
 }

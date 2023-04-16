@@ -5,6 +5,7 @@
 #include "Renderer.hpp"
 #include "WindowAPI.hpp" //needs to be below the rendering stuff, e.g. "Renderer.hpp"
 #include "UIElement.hpp"
+#include "LifeTimeGuard.hpp"
 
 //#define DEBUG_ID_BUFFER
 
@@ -20,12 +21,11 @@ enum WindowDecoration {
 	undecorated = 0,
 };
 
-struct Window {
+struct Window : public LifetimeGuard{
 
 	Renderer renderer;
 
 	APIWindow apiWindow = nullptr;
-
 
 	UShort id = 0;
 	Thread thread;
@@ -74,7 +74,7 @@ struct Window {
 	void setPosition(IVec2 position);
 	void resize(Int width, Int height);
 	void createAPIWindow(String title, Area size);
-	void create(String title, Area size, Bool decorated, WindowState state, Engine& engine);
+	void create(String title, Area size, Bool decorated, WindowState state, ResourceManager& resourceManager);
 
 	Bool shouldClose();
 	Bool isCapturing();
@@ -88,7 +88,7 @@ struct Window {
 	Window& insert(UIElement& element);
 };
 
-void windowThread(Engine& engine, Window& window);
+void windowThread(ResourceManager& resourceManager, Window& window);
 
 //window callbacks
 void whenWindowCloseRequest(APIWindow apiWindow);

@@ -48,9 +48,9 @@ void GPUTexture::unload() {
 		loaded = false;
 	}
 }
-void GPUTexture::load(Engine& engine, Name name) {
+void GPUTexture::load(ResourceManager& resourceManager, Name name) {
 	CPUTexture t;
-	t.load(engine, name);
+	t.load(resourceManager, name);
 	load(t);
 }
 void GPUTexture::resize(Area size)

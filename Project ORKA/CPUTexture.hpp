@@ -2,7 +2,7 @@
 #pragma once
 
 #include "GraphicsAPI.hpp"
-#include "Engine.hpp"
+#include "ResourceManager.hpp"
 
 enum DataType {
 	dataTypeByte = GL_UNSIGNED_BYTE,
@@ -54,7 +54,7 @@ struct CPUTexture {
 
 	void unload();
 	void load(Path path, Name name);
-	void load(Engine& engine, Name name);
+	void load(ResourceManager& resourceManager, Name name);
 
 	Index xyToIndex(Int x, Int y, Int channel);
 

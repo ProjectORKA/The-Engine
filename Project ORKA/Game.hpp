@@ -9,9 +9,9 @@ struct GameSimulation {
 	Float tickrate = 60;
 	Bool keepRunning = false;
 
-	void stop();
-	void start(Engine& engine);
-	virtual void create(Engine& engine) {};
+	virtual void stop();
+	virtual void start(ResourceManager& resourceManager);
+	virtual void create(ResourceManager& resourceManager) {};
 	virtual void destroy() {};
 	virtual void update(Float delta) {};
 };

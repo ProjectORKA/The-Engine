@@ -3,36 +3,28 @@
 #include "Basics.hpp"
 #include "Game.hpp"
 
+struct User {
+	String firstName;
+	String lastName;
+	String email;
+};
 
 struct Task {
 	Name name = "empty";
-	TimePoint lastExecution = now();
-	Duration preferredTimeBetweenExecutions = FHours(24);
-	Float priority = 0.0;
+	//UInt priority = -1;
+	//Float severity = 0.0;
+	//TimePoint lastExecution = now();
+	//TimePoint creationDate = now();
+	//Duration preferredTimeBetweenExecutions = FHours(24);
 
-	void create(Name name, Float repetitionTimeInHours) {
-		this->name = name;
-		preferredTimeBetweenExecutions = FHours(repetitionTimeInHours);
-	};
-
-	void update() {
-		FHours h = lastExecution - now();
-		priority = h / preferredTimeBetweenExecutions;
-	};
-
-	void print() {
-		std::cout << priority << "\n";
-	}
 };
 
 struct Organizer : public GameRenderer{
+	Vector<User> users;
 	Vector<Task> tasks;
 
-	void update(Window& window) override {
-		for (Task& t : tasks) {
-			t.update();
-		}
-	}
-	void render(Window& window, TiledRectangle area) override {
-	};
+	void addUser(User user);
+	void addTask(Task task);
+	void update(Window& window) override;
+	void render(ResourceManager& resourceManager, Window& window, TiledRectangle area) override;
 };

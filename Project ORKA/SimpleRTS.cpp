@@ -1,14 +1,24 @@
 
 #include "SimpleRTS.hpp"
-#include "Engine.hpp"
+#include "ResourceManager.hpp"
 #include "UserInterface.hpp"
 
 void SimpleRTSRenderer::update(Window& window) {
+	terrainRenderingSystem.update(sim->terrainSystem, player.camera.location);
 	player.update(window);
 }
-void SimpleRTSRenderer::render(Engine& engine, Window& window, TiledRectangle area) {
+void SimpleRTSRenderer::create(ResourceManager& resourceManager, Window& window) {
+	terrainRenderingSystem.create(resourceManager);
+};
+void SimpleRTSRenderer::inputEvent(Window& window, InputEvent input) {
+	if (input == enter) window.captureCursor();
+	if (input == exit) window.uncaptureCursor();
+	if (input == toggleWireframe) wireframeMode = !wireframeMode;
+	player.inputEvent(window, input);
+}
+void SimpleRTSRenderer::render(ResourceManager& resourceManager, Window& window, TiledRectangle area) {
 	Renderer& renderer = window.renderer;
-	
+
 	mutex.lock();
 
 	renderer.setWireframeMode();
@@ -17,24 +27,23 @@ void SimpleRTSRenderer::render(Engine& engine, Window& window, TiledRectangle ar
 
 	//sky
 	renderer.setDepthTest(false);
-	renderer.useShader(engine, "color");
+	renderer.useShader(resourceManager, "color");
 	renderer.fill(Color(0.207143, 0.722031, 1.0f, 1));
-	renderer.uniforms().sunDir(Vec4(normalize(Vec3(1)),1));
-	renderer.renderMesh(engine, "fullScreenQuad");
+	renderer.uniforms().sunDir(Vec4(normalize(Vec3(1)), 1));
+	renderer.renderMesh(resourceManager, "fullScreenQuad");
 	renderer.setDepthTest(true);
 
 	renderer.fill(Color(1.0f));
 
+	renderer.setWireframeMode(wireframeMode);
+
 	//prepare rendering scene
 	renderer.uniforms().mMatrix() = Matrix(1);
-	renderer.useShader(engine, "simpleRTS");
-	player.render(engine, window);
+	renderer.useShader(resourceManager, "simpleRTS");
+	player.render(resourceManager, window);
 
-
-
-	//ground plane
-	renderer.uniforms().mMatrix(matrixFromScale(SIMPLERTS_MAPSIZE));
-	renderer.renderMesh(engine, "FloatingIsland");
+	renderer.fill(Color(0.1, 0.4, 0.0f, 1));
+	terrainRenderingSystem.render(renderer);
 
 	////render trees that are about to be cut
 	//for (UInt i = 0; i < sim->humanCount; i++) {
@@ -48,7 +57,8 @@ void SimpleRTSRenderer::render(Engine& engine, Window& window, TiledRectangle ar
 	renderer.uniforms().mMatrix(Matrix(1));
 
 
-	sim->render(engine, renderer);
+	sim->render(resourceManager, renderer);
+
 
 	////berry bushes
 	//renderer.matrixSystem.matrixArray(sim->bushPosition, sim->bushDirection);
@@ -77,18 +87,12 @@ void SimpleRTSRenderer::render(Engine& engine, Window& window, TiledRectangle ar
 	//ui
 	renderer.setDepthTest(false);
 	renderer.screenSpace();
-	renderer.renderText(engine, String(toString(1.0f / renderer.time.delta)), Vec2(50), fonts.heading);
-
+	renderer.textRenderSystem.setStyle(fonts.heading);
+	renderer.textRenderSystem.render(resourceManager, renderer, String(toString(1.0f / renderer.time.delta)), Vec2(50));
+	renderer.textRenderSystem.setStyle(fonts.debug);
 	////////////////////////
 
 	mutex.unlock();
-}
-void SimpleRTSRenderer::inputEvent(Window& window, InputEvent input) {
-
-	if (input == enter) window.captureCursor();
-	if (input == exit) window.uncaptureCursor();
-
-	player.inputEvent(window, input);
 }
 
 
@@ -263,10 +267,7 @@ void SimpleRTSRenderer::inputEvent(Window& window, InputEvent input) {
 
 SimpleRTSSimulation::SimpleRTSSimulation() {
 
-	trees.create(*this);
-
-
-
+	//trees.create(*this);
 
 	//generateTerrain();
 
@@ -292,8 +293,7 @@ SimpleRTSSimulation::SimpleRTSSimulation() {
 	//}
 }
 void SimpleRTSSimulation::update(Float timestep) {
-	trees.update(*this);
-
+	//trees.update(*this);
 	//treeSimulation.update();
 	//humanitySimulation;
 	//bushSimulation;
@@ -301,11 +301,10 @@ void SimpleRTSSimulation::update(Float timestep) {
 	//rabbitSimulation;
 }
 
-void Trees::update(SimpleRTSSimulation& simulation) {
-	for (UInt i = 0; i < treeCount; i++) {
-		treeAge[i] += simulation.timestep;
-		treeSize[i] = calculateTreeSize(i);
+void SimpleRTSSimulation::render(ResourceManager& resourceManager, Renderer& renderer) {
+	//trees.render(resourceManager, renderer);
+}
 
-		if (treeAge[i] >= lifeExpectancy[i]) cutTree(i);
-	}
+Vec2 randomSpawnPosition() {
+	return randomVec2(SIMPLERTS_MAPSIZE);
 }

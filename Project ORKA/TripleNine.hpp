@@ -30,8 +30,8 @@ struct TripleNineEnemy : UIElement {
 	void die() {
 		position = Vec3(randomVec2(-85, 85), 0);
 	}
-	void render(Engine& engine, Renderer& renderer);
-	void renderInteractive(Engine& engine, Window& window, TiledRectangle area) override;
+	void render(ResourceManager& resourceManager, Renderer& renderer);
+	void renderInteractive(ResourceManager& resourceManager, Window& window, TiledRectangle area) override;
 };
 
 struct TripleNinePlayer : public Player {
@@ -192,12 +192,7 @@ struct TripleNinePlayer : public Player {
 struct TripleNineSimulation : public GameSimulation {
 	Vector<TripleNineEnemy> enemies;
 
-	void create() {
-		//create targets
-		for (Int i = 0; i < 100; i++) {
-			createEnemy();
-		}
-	}
+	void create();
 	void createEnemy();
 };
 
@@ -214,29 +209,20 @@ struct TripleNineRenderer : public GameRenderer {
 	InputEvent toggleBloom = InputEvent(InputType::KeyBoard, B, 0);
 	InputEvent reloadShaders = InputEvent(InputType::KeyBoard, T, 0);
 
-	void connect(TripleNineSimulation & sim) {
-		this->sim = &sim;
-	}
 	void update(Window& window) override;
-	void renderBloom(Engine& e, Renderer& r);
-	void create(Engine& engine, Window& window) override;
+	void connect(TripleNineSimulation & sim);
 	void inputEvent(Window& window, InputEvent input) override;
-	void render(Engine& engine, Window& window, TiledRectangle area) override;
-	void renderInteractive(Engine& engine, Window& window, TiledRectangle area) override;
+	void renderBloom(ResourceManager& resourceManager, Renderer& r);
+	void create(ResourceManager& resourceManager, Window& window) override;
+	void render(ResourceManager& resourceManager, Window& window, TiledRectangle area) override;
+	void renderInteractive(ResourceManager& resourceManager, Window& window, TiledRectangle area) override;
 };
 
 struct TripleNine {
-	Engine engine;
+	ResourceManager resourceManager;
 	UserInterface ui;
-	TripleNineRenderer player1;
-	TripleNineRenderer player2;
+	TripleNineRenderer renderer;
 	TripleNineSimulation simulation;
 
-	void run() {
-		simulation.create();
-		player1.connect(simulation);
-		player2.connect(simulation);
-		ui.window("Triple Nine", Area(1920, 1080), true, WindowState::windowed, player1, engine);
-		ui.run();
-	};
+	void run();
 };

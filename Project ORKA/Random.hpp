@@ -14,6 +14,7 @@ ULL random(ULL size);
 Vec3 randomUnitVec3();
 Vec2 randomUnitVec2();
 Int randomInt(Int high);
+UInt randomUInt(UInt high);
 Vec3 randomVec3(Vec3 high);
 Vec2 randomVec2(Float high);
 Vec3 randomVec3(Float high);

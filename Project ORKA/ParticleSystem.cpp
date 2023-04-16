@@ -36,14 +36,14 @@ void ParticleSystem::spawn(Vec3 loc,Vec3 vel) {
 	lifetime[currentID] = 0;
 	alive[currentID] = true;
 }
-void ParticleSystem::render(Engine& engine, Renderer& renderer) {
+void ParticleSystem::render(ResourceManager& resourceManager, Renderer& renderer) {
 	static Vector<Vec4> pos;
 	pos.clear();
 	for (Int i = 0; i < particleCount; i++) {
 		if (alive[i])pos.pushBack(Vec4(transformation[i]));
 	}
 	renderer.matrixSystem.matrixArray(pos);
-	renderer.renderMeshInstanced(engine, "melonSmokeParticle");
+	renderer.renderMeshInstanced(resourceManager, "melonSmokeParticle");
 }
 ParticleSystem::ParticleSystem(U16 particleCount) {
 	this->particleCount = particleCount;
@@ -60,6 +60,7 @@ ParticleSystem::ParticleSystem(U16 particleCount) {
 }
 Float particleSizeFunction(Float particleRelativeLifeTime) {
 	return particleRelativeLifeTime - pow(particleRelativeLifeTime, 5);
+	//return 1-particleRelativeLifeTime;
 }
 void ParticleSystem::update(Vec3 location, Renderer& renderer) {
 	delta += renderer.time.delta;

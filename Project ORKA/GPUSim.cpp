@@ -1,7 +1,7 @@
 #include "GPUSim.hpp"
 
 
-inline void GPUSimRenderer::render(Engine & engine, Window& window, TiledRectangle area) {
+inline void GPUSimRenderer::render(ResourceManager& resourceManager, Window& window, TiledRectangle area) {
 	Renderer& renderer = window.renderer;
 
 	if (!initialized) {
@@ -14,9 +14,9 @@ inline void GPUSimRenderer::render(Engine & engine, Window& window, TiledRectang
 
 		renderer.clearColor(Color(1));
 		renderer.renderRegion.set(TiledRectangle(50, 50, 50, 50));
-		renderer.useShader(engine, "color");
+		renderer.useShader(resourceManager, "color");
 		renderer.fill(Color(0));
-		renderer.renderMesh(engine, "fullScreenQuad");
+		renderer.renderMesh(resourceManager, "fullScreenQuad");
 
 		renderer.framebufferSystem.framebuffers.emplaceBack();
 		renderer.framebufferSystem.framebuffers.last().create(Area(512));
@@ -26,7 +26,7 @@ inline void GPUSimRenderer::render(Engine & engine, Window& window, TiledRectang
 		renderer.framebufferSystem.framebuffers.last().draw();
 
 		renderer.clearColor(Color(1));
-		renderer.renderMesh(engine, "fullScreenQuad");
+		renderer.renderMesh(resourceManager, "fullScreenQuad");
 
 		initialized = true;
 	}
@@ -42,8 +42,8 @@ inline void GPUSimRenderer::render(Engine & engine, Window& window, TiledRectang
 	renderer.framebufferSystem.draw(renderer, 0);
 	renderer.aspectCorrectNormalizedSpace();
 	//renderer.clearColor(Color(1));
-	renderer.useShader(engine, "final");
-	renderer.renderMesh(engine, "fullScreenQuad");
+	renderer.useShader(resourceManager, "final");
+	renderer.renderMesh(resourceManager, "fullScreenQuad");
 
 
 	//swap buffers
