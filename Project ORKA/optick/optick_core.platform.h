@@ -36,7 +36,7 @@ namespace Optick
 	struct Trace;
 	struct Module;
 	struct Symbol;
-	struct SymbolEngine;
+	struct SymbolresourceManager;
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Platform API
@@ -56,7 +56,7 @@ namespace Optick
 		// System Tracer
 		static OPTICK_INLINE Trace* CreateTrace();
 		// Symbol Resolver
-		static OPTICK_INLINE SymbolEngine* CreateSymbolEngine();
+		static OPTICK_INLINE SymbolresourceManager* CreateSymbolresourceManager();
 	};
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -98,7 +98,7 @@ namespace Optick
 		{}
 	};
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	struct SymbolEngine
+	struct SymbolresourceManager
 	{
 		// Get list of loaded modules
 		virtual const vector<Module>& GetModules() = 0;
@@ -106,7 +106,7 @@ namespace Optick
 		// Get Symbol from address
 		virtual const Symbol* GetSymbol(uint64 dwAddress) = 0;
 
-		virtual ~SymbolEngine() {};
+		virtual ~SymbolresourceManager() {};
 	};
 }
 //////////////////////////////////////////////////////////////////////////

@@ -106,12 +106,12 @@ void NeighbourQuadtreeNode::update(Vec3 location) {
 		c11->update(location);
 	}
 }
-void NeighbourQuadtreeNode::render(Engine& engine, Renderer& renderer) {
+void NeighbourQuadtreeNode::render(ResourceManager& resourceManager, Renderer& renderer) {
 	if (subdivided) {
-		c00->render(engine, renderer);
-		c01->render(engine, renderer);
-		c10->render(engine, renderer);
-		c11->render(engine, renderer);
+		c00->render(resourceManager, renderer);
+		c01->render(resourceManager, renderer);
+		c10->render(resourceManager, renderer);
+		c11->render(resourceManager, renderer);
 	}
 	else {
 		Transform t;
@@ -119,15 +119,15 @@ void NeighbourQuadtreeNode::render(Engine& engine, Renderer& renderer) {
 		t.scale = Vec3(pow(2, -level+1));
 		t.render(renderer);
 		renderer.fill(color);
-		renderer.useShader(engine, "color");
-		renderer.renderMesh(engine, "plane");
+		renderer.useShader(resourceManager, "color");
+		renderer.renderMesh(resourceManager, "plane");
 
 		//render connections
 		if (level > 0) {
-			renderer.arrow(engine, position + Vec3(0), nrr().position + Vec3(0));
-			renderer.arrow(engine, position + Vec3(0), nlr().position + Vec3(0));
-			renderer.arrow(engine, position + Vec3(0), nfr().position + Vec3(0));
-			renderer.arrow(engine, position + Vec3(0), nbr().position + Vec3(0));
+			renderer.arrow(resourceManager, position + Vec3(0), nrr().position + Vec3(0));
+			renderer.arrow(resourceManager, position + Vec3(0), nlr().position + Vec3(0));
+			renderer.arrow(resourceManager, position + Vec3(0), nfr().position + Vec3(0));
+			renderer.arrow(resourceManager, position + Vec3(0), nbr().position + Vec3(0));
 		}
 	}
 }
@@ -195,6 +195,6 @@ void NeighbourQuadtree::destroy() {
 void NeighbourQuadtree::update(Vec3 location) {
 	root.update(location);
 }
-void NeighbourQuadtree::render(Engine& engine, Renderer& renderer) {
-	root.render(engine, renderer);
+void NeighbourQuadtree::render(ResourceManager& resourceManager, Renderer& renderer) {
+	root.render(resourceManager, renderer);
 }

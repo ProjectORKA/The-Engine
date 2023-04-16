@@ -3,8 +3,8 @@
 
 String uniformName = "/uniforms.glsl";
 
-void ShaderSystem::create(Engine & engine) {
-	uniforms.create(engine);
+void ShaderSystem::create(ResourceManager& resourceManager) {
+	uniforms.create(resourceManager);
 	loadDefaultShader();
 }
 void ShaderSystem::rebuild()
@@ -62,14 +62,14 @@ Index ShaderSystem::use(Index shaderProgramID)
 	currentShaderProgram().select();
 	return currentShaderProgramID;
 }
-void ShaderSystem::add(Engine engine, Name name)
+void ShaderSystem::add(ResourceManager& resourceManager, Name name)
 {
 	shaderPrograms.emplaceBack();
-	shaderPrograms.last().create(engine, name, uniforms);
+	shaderPrograms.last().create(resourceManager, name, uniforms);
 	currentShaderProgramID = shaderPrograms.size() - 1;
 	shaderNames[name] = currentShaderProgramID;
 }
-Index ShaderSystem::use(Engine engine, Name name)
+Index ShaderSystem::use(ResourceManager & resourceManager, Name name)
 {
 	auto it = shaderNames.find(name);
 	if (it != shaderNames.end()) {
@@ -77,7 +77,7 @@ Index ShaderSystem::use(Engine engine, Name name)
 	}
 	else {
 		//try loading the shader
-		add(engine, name);
+		add(resourceManager, name);
 		it = shaderNames.find(name);
 		if (it != shaderNames.end()) {
 			use(it->second);
@@ -92,8 +92,8 @@ ShaderProgram& ShaderSystem::currentShaderProgram()
 {
 	return shaderPrograms[currentShaderProgramID];
 }
-Index ShaderSystem::getShaderID(Engine& engine, Name name) {
-	use(engine,name);
+Index ShaderSystem::getShaderID(ResourceManager& resourceManager, Name name) {
+	use(resourceManager,name);
 	return currentShaderProgramID;
 }
 void ShaderSystem::add(Shader& vertexShader, Shader& fragmentShader, Name name)

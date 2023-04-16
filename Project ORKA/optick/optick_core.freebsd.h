@@ -67,7 +67,7 @@ namespace Optick
 		return nullptr;
 	}
 
-	SymbolEngine* Platform::CreateSymbolEngine()
+	SymbolresourceManager* Platform::CreateSymbolresourceManager()
 	{
 		return nullptr;
 	}

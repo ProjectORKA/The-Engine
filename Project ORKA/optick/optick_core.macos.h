@@ -298,7 +298,7 @@ Trace* Platform::CreateTrace()
 	return Memory::New<DTrace>();
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-SymbolEngine* Platform::CreateSymbolEngine()
+SymbolresourceManager* Platform::CreateSymbolresourceManager()
 {
 	return nullptr;
 }

@@ -14,14 +14,14 @@ struct MooncrashPlayer : public PlanetSystemPlayer {
 
 	MooncrashPlayer();
 	void update(Window& window) override;
-	void render(Engine& engine, Window& window) override;
+	void render(ResourceManager& resourceManager, Window& window) override;
 };
 
 struct MooncrashSimulation : public GameSimulation {
 	Time time;
 	PlanetSystem planetSystem;
 	void update(Float delta) override;
-	void create(Engine& engine) override;
+	void create(ResourceManager& resourceManager) override;
 };
 
 struct MooncrashRenderer : public GameRenderer {
@@ -50,12 +50,22 @@ struct MooncrashRenderer : public GameRenderer {
 		player.speedExponent = 200;
 	};
 	void inputEvent(Window& window, InputEvent input) override;
-	void render(Engine& engine, Window& window, TiledRectangle area) override;
+	void render(ResourceManager& resourceManager, Window& window, TiledRectangle area) override;
 };
 
-void renderMooncrashAtmosphere(Engine& engine, Renderer& renderer, MooncrashPlayer& player);
-void renderPlanet(Engine& engine, Renderer& renderer, PlanetSystem& planetSystem, PlanetSystemPlayer& player);
+void renderMooncrashAtmosphere(ResourceManager& resourceManager, Renderer& renderer, MooncrashPlayer& player);
+void renderPlanet(ResourceManager& resourceManager, Renderer& renderer, PlanetSystem& planetSystem, PlanetSystemPlayer& player);
 
 struct Mooncrash{
+	ResourceManager resourceManager; 
+	UserInterface ui;
+	MooncrashSimulation sim;
 	MooncrashRenderer renderer;
+
+	void run() {
+		renderer.simulation = &sim;
+
+		ui.window("Mooncrash", Area(1920, 1080), true, WindowState::fullscreen, renderer, resourceManager);
+		ui.run();
+	}
 };

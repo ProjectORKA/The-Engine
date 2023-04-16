@@ -21,7 +21,7 @@ struct GPUTexture {
 	void use(Index textureID);
 	void attachTexture(Int slot);
 	void load(CPUTexture& cpuTexture);
-	void load(Engine& engine, Name name);
+	void load(ResourceManager& resourceManager, Name name);
 	void setFilters(Filter nearFilter, Filter farFilter) {
 		this->nearFilter = nearFilter;
 		this->farFilter = farFilter;

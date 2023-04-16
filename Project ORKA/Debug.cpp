@@ -17,7 +17,6 @@ void logError(String message)
 #ifdef DEBUG
 	if(showError) std::cout <<	"Error: " << message << "\n";
 	beep();
-	sleep(3000);
 	__debugbreak();
 	pause();
 #endif // DEBUG
@@ -33,6 +32,7 @@ void beep() {
 	std::cout << '\a';
 }
 void pause() {
+#ifdef DEBUG
 #ifdef _WIN32
 	system("pause");
 #else
@@ -40,6 +40,7 @@ void pause() {
 	char a;
 	std::cin >> a;
 #endif
+#endif // DEBUG
 }
 void logDebug(ULL t) {
 #ifdef DEBUG

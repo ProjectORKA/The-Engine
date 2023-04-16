@@ -25,6 +25,6 @@ struct UISandbox : public GameRenderer {
 	UISandbox();
 	void update(Window& window)override;
 	void inputEvent(Window& window, InputEvent input) override;
-	void render(Engine& engine, Window& window, TiledRectangle area) override;
-	void renderInteractive(Engine& engine, Window& window, TiledRectangle area) override;
+	void render(ResourceManager& resourceManager, Window& window, TiledRectangle area) override;
+	void renderInteractive(ResourceManager& resourceManager, Window& window, TiledRectangle area) override;
 };

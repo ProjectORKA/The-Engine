@@ -3,7 +3,6 @@
 
 #include "ShaderProgram.hpp"
 #include "GPUBuffer.hpp"
-#include "Engine.hpp"
 
 struct ShaderSystem {
 	Uniforms uniforms;
@@ -15,10 +14,10 @@ struct ShaderSystem {
 	void rebuild();
 	void loadDefaultShader();
 	Index use(Index shaderID);
-	void create(Engine& engine);
-	void add(Engine engine, Name name);
-	Index use(Engine engine, Name name);
 	ShaderProgram& currentShaderProgram();
-	Index getShaderID(Engine& engine, Name name);
+	void create(ResourceManager& resourceManager);
+	void add(ResourceManager & resourceManager, Name name);
+	Index use(ResourceManager& resourceManager, Name name);
+	Index getShaderID(ResourceManager& resourceManager, Name name);
 	void add(Shader& vertexShader, Shader& fragmentShader, Name name);
 };

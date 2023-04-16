@@ -5,7 +5,6 @@
 #include "ShaderSystem.hpp"
 #include "MeshSystem.hpp"
 #include "TextureSystem.hpp"
-#include "Engine.hpp"
 
 struct Renderer;
 
@@ -40,8 +39,8 @@ struct RenderObjectSystem {
 	void select(Index id);
 	void render(Index id);
 	void create(Renderer& renderer);
-	void render(Engine& engine,Name name);
-	void select(Engine& engine, Name name);
+	void render(ResourceManager& resourceManager,Name name);
+	void select(ResourceManager& resourceManager, Name name);
 	Index addRenderObject(RenderObject& renderObject);
 	void addRenderObject(RenderObjectNames renderobject);
 	void addRenderObject(Name name, Name meshName, Name textureName, Name shaderName);

@@ -180,11 +180,11 @@ void CPUTexture::load(Path path, Name name)
 
 	if (pixels) loaded = true; else logEvent("Texture not loaded! Searching for different file format...");
 }
-void CPUTexture::load(Engine & engine, Name name) {
+void CPUTexture::load(ResourceManager& resourceManager, Name name) {
 	if (!loaded) {
 		//search in resource manager
-		auto it = engine.resourceManager.textureResources.find(name);
-		if (it != std::end(engine.resourceManager.textureResources)) {
+		auto it = resourceManager.textureResources.find(name);
+		if (it != std::end(resourceManager.textureResources)) {
 			load(it->second, name);
 		}
 		else {
@@ -195,12 +195,10 @@ void CPUTexture::load(Engine & engine, Name name) {
 		logWarning("Texture already loaded, you are trying to load it again, something must be wrong!");
 	}
 }
-
 Index CPUTexture::xyToIndex(Int x, Int y, Int channel)
 {
 	return channels * (y * width + x) + channel;
 }
-
 CPUTexture::~CPUTexture()
 {
 	unload();

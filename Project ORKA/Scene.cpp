@@ -20,15 +20,16 @@ void Scene::loadFBX(Path path, ResourceManager& resourceManager) {
 		const aiScene* assimpScene = importer.ReadFile(path.string(),
 			aiProcess_GenUVCoords |
 			aiProcess_Triangulate |
-			//aiProcess_SortByPType |
-			//aiProcess_FindInvalidData |
-			//aiProcess_FindDegenerates |
-			//aiProcess_CalcTangentSpace |
+			aiProcess_SortByPType |
+			aiProcess_FindInvalidData |
+			aiProcess_FindDegenerates |
+			aiProcess_CalcTangentSpace |
 			aiProcess_GenSmoothNormals |
-			//aiProcess_ImproveCacheLocality |
-			//aiProcess_ValidateDataStructure |
-			//aiProcess_JoinIdenticalVertices |
-			aiProcess_RemoveRedundantMaterials
+			aiProcess_ImproveCacheLocality |
+			aiProcess_ValidateDataStructure |
+			aiProcess_JoinIdenticalVertices |
+			aiProcess_RemoveRedundantMaterials |
+			0
 		);
 
 		errorMessage = importer.GetErrorString();

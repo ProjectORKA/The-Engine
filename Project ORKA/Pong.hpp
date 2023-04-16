@@ -12,6 +12,7 @@ struct Window;
 struct PongPlayer {
 	ULL score = 0;
 	Vec2 position = Vec2(0,0);
+	Vec2 direction = Vec2(1, 0);
 
 	Bool shoot = false;
 
@@ -34,7 +35,7 @@ struct Ball {
 	Bool stuckToPaddle = true;
 	Bool stuckToPaddle1 = true;
 
-	void render(Engine& engine, Renderer& renderer);
+	void render(ResourceManager& resourceManager, Renderer& renderer);
 	void update(Float deltaTime, PongPlayer players[2]);
 };
 
@@ -53,16 +54,16 @@ struct PongRenderer : public GameRenderer {
 
 	Vector<Ball> balls;
 	void update(Window& window) override;
-	void render(Engine& engine, Window& window, TiledRectangle area) override;
+	void render(ResourceManager& resourceManager, Window& window, TiledRectangle area) override;
 };
 
 struct Pong {
-	Engine engine;
+	ResourceManager resourceManager;
 	UserInterface ui;
 	PongRenderer pongRenderer;
 
-	Pong() {
-		ui.window("Pong", Area(1920, 1080), true, WindowState::fullscreen, pongRenderer, engine);
+	void run() {
+		ui.window("Pong", Area(1920, 1080), true, WindowState::fullscreen, pongRenderer, resourceManager);
 		ui.run();
 	};
 };

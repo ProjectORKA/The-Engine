@@ -7,6 +7,16 @@
 
 struct TiledRectangle;
 
+struct Line2D {
+	Vec2 start;
+	Vec2 end;
+};
+
+struct Line3D {
+	Vec3 start;
+	Vec3 end;
+};
+
 struct Graph {
 	Vector<Float> points;
 
@@ -82,6 +92,7 @@ Matrix matrixFromLocation(Vec2 location);
 Matrix matrixFromLocation(Vec3 location);
 Matrix matrixFromOrientation(Orientation o);
 Matrix matrixFromAxis(Vec3 x, Vec3 y, Vec3 z);
+Matrix clerp(Matrix a, Matrix b, Float alpha);
 Matrix matrixFromTiledRectangle(TiledRectangle area);
 Matrix matrixFromRotation(Float x, Float y, Float z);
 Matrix matrixFromLocationAndSize2D(Vec2 pos, Vec2 size);
@@ -94,7 +105,8 @@ Matrix matrixFromLocationAndSize2D(Float x, Float y, Float w, Float h);
 Matrix matrixFromAxis(Vec3 x, Vec3 y, Vec3 z, Vec3 position, Float size);
 Matrix matrixFromLocationDirectionAndSize(Vec2 pos, Vec2 dir, Float size);
 
-void loopWithin(Vec2& point, Float extend);
+
+void loopWithinCentered(Vec2& point, Float extend);
 void removePointsInRadius(Vec3 point, Vector<Vec3>& points, Float radius);
 void getClosestPoint(Vec3 point, Vector<Vec3>& points, Index& closestID, Vec3& closestPoint);
 void spaceColonization(Vector<Vec3>& points, Vector<Vec3>& branches, Vector<Index>& connections, Float segmentSize, Float killRadius);

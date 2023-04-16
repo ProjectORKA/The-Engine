@@ -28,7 +28,7 @@ void Player::update(Window& window) {
 	}
 }
 
-void Player::render(Engine& engine, Window & window) {
+void Player::render(ResourceManager& resourceManager, Window & window) {
 	camera.render(window.renderer);		//set up matrices to view the world from cameras perspective
 }
 
