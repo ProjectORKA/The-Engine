@@ -3,8 +3,8 @@
 
 #include "Game.hpp"
 #include "Player.hpp"
-
 #include "KeyMap.hpp"
+#include "ResourceManager.hpp"
 
 struct SandboxRenderer : public GameRenderer {
 	Mutex mutex;
@@ -15,21 +15,16 @@ struct SandboxRenderer : public GameRenderer {
 	InputEvent exit = InputEvent(InputType::Mouse, RMB, 0);
 	InputEvent wireframeToogle = InputEvent(InputType::KeyBoard, F, 1);
 
-	void create(Engine& engine, Window& window) {
-		player.camera.location = Vec3(0, -5, 0);
-	};
 	void update(Window& window) override;
 	void inputEvent(Window& window, InputEvent input) override;
-	void render(Engine & engine, Window& window, TiledRectangle area) override;
+	void create(ResourceManager& resourceManager, Window& window);
+	void render(ResourceManager& resourceManager, Window& window, TiledRectangle area) override;
 };
 
 struct Sandbox {
-	Engine engine;
 	UserInterface ui;
+	ResourceManager resourceManager;
 	SandboxRenderer sandboxRenderer;
 
-	void run() {
-		ui.window("ORKA Sandbox", Area(1920, 1080), true, WindowState::maximized, sandboxRenderer, engine);
-		ui.run();
-	};
+	void run();
 };

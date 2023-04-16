@@ -2,7 +2,7 @@
 
 #include "Random.hpp"
 #include "Window.hpp"
-#include "Engine.hpp"
+#include "ResourceManager.hpp"
 
 struct Renderer;
 
@@ -29,6 +29,6 @@ struct MindMap {
 	void update();
 	void addNode();
 	void addForce(Index a, Vec2 force);
-	void render(Engine& engine, Renderer& renderer);
-	void renderInteractive(Engine& engine, Window& window);
+	void render(ResourceManager& resourceManager, Renderer& renderer);
+	void renderInteractive(ResourceManager& resourceManager, Window& window);
 };

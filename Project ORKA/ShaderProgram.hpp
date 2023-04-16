@@ -4,7 +4,7 @@
 #include "Uniforms.hpp"
 #include "Shader.hpp"
 #include "AutoConstruct.hpp"
-#include "Engine.hpp"
+#include "ResourceManager.hpp"
 
 struct ShaderProgram {
 	Bool isLoaded = false;
@@ -13,6 +13,6 @@ struct ShaderProgram {
 
 	void select();
 	void destroy();
-	void create(Engine engine, Name name, Uniforms& uniforms);
+	void create(ResourceManager& resourceManager, Name name, Uniforms& uniforms);
 	void create(Shader& vertexShader, Shader& fragmentShader, Uniforms& uniforms);
 };

@@ -1,58 +1,58 @@
 #include "Mooncrash.hpp"
 #include "Window.hpp"
 
-void MooncrashSimulation::create(Engine& engine) {
-	planetSystem.create(engine);
+void MooncrashSimulation::create(ResourceManager& resourceManager) {
+	planetSystem.create(resourceManager);
 }
 
 void MooncrashSimulation::update(Float timeStep) {
 	planetSystem.update();
 }
 
-void renderUI(Engine  & engine, Renderer& renderer, MooncrashPlayer& player) {
-	renderer.setWireframeMode(false);
-	renderer.setDepthTest(false);
+void renderUI(ResourceManager & resourceManager, Renderer& r, MooncrashPlayer& player) {
+	r.setWireframeMode(false);
+	r.setDepthTest(false);
 
-	renderer.screenSpace();
+	r.screenSpace();
 
-	String s = String("FrameTime: ").append(toString(renderer.time.delta));
-	renderer.renderText(engine, s, Vec2(0), fonts.debug);
+	String s = String("FrameTime: ").append(toString(r.time.delta));
+	r.textRenderSystem.render(resourceManager,r, s);
 
-	s = String("FPS: ").append(toString(1.0f / renderer.time.delta));
-	renderer.renderText(engine, s, Vec2(0, fonts.debug.absoluteSize), fonts.debug);
+	s = String("FPS: ").append(toString(1.0f / r.time.delta));
+	r.textRenderSystem.render(resourceManager, r, s, Vec2(0,fonts.debug.absoluteSize));
 
 	s = String("Speed: ").append(toString(player.speedExponent));
-	renderer.renderText(engine, s, Vec2(0, 2 * fonts.debug.absoluteSize), fonts.debug);
+	r.textRenderSystem.render(resourceManager, r, s, Vec2(0, 2 * fonts.debug.absoluteSize));
 
 	s = String("Camera height float: ").append(toString(player.camera.location.z));
-	renderer.renderText(engine, s, Vec2(0, 3 * fonts.debug.absoluteSize), fonts.debug);
+	r.textRenderSystem.render(resourceManager, r, s, Vec2(0, 3 * fonts.debug.absoluteSize));
 
 	s = String("Camera height ULL: ").append(toString(player.chunkLocation.z));
-	renderer.renderText(engine, s, Vec2(0, 4 * fonts.debug.absoluteSize), fonts.debug);
+	r.textRenderSystem.render(resourceManager, r, s, Vec2(0, 4 * fonts.debug.absoluteSize));
 
-	s = String("SunDir: ").append(toString(renderer.uniforms().sunDir().x).append(toString(renderer.uniforms().sunDir().y)).append(toString(renderer.uniforms().sunDir().z)));
-	renderer.renderText(engine, s, Vec2(0, 5 * fonts.debug.absoluteSize), fonts.debug);
+	s = String("SunDir: ").append(toString(r.uniforms().sunDir().x).append(toString(r.uniforms().sunDir().y)).append(toString(r.uniforms().sunDir().z)));
+	r.textRenderSystem.render(resourceManager, r, s, Vec2(0, 5 * fonts.debug.absoluteSize));
 }
-void renderMooncrashAtmosphere(Engine& engine, Renderer& renderer, MooncrashPlayer& player)
+void renderMooncrashAtmosphere(ResourceManager& resourceManager, Renderer& renderer, MooncrashPlayer& player)
 {
 	Bool culling = renderer.getCulling();
 	player.camera.renderOnlyRot(renderer);
 	renderer.uniforms().cameraPos() = Vec4(Vec3(0, 0, (Float(player.chunkLocation.z) + player.camera.location.z) / Float(ULLONG_MAX)), 1);
 	renderer.setCulling(false);
-	renderer.useShader(engine, "atmosphere");
+	renderer.useShader(resourceManager, "atmosphere");
 	renderer.framebufferSystem.currentDraw().setAsTexture(0); //[TODO]might not work if draw doesent bind; check
 
 	//renderer.setAlphaBlending(true);
 	//glBlendFunc(GL_ONE, GL_ONE);
 	renderer.setDepthTest(false);
 
-	renderer.renderMesh(engine, "centeredCube");
+	renderer.renderMesh(resourceManager, "centeredCube");
 	renderer.setCulling(culling);
 
 	//renderer.setAlphaBlending(false);
 	renderer.setDepthTest(true);
 }
-void renderPlanet(Engine& engine, Renderer& renderer, PlanetSystem& planetSystem, PlanetSystemPlayer& player) {
+void renderPlanet(ResourceManager& resourceManager, Renderer& renderer, PlanetSystem& planetSystem, PlanetSystemPlayer& player) {
 	//set modes
 	renderer.setAlphaBlending(false);
 	renderer.setDepthTest(true);
@@ -64,7 +64,7 @@ void renderPlanet(Engine& engine, Renderer& renderer, PlanetSystem& planetSystem
 
 	//render meshes
 	for (UShort level = 0; level < MAX_CHUNK_LEVEL; level++) {
-		renderer.planetRenderSystem.renderLevel(engine, planetSystem, renderer, player, level);
+		renderer.planetRenderSystem.renderLevel(resourceManager, planetSystem, renderer, player, level);
 	}
 };
 
@@ -158,7 +158,7 @@ void MooncrashPlayer::update(Window& window) {
 		}
 	}
 }
-void MooncrashPlayer::render(Engine& engine, Window & window) {
+void MooncrashPlayer::render(ResourceManager& resourceManager, Window & window) {
 	Renderer& renderer = window.renderer;
 
 	camera.render(renderer);
@@ -168,21 +168,21 @@ void MooncrashRenderer::update(Window& window) {
 	player.update(window);
 	window.renderer.planetRenderSystem.update(simulation->planetSystem, player);
 }
-void MooncrashRenderer::render(Engine& engine, Window& window, TiledRectangle area) {
+void MooncrashRenderer::render(ResourceManager& resourceManager, Window& window, TiledRectangle area) {
 	Renderer& renderer = window.renderer;
 
-	player.render(engine, window);
+	player.render(resourceManager, window);
 
 	renderer.uniforms().sunDir(player.skyRotation * Vec4(0, 0, 1, 0));
 
 	renderer.setWireframeMode(renderer.wireframeMode);
 
 	renderer.uniforms().mMatrix(player.skyRotation);
-	renderer.renderSky(engine, player.camera);
+	renderer.renderSky(resourceManager, player.camera);
 
 	//renderMooncrashAtmosphere(renderer, player);
 
-	renderPlanet(engine, renderer, simulation->planetSystem, player);
+	renderPlanet(resourceManager, renderer, simulation->planetSystem, player);
 	
 
 

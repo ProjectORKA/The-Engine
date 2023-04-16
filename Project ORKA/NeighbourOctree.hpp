@@ -60,4 +60,4 @@ struct NeighbourOctree {
 	void update(Vec3 location);
 };
 
-void renderNeighbourOctreeNode(Engine& engine, NeighbourOctreeNode& node, Renderer& renderer);
+void renderNeighbourOctreeNode(ResourceManager& resourceManager, NeighbourOctreeNode& node, Renderer& renderer);

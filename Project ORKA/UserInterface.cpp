@@ -5,36 +5,36 @@
 #include "FileSystem.hpp"
 
 //UIImage
-void UIImage::render(Engine& engine, Window& window, TiledRectangle renderArea) {
+UIImage::UIImage(Name name) {
+	this->name = name;
+}
+void UIImage::update(Window& window) {}
+void UIImage::render(ResourceManager& resourceManager, Window& window, TiledRectangle renderArea) {
 	Renderer& renderer = window.renderer;
 
 	renderer.renderRegion.set(renderArea);
-	renderer.useShader(engine, "unlit");
-	renderer.useTexture(engine, "default");
+	renderer.useShader(resourceManager, "unlit");
+	renderer.useTexture(resourceManager, "default");
 	renderer.setColor(Color(1.0f));
 	renderer.screenSpace();
 	Matrix m = matrixFromLocationAndSize(Vec4(renderArea.position.x, renderArea.position.y, 0, min(renderArea.size.x, renderArea.size.x)));
 	renderer.uniforms().mMatrix(m);
-	renderer.renderMesh(engine, "plane");
+	renderer.renderMesh(resourceManager, "plane");
 }
-UIImage::UIImage(Name name) {
-	this->name = name;
-}
-
-void UIImage::update(Window& window) {}
 
 //TextBox
 UITextBox::UITextBox(String& data) {
 	this->data = &data;
 }
 void UITextBox::update(Window& window) {}
-void UITextBox::render(Engine& engine, Window& window, TiledRectangle renderArea) {
+void UITextBox::render(ResourceManager& resourceManager, Window& window, TiledRectangle renderArea) {
 	Renderer& renderer = window.renderer;
 
-	renderer.screenSpace();
-	Matrix m = matrixFromLocationAndSize(Vec4(renderArea.position.x, renderArea.position.y, 0, min(renderArea.size.x, renderArea.size.y)));
+	renderer.screenSpaceFromTopLeft();
+	Matrix m = matrixFromLocation(Vec3(renderArea.position.x, renderArea.position.y, 0));
 	renderer.uniforms().mMatrix(m);
-	renderer.renderText(engine, *data, Vec2(0), fonts.paragraph);
+	renderer.textRenderSystem.setStyle(fonts.paragraph);
+	renderer.textRenderSystem.render(resourceManager,renderer, *data);
 }
 
 //Checkbox
@@ -42,7 +42,7 @@ UICheckBox::UICheckBox(Boolean& data) {
 	this->data = &data;
 }
 void UICheckBox::update(Window& window) {}
-void UICheckBox::render(Engine& engine, Window& window, TiledRectangle renderArea) {}
+void UICheckBox::render(ResourceManager& resourceManager, Window& window, TiledRectangle renderArea) {}
 
 //Container
 UIContainer& UIContainer::horizontal() {
@@ -58,21 +58,21 @@ UIContainer& UIContainer::insert(UIElement& element) {
 	return *this;
 }
 void UIContainer::update(Window& window) {}
-void UIContainer::render(Engine& engine, Window& window, TiledRectangle renderArea) {
+void UIContainer::render(ResourceManager& resourceManager, Window& window, TiledRectangle renderArea) {
 	for (UInt i = 0; i < contents.size(); i++) {
 		TiledRectangle a = renderArea;
 		if (renderVertical) {
 			a.size.y /= contents.size();
-			a.position.y += a.size.y * i;
+			a.position.y -= a.size.y * i;
 		}
 		else {
 			a.size.x /= contents.size();
 			a.position.x += a.size.x * i;
 		}
-		contents[i]->render(engine, window, a);
+		contents[i]->render(resourceManager, window, a);
 	}
 }
-void UIContainer::renderInteractive(Engine& engine, Window& window, TiledRectangle renderArea)
+void UIContainer::renderInteractive(ResourceManager& resourceManager, Window& window, TiledRectangle renderArea)
 {
 	for (UInt i = 0; i < contents.size(); i++) {
 		TiledRectangle a = renderArea;
@@ -84,12 +84,11 @@ void UIContainer::renderInteractive(Engine& engine, Window& window, TiledRectang
 			a.size.x /= contents.size();
 			a.position.x += a.size.x * i;
 		}
-		contents[i]->renderInteractive(engine, window, a);
+		contents[i]->renderInteractive(resourceManager, window, a);
 	}
 }
 
-//User Interface
-//elements
+//User Interface Elements
 UIButton& UserInterface::button() {
 	buttons.emplace_back();
 	return buttons.back();
@@ -110,16 +109,15 @@ UITextBox& UserInterface::textBox(String& data) {
 	textBoxes.emplace_back(data);
 	return textBoxes.back();
 }
-Window& UserInterface::window(String title, Area size, Bool decorated, WindowState state, Engine& engine) {
+Window& UserInterface::window(String title, Area size, Bool decorated, WindowState state, ResourceManager& resourceManager) {
 	windows.emplace_back();
-	windows.back().create(title, size, decorated, state, engine);
+	windows.back().create(title, size, decorated, state, resourceManager);
 	windows.back().content = nullptr;
 	return windows.back();
 };
-Window& UserInterface::window(String title, Area size, Bool decorated, WindowState state, UIElement& element, Engine& engine) {
-	
+Window& UserInterface::window(String title, Area size, Bool decorated, WindowState state, UIElement& element, ResourceManager& resourceManager) {
 	windows.emplace_back();
-	windows.back().create(title, size, decorated, state, engine);
+	windows.back().create(title, size, decorated, state, resourceManager);
 	windows.back().content = &element;
 	return windows.back();
 };
@@ -146,12 +144,7 @@ void UserInterface::run() {
 	}
 	windows.clear();
 
-	glfwTerminate();
-}
-UserInterface::UserInterface() {
-	assert(glfwInit() == GLFW_TRUE);
-	glfwSetErrorCallback(whenWindowAPIThrowsError);
-}
-UserInterface::~UserInterface() {
+	glfwPollEvents();
+
 	glfwTerminate();
 }

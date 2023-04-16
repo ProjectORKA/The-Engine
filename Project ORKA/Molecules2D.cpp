@@ -25,8 +25,8 @@ void Molecule2D::collide(Molecule2D& p) {
 		}
 	}
 }
-void Molecule2D::render(Engine& engine, Renderer& renderer) {
-	renderer.circle(engine, pos, 1);
+void Molecule2D::render(ResourceManager& resourceManager, Renderer& renderer) {
+	renderer.circle(resourceManager, pos, 1);
 }
 
 void Molecules2D::update(Vec3 location) {
@@ -47,11 +47,11 @@ void Molecules2D::update(Vec3 location) {
 
 	molecules.first().pos = location;
 }
-void Molecules2D::render(Engine& engine, Renderer& renderer) {
+void Molecules2D::render(ResourceManager& resourceManager, Renderer& renderer) {
 	
-	renderer.useShader(engine, "color");
+	renderer.useShader(resourceManager, "color");
 	renderer.fill(Color(1));	
 	for (Molecule2D m : molecules) {
-		m.render(engine, renderer);
+		m.render(resourceManager, renderer);
 	}
 }

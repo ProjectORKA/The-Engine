@@ -51,7 +51,7 @@ struct Renderer{
 	Mutex mutex;
 	void sync(); //makes non renderer threads wait for the finished frame
 
-	void create(Engine& engine, Area size);
+	void create(ResourceManager& resourceManager, Area size);
 	void destroy();
 
 	//drawing a frame
@@ -66,24 +66,25 @@ struct Renderer{
 	void screenSpace();
 	void normalizedSpace();
 	void normalizedScreenSpace();
+	void screenSpaceFromTopLeft();
 	void aspectCorrectNormalizedSpace();
 	void normalizedSpaceWithAspectRatio(Float aspectRatio);
 	
 	//meshes
 	void rerenderMesh();
 	void renderMesh(Index meshID);
-	void useMesh(Engine& engine, Name name);
-	void renderMesh(Engine& engine, Name name);
-	void renderMeshInstanced(Engine& engine, Name name);
+	void useMesh(ResourceManager& resourceManager, Name name);
+	void renderMesh(ResourceManager& resourceManager, Name name);
+	void renderMeshInstanced(ResourceManager& resourceManager, Name name);
 
 	//textures
-	void useTexture(Engine& engine, Name name);
-	void useTexture(Engine& engine, Name name, Index location);
+	void useTexture(ResourceManager& resourceManager, Name name);
+	void useTexture(ResourceManager& resourceManager, Name name, Index location);
 
 	//shaders
-	Index useShader(Engine& engine, Name name);
-	void postProcess(Engine& engine, Name name);
-	void fullScreenShader(Engine& engine, Name name);
+	Index useShader(ResourceManager& resourceManager, Name name);
+	void postProcess(ResourceManager& resourceManager, Name name);
+	void fullScreenShader(ResourceManager& resourceManager, Name name);
 
 	//framebuffers
 	void read(Name name);
@@ -98,21 +99,19 @@ struct Renderer{
 	//primitives
 	void line(Vec3 start, Vec3 end, Float width);
 	void line(Vec2 start, Vec2 end, Float width);
-	void arrow(Engine& engine, Vec2 start, Vec2 end);
-	void arrow(Engine& engine, Vec3 start, Vec3 end);
-	void rectangle(Engine& engine, Vec2 pos, Vec2 size);
-	void circle(Engine& engine, Vec2 pos, Float radius);
-
-	//text
-	void renderText(Engine& engine, String text, Vec2 position, FontStyle font);
+	void arrow(ResourceManager& resourceManager, Vec2 start, Vec2 end);
+	void arrow(ResourceManager& resourceManager, Vec3 start, Vec3 end);
+	void rectangle(ResourceManager& resourceManager, Vec2 pos, Vec2 size);
+	void circle(ResourceManager& resourceManager, Vec2 pos, Float radius);
 
 	//sky
-	void renderSky(Engine& engine, Camera& camera);
-	void renderAtmosphere(Engine& engine, Player& player, Vec3 sunDirection);
+	void renderSky(ResourceManager& resourceManager, Camera& camera);
+	void renderAtmosphere(ResourceManager& resourceManager, Player& player, Vec3 sunDirection);
 
 	//blending
 	void blendModeAdditive();
 	void setAlphaBlending(Bool blending);
+	void setAlphaBlending(Bool enable, BlendFunction src, BlendFunction dst, BlendEquation eq);
 
 	void setWireframeMode();
 	void setColor(Color color);

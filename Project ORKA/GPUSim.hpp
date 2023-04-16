@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Game.hpp"
-#include "Engine.hpp"
+#include "ResourceManager.hpp"
 
 struct GPUSimRenderer : public GameRenderer {
 	Bool initialized = false;
@@ -38,5 +38,5 @@ struct GPUSimRenderer : public GameRenderer {
 	}
 
 	void update(Window& window) override {};
-	void render(Engine& engine, Window& window, TiledRectangle area) override;
+	void render(ResourceManager& resourceManager, Window& window, TiledRectangle area) override;
 };

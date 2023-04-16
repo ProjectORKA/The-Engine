@@ -14,6 +14,12 @@ struct InFile {
 
 	template <typename T>
 	void read(T& data) { read((char*)&data, sizeof(data));}
+
+	Bool readLine(String & line) {
+		if (std::getline(file, line)) return true;
+		else return false;
+	}
+
 };
 
 struct OutFile {

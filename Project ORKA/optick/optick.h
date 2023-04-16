@@ -949,7 +949,7 @@ struct OptickApp
 
 // Push\Pop profiling macro with STATIC name.
 // Please avoid using Push\Pop approach in favor for scoped macros.
-// For backward compatibility with some engines.
+// For backward compatibility with some resourceManagers.
 // Example:
 //		OPTICK_PUSH("ScopeName");
 //		...

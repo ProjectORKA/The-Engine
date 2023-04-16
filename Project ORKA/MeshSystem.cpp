@@ -2,7 +2,7 @@
 #include "MeshSystem.hpp"
 #include "Uniforms.hpp"
 
-void MeshSystem::create(Engine& engine) {
+void MeshSystem::create(ResourceManager& resourceManager) {
 	CPUMesh standard;
 	standard.name = "default";
 	proceduralPlaneMesh(standard, 1, 1);
@@ -13,7 +13,7 @@ void MeshSystem::create(Engine& engine) {
 	proceduralWireframeAxisLines(boundingBox);
 	addMesh(boundingBox);
 
-	basicMeshes.create(engine);
+	basicMeshes.create(resourceManager);
 }
 void MeshSystem::destroy()
 {
@@ -27,7 +27,7 @@ void MeshSystem::use(Index meshID)
 {
 	currentMeshID = meshID;
 }
-void MeshSystem::use(Engine& engine, Name meshName)
+void MeshSystem::use(ResourceManager& resourceManager, Name meshName)
 {
 	Index id;
 	if (meshNames.find(meshName, id)) {
@@ -35,7 +35,7 @@ void MeshSystem::use(Engine& engine, Name meshName)
 	}
 	else {
 		CPUMesh mesh;
-		mesh.load(engine, meshName);
+		mesh.load(resourceManager, meshName);
 		addMesh(mesh);
 		if (meshNames.find(meshName, id)) {
 			currentMeshID = id;
@@ -61,12 +61,12 @@ void MeshSystem::render(Uniforms& uniforms, Index meshID) {
 	use(meshID);
 	currentMesh().render(uniforms);
 }
-void MeshSystem::render(Engine & engine, Uniforms& uniforms, Name meshName) {
-	use(engine, meshName);
+void MeshSystem::render(ResourceManager& resourceManager, Uniforms& uniforms, Name meshName) {
+	use(resourceManager, meshName);
 	currentMesh().render(uniforms);
 }
-void MeshSystem::renderInstanced(Engine& engine, Uniforms& uniforms, Name meshName, Vector<Matrix>& data) {
-	use(engine, meshName);
+void MeshSystem::renderInstanced(ResourceManager& resourceManager, Uniforms& uniforms, Name meshName, Vector<Matrix>& data) {
+	use(resourceManager, meshName);
 
 	const UInt transformPos = 4;
 

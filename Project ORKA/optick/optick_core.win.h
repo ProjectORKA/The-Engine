@@ -1455,7 +1455,7 @@ namespace Optick
 typedef array<uintptr_t, 512> CallStackBuffer;
 typedef unordered_map<uint64, Symbol> SymbolCache;
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-class WinSymbolEngine : public SymbolEngine
+class WinSymbolresourceManager : public SymbolresourceManager
 {
 	HANDLE hProcess;
 
@@ -1472,8 +1472,8 @@ class WinSymbolEngine : public SymbolEngine
 	void InitSystemModules();
 	void InitApplicationModules();
 public:
-	WinSymbolEngine();
-	~WinSymbolEngine();
+	WinSymbolresourceManager();
+	~WinSymbolresourceManager();
 
 	void Init();
 	void Close();
@@ -1483,16 +1483,16 @@ public:
 	virtual const vector<Module>& GetModules() override;
 };
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-WinSymbolEngine::WinSymbolEngine() : hProcess(GetCurrentProcess()), isInitialized(false), needRestorePreviousSettings(false), previousOptions(0)
+WinSymbolresourceManager::WinSymbolresourceManager() : hProcess(GetCurrentProcess()), isInitialized(false), needRestorePreviousSettings(false), previousOptions(0)
 {
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-WinSymbolEngine::~WinSymbolEngine()
+WinSymbolresourceManager::~WinSymbolresourceManager()
 {
 	Close();
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-const Symbol* WinSymbolEngine::GetSymbol(uint64 address)
+const Symbol* WinSymbolresourceManager::GetSymbol(uint64 address)
 {
 	if (address == 0)
 		return nullptr;
@@ -1545,7 +1545,7 @@ const Symbol* WinSymbolEngine::GetSymbol(uint64 address)
 	return &symbol;
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-const vector<Module>& WinSymbolEngine::GetModules()
+const vector<Module>& WinSymbolresourceManager::GetModules()
 {
 	if (modules.empty())
 	{
@@ -1557,7 +1557,7 @@ const vector<Module>& WinSymbolEngine::GetModules()
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // const char* USER_SYMBOL_SEARCH_PATH = "http://msdl.microsoft.com/download/symbols";
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-void WinSymbolEngine::Init()
+void WinSymbolresourceManager::Init()
 {
 	if (!isInitialized)
 	{
@@ -1622,7 +1622,7 @@ struct MODULE_LIST
 };
 #pragma warning (pop)
 
-void WinSymbolEngine::InitSystemModules()
+void WinSymbolresourceManager::InitSystemModules()
 {
 	ULONG returnLength = 0;
 	ULONG systemInformationLength = 0;
@@ -1680,7 +1680,7 @@ void WinSymbolEngine::InitSystemModules()
 	}
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-void WinSymbolEngine::InitApplicationModules()
+void WinSymbolresourceManager::InitApplicationModules()
 {
 	HANDLE processHandle = GetCurrentProcess();
 	HMODULE hModules[256];
@@ -1704,7 +1704,7 @@ void WinSymbolEngine::InitApplicationModules()
 	}
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-void WinSymbolEngine::Close()
+void WinSymbolresourceManager::Close()
 {
 	if (isInitialized)
 	{
@@ -1726,9 +1726,9 @@ void WinSymbolEngine::Close()
 	}
 }
 //////////////////////////////////////////////////////////////////////////
-SymbolEngine* Platform::CreateSymbolEngine()
+SymbolresourceManager* Platform::CreateSymbolresourceManager()
 {
-	return Memory::New<WinSymbolEngine>();
+	return Memory::New<WinSymbolresourceManager>();
 }
 //////////////////////////////////////////////////////////////////////////
 }

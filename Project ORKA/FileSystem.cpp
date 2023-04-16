@@ -10,10 +10,9 @@ namespace stbi {
 #include "stb_image.h"
 }
 
-FileSystem::FileSystem() {
-	if(executablePath == "") executablePath = std::filesystem::current_path();
+void deleteFile(Path path) {
+	std::filesystem::remove(path);
 }
-
 String loadString(Path path) {
 	String s;
 	std::ifstream stream(path, std::ios::in);
@@ -29,11 +28,10 @@ String loadString(Path path) {
 		return "";
 	}
 }
-Path removeFileName(Path path) {
-	return std::filesystem::absolute(path).remove_filename();
-}
 Path getDirectory(Path path) {
-	return std::filesystem::absolute(path).remove_filename();
+	path = makeAbsolute(path);
+	path = removeFileName(path);
+	return path;
 }
 Path makeAbsolute(Path path) {
 	return std::filesystem::absolute(path);
@@ -42,12 +40,37 @@ Bool doesPathExist(Path path)
 {
 	return std::filesystem::exists(makeAbsolute(path));
 }
+Path removeFileName(Path path) {
+	if (path.has_extension())
+		return path.remove_filename();
+	else return path;
+}
 void createDirectory(Path path) {
 	path = removeFileName(path);
 	std::filesystem::create_directory(path);
 }
 FileTime lastWrittenTime(Path path) {
 	return std::filesystem::last_write_time(path);
+}
+Vector<String> loadStringVector(Path path)
+{
+	Vector<String> lines;
+
+	InFile file(path);
+	
+	String line;
+	while (std::getline(file.file, line)) {
+		lines.pushBack(line);
+	}
+
+	return lines;
+}
+Vector<Path> getFilesInDirectory(Path path) {
+	Vector<Path> paths;
+	for (const auto& file : std::filesystem::directory_iterator(path)) {
+		if (file.is_regular_file()) paths.pushBack(file.path());
+	}
+	return paths;
 }
 Path nameToPath(Name name, String filetype) {
 	if (filetype == ".fbx") return Path(String("data/objects/").append(name.data).append(".fbx"));
@@ -99,6 +122,11 @@ FileTime getLastWrittenTimeOfFiles(Vector<Path> paths) {
 Image loadImage(Path path, Int bitcount, Bool inverted) {
 	stbi::stbi_set_flip_vertically_on_load(inverted);
 
+	//check if file exists
+	if (!doesPathExist(path)) {
+		logError(String("File not found! (").append(path.string()).append(")"));
+	}
+
 	Image image;
 	if (bitcount == 8) {
 		image.pixels = stbi::stbi_load(path.string().c_str(), &image.width, &image.height, &image.channels, 0);
@@ -117,18 +145,31 @@ Image loadImage(Path path, Int bitcount, Bool inverted) {
 
 	return image;
 }
-Vector<Path> getAllFilesInDirectory(Path path, Vector<String> filter) {
-	Vector<Path> paths;
-	for (const auto& file : std::filesystem::recursive_directory_iterator(path)) {
-		Bool use = file.is_regular_file();
+Vector<Path> getFilesInDirectory(Path path, Vector<String> filter) {
+	Vector<Path> paths1;
+	Vector<Path> paths2;
 
-		for (String& fileType : filter) {
+	paths1 = getFilesInDirectory(path);
 
-			if (file.path().extension() == fileType) {
-				paths.pushBack(file.path());
-				break;
-			}
+	for (auto p : paths1) {
+		for (auto f : filter) {
+			if (p.extension() == f)paths2.pushBack(p);
 		}
 	}
-	return paths;
+
+	return paths2;
+}
+Vector<Path> getAllFilesInDirectory(Path path, Vector<String> filter) {
+	Vector<Path> paths1;
+	Vector<Path> paths2;
+
+	paths1 = getAllFilesInDirectory(path);
+	
+	for (auto p : paths1) {
+		for (auto f : filter) {
+			if (p.extension() == f)paths2.pushBack(p);
+		}
+	}
+
+	return paths2;
 }

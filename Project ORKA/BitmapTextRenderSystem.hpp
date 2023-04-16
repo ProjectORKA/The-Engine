@@ -7,7 +7,18 @@
 #include "Fonts.hpp"
 
 struct Renderer;
-struct Engine;
+struct ResourceManager;
+
+enum class Alignment {
+	start = 0,
+	center = 1,
+	end = 2,
+	middle = 1,
+	left = 0,
+	right = 2,
+	top = 0,
+	bottom = 2,
+};
 
 struct BitmapTextRenderSystem {
 	GPUMesh gpuText;
@@ -15,6 +26,6 @@ struct BitmapTextRenderSystem {
 	GPUTexture textTexture;
 
 	void destroy();
-	void create(Engine& engine, Renderer& renderer);
-	void render(Engine& engine, Renderer& renderer, String text, Vec2 position, FontStyle style);
+	void create(ResourceManager& resourceManager, Renderer& renderer);
+	void render(ResourceManager& resourceManager, Renderer& renderer, String text, Vec2 position, Alignment x, Alignment y, FontStyle style);
 };

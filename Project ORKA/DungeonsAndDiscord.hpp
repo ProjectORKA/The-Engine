@@ -6,6 +6,7 @@
 #include "KeyMap.hpp"
 #include "Player.hpp"
 #include "ECS.hpp"
+#include "SceneSystem.hpp"
 
 // todo list
 // import objects
@@ -19,7 +20,7 @@ struct Window;
 struct DNDEntity {
 	Name meshName = "empty";
 	Transform transform;
-	void render(Engine& engine, Renderer& renderer);
+	void render(ResourceManager& resourceManager, Renderer& renderer);
 };
 
 struct DNDWorld : public GameSimulation {
@@ -31,10 +32,12 @@ struct DNDWorld : public GameSimulation {
 	DVec3 rotation = Vec3(0);
 	//player data
 	Int speedExponent = 1;
+
+	Scene2 scene;
 	
 	Vector<DNDEntity> entities;
 
-	void load();
+	void load(ResourceManager& resourceManager);
 	void save();
 };
 
@@ -51,24 +54,19 @@ struct DNDRenderer : public GameRenderer {
 	InputEvent enter = InputEvent(InputType::Mouse, LMB, 1);
 
 	void update(Window& window) override;
-	void destroy(Window& window) override;
-	void create(Engine& engine, Window& window) override;
+	void create(ResourceManager& resourceManager, Window& window) override;
 	void inputEvent(Window& window, InputEvent input) override;
-	void render(Engine& engine, Window& window, TiledRectangle area) override;
-	void renderInteractive(Engine& engine, Window& window, TiledRectangle area) override;
+	void render(ResourceManager& resourceManager, Window& window, TiledRectangle area) override;
+	void renderInteractive(ResourceManager& resourceManager, Window& window, TiledRectangle area) override;
 };
 
 struct DungeonsAndDiscord {
 	DNDWorld sim;
-	Engine engine;
+	ResourceManager resourceManager;
 	UserInterface ui;
 	DNDRenderer renderer;
 
-	void run() {
-		renderer.world = &sim;
-		ui.window("Simple RTS", Area(1920, 1080), true, WindowState::windowed, renderer, engine);
-		ui.run();
-	}
+	void run();
 };
 
 Int diceRoll(Int diceCount);

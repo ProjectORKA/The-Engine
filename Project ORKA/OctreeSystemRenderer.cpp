@@ -89,23 +89,23 @@ void OctreeNodeRenderData::unsubdivide()
 		subdivided = false;
 	}
 }
-void OctreeNodeRenderData::render(Engine& engine, Renderer & renderer)
+void OctreeNodeRenderData::render(ResourceManager& resourceManager, Renderer & renderer)
 {
 	renderer.uniforms().cameraPos() = Vec4(cameraPosition, 1);
 	renderer.uniforms().worldOffset() = Vec4(equivalentOctreeNode->id.location.x, equivalentOctreeNode->id.location.y, equivalentOctreeNode->id.location.z, equivalentOctreeNode->id.level);
 
-	if(renderer.planetRenderSystem.chunkBorders)renderer.renderMesh(engine, "gizmo");
+	if(renderer.planetRenderSystem.chunkBorders)renderer.renderMesh(resourceManager, "gizmo");
 }
 void OctreeNodeRenderData::create(OctreeNode& octreeNode)
 {
 	equivalentOctreeNode = &octreeNode;
 	octreeNode.incrementUser();
 }
-void OctreeNodeRenderData::renderWater(Engine& engine, Renderer &renderer){
+void OctreeNodeRenderData::renderWater(ResourceManager& resourceManager, Renderer &renderer){
 	
 	renderer.uniforms().cameraPos() = Vec4(cameraPosition, 1);
 	renderer.uniforms().worldOffset() = Vec4(equivalentOctreeNode->id.location.x, equivalentOctreeNode->id.location.y, equivalentOctreeNode->id.location.z, equivalentOctreeNode->id.level);
-	renderer.renderMesh(engine, "waterPlane");
+	renderer.renderMesh(resourceManager, "waterPlane");
 }
 void OctreeNodeRenderData::update(PlanetSystemPlayer& player)
 {
@@ -124,36 +124,36 @@ void OctreeNodeRenderData::update(PlanetSystemPlayer& player)
 	}
 }
 
-void OctreeNodeRenderData::renderLevel(Engine& engine, UShort level, Renderer &renderer)
+void OctreeNodeRenderData::renderLevel(ResourceManager& resourceManager, UShort level, Renderer &renderer)
 {
 	if (subdivided) {
-		c000->renderLevel(engine, level, renderer);
-		c001->renderLevel(engine, level, renderer);
-		c010->renderLevel(engine, level, renderer);
-		c011->renderLevel(engine, level, renderer);
-		c100->renderLevel(engine, level, renderer);
-		c101->renderLevel(engine, level, renderer);
-		c110->renderLevel(engine, level, renderer);
-		c111->renderLevel(engine, level, renderer);
+		c000->renderLevel(resourceManager, level, renderer);
+		c001->renderLevel(resourceManager, level, renderer);
+		c010->renderLevel(resourceManager, level, renderer);
+		c011->renderLevel(resourceManager, level, renderer);
+		c100->renderLevel(resourceManager, level, renderer);
+		c101->renderLevel(resourceManager, level, renderer);
+		c110->renderLevel(resourceManager, level, renderer);
+		c111->renderLevel(resourceManager, level, renderer);
 	} else {
 		if (equivalentOctreeNode->id.level == level) {
-			render(engine, renderer);
+			render(resourceManager, renderer);
 		}
 	}
 }
-void OctreeNodeRenderData::renderWaterLevel(Engine& engine, UShort level, Renderer & renderer){
+void OctreeNodeRenderData::renderWaterLevel(ResourceManager& resourceManager, UShort level, Renderer & renderer){
 	if (subdivided) {
-		c000->renderWaterLevel(engine, level, renderer);
-		c001->renderWaterLevel(engine, level, renderer);
-		c010->renderWaterLevel(engine, level, renderer);
-		c011->renderWaterLevel(engine, level, renderer);
-		c100->renderWaterLevel(engine, level, renderer);
-		c101->renderWaterLevel(engine, level, renderer);
-		c110->renderWaterLevel(engine, level, renderer);
-		c111->renderWaterLevel(engine, level, renderer);
+		c000->renderWaterLevel(resourceManager, level, renderer);
+		c001->renderWaterLevel(resourceManager, level, renderer);
+		c010->renderWaterLevel(resourceManager, level, renderer);
+		c011->renderWaterLevel(resourceManager, level, renderer);
+		c100->renderWaterLevel(resourceManager, level, renderer);
+		c101->renderWaterLevel(resourceManager, level, renderer);
+		c110->renderWaterLevel(resourceManager, level, renderer);
+		c111->renderWaterLevel(resourceManager, level, renderer);
 	} else {
 		if (equivalentOctreeNode->id.level == level) {
-			renderWater(engine, renderer);
+			renderWater(resourceManager, renderer);
 		}
 	}
 }
@@ -193,6 +193,6 @@ void OctreeRenderSystem::create(Renderer& renderer) {
 void OctreeRenderSystem::update(PlanetSystemPlayer& player) {
 	root.update(player);
 }
-void OctreeRenderSystem::renderLevel(Engine& engine, UShort level, Renderer& renderer) {
-	root.renderLevel(engine, level, renderer);
+void OctreeRenderSystem::renderLevel(ResourceManager& resourceManager, UShort level, Renderer& renderer) {
+	root.renderLevel(resourceManager, level, renderer);
 }

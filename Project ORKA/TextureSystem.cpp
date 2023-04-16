@@ -51,9 +51,9 @@ void TextureSystem::destroy()
 
 	textureNames.clear();
 }
-Index TextureSystem::use(Engine& engine, Name name)
+Index TextureSystem::use(ResourceManager& resourceManager, Name name)
 {
-	use(engine, name,0);
+	use(resourceManager, name,0);
 	return currentTextureID;
 }
 void TextureSystem::resize(Area size)
@@ -65,7 +65,7 @@ void TextureSystem::use(Index textureIndex)
 	currentTextureID = textureIndex;
 	currentTexture().use(0);
 }
-void TextureSystem::use(Engine& engine, Name name, Index slot) {
+void TextureSystem::use(ResourceManager& resourceManager, Name name, Index slot) {
 	auto it = textureNames.find(name);
 	if (it != textureNames.end()) {
 		currentTextureID = it->second;
@@ -73,7 +73,7 @@ void TextureSystem::use(Engine& engine, Name name, Index slot) {
 	} else {
 		
 		CPUTexture cpuTexture;
-		cpuTexture.load(engine, name);
+		cpuTexture.load(resourceManager, name);
 		add(cpuTexture);
 
 		it = textureNames.find(name);
@@ -83,7 +83,7 @@ void TextureSystem::use(Engine& engine, Name name, Index slot) {
 		}
 		else {
 			logError("Could not find Texture!");
-			use(engine, "empty");
+			use(resourceManager, "empty");
 		}
 	}
 }

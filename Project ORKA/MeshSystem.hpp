@@ -8,7 +8,6 @@
 #include "Scene.hpp"
 #include "GPUMesh.hpp"
 #include "ProceduralMeshes.hpp"
-#include "Engine.hpp"
 
 struct Uniforms;
 
@@ -23,9 +22,9 @@ struct NameTable {
 
 struct BasicMeshes {
 	GPUMesh fullscreenMesh;
-	void create(Engine& engine) {
+	void create(ResourceManager& resourceManager) {
 		CPUMesh fullScreenQuad;
-		fullScreenQuad.load(engine, "fullScreenQuad");
+		fullScreenQuad.load(resourceManager, "fullScreenQuad");
 		fullscreenMesh.upload(fullScreenQuad);
 	}
 	void destroy() {
@@ -42,15 +41,15 @@ struct MeshSystem {
 	Index currentMeshID = 0;
 
 	void destroy();
-	void create(Engine& engine);
+	void create(ResourceManager& resourceManager);
 
 	//mesh
 	void use(Index meshID);
 	GPUMesh& currentMesh();
 	void addMesh(CPUMesh cpuMesh);
-	void use(Engine& engine, Name name);
+	void use(ResourceManager& resourceManager, Name name);
 	void renderFullscreen(Uniforms& uniforms);
 	void render(Uniforms& uniforms, Index meshID);
-	void render(Engine& engine, Uniforms& uniforms, Name meshName);
-	void renderInstanced(Engine& engine, Uniforms& uniforms, Name meshName, Vector<Matrix>& transformations);
+	void render(ResourceManager& resourceManager, Uniforms& uniforms, Name meshName);
+	void renderInstanced(ResourceManager& resourceManager, Uniforms& uniforms, Name meshName, Vector<Matrix>& transformations);
 };

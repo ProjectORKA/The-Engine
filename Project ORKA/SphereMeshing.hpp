@@ -42,7 +42,7 @@ struct SphereMeshing {
 
 	};
 
-	void rebuildMesh(Engine& engine) {
+	void rebuildMesh(ResourceManager& resourceManager) {
 		spheres.clear();
 		for (auto t : terrain.points) {
 			Float size = getDistanceToClosestPoint(t, air);
@@ -50,14 +50,14 @@ struct SphereMeshing {
 		}
 
 		CPUMesh icoSphere;
-		icoSphere.load(engine, "lowPolyIcoSphere");
+		icoSphere.load(resourceManager, "lowPolyIcoSphere");
 
 		Mesh m;
 		m.positions = icoSphere.positions;
 		m.faces = icoSphere.indices;
 	};
 
-	void update(Engine & engine) {
+	void update(ResourceManager& resourceManager) {
 		if (!loaded) {
 			UInt gridSize = 64;
 			Float noiseSize = 4;
@@ -72,7 +72,7 @@ struct SphereMeshing {
 				}
 			}
 
-			if (terrain.points.size() && air.size()) rebuildMesh(engine);
+			if (terrain.points.size() && air.size()) rebuildMesh(resourceManager);
 			loaded = true;
 		}
 

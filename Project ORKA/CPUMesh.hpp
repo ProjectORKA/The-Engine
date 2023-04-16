@@ -1,16 +1,17 @@
 
 #pragma once
 
+#include "Memory.hpp"
 #include "Basics.hpp"
 #include "Math.hpp"
 #include "Debug.hpp"
 #include "Array2D.hpp"
 #include "FileSystem.hpp"
 #include "GraphicsAPI.hpp"
-#include "Engine.hpp"
 #include "ResourceManager.hpp"
 
 struct Renderer;
+struct ResourceManager;
 
 enum class VertexDataLocation {
 	Position = 0,
@@ -29,9 +30,10 @@ enum MeshData : Short {
 };
 
 struct CPUMesh {
+	Bool loaded = false;
+
 	Name name = "empty";
 	Short dataFlags = 0;
-	Bool loaded = false;
 	Int drawMode = MeshDrawMode::staticMode;
 	Int primitiveMode = PrimitiveMode::Triangles;
 	
@@ -47,7 +49,6 @@ struct CPUMesh {
 	CPUMesh() {};
 	~CPUMesh() {};
 	CPUMesh(Graph& graph);
-	CPUMesh(Engine& engine, Name name);
 
 	void clearGeometry();
 	void removeDoubles();
@@ -56,9 +57,13 @@ struct CPUMesh {
 	void merge(CPUMesh source);
 	void calculateSmoothNormals();
 	void render(Renderer& renderer);
-	void load(Engine& engine, Name name);
 	void saveMeshFile(ResourceManager& resourceManager);
+	void load(ResourceManager& resourceManager, Name name);
 	void meshFromHeightmap(Array2D<Float>& heightmap, UInt size);
+
+private:
+	void calculateSmoothNormalsForTriangleMesh();
+	void calculateSmoothNormalsForTriangleStrip();
 };
 
 struct MeshHeader1 {

@@ -2,7 +2,7 @@
 
 #include "Basics.hpp"
 #include "Random.hpp"
-#include "Engine.hpp"
+#include "ResourceManager.hpp"
 
 struct Renderer;
 
@@ -16,12 +16,12 @@ struct Molecule2D {
 	void move();
 	void addForce(Vec2 force);
 	void collide(Molecule2D& p);
-	void render(Engine& engine, Renderer& renderer);
+	void render(ResourceManager& resourceManager, Renderer& renderer);
 };
 
 struct Molecules2D {
 	Vector<Molecule2D> molecules;
 
 	void update(Vec3 location);
-	void render(Engine& engine, Renderer& renderer);
+	void render(ResourceManager& resourceManager, Renderer& renderer);
 };
