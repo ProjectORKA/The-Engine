@@ -435,7 +435,7 @@ Trace* Platform::CreateTrace()
 	return Memory::New<FTrace>();
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-SymbolEngine* Platform::CreateSymbolEngine()
+SymbolresourceManager* Platform::CreateSymbolresourceManager()
 {
 	return nullptr;
 }

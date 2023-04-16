@@ -1,7 +1,7 @@
-//#pragma once
-//
-//void simulateLeftClick();
-//
-//void simulateRightClick();
-//
-//void cheatTest();
+#pragma once
+
+void simulateLeftClick();
+
+void simulateRightClick();
+
+void cheatTest();

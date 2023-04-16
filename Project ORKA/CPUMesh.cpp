@@ -78,77 +78,9 @@ void CPUMesh::move(Vec3 moveVector) {
 void CPUMesh::calculateSmoothNormals()
 {
 	switch (primitiveMode) {
-	case PrimitiveMode::Triangles:
-		normals.resize(positions.size());
-		for (Vec3& normal : normals) {
-			normal = Vec3(0);
-		}
-
-		for (UInt f = 0; f < (indices.size() / 3); f++) {
-			Index indexA = indices[f * 3];
-			Index indexB = indices[f * 3 + 1];
-			Index indexC = indices[f * 3 + 2];
-
-			//get vertex position for each face
-			Vec3 vertexA = positions[indexA];
-			Vec3 vertexB = positions[indexB];
-			Vec3 vertexC = positions[indexC];
-
-			//get face normal
-			Vec3 faceNormal = glm::normalize(glm::cross(vertexB - vertexA, vertexC - vertexA));
-
-			//add face normal to every vertex
-			normals[indexA] += faceNormal;
-			normals[indexB] += faceNormal;
-			normals[indexC] += faceNormal;
-		}
-		for (Vec3& normal : normals) {
-			normal = glm::normalize(normal);
-		}
-		break;
-	case PrimitiveMode::TriangleStrip:
-		normals.resize(positions.size());
-
-		for (Vec3& normal : normals) {
-			normal = Vec3(0);
-		}
-
-		for (UInt f = 2; f < indices.size(); f++) {
-
-			Index a, b, c;
-			if (isEven(f)) {
-				a = indices[f - 2];
-				b = indices[f - 1];
-				c = indices[f - 0];
-			}
-			else {
-				a = indices[f - 1];
-				b = indices[f - 2];
-				c = indices[f - 0];
-			}
-
-			//get vertex position for each face
-			Vec3 vertexA = positions[a];
-			Vec3 vertexB = positions[b];
-			Vec3 vertexC = positions[c];
-
-			if (vertexA == vertexB || vertexB == vertexC || vertexA == vertexC)continue;
-
-			//get face normal
-			Vec3 faceNormal = glm::normalize(glm::cross(vertexB - vertexA, vertexC - vertexA));
-
-			//add face normal to every vertex
-			normals[a] += faceNormal;
-			normals[b] += faceNormal;
-			normals[c] += faceNormal;
-		}
-		for (Vec3& normal : normals) {
-			normal = glm::normalize(normal);
-		}
-		break;
-	default:
-		logError("Cant compute normals for this mesh! Primitive type not supported!");
-		break;
+	case PrimitiveMode::Triangles: calculateSmoothNormalsForTriangleMesh(); break;
+	case PrimitiveMode::TriangleStrip: calculateSmoothNormalsForTriangleStrip(); break;
+	default: logError("Cant compute normals for this mesh! Primitive type not supported!"); break;
 	}
 }
 void CPUMesh::render(Renderer& renderer) {
@@ -157,12 +89,9 @@ void CPUMesh::render(Renderer& renderer) {
 	mesh.render(renderer.uniforms());
 	mesh.unload();
 }
-CPUMesh::CPUMesh(Engine& engine, Name name) {
-	load(engine, name);
-}
-void CPUMesh::load(Engine& engine, Name name) {
-	auto it{ engine.resourceManager.meshResources.find(name) };
-	if (it != std::end(engine.resourceManager.meshResources))
+void CPUMesh::load(ResourceManager& resourceManager, Name name) {
+	auto it{ resourceManager.meshResources.find(name) };
+	if (it != std::end(resourceManager.meshResources))
 	{
 		Path path = it->second;
 
@@ -267,3 +196,73 @@ void CPUMesh::meshFromHeightmap(Array2D<Float>& heightmap, UInt size) {
 
 	checkIntegrity();
 }
+void CPUMesh::calculateSmoothNormalsForTriangleMesh() {
+	normals.resize(positions.size());
+
+	for (Vec3& normal : normals) {
+		normal = Vec3(0);
+	}
+
+	for (UInt f = 0; f < (indices.size() / 3); f++) {
+		Index indexA = indices[f * 3];
+		Index indexB = indices[f * 3 + 1];
+		Index indexC = indices[f * 3 + 2];
+
+		//get vertex position for each face
+		Vec3 vertexA = positions[indexA];
+		Vec3 vertexB = positions[indexB];
+		Vec3 vertexC = positions[indexC];
+
+		//get face normal
+		Vec3 faceNormal = glm::normalize(glm::cross(vertexB - vertexA, vertexC - vertexA));
+
+		//add face normal to every vertex
+		normals[indexA] += faceNormal;
+		normals[indexB] += faceNormal;
+		normals[indexC] += faceNormal;
+	}
+
+	for (Vec3& normal : normals) {
+		normal = glm::normalize(normal);
+	}
+};
+void CPUMesh::calculateSmoothNormalsForTriangleStrip() {
+	normals.resize(positions.size());
+
+	for (Vec3& normal : normals) {
+		normal = Vec3(0);
+	}
+
+	for (UInt f = 2; f < indices.size(); f++) {
+
+		Index a, b, c;
+		if (isEven(f)) {
+			a = indices[f - 2];
+			b = indices[f - 1];
+			c = indices[f - 0];
+		}
+		else {
+			a = indices[f - 1];
+			b = indices[f - 2];
+			c = indices[f - 0];
+		}
+
+		//get vertex position for each face
+		Vec3 vertexA = positions[a];
+		Vec3 vertexB = positions[b];
+		Vec3 vertexC = positions[c];
+
+		if (vertexA == vertexB || vertexB == vertexC || vertexA == vertexC)continue;
+
+		//get face normal
+		Vec3 faceNormal = glm::normalize(glm::cross(vertexB - vertexA, vertexC - vertexA));
+
+		//add face normal to every vertex
+		normals[a] += faceNormal;
+		normals[b] += faceNormal;
+		normals[c] += faceNormal;
+	}
+	for (Vec3& normal : normals) {
+		normal = glm::normalize(normal);
+	}
+};

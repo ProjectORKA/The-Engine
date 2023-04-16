@@ -73,14 +73,14 @@ void MindMap::addNode()
 	else positions.pushBack(Vec2(0));
 	nodeCount++;
 }
-void MindMap::render(Engine& engine, Renderer& renderer)
+void MindMap::render(ResourceManager& resourceManager, Renderer& renderer)
 {
 
 	renderer.clearColor();
 	renderer.clearDepth();
 
 	renderer.setDepthTest(false);
-	renderer.useShader(engine, "color");
+	renderer.useShader(resourceManager, "color");
 
 	//render connections
 	renderer.fill(Color(0.5, 0.5, 0.5, 1));
@@ -92,7 +92,7 @@ void MindMap::render(Engine& engine, Renderer& renderer)
 	renderer.fill(Color(1));
 	for (UInt a = 0; a < positions.size(); a++) {
 		renderer.uniforms().mMatrix(matrixFromLocation(Vec3(positions[a], 0.0f)));
-		renderer.renderMesh(engine, "centeredPlane");
+		renderer.renderMesh(resourceManager, "centeredPlane");
 	}
 
 	renderer.setDepthTest(true);
@@ -102,12 +102,12 @@ void MindMap::addForce(Index a, Vec2 force)
 	forces[a] += force;
 	numforces[a]++;
 }
-void MindMap::renderInteractive(Engine& engine, Window & window)
+void MindMap::renderInteractive(ResourceManager& resourceManager, Window & window)
 {
 	Renderer& renderer = window.renderer;
 
 	renderer.setDepthTest(false);
-	renderer.useShader(engine, "idShader");
+	renderer.useShader(resourceManager, "idShader");
 
 	//render connections
 	renderer.fill(Color(0.5, 0.5, 0.5, 1));
@@ -123,7 +123,7 @@ void MindMap::renderInteractive(Engine& engine, Window & window)
 	{
 		renderer.uniforms().objectID(connections.size() - 1 + i);
 		renderer.uniforms().mMatrix(matrixFromLocation(Vec3(positions[i], 0.0f)));
-		renderer.renderMesh(engine, "1x1planeCentered");
+		renderer.renderMesh(resourceManager, "1x1planeCentered");
 	}
 
 	renderer.idFramebuffer.updateIdsUnderCursor(window);

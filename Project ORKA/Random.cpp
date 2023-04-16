@@ -66,6 +66,10 @@ Vec3 randomUnitVec3() {
 Vec2 randomUnitVec2() {
 	return normalize(randomPointInCircle(1));
 }
+UInt randomUInt(UInt max) {
+	if (max < 1) return 0;
+	return xorshf96() % max;
+}
 Int randomInt(Int max) {
 	if (max < 1) return 0;
 	return xorshf96() % max;

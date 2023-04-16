@@ -63,7 +63,8 @@ namespace PrimitiveMode {
 }
 
 //debug opengl by simulating state
-#define OPENGLSTATE
+//#define OPENGLSTATE
+
 struct OpenGLStateCopy {
 	Bool culling = false;
 	Bool blending = false;

@@ -3,7 +3,7 @@
 
 #include "Basics.hpp"
 #include "Transform.hpp"
-#include "Engine.hpp"
+#include "ResourceManager.hpp"
 
 struct Renderer;
 
@@ -32,7 +32,7 @@ struct ParticleSystem {
 	ParticleSystem(U16 particleCount);
 	void spawn(Vec3 location, Vec3 velocity);
 	void update(Vec3 location, Renderer& renderer);
-	void render(Engine& engine, Renderer& renderer);
+	void render(ResourceManager& resourceManager, Renderer& renderer);
 };
 
 Float particleSizeFunction(Float particleRelativeLifeTime);

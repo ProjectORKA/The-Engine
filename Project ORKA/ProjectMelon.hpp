@@ -26,17 +26,23 @@ struct Window;
 // smooth acceleration estimate for particle generation
 
 struct MelonRenderer : public GameRenderer {
-	Float mouseSensitivity = 0.0015;
-
-	Vec3 mousePosA, mousePosB, mousePosC = Vec3(0);
-
-	MelonPlayer player;
 	MelonWorld world;
-
+	MelonPlayer player;
+	Float mouseSensitivity = 0.0015;
+	Vec3 mousePosA, mousePosB, mousePosC = Vec3(0);
 	InputEvent exit = InputEvent(InputType::Mouse, RMB, 0);
 	InputEvent enter = InputEvent(InputType::Mouse, LMB, 1);
 
 	void update(Window& window) override;
 	void inputEvent(Window& window, InputEvent input) override;
-	void render(Engine& engine, Window& window, TiledRectangle area) override;
+	void render(ResourceManager& resourceManager, Window& window, TiledRectangle area) override;
+};
+
+struct ProjectMelon {
+
+	ResourceManager resourceManager;
+	UserInterface ui;
+	MelonRenderer game;
+
+	void run();
 };

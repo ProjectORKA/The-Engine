@@ -29,6 +29,6 @@ struct MelonPlayer : public Player {
 
 	MelonPlayer();
 	void update(Window & window) override;
-	void render(Engine& engine, Window & window) override;
+	void render(ResourceManager& resourceManager, Window & window) override;
 	void inputEvent(Window& window, InputEvent input) override;
 };

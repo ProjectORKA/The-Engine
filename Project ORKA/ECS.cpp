@@ -2,6 +2,6 @@
 #include "ECS.hpp"
 #include "Renderer.hpp"
 
-void RenderComponent::render(Engine& engine, Renderer& renderer) {
-	renderer.renderMesh(engine, meshName);
+void RenderComponent::render(ResourceManager& resourceManager, Renderer& renderer) {
+	renderer.renderMesh(resourceManager, meshName);
 }

@@ -24,7 +24,7 @@ struct Player {
 	//call update once in order to update player logic such as movement
 	virtual void update(Window& window);
 	//call render if you want to render from the players perspective
-	virtual void render(Engine& engine, Window& window);
+	virtual void render(ResourceManager& resourceManager, Window& window);
 	//this gets called for every input event
 	virtual void inputEvent(Window& window, InputEvent input) {};
 };

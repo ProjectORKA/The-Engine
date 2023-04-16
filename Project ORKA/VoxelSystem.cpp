@@ -13,19 +13,25 @@ Chunk::Chunk() {
 	}
 }
 
-CPUMesh Chunk::generateMesh(Engine& engine) {
+CPUMesh Chunk::generateMesh(ResourceManager& resourceManager) {
 
 	CPUMesh terrain;
 	terrain.name = "terrain";
 	terrain.drawMode = MeshDrawMode::staticMode;
 	terrain.primitiveMode = PrimitiveMode::Triangles;
 
-	CPUMesh topFace(engine, "voxelTop");
-	CPUMesh bottomFace(engine, "voxelBot");
-	CPUMesh rightFace(engine, "voxelRight");
-	CPUMesh leftFace(engine, "voxelLeft");
-	CPUMesh frontFace(engine, "voxelFront");
-	CPUMesh backFace(engine, "voxelBack");
+	CPUMesh topFace;
+	topFace.load(resourceManager, "voxelTop");
+	CPUMesh bottomFace;
+	bottomFace.load(resourceManager, "voxelBot");
+	CPUMesh rightFace;
+	rightFace.load(resourceManager, "voxelRight");
+	CPUMesh leftFace;
+	leftFace.load(resourceManager, "voxelLeft");
+	CPUMesh frontFace;
+	frontFace.load(resourceManager, "voxelFront");
+	CPUMesh backFace;
+	backFace.load(resourceManager, "voxelBack");
 
 	for (Int x = 0; x < VOXEL_CHUNK_SIZE; x++) {
 		for (Int y = 0; y < VOXEL_CHUNK_SIZE; y++) {
@@ -72,17 +78,14 @@ CPUMesh Chunk::generateMesh(Engine& engine) {
 		}
 	}
 
-
 	terrain.checkIntegrity();
-
 	terrain.removeDoubles();
-
 	terrain.calculateSmoothNormals();
-	
+
 	return terrain;
 }
 
-void VoxelRenderer::render(Engine& engine, Renderer& renderer) {
-	if (!terrainMesh.loaded)terrainMesh.upload(world.chunk.generateMesh(engine));
+void VoxelRenderer::render(ResourceManager& resourceManager, Renderer& renderer) {
+	if (!terrainMesh.loaded)terrainMesh.upload(world.chunk.generateMesh(resourceManager));
 	else terrainMesh.render(renderer.uniforms());
 }

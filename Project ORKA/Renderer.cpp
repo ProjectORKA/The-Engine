@@ -45,13 +45,15 @@ void Renderer::clearColor()
 	apiClearColor();
 }
 void Renderer::screenSpace() {
-	Float width = renderRegion.region.size.x, height = renderRegion.region.size.y;
+	Float width = renderRegion.region.size.x;
+	Float height = renderRegion.region.size.y;
+	
 	Matrix matrix = Matrix(1);
 	matrix = glm::translate(matrix, Vec3(-1, -1, 0));
-	matrix = glm::scale(matrix, Vec3(2, 2, 0));
-	matrix = glm::scale(matrix, Vec3(1.0 / width, 1.0 / height, 0));
-	uniforms().vMatrix() = Matrix(1);
-	uniforms().pMatrix() = matrix;
+	matrix = glm::scale(matrix, Vec3(2.0 / width, 2.0 / height, 0));
+	
+	uniforms().vMatrix() = matrix;
+	uniforms().pMatrix() = Matrix(1);
 }
 void Renderer::rerenderMesh() {
 	//simply renders the previous mesh again (saves performance)
@@ -100,13 +102,19 @@ void Renderer::clearColor(Color color) {
 void Renderer::normalizedScreenSpace() {
 	Float width = renderRegion.region.size.x;
 	Float height = renderRegion.region.size.y;
+
+	uniforms().vMatrix() = glm::scale(Matrix(1), Vec3(2.0 / width, 2.0 / height, 0));
+	uniforms().pMatrix() = Matrix(1);
+}
+void Renderer::screenSpaceFromTopLeft() {
+	Float width = renderRegion.region.size.x;
+	Float height = renderRegion.region.size.y;
 	Matrix matrix = Matrix(1);
-	matrix = glm::translate(matrix, Vec3(-1, -1, 0));
+	matrix = glm::translate(matrix, Vec3(-1, 1, 0));
 	matrix = glm::scale(matrix, Vec3(2, 2, 0));
 	matrix = glm::scale(matrix, Vec3(1.0 / width, 1.0 / height, 0));
-
-	uniforms().vMatrix() = matrix;
-	uniforms().pMatrix() = Matrix(1);
+	uniforms().vMatrix() = Matrix(1);
+	uniforms().pMatrix() = matrix;
 }
 void Renderer::renderMesh(Index meshID) {
 	meshSystem.render(uniforms(), meshID);
@@ -132,29 +140,29 @@ void Renderer::setAlphaBlending(Bool blending)
 void Renderer::fill(Float r, Float g, Float b) {
 	fill(Vec4(r, g, b, 1));
 }
-void Renderer::create(Engine& engine, Area size)
+void Renderer::create(ResourceManager& resourceManager, Area size)
 {
 	randomizeSeed();
 	//basic systems
 	time.reset();
 	textureSystem.create();
-	meshSystem.create(engine);
-	shaderSystem.create(engine);
+	meshSystem.create(resourceManager);
+	shaderSystem.create(resourceManager);
 	lineRenderer.create();
 	
 	//advanced systems
 	framebufferSystem.create(*this, size);
-	textRenderSystem.create(engine, *this);
+	textRenderSystem.create(resourceManager, *this);
 	renderObjectSystem.create(*this);
 	idFramebuffer.create(*this); //needs to be below framebuffer system
-	rectangleRenderer.create(engine, *this);
+	rectangleRenderer.create(resourceManager, *this);
 
 	apiClipControl(GL_LOWER_LEFT, GL_ZERO_TO_ONE);
 	apiSetScissorTest(true);
 }
-void Renderer::useMesh(Engine& engine, Name name) {
+void Renderer::useMesh(ResourceManager& resourceManager, Name name) {
 	//selects a mesh to be rendered but doesent render it
-	meshSystem.use(engine,name);
+	meshSystem.use(resourceManager,name);
 }
 void Renderer::setWireframeMode(Bool wireframeMode) {
 	if (wireframeMode) {
@@ -164,13 +172,13 @@ void Renderer::setWireframeMode(Bool wireframeMode) {
 		apiPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	}
 }
-void Renderer::renderMesh(Engine& engine, Name name) {
-	meshSystem.render(engine, uniforms(), name);
+void Renderer::renderMesh(ResourceManager& resourceManager, Name name) {
+	meshSystem.render(resourceManager, uniforms(), name);
 }
-void Renderer::useTexture(Engine& engine, Name name) {
-	textureSystem.use(engine, name);
+void Renderer::useTexture(ResourceManager& resourceManager, Name name) {
+	textureSystem.use(resourceManager, name);
 }
-void Renderer::postProcess(Engine& engine, Name name) {
+void Renderer::postProcess(ResourceManager& resourceManager, Name name) {
 	//draw to second buffer
 	DepthTestOverride(false,*this);
 
@@ -180,14 +188,14 @@ void Renderer::postProcess(Engine& engine, Name name) {
 	draw("postProcess");
 	clearColor();
 	clearDepth();
-	useShader(engine, name);
-	renderMesh(engine, "fullScreenQuad");
+	useShader(resourceManager, name);
+	renderMesh(resourceManager, "fullScreenQuad");
 
 	read("postProcess");
 	framebufferSystem.currentRead().setAsTexture(0);
 	draw("main");
-	useShader(engine, "texture");
-	renderMesh(engine, "fullScreenQuad");
+	useShader(resourceManager, "texture");
+	renderMesh(resourceManager, "fullScreenQuad");
 }
 void Renderer::line(Vec3 start, Vec3 end, Float width) {
 	lineRenderer.renderLine(*this, start, end, width);
@@ -195,44 +203,44 @@ void Renderer::line(Vec3 start, Vec3 end, Float width) {
 void Renderer::line(Vec2 start, Vec2 end, Float width) {
 	lineRenderer.renderLine(*this, Vec3(start,0.0f), Vec3(end,0.0f), width);
 }
-void Renderer::renderSky(Engine& engine, Camera& camera) {
+void Renderer::renderSky(ResourceManager& resourceManager, Camera& camera) {
 	setCulling(false);
 	setDepthTest(false);
 	camera.renderOnlyRot(*this);
-	useShader(engine, "sky");
-	useTexture(engine, "sky");
-	renderMesh(engine, "sky");
+	useShader(resourceManager, "sky");
+	useTexture(resourceManager, "sky");
+	renderMesh(resourceManager, "sky");
 	setCulling(true);
 	setDepthTest(true);
 }
-void Renderer::fullScreenShader(Engine& engine, Name name) {
-	useShader(engine, name);
+void Renderer::fullScreenShader(ResourceManager& resourceManager, Name name) {
+	useShader(resourceManager, name);
 	meshSystem.renderFullscreen(uniforms());
 }
-void Renderer::arrow(Engine& engine, Vec2 start, Vec2 end) {
-	arrow(engine, Vec3(start, 0), Vec3(end, 0));
+void Renderer::arrow(ResourceManager& resourceManager, Vec2 start, Vec2 end) {
+	arrow(resourceManager, Vec3(start, 0), Vec3(end, 0));
 }
-void Renderer::arrow(Engine& engine, Vec3 start, Vec3 end) {
-	useShader(engine, "color");
+void Renderer::arrow(ResourceManager& resourceManager, Vec3 start, Vec3 end) {
+	useShader(resourceManager, "color");
 	uniforms().customColor(Vec4(1, 0, 0, 1));
 	Float length = distance(start, end) / 20;
 	//if (length >= 0.075) return; //[TODO] erase this
 	Vec3 direction = end - start;
 	Orientation o(direction, Vec3(0, 0, 1));
 	uniforms().mMatrix() = matrixFromOrientation(o, start, length);
-	renderMesh(engine, "arrow");
+	renderMesh(resourceManager, "arrow");
 }
-void Renderer::circle(Engine& engine, Vec2 pos, Float radius)
+void Renderer::circle(ResourceManager& resourceManager, Vec2 pos, Float radius)
 {
 	uniforms().mMatrix(matrixFromLocationAndSize(pos,radius));
-	renderMesh(engine, "circle");
+	renderMesh(resourceManager, "circle");
 }
-void Renderer::rectangle(Engine& engine, Vec2 pos, Vec2 size) {
-	rectangleRenderer.render(engine, *this, pos, size);
+void Renderer::rectangle(ResourceManager& resourceManager, Vec2 pos, Vec2 size) {
+	rectangleRenderer.render(resourceManager, *this, pos, size);
 }
-void Renderer::renderMeshInstanced(Engine& engine, Name name)
+void Renderer::renderMeshInstanced(ResourceManager& resourceManager, Name name)
 {
-	meshSystem.renderInstanced(engine, uniforms(), name, matrixSystem.modelMatrixArray);
+	meshSystem.renderInstanced(resourceManager, uniforms(), name, matrixSystem.modelMatrixArray);
 }
 void Renderer::normalizedSpaceWithAspectRatio(Float aspectRatio) {
 	Float renderAspectRatio = getAspectRatio();
@@ -269,24 +277,26 @@ void Renderer::addRenderObject(RenderObjectNames renderObjectNames)
 {
 	renderObjectSystem.addRenderObject(renderObjectNames);
 }
-void Renderer::useTexture(Engine& engine, Name name, Index location) {
-	textureSystem.use(engine, name, location);
+void Renderer::useTexture(ResourceManager& resourceManager, Name name, Index location) {
+	textureSystem.use(resourceManager, name, location);
 }
-void Renderer::renderAtmosphere(Engine& engine, Player& player, Vec3 sunDirection) {
+void Renderer::renderAtmosphere(ResourceManager& resourceManager, Player& player, Vec3 sunDirection) {
 	Bool culling = getCulling();
 	setDepthTest(false);
 	player.camera.renderOnlyRot(*this);
 	uniforms().cameraPos() = Vec4(Vec3(0), 1);
 	setCulling(false);
 	uniforms().sunDir() = Vec4(sunDirection, 1);
-	useShader(engine, "atmosphere");
+	useShader(resourceManager, "atmosphere");
 	/*framebufferSystem.current().colorTexture.use(0);*/
-	renderMesh(engine, "centeredCube");
+	renderMesh(resourceManager, "centeredCube");
 	setCulling(culling);
 	setDepthTest(true);
 }
-void Renderer::renderText(Engine& engine, String text, Vec2 position, FontStyle font) {
-	textRenderSystem.render(engine, *this, text, position, font);
+void Renderer::setAlphaBlending(Bool enable, BlendFunction src, BlendFunction dst, BlendEquation eq) {
+	apiSetBlending(enable);
+	apiBlendFunc(src, dst);
+	apiBlendEquation(eq);
 }
 
 Area Renderer::getArea() {
@@ -305,6 +315,6 @@ Uniforms& Renderer::uniforms()
 Float Renderer::getAspectRatio(){
 	return framebufferSystem.currentDraw().aspectRatio();
 }
-Index Renderer::useShader(Engine& engine, Name name) {
-	return shaderSystem.use(engine, name);
+Index Renderer::useShader(ResourceManager& resourceManager, Name name) {
+	return shaderSystem.use(resourceManager, name);
 }

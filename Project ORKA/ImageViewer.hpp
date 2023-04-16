@@ -1,116 +1,64 @@
-
 #pragma once
 
 #include "Game.hpp"
+#include "ResourceManager.hpp"
 
-struct ImageViewer : public GameRenderer{
-	Path imagePath = "";
-	CPUTexture cimage;
-	GPUTexture gimage;
-	
+// [TODO]
+// multithreaded file loading
+// only load files in folder
+// usable with only mouse controls
+// add fpng support
+// add webp support
+// converter button
+
+struct ImageViewerRenderer : public GameRenderer {
+	Vector<Path> paths;
+	Vector<GPUTexture> gpuTextures;
+
+	Vector<Thread> threads;
+	Float frameRate = 24;
+	Float holdingDelay = 0.5;
+
+	Int currentImageID = 0;
+
 	Int zoomLevel = 0;
 	Float zoom = 1;
 	Float zoomfactor = 1.2;
-	Float smoothness = 10;
+	Float smoothness = 0.1;
+	
+	TimePoint lastImageRefresh;
+	TimePoint lastButtonInput;
 
 	Vec2 offset = Vec2(0);
 
-	Float actualzoom = 1;
-	Vec2 actualOffset = Vec2(0);
+	Matrix actualMatrix = Matrix(1);
 
+	Float holdDelay = 1;
+
+	InputEvent previousImage = InputEvent(InputType::KeyBoard, LEFT, 0);
+	InputEvent deleteImage = InputEvent(InputType::KeyBoard, DEL, 0);
+	InputEvent nextImage = InputEvent(InputType::KeyBoard, RIGHT, 0);
 	InputEvent zoomIn = InputEvent(InputType::Scroll, 1, 1);
 	InputEvent zoomOut = InputEvent(InputType::Scroll, 1, 0);
+	InputEvent resetView = InputEvent(InputType::Mouse, MMB, 0);
 
 	InputID mouseDown = InputID(InputType::Mouse, LMB);
+	InputID nextImageHolding = InputID(InputType::KeyBoard, RIGHT);
+	InputID previousImageHolding = InputID(InputType::KeyBoard, LEFT);
 
-	void showImage(Path path) {
-		cimage.load(path, "imageViewerImage");
-		cimage.nearFilter = Filter::nearest;
-	}
-	
-	void update(Window& window) override{
-		if (window.droppedFilePaths.size()) {
-			cimage.unload();
-			cimage.load(window.droppedFilePaths.last(), "imageViewerImage");
-			cimage.nearFilter = Filter::nearest;
-			gimage.load(cimage);
-			window.droppedFilePaths.popBack();
-		}
-	}
+	void updateZoom();
+	void setNextImage();
+	void setPreviousImage();
+	void update(Window& window) override;
+	void preloadImage(Path path, GPUTexture& texture);
+	void inputEvent(Window& window, InputEvent input) override;
+	void render(ResourceManager& resourceManager, Window& window, TiledRectangle area) override;
+};
 
-	void render(Engine& engine, Window& window, TiledRectangle area) override {
-		Renderer& renderer = window.renderer;
+struct ImageViewer {
+	ResourceManager resourceManager;
+	UserInterface ui;
+	ImageViewerRenderer renderer;
 
-		renderer.clearColor(Color(0,0,0,1));
-
-		if (window.pressed(mouseDown)) {
-			offset += window.mouseDelta;
-		}
-
-		gimage.use(0);
-		renderer.useShader(engine, "imageViewer");
-		renderer.normalizedScreenSpace();
-
-		//calculate image size and position
-		Float winX = window.renderer.framebufferSystem.windowSize.x;
-		Float winY = window.renderer.framebufferSystem.windowSize.y;
-
-		Float imgX = cimage.width;
-		Float imgY = cimage.height;
-
-		Float aspW = winX / winY;
-		Float aspI = imgX / imgY;
-
-		Float targetX = 0;
-		Float targetY = 0;
-
-		if (aspW >= aspI) {
-			targetX = winY * aspI;
-			targetY = winY;
-		}
-		else {
-			targetX = winX;
-			targetY = winX * (1/aspI);
-		}
-
-		approach(actualzoom, zoom, window.renderer.deltaTime() * smoothness);
-		actualOffset = offset;
-
-
-		Matrix centerMatrix = translate(Matrix(1), Vec3(winX / 2, winY / 2,0));
-		Matrix zoomMatrix = scale(Matrix(1), Vec3(actualzoom));
-		Matrix offsetMatrix = translate(Matrix(1),Vec3(offset,0));
-		Matrix imageScale = scale(Matrix(1), Vec3(targetX, targetY, 0));
-
-
-
-		Matrix finalMatrix = offsetMatrix * zoomMatrix * imageScale * centerMatrix;
-		finalMatrix = imageScale * centerMatrix;
-
-		renderer.uniforms().mMatrix(finalMatrix);
-
-		renderer.renderMesh(engine, "centeredPlane");
-	};
-
-	void inputEvent(Window& window, InputEvent input) override {
-		if (input == zoomIn) {
-			zoomLevel++;
-			
-			Float oldZoom = zoom;
-
-			zoom = pow(zoomfactor, zoomLevel);
-
-			offset *= zoom / oldZoom;
-
-		}
-		if (input == zoomOut) {
-			zoomLevel--;
-
-			Float oldZoom = zoom;
-
-			zoom = pow(zoomfactor, zoomLevel);
-
-			offset *= zoom / oldZoom;
-		};
-	};
+	void run(Int argc, Char* argv[]);
 };

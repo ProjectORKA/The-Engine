@@ -605,9 +605,9 @@ void CallstackCollector::Clear()
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 bool CallstackCollector::SerializeModules(OutputDataStream& stream)
 {
-	if (SymbolEngine* symEngine = Core::Get().symbolEngine)
+	if (SymbolresourceManager* symresourceManager = Core::Get().symbolresourceManager)
 	{
-		stream << symEngine->GetModules();
+		stream << symresourceManager->GetModules();
 		return true;
 	}
 	else
@@ -659,21 +659,21 @@ bool CallstackCollector::SerializeSymbols(OutputDataStream& stream)
 		}
 	}
 
-	SymbolEngine* symEngine = Core::Get().symbolEngine;
+	SymbolresourceManager* symresourceManager = Core::Get().symbolresourceManager;
 
 	vector<const Symbol*> symbols;
 	symbols.reserve(symbolSet.size());
 
 	Core::Get().DumpProgress("Resolving addresses ... ");
 
-	if (symEngine)
+	if (symresourceManager)
 	{
 		int total = (int)symbolSet.size();
 		const int progressBatchSize = 100;
 		for (auto it = symbolSet.begin(); it != symbolSet.end(); ++it)
 		{
 			uint64 address = *it;
-			if (const Symbol* symbol = symEngine->GetSymbol(address))
+			if (const Symbol* symbol = symresourceManager->GetSymbol(address))
 			{
 				symbols.push_back(symbol);
 
@@ -1103,9 +1103,9 @@ void Core::DumpFrames(uint32 mode)
 		Server::Get().Send(DataResponse::CallstackDescriptionBoard, symbolsStream);
 
 		// We can free some memory now to unlock space for callstack serialization
-		DumpProgress("Deallocating memory for SymbolEngine");
-		Memory::Delete(symbolEngine);
-		symbolEngine = nullptr;
+		DumpProgress("Deallocating memory for SymbolresourceManager");
+		Memory::Delete(symbolresourceManager);
+		symbolresourceManager = nullptr;
 
 		DumpProgress("Serializing callstacks");
 		OutputDataStream callstacksStream;
@@ -1215,7 +1215,7 @@ Core::Core()
 	, forcedMainThreadIndex((uint32)-1)
 	, currentMode(Mode::OFF)
 	, previousMode(Mode::OFF)
-	, symbolEngine(nullptr)
+	, symbolresourceManager(nullptr)
 	, tracer(nullptr)
 	, gpuProfiler(nullptr)
 {
@@ -1384,8 +1384,8 @@ void Core::Activate(Mode::Type mode)
 			}
 
 			if (mode & Mode::AUTOSAMPLING)
-				if (symbolEngine == nullptr)
-					symbolEngine = Platform::CreateSymbolEngine();
+				if (symbolresourceManager == nullptr)
+					symbolresourceManager = Platform::CreateSymbolresourceManager();
 #endif
 
 			if (gpuProfiler && (mode & Mode::GPU))
@@ -1650,8 +1650,8 @@ void Core::Shutdown()
 	}
 	fibers.clear();
 
-	Memory::Delete(symbolEngine);
-	symbolEngine = nullptr;
+	Memory::Delete(symbolresourceManager);
+	symbolresourceManager = nullptr;
 
 	EventDescriptionBoard::Get().Shutdown();
 }

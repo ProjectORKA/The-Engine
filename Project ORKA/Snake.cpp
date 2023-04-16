@@ -6,14 +6,14 @@ void Snake::addSegment() {
 void Snake::dumbAI(SnakeFood& f) {
 	direction = speed * normalize(f.foodPosition - headPosition);
 }
-void Snake::render(Engine& engine, Window& window) {
+void Snake::render(ResourceManager& resourceManager, Window& window) {
 	window.renderer.fill(Color(snakeColor));
-	window.renderer.useShader(engine, "color");
+	window.renderer.useShader(resourceManager, "color");
 	window.renderer.uniforms().mMatrix(matrixFromLocationAndSize(headPosition, segmentRadius));
-	window.renderer.renderMesh(engine, "circle");
+	window.renderer.renderMesh(resourceManager, "circle");
 	for (Int i = 0; i < bodySegments.size(); i++) {
 		window.renderer.uniforms().mMatrix(matrixFromLocationAndSize(bodySegments[i], segmentRadius));
-		window.renderer.renderMesh(engine, "circle");
+		window.renderer.renderMesh(resourceManager, "circle");
 	}
 }
 void Snake::inputEvent(Window& window, InputEvent input) {
@@ -52,11 +52,11 @@ void SnakeFood::update() {
 	foodPosition += randomVec2(-0.02, 0.02);
 	foodColor = randomVec4(0, 1);
 }
-void SnakeFood::render(Engine& engine, Window& window) {
+void SnakeFood::render(ResourceManager& resourceManager, Window& window) {
 	window.renderer.fill(Color(foodColor));
-	window.renderer.useShader(engine, "color");
+	window.renderer.useShader(resourceManager, "color");
 	window.renderer.uniforms().mMatrix(matrixFromLocationAndSize(foodPosition, 0.03));
-	window.renderer.renderMesh(engine, "circle");
+	window.renderer.renderMesh(resourceManager, "circle");
 
 }
 void SnakeGame::update(Window& window) {
@@ -71,14 +71,14 @@ void SnakeGame::update(Window& window) {
 	}
 }
 
-void SnakeGame::render(Engine& engine, Window& window, TiledRectangle area) {
+void SnakeGame::render(ResourceManager& resourceManager, Window& window, TiledRectangle area) {
 	Renderer& renderer = window.renderer;
 
 	renderer.clearColor(Color(0, 0.2, 0.2, 0.7));
 	renderer.normalizedSpaceWithAspectRatio(16.0 / 9.0);
 
-	snake.render(engine, window);
-	snakefood.render(engine, window);
+	snake.render(resourceManager, window);
+	snakefood.render(resourceManager, window);
 }
 void SnakeGame::inputEvent(Window& window, InputEvent input) {
 	snake.inputEvent(window, input);

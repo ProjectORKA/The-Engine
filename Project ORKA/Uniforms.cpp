@@ -28,11 +28,11 @@ void Uniforms::reset()
 	data.materialID = -1;
 	sampler2Ds["texture0"] = 0;
 }
-void Uniforms::create(Engine& engine)
+void Uniforms::create(ResourceManager& resourceManager)
 {
 	reset();
 
-	Path uniformShaderCodePath = Path(engine.resourceManager.orkaDataLocation).append("shaders").append("uniforms.glsl");
+	Path uniformShaderCodePath = Path(resourceManager.orkaDataLocation).append("shaders").append("uniforms.glsl");
 	uniformBlockShaderCode = loadString(uniformShaderCodePath);
 
 	apiGenBuffer(id);

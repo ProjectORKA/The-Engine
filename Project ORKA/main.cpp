@@ -1,6 +1,6 @@
 //	Welcome fellow programmer!
 //	My name is Samuel and im the creator of Project ORKA.
-//	This is the open source code for the games and game engine
+//	This is the open source code for the games and game resourceManager
 //	Feel free to take a look at the code and point out all the errors :)
 //	If you want to report bugs, request features or add your own code take a look at our GitHub:
 //	https://github.com/ProjectORKA/Project-ORKA
@@ -14,7 +14,7 @@
 //	About the code:
 //	The following C++ code is meant to be as clean and humanly readable as possible.
 //	If you are a human and you find that you can not read it please contact me :)
-//	The "Project ORKA" engine is divided into
+//	The "Project ORKA" resourceManager is divided into
 //		1. data stored in structs (yes everything is public)
 //		2. functions that act on that data in form of void or member functions
 //	We are trying to avoid con/destructors and inheritance and advanced features like macros, lambdas, templates, etc...
@@ -22,8 +22,8 @@
 //	Everything is written in camelCase and datatypes starts with upper case while variables and functions start with lower case
 //	For example "ThisIsADataType" vs "thisIsAFunction"
 
-//	About the engine:
-//	This engine uses a left-handed coordinate system like Blender:
+//	About the resourceManager:
+//	This resourceManager uses a left-handed coordinate system like Blender:
 //	+X = right
 //	+Y = forward
 //	+Z = up
@@ -43,27 +43,34 @@
 // easy to use algorithms
 // multiple window support
 
-
-//#define TESTING
-
-#include "TripleNine.hpp"
+//#include "Basics.hpp"
+//#include "Debug.hpp"
+//#include "RedDotHack.hpp"
+//#include "TripleNine.hpp"
 //#include "Pong.hpp"
 //#include "SimpleRTS.hpp"
 //#include "DungeonsAndDiscord.hpp"
 //#include "Mooncrash.hpp"
 //#include "SceneSystem.hpp"
 //#include "Blob.hpp"
+//#include "SimpleRTS.hpp"
+//#include "ProjectMelon.hpp"
+//#include "PhysicsPlayground.hpp"
+#include "ImageViewer.hpp"
+
+//[TODO] move advanced rendering systems like textRenderSystem out of renderer and into window
+//(basically simplify renderer to barebones tech)
+//OR separate into renderer and lowLevelRenderer
+
+//[TODO] there is a bug where the window size is not set properly
 
 Int main(Int  argc, Char* argv[]) {
-#ifndef TESTING
-	TripleNine game;
-	game.run();
-#else
-	//testing code
-	/////////////////////////////////////////////////////////////////////////////////////////////////
-
-	/////////////////////////////////////////////////////////////////////////////////////////////////
-	pause();
-#endif // TESTING
+	ImageViewer game;
+	game.run(argc, argv);
 	return 0;
+}
+
+//windows entry point
+Int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, Int nCmdShow) {
+	return main(__argc, __argv);
 }

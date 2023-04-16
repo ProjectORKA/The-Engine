@@ -2,7 +2,7 @@
 #pragma once
 
 #include "Game.hpp"
-#include "Engine.hpp"
+#include "ResourceManager.hpp"
 
 //this "game" plays and intro sequence and then replaces itself with any game you want
 
@@ -12,5 +12,5 @@ struct ORKAIntroSequence : public GameRenderer {
 	GameRenderer* gameStartingAfterIntro = nullptr;
 
 	void init(GameRenderer& game);
-	void render(Engine & engine, Window& window, TiledRectangle area) override;
+	void render(ResourceManager& resourceManager, Window& window, TiledRectangle area) override;
 };

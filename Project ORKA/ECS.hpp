@@ -5,7 +5,7 @@
 #include "Basics.hpp"
 #include "Math.hpp"
 #include "Transform.hpp"
-#include "Engine.hpp"
+#include "ResourceManager.hpp"
 
 #define ENTITY_MAX_COMPONENT_NUMBER 7
 
@@ -23,7 +23,7 @@ struct RenderComponent : public Component {
 	Name shaderName = "default";
 	Name meshName = "empty";
 
-	void render(Engine& engine, Renderer& renderer);
+	void render(ResourceManager& resourceManager, Renderer& renderer);
 };
 
 enum Components {

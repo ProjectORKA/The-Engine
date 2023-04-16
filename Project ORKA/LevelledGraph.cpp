@@ -75,9 +75,9 @@ Vec3 LevelledGraph::getPos(Index x, Index y) {
 	Float size = 2;
 	return Vec3(x * size, positions[x][y] * size, 0);
 }
-void LevelledGraph::render(Engine & engine, Renderer& renderer) {
+void LevelledGraph::render(ResourceManager& resourceManager, Renderer& renderer) {
 	renderer.setDepthTest(false);
-	renderer.useShader(engine, "color");
+	renderer.useShader(resourceManager, "color");
 	
 	//render connections
 	renderer.fill(Color(0.5, 0.5, 0.5, 1));
@@ -89,7 +89,7 @@ void LevelledGraph::render(Engine & engine, Renderer& renderer) {
 	renderer.fill(Color(1));
 	for (UInt a = 0; a < positions.size(); a++) {
 		renderer.uniforms().mMatrix(matrixFromLocation(Vec3(positions[a],0.0f)));
-		renderer.renderMesh(engine, "1x1planeCentered");
+		renderer.renderMesh(resourceManager, "1x1planeCentered");
 	}
 
 	renderer.setDepthTest(true);

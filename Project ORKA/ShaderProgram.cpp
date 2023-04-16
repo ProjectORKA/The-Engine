@@ -20,11 +20,11 @@ void ShaderProgram::destroy()
 	}
 	logDebug("Unloaded Shader!");
 }
-void ShaderProgram::create(Engine engine, Name name, Uniforms& uniforms) {
+void ShaderProgram::create(ResourceManager& resourceManager, Name name, Uniforms& uniforms) {
 	
-	auto vertIt = engine.resourceManager.vertexShaderResources.find(name);
+	auto vertIt = resourceManager.vertexShaderResources.find(name);
 	Shader vertexShader;
-	if (vertIt != engine.resourceManager.vertexShaderResources.end()) {
+	if (vertIt != resourceManager.vertexShaderResources.end()) {
 		logDebug(String("Loading Shader: ").append(vertIt->second.string()));
 		vertexShader.create(vertIt->second, uniforms.uniformBlockShaderCode);
 	}
@@ -32,9 +32,9 @@ void ShaderProgram::create(Engine engine, Name name, Uniforms& uniforms) {
 		logError("Vertex shader could not be found!");
 	}
 
-	auto fragIt = engine.resourceManager.fragmentShaderResources.find(name);
+	auto fragIt = resourceManager.fragmentShaderResources.find(name);
 	Shader fragmentShader;
-	if (fragIt != engine.resourceManager.fragmentShaderResources.end()) {
+	if (fragIt != resourceManager.fragmentShaderResources.end()) {
 		logDebug(String("Loading Shader: ").append(fragIt->second.string()));
 		fragmentShader.create(fragIt->second, uniforms.uniformBlockShaderCode);
 	}

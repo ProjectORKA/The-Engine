@@ -331,24 +331,24 @@ void NeighbourOctreeNode::create(NeighbourOctreeNode& parent, Bool x, Bool y, Bo
 	updateIsSurface();
 }
 
-void renderNeighbourOctreeNode(Engine& engine, NeighbourOctreeNode & node, Renderer& renderer) {
+void renderNeighbourOctreeNode(ResourceManager& resourceManager, NeighbourOctreeNode & node, Renderer& renderer) {
 	if (!node.inRenderDistance || !node.subdivided) {
 		if (node.isTerrain) {
 			Transform t;
 			t.location = node.position;
 			t.scale = Vec3(pow(2, -node.level + 2));
 			t.render(renderer);
-			renderer.renderMesh(engine, "centeredCube");
+			renderer.renderMesh(resourceManager, "centeredCube");
 		}
 	}
 	else {
-		renderNeighbourOctreeNode(engine, *node.c000, renderer);
-		renderNeighbourOctreeNode(engine, *node.c001, renderer);
-		renderNeighbourOctreeNode(engine, *node.c010, renderer);
-		renderNeighbourOctreeNode(engine, *node.c011, renderer);
-		renderNeighbourOctreeNode(engine, *node.c100, renderer);
-		renderNeighbourOctreeNode(engine, *node.c101, renderer);
-		renderNeighbourOctreeNode(engine, *node.c110, renderer);
-		renderNeighbourOctreeNode(engine, *node.c111, renderer);
+		renderNeighbourOctreeNode(resourceManager, *node.c000, renderer);
+		renderNeighbourOctreeNode(resourceManager, *node.c001, renderer);
+		renderNeighbourOctreeNode(resourceManager, *node.c010, renderer);
+		renderNeighbourOctreeNode(resourceManager, *node.c011, renderer);
+		renderNeighbourOctreeNode(resourceManager, *node.c100, renderer);
+		renderNeighbourOctreeNode(resourceManager, *node.c101, renderer);
+		renderNeighbourOctreeNode(resourceManager, *node.c110, renderer);
+		renderNeighbourOctreeNode(resourceManager, *node.c111, renderer);
 	}
 }

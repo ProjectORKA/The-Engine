@@ -11,7 +11,6 @@ struct PointCloud {
 	Vector<Vec3> points;
 	void add(Vec3 point);
 };
-
 struct PointCloudRenderer {
 	GPUMesh gpuMesh;
 	UInt pointCloudSize = 0;

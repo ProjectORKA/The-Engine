@@ -29,5 +29,5 @@ struct NormalTexture {
 
 struct TerrainSystem {
 	HeightTexture heightTextures[MAX_CHUNK_LEVEL];
-	void create(Engine& engine);
+	void create(ResourceManager& resourceManager);
 };

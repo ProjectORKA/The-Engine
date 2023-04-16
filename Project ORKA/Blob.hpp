@@ -24,7 +24,7 @@ struct BlobRenderer : GameRenderer {
 		player.inputEvent(window, input);
 	};
 
-	void render(Engine& engine, Window& window, TiledRectangle area) {
+	void render(ResourceManager& resourceManager, Window& window, TiledRectangle area) {
 		Renderer& r = window.renderer;
 		
 		//setup
@@ -36,19 +36,19 @@ struct BlobRenderer : GameRenderer {
 		player.camera.renderOnlyRot(r);
 		r.uniforms().sunDir(Vec4(normalize(Vec3(0.445776,0.77546453,1)), 0));
 		r.uniforms().cameraPos(Vec4(player.camera.location,0));
-		r.useTexture(engine, "noise", 1);
-		r.useShader(engine, "blob2");
-		r.renderMesh(engine, "centeredCube");
+		r.useTexture(resourceManager, "noise", 1);
+		r.useShader(resourceManager, "blob2");
+		r.renderMesh(resourceManager, "centeredCube");
 	}
 };
 
 struct Blob {
 	BlobRenderer renderer;
-	Engine engine;
+	ResourceManager resourceManager;
 	UserInterface ui;
 
 	void run() {
-		ui.window("Blob", Area(1920, 1080), true, WindowState::windowed, renderer, engine);
+		ui.window("Blob", Area(1920, 1080), true, WindowState::windowed, renderer, resourceManager);
 		ui.run();
 	}
 };

@@ -1,11 +1,11 @@
 
 #include "PlanetSystem.hpp"
 
-void PlanetSystem::create(Engine& engine)
+void PlanetSystem::create(ResourceManager& resourceManager)
 {
 	quadtreeSystem.create(terrainSystem);
 	octreeSystem.create(quadtreeSystem);
-	terrainSystem.create(engine);
+	terrainSystem.create(resourceManager);
 }
 PlanetSystem::~PlanetSystem() {
 	octreeSystem.destroy();

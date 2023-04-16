@@ -20,15 +20,15 @@ struct MindMapperRenderer : public GameRenderer {
 	MindMapperRenderer() {};
 	void update(Window& window) override;
 	void inputEvent(Window& window, InputEvent input) override;
-	void render(Engine& engine, Window& window, TiledRectangle area) override;
+	void render(ResourceManager& resourceManager, Window& window, TiledRectangle area) override;
 };
 
 struct MindMapper {
 	UserInterface ui;
 	MindMapperRenderer mindMapperRenderer;
 
-	MindMapper(Engine& engine) {
-		ui.window("ORKA Sandbox", Area(1920, 1080), true, WindowState::windowed, mindMapperRenderer, engine);
+	MindMapper(ResourceManager& resourceManager) {
+		ui.window("ORKA Sandbox", Area(1920, 1080), true, WindowState::windowed, mindMapperRenderer, resourceManager);
 		ui.run();
 	}
 };

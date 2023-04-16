@@ -8,19 +8,13 @@ Int diceRoll(Int diceCount) {
 	return 1 + randomInt(diceCount);
 }
 
-void DNDRenderer::create(Engine& engine, Window& window) {
+void DNDRenderer::create(ResourceManager& resourceManager, Window& window) {
 	player.speedExponent = world->speedExponent;
 	player.camera.farClipValue = world->farClipValue;
 	player.camera.nearClipValue = world->nearClipValue;
 	player.camera.fieldOfView = world->fieldOfView;
 	player.camera.setRotation(world->rotation);
 	player.camera.location = world->location;
-
-	world->load();
-}
-
-void DNDRenderer::destroy(Window& window) {
-	world->save();
 }
 
 void DNDRenderer::update(Window& window)
@@ -28,16 +22,16 @@ void DNDRenderer::update(Window& window)
 	player.update(window);
 
 	for (Path& path : window.droppedFilePaths) {
-		Name name = path.stem().string();
+		//Name name = path.stem().string();
 
-		DNDEntity e;
-		e.meshName = name;
-		e.transform = Transform();
-		world->entities.pushBack(e);
+		//DNDEntity e;
+		//e.meshName = name;
+		//e.transform = Transform();
+		//world->entities.pushBack(e);
 	}
 	window.droppedFilePaths.clear();
 }
-void DNDRenderer::render(Engine& e, Window& window, TiledRectangle area) {
+void DNDRenderer::render(ResourceManager& resourceManager, Window& window, TiledRectangle area) {
 	Renderer& r = window.renderer;
 	
 	//preprocess
@@ -50,17 +44,17 @@ void DNDRenderer::render(Engine& e, Window& window, TiledRectangle area) {
 	r.clearColor();
 	r.clearDepth();
 	//renderer.renderSky(player.camera);
-	//renderer.renderAtmosphere(engine, player, normalize(Vec3(1)));
+	//renderer.renderAtmosphere(resourceManager, player, normalize(Vec3(1)));
 
 	r.blendModeAdditive();
 	player.camera.renderOnlyRot(r);
-	r.useTexture(e, "dndSky");
-	r.useShader(e, "dndSky");
-	r.renderMesh(e, "centeredCube");
+	r.useTexture(resourceManager, "dndSky");
+	r.useShader(resourceManager, "dndSky");
+	r.renderMesh(resourceManager, "centeredCube");
 
 	r.setDepthTest(true);
 
-	r.postProcess(e, "tonemapping");
+	r.postProcess(resourceManager, "tonemapping");
 
 	//r.setCulling(true);
 
@@ -127,14 +121,14 @@ void DNDRenderer::inputEvent(Window& window, InputEvent input) {
 
 	player.inputEvent(window, input);
 }
-void DNDRenderer::renderInteractive(Engine& engine, Window& window, TiledRectangle area)
+void DNDRenderer::renderInteractive(ResourceManager& resourceManager, Window& window, TiledRectangle area)
 {
-	player.render(engine, window);
+	player.render(resourceManager, window);
 
 	if (world->loaded) {
 		for (Int i = 0; i < world->entities.size(); i++) {
 			window.renderer.uniforms().objectID() = i;
-			world->entities[i].render(engine, window.renderer);
+			world->entities[i].render(resourceManager, window.renderer);
 		}
 	}
 }
@@ -153,7 +147,7 @@ void DNDWorld::save() {
 	save.write((Char*)&entityCount, sizeof(UInt));
 	save.write((Char*)&entities[0], sizeof(DNDEntity) * entities.size());
 }
-void DNDWorld::load() {
+void DNDWorld::load(ResourceManager& resourceManager) {
 	InFile save("Saves/dnd.save");
 
 	if (save.isOpen) {
@@ -172,8 +166,20 @@ void DNDWorld::load() {
 
 		loaded = true;
 	}
+
+	scene.importFBX("dnd",resourceManager);
 }
-void DNDEntity::render(Engine& engine, Renderer& renderer) {
+void DNDEntity::render(ResourceManager& resourceManager, Renderer& renderer) {
 	transform.render(renderer);
-	renderer.renderMesh(engine, meshName);
+	renderer.renderMesh(resourceManager, meshName);
+}
+
+void DungeonsAndDiscord::run() {
+	sim.load(resourceManager);
+
+	renderer.world = &sim;
+	ui.window("Simple RTS", Area(1920, 1080), true, WindowState::windowed, renderer, resourceManager);
+	ui.run();
+
+	sim.save();
 }

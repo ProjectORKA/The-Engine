@@ -11,19 +11,17 @@ void finish() {
 }
 
 //window thread
-void windowThread(Engine& engine, Window& window)
+void windowThread(ResourceManager& resourceManager, Window& window)
 {
 	Renderer& renderer = window.renderer;
 	window.initializeGraphicsAPI();					//needs to be in this thread
-	renderer.create(engine, window.getContentSize());		//also needs to be in this thread
+	renderer.create(resourceManager, window.getContentSize());		//also needs to be in this thread
 	window.updateWindowState();
 
-	if (window.content)window.content->create(engine, window);
+	if (window.content)window.content->create(resourceManager, window);
 
 	if (window.windowState == WindowState::windowed) window.centerWindow();
 	if (window.windowState == WindowState::windowed || window.windowState == WindowState::maximized) window.updateDecorations();
-
-	window.setCallbacks();
 
 	MouseMovement prevPos = MouseMovement(0);
 
@@ -40,7 +38,7 @@ void windowThread(Engine& engine, Window& window)
 			prevPos = window.mousePosBotLeft;
 
 			renderer.begin(); //resets and syncronizes the renderer
-			
+
 			Area windowSize = window.getContentSize();
 
 			TiledRectangle windowArea(windowSize);
@@ -60,15 +58,15 @@ void windowThread(Engine& engine, Window& window)
 				OPTICK_PUSH("Interactive Draw");
 				renderer.idFramebuffer.draw(renderer);
 				renderer.clearColor();
-				renderer.useShader(engine, "idShader");
+				renderer.useShader(resourceManager, "idShader");
 				renderer.uniforms().reset();
-				renderer.renderMesh(engine, "fullScreenQuad");
+				renderer.renderMesh(resourceManager, "fullScreenQuad");
 				renderer.clearDepth();
 				renderer.setWireframeMode(false);
 				renderer.setCulling(false);
-				renderer.useShader(engine, "idShader");
+				renderer.useShader(resourceManager, "idShader");
 				renderer.setAlphaBlending(false);
-				window.content->renderInteractive(engine, window, windowArea);
+				window.content->renderInteractive(resourceManager, window, windowArea);
 				renderer.idFramebuffer.updateIdsUnderCursor(window);
 				OPTICK_POP();
 
@@ -76,10 +74,11 @@ void windowThread(Engine& engine, Window& window)
 				OPTICK_PUSH("Draw");
 				renderer.draw("main");
 				renderer.clearColor();
-				window.content->render(engine, window, windowArea);
+				window.content->render(resourceManager, window, windowArea);
 
 				renderer.aspectCorrectNormalizedSpace();
-				if (window.profiling) renderer.renderText(engine, "[R]", Vec2(0.9), FontStyle(0.02));
+
+				if (window.profiling) renderer.textRenderSystem.render(resourceManager, renderer, "[R]", Vec2(0.9), FontStyle(0.02));
 				OPTICK_POP();
 			}
 
@@ -94,12 +93,12 @@ void windowThread(Engine& engine, Window& window)
 
 #ifdef DEBUG_ID_BUFFER
 			renderer.framebufferSystem.framebuffers[renderer.idFramebuffer.framebufferID].setAsTexture(0);
-			renderer.fullScreenShader(engine, "debugID");
+			renderer.fullScreenShader(resourceManager, "debugID");
 #else
 			OPTICK_PUSH("Draw final quad");
 			renderer.uniforms().reset();
 			renderer.framebufferSystem.currentDraw().setAsTexture(0); //[TODO] might not work; check
-			renderer.fullScreenShader(engine, "final");
+			renderer.fullScreenShader(resourceManager, "final");
 			OPTICK_POP();
 #endif
 			renderer.end(); //checks errors and unlocks renderer
@@ -111,8 +110,8 @@ void windowThread(Engine& engine, Window& window)
 		}
 		window.mouseDelta = MouseMovement(0);
 	}
+	
 	renderer.destroy();
-	window.destroyAPIWindow();
 }
 
 //windowstate
@@ -135,20 +134,27 @@ void Window::uncaptureCursor() {
 void Window::destroy() {
 	keeprunning = false;
 	thread.stop();
+	destroyAPIWindow();
+	LifetimeGuard::destroy();
 }
-void Window::setWindowed()
-{
+void Window::setWindowed(){
+	checkLifetime();
+
 	apiWindowSetWindowedMode(apiWindow, windowedModeSize);
 	apiWindowRestore(apiWindow);
 	centerWindow();
 	windowState = WindowState::windowed;
 }
 void Window::setMaximized() {
+	checkLifetime();
+
 	apiMaximizeWindow(apiWindow);
 	windowState = WindowState::maximized;
 }
 void Window::setCallbacks()
 {
+	checkLifetime();
+
 	//glfwSetCharCallback(apiWindow, whenCharIsTyped);
 	glfwSetKeyCallback(apiWindow, whenButtonIsPressed);
 	glfwSetCursorPosCallback(apiWindow, whenMouseIsMoving);
@@ -166,32 +172,46 @@ void Window::setCallbacks()
 	glfwSetWindowContentScaleCallback(apiWindow, whenWindowContentScaleChanged);
 }
 void Window::centerWindow() {
+	checkLifetime();
+
 	TiledRectangle workableArea = apiWindowGetWorkableArea(apiWindow);
 	setPosition(workableArea.center() - getFrameSize().center());
 }
 void Window::setMinimized() {
+	checkLifetime();
+
 	apiMinimizeWindow(apiWindow);
 	windowState = WindowState::minimized;
 }
 void Window::setFullscreen() {
+	checkLifetime();
+
 	glfwSetWindowMonitor(apiWindow, glfwGetPrimaryMonitor(), 0, 0, glfwGetVideoMode(glfwGetPrimaryMonitor())->width, glfwGetVideoMode(glfwGetPrimaryMonitor())->height, GLFW_DONT_CARE);
 	windowState = WindowState::fullscreen;
 }
 void Window::decorateWindow()
 {
+	checkLifetime();
+
 	apiWindowDecorate(apiWindow);
 	decorated = true;
 }
 void Window::updatePosition()
 {
+	checkLifetime();
+
 	glfwSetWindowPos(apiWindow, windowPosition.x, windowPosition.y);
 }
 void Window::undecorateWindow()
 {
+	checkLifetime();
+
 	apiWindowUndecorate(apiWindow);
 	decorated = false;
 }
 void Window::destroyAPIWindow() {
+	checkLifetime();
+
 	uncaptureCursor();
 	if (apiWindow) {
 		glfwDestroyWindow(apiWindow);
@@ -200,6 +220,7 @@ void Window::destroyAPIWindow() {
 	logEvent("API Window destroyed!");
 }
 void Window::setIcon(Path path) {
+	checkLifetime();
 
 	path = std::filesystem::absolute(path);
 
@@ -217,6 +238,8 @@ void Window::setIcon(Path path) {
 	}
 }
 void Window::updateWindowState() {
+	checkLifetime();
+
 	switch (windowState) {
 	case WindowState::fullscreen: setFullscreen(); break;
 	case WindowState::maximized: setMaximized(); break;
@@ -226,12 +249,16 @@ void Window::updateWindowState() {
 	}
 }
 void Window::updateDecorations() {
+	checkLifetime();
+
 	if (decorated) decorateWindow();
 	else undecorateWindow();
 }
 void Window::initializeGraphicsAPI() {
+	checkLifetime();
+
 	glfwMakeContextCurrent(apiWindow);
-	
+
 	glewExperimental = true;
 
 	if (glewInit() == GLEW_OK) {
@@ -247,17 +274,25 @@ void Window::initializeGraphicsAPI() {
 }
 void Window::setPosition(IVec2 position)
 {
+	checkLifetime();
+
 	windowPosition = position;
 	updatePosition();
 }
 Window& Window::insert(UIElement& element) {
+	checkLifetime();
+
 	content = &element;
 	return *this;
 }
 void Window::resize(Int width, Int height) {
+	checkLifetime();
+
 	apiWindowResize(apiWindow, width, height);
 }
 void Window::createAPIWindow(String title, Area size) {
+	checkLifetime();
+
 	if (!apiWindow) {
 		//video mode
 		const GLFWvidmode* videoMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
@@ -301,15 +336,17 @@ void Window::createAPIWindow(String title, Area size) {
 		logError("Window already exists!");
 	}
 }
-void Window::create(String title, Area size, Bool decorated, WindowState state, Engine& engine)
+void Window::create(String title, Area size, Bool decorated, WindowState state, ResourceManager& resourceManager)
 {
+	LifetimeGuard::create();
+
 	this->decorated = decorated;
 	this->windowState = state;
 	id = nextWindowID++;
 	windowedModeSize = size;
 	createAPIWindow(title, size); //needs to be in this thread
-
-	thread.start(windowThread, engine, *this);
+	setCallbacks();
+	thread.start(windowThread, resourceManager, *this);
 	logEvent("Created Window in Main Thread!");
 }
 
@@ -438,5 +475,5 @@ void whenButtonIsPressed(APIWindow apiWindow, Int key, Int scancode, Int action,
 		OPTICK_SAVE_CAPTURE("profileDump");
 	}
 
-	if(window.content)window.content->inputEvent(window, input);
+	if (window.content)window.content->inputEvent(window, input);
 }
