@@ -7,33 +7,33 @@ Float CPUTexture::getRed(UInt x, UInt y) {
 	y = y % height;
 
 	switch (dataType) {
-	case dataTypeByte:  return Float(bytePixels	[xyToIndex(x, y, 0)]) / 255.0f; break;
-	case dataTypeFloat: return floatPixels		[xyToIndex(x, y, 0)]; break;
-	case dataTypeUInt:  return uIntPixels		[xyToIndex(x, y, 0)]; break;
+	case DataType::dataTypeByte:  return Float(bytePixels	[xyToIndex(x, y, 0)]) / 255.0f; break;
+	case DataType::dataTypeFloat: return floatPixels		[xyToIndex(x, y, 0)]; break;
+	case DataType::dataTypeUInt:  return uIntPixels		[xyToIndex(x, y, 0)]; break;
 	default: logError("Not supported!"); break;
 	}
 }
 Float CPUTexture::getGreen(UInt x, UInt y) {
 	switch (dataType) {
-	case dataTypeByte:  return Float(bytePixels[xyToIndex(x, y, 1)]) / 255.0f; break;
-	case dataTypeFloat: return floatPixels[xyToIndex(x, y, 1)]; break;
-	case dataTypeUInt:  return uIntPixels[xyToIndex(x, y, 1)]; break;
+	case DataType::dataTypeByte:  return Float(bytePixels[xyToIndex(x, y, 1)]) / 255.0f; break;
+	case DataType::dataTypeFloat: return floatPixels[xyToIndex(x, y, 1)]; break;
+	case DataType::dataTypeUInt:  return uIntPixels[xyToIndex(x, y, 1)]; break;
 	default: logError("Not supported!"); break;
 	}
 }
 Float CPUTexture::getBlue(UInt x, UInt y) {
 	switch (dataType) {
-	case dataTypeByte:  return Float(bytePixels[xyToIndex(x, y, 2)]) / 255.0f; break;
-	case dataTypeFloat: return floatPixels[xyToIndex(x, y, 2)]; break;
-	case dataTypeUInt:  return uIntPixels[xyToIndex(x, y, 2)]; break;
+	case DataType::dataTypeByte:  return Float(bytePixels[xyToIndex(x, y, 2)]) / 255.0f; break;
+	case DataType::dataTypeFloat: return floatPixels[xyToIndex(x, y, 2)]; break;
+	case DataType::dataTypeUInt:  return uIntPixels[xyToIndex(x, y, 2)]; break;
 	default: logError("Not supported!"); break;
 	}
 }
 Float CPUTexture::getAlpha(UInt x, UInt y) {
 	switch (dataType) {
-	case dataTypeByte:  return Float(bytePixels[xyToIndex(x, y, 3)]) / 255.0f; break;
-	case dataTypeFloat: return floatPixels[xyToIndex(x, y, 3)]; break;
-	case dataTypeUInt:  return uIntPixels[xyToIndex(x, y, 3)]; break;
+	case DataType::dataTypeByte:  return Float(bytePixels[xyToIndex(x, y, 3)]) / 255.0f; break;
+	case DataType::dataTypeFloat: return floatPixels[xyToIndex(x, y, 3)]; break;
+	case DataType::dataTypeUInt:  return uIntPixels[xyToIndex(x, y, 3)]; break;
 	default: logError("Not supported!"); break;
 	}
 }
@@ -154,31 +154,37 @@ void CPUTexture::unload()
 {
 	logDebug(String("Unloading Texture: (").append(name.data).append(")"));
 	
-	if (loaded) {
-		if (pixels)free(pixels);
-		pixels = nullptr;
-	}
+	bytePixels.clear();
+	floatPixels.clear();
+	uIntPixels.clear();
 }
-void CPUTexture::load(Path path, Name name)
-{
-	logDebug(String("Loading texture: (").append(name.data).append(" | ").append(path.string()).append(")"));
-
-	UInt bitcount = 8;
-
-	if (path.extension() == ".hdr" || path.extension() == ".exr") {
-		dataType = DataType::dataTypeFloat;
-		bitcount = 32;
-	}
-
-	Image image = loadImage(path, bitcount, true);
-
+void CPUTexture::load(Image image, Filter nearFilter, Filter farFilter, Wrapping wrapping, Name name) {
 	this->name = name;
-	this->bytePixels = image.pixels;
 	this->width = image.width;
 	this->height = image.height;
 	this->channels = image.channels;
+	this->farFilter = farFilter;
+	this->nearFilter = nearFilter;
+	this->wrapping = wrapping;
+	this->name = name;
 
-	if (pixels) loaded = true; else logEvent("Texture not loaded! Searching for different file format...");
+	switch (image.bitcount) {
+	case 8:
+		bytePixels.resize(image.width * image.height * image.channels);
+		std::memcpy(bytePixels.data(), image.pixels.data(), bytePixels.size());
+		dataType = DataType::dataTypeByte;
+		loaded = true;
+		break;
+	case 32:
+		floatPixels.resize(image.width * image.height * image.channels);
+		std::memcpy(floatPixels.data(), image.pixels.data(), floatPixels.size() * 4);
+		dataType = DataType::dataTypeFloat;
+		loaded = true;
+		break;
+	default:
+		logError("Unsupported bitcount!");
+		break;
+	}
 }
 void CPUTexture::load(ResourceManager& resourceManager, Name name) {
 	if (!loaded) {
@@ -195,11 +201,51 @@ void CPUTexture::load(ResourceManager& resourceManager, Name name) {
 		logWarning("Texture already loaded, you are trying to load it again, something must be wrong!");
 	}
 }
+void CPUTexture::load(Path path, Name name)
+{
+	if (!loaded) {
+		Image image;
+		image.load(path, true);
+		load(image,Filter::linear,Filter::linearMM,Wrapping::repeat, name);
+	}
+}
+void CPUTexture::load(Path path)
+{
+	Name name = getFileName(path);
+	load(path, name);
+}
 Index CPUTexture::xyToIndex(Int x, Int y, Int channel)
 {
 	return channels * (y * width + x) + channel;
 }
+CPUTexture::CPUTexture() {}
 CPUTexture::~CPUTexture()
 {
 	unload();
+}
+
+CPUTexture::CPUTexture(const CPUTexture& other) {
+	this->bytePixels = other.bytePixels;
+	this->width = other.width;
+	this->height = other.height;
+	this->channels = other.channels;
+	this->loaded = other.loaded;
+	this->wrapping = other.wrapping;
+	this->farFilter = other.farFilter;
+	this->nearFilter = other.nearFilter;
+	this->dataType = other.dataType;
+	this->name = other.name;
+}
+CPUTexture& CPUTexture::operator=(const CPUTexture& other) {
+	this->bytePixels = other.bytePixels;
+	this->width = other.width;
+	this->height = other.height;
+	this->channels = other.channels;
+	this->loaded = other.loaded;
+	this->wrapping = other.wrapping;
+	this->farFilter = other.farFilter;
+	this->nearFilter = other.nearFilter;
+	this->dataType = other.dataType;
+	this->name = other.name;
+	return *this;
 }

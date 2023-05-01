@@ -50,3 +50,10 @@ void logDebug(Vector<T> vec) {
 	for (auto v : vec) logDebug(v);
 #endif // DEBUG
 };
+
+template <typename T>
+void logDebug(std::vector<T> vec) {
+#ifdef DEBUG
+	for (auto v : vec) logDebug(v);
+#endif // DEBUG
+};

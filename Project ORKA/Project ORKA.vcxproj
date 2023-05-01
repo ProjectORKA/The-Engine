@@ -45,6 +45,7 @@
     <ClCompile Include="GPUTexture.cpp" />
     <ClCompile Include="GraphicsAPI.cpp" />
     <ClCompile Include="IdFramebuffer.cpp" />
+    <ClCompile Include="Image.cpp" />
     <ClCompile Include="ImageViewer.cpp" />
     <ClCompile Include="IndexBufferObject.cpp" />
     <ClCompile Include="InfiniteDetailPrototype.cpp" />
@@ -241,7 +242,6 @@
     <ClInclude Include="ParticleSystem.hpp" />
     <ClInclude Include="Physics.hpp" />
     <ClInclude Include="PhysicsPlayground.hpp" />
-    <ClInclude Include="Pixel.hpp" />
     <ClInclude Include="PlanetCamera.hpp" />
     <ClInclude Include="PlanetRenderSystem.hpp" />
     <ClInclude Include="PlanetSystem.hpp" />
@@ -273,6 +273,7 @@
     <ClInclude Include="ShaderSystem.hpp" />
     <ClInclude Include="SimpleRTSTreeSystem.hpp" />
     <ClInclude Include="StaticAllocator.hpp" />
+    <ClInclude Include="System.hpp" />
     <ClInclude Include="TextRenderSystem.hpp" />
     <ClInclude Include="TextureSystem.hpp" />
     <ClInclude Include="TLSFAllocator.h" />

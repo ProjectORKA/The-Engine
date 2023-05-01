@@ -22,7 +22,6 @@ struct GPUSimRenderer : public GameRenderer {
 		cpuTexture.width = worldSize;
 		cpuTexture.height = worldSize;
 		cpuTexture.wrapping = Wrapping::repeat;
-		cpuTexture.bytePixels = nullptr;
 		cpuTexture.loaded = true;
 
 		//worldFramebufferTexture.texture.load(cpuTexture);

@@ -220,15 +220,15 @@ void Window::destroyAPIWindow() {
 	logEvent("API Window destroyed!");
 }
 void Window::setIcon(Path path) {
+	
 	checkLifetime();
 
-	path = std::filesystem::absolute(path);
+	Image logo;
+	logo.load(makeAbsolute(path), false);
 
-	Image logo = loadImage(path, 8, false);
-
-	if (logo.pixels && logo.channels == 4) {
+	if (logo.pixels.size() && logo.channels == 4) {
 		GLFWimage icon;
-		icon.pixels = logo.pixels;
+		icon.pixels = logo.pixels.data();
 		icon.width = logo.width;
 		icon.height = logo.height;
 		glfwSetWindowIcon(apiWindow, 1, &icon);

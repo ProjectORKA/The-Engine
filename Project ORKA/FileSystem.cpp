@@ -1,17 +1,29 @@
 
 #include "FileSystem.hpp"
+#include "Platform.hpp"
 
 Path executablePath = "";
 
-namespace stbi {
-	//#define STBI_NO_JPEG
-#define STBI_FAILURE_USERMSG
-#define STB_IMAGE_IMPLEMENTATION
-#include "stb_image.h"
-}
-
 void deleteFile(Path path) {
-	std::filesystem::remove(path);
+	//if operating system is windows
+	if (_WIN32) {
+		//send to windows recycle bin
+		SHFILEOPSTRUCT fileOp;
+		ZeroMemory(&fileOp, sizeof(fileOp));
+		fileOp.hwnd = NULL;
+		fileOp.wFunc = FO_DELETE;
+		String s = path.string();
+		fileOp.pFrom = s.c_str();
+		fileOp.fFlags = FOF_ALLOWUNDO | FOF_NOCONFIRMATION;
+
+		Int result = SHFileOperation(&fileOp);
+		if (result != 0) {
+			logError("Could not delete file!");
+		}
+	}
+	else {
+		std::filesystem::remove(path);
+	}
 }
 String loadString(Path path) {
 	String s;
@@ -39,6 +51,11 @@ Path makeAbsolute(Path path) {
 Bool doesPathExist(Path path)
 {
 	return std::filesystem::exists(makeAbsolute(path));
+}
+String getFileName(Path path) {
+	if (path.has_filename())
+		return path.filename().string();
+	else logError("Could not resolve filename!");
 }
 Path removeFileName(Path path) {
 	if (path.has_extension())
@@ -118,32 +135,6 @@ FileTime getLastWrittenTimeOfFiles(Vector<Path> paths) {
 	}
 
 	return t1;
-}
-Image loadImage(Path path, Int bitcount, Bool inverted) {
-	stbi::stbi_set_flip_vertically_on_load(inverted);
-
-	//check if file exists
-	if (!doesPathExist(path)) {
-		logError(String("File not found! (").append(path.string()).append(")"));
-	}
-
-	Image image;
-	if (bitcount == 8) {
-		image.pixels = stbi::stbi_load(path.string().c_str(), &image.width, &image.height, &image.channels, 0);
-	}
-	else {
-		if (bitcount == 32) {
-			image.pixels = reinterpret_cast <Byte*>(stbi::stbi_loadf(path.string().c_str(), &image.width, &image.height, &image.channels, 0));
-			image.bitcount = 32;
-		}
-		else {
-			logError("Bitcount not supported!");
-		}
-	}
-
-	if (!image.pixels)logError("Image not loaded!");
-
-	return image;
 }
 Vector<Path> getFilesInDirectory(Path path, Vector<String> filter) {
 	Vector<Path> paths1;

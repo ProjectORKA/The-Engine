@@ -27,11 +27,11 @@ void FramebufferSystem::update(Area area)
 Framebuffer& FramebufferSystem::addGbuffer(Name name, Float relativeSize) {
 	Framebuffer & f = framebuffers.emplaceBack();
 	f.create(Area(1));
-	f.add(4, dataTypeFloat, 0);	//color
-	f.add(3, dataTypeFloat, 1);	//normal
-	f.add(3, dataTypeFloat, 2);	//world position
-	f.add(1, dataTypeUInt, 3);	//
-	f.add(5, dataTypeFloat, 4);	//depth
+	f.add(4, DataType::dataTypeFloat, 0);	//color
+	f.add(3, DataType::dataTypeFloat, 1);	//normal
+	f.add(3, DataType::dataTypeFloat, 2);	//world position
+	f.add(1, DataType::dataTypeUInt, 3);	//
+	f.add(5, DataType::dataTypeFloat, 4);	//depth
 	f.relativeScale = relativeSize;
 	nametoID[name] = framebuffers.size() - 1;
 	return f;
@@ -47,8 +47,8 @@ Framebuffer& FramebufferSystem::currentDraw()
 Framebuffer& FramebufferSystem::addIDBuffer(Name name, Float relativeSize) {
 	Framebuffer& f = framebuffers.emplaceBack();
 	f.create(Area(1));
-	f.add(3, dataTypeUInt, 0);	//ids
-	f.add(5, dataTypeFloat, 1);	//depth
+	f.add(3, DataType::dataTypeUInt, 0);	//ids
+	f.add(5, DataType::dataTypeFloat, 1);	//depth
 	f.relativeScale = relativeSize;
 	nametoID[name] = framebuffers.size() - 1;
 	return f;
@@ -56,8 +56,8 @@ Framebuffer& FramebufferSystem::addIDBuffer(Name name, Float relativeSize) {
 Framebuffer& FramebufferSystem::addFrameBuffer(Name name, Float relativeSize) {
 	Framebuffer& f = framebuffers.emplaceBack();
 	f.create(Area(1));
-	f.add(4, dataTypeFloat, 0);	//color
-	f.add(5, dataTypeFloat, 1);	//depth
+	f.add(4, DataType::dataTypeFloat, 0);	//color
+	f.add(5, DataType::dataTypeFloat, 1);	//depth
 	f.relativeScale = relativeSize;
 	nametoID[name] = framebuffers.size() - 1;
 	return f;

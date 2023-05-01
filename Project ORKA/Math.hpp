@@ -93,6 +93,7 @@ Matrix matrixFromLocation(Vec3 location);
 Matrix matrixFromOrientation(Orientation o);
 Matrix matrixFromAxis(Vec3 x, Vec3 y, Vec3 z);
 Matrix clerp(Matrix a, Matrix b, Float alpha);
+Matrix screenSpaceMatrix(Float width, Float height);
 Matrix matrixFromTiledRectangle(TiledRectangle area);
 Matrix matrixFromRotation(Float x, Float y, Float z);
 Matrix matrixFromLocationAndSize2D(Vec2 pos, Vec2 size);

@@ -284,7 +284,10 @@
       <Filter>BitmapTextRenderSystem</Filter>
     </ClCompile>
     <ClCompile Include="Organizer.cpp">
-      <Filter>Apps\2D Apps</Filter>
+      <Filter>Apps\2D Apps\Organizer</Filter>
+    </ClCompile>
+    <ClCompile Include="Image.cpp">
+      <Filter>Common</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -528,9 +531,6 @@
     <ClInclude Include="PhysicsPlayground.hpp">
       <Filter>Apps\2D Apps\Physics Playground</Filter>
     </ClInclude>
-    <ClInclude Include="Organizer.hpp">
-      <Filter>Apps\2D Apps</Filter>
-    </ClInclude>
     <ClInclude Include="Pong.hpp">
       <Filter>Apps\2D Apps\Pong</Filter>
     </ClInclude>
@@ -646,7 +646,6 @@
     <ClInclude Include="Networking.hpp" />
     <ClInclude Include="ParticleSystem.hpp" />
     <ClInclude Include="Physics.hpp" />
-    <ClInclude Include="Pixel.hpp" />
     <ClInclude Include="Player.hpp" />
     <ClInclude Include="PointCloud.hpp" />
     <ClInclude Include="PoolAllocator.hpp" />
@@ -719,6 +718,10 @@
     <ClInclude Include="BitmapTextRenderSystem.hpp">
       <Filter>BitmapTextRenderSystem</Filter>
     </ClInclude>
+    <ClInclude Include="Organizer.hpp">
+      <Filter>Apps\2D Apps\Organizer</Filter>
+    </ClInclude>
+    <ClInclude Include="System.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Data\shaders\mooncrashVertexColor.vert">
@@ -1211,6 +1214,12 @@
     </Filter>
     <Filter Include="BitmapTextRenderSystem">
       <UniqueIdentifier>{494ff01b-3242-497b-b2e2-0261890654b7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Apps\2D Apps\Organizer">
+      <UniqueIdentifier>{7f7cd27c-845d-4ac8-917a-86a258a5917f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Apps\2D Apps\Organizer\Shaders">
+      <UniqueIdentifier>{a2b39c4c-33a5-4821-8044-99b8ad6abe47}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
