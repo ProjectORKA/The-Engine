@@ -44,15 +44,9 @@ void Renderer::clearColor()
 {
 	apiClearColor();
 }
+
 void Renderer::screenSpace() {
-	Float width = renderRegion.region.size.x;
-	Float height = renderRegion.region.size.y;
-	
-	Matrix matrix = Matrix(1);
-	matrix = glm::translate(matrix, Vec3(-1, -1, 0));
-	matrix = glm::scale(matrix, Vec3(2.0 / width, 2.0 / height, 0));
-	
-	uniforms().vMatrix() = matrix;
+	uniforms().vMatrix() = getScreenSpaceMatrix();
 	uniforms().pMatrix() = Matrix(1);
 }
 void Renderer::rerenderMesh() {
@@ -311,6 +305,11 @@ Float Renderer::deltaTime() {
 Uniforms& Renderer::uniforms()
 {
 	return shaderSystem.uniforms;
+}
+Matrix Renderer::getScreenSpaceMatrix() {
+	Float width = renderRegion.region.size.x;
+	Float height = renderRegion.region.size.y;
+	return screenSpaceMatrix(width, height);
 }
 Float Renderer::getAspectRatio(){
 	return framebufferSystem.currentDraw().aspectRatio();

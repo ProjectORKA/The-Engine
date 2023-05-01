@@ -127,6 +127,7 @@ struct Renderer{
 	Float deltaTime();
 	Float getAspectRatio();
 	Uniforms& uniforms();
+	Matrix getScreenSpaceMatrix();
 };
 
 struct DepthTestOverride {

@@ -13,6 +13,7 @@ String loadString(Path path);
 Path getDirectory(Path path);
 Path makeAbsolute(Path path);
 Bool doesPathExist(Path path);
+String getFileName(Path path);
 Path removeFileName(Path path);
 void createDirectory(Path path);
 FileTime lastWrittenTime(Path path);
@@ -23,7 +24,6 @@ void copyFile(Path source, Path destination);
 Vector<Path> getAllPathsInDirectory(Path path);
 Vector<Path> getAllFilesInDirectory(Path path);
 FileTime getLastWrittenTimeOfFiles(Vector<Path> paths);
-Image loadImage(Path path, Int bitcount, Bool inverted);
 Vector<Path> getFilesInDirectory(Path path, Vector<String> filter);
 Vector<Path> getAllFilesInDirectory(Path path, Vector<String> filter);
 

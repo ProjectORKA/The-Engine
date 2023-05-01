@@ -104,7 +104,10 @@ public:
 
     constexpr FORCEINLINE const T& first() const noexcept { return *this->front(); }
 
-    constexpr FORCEINLINE T* data() noexcept { return this->front(); }
+    constexpr FORCEINLINE T* data() noexcept {
+        if (this->isEmpty()) return nullptr;
+        else return this->front();
+    }
 
     constexpr FORCEINLINE T get(usize i) const noexcept
     {

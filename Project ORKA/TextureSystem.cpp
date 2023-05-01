@@ -1,44 +1,35 @@
 
 #include "TextureSystem.hpp"
-#include "Pixel.hpp"
 
 void TextureSystem::create()
 {	
-	PixelByteRGBA* image = new PixelByteRGBA[4];
+	Image image;
+	image.height = 2;
+	image.width = 2;
+	image.channels = 4;
+	image.bitcount = 8;
+	image.pixels.resize(image.width * image.height * image.channels * image.bitcount / 8);
 
-	image[0].red = 0;
-	image[0].green = 0;
-	image[0].blue = 0;
-	image[0].alpha = 255;
-
-	image[1].red = 0;
-	image[1].green = 127;
-	image[1].blue = 255;
-	image[1].alpha = 255;
-
-	image[2].red = 255;
-	image[2].green = 127;
-	image[2].blue = 0;
-	image[2].alpha = 255;
-
-	image[3].red = 0;
-	image[3].green = 0;
-	image[3].blue = 0;
-	image[3].alpha = 255;
-
+	image.pixels[0] = 0;
+	image.pixels[1] = 0;
+	image.pixels[2] = 0;
+	image.pixels[3] = 255;
+	image.pixels[4] = 0;
+	image.pixels[5] = 127;
+	image.pixels[6] = 255;
+	image.pixels[7] = 255;
+	image.pixels[8] = 255;
+	image.pixels[9] = 127;
+	image.pixels[10] = 0;
+	image.pixels[11] = 255;
+	image.pixels[12] = 0;
+	image.pixels[13] = 0;
+	image.pixels[14] = 0;
+	image.pixels[15] = 255;
 
 	CPUTexture defaultTexture;
-	defaultTexture.channels = 4;
-	defaultTexture.dataType = dataTypeByte;
-	defaultTexture.nearFilter = Filter::nearest;
-	defaultTexture.farFilter = Filter::nearest;
-	defaultTexture.height = 2;
-	defaultTexture.width = 2;
-	defaultTexture.name = "empty";
-	defaultTexture.wrapping = repeat;
-	defaultTexture.bytePixels = &image->red;
 
-	defaultTexture.loaded = true;
+	defaultTexture.load(image, Filter::nearest, Filter::nearestMM, Wrapping::repeat, "default");
 
 	add(defaultTexture);
 }

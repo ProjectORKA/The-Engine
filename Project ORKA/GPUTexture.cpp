@@ -2,41 +2,41 @@
 #include "GPUTexture.hpp"
 #include "Math.hpp"
 
-void createTexture(UInt channels, DataType dataType, UInt width, UInt height, void* pixels) {
-	switch (channels) {
+void createTexture(CPUTexture & cpuTexture) {
+	switch (cpuTexture.channels) {
 	case 1:
-		switch (dataType) {
-		case dataTypeByte:	apiTexImage2D(GL_TEXTURE_2D, 0, GL_R8, width, height, 0, GL_RED, GL_UNSIGNED_BYTE, pixels); break;
-		case dataTypeFloat: apiTexImage2D(GL_TEXTURE_2D, 0, GL_R32F, width, height, 0, GL_RED, GL_FLOAT, pixels); break;
-		case dataTypeUInt:	apiTexImage2D(GL_TEXTURE_2D, 0, GL_R32UI, width, height, 0, GL_RED_INTEGER, GL_UNSIGNED_INT, pixels); break;
+		switch (cpuTexture.dataType) {
+		case DataType::dataTypeByte:	apiTexImage2D(GL_TEXTURE_2D, 0, GL_R8, cpuTexture.width, cpuTexture.height, 0, GL_RED, GL_UNSIGNED_BYTE, cpuTexture.bytePixels.data()); break;
+		case DataType::dataTypeFloat: apiTexImage2D(GL_TEXTURE_2D, 0, GL_R32F, cpuTexture.width, cpuTexture.height, 0, GL_RED, GL_FLOAT, cpuTexture.floatPixels.data()); break;
+		case DataType::dataTypeUInt:	apiTexImage2D(GL_TEXTURE_2D, 0, GL_R32UI, cpuTexture.width, cpuTexture.height, 0, GL_RED_INTEGER, GL_UNSIGNED_INT, cpuTexture.uIntPixels.data()); break;
 		default: logError("Format not supported!"); break;
 		}break;
 	case 2:
-		switch (dataType) {
-		case dataTypeByte:	apiTexImage2D(GL_TEXTURE_2D, 0, GL_RG8, width, height, 0, GL_RG, GL_UNSIGNED_BYTE, pixels); break;
-		case dataTypeFloat: apiTexImage2D(GL_TEXTURE_2D, 0, GL_RG32F, width, height, 0, GL_RG, GL_FLOAT, pixels); break;
-		case dataTypeUInt:	apiTexImage2D(GL_TEXTURE_2D, 0, GL_RG32UI, width, height, 0, GL_RG_INTEGER, GL_UNSIGNED_INT, pixels); break;
+		switch (cpuTexture.dataType) {
+		case DataType::dataTypeByte:	apiTexImage2D(GL_TEXTURE_2D, 0, GL_RG8, cpuTexture.width, cpuTexture.height, 0, GL_RG, GL_UNSIGNED_BYTE, cpuTexture.bytePixels.data()); break;
+		case DataType::dataTypeFloat: apiTexImage2D(GL_TEXTURE_2D, 0, GL_RG32F, cpuTexture.width, cpuTexture.height, 0, GL_RG, GL_FLOAT, cpuTexture.floatPixels.data()); break;
+		case DataType::dataTypeUInt:	apiTexImage2D(GL_TEXTURE_2D, 0, GL_RG32UI, cpuTexture.width, cpuTexture.height, 0, GL_RG_INTEGER, GL_UNSIGNED_INT, cpuTexture.uIntPixels.data()); break;
 		default: logError("Format not supported!"); break;
 		} break;
 	case 3:
 		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-		switch (dataType) {
-		case dataTypeByte:	apiTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, pixels); break;
-		case dataTypeFloat:	apiTexImage2D(GL_TEXTURE_2D, 0, GL_RGB32F, width, height, 0, GL_RGB, GL_FLOAT, pixels); break;
-		case dataTypeUInt: apiTexImage2D(GL_TEXTURE_2D, 0, GL_RGB32UI, width, height, 0, GL_RGB_INTEGER, GL_UNSIGNED_INT, pixels); break;
+		switch (cpuTexture.dataType) {
+		case DataType::dataTypeByte:	apiTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, cpuTexture.width, cpuTexture.height, 0, GL_RGB, GL_UNSIGNED_BYTE, cpuTexture.bytePixels.data()); break;
+		case DataType::dataTypeFloat:	apiTexImage2D(GL_TEXTURE_2D, 0, GL_RGB32F, cpuTexture.width, cpuTexture.height, 0, GL_RGB, GL_FLOAT, cpuTexture.floatPixels.data()); break;
+		case DataType::dataTypeUInt: apiTexImage2D(GL_TEXTURE_2D, 0, GL_RGB32UI, cpuTexture.width, cpuTexture.height, 0, GL_RGB_INTEGER, GL_UNSIGNED_INT, cpuTexture.uIntPixels.data()); break;
 		default: logError("Format not supported!"); break;
 		}
 		glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
 		break;
 	case 4:
-		switch (dataType) {
-		case dataTypeByte:	apiTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels); break;
-		case dataTypeFloat:	apiTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, width, height, 0, GL_RGBA, GL_FLOAT, pixels); break;
-		case dataTypeUInt:	apiTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32UI, width, height, 0, GL_RGBA_INTEGER, GL_UNSIGNED_INT, pixels); break;
+		switch (cpuTexture.dataType) {
+		case DataType::dataTypeByte:	apiTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, cpuTexture.width, cpuTexture.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, cpuTexture.bytePixels.data()); break;
+		case DataType::dataTypeFloat:	apiTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, cpuTexture.width, cpuTexture.height, 0, GL_RGBA, GL_FLOAT, cpuTexture.floatPixels.data()); break;
+		case DataType::dataTypeUInt:	apiTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32UI, cpuTexture.width, cpuTexture.height, 0, GL_RGBA_INTEGER, GL_UNSIGNED_INT, cpuTexture.uIntPixels.data()); break;
 		default: logError("Format not supported!"); break;
 		} break;
 	case 5:
-		apiTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, width, height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, pixels); break;
+		apiTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, cpuTexture.width, cpuTexture.height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, cpuTexture.floatPixels.data()); break;
 	default: logError("Invalid value for number of channels for Texture!");
 	};
 }
@@ -53,6 +53,13 @@ void GPUTexture::load(ResourceManager& resourceManager, Name name) {
 	t.load(resourceManager, name);
 	load(t);
 }
+void GPUTexture::setFilters(Filter nearFilter, Filter farFilter) {
+	this->nearFilter = nearFilter;
+	this->farFilter = farFilter;
+	apiBindTexture(GL_TEXTURE_2D, textureID);
+	apiTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, static_cast<int>(nearFilter));
+	apiTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, static_cast<int>(farFilter));
+}
 void GPUTexture::resize(Area size)
 {
 	//[IMPORTANT] apply same stuff as in creation
@@ -64,7 +71,13 @@ void GPUTexture::resize(Area size)
 
 	apiBindTexture(GL_TEXTURE_2D, textureID);
 
-	createTexture(channels, dataType, width, height, nullptr);
+	CPUTexture tex;
+	tex.channels = channels;
+	tex.dataType = dataType;
+	tex.width = width;
+	tex.height = height;
+
+	createTexture(tex);
 }
 void GPUTexture::use(Index textureSlot)
 {
@@ -123,6 +136,7 @@ void GPUTexture::load(CPUTexture& cpuTexture) {
 	if (loaded)unload();
 
 	if (cpuTexture.loaded) {
+
 		wrapping = cpuTexture.wrapping;
 		nearFilter = cpuTexture.nearFilter;
 		farFilter = cpuTexture.farFilter;
@@ -135,12 +149,12 @@ void GPUTexture::load(CPUTexture& cpuTexture) {
 		apiGenTexture(textureID);
 		apiBindTexture(GL_TEXTURE_2D, textureID);
 
-		createTexture(channels, dataType, width, height, cpuTexture.pixels);
+		createTexture(cpuTexture);
 
 		//set texture wrapping
-		apiTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrapping);
-		apiTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrapping);
-		if (wrapping == border) apiTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, glm::value_ptr(Color(0.0f, 0.0f, 0.0f, 1.0f)));
+		apiTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, static_cast<int>(wrapping));
+		apiTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, static_cast<int>(wrapping));
+		if (wrapping == Wrapping::border) apiTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, glm::value_ptr(Color(0.0f, 0.0f, 0.0f, 1.0f)));
 
 		generateMipMaps(nearFilter, farFilter);
 
@@ -157,10 +171,9 @@ void GPUTexture::load(Vec2 size, Int channels, DataType type) {
 	cpuTexture.height = size.y;
 	cpuTexture.channels = channels;
 	cpuTexture.dataType = type;
-	cpuTexture.pixels = nullptr;
 	cpuTexture.nearFilter = Filter::linear;
 	cpuTexture.farFilter = Filter::linear;
-	cpuTexture.wrapping = clamped;
+	cpuTexture.wrapping = Wrapping::clamped;
 	cpuTexture.loaded = true;
 	load(cpuTexture);
 }
@@ -175,13 +188,13 @@ void GPUTexture::generateMipMaps() {
 	//set up mip mapping
 	apiGenerateMipmap(GL_TEXTURE_2D);
 }
-void GPUTexture::generateMipMaps(Int nearFilter, Int farFilter) {
+void GPUTexture::generateMipMaps(Filter nearFilter, Filter farFilter) {
 	//select tecture
 	apiBindTexture(GL_TEXTURE_2D, textureID);
 
 	//set texture filter
-	apiTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, nearFilter);
-	apiTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, farFilter);
+	apiTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, static_cast<int>(nearFilter));
+	apiTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, static_cast<int>(farFilter));
 	apiTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY, 1.0f);
 
 	//set up mip mapping

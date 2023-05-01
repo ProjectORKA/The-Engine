@@ -48,11 +48,6 @@ void apiSetDebugging(Bool value) {
 	}
 	openglState.debugging = value;
 }
-void apiSetScissorTest(Bool value) {
-	if (value && !openglState.scissorTest) glEnable(GL_SCISSOR_TEST);
-	if (!value && openglState.scissorTest) glDisable(GL_SCISSOR_TEST);
-	openglState.scissorTest = value;
-}
 void apiSetCulling(Bool value) {
 	if (value && !openglState.culling) glEnable(GL_CULL_FACE);
 	if (!value && openglState.culling) glDisable(GL_CULL_FACE);
@@ -76,6 +71,11 @@ void apiDeleteBuffer(UInt buffer) {
 }
 void apiGenBuffer(UInt& bufferID) {
 	glGenBuffers(1, &bufferID);
+}
+void apiSetScissorTest(Bool value) {
+	if (value && !openglState.scissorTest) glEnable(GL_SCISSOR_TEST);
+	if (!value && openglState.scissorTest) glDisable(GL_SCISSOR_TEST);
+	openglState.scissorTest = value;
 }
 void apiSetClearColor(Color color) {
 	if (clearColor != color) glClearColor(color.r, color.g, color.b, color.a);

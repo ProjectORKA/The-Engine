@@ -57,6 +57,7 @@
 //#include "ProjectMelon.hpp"
 //#include "PhysicsPlayground.hpp"
 #include "ImageViewer.hpp"
+//#include "Organizer.hpp"
 
 //[TODO] move advanced rendering systems like textRenderSystem out of renderer and into window
 //(basically simplify renderer to barebones tech)
@@ -65,8 +66,8 @@
 //[TODO] there is a bug where the window size is not set properly
 
 Int main(Int  argc, Char* argv[]) {
-	ImageViewer game;
-	game.run(argc, argv);
+	ImageViewer imageViewer;
+	imageViewer.run(argc, argv);
 	return 0;
 }
 

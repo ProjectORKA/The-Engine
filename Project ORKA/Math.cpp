@@ -501,3 +501,10 @@ Matrix matrixFromLocationDirectionAndSize(Vec2 pos, Vec2 dir, Float size) {
 	m[3] = Vec4(pos.x, pos.y, 0, 1);
 	return m;
 }
+
+Matrix screenSpaceMatrix(Float width, Float height) {
+	Matrix matrix = Matrix(1);
+	matrix = glm::translate(matrix, Vec3(-1, -1, 0));
+	matrix = glm::scale(matrix, Vec3(2.0 / width, 2.0 / height, 1));
+	return matrix;
+}
