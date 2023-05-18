@@ -11,8 +11,8 @@
 
 void guessingGame() {
 	randomizeSeed();
-	Int maxNumber = 1000;
-	Int target = randomInt(maxNumber);
+	const Int maxNumber = 1000;
+	const Int target = randomInt(maxNumber);
 	Int guess = 0;
 	String name;
 	Int guessCount = 0;
@@ -20,7 +20,8 @@ void guessingGame() {
 	std::cout << "Welcome to the number guessing game, whats your name?\n";
 	std::cin >> name;
 
-	std::cout << "We have generated a random number between 0 and "<< maxNumber << ". Try and guess the number." << std::endl;
+	std::cout << "We have generated a random number between 0 and " << maxNumber << ". Try and guess the number." <<
+		std::endl;
 	std::cin >> guess;
 
 	while (target != guess) {

@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include "Transform.hpp"
@@ -34,7 +33,7 @@ struct DNDWorld : public GameSimulation {
 	Int speedExponent = 1;
 
 	Scene2 scene;
-	
+
 	Vector<DNDEntity> entities;
 
 	void load(ResourceManager& resourceManager);
@@ -47,11 +46,11 @@ struct DNDRenderer : public GameRenderer {
 	Index lastSelectedObject = -1;
 	Vector<Index> selectedObjects;
 	Float mouseSensitivity = 0.0015f;
-	InputEvent select = InputEvent(InputType::Mouse, LMB, 1);
+	InputEvent select = InputEvent(InputType::Mouse, LMB, true);
 	InputID selectMultiple = InputID(InputType::KeyBoard, SHIFT);
 
-	InputEvent exit = InputEvent(InputType::Mouse, RMB, 0);
-	InputEvent enter = InputEvent(InputType::Mouse, LMB, 1);
+	InputEvent exit = InputEvent(InputType::Mouse, RMB, false);
+	InputEvent enter = InputEvent(InputType::Mouse, LMB, true);
 
 	void update(Window& window) override;
 	void create(ResourceManager& resourceManager, Window& window) override;

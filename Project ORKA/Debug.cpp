@@ -6,31 +6,36 @@ bool showDebug = true;
 bool showWarning = true;
 bool showError = true;
 
-void logEvent(String message)
-{
+void logEvent(const String& message) {
 #ifdef DEBUG
-	if(showEvents) std::cout <<	"Event: " << message << "\n";
+	if (showEvents) std::cout << "Event: " << message << "\n";
 #endif // DEBUG
 }
-void logError(String message)
-{
+
+void logDebug(const String& message) {
 #ifdef DEBUG
-	if(showError) std::cout <<	"Error: " << message << "\n";
+	std::cout << "Debug: " << message << "\n";
+#endif // DEBUG
+}
+
+void logError(const String& message) {
+#ifdef DEBUG
+	if (showError) std::cout << "Error: " << message << "\n";
 	beep();
 	__debugbreak();
 	pause();
 #endif // DEBUG
 }
-void logWarning(String message) {
+
+void logWarning(const String& message) {
 #ifdef DEBUG
 	beep();
 	if (showWarning) std::cout << "Warning: " << message << "\n";
 #endif // DEBUG
 }
 
-void beep() {
-	std::cout << '\a';
-}
+void beep() { std::cout << '\a'; }
+
 void pause() {
 #ifdef DEBUG
 #ifdef _WIN32
@@ -42,63 +47,66 @@ void pause() {
 #endif
 #endif // DEBUG
 }
-void logDebug(ULL t) {
+
+void logDebug(const ULL t) {
 #ifdef DEBUG
 	std::cout << "Debug: (" << std::bitset<64>(t) << ")" << t << "\n";
 #endif // DEBUG
 }
-void logDebug(Int t)
-{
+
+void logDebug(const Int t) {
 #ifdef DEBUG
 	std::cout << t << "\n";
 #endif // DEBUG
 }
-void logDebug(UInt t)
-{
+
+void logDebug(const UInt t) {
 #ifdef DEBUG
 	std::cout << t << "\n";
 #endif // DEBUG
 }
-void logDebug(Vec2 t)
-{
+
+void logDebug(const Vec2 t) {
 #ifdef DEBUG
 	std::cout << "(" << t.x << "|" << t.y << ")" << "\n";
 #endif // DEBUG
 };
-void logDebug(Vec3 t) {
+
+void logDebug(const Vec3 t) {
 #ifdef DEBUG
 	std::cout << "(" << t.x << "|" << t.y << "|" << t.z << ")" << "\n";
 #endif // DEBUG
 }
-void logDebug(Vec4 t)
-{
+
+void logDebug(const Vec4 t) {
 #ifdef DEBUG
 	std::cout << "(" << t.x << "|" << t.y << "|" << t.z << "|" << t.w << ")" << "\n";
 #endif // DEBUG
 }
-void logDebug(Short t)
-{
+
+void logDebug(const Short t) {
 #ifdef DEBUG
 	std::cout << t << "\n";
 #endif // DEBUG
 }
-void logDebug(IVec3 t) {
-	std::cout << "(" << t.x << "|" << t.y << "|" << t.z << ")" << "\n";
-}
-void logDebug(IVec2 t) {
-	std::cout << "(" << t.x << "|" << t.y << ")" << "\n";
-}
-void logDebug(ULLVec2 t)
-{
+
+void logDebug(const IVec3 t) { std::cout << "(" << t.x << "|" << t.y << "|" << t.z << ")" << "\n"; }
+void logDebug(const IVec2 t) { std::cout << "(" << t.x << "|" << t.y << ")" << "\n"; }
+
+void logDebug(const ULLVec2 t) {
 #ifdef DEBUG
 	std::cout << "(" << t.x << "|" << t.y << ")" << "\n";
 #endif // DEBUG
 }
-void logDebug(ULLVec3 t) {
+
+void logDebug(const ULLVec3& t) {
 #ifdef DEBUG
 	std::cout << "(" << t.x << "|" << t.y << "|" << t.z << ")" << "\n";
 #endif // DEBUG
 }
+
+void logDebug(const Path& t) { logDebug(t.string()); }
+
 void logDebug(Matrix matrix) {
 #ifdef DEBUG
 	std::cout << "[ " << matrix[0][0] << "  " << matrix[0][1] << "  " << matrix[0][2] << "  " << matrix[0][3] << " ]\n";
@@ -107,19 +115,19 @@ void logDebug(Matrix matrix) {
 	std::cout << "[ " << matrix[3][0] << "  " << matrix[3][1] << "  " << matrix[3][2] << "  " << matrix[3][3] << " ]\n";
 #endif // DEBUG
 }
-void logDebug(String message)
-{
+
+void logDebug(const char* t) {
 #ifdef DEBUG
-	if(showDebug) std::cout <<	"Debug: " << message << "\n";
+	std::cout << "Debug: " << t << "\n";
 #endif // DEBUG
 }
-void logDebug(glm::highp_dvec3 t) {
+
+void logDebug(const glm::highp_dvec3& t) {
 #ifdef DEBUG
 	std::cout << "(" << t.x << "|" << t.y << "|" << t.z << ")" << "\n";
 #endif // DEBUG
 }
-void printLaunchProperties(Int  argc, Char* argv[]) {
-	for (Int i = 0; i < argc; i++) {
-		logDebug(argv[i]);
-	}
+
+void printLaunchProperties(const Int argc, Char* argv[]) {
+	for (Int i = 0; i < argc; i++) { std::cout << "Launch properties:" << argv[i] << "\n"; }
 }

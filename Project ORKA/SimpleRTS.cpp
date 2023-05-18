@@ -1,4 +1,3 @@
-
 #include "SimpleRTS.hpp"
 #include "ResourceManager.hpp"
 #include "UserInterface.hpp"
@@ -7,15 +6,18 @@ void SimpleRTSRenderer::update(Window& window) {
 	terrainRenderingSystem.update(sim->terrainSystem, player.camera.location);
 	player.update(window);
 }
+
 void SimpleRTSRenderer::create(ResourceManager& resourceManager, Window& window) {
 	terrainRenderingSystem.create(resourceManager);
 };
-void SimpleRTSRenderer::inputEvent(Window& window, InputEvent input) {
+
+void SimpleRTSRenderer::inputEvent(Window& window, const InputEvent input) {
 	if (input == enter) window.captureCursor();
 	if (input == exit) window.uncaptureCursor();
 	if (input == toggleWireframe) wireframeMode = !wireframeMode;
 	player.inputEvent(window, input);
 }
+
 void SimpleRTSRenderer::render(ResourceManager& resourceManager, Window& window, TiledRectangle area) {
 	Renderer& renderer = window.renderer;
 
@@ -266,7 +268,6 @@ void SimpleRTSRenderer::render(ResourceManager& resourceManager, Window& window,
 //}
 
 SimpleRTSSimulation::SimpleRTSSimulation() {
-
 	//trees.create(*this);
 
 	//generateTerrain();
@@ -292,6 +293,7 @@ SimpleRTSSimulation::SimpleRTSSimulation() {
 	//	spawnRabbit();
 	//}
 }
+
 void SimpleRTSSimulation::update(Float timestep) {
 	//trees.update(*this);
 	//treeSimulation.update();
@@ -305,6 +307,4 @@ void SimpleRTSSimulation::render(ResourceManager& resourceManager, Renderer& ren
 	//trees.render(resourceManager, renderer);
 }
 
-Vec2 randomSpawnPosition() {
-	return randomVec2(SIMPLERTS_MAPSIZE);
-}
+Vec2 randomSpawnPosition() { return randomVec2(SIMPLERTS_MAPSIZE); }

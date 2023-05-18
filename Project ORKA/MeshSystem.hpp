@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include <iostream>
@@ -15,27 +14,26 @@ struct NameTable {
 	Vector<Name> names;
 	Vector<Index> indices;
 
-	void add(Name name, Index id);
-	Bool find(Name name, Index& id);
+	void add(const Name& name, Index id);
+	Bool find(const Name& name, Index& id) const;
 };
-
 
 struct BasicMeshes {
 	GPUMesh fullscreenMesh;
+
 	void create(ResourceManager& resourceManager) {
-		CPUMesh fullScreenQuad;
+		CpuMesh fullScreenQuad;
 		fullScreenQuad.load(resourceManager, "fullScreenQuad");
 		fullscreenMesh.upload(fullScreenQuad);
 	}
-	void destroy() {
-		fullscreenMesh.unload();
-	}
+
+	void destroy() { fullscreenMesh.unload(); }
 };
 
 struct MeshSystem {
 	NameTable meshNames;
 	BasicMeshes basicMeshes;
-	Vector<GPUMesh> gpuMeshes;	//uploaded meshes ready to be drawn
+	Vector<GPUMesh> gpuMeshes; //uploaded meshes ready to be drawn
 	VertexBufferObject transforms;
 
 	Index currentMeshID = 0;
@@ -46,10 +44,11 @@ struct MeshSystem {
 	//mesh
 	void use(Index meshID);
 	GPUMesh& currentMesh();
-	void addMesh(CPUMesh cpuMesh);
-	void use(ResourceManager& resourceManager, Name name);
+	void addMesh(const CpuMesh& cpuMesh);
+	void use(ResourceManager& resourceManager, const Name& name);
 	void renderFullscreen(Uniforms& uniforms);
 	void render(Uniforms& uniforms, Index meshID);
-	void render(ResourceManager& resourceManager, Uniforms& uniforms, Name meshName);
-	void renderInstanced(ResourceManager& resourceManager, Uniforms& uniforms, Name meshName, Vector<Matrix>& transformations);
+	void render(ResourceManager& resourceManager, Uniforms& uniforms, const Name& meshName);
+	void renderInstanced(ResourceManager& resourceManager, Uniforms& uniforms, const Name& meshName,
+	                     Vector<Matrix>& transformations);
 };

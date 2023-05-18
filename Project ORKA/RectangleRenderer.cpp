@@ -1,4 +1,3 @@
-
 #include "RectangleRenderer.hpp"
 #include "Renderer.hpp"
 
@@ -7,7 +6,8 @@ void RectangleRenderer::create(ResourceManager& resourceManager, Renderer& rende
 	rectangleMeshId = renderer.meshSystem.currentMeshID;
 }
 
-void RectangleRenderer::render(ResourceManager& resourceManager, Renderer& renderer, Vec2 pos, Vec2 size) {
+void RectangleRenderer::render(ResourceManager& resourceManager, Renderer& renderer, const Vec2 pos,
+                               const Vec2 size) const {
 	renderer.useShader(resourceManager, "color");
 	renderer.uniforms().mMatrix(matrixFromLocationAndSize2D(pos, size));
 	renderer.renderMesh(rectangleMeshId);

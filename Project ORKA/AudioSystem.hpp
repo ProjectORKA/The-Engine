@@ -1,16 +1,10 @@
-
 #pragma once
 
 #include "Basics.hpp"
 #include "FileSystem.hpp"
 
-struct Sound {
-
-};
+struct Sound {};
 
 struct AudioSystem {
-
-	AudioSystem() {
-		
-	}
+	AudioSystem() { }
 };

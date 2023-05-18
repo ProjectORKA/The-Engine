@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include "Memory.hpp"
@@ -25,41 +24,41 @@ enum MeshData : Short {
 	TextureCoords = 2,
 	Normals = 4,
 	Tangents = 8,
-	Bitangents = 16,
+	BiTangents = 16,
 	VertexColor = 32,
 };
 
-struct CPUMesh {
+struct CpuMesh {
 	Bool loaded = false;
 
 	Name name = "empty";
 	Short dataFlags = 0;
 	Int drawMode = MeshDrawMode::staticMode;
 	Int primitiveMode = PrimitiveMode::Triangles;
-	
+
 	Vector<Vec3> positions;
 	Vector<Vec2> textureCoordinates;
 	Vector<Vec3> normals;
 	Vector<Vec3> tangents;
-	Vector<Vec3> bitangents;
+	Vector<Vec3> biTangents;
 	Vector<Vec3> vertexColors;
 
 	Vector<Index> indices;
 
-	CPUMesh() {};
-	~CPUMesh() {};
-	CPUMesh(Graph& graph);
+	CpuMesh() {}
+	~CpuMesh() {}
+	explicit CpuMesh(const Graph& graph);
 
 	void clearGeometry();
 	void removeDoubles();
 	void checkIntegrity();
 	void move(Vec3 moveVector);
-	void merge(CPUMesh source);
+	void merge(const CpuMesh& source);
 	void calculateSmoothNormals();
-	void render(Renderer& renderer);
-	void saveMeshFile(ResourceManager& resourceManager);
+	void render(Renderer& renderer) const;
+	void saveMeshFile(const ResourceManager& resourceManager);
 	void load(ResourceManager& resourceManager, Name name);
-	void meshFromHeightmap(Array2D<Float>& heightmap, UInt size);
+	void meshFromHeightMap(Array2D<Float>& heightMap, UInt size);
 
 private:
 	void calculateSmoothNormalsForTriangleMesh();

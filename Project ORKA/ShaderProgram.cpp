@@ -1,56 +1,31 @@
-
 #include "ShaderProgram.hpp"
 
-void ShaderProgram::select() {
-	if (isLoaded) {
-		apiUseProgram(programID);
-	}
-	else {
-		logError("ShaderProgram not loaded!");
-	}
+void ShaderProgram::select() const {
+	if (isLoaded) { apiUseProgram(programID); }
+	else { logError("ShaderProgram not loaded!"); }
 };
-void ShaderProgram::destroy()
-{
+
+void ShaderProgram::destroy() const {
 	logDebug("Unloading Shader!");
-	if (isLoaded) {
-		apiDeleteProgram(programID);
-	}
-	else {
-		logDebug("ShaderProgram already unloaded!");
-	}
+	if (isLoaded) { apiDeleteProgram(programID); }
+	else { logDebug("ShaderProgram already unloaded!"); }
 	logDebug("Unloaded Shader!");
 }
-void ShaderProgram::create(ResourceManager& resourceManager, Name name, Uniforms& uniforms) {
-	
-	auto vertIt = resourceManager.vertexShaderResources.find(name);
-	Shader vertexShader;
-	if (vertIt != resourceManager.vertexShaderResources.end()) {
-		logDebug(String("Loading Shader: ").append(vertIt->second.string()));
-		vertexShader.create(vertIt->second, uniforms.uniformBlockShaderCode);
-	}
-	else {
-		logError("Vertex shader could not be found!");
-	}
 
-	auto fragIt = resourceManager.fragmentShaderResources.find(name);
+void ShaderProgram::create(ResourceManager& resourceManager, const Name& name, Uniforms& uniforms) {
+	Shader vertexShader;
+	vertexShader.create(resourceManager.getVertexShaderResourcePath(name), uniforms.uniformBlockShaderCode);
+
 	Shader fragmentShader;
-	if (fragIt != resourceManager.fragmentShaderResources.end()) {
-		logDebug(String("Loading Shader: ").append(fragIt->second.string()));
-		fragmentShader.create(fragIt->second, uniforms.uniformBlockShaderCode);
-	}
-	else {
-		logError("Fragment shader could not be found!");
-	}
+	fragmentShader.create(resourceManager.getFragmentShaderResourcePath(name), uniforms.uniformBlockShaderCode);
 
 	create(vertexShader, fragmentShader, uniforms);
 }
-void ShaderProgram::create(Shader& vertexShader, Shader& fragmentShader, Uniforms& uniforms) {
 
+void ShaderProgram::create(const Shader& vertexShader, const Shader& fragmentShader, Uniforms& uniforms) {
 	logDebug("Creating Shader!");
 
-	if (isLoaded) {
-		logError("ShaderProgram already loaded!");
-	}
+	if (isLoaded) { logError("ShaderProgram already loaded!"); }
 	else {
 		programID = apiCreateProgram();
 		apiAttachShader(programID, vertexShader.shaderID);
@@ -58,11 +33,9 @@ void ShaderProgram::create(Shader& vertexShader, Shader& fragmentShader, Uniform
 		apiLinkProgram(programID);
 
 		Int result = apiGetProgramIntegerValue(programID, GL_LINK_STATUS);
-		Int infoLogLength = apiGetProgramIntegerValue(programID, GL_INFO_LOG_LENGTH);
+		const Int infoLogLength = apiGetProgramIntegerValue(programID, GL_INFO_LOG_LENGTH);
 
-		if (infoLogLength > 1) {
-			logError(apiGetProgramInfoLog(programID, infoLogLength));
-		}
+		if (infoLogLength > 1) { logError(apiGetProgramInfoLog(programID, infoLogLength)); }
 
 		apiDetachShader(programID, vertexShader.shaderID);
 		apiDetachShader(programID, fragmentShader.shaderID);

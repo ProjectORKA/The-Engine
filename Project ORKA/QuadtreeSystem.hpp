@@ -2,12 +2,12 @@
 
 #include "QuadtreeNode.hpp"
 
-struct QuadtreeSystem {
-	QuadtreeNode * root = nullptr;
+struct QuadTreeSystem {
+	QuadtreeNode* root = nullptr;
 
-	void count();
+	void count() const;
 	ULLVec3 rayTrace(Ray ray);
 	void update(TerrainSystem& terrainSystem);
 	void create(TerrainSystem& terrainSystem);
-	QuadtreeNode& get(TerrainSystem& terrainSystem, QuadtreeID id);
+	QuadtreeNode& get(TerrainSystem& terrainSystem, const QuadtreeID& id) const;
 };

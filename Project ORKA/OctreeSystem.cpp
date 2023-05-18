@@ -1,18 +1,12 @@
+#include "OcTreeSystem.hpp"
+#include "QuadTreeSystem.hpp"
 
-#include "OctreeSystem.hpp"
-#include "QuadtreeSystem.hpp"
+void OcTreeSystem::count() const { root->count(); }
+void OcTreeSystem::update() const { root->update(); }
 
-void OctreeSystem::count() {
-	root->count();
-}
-void OctreeSystem::update() {
-	root->update();
-}
-void OctreeSystem::destroy()
-{
-	delete  root;
+void OcTreeSystem::destroy() {
+	delete root;
 	root = nullptr;
 }
-void OctreeSystem::create(QuadtreeSystem& quadtreeSystem) {
-	root = new OctreeNode(*quadtreeSystem.root);
-}
+
+void OcTreeSystem::create(const QuadTreeSystem& quadTreeSystem) { root = new OcTreeNode(*quadTreeSystem.root); }

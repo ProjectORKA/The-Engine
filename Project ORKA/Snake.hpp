@@ -1,4 +1,3 @@
-
 //written by deg
 //modified by Blendurian
 
@@ -21,13 +20,13 @@ struct Snake {
 	Color snakeColor = Color(0.2, 0.5, 0, 1);
 	Vector<Vec2> bodySegments;
 
-	InputEvent forward = InputEvent(InputType::KeyBoard, W, 1);
-	InputEvent left = InputEvent(InputType::KeyBoard, A, 1);
-	InputEvent back = InputEvent(InputType::KeyBoard, S, 1);
-	InputEvent right = InputEvent(InputType::KeyBoard, D, 1);
+	InputEvent forward = InputEvent(InputType::KeyBoard, W, true);
+	InputEvent left = InputEvent(InputType::KeyBoard, A, true);
+	InputEvent back = InputEvent(InputType::KeyBoard, S, true);
+	InputEvent right = InputEvent(InputType::KeyBoard, D, true);
 
 	void addSegment();
-	void dumbAI(SnakeFood& f);
+	void dumbAI(const SnakeFood& f);
 	void render(ResourceManager& resourceManager, Window& window);
 	void inputEvent(Window& window, InputEvent input);
 	void update(SnakeFood& snakefood, Float deltaTime);
@@ -42,7 +41,7 @@ struct SnakeFood {
 	void render(ResourceManager& resourceManager, Window& window);
 };
 
-struct SnakeGame :public GameRenderer {
+struct SnakeGame : public GameRenderer {
 	Snake snake;
 	SnakeFood snakefood;
 	Float totalTime = 0;

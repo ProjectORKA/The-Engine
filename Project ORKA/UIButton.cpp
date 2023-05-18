@@ -1,47 +1,39 @@
-
 #include "UIButton.hpp"
 #include "Window.hpp"
 
-UIButton::UIButton() {
+UIButton::UIButton() {}
 
-}
 UIButton& UIButton::insert(UIElement& element) {
 	content = &element;
 	return *this;
 }
-void UIButton::update(Window& window) {
-	content->update(window);
-}
-void UIButton::inputEvent(Window& window, InputEvent input)
-{
-	if (input == InputEvent(InputType::Mouse,0,1)) pressed = window.renderer.idFramebuffer.objectID == id;
-	if (input == InputEvent(InputType::Mouse, 0, 0)) {
+
+void UIButton::update(Window& window) { content->update(window); }
+
+void UIButton::inputEvent(Window& window, const InputEvent input) {
+	if (input == InputEvent(InputType::Mouse, 0, true)) pressed = window.renderer.idFramebuffer.objectID == id;
+	if (input == InputEvent(InputType::Mouse, 0, false)) {
 		if (pressed) {
 			pressed = false;
 			doThis();
 		}
 	}
 
-	if(content)content->inputEvent(window, input);
+	if (content)content->inputEvent(window, input);
 }
+
 void UIButton::render(ResourceManager& resourceManager, Window& window, TiledRectangle renderArea) {
 	Renderer& renderer = window.renderer;
 
 	constraints.update(renderArea);
 
 	renderer.useShader(resourceManager, "color");
-	if (pressed) {
-		renderer.uniforms().customColor(Color(1, 1, 0, 1));
-	}
+	if (pressed) { renderer.uniforms().customColor(Color(1, 1, 0, 1)); }
 	else {
-		UInt objectID = renderer.idFramebuffer.objectID;
+		const UInt objectID = renderer.idFramebuffer.objectID;
 
-		if (objectID == id) {
-			renderer.uniforms().customColor(Color(1));
-		}
-		else {
-			renderer.uniforms().customColor(Color(0.1, 0.1, 0.1, 1));
-		}
+		if (objectID == id) { renderer.uniforms().customColor(Color(1)); }
+		else { renderer.uniforms().customColor(Color(0.1, 0.1, 0.1, 1)); }
 	}
 
 	renderer.screenSpace();
@@ -50,10 +42,10 @@ void UIButton::render(ResourceManager& resourceManager, Window& window, TiledRec
 
 	if (content) content->render(resourceManager, window, renderArea);
 }
+
 void UIButton::renderInteractive(ResourceManager& resourceManager, Window& window, TiledRectangle renderArea) {
-	
 	constraints.update(renderArea);
-	
+
 	window.renderer.useShader(resourceManager, "idShader");
 	window.renderer.screenSpace();
 	window.renderer.uniforms().objectID(id);

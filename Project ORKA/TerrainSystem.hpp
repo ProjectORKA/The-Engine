@@ -9,14 +9,14 @@
 #define SEALEVEL 1677721600000
 #define TERRAIN_GENERATION_SEED 645123587412588622
 
-struct QuadtreeSystem;
+struct QuadTreeSystem;
 struct QuadtreeNode;
 struct QuadtreeID;
 struct TerrainSystem;
 
 struct Terrain {
 	AdvancedHeightMap heightmap;
-	Terrain(TerrainSystem& terrainSystem, QuadtreeID id, Terrain* parentTerrain, Bool cx, Bool cy);
+	Terrain(const TerrainSystem& terrainSystem, const QuadtreeID& id, const Terrain* parentTerrain, Bool cx, Bool cy);
 };
 
 struct HeightTexture {

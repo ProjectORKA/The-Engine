@@ -1,9 +1,6 @@
-
 #include "Sortr.hpp"
 
-void removeDoubleQuotes(String& s) {
-	s.erase(std::remove(s.begin(), s.end(), '\"'), s.end());
-}
+void removeDoubleQuotes(String& s) { std::erase(s, '\"'); }
 
 void sortr() {
 	Path unsortedFolder;
@@ -19,19 +16,14 @@ void sortr() {
 
 	unsortedFolder = Path(unsortedFilePathString);
 
-	if (std::filesystem::exists(unsortedFolder)) {
-		for (auto& d : std::filesystem::directory_iterator(unsortedFolder))
-		{
+	if (exists(unsortedFolder)) {
+		for (auto& d : std::filesystem::directory_iterator(unsortedFolder)) {
 			Path filePath = d.path();
 
-			if (filePath.filename().extension() == ".png") {
-				std::cout << filePath.string() << '\n';
-			}
+			if (filePath.filename().extension() == ".png") { std::cout << filePath.string() << '\n'; }
 		}
 	}
-	else {
-		logDebug("Not a valid directory!");
-	}
+	else { logDebug("Not a valid directory!"); }
 
 	logDebug("All files sorted!");
 }

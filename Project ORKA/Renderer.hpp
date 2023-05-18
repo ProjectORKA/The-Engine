@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include "Time.hpp"
@@ -22,7 +21,7 @@ struct Camera;
 struct Player;
 
 
-struct Renderer{
+struct Renderer {
 	Time time;
 	//settings
 	Bool wireframeMode = false;
@@ -69,26 +68,26 @@ struct Renderer{
 	void screenSpaceFromTopLeft();
 	void aspectCorrectNormalizedSpace();
 	void normalizedSpaceWithAspectRatio(Float aspectRatio);
-	
+
 	//meshes
 	void rerenderMesh();
 	void renderMesh(Index meshID);
-	void useMesh(ResourceManager& resourceManager, Name name);
-	void renderMesh(ResourceManager& resourceManager, Name name);
-	void renderMeshInstanced(ResourceManager& resourceManager, Name name);
+	void useMesh(ResourceManager& resourceManager, const Name& name);
+	void renderMesh(ResourceManager& resourceManager, const Name& name);
+	void renderMeshInstanced(ResourceManager& resourceManager, const Name& name);
 
 	//textures
-	void useTexture(ResourceManager& resourceManager, Name name);
-	void useTexture(ResourceManager& resourceManager, Name name, Index location);
+	void useTexture(ResourceManager& resourceManager, const Name& name);
+	void useTexture(ResourceManager& resourceManager, const Name& name, Index location);
 
 	//shaders
-	Index useShader(ResourceManager& resourceManager, Name name);
-	void postProcess(ResourceManager& resourceManager, Name name);
-	void fullScreenShader(ResourceManager& resourceManager, Name name);
+	Index useShader(ResourceManager& resourceManager, const Name& name);
+	void postProcess(ResourceManager& resourceManager, const Name& name);
+	void fullScreenShader(ResourceManager& resourceManager, const Name& name);
 
 	//framebuffers
-	void read(Name name);
-	void draw(Name name);
+	void read(const Name& name);
+	void draw(const Name& name);
 
 	//colors
 	void fill(Vec3 color);
@@ -115,31 +114,31 @@ struct Renderer{
 
 	void setWireframeMode();
 	void setColor(Color color);
-	void pollGraphicsAPIError();
+	void pollGraphicsAPIError() const;
 	void setCulling(Bool isCulling);
 	//void setDepthClamp(Bool depthClamp); //[TODO] maybe use depth clamp by default, it should allow for infinite range with proper depth testing in the desired range
 	void setDepthTest(Bool isUsingDepth);
 	void setWireframeMode(Bool isWireframeMode);
-	void addRenderObject(RenderObjectNames renderObjectNames);
-	
-	Area getArea();
+	void addRenderObject(const RenderObjectNames& renderObjectNames);
+
+	Area getArea() const;
 	Bool getCulling();
-	Float deltaTime();
+	Float deltaTime() const;
 	Float getAspectRatio();
 	Uniforms& uniforms();
-	Matrix getScreenSpaceMatrix();
+	Matrix getScreenSpaceMatrix() const;
+	void lines(const Vector<Line3D>& lines) { lineRenderer.renderLines(*this, lines); };
 };
 
 struct DepthTestOverride {
 	Bool stored = false;
 	Renderer* renderer = nullptr;
-	DepthTestOverride(Bool value, Renderer& renderer) {
+
+	DepthTestOverride(const Bool value, Renderer& renderer) {
 		this->renderer = &renderer;
 		stored = openglState.depthTest;
 		this->renderer->setDepthTest(value);
 	};
 
-	~DepthTestOverride() {
-		this->renderer->setDepthTest(stored);
-	};
+	~DepthTestOverride() { this->renderer->setDepthTest(stored); };
 };

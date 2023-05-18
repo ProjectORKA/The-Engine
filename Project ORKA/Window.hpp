@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include "Threading.hpp"
@@ -21,8 +20,7 @@ enum WindowDecoration {
 	undecorated = 0,
 };
 
-struct Window : public LifetimeGuard{
-
+struct Window : public LifetimeGuard {
 	Renderer renderer;
 
 	APIWindow apiWindow = nullptr;
@@ -48,11 +46,11 @@ struct Window : public LifetimeGuard{
 
 	//input
 	InputID altKey = InputID(InputType::KeyBoard, ALT);
-	InputEvent escape = InputEvent(InputType::KeyBoard, ESC, 1);
-	InputEvent enter = InputEvent(InputType::KeyBoard, ENTER, 1);
+	InputEvent escape = InputEvent(InputType::KeyBoard, ESC, true);
+	InputEvent enter = InputEvent(InputType::KeyBoard, ENTER, true);
 
-	InputEvent startProfiling = InputEvent(InputType::KeyBoard, F8, 1);
-	InputEvent stopProfiling = InputEvent(InputType::KeyBoard, F8, 0);
+	InputEvent startProfiling = InputEvent(InputType::KeyBoard, F8, true);
+	InputEvent stopProfiling = InputEvent(InputType::KeyBoard, F8, false);
 
 	void destroy();
 	void setWindowed();
@@ -67,23 +65,23 @@ struct Window : public LifetimeGuard{
 	void uncaptureCursor();
 	void undecorateWindow();
 	void destroyAPIWindow();
-	void setIcon(Path path);
+	void setIcon(const Path& path);
 	void updateWindowState();
 	void updateDecorations();
 	void initializeGraphicsAPI();
 	void setPosition(IVec2 position);
 	void resize(Int width, Int height);
-	void createAPIWindow(String title, Area size);
-	void create(String title, Area size, Bool decorated, WindowState state, ResourceManager& resourceManager);
+	void createAPIWindow(const String& title, Area size);
+	void create(const String& title, Area size, Bool decorated, WindowState state, ResourceManager& resourceManager);
 
-	Bool shouldClose();
-	Bool isCapturing();
-	Bool isFullScreen();
-	Bool isKeyPressed(Int key);
-	Bool pressed(InputID input);
+	Bool shouldClose() const;
+	Bool isCapturing() const;
+	Bool isFullScreen() const;
+	Bool isKeyPressed(Int key) const;
+	Bool pressed(InputID input) const;
 
-	Area getFrameSize();
-	Area getContentSize();
+	Area getFrameSize() const;
+	Area getContentSize() const;
 
 	Window& insert(UIElement& element);
 };

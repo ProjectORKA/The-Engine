@@ -25,12 +25,12 @@
 //}
 //
 //void SimpleRTSTreeSystem::spawnTree(SimpleRTSSimulation& simulation) {
-//	lifeExpectancy.pushBack(random(minTreeLifeExpectancyInSeconds, maxTreeLifeExpectancyInSeconds));
-//	treeAge.pushBack(randomFloat(minTreeLifeExpectancyInSeconds, lifeExpectancy.last()));
-//	treeDirection.pushBack(randomUnitVec2());
-//	treePosition.pushBack(randomVec2(-simulation.mapSize, simulation.mapSize));
-//	fullyGrownSize.pushBack(random(fullyGrownMinTreeSize, fullyGrownMaxTreeSize));
-//	treeSize.pushBack(calculateTreeSize(treeCount));
+//	lifeExpectancy.push_back(random(minTreeLifeExpectancyInSeconds, maxTreeLifeExpectancyInSeconds));
+//	treeAge.push_back(randomFloat(minTreeLifeExpectancyInSeconds, lifeExpectancy.last()));
+//	treeDirection.push_back(randomUnitVec2());
+//	treePosition.push_back(randomVec2(-simulation.mapSize, simulation.mapSize));
+//	fullyGrownSize.push_back(random(fullyGrownMinTreeSize, fullyGrownMaxTreeSize));
+//	treeSize.push_back(calculateTreeSize(treeCount));
 //	treeCount++;
 //}
 //

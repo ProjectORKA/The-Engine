@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include "Basics.hpp"
@@ -45,13 +44,14 @@ enum ShaderType : int {
 	tessellationEvaluation = GL_TESS_EVALUATION_SHADER
 };
 
-namespace MeshDrawMode{
+namespace MeshDrawMode {
 	enum {
 		staticMode = GL_STATIC_DRAW,
 		dynamicMode = GL_DYNAMIC_DRAW,
 		streamMode = GL_STREAM_DRAW,
 	};
 }
+
 namespace PrimitiveMode {
 	enum {
 		Lines = GL_LINES,
@@ -74,7 +74,7 @@ struct OpenGLStateCopy {
 	Int currentDrawFramebuffer = -1;
 	Int currentReadFramebuffer = -1;
 
-	void print();
+	void print() const;
 };
 
 extern OpenGLStateCopy openglState;
@@ -138,7 +138,7 @@ void apiBlendEquationSeparate(Enum modeRGB, Enum modeAlpha);
 void apiBlitFramebuffer(Int width, Int height, Enum filter);
 void apiBindBufferBase(Enum target, UInt index, UInt buffer);
 void apiTexParameterfv(Enum target, Enum name, const Float* param);
-void apiBufferData(Enum target, SizeIPtr size, void* data, Enum usage);
+void apiBufferData(Enum target, SizeIPtr size, const void* data, Enum usage);
 void apiBlitFramebuffer(UInt width, UInt height, UInt mask, UInt filter);
 void apiDrawElements(Enum mode, SizeI count, Enum type, const void* indices);
 void apiUniformBlockBinding(UInt programID, UInt uniformBlockIndex, UInt value);
@@ -146,11 +146,13 @@ void apiBlitFramebuffer(UInt srcX, UInt srcY, UInt dstX, UInt dstY, UInt filter)
 void apiBlitFramebuffer(UInt srcX, UInt srcY, UInt dstX, UInt dstY, UInt mask, UInt filter);
 void apiShaderSource(UInt shaderID, SizeI count, const Char* const* string, const Int* length);
 void apiBlendFuncSeparate(Enum sfactorRGB, Enum dfactorRGB, Enum sfactorAlpha, Enum dfactorAlpha);
-void apiDrawElementsInstanced(Enum mode, SizeI size, Enum type, void* data, SizeI primitiveCount);
+void apiDrawElementsInstanced(Enum mode, SizeI size, Enum type, const void* data, SizeI primitiveCount);
 void apiFramebufferTexture2D(Enum target, Enum attachment, Enum textarget, UInt texture, Int level);
 void apiVertexAttribPointer(UInt index, Int size, Enum type, Bool normalized, SizeI stride, const void* pointer);
-void __stdcall DebugOutputCallback(Enum source, Enum type, UInt id, Enum severity, SizeI length, const Char* message, const void* userParam);
-void apiTexImage2D(Enum target, Int level, Int internalFormat, SizeI width, UInt height, Int border, Enum format, Enum type, const void* pixels);
+void __stdcall DebugOutputCallback(Enum source, Enum type, UInt id, Enum severity, SizeI length, const Char* message,
+                                   const void* userParam);
+void apiTexImage2D(Enum target, Int level, Int internalFormat, SizeI width, UInt height, Int border, Enum format,
+                   Enum type, const void* pixels);
 
 Int apiGetError();
 Int apiCreateProgram();

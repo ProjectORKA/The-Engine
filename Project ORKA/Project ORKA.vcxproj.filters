@@ -2,9 +2,6 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="C++ Cheatsheet.cpp">
-      <Filter>Misc</Filter>
-    </ClCompile>
     <ClCompile Include="String.cpp">
       <Filter>Common\Datastructures\String</Filter>
     </ClCompile>
@@ -68,7 +65,7 @@
     <ClCompile Include="InfiniteDetailPrototype.cpp">
       <Filter>Apps\Console Apps</Filter>
     </ClCompile>
-    <ClCompile Include="Mooncrash.cpp">
+    <ClCompile Include="MoonCrash.cpp">
       <Filter>Apps\3D Apps\Mooncrash</Filter>
     </ClCompile>
     <ClCompile Include="MelonPlayer.cpp">
@@ -98,10 +95,10 @@
     <ClCompile Include="NeighbourQuadtree.cpp">
       <Filter>Systems</Filter>
     </ClCompile>
-    <ClCompile Include="OctreeNode.cpp">
+    <ClCompile Include="OcTreeNode.cpp">
       <Filter>Apps\3D Apps\Mooncrash</Filter>
     </ClCompile>
-    <ClCompile Include="OctreeSystem.cpp">
+    <ClCompile Include="OcTreeSystem.cpp">
       <Filter>Apps\3D Apps\Mooncrash</Filter>
     </ClCompile>
     <ClCompile Include="OctreeSystemRenderer.cpp">
@@ -128,7 +125,7 @@
     <ClCompile Include="QuadtreeNode.cpp">
       <Filter>Apps\3D Apps\Mooncrash</Filter>
     </ClCompile>
-    <ClCompile Include="QuadtreeSystem.cpp">
+    <ClCompile Include="QuadTreeSystem.cpp">
       <Filter>Apps\3D Apps\Mooncrash</Filter>
     </ClCompile>
     <ClCompile Include="QuadtreeSystemRenderer.cpp">
@@ -221,7 +218,7 @@
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="Collision.cpp" />
-    <ClCompile Include="CPUMesh.cpp" />
+    <ClCompile Include="CpuMesh.cpp" />
     <ClCompile Include="CPUTexture.cpp" />
     <ClCompile Include="ECS.cpp" />
     <ClCompile Include="Fonts.cpp" />
@@ -267,7 +264,6 @@
     <ClCompile Include="UIButton.cpp" />
     <ClCompile Include="UIElement.cpp" />
     <ClCompile Include="UIFlatPanel.cpp" />
-    <ClCompile Include="UniformBuffer.cpp" />
     <ClCompile Include="Uniforms.cpp" />
     <ClCompile Include="UserInterface.cpp" />
     <ClCompile Include="VertexArrayObject.cpp" />
@@ -288,6 +284,9 @@
     </ClCompile>
     <ClCompile Include="Image.cpp">
       <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="PhysicsPlayground.cpp">
+      <Filter>Apps\2D Apps\Physics Playground</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -387,9 +386,6 @@
     <ClInclude Include="Ray.hpp">
       <Filter>Common</Filter>
     </ClInclude>
-    <ClInclude Include="BasicVector.hpp">
-      <Filter>Common</Filter>
-    </ClInclude>
     <ClInclude Include="DebugConsole.hpp">
       <Filter>Common</Filter>
     </ClInclude>
@@ -411,7 +407,7 @@
     <ClInclude Include="FlappyBird.hpp">
       <Filter>Apps\3D Apps\Flappy Bird</Filter>
     </ClInclude>
-    <ClInclude Include="Mooncrash.hpp">
+    <ClInclude Include="MoonCrash.hpp">
       <Filter>Apps\3D Apps\Mooncrash</Filter>
     </ClInclude>
     <ClInclude Include="MelonPlayer.hpp">
@@ -450,10 +446,10 @@
     <ClInclude Include="OctreeID.hpp">
       <Filter>Apps\3D Apps\Mooncrash</Filter>
     </ClInclude>
-    <ClInclude Include="OctreeNode.hpp">
+    <ClInclude Include="OcTreeNode.hpp">
       <Filter>Apps\3D Apps\Mooncrash</Filter>
     </ClInclude>
-    <ClInclude Include="OctreeSystem.hpp">
+    <ClInclude Include="OcTreeSystem.hpp">
       <Filter>Apps\3D Apps\Mooncrash</Filter>
     </ClInclude>
     <ClInclude Include="OctreeSystemRenderer.hpp">
@@ -483,7 +479,7 @@
     <ClInclude Include="QuadtreeNode.hpp">
       <Filter>Apps\3D Apps\Mooncrash</Filter>
     </ClInclude>
-    <ClInclude Include="QuadtreeSystem.hpp">
+    <ClInclude Include="QuadTreeSystem.hpp">
       <Filter>Apps\3D Apps\Mooncrash</Filter>
     </ClInclude>
     <ClInclude Include="QuadtreeSystemRenderer.hpp">
@@ -500,9 +496,6 @@
     </ClInclude>
     <ClInclude Include="VoxelSystem.hpp">
       <Filter>Systems</Filter>
-    </ClInclude>
-    <ClInclude Include="Vector.hpp">
-      <Filter>Common</Filter>
     </ClInclude>
     <ClInclude Include="ULLUtil.hpp">
       <Filter>Common\ULLUtil</Filter>
@@ -613,7 +606,7 @@
     <ClInclude Include="Client.hpp" />
     <ClInclude Include="Colliders.hpp" />
     <ClInclude Include="Collision.hpp" />
-    <ClInclude Include="CPUMesh.hpp" />
+    <ClInclude Include="CpuMesh.hpp" />
     <ClInclude Include="CPUTexture.hpp" />
     <ClInclude Include="ECS.hpp" />
     <ClInclude Include="EntityComponentSystem.hpp" />
@@ -673,7 +666,6 @@
     <ClInclude Include="UIElement.hpp" />
     <ClInclude Include="UIFlatPanel.hpp" />
     <ClInclude Include="UITextBox.hpp" />
-    <ClInclude Include="UniformBuffer.hpp" />
     <ClInclude Include="Uniforms.hpp" />
     <ClInclude Include="UserInterface.hpp" />
     <ClInclude Include="Velox_AllocatorMisc.hpp" />

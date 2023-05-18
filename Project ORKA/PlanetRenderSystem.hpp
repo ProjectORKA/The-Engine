@@ -15,7 +15,9 @@ struct PlanetRenderSystem {
 	QuadtreeRenderSystem quadtreeRenderSystem;
 
 	void destroy();
-	void update(PlanetSystem& planetSystem, PlanetSystemPlayer& player);
-	void renderLevel(ResourceManager& resourceManager, PlanetSystem& planetSystem, Renderer& renderer, PlanetSystemPlayer& player, UShort level);
-	void renderAllLevels(ResourceManager& resourceManager, PlanetSystem& planetSystem, Renderer& renderer, PlanetSystemPlayer& player);
+	void update(const PlanetSystem& planetSystem, PlanetSystemPlayer& player);
+	void renderLevel(ResourceManager& resourceManager, PlanetSystem& planetSystem, Renderer& renderer,
+	                 PlanetSystemPlayer& player, UShort level);
+	void renderAllLevels(ResourceManager& resourceManager, PlanetSystem& planetSystem, Renderer& renderer,
+	                     PlanetSystemPlayer& player);
 };

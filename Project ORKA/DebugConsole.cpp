@@ -1,4 +1,3 @@
-
 #include "DebugConsole.hpp"
 #include "UserInterface.hpp"
 

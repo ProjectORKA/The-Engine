@@ -1,4 +1,3 @@
-
 #pragma once
 
 //written by Omarito
@@ -12,9 +11,9 @@
 //Include known-size integer files, based on compiler. Some compilers do not have these
 //files, so they must be created manually.
 #if defined(__GNUC__) || defined(__clang__) || (defined(_MSC_VER) && _MSC_VER >= 1600)
-	// Compilers supporting C99 or C++0x have stdint.h defining these integer types	
-	#include <stdint.h>
-    #include <cstddef>
+// Compilers supporting C99 or C++0x have stdint.h defining these integer types	
+#include <stdint.h>
+#include <cstddef>
 #elif defined(_MSC_VER)
 	typedef signed   __int8  int8_t;
 	typedef unsigned __int8  uint8_t;
@@ -28,14 +27,14 @@
 	typedef int64_t intptr_t;
 	typedef int16_t wchar_t;
 
-	#ifndef _INTPTR_T_DEFINED
+#ifndef _INTPTR_T_DEFINED
 		#define _INTPTR_T_DEFINED
-		#ifdef  __x86_64__
+#ifdef  __x86_64__
 			typedef int64_t intptr_t;
-		#else
+#else
 			typedef int32_t intptr_t;
-		#endif
-	#endif
+#endif
+#endif
 #else
 	// sizeof(char) == 1
 	// sizeof(char) <= sizeof(short)
@@ -59,11 +58,11 @@
 	typedef uint64_t uintptr_t;
 	typedef int64_t intptr_t;
 	typedef int16_t wchar_t;
-	#ifdef  __x86_64__
+#ifdef  __x86_64__
 		typedef int64_t intptr_t;
-	#else
+#else
 		typedef int32_t intptr_t;
-	#endif
+#endif
 #endif
 
 /*
@@ -72,8 +71,8 @@
  * to be the only LLP64 architecture in current use.
 */
 #ifdef _WIN64
-	typedef signed	 long long  ssize_type;
-	typedef unsigned long long  usize_type;
+using ssize_type = signed long long;
+using usize_type = unsigned long long;
 #elif _WIN32
 	typedef signed   int     	ssize_type;
 	typedef unsigned int     	usize_type;
@@ -83,36 +82,36 @@
 #endif
 
 #if defined(OS_WINDOWS)
-	typedef ssize_type ssize_t;
-	typedef usize_type usize_t;
+using ssize_t = ssize_type;
+using usize_t = usize_type;
 #endif
 
 #if CPU_ARCH == CPU_ARCH_x86_64
-	#define SZi PRIi64
-	#define SZu PRIu64
+#define SZi PRIi64
+#define SZu PRIu64
 #elif CPU_ARCH == CPU_ARCH_x86
 	#define SZi PRIi32 
 	#define SZu PRIu32
 #endif
 
-typedef int8_t int8;
-typedef int16_t int16;
-typedef int32_t int32;
-typedef int64_t int64;
-typedef uint8_t uint8;
-typedef uint16_t uint16;
-typedef uint32_t uint32;
-typedef uint32_t uint;
-typedef uint64_t uint64;
-typedef ssize_type ssize;
-typedef usize_type usize;
-typedef intptr_t intptr;
-typedef uintptr_t uintptr;
+using int8 = int8_t;
+using int16 = int16_t;
+using int32 = int32_t;
+using int64 = int64_t;
+using uint8 = uint8_t;
+using uint16 = uint16_t;
+using uint32 = uint32_t;
+using uint = uint32_t;
+using uint64 = uint64_t;
+using ssize = ssize_type;
+using usize = usize_type;
+using intptr = intptr_t;
+using uintptr = uintptr_t;
 
 #define INLINE inline
 
 #ifdef COMPILER_MSVC
-	#define FORCEINLINE __forceinline
+#define FORCEINLINE __forceinline
 #elif defined(COMPILER_GCC) || defined(COMPILER_CLANG)
 	#define FORCEINLINE inline __attribute__ ((always_inline))
 #else
@@ -123,7 +122,7 @@ typedef uintptr_t uintptr;
 	#define nullptr NULL
 	#define CONSTEXPR
 #else
-	#define CONSTEXPR constexpr
+#define CONSTEXPR constexpr
 #endif
 
 #define NULL_COPY_AND_ASSIGN(T) \
@@ -142,8 +141,8 @@ typedef uintptr_t uintptr;
 /******************* SUPRESS WARNINGS *******************/
 
 #if defined(COMPILER_MSVC)
-	#pragma warning(disable : 4201) 							// Remove namesless struct/union warnning
-	//#pragma warning(disable : 4201) 							// Remove multichar warnning
+#pragma warning(disable : 4201) 							// Remove namesless struct/union warnning
+//#pragma warning(disable : 4201) 							// Remove multichar warnning
 #elif defined(COMPILER_GCC)
 	#pragma GCC diagnostic ignored "-Wpedantic"					// Remove namesless struct/union warnning
 	#pragma GCC diagnostic ignored "-Wunused-function"			// Remove namesless struct/union warnning
@@ -156,24 +155,24 @@ typedef uintptr_t uintptr;
 
 #if defined(OS_WINDOWS)
 
-	#define LITTLE_ENDIAN 0x41424344UL 
-	#define BIG_ENDIAN    0x44434241UL
-	#define PDP_ENDIAN    0x42414443UL
-	#define ENDIAN_ORDER  ('ABCD') 
-	#define ENDIANNESS	  0
+#define LITTLE_ENDIAN 0x41424344UL
+#define BIG_ENDIAN    0x44434241UL
+#define PDP_ENDIAN    0x42414443UL
+#define ENDIAN_ORDER  ('ABCD')
+#define ENDIANNESS	  0
 
-	#if ENDIAN_ORDER == LITTLE_ENDIAN
-		#undef ENDIANNESS
-		#define ENDIANNESS LITTLE_ENDIAN
-	#elif ENDIAN_ORDER == BIG_ENDIAN
+#if ENDIAN_ORDER == LITTLE_ENDIAN
+#undef ENDIANNESS
+#define ENDIANNESS LITTLE_ENDIAN
+#elif ENDIAN_ORDER == BIG_ENDIAN
 		#undef ENDIANNESS
 		#define ENDIANNESS BIG_ENDIAN
-	#elif ENDIAN_ORDER == PDP_ENDIAN
+#elif ENDIAN_ORDER == PDP_ENDIAN
 		#undef ENDIANNESS
 		#define ENDIANNESS PDP_ENDIAN
-	#else
+#else
 		#error "Can't determine the endianness."
-	#endif
+#endif
 
 #elif defined(OS_LINUX) || defined(OS_UNIX) || defined(OS_APPLE) || defined(OS_ANDROID)
 
@@ -181,15 +180,15 @@ typedef uintptr_t uintptr;
 	
 	#define ENDIANNESS	  0
 
-	#if __BYTE_ORDER == __BIG_ENDIAN
+#if __BYTE_ORDER == __BIG_ENDIAN
 		#undef ENDIANNESS
 		#define ENDIANNESS BIG_ENDIAN
-	#elif __BYTE_ORDER == __LITTLE_ENDIAN
+#elif __BYTE_ORDER == __LITTLE_ENDIAN
 		#undef ENDIANNESS
 		#define ENDIANNESS LITTLE_ENDIAN
-	#else
+#else
 		#error "Can't determine the endianness."
-	#endif
+#endif
 #endif
 
 #if defined(__GNUC__) || (defined(__MWERKS__) && (__MWERKS__ >= 0x3000)) || (defined(__ICC) && (__ICC >= 600)) || defined(__ghs__)

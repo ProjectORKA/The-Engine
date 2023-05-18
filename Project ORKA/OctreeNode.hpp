@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include "OctreeData.hpp"
@@ -6,7 +5,7 @@
 #include "Basics.hpp"
 #include "QuadtreeNode.hpp"
 
-struct OctreeNode {
+struct OcTreeNode {
 	OctreeNodeData data;
 	OctreeID id;
 	Bool isValid = false;
@@ -14,28 +13,28 @@ struct OctreeNode {
 	UInt users = 0;
 	Bool subdivided = false;
 	//parent node
-	OctreeNode* parent = nullptr;
+	OcTreeNode* parent = nullptr;
 	//child nodes
-	OctreeNode* c000 = nullptr;
-	OctreeNode* c001 = nullptr;
-	OctreeNode* c010 = nullptr;
-	OctreeNode* c011 = nullptr;
-	OctreeNode* c100 = nullptr;
-	OctreeNode* c101 = nullptr;
-	OctreeNode* c110 = nullptr;
-	OctreeNode* c111 = nullptr;
+	OcTreeNode* c000 = nullptr;
+	OcTreeNode* c001 = nullptr;
+	OcTreeNode* c010 = nullptr;
+	OcTreeNode* c011 = nullptr;
+	OcTreeNode* c100 = nullptr;
+	OcTreeNode* c101 = nullptr;
+	OcTreeNode* c110 = nullptr;
+	OcTreeNode* c111 = nullptr;
 	//look at 2d structure
-	QuadtreeNode* quadtreeEquivalent = nullptr;
+	QuadtreeNode* quadTreeEquivalent = nullptr;
 
-	~OctreeNode();
-	OctreeNode(QuadtreeNode& quadTreeRoot);
-	OctreeNode(OctreeNode& parent, Bool x, Bool y, Bool z);
+	~OcTreeNode();
+	explicit OcTreeNode(QuadtreeNode& quadTreeRoot);
+	OcTreeNode(OcTreeNode& parent, Bool x, Bool y, Bool z);
 
-	void count();
+	void count() const;
 	void update();
 	void subdivide();
-	void unsubdivide();
+	void unSubdivide();
 	void incrementUser();
 	void decrementUser();
-	ULLVec3 getLocation();
+	ULLVec3 getLocation() const;
 };

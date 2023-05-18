@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include <memory>
@@ -12,12 +11,8 @@ struct Memory {
 		//memory = malloc(WHOLEPROGRAM_MAX_MEMORY);
 	}
 
-	void allocate() {
-		
-	};
-	void free() {
-		
-	};
+	void allocate() { };
+	void free() { };
 };
 
 extern Memory memory;

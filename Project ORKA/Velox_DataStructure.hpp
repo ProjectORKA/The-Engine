@@ -1,4 +1,3 @@
-
 #pragma once
 
 //written by Omarito
@@ -9,8 +8,8 @@
 #include <string>
 #include <map>
 
-template<typename T>
+template <typename T>
 using StdVector = std::vector<T>;
-typedef std::string StdString;
-template<typename K, typename V>
+using StdString = std::string;
+template <typename K, typename V>
 using StdMap = std::map<K, V>;

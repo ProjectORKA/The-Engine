@@ -1,6 +1,5 @@
-
-#include "CPUMesh.hpp"
+#include "CpuMesh.hpp"
 #include "CPUTexture.hpp"
 #include "Heightmap.hpp"
 
-CPUMesh createTerrainMesh(AdvancedHeightMap& heightmap);
+CpuMesh createTerrainMesh(const AdvancedHeightMap& heightmap);

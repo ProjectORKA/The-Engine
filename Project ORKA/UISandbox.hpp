@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include "Game.hpp"
@@ -14,7 +13,7 @@ struct Toggle : public UIButton {
 	Bool toggle = false;
 
 	void doThis() override;
-	void update(Window& window) override;;
+	void update(Window& window) override;
 };
 
 struct UISandbox : public GameRenderer {
@@ -23,7 +22,7 @@ struct UISandbox : public GameRenderer {
 	UIButton saveButton;
 
 	UISandbox();
-	void update(Window& window)override;
+	void update(Window& window) override;
 	void inputEvent(Window& window, InputEvent input) override;
 	void render(ResourceManager& resourceManager, Window& window, TiledRectangle area) override;
 	void renderInteractive(ResourceManager& resourceManager, Window& window, TiledRectangle area) override;

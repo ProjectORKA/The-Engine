@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include "Basics.hpp"
@@ -21,7 +20,7 @@ struct ParticleSystem {
 	Bool loaded = false;
 	U16 particleCount = 0;
 	Vec3 location = Vec3(0);
-	
+
 	//advanced data for smooth interpolation
 	Vec3 previous1 = Vec3(0);
 	Vec3 previous2 = Vec3(0);
@@ -31,7 +30,7 @@ struct ParticleSystem {
 	ParticleSystem() = delete;
 	ParticleSystem(U16 particleCount);
 	void spawn(Vec3 location, Vec3 velocity);
-	void update(Vec3 location, Renderer& renderer);
+	void update(Vec3 location, const Renderer& renderer);
 	void render(ResourceManager& resourceManager, Renderer& renderer);
 };
 

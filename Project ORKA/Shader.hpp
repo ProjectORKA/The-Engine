@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include "Basics.hpp"
@@ -9,6 +8,6 @@ struct Shader {
 	Bool isLoaded = false;
 
 	void destroy();
-	void create(Path path, String uniformBlock);
-	void loadShaderCode(Int shaderType, String shaderCode);
+	void create(const Path& path, const String& uniformBlock);
+	void loadShaderCode(Int shaderType, const String& shaderCode);
 };

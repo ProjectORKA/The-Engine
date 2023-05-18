@@ -25,7 +25,7 @@ enum class SimpleRTSItem {
 struct RabbitSimulation {
 	const Float rabbitJitter = 10;
 	const Float rabbitSpeed = 8;
-	
+
 	UInt rabbitCount = 0;
 	Vector<Float> rabbitAge;
 	Vector<Vec2> rabbitPosition;
@@ -36,11 +36,13 @@ struct RabbitSimulation {
 	void killRabbit(Index id);
 	Index getClosestRabbit(Vec2 pos);
 };
+
 struct HouseSimulation {
 	UInt houseCount = 0;
 	Vector<Vec2> housePosition;
 	Vector<UInt> houseClanID;
 };
+
 struct BushSimulation {
 	//bush
 	Vector<Vec2> bushPosition;
@@ -50,6 +52,7 @@ struct BushSimulation {
 	Vector<Vec2> berryBushPosition;
 	Vector<Vec2> berryBushDirection;
 };
+
 struct TreeStumps {
 	UInt lastTreeStump = 0;
 	UInt treeStumpCount = 0;
@@ -68,12 +71,12 @@ struct SimpleRTSSimulation : public GameSimulation {
 	//RabbitSimulation rabbitSimulation;
 	//SimpleRTSTreeSystem treeSystem;
 	//SimpleRTSHumanSystem humanitySimulation;
-	
+
 	SimpleRTSTerrainSystem terrainSystem;
 
 	SimpleRTSSimulation();
 	void update(Float timestep) override;
-	void render(ResourceManager& resourceManager, Renderer& renderer);;
+	void render(ResourceManager& resourceManager, Renderer& renderer);
 };
 
 struct SimpleRTSRenderer : public GameRenderer {
@@ -84,9 +87,9 @@ struct SimpleRTSRenderer : public GameRenderer {
 	SimpleRTSSimulation* sim = nullptr;
 	SimpleRTSTerrainRenderingSystem terrainRenderingSystem;
 	//Input
-	InputEvent exit = InputEvent(InputType::Mouse, RMB, 0);
-	InputEvent enter = InputEvent(InputType::Mouse, LMB, 1);
-	InputEvent toggleWireframe = InputEvent(InputType::KeyBoard, F, 0);
+	InputEvent exit = InputEvent(InputType::Mouse, RMB, false);
+	InputEvent enter = InputEvent(InputType::Mouse, LMB, true);
+	InputEvent toggleWireframe = InputEvent(InputType::KeyBoard, F, false);
 
 	void update(Window& window) override;
 	void create(ResourceManager& resourceManager, Window& window) override;

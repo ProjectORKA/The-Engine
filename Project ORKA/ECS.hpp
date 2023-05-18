@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include "Time.hpp"
@@ -11,9 +10,7 @@
 
 struct Renderer;
 
-struct Component {
-
-};
+struct Component {};
 
 struct TransformComponent : public Component {
 	Transform transform;
@@ -23,7 +20,7 @@ struct RenderComponent : public Component {
 	Name shaderName = "default";
 	Name meshName = "empty";
 
-	void render(ResourceManager& resourceManager, Renderer& renderer);
+	void render(ResourceManager& resourceManager, Renderer& renderer) const;
 };
 
 enum Components {
@@ -32,7 +29,7 @@ enum Components {
 
 struct Entity {
 	U16 archetypeID = 0;
-	U16 * componentIDs = nullptr;
+	U16* componentIDs = nullptr;
 };
 
 struct Archetype {

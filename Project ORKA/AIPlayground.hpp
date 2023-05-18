@@ -7,7 +7,6 @@
 struct Window;
 
 struct AIPlayground : public GameRenderer {
-	
 	NeuralNet network;
 
 	AIPlayground();

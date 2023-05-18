@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include "Basics.hpp"
@@ -13,15 +12,11 @@ struct Thread {
 
 	std::thread thread;
 
-	template<class Function, class ...Args>
-	void start(Function&& f, Args && ...args)
-	{
-		thread = std::thread(f, std::ref(args)...);
-	}
-	void stop()
-	{
+	template <class Function, class... Args>
+	void start(Function&& f, Args&&... args) { thread = std::thread(f, std::ref(args)...); }
+
+	void stop() {
 		if (thread.joinable())thread.join();
 		else logError("Thread not joinable!");
 	}
 };
-

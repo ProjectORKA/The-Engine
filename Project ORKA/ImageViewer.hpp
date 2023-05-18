@@ -10,13 +10,6 @@
 // add webp support
 // converter button
 
-//get all resources
-//rate them based on some function
-//sort them
-//increase or decrease the amount of resources loaded based on the memory available
-//make sure resources out of that scope are unloaded
-//make sure resources in that scope are loaded
-
 struct ImageViewerResource {
 	Path path = Path("");
 	Float priority = 0;
@@ -29,11 +22,11 @@ struct ImageViewerResource {
 };
 
 struct ImageViewerRenderer : public GameRenderer {
-	std::vector<ImageViewerResource> images;
+	Vector<ImageViewerResource> images;
 	UInt cpuLoadedCount = 0;
 	UInt gpuLoadedCount = 0;
-	UInt cpuMaxPreloadCount = 64;
-	UInt gpuMaxPreloadCount = 16;
+	UInt cpuMaxPreloadCount = 2;
+	UInt gpuMaxPreloadCount = 1;
 
 	Int currentImageID = 0;
 
@@ -44,7 +37,7 @@ struct ImageViewerRenderer : public GameRenderer {
 	Float zoom = 1;
 	Float zoomfactor = 1.2;
 	Float smoothness = 0.1;
-	
+
 	TimePoint lastImageRefresh;
 	TimePoint lastButtonInput;
 
@@ -54,14 +47,14 @@ struct ImageViewerRenderer : public GameRenderer {
 
 	Float holdDelay = 1;
 
-	InputEvent zoomIn = InputEvent(InputType::Scroll, 1, 1);
-	InputEvent zoomOut = InputEvent(InputType::Scroll, 1, 0);
-	InputEvent resetView = InputEvent(InputType::Mouse, MMB, 0);
-	InputEvent deleteImage = InputEvent(InputType::KeyBoard, DEL, 0);
-	InputEvent nextImage = InputEvent(InputType::KeyBoard, RIGHT, 0);
-	InputEvent previousImage = InputEvent(InputType::KeyBoard, LEFT, 0);
-	InputEvent nextImageMouse = InputEvent(InputType::Mouse, MOUSE_BUTTON_4, 0);
-	InputEvent previousImageMouse = InputEvent(InputType::Mouse, MOUSE_BUTTON_5, 0);
+	InputEvent zoomIn = InputEvent(InputType::Scroll, 1, true);
+	InputEvent zoomOut = InputEvent(InputType::Scroll, 1, false);
+	InputEvent resetView = InputEvent(InputType::Mouse, MMB, false);
+	InputEvent deleteImage = InputEvent(InputType::KeyBoard, DEL, false);
+	InputEvent nextImage = InputEvent(InputType::KeyBoard, RIGHT, false);
+	InputEvent previousImage = InputEvent(InputType::KeyBoard, LEFT, false);
+	InputEvent nextImageMouse = InputEvent(InputType::Mouse, MOUSE_BUTTON_4, false);
+	InputEvent previousImageMouse = InputEvent(InputType::Mouse, MOUSE_BUTTON_5, false);
 
 	InputID mouseDown = InputID(InputType::Mouse, LMB);
 	InputID nextImageHolding = InputID(InputType::KeyBoard, RIGHT);
@@ -70,6 +63,7 @@ struct ImageViewerRenderer : public GameRenderer {
 	InputID previousImageHoldingMouse = InputID(InputType::Mouse, MOUSE_BUTTON_5);
 
 	void updateZoom();
+	void preloadImages();
 	void showNextImage();
 	void showPrevImage();
 	void loadGPUResource();
@@ -80,12 +74,12 @@ struct ImageViewerRenderer : public GameRenderer {
 	void loadGPUImageWithHighestPriority();
 	void unloadGPUImageWithLowestPriority();
 	void unloadCPUImageWithLowestPriority();
-	Index indexOfCPUImageWithLowestPriority();
-	Index indexOfGPUImageWithLowestPriority();
-	Index indexOfCPUImageWithHighestPriority();
-	Index indexOfGPUImageWithHighestPriority();
-	void preloadImage(Path path, GPUTexture& texture);
-	std::vector<Index> indicesOfImagesSortedByPriority();
+	Index indexOfCPUImageWithLowestPriority() const;
+	Index indexOfGPUImageWithLowestPriority() const;
+	Index indexOfCPUImageWithHighestPriority() const;
+	Index indexOfGPUImageWithHighestPriority() const;
+	void preloadImage(const Path& path, GPUTexture& texture);
+	Vector<Index> indicesOfImagesSortedByPriority() const;
 	void inputEvent(Window& window, InputEvent input) override;
 	void render(ResourceManager& resourceManager, Window& window, TiledRectangle area) override;
 };
@@ -95,5 +89,5 @@ struct ImageViewer {
 	UserInterface ui;
 	ImageViewerRenderer renderer;
 
-	void run(Int argc, Char* argv[]);
+	ImageViewer(Int argc, Char* argv[]);
 };

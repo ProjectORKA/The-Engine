@@ -1,8 +1,7 @@
-
 #pragma once
 
 #include "Basics.hpp"
-#include "CPUMesh.hpp"
+#include "CpuMesh.hpp"
 #include "GPUMesh.hpp"
 #include "PerlinNoise.hpp"
 
@@ -15,7 +14,7 @@ struct Chunk {
 	Bool voxels[VOXEL_CHUNK_SIZE][VOXEL_CHUNK_SIZE][VOXEL_CHUNK_HEIGHT];
 
 	Chunk();
-	CPUMesh generateMesh(ResourceManager& resourceManager);
+	CpuMesh generateMesh(ResourceManager& resourceManager) const;
 };
 
 struct VoxelWorld {

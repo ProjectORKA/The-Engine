@@ -1,11 +1,10 @@
-
 #pragma once
 
 #include "Game.hpp"
 #include "MindMap.hpp"
 #include "Player.hpp"
 
-struct MindMapperRenderer : public GameRenderer {
+struct MindMapperRenderer final : public GameRenderer {
 	Mutex mutex;
 	DebugPlayer player;
 
@@ -13,11 +12,11 @@ struct MindMapperRenderer : public GameRenderer {
 
 	Bool grow = false;
 
-	InputEvent exit = InputEvent(InputType::Mouse, 1, 0);
-	InputEvent enter = InputEvent(InputType::Mouse, 0, 1);
-	InputEvent growToggle = InputEvent(InputType::KeyBoard, SPACE, 0);
+	InputEvent exit = InputEvent(InputType::Mouse, 1, false);
+	InputEvent enter = InputEvent(InputType::Mouse, 0, true);
+	InputEvent growToggle = InputEvent(InputType::KeyBoard, SPACE, false);
 
-	MindMapperRenderer() {};
+	MindMapperRenderer() = default;
 	void update(Window& window) override;
 	void inputEvent(Window& window, InputEvent input) override;
 	void render(ResourceManager& resourceManager, Window& window, TiledRectangle area) override;
@@ -25,10 +24,7 @@ struct MindMapperRenderer : public GameRenderer {
 
 struct MindMapper {
 	UserInterface ui;
+	ResourceManager resourceManager;
 	MindMapperRenderer mindMapperRenderer;
-
-	MindMapper(ResourceManager& resourceManager) {
-		ui.window("ORKA Sandbox", Area(1920, 1080), true, WindowState::windowed, mindMapperRenderer, resourceManager);
-		ui.run();
-	}
+	void run();
 };

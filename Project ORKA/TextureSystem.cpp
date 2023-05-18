@@ -1,14 +1,12 @@
-
 #include "TextureSystem.hpp"
 
-void TextureSystem::create()
-{	
+void TextureSystem::create() {
 	Image image;
 	image.height = 2;
 	image.width = 2;
 	image.channels = 4;
-	image.bitcount = 8;
-	image.pixels.resize(image.width * image.height * image.channels * image.bitcount / 8);
+	image.bitCount = 8;
+	image.pixels.resize(image.width * image.height * image.channels * image.bitCount / 8);
 
 	image.pixels[0] = 0;
 	image.pixels[1] = 0;
@@ -33,38 +31,35 @@ void TextureSystem::create()
 
 	add(defaultTexture);
 }
-void TextureSystem::destroy()
-{
-	for (GPUTexture& gpuTexture : gpuTextures) {
-		gpuTexture.unload();
-	}
+
+void TextureSystem::destroy() {
+	for (GPUTexture& gpuTexture : gpuTextures) { gpuTexture.unload(); }
 	gpuTextures.clear();
 
 	textureNames.clear();
 }
-Index TextureSystem::use(ResourceManager& resourceManager, Name name)
-{
-	use(resourceManager, name,0);
+
+Index TextureSystem::use(ResourceManager& resourceManager, const Name& name) {
+	use(resourceManager, name, 0);
 	return currentTextureID;
 }
-void TextureSystem::resize(Area size)
-{
-	currentTexture().resize(size);
-}
-void TextureSystem::use(Index textureIndex)
-{
+
+void TextureSystem::resize(const Area size) { currentTexture().resize(size); }
+
+void TextureSystem::use(const Index textureIndex) {
 	currentTextureID = textureIndex;
 	currentTexture().use(0);
 }
-void TextureSystem::use(ResourceManager& resourceManager, Name name, Index slot) {
+
+void TextureSystem::use(ResourceManager& resourceManager, const Name& name, const Index slot) {
 	auto it = textureNames.find(name);
 	if (it != textureNames.end()) {
 		currentTextureID = it->second;
 		currentTexture().use(slot);
-	} else {
-		
+	}
+	else {
 		CPUTexture cpuTexture;
-		cpuTexture.load(resourceManager, name);
+		cpuTexture.load(resourceManager, name, Filter::nearest, Filter::linearMM, Wrapping::repeat);
 		add(cpuTexture);
 
 		it = textureNames.find(name);
@@ -78,15 +73,12 @@ void TextureSystem::use(ResourceManager& resourceManager, Name name, Index slot)
 		}
 	}
 }
-void TextureSystem::add(CPUTexture & cpuTexture)
-{
-	gpuTextures.emplaceBack();
-	gpuTextures.last().load(cpuTexture);
+
+void TextureSystem::add(CPUTexture& cpuTexture) {
+	gpuTextures.emplace_back();
+	gpuTextures.back().load(cpuTexture);
 	currentTextureID = gpuTextures.size() - 1;
 	textureNames[cpuTexture.name] = currentTextureID;
 }
 
-GPUTexture& TextureSystem::currentTexture()
-{
-	return gpuTextures[currentTextureID];
-}
+GPUTexture& TextureSystem::currentTexture() { return gpuTextures[currentTextureID]; }

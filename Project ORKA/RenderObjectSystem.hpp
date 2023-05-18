@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include "Basics.hpp"
@@ -20,7 +19,7 @@ struct RenderObjectNames {
 	Name shaderName = "default";
 	Name textureName = "default";
 	RenderObjectNames();
-	RenderObjectNames(String name, String mesh, String texture, String shader);
+	RenderObjectNames(const String& name, const String& mesh, const String& texture, const String& shader);
 };
 
 struct RenderObjectSystem {
@@ -39,11 +38,11 @@ struct RenderObjectSystem {
 	void select(Index id);
 	void render(Index id);
 	void create(Renderer& renderer);
-	void render(ResourceManager& resourceManager,Name name);
-	void select(ResourceManager& resourceManager, Name name);
-	Index addRenderObject(RenderObject& renderObject);
-	void addRenderObject(RenderObjectNames renderobject);
-	void addRenderObject(Name name, Name meshName, Name textureName, Name shaderName);
+	void render(ResourceManager& resourceManager, const Name& name);
+	void select(ResourceManager& resourceManager, const Name& name);
+	Index addRenderObject(const RenderObject& renderObject);
+	void addRenderObject(const RenderObjectNames& renderobject);
+	void addRenderObject(const Name& name, const Name& meshName, const Name& textureName, const Name& shaderName);
 
 	RenderObject& current();
 };

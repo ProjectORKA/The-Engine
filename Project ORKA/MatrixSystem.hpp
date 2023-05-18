@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include "TransformationStack.hpp"
@@ -11,32 +10,32 @@
 struct MatrixSystem {
 	//matrix array for instanced rendering
 	Vector<Matrix> modelMatrixArray;
-	void matrixArray(Vector<Vec2>& pos);
-	void matrixArray(Vector<Vec2>& pos, Float size);
-	void matrixArray(Vector<Vec4>& compactTransform);
-	void matrixArray(Vector<Vec2>& pos, Vector<Vec2>& dir);
-	void matrixArray(Vector<Vec2>& position, Vector<Vec2>& direction, Vector<Float>& size);
+	void matrixArray(const Vector<Vec2>& pos);
+	void matrixArray(const Vector<Vec2>& pos, Float size);
+	void matrixArray(const Vector<Vec4>& compactTransform);
+	void matrixArray(const Vector<Vec2>& pos, const Vector<Vec2>& dir);
+	void matrixArray(const Vector<Vec2>& position, const Vector<Vec2>& direction, const Vector<Float>& size);
 
 	//getters
-	Matrix getVP();
+	Matrix getVP() const;
 	Matrix getMVP();
-	Matrix getView();
+	Matrix getView() const;
 	Matrix getModel();
-	Matrix getProjection();
+	Matrix getProjection() const;
 
 	//setters
-	void setView(Matrix matrix);
-	void setProjection(Matrix matrix);
+	void setView(const Matrix& matrix);
+	void setProjection(const Matrix& matrix);
 	//model matrices are stacked
 	void popMatrix();
-	UInt stackCount();
-	void pushMatrix(Matrix matrix);
-	void overridePush(Matrix matrix);
+	UInt stackCount() const;
+	void pushMatrix(const Matrix& matrix);
+	void overridePush(const Matrix& matrix);
 	void applyToUniforms(Uniforms& uniforms);
 
 private :
 	TransformationStack transformationStack;
 	Matrix mvp = Matrix(1);
 	Matrix viewMatrix = Matrix(1);
-	Matrix projectionMatrix =Matrix(1);
+	Matrix projectionMatrix = Matrix(1);
 };

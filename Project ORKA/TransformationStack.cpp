@@ -1,16 +1,10 @@
-
 #include "TransformationStack.hpp"
 
-Matrix TransformationStack::get() {
-	if (matrices.size() == 0) return Matrix(1);
-	else return matrices.last();
+Matrix TransformationStack::get() const {
+	if (matrices.empty()) return Matrix(1);
+	return matrices.back();
 }
-void TransformationStack::popMatrix() {
-	matrices.popBack();
-}
-void TransformationStack::pushMatrix(Matrix matrix) {
-	matrices.pushBack(matrix * get());
-}
-void TransformationStack::overridePush(Matrix matrix) {
-	matrices.pushBack(matrix);
-}
+
+void TransformationStack::popMatrix() { matrices.pop_back(); }
+void TransformationStack::pushMatrix(const Matrix& matrix) { matrices.push_back(matrix * get()); }
+void TransformationStack::overridePush(const Matrix& matrix) { matrices.push_back(matrix); }

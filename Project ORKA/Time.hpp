@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include <chrono>
@@ -8,7 +7,7 @@
 using Clock = std::chrono::system_clock;
 using Milliseconds = std::chrono::milliseconds;
 using TimePoint = Clock::time_point;
-using Duration = std::chrono::duration<Double, std::ratio< 1 / 1 >>;
+using Duration = std::chrono::duration<Double, std::ratio<1 / 1>>;
 using FHours = std::chrono::duration<float, std::chrono::hours::period>;
 
 // a simple function that returns the current time point
@@ -44,4 +43,4 @@ struct Timer {
 // puts threads to sleep for a certain amount of time
 void sleep();
 void sleep(UInt millseconds);
-void sleepUntil(TimePoint& t);
+void sleepUntil(const TimePoint& t);

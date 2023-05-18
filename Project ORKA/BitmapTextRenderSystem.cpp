@@ -1,4 +1,3 @@
-
 #include "BitmapTextRenderSystem.hpp"
 
 #include "Renderer.hpp"
@@ -8,18 +7,19 @@ void BitmapTextRenderSystem::destroy() {
 	gpuText.unload();
 	textTexture.unload();
 }
+
 void BitmapTextRenderSystem::create(ResourceManager& resourceManager, Renderer& renderer) {
 	CPUTexture cpuTextTexture;
-	cpuTextTexture.load(resourceManager, "font");
+	cpuTextTexture.load(resourceManager, "font", Filter::nearest, Filter::linear, Wrapping::repeat);
 	textTexture.load(cpuTextTexture);
 	renderer.shaderSystem.add(resourceManager, "text");
 }
 
-void BitmapTextRenderSystem::render(ResourceManager& resourceManager, Renderer & renderer, String text, Vec2 position, Alignment x, Alignment y, FontStyle style) {
-
+void BitmapTextRenderSystem::render(ResourceManager& resourceManager, Renderer& renderer, const String& text,
+                                    const Vec2 position, const Alignment x, const Alignment y, const FontStyle style) {
 	renderer.setDepthTest(false);
-	UInt length = text.size();
-	Float size = style.absoluteSize;
+	const UInt length = text.size();
+	const Float size = style.absoluteSize;
 	Float up = 1.0;
 	Float down = 0.0;
 	Float left = 0;
@@ -36,54 +36,43 @@ void BitmapTextRenderSystem::render(ResourceManager& resourceManager, Renderer &
 		down = -0.5;
 	}
 
-	if (x == Alignment::start) {
-		start = -(length * style.letterSpacing);
-	}
+	if (x == Alignment::start) { start = -(length * style.letterSpacing); }
 
-	if (x == Alignment::center) {
-		start = -(length * style.letterSpacing)/2;
-	}
+	if (x == Alignment::center) { start = -(static_cast<Float>(length) * style.letterSpacing) / 2.0f; }
 
-	if (x == Alignment::end) {
-		start = 0;
-	}
+	if (x == Alignment::end) { start = 0; }
 
 	cpuText.name = "text";
-	cpuText.clearGeometry();	
+	cpuText.clearGeometry();
 	cpuText.drawMode = MeshDrawMode::dynamicMode;
 
 	for (UInt i = 0; i < length; i++) {
-		//[TODO] use 4 vertex and index pushbacks instead of 6
-		left = start + Float(i) * style.letterSpacing;
-		right = left + 1.0;
+		left = start + static_cast<Float>(i) * style.letterSpacing;
+		right = left + 1.0f;
 
-		Int character = text[i];
+		const Int character = static_cast<unsigned char>(text[i]);
 
-		Float uvUp = 1 - Float(character / 16) / 16.0;
-		Float uvLeft = Float(character % 16) / 16.0;
-		Float uvRight = uvLeft + 1.0 / 16.0;
-		Float uvDown = uvUp - 1.0 / 16.0;
+		const Float uvUp = 1 - static_cast<Float>(character / 16) / 16.0f;
+		const Float uvLeft = static_cast<Float>(character % 16) / 16.0f;
+		const Float uvRight = uvLeft + 1.0f / 16.0f;
+		const Float uvDown = uvUp - 1.0f / 16.0f;
 
-		cpuText.positions.pushBack(Vec3(position.x + size * left,  position.y + size * up, 0));
-		cpuText.positions.pushBack(Vec3(position.x + size * left,  position.y + size * down, 0));
-		cpuText.positions.pushBack(Vec3(position.x + size * right, position.y + size * up, 0));
-		cpuText.positions.pushBack(Vec3(position.x + size * left,  position.y + size * down, 0));
-		cpuText.positions.pushBack(Vec3(position.x + size * right, position.y + size * down, 0));
-		cpuText.positions.pushBack(Vec3(position.x + size * right, position.y + size * up, 0));
+		cpuText.positions.push_back(Vec3(position.x + size * left, position.y + size * up, 0));
+		cpuText.positions.push_back(Vec3(position.x + size * left, position.y + size * down, 0));
+		cpuText.positions.push_back(Vec3(position.x + size * right, position.y + size * up, 0));
+		cpuText.positions.push_back(Vec3(position.x + size * right, position.y + size * down, 0));
 
-		cpuText.textureCoordinates.pushBack(Vec2(uvLeft, uvUp));
-		cpuText.textureCoordinates.pushBack(Vec2(uvLeft, uvDown));
-		cpuText.textureCoordinates.pushBack(Vec2(uvRight, uvUp));
-		cpuText.textureCoordinates.pushBack(Vec2(uvLeft, uvDown));
-		cpuText.textureCoordinates.pushBack(Vec2(uvRight, uvDown));
-		cpuText.textureCoordinates.pushBack(Vec2(uvRight, uvUp));
+		cpuText.textureCoordinates.push_back(Vec2(uvLeft, uvUp));
+		cpuText.textureCoordinates.push_back(Vec2(uvLeft, uvDown));
+		cpuText.textureCoordinates.push_back(Vec2(uvRight, uvUp));
+		cpuText.textureCoordinates.push_back(Vec2(uvRight, uvDown));
 
-		cpuText.indices.pushBack(i * 6);
-		cpuText.indices.pushBack(i * 6 + 1);
-		cpuText.indices.pushBack(i * 6 + 2);
-		cpuText.indices.pushBack(i * 6 + 3);
-		cpuText.indices.pushBack(i * 6 + 4);
-		cpuText.indices.pushBack(i * 6 + 5);
+		cpuText.indices.push_back(i * 4);
+		cpuText.indices.push_back(i * 4 + 1);
+		cpuText.indices.push_back(i * 4 + 2);
+		cpuText.indices.push_back(i * 4 + 1);
+		cpuText.indices.push_back(i * 4 + 3);
+		cpuText.indices.push_back(i * 4 + 2);
 	}
 
 	cpuText.checkIntegrity();

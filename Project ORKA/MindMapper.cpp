@@ -9,9 +9,10 @@ void MindMapperRenderer::update(Window& window) {
 	if (grow) system.addNode();
 	system.update();
 }
+
 void MindMapperRenderer::render(ResourceManager& resourceManager, Window& window, TiledRectangle area) {
 	Renderer& renderer = window.renderer;
-	
+
 	mutex.lock();
 
 	renderer.setWireframeMode();
@@ -35,7 +36,15 @@ void MindMapperRenderer::render(ResourceManager& resourceManager, Window& window
 
 	mutex.unlock();
 }
-void MindMapperRenderer::inputEvent(Window& window, InputEvent input) {
+
+void MindMapper::run() {
+	resourceManager.create();
+	ui.create();
+	ui.window("ORKA MindMapper", Area(1920, 1080), true, WindowState::windowed, mindMapperRenderer, resourceManager);
+	ui.run();
+}
+
+void MindMapperRenderer::inputEvent(Window& window, const InputEvent input) {
 	if (input == growToggle)grow = !grow;
 	if (input == exit) window.uncaptureCursor();
 	if (input == enter) window.captureCursor();

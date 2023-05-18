@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include "BitmapTextRenderSystem.hpp"
@@ -25,10 +24,13 @@ struct TextRenderSystem {
 	void alignText(Alignment x, Alignment y);
 	void create(ResourceManager& resourceManager, Renderer& renderer);
 
-	void render(ResourceManager& resourceManager, Renderer& renderer, String text);
-	void render(ResourceManager& resourceManager, Renderer& renderer, String text, Vec2 position);
-	void render(ResourceManager& resourceManager, Renderer& renderer, String text, FontStyle style);
-	void render(ResourceManager& resourceManager, Renderer& renderer, String text, Vec2 position, FontStyle style);
+	void render(ResourceManager& resourceManager, Renderer& renderer, const String& text);
+	void render(ResourceManager& resourceManager, Renderer& renderer, const String& text, Vec2 position);
+	void render(ResourceManager& resourceManager, Renderer& renderer, const String& text, FontStyle style);
+	void render(ResourceManager& resourceManager, Renderer& renderer, const String& text, Vec2 position,
+	            FontStyle style);
+
 private:
-	void renderAdvanced(ResourceManager& resourceManager, Renderer& renderer, String text, Vec2 position, Alignment x, Alignment y, FontStyle style);
+	void renderAdvanced(ResourceManager& resourceManager, Renderer& renderer, const String& text, Vec2 position,
+	                    Alignment x, Alignment y, FontStyle style);
 };

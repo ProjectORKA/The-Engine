@@ -1,13 +1,12 @@
-
 #pragma once
 
-#include "OctreeSystem.hpp"
-#include "QuadtreeSystem.hpp"
+#include "OcTreeSystem.hpp"
+#include "QuadTreeSystem.hpp"
 #include "TerrainSystem.hpp"
 
 struct PlanetSystem {
-	OctreeSystem octreeSystem;
-	QuadtreeSystem quadtreeSystem;
+	OcTreeSystem octreeSystem;
+	QuadTreeSystem quadtreeSystem;
 	TerrainSystem terrainSystem;
 
 	void count();

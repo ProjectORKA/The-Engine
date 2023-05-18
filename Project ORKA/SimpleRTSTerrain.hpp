@@ -14,7 +14,7 @@ struct SimpleRTSTerrainSystem {
 
 struct SimpleRTSTerrainRenderingSystem {
 	GPUMesh gpuTerrain;
-	CPUMesh cpuTerrain;
+	CpuMesh cpuTerrain;
 	Vec2 offset = Vec2(0);
 
 	void create(ResourceManager& resourceManager);
