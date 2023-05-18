@@ -1,4 +1,3 @@
-
 #include "RedDotHack.hpp"
 #include <Windows.h>
 #include "Basics.hpp"
@@ -8,7 +7,7 @@
 #pragma comment(lib, "Gdi32.lib")
 
 void simulateLeftClick() {
-	INPUT inputEvent = { 0 };
+	INPUT inputEvent = {0};
 	inputEvent.type = INPUT_MOUSE;
 	inputEvent.mi.dwFlags = MOUSEEVENTF_LEFTDOWN;
 	SendInput(1, &inputEvent, sizeof(inputEvent));
@@ -22,7 +21,7 @@ void simulateLeftClick() {
 }
 
 void simulateRightClick() {
-	INPUT inputEvent = { 0 };
+	INPUT inputEvent = {0};
 	inputEvent.type = INPUT_MOUSE;
 	inputEvent.mi.dwFlags = MOUSEEVENTF_RIGHTDOWN;
 	SendInput(1, &inputEvent, sizeof(inputEvent));
@@ -42,30 +41,30 @@ void cheatTest() {
 
 	//LPCSTR gameName = "Grand Theft Auto V";
 	//LPCSTR gameName = "Dishonored";
-	LPCSTR gameName = "Red Dead Redemption 2";
+	const auto gameName = "Red Dead Redemption 2";
 
-	HWND gameWindow = FindWindow(NULL, gameName);
+	HWND gameWindow = FindWindow(nullptr, gameName);
 
-	while (gameWindow == NULL) {
+	while (gameWindow == nullptr) {
 		logDebug("Start Game!");
 		Sleep(1000);
-		gameWindow = FindWindow(NULL, gameName);
+		gameWindow = FindWindow(nullptr, gameName);
 	}
 
-	HDC device = GetDC(0);              //use for fullscreen
+	const HDC device = GetDC(nullptr); //use for fullscreen
 	//HDC device = GetDC(gameWindow);   //use for windowed
 
 	while (true) {
 		RECT screenRectangle;
 		if (GetClientRect(gameWindow, &screenRectangle)) {
-			long x = screenRectangle.right - screenRectangle.left;
-			long y = screenRectangle.bottom - screenRectangle.top;
+			const long x = screenRectangle.right - screenRectangle.left;
+			const long y = screenRectangle.bottom - screenRectangle.top;
 
-			COLORREF colorRef = GetPixel(device, x / 2, y / 2);
-			Vec3 color = Vec3(GetRValue(colorRef), GetGValue(colorRef), GetBValue(colorRef));
+			const COLORREF colorRef = GetPixel(device, x / 2, y / 2);
+			const auto color = Vec3(GetRValue(colorRef), GetGValue(colorRef), GetBValue(colorRef));
 			//Vec3 target = Vec3(193, 79, 79);      //grand theft auto crosshair color
 			//Vec3 target = Vec3(203, 24, 41);        //dishonored crosshair color
-			Vec3 target = Vec3(255, 0, 0);        //red dead redemption 2 color
+			const auto target = Vec3(255, 0, 0); //red dead redemption 2 color
 
 			if (isNear(color, target, 90)) {
 				//simulateRightClick();
@@ -79,4 +78,3 @@ void cheatTest() {
 
 	ReleaseDC(gameWindow, device);
 }
-

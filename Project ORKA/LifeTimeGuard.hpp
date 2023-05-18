@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include "Basics.hpp"
@@ -13,14 +12,12 @@ struct LifetimeGuard {
 	}
 
 	void destroy() {
-		if(!initialized) logError("Object never created");
+		if (!initialized) logError("Object never created");
 		else initialized = false;
 		logDebug("Destroyed");
 	}
 
-	void checkLifetime() {
-		if (!initialized) logError("Object never created");
-	}
+	void checkLifetime() const { if (!initialized) logError("Object never created"); }
 
 	LifetimeGuard() {
 		if (initialized) logError("Already initialized");

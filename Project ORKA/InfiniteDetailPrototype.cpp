@@ -36,12 +36,12 @@
 //
 //void generateSolarSystem(Thing& thing) {
 //	//add sun
-//	thing.content.emplaceBack(ThingType::Star);
+//	thing.content.emplace_back(ThingType::Star);
 //
 //	//add planets
 //	UInt numberOfPlanets = randomInt(10);
 //	for (UInt i = 0; i < numberOfPlanets; i++) {
-//		thing.content.emplaceBack(ThingType::Planet);
+//		thing.content.emplace_back(ThingType::Planet);
 //	}
 //
 //	//generate contents

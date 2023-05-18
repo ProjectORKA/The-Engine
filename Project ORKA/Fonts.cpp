@@ -1,9 +1,8 @@
-
 #include "Fonts.hpp"
 
 Fonts fonts;
 
-void Fonts::setFontSize(Float size) {
+void Fonts::setFontSize(const Float size) {
 	debug.setSize(size);
 	heading.setSize(size);
 	paragraph.setSize(size);
@@ -15,10 +14,6 @@ Fonts::Fonts() {
 	setFontSize(20);
 }
 
-FontStyle::FontStyle(Float absoluteSize) {
-	this->absoluteSize = absoluteSize;
-}
+FontStyle::FontStyle(const Float absoluteSize) { this->absoluteSize = absoluteSize; }
 
-void FontStyle::setSize(Float size) {
-	absoluteSize = size * relativeSize;
-}
+void FontStyle::setSize(const Float size) { absoluteSize = size * relativeSize; }

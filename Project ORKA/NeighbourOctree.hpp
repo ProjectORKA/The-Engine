@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include "Basics.hpp"
@@ -28,7 +27,7 @@ struct NeighbourOctreeNode {
 	NeighbourOctreeNode* nf = nullptr;
 	NeighbourOctreeNode* nt = nullptr;
 	NeighbourOctreeNode* nd = nullptr;
-	
+
 	NeighbourOctreeNode& nlr();
 	NeighbourOctreeNode& nrr();
 	NeighbourOctreeNode& nbr();
@@ -49,7 +48,7 @@ struct NeighbourOctreeNode {
 	void updateIsSurface();
 	void update(Vec3 location);
 	void updateHasAllNeighbours();
-	void removeSelfFromNeighbours();
+	void removeSelfFromNeighbours() const;
 	void create(NeighbourOctreeNode& parent, Bool x, Bool y, Bool z);
 };
 
@@ -60,4 +59,4 @@ struct NeighbourOctree {
 	void update(Vec3 location);
 };
 
-void renderNeighbourOctreeNode(ResourceManager& resourceManager, NeighbourOctreeNode& node, Renderer& renderer);
+void renderNeighbourOctreeNode(ResourceManager& resourceManager, const NeighbourOctreeNode& node, Renderer& renderer);

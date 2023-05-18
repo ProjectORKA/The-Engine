@@ -1,52 +1,38 @@
-
 #include "NeighbourQuadtree.hpp"
 #include "Renderer.hpp"
 
 NeighbourQuadtreeNode& NeighbourQuadtreeNode::nlr() {
-	NeighbourQuadtreeNode* cur = this;
+	const NeighbourQuadtreeNode* cur = this;
 	while (!cur->nl) {
-		if (cur->parent) {
-			cur = cur->parent;
-		}
-		else {
-			logError("Quadtree Critical Failure!");
-		}
+		if (cur->parent) { cur = cur->parent; }
+		else { logError("Quadtree Critical Failure!"); }
 	}
 	return *cur->nl;
 }
+
 NeighbourQuadtreeNode& NeighbourQuadtreeNode::nrr() {
-	NeighbourQuadtreeNode* cur = this;
+	const NeighbourQuadtreeNode* cur = this;
 	while (!cur->nr) {
-		if (cur->parent) {
-			cur = cur->parent;
-		}
-		else {
-			logError("Quadtree Critical Failure!");
-		}
+		if (cur->parent) { cur = cur->parent; }
+		else { logError("Quadtree Critical Failure!"); }
 	}
 	return *cur->nr;
 }
+
 NeighbourQuadtreeNode& NeighbourQuadtreeNode::nbr() {
-	NeighbourQuadtreeNode* cur = this;
+	const NeighbourQuadtreeNode* cur = this;
 	while (!cur->nb) {
-		if (cur->parent) {
-			cur = cur->parent;
-		}
-		else {
-			logError("Quadtree Critical Failure!");
-		}
+		if (cur->parent) { cur = cur->parent; }
+		else { logError("Quadtree Critical Failure!"); }
 	}
 	return *cur->nb;
 }
+
 NeighbourQuadtreeNode& NeighbourQuadtreeNode::nfr() {
-	NeighbourQuadtreeNode* cur = this;
+	const NeighbourQuadtreeNode* cur = this;
 	while (!cur->nf) {
-		if (cur->parent) {
-			cur = cur->parent;
-		}
-		else {
-			logError("Quadtree Critical Failure!");
-		}
+		if (cur->parent) { cur = cur->parent; }
+		else { logError("Quadtree Critical Failure!"); }
 	}
 	return *cur->nf;
 }
@@ -58,14 +44,15 @@ void NeighbourQuadtreeNode::subdivide() {
 		c10 = new NeighbourQuadtreeNode();
 		c11 = new NeighbourQuadtreeNode();
 
-		c00->create(*this,0,0);
-		c01->create(*this,0,1);
-		c10->create(*this,1,0);
-		c11->create(*this,1,1);
+		c00->create(*this, false, false);
+		c01->create(*this, false, true);
+		c10->create(*this, true, false);
+		c11->create(*this, true, true);
 
 		subdivided = true;
 	}
 }
+
 void NeighbourQuadtreeNode::unsubdivide() {
 	if (subdivided) {
 		c00->unsubdivide();
@@ -91,13 +78,10 @@ void NeighbourQuadtreeNode::unsubdivide() {
 		subdivided = false;
 	}
 }
-void NeighbourQuadtreeNode::update(Vec3 location) {
-	if (distance(position, location) < pow(2, 5 - level)) {
-		subdivide();
-	}
-	else {
-		unsubdivide();
-	};
+
+void NeighbourQuadtreeNode::update(const Vec3 location) {
+	if (distance(position, location) < pow(2, 5 - level)) { subdivide(); }
+	else { unsubdivide(); }
 
 	if (subdivided) {
 		c00->update(location);
@@ -106,6 +90,7 @@ void NeighbourQuadtreeNode::update(Vec3 location) {
 		c11->update(location);
 	}
 }
+
 void NeighbourQuadtreeNode::render(ResourceManager& resourceManager, Renderer& renderer) {
 	if (subdivided) {
 		c00->render(resourceManager, renderer);
@@ -116,7 +101,7 @@ void NeighbourQuadtreeNode::render(ResourceManager& resourceManager, Renderer& r
 	else {
 		Transform t;
 		t.location = position;
-		t.scale = Vec3(pow(2, -level+1));
+		t.scale = Vec3(pow(2, -level + 1));
 		t.render(renderer);
 		renderer.fill(color);
 		renderer.useShader(resourceManager, "color");
@@ -131,24 +116,25 @@ void NeighbourQuadtreeNode::render(ResourceManager& resourceManager, Renderer& r
 		}
 	}
 }
-void NeighbourQuadtreeNode::removeSelfFromNeighbours() {
+
+void NeighbourQuadtreeNode::removeSelfFromNeighbours() const {
 	if (nf) nf->nb = nullptr;
 	if (nb) nb->nf = nullptr;
 	if (nr) nr->nl = nullptr;
 	if (nl) nl->nr = nullptr;
 }
-void NeighbourQuadtreeNode::create(NeighbourQuadtreeNode& parent, Bool x, Bool y) {
-	
+
+void NeighbourQuadtreeNode::create(NeighbourQuadtreeNode& parent, const Bool x, const Bool y) {
 	this->parent = &parent;
 	level = parent.level + 1;
-	if (x) position.x = parent.position.x + pow(2, 1-level);
-	else position.x = parent.position.x - pow(2, 1-level);
-	if (y) position.y = parent.position.y + pow(2, 1-level);
-	else position.y = parent.position.y - pow(2, 1-level);
+	if (x) position.x = parent.position.x + pow(2, 1 - level);
+	else position.x = parent.position.x - pow(2, 1 - level);
+	if (y) position.y = parent.position.y + pow(2, 1 - level);
+	else position.y = parent.position.y - pow(2, 1 - level);
 
 	//calculate neighbours
 	if (x && y) {
-		if(parent.nr && parent.nr->subdivided) nr = parent.nr->c01;
+		if (parent.nr && parent.nr->subdivided) nr = parent.nr->c01;
 		nl = parent.c01;
 		if (parent.nf && parent.nf->subdivided) nf = parent.nf->c10;
 		nb = parent.c10;
@@ -189,12 +175,10 @@ void NeighbourQuadtree::create() {
 	root.nf = &root;
 	root.position = Vec3(1, 1, 0);
 }
-void NeighbourQuadtree::destroy() {
-	root.unsubdivide();
-}
-void NeighbourQuadtree::update(Vec3 location) {
-	root.update(location);
-}
+
+void NeighbourQuadtree::destroy() { root.unsubdivide(); }
+void NeighbourQuadtree::update(const Vec3 location) { root.update(location); }
+
 void NeighbourQuadtree::render(ResourceManager& resourceManager, Renderer& renderer) {
 	root.render(resourceManager, renderer);
 }

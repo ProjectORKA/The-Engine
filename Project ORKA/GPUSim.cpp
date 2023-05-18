@@ -5,12 +5,12 @@ inline void GPUSimRenderer::render(ResourceManager& resourceManager, Window& win
 	Renderer& renderer = window.renderer;
 
 	if (!initialized) {
-		renderer.framebufferSystem.framebuffers.emplaceBack();
-		renderer.framebufferSystem.framebuffers.last().create(Area(512));
-		renderer.framebufferSystem.framebuffers.last().add(1, DataType::dataTypeFloat, 0);
+		renderer.framebufferSystem.framebuffers.emplace_back();
+		renderer.framebufferSystem.framebuffers.back().create(Area(512));
+		renderer.framebufferSystem.framebuffers.back().add(1, DataType::dataTypeFloat, 0);
 		factionsID2 = renderer.framebufferSystem.framebuffers.size() - 1;
 
-		renderer.framebufferSystem.framebuffers.last().draw();
+		renderer.framebufferSystem.framebuffers.back().draw();
 
 		renderer.clearColor(Color(1));
 		renderer.renderRegion.set(TiledRectangle(50, 50, 50, 50));
@@ -18,12 +18,12 @@ inline void GPUSimRenderer::render(ResourceManager& resourceManager, Window& win
 		renderer.fill(Color(0));
 		renderer.renderMesh(resourceManager, "fullScreenQuad");
 
-		renderer.framebufferSystem.framebuffers.emplaceBack();
-		renderer.framebufferSystem.framebuffers.last().create(Area(512));
-		renderer.framebufferSystem.framebuffers.last().add(1, DataType::dataTypeFloat, 0);
+		renderer.framebufferSystem.framebuffers.emplace_back();
+		renderer.framebufferSystem.framebuffers.back().create(Area(512));
+		renderer.framebufferSystem.framebuffers.back().add(1, DataType::dataTypeFloat, 0);
 		factionsID1 = renderer.framebufferSystem.framebuffers.size() - 1;
 
-		renderer.framebufferSystem.framebuffers.last().draw();
+		renderer.framebufferSystem.framebuffers.back().draw();
 
 		renderer.clearColor(Color(1));
 		renderer.renderMesh(resourceManager, "fullScreenQuad");

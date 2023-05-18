@@ -1,59 +1,50 @@
-
-#include "OctreeNode.hpp"
+#include "OcTreeNode.hpp"
 #include "Debug.hpp"
 
 //worldChunk
-OctreeNode::~OctreeNode()
-{
-	unsubdivide();
-	quadtreeEquivalent->decrementUsers();
+OcTreeNode::~OcTreeNode() {
+	unSubdivide();
+	quadTreeEquivalent->decrementUsers();
 }
-OctreeNode::OctreeNode(QuadtreeNode& quadTreeRoot) {
+
+OcTreeNode::OcTreeNode(QuadtreeNode& quadTreeRoot) {
 	id.level = 0;
 	id.location = ULLVec3(0);
 
-	quadtreeEquivalent = &quadTreeRoot;
+	quadTreeEquivalent = &quadTreeRoot;
 
 	ULL chunkHeight = getLocation().z;
 
 	//data.hasContent = 1;
 
-	//data.isTerrain = (chunkHeight >= quadtreeEquivalent->data.terrain->lowerLimit) && (chunkHeight <= quadtreeEquivalent->data.terrain->upperLimit);
+	//data.isTerrain = (chunkHeight >= quadTreeEquivalent->data.terrain->lowerLimit) && (chunkHeight <= quadTreeEquivalent->data.terrain->upperLimit);
 
-	quadtreeEquivalent->incrementUsers();
+	quadTreeEquivalent->incrementUsers();
 	isValid = true;
 };
-OctreeNode::OctreeNode(OctreeNode& parent, Bool x, Bool y, Bool z)
-{
+
+OcTreeNode::OcTreeNode(OcTreeNode& parent, const Bool x, const Bool y, const Bool z) {
 	this->parent = &parent;
 	this->id.level = parent.id.level + 1;
 	ULLVec3 tmp = parent.id.location;
 
-	this->id.location.x = tmp.x += ULL(x) << 64 - id.level;
-	this->id.location.y = tmp.y += ULL(y) << 64 - id.level;
-	this->id.location.z = tmp.z += ULL(z) << 64 - id.level;
+	this->id.location.x = tmp.x += static_cast<ULL>(x) << 64 - id.level;
+	this->id.location.y = tmp.y += static_cast<ULL>(y) << 64 - id.level;
+	this->id.location.z = tmp.z += static_cast<ULL>(z) << 64 - id.level;
 
 	if (x) {
-		if (y) {
-			quadtreeEquivalent = parent.quadtreeEquivalent->c11;
-		}
-		else {
-			quadtreeEquivalent = parent.quadtreeEquivalent->c10;
-		}
+		if (y) { quadTreeEquivalent = parent.quadTreeEquivalent->c11; }
+		else { quadTreeEquivalent = parent.quadTreeEquivalent->c10; }
 	}
 	else {
-		if (y) {
-			quadtreeEquivalent = parent.quadtreeEquivalent->c01;
-		}
-		else {
-			quadtreeEquivalent = parent.quadtreeEquivalent->c00;
-		}
+		if (y) { quadTreeEquivalent = parent.quadTreeEquivalent->c01; }
+		else { quadTreeEquivalent = parent.quadTreeEquivalent->c00; }
 	}
 
 	ULL chunkHeight = getLocation().z;
 
-	//data.hasContent = (chunkHeight <= quadtreeEquivalent->data.terrain->upperLimit) && (chunkHeight >= quadtreeEquivalent->data.terrain->lowerLimit);
-	//data.isTerrain = (chunkHeight >= quadtreeEquivalent->data.terrain->lowerLimit) && (chunkHeight <= quadtreeEquivalent->data.terrain->upperLimit);
+	//data.hasContent = (chunkHeight <= quadTreeEquivalent->data.terrain->upperLimit) && (chunkHeight >= quadTreeEquivalent->data.terrain->lowerLimit);
+	//data.isTerrain = (chunkHeight >= quadTreeEquivalent->data.terrain->lowerLimit) && (chunkHeight <= quadTreeEquivalent->data.terrain->upperLimit);
 
 	//if (data.isTerrain) {
 	//	for (Int i = 0; i < 1000; i++) {
@@ -66,22 +57,19 @@ OctreeNode::OctreeNode(OctreeNode& parent, Bool x, Bool y, Bool z)
 	//}
 
 	//propagate "hasContent upwards"
-	//OctreeNode* currentParentNode = &parent;
+	//OcTreeNode* currentParentNode = &parent;
 	//while ((currentParentNode != nullptr) && data.hasContent) {
 	//	currentParentNode->data.hasContent |= data.hasContent;
 	//	currentParentNode = currentParentNode->parent;
 	//}
 
-	quadtreeEquivalent->incrementUsers();
+	quadTreeEquivalent->incrementUsers();
 	isValid = true;
 }
 
-void OctreeNode::count()
-{
+void OcTreeNode::count() const {
 	static Int nodeCount = 0;
-	if (id.level == 0) {
-		nodeCount = 0;
-	}
+	if (id.level == 0) { nodeCount = 0; }
 	nodeCount++;
 	if (subdivided) {
 		c000->count();
@@ -94,11 +82,10 @@ void OctreeNode::count()
 		c111->count();
 	}
 
-	if (id.level == 0) {
-		logDebug(String("OctreeNodeCount: ").append(toString(nodeCount)));
-	}
+	if (id.level == 0) { logDebug(String("OctreeNodeCount: ").append(toString(nodeCount))); }
 }
-void OctreeNode::update() {
+
+void OcTreeNode::update() {
 	if (users) {
 		if (subdivided) {
 			c000->update();
@@ -110,35 +97,31 @@ void OctreeNode::update() {
 			c110->update();
 			c111->update();
 		}
-		else {
-			subdivide();
-		}
+		else { subdivide(); }
 	}
-	else {
-		unsubdivide();
-	}
+	else { unSubdivide(); }
 };
-void OctreeNode::subdivide()
-{
+
+void OcTreeNode::subdivide() {
 	if ((!subdivided) && (id.level < MAX_CHUNK_LEVEL - 1)) {
 		mutex.lock();
-		quadtreeEquivalent->incrementUsers();
+		quadTreeEquivalent->incrementUsers();
 
-		c000 = new OctreeNode(*this, 0, 0, 0);
-		c001 = new OctreeNode(*this, 0, 0, 1);
-		c010 = new OctreeNode(*this, 0, 1, 0);
-		c011 = new OctreeNode(*this, 0, 1, 1);
-		c100 = new OctreeNode(*this, 1, 0, 0);
-		c101 = new OctreeNode(*this, 1, 0, 1);
-		c110 = new OctreeNode(*this, 1, 1, 0);
-		c111 = new OctreeNode(*this, 1, 1, 1);
+		c000 = new OcTreeNode(*this, false, false, false);
+		c001 = new OcTreeNode(*this, false, false, true);
+		c010 = new OcTreeNode(*this, false, true, false);
+		c011 = new OcTreeNode(*this, false, true, true);
+		c100 = new OcTreeNode(*this, true, false, false);
+		c101 = new OcTreeNode(*this, true, false, true);
+		c110 = new OcTreeNode(*this, true, true, false);
+		c111 = new OcTreeNode(*this, true, true, true);
 
 		subdivided = true;
 		mutex.unlock();
 	}
 }
-void OctreeNode::unsubdivide()
-{
+
+void OcTreeNode::unSubdivide() {
 	if (subdivided) {
 		mutex.lock();
 		//c000->destroy();
@@ -166,23 +149,16 @@ void OctreeNode::unsubdivide()
 		c110 = nullptr;
 		c111 = nullptr;
 		subdivided = false;
-		quadtreeEquivalent->decrementUsers();
+		quadTreeEquivalent->decrementUsers();
 		mutex.unlock();
 	}
 }
-void OctreeNode::incrementUser()
-{
-	users++;
-}
-void OctreeNode::decrementUser()
-{
+
+void OcTreeNode::incrementUser() { users++; }
+
+void OcTreeNode::decrementUser() {
 	if (users) users--;
-	else {
-		logError("User mismatch found!");
-	}
+	else { logError("User mismatch found!"); }
 }
 
-ULLVec3 OctreeNode::getLocation()
-{
-	return id.location;
-}
+ULLVec3 OcTreeNode::getLocation() const { return id.location; }

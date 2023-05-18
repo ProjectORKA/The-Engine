@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include "Basics.hpp"
@@ -7,14 +6,11 @@
 struct Area : public IVec2 {
 	Area() {};
 	Area(Int a);
+	Area center() const;
 	Area(Int x, Int y);
-	Area center();
-	void setMinimum(Area minimumSize);
+	Area operator*(Float value) const;
 	void setMinimum(Int minimumSize);
-
-	Area operator*(Float value) {
-		return Area(x * value, y * value);
-	};
+	void setMinimum(Area minimumSize);
 };
 
 void logDebug(Area t);
@@ -23,13 +19,10 @@ struct TiledRectangle {
 	Area size = Area(1);
 	IVec2 position = IVec2(0);
 
-	IVec2 center();
+	IVec2 center() const;
 	TiledRectangle() {};
 	TiledRectangle(Area area);
-	Bool positionInsideArea(IVec2 position);
+	TiledRectangle operator*(Float value) const;
+	Bool positionInsideArea(IVec2 position) const;
 	TiledRectangle(Int x, Int y, Int w, Int h);
-
-	TiledRectangle operator*(Float value) {
-		return TiledRectangle(size.x * value, size.y * value, position.x + (size.x * (1 - value) / 2), position.y + (size.y * (1 - value) / 2));
-	};
 };

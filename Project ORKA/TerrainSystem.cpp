@@ -1,21 +1,19 @@
-
 #include "TerrainSystem.hpp"
-#include "QuadtreeSystem.hpp"
+#include "QuadTreeSystem.hpp"
 #include "PerlinNoise.hpp"
 #include "Random.hpp"
 
 void TerrainSystem::create(ResourceManager& resourceManager) {
-
 	for (Int i = 0; i < MAX_CHUNK_LEVEL; i++) {
 		CPUTexture h;
 
-		if(i == 0) h.load(resourceManager,"blah");
-		else h.load(resourceManager, "terrainNoise");
+		if (i == 0) h.load(resourceManager, "blah", Filter::linear, Filter::linear, Wrapping::repeat);
+		else h.load(resourceManager, "terrainNoise", Filter::linear, Filter::linear, Wrapping::repeat);
 
 		for (UInt x = 0; x < TERRAIN_TEXTURE_SIZE; x++) {
 			for (UInt y = 0; y < TERRAIN_TEXTURE_SIZE; y++) {
-				Float xCoord = (Float(x) / Float(TERRAIN_TEXTURE_SIZE));
-				Float yCoord = (Float(y) / Float(TERRAIN_TEXTURE_SIZE));
+				Float xCoord = (static_cast<Float>(x) / static_cast<Float>(TERRAIN_TEXTURE_SIZE));
+				Float yCoord = (static_cast<Float>(y) / static_cast<Float>(TERRAIN_TEXTURE_SIZE));
 
 				heightTextures[i].data[x][y] = h.getRed(xCoord, yCoord);
 			}
@@ -26,17 +24,21 @@ void TerrainSystem::create(ResourceManager& resourceManager) {
 				Float v, a, b, c, d;
 
 				v = heightTextures[i].data[x][y];
-				if (x < TERRAIN_TEXTURE_SIZE - 1) a = heightTextures[i].data[x + 1][y]; else a = heightTextures[i].data[0][y];
-				if (y < TERRAIN_TEXTURE_SIZE - 1) b = heightTextures[i].data[x][y + 1]; else b = heightTextures[i].data[x][0];
-				if (x > 0) c = heightTextures[i].data[x - 1][y]; else c = heightTextures[i].data[TERRAIN_TEXTURE_SIZE - 1][y];
-				if (y > 0) d = heightTextures[i].data[x][y - 1]; else d = heightTextures[i].data[x][TERRAIN_TEXTURE_SIZE - 1];
+				if (x < TERRAIN_TEXTURE_SIZE - 1) a = heightTextures[i].data[x + 1][y];
+				else a = heightTextures[i].data[0][y];
+				if (y < TERRAIN_TEXTURE_SIZE - 1) b = heightTextures[i].data[x][y + 1];
+				else b = heightTextures[i].data[x][0];
+				if (x > 0) c = heightTextures[i].data[x - 1][y];
+				else c = heightTextures[i].data[TERRAIN_TEXTURE_SIZE - 1][y];
+				if (y > 0) d = heightTextures[i].data[x][y - 1];
+				else d = heightTextures[i].data[x][TERRAIN_TEXTURE_SIZE - 1];
 
 				Float da = a - v;
 				Float db = b - v;
 				Float dc = c - v;
 				Float dd = d - v;
 
-				Float delta = 1.0f / Float(TERRAIN_TEXTURE_SIZE);
+				Float delta = 1.0f / static_cast<Float>(TERRAIN_TEXTURE_SIZE);
 
 				Vec3 va = normalize(Vec3(delta, 0, da));
 				Vec3 vb = normalize(Vec3(0, delta, db));
@@ -51,13 +53,13 @@ void TerrainSystem::create(ResourceManager& resourceManager) {
 
 	logDebug("Created TerrainSystem!");
 }
-void terrainDistributionFunction(LDouble& height) {
-	height = 4 * pow((height - 0.5), 3) + 0.5;
-}
-Terrain::Terrain(TerrainSystem& terrainSystem, QuadtreeID id, Terrain* parentTerrain, Bool cx, Bool cy)
-{
+
+void terrainDistributionFunction(LDouble& height) { height = 4 * pow((height - 0.5), 3) + 0.5; }
+
+Terrain::Terrain(const TerrainSystem& terrainSystem, const QuadtreeID& id, const Terrain* parentTerrain, const Bool cx,
+                 const Bool cy) {
 	heightmap.upperLimit = 0;
-	heightmap.lowerLimit = LDouble(ULLONG_MAX);
+	heightmap.lowerLimit = static_cast<LDouble>(ULLONG_MAX);
 
 	for (UInt x = 0; x < TERRAIN_MAP_SIZE; x++) {
 		for (UInt y = 0; y < TERRAIN_MAP_SIZE; y++) {
@@ -70,21 +72,18 @@ Terrain::Terrain(TerrainSystem& terrainSystem, QuadtreeID id, Terrain* parentTer
 				yh = yl;
 				if (isOdd(y))yh++;
 
-				LDouble ah = parentTerrain->heightmap.height[xl][yl];
-				LDouble bh = parentTerrain->heightmap.height[xh][yl];
-				LDouble ch = parentTerrain->heightmap.height[xl][yh];
-				LDouble dh = parentTerrain->heightmap.height[xh][yh];
+				const LDouble ah = parentTerrain->heightmap.height[xl][yl];
+				const LDouble bh = parentTerrain->heightmap.height[xh][yl];
+				const LDouble ch = parentTerrain->heightmap.height[xl][yh];
+				const LDouble dh = parentTerrain->heightmap.height[xh][yh];
 
 				heightmap.height[x][y] = (ah + bh + ch + dh) / 4.0;
 			}
-			else {
-				heightmap.height[x][y] = ULLONG_MAX / 2;
-			}
+			else { heightmap.height[x][y] = ULLONG_MAX / 2; }
 		}
 	}
 	for (UInt x = 0; x < TERRAIN_MAP_SIZE; x++) {
 		for (UInt y = 0; y < TERRAIN_MAP_SIZE; y++) {
-
 			UInt sampleX = x;
 			UInt sampleY = y;
 			if (sampleX == TERRAIN_TEXTURE_SIZE) sampleX = 0;
@@ -92,8 +91,8 @@ Terrain::Terrain(TerrainSystem& terrainSystem, QuadtreeID id, Terrain* parentTer
 
 			LDouble height = terrainSystem.heightTextures[id.level].data[sampleX][sampleY];
 			terrainDistributionFunction(height);
-			height = (height - LDouble(0.5)) * LDouble(ULLONG_MAX);
-			LDouble impact = (3 / pow(2.5, id.level + 7));
+			height = (height - static_cast<LDouble>(0.5)) * static_cast<LDouble>(ULLONG_MAX);
+			const LDouble impact = (3 / pow(2.5, id.level + 7));
 
 			heightmap.height[x][y] += height * impact;
 

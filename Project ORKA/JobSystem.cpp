@@ -1,7 +1,3 @@
-
 #include "JobSystem.hpp"
 
-void JobSystem::create(UShort numberOfThreads)
-{
-
-}
+void JobSystem::create(UShort numberOfThreads) {}

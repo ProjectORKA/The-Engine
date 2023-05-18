@@ -1,4 +1,3 @@
-
 #pragma once
 
 //#include "imgui/imgui.h"
@@ -7,7 +6,6 @@
 #include "WindowAPI.hpp"
 
 struct ImguiWrapper {
-
 	Mutex mutex;
 
 	void create(APIWindow window) {
@@ -22,6 +20,7 @@ struct ImguiWrapper {
 		//
 		//mutex.unlock();
 	}
+
 	void render() {
 		//mutex.lock();
 
@@ -36,6 +35,7 @@ struct ImguiWrapper {
 
 		//mutex.unlock();
 	}
+
 	void destroy() {
 		//mutex.lock();
 

@@ -1,4 +1,3 @@
-
 #pragma once
 
 //standard
@@ -41,9 +40,9 @@ using UChar = unsigned char;
 #include <memory>
 template <typename T>
 using UniquePointer = std::unique_ptr<T>;
-template<typename T>
+template <typename T>
 using SharedPointer = std::shared_ptr<T>;
-template<typename T>
+template <typename T>
 using WeakPointer = std::weak_ptr<T>;
 
 #include "String.hpp"
@@ -79,13 +78,15 @@ using Mutex = std::shared_mutex;
 
 //containers
 #include <list>
-template<typename T>
+template <typename T>
 using List = std::list<T>;
 
-#include "Vector.hpp"
+//vector
+template <typename T>
+using Vector = std::vector<T>;
 
 #include <set>
-template<typename T>
+template <typename T>
 using Set = std::set<T>;
 
 #include "Map.hpp"
@@ -95,7 +96,7 @@ template <std::size_t T>
 using BitSet = std::bitset<T>;
 
 #include <deque>
-template<typename T>
+template <typename T>
 using Deque = std::deque<T>;
 
 using SizeT = std::size_t;

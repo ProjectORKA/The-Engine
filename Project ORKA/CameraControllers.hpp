@@ -4,6 +4,4 @@
 #include "SimpleCamera.hpp"
 #include "PlanetCamera.hpp"
 
-void planetCameraController(InputManager & input, PlanetCamera & camera) {
-	
-}
+void planetCameraController(InputManager& input, PlanetCamera& camera) { }

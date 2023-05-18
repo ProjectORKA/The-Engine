@@ -10,14 +10,13 @@ struct MindmapConnection {
 	Index a;
 	Index b;
 
-	MindmapConnection(Index a, Index b) {
+	MindmapConnection(const Index a, const Index b) {
 		this->a = a;
 		this->b = b;
 	};
 };
 
 struct MindMap {
-
 	UInt nodeCount = 0;
 
 	Vector<Vec2> positions;
@@ -29,6 +28,6 @@ struct MindMap {
 	void update();
 	void addNode();
 	void addForce(Index a, Vec2 force);
-	void render(ResourceManager& resourceManager, Renderer& renderer);
-	void renderInteractive(ResourceManager& resourceManager, Window& window);
+	void render(ResourceManager& resourceManager, Renderer& renderer) const;
+	void renderInteractive(ResourceManager& resourceManager, Window& window) const;
 };

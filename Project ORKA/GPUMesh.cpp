@@ -1,4 +1,3 @@
-
 #include "GPUMesh.hpp"
 #include "Uniforms.hpp"
 
@@ -9,10 +8,11 @@ void GPUMesh::unload() {
 		loaded = false;
 	}
 }
-void GPUMesh::upload(CPUMesh cpuMesh) {
+
+void GPUMesh::upload(CpuMesh cpuMesh) {
 	if (!loaded) {
 		if (cpuMesh.loaded) {
-			if (cpuMesh.positions.size() > 0) {
+			if (!cpuMesh.positions.empty()) {
 				primitiveMode = cpuMesh.primitiveMode;
 
 				vao.create(cpuMesh);
@@ -20,14 +20,11 @@ void GPUMesh::upload(CPUMesh cpuMesh) {
 				loaded = true;
 			}
 		}
-		else {
-			logDebug("CPUMesh not loaded! Cant upload!");
-		}
+		else { logDebug("CpuMesh not loaded! Cant upload!"); }
 	}
-	else {
-		logDebug("GPUMesh already loaded!");
-	}
+	else { logDebug("GPUMesh already loaded!"); }
 }
+
 void GPUMesh::render(Uniforms& uniforms) {
 	if (loaded) {
 		uniforms.instanced(false);
@@ -36,7 +33,8 @@ void GPUMesh::render(Uniforms& uniforms) {
 		apiDrawElements(primitiveMode, vao.indexBuffer.indexCount, GL_UNSIGNED_INT, nullptr);
 	}
 }
-void GPUMesh::renderInstances(Uniforms& uniforms, UInt instanceCount) {
+
+void GPUMesh::renderInstances(Uniforms& uniforms, const UInt instanceCount) {
 	if (loaded) {
 		uniforms.instanced(true);
 		uniforms.upload();

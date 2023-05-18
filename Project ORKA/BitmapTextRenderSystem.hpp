@@ -1,8 +1,7 @@
-
 #pragma once
 
 #include "GPUMesh.hpp"
-#include "CPUMesh.hpp"
+#include "CpuMesh.hpp"
 #include "GPUTexture.hpp"
 #include "Fonts.hpp"
 
@@ -22,10 +21,11 @@ enum class Alignment {
 
 struct BitmapTextRenderSystem {
 	GPUMesh gpuText;
-	CPUMesh cpuText;
+	CpuMesh cpuText;
 	GPUTexture textTexture;
 
 	void destroy();
 	void create(ResourceManager& resourceManager, Renderer& renderer);
-	void render(ResourceManager& resourceManager, Renderer& renderer, String text, Vec2 position, Alignment x, Alignment y, FontStyle style);
+	void render(ResourceManager& resourceManager, Renderer& renderer, const String& text, Vec2 position, Alignment x,
+	            Alignment y, FontStyle style);
 };

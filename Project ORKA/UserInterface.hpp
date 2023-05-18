@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include "UIElement.hpp"
@@ -12,10 +11,11 @@ struct Window;
 struct UIImage : public UIElement {
 	Name name;
 
-	UIImage(Name name);
+	UIImage(const Name& name);
 	void update(Window& window) override;
-	void render(ResourceManager& resourceManager, Window& window, TiledRectangle renderArea)override;
+	void render(ResourceManager& resourceManager, Window& window, TiledRectangle renderArea) override;
 };
+
 struct UITextBox : public UIElement {
 	String* data;
 
@@ -23,12 +23,14 @@ struct UITextBox : public UIElement {
 	void update(Window& window) override;
 	void render(ResourceManager& resourceManager, Window& window, TiledRectangle renderArea) override;
 };
+
 struct UICheckBox : public UIElement {
 	Boolean* data;
 	UICheckBox(Boolean& data);
 	void update(Window& window) override;
 	void render(ResourceManager& resourceManager, Window& window, TiledRectangle renderArea) override;
 };
+
 struct UIContainer : public UIElement {
 	Boolean renderVertical = false;
 
@@ -43,6 +45,7 @@ struct UIContainer : public UIElement {
 };
 
 struct UserInterface {
+	Bool initialized = false;
 	UIElement* currentlyActive = nullptr;
 
 	List<UIImage> images;
@@ -53,8 +56,13 @@ struct UserInterface {
 	List<UIContainer> containers;
 
 	void create() {
-		if (glfwInit() != GLFW_TRUE) logError("GLFW could not be initialized");
+		if (glfwInit() != GLFW_TRUE) {
+			logError("GLFW could not be initialized");
+			return;
+		}
 		glfwSetErrorCallback(whenWindowAPIThrowsError);
+
+		initialized = true;
 	}
 
 	void run();
@@ -64,6 +72,7 @@ struct UserInterface {
 	UIImage& image(Name name);
 	UICheckBox& checkBox(Bool& data);
 	UITextBox& textBox(String& data);
-	Window& window(String title, Area size, Bool decorated, WindowState state, ResourceManager& resourceManager);
-	Window& window(String title, Area size, Bool decorated, WindowState state, UIElement& element, ResourceManager& resourceManager);
+	Window& window(const String& title, Area size, Bool decorated, WindowState state, ResourceManager& resourceManager);
+	Window& window(const String& title, Area size, Bool decorated, WindowState state, UIElement& element,
+	               ResourceManager& resourceManager);
 };

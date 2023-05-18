@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include "GraphicsAPI.hpp"
@@ -9,13 +8,14 @@ enum class DataType : UInt {
 	dataTypeFloat = GL_FLOAT,
 	dataTypeUInt = GL_UNSIGNED_INT
 };
-enum class Wrapping : Int
-{
+
+enum class Wrapping : Int {
 	repeat = GL_REPEAT,
 	mirrored = GL_MIRRORED_REPEAT,
 	clamped = GL_CLAMP_TO_EDGE,
 	border = GL_CLAMP_TO_BORDER
 };
+
 enum class Filter : Int {
 	nearest = GL_NEAREST,
 	nearestMM = GL_NEAREST_MIPMAP_NEAREST,
@@ -49,12 +49,13 @@ struct CPUTexture {
 	Float getAlpha(Float x, Float y);
 
 	void unload();
-	void load(Path path);
-	void load(Path path, Name name);
-	void load(ResourceManager& resourceManager, Name name);
-	void load(Image image, Filter nearFilter, Filter farFilter, Wrapping wrapping, Name name);
+	void load(const Path& path, Filter nearFilter, Filter farFilter, Wrapping wrapping);
+	void load(const Path& path, const Name& name, Filter nearFilter, Filter farFilter, Wrapping wrapping);
+	void load(const Image& image, Filter nearFilter, Filter farFilter, Wrapping wrapping, const Name& name);
+	void load(ResourceManager& resourceManager, const Name& name, Filter nearFilter, Filter farFilter,
+	          Wrapping wrapping);
 
-	Index xyToIndex(Int x, Int y, Int channel);
+	Index xyToIndex(Int x, Int y, Int channel) const;
 
 	CPUTexture();
 	~CPUTexture();

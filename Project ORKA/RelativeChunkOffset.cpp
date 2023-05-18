@@ -1,29 +1,27 @@
-
 #include "RelativeChunkOffset.hpp"
 
-Vec3 relativeCameraPosition(OctreeID id, ULLVec3 chunkLocation, Vec3 location) {
-
+Vec3 relativeCameraPosition(const OctreeID& id, const ULLVec3& chunkLocation, const Vec3 location) {
 	Vec3 chunkOffset;
 
-	ULL cx = chunkLocation.x;
-	ULL cy = chunkLocation.y;
-	ULL cz = chunkLocation.z;
+	const ULL cx = chunkLocation.x;
+	const ULL cy = chunkLocation.y;
+	const ULL cz = chunkLocation.z;
 
-	LL  lx = id.location.x - cx;
-	LL  ly = id.location.y - cy;
+	const LL lx = id.location.x - cx;
+	const LL ly = id.location.y - cy;
 
 	chunkOffset.x = lx;
 	chunkOffset.y = ly;
 
 	if (id.location.z > cz) {
-		ULL uz = id.location.z - cz;
+		const ULL uz = id.location.z - cz;
 		chunkOffset.z = uz;
 	}
 	else {
-		ULL uz = cz - id.location.z;
+		const ULL uz = cz - id.location.z;
 		chunkOffset.z = uz;
 		chunkOffset.z = -chunkOffset.z;
-	};
+	}
 
 	chunkOffset -= location;
 

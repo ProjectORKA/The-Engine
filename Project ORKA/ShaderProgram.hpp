@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include "Uniforms.hpp"
@@ -11,8 +10,8 @@ struct ShaderProgram {
 	Index programID = 0;
 	Index uniformBlockID = 0;
 
-	void select();
-	void destroy();
-	void create(ResourceManager& resourceManager, Name name, Uniforms& uniforms);
-	void create(Shader& vertexShader, Shader& fragmentShader, Uniforms& uniforms);
+	void select() const;
+	void destroy() const;
+	void create(ResourceManager& resourceManager, const Name& name, Uniforms& uniforms);
+	void create(const Shader& vertexShader, const Shader& fragmentShader, Uniforms& uniforms);
 };

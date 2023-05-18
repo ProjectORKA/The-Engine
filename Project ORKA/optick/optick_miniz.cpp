@@ -252,7 +252,7 @@ int mz_deflate(mz_streamp pStream, int flush)
 
     orig_total_in = pStream->total_in;
     orig_total_out = pStream->total_out;
-    for (;;)
+    while (true)
     {
         tdefl_status defl_status;
         in_bytes = pStream->avail_in;
@@ -495,7 +495,7 @@ int mz_inflate(mz_streamp pStream, int flush)
         return ((pState->m_last_status == TINFL_STATUS_DONE) && (!pState->m_dict_avail)) ? MZ_STREAM_END : MZ_OK;
     }
 
-    for (;;)
+    while (true)
     {
         in_bytes = pStream->avail_in;
         out_bytes = TINFL_LZ_DICT_SIZE - pState->m_dict_ofs;
@@ -1394,9 +1394,9 @@ static MZ_FORCEINLINE void tdefl_find_match(tdefl_compressor *d, mz_uint lookahe
     MZ_ASSERT(max_match_len <= TDEFL_MAX_MATCH_LEN);
     if (max_match_len <= match_len)
         return;
-    for (;;)
+    while (true)
     {
-        for (;;)
+        while (true)
         {
             if (--num_probes_left == 0)
                 return;
@@ -1447,9 +1447,9 @@ static MZ_FORCEINLINE void tdefl_find_match(tdefl_compressor *d, mz_uint lookahe
     MZ_ASSERT(max_match_len <= TDEFL_MAX_MATCH_LEN);
     if (max_match_len <= match_len)
         return;
-    for (;;)
+    while (true)
     {
-        for (;;)
+        while (true)
         {
             if (--num_probes_left == 0)
                 return;
@@ -2261,7 +2261,7 @@ extern "C" {
 #define TINFL_CR_RETURN_FOREVER(state_index, result) \
     do                                               \
     {                                                \
-        for (;;)                                     \
+        while(true)                                  \
         {                                            \
             TINFL_CR_RETURN(state_index, result);    \
         }                                            \
@@ -2602,10 +2602,10 @@ tinfl_status tinfl_decompress(tinfl_decompressor *r, const mz_uint8 *pIn_buf_nex
                     TINFL_MEMCPY(r->m_tables[1].m_code_size, r->m_len_codes + r->m_table_sizes[0], r->m_table_sizes[1]);
                 }
             }
-            for (;;)
+            while (true)
             {
                 mz_uint8 *pSrc;
-                for (;;)
+                while (true)
                 {
                     if (((pIn_buf_end - pIn_buf_cur) < 4) || ((pOut_buf_end - pOut_buf_cur) < 2))
                     {
@@ -2861,7 +2861,7 @@ void *tinfl_decompress_mem_to_heap(const void *pSrc_buf, size_t src_buf_len, siz
     size_t src_buf_ofs = 0, out_buf_capacity = 0;
     *pOut_len = 0;
     tinfl_init(&decomp);
-    for (;;)
+    while (true)
     {
         size_t src_buf_size = src_buf_len - src_buf_ofs, dst_buf_size = out_buf_capacity - *pOut_len, new_out_buf_capacity;
         tinfl_status status = tinfl_decompress(&decomp, (const mz_uint8 *)pSrc_buf + src_buf_ofs, &src_buf_size, (mz_uint8 *)pBuf, pBuf ? (mz_uint8 *)pBuf + *pOut_len : NULL, &dst_buf_size,
@@ -2910,7 +2910,7 @@ int tinfl_decompress_mem_to_callback(const void *pIn_buf, size_t *pIn_buf_size, 
     if (!pDict)
         return TINFL_STATUS_FAILED;
     tinfl_init(&decomp);
-    for (;;)
+    while (true)
     {
         size_t in_buf_size = *pIn_buf_size - in_buf_ofs, dst_buf_size = TINFL_LZ_DICT_SIZE - dict_ofs;
         tinfl_status status = tinfl_decompress(&decomp, (const mz_uint8 *)pIn_buf + in_buf_ofs, &in_buf_size, pDict, pDict + dict_ofs, &dst_buf_size,

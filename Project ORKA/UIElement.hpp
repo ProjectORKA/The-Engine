@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include "Basics.hpp"
@@ -19,22 +18,22 @@ struct Constraints {
 	U16 width = -1;
 	U16 height = -1;
 
-	void update(TiledRectangle& area) {
-		if (paddingX != U16(-1)) {
-
+	void update(TiledRectangle& area) const {
+		if (paddingX != static_cast<U16>(-1)) {
 			area.size.x -= 2 * paddingX;
 			area.position.x += paddingX;
 		}
-		if (paddingY != U16(-1)) {
+		if (paddingY != static_cast<U16>(-1)) {
 			area.size.y -= 2 * paddingY;
 			area.position.y += paddingY;
 		}
-		if (width != U16(-1)) area.size.x = width;
-		if (height != U16(-1)) area.size.y = height;
+		if (width != static_cast<U16>(-1)) area.size.x = width;
+		if (height != static_cast<U16>(-1)) area.size.y = height;
 	}
 };
 
 struct UIElement {
+	virtual ~UIElement() = default;
 	Constraints constraints;
 	Index id = nextInteractiveElementID++;
 
@@ -45,5 +44,8 @@ struct UIElement {
 	virtual void create(ResourceManager& resourceManager, Window& window) {};
 	virtual void inputEvent(Window& window, InputEvent input) {};
 	virtual void render(ResourceManager& resourceManager, Window& window, TiledRectangle area) {};
-	virtual void renderInteractive(ResourceManager& resourceManager, Window& window, TiledRectangle area) { OPTICK_EVENT(); };
+
+	virtual void renderInteractive(ResourceManager& resourceManager, Window& window, TiledRectangle area) {
+		OPTICK_EVENT();
+	};
 };

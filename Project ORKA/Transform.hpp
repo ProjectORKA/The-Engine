@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include "Basics.hpp"
@@ -10,6 +9,6 @@ struct Transform {
 	Vec3 rotation = Vec3(0);
 	Vec3 scale = Vec3(0);
 
-	Matrix matrix();
+	Matrix matrix() const;
 	void render(Renderer& renderer);
 };

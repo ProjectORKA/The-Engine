@@ -1,4 +1,3 @@
-
 #include "UIFlatPanel.hpp"
 
 //ui flat panel

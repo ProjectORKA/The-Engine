@@ -1,4 +1,3 @@
-
 #pragma once
 #include <cstring>
 #include <string>
@@ -13,10 +12,8 @@ using String = std::string;
 String toString(Bool b);
 String toString(Vec3 v);
 
-template<typename T>
-String toString(T t) {
-	return std::to_string(t);
-}
+template <typename T>
+String toString(T t) { return std::to_string(t); }
 
 //trim
 //trim end
@@ -27,4 +24,3 @@ String toString(T t) {
 //contains
 //starts with
 //ends with
-

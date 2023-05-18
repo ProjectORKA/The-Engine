@@ -1,4 +1,3 @@
-
 #include "PlanetCamera.hpp"
 #include "TerrainSystem.hpp"
 

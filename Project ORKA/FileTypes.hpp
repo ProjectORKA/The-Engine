@@ -14,67 +14,59 @@ enum class FileType {
 	Unknown
 };
 
-const String executableExtensions[] = { ".exe" };
-const String meshExtensions[] = { ".mesh", ".obj", ".fbx", ".blend" };
-const String imageExtensions[] = { ".png", ".jpg", ".jpeg", ".bmp", ".tga" };
-const String shaderExtensions[] = { ".vert", ".frag", ".geom", ".comp", ".tess", ".glsl" };
-const String fontExtensions[] = { ".ttf" };
-const String audioExtensions[] = { ".ogg", ".wav", ".mp3" };
-const String binaryExtensions[] = { ".bin" };
+Vector<String> executableExtensions = {".exe"};
+Vector<String> meshExtensions = {".mesh", ".obj", ".fbx", ".blend"};
+Vector<String> imageExtensions = {".png", ".jpg", ".jpeg", ".bmp", ".tga", ".webp"};
+Vector<String> shaderExtensions = {".vert", ".frag", ".geom", ".comp", ".tess", ".glsl"};
+Vector<String> fontExtensions = {".ttf"};
+Vector<String> audioExtensions = {".ogg", ".wav", ".mp3"};
+Vector<String> binaryExtensions = {".bin"};
 
-String getFileExtension(Path path) {
-	return path.extension().string();
-}
-Bool isExecutableFile(Path path) {
-	String extension = getFileExtension(path);
-	for (String ext : executableExtensions) {
-		if (extension == ext) return true;
-	}
+String getFileExtension(const Path& path) { return path.extension().string(); }
+
+Bool isExecutableFile(const Path& path) {
+	const String extension = getFileExtension(path);
+	for (String ext : executableExtensions) { if (extension == ext) return true; }
 	return false;
 }
-Bool isImageFile(Path path) {
-	String extension = getFileExtension(path);
-	for (String ext : imageExtensions) {
-		if (extension == ext) return true;
-	}
+
+Bool isImageFile(const Path& path) {
+	const String extension = getFileExtension(path);
+	for (String ext : imageExtensions) { if (extension == ext) return true; }
 	return false;
 }
-Bool isMeshFile(Path path) {
-	String extension = getFileExtension(path);
-	for (String ext : meshExtensions) {
-		if (extension == ext) return true;
-	}
+
+Bool isMeshFile(const Path& path) {
+	const String extension = getFileExtension(path);
+	for (String ext : meshExtensions) { if (extension == ext) return true; }
 	return false;
 }
-Bool isShaderFile(Path path) {
-	String extension = getFileExtension(path);
-	for (String ext : shaderExtensions) {
-		if (extension == ext) return true;
-	}
+
+Bool isShaderFile(const Path& path) {
+	const String extension = getFileExtension(path);
+	for (String ext : shaderExtensions) { if (extension == ext) return true; }
 	return false;
 }
-Bool isFontFile(Path path) {
-	String extension = getFileExtension(path);
-	for (String ext : fontExtensions) {
-		if (extension == ext) return true;
-	}
+
+Bool isFontFile(const Path& path) {
+	const String extension = getFileExtension(path);
+	for (String ext : fontExtensions) { if (extension == ext) return true; }
 	return false;
 }
-Bool isAudioFile(Path path) {
-	String extension = getFileExtension(path);
-	for (String ext : audioExtensions) {
-		if (extension == ext) return true;
-	}
+
+Bool isAudioFile(const Path& path) {
+	const String extension = getFileExtension(path);
+	for (String ext : audioExtensions) { if (extension == ext) return true; }
 	return false;
 }
-Bool isBinaryFile(Path path) {
-	String extension = getFileExtension(path);
-	for (String ext : binaryExtensions) {
-		if (extension == ext) return true;
-	}
+
+Bool isBinaryFile(const Path& path) {
+	const String extension = getFileExtension(path);
+	for (String ext : binaryExtensions) { if (extension == ext) return true; }
 	return false;
 }
-FileType getFileType(Path path) {
+
+FileType getFileType(const Path& path) {
 	if (isExecutableFile(path)) return FileType::Application;
 	if (isImageFile(path)) return FileType::Image;
 	if (isMeshFile(path)) return FileType::Mesh;

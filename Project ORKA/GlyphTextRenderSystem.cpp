@@ -1,16 +1,12 @@
 #include "GlyphTextRenderSystem.hpp"
 
 void GPUFont::load() {
-	if (loaded) {
-		logError("Font already loaded!");
-	}
+	if (loaded) { logError("Font already loaded!"); }
 	else {
 		FT_Library ft;
 
 		//initialize freetype
-		if (FT_Init_FreeType(&ft)) {
-			logError("Could not initialize FreeType!");
-		}
+		if (FT_Init_FreeType(&ft)) { logError("Could not initialize FreeType!"); }
 		else {
 			logDebug("Initialized Freetype!");
 
@@ -37,6 +33,6 @@ void GPUFont::load() {
 }
 
 GlyphTextRenderSystem::GlyphTextRenderSystem() {
-	fonts.emplaceBack();
-	fonts.last().load();
+	fonts.emplace_back();
+	fonts.back().load();
 }

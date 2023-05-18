@@ -1,4 +1,3 @@
-
 #include "Networking.hpp"
 
 ////console commands

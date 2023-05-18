@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include "Basics.hpp"
@@ -19,6 +18,7 @@ struct MelonWorld {
 
 	void update(MelonPlayer& player);
 	void render(ResourceManager& resourceManager, Renderer& renderer);
-	void generateScenery(Float& sceneryPersistencySize, MelonPlayer& player, Float& pathWidth);
-	void generatePaths(Float& generationSize, MelonPlayer& player, Float& pathWidth, Float& pathPersistencySize);
+	void generateScenery(Float& sceneryPersistencySize, const MelonPlayer& player, const Float& pathWidth);
+	void generatePaths(const Float& generationSize, const MelonPlayer& player, const Float& pathWidth,
+	                   const Float& pathPersistencySize);
 };

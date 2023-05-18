@@ -1,12 +1,11 @@
-
 #include "Game.hpp"
 
 void gameSimulationThread(GameSimulation& sim) {
 	TimePoint t;
 	logDebug("Game simulation started!");
 	while (sim.keepRunning) {
-		t = Clock::now() + Milliseconds(Int(1000.0f / sim.tickrate));
-		sim.update(1.0f / sim.tickrate);
+		t = Clock::now() + Milliseconds(static_cast<Int>(1000.0f / sim.tickRate));
+		sim.update(1.0f / sim.tickRate);
 		sleepUntil(t);
 	}
 	logDebug("Game simulation stopped!");

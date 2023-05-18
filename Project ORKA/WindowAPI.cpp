@@ -1,125 +1,102 @@
-
 #include "WindowAPI.hpp"
 #include "Profiler.hpp"
 
-void apiWindowRestore(APIWindow apiWindow)
-{
-	glfwRestoreWindow(apiWindow);
-}
-void apiMaximizeWindow(APIWindow apiWindow) {
-	glfwMaximizeWindow(apiWindow);
-}
-void apiWindowDecorate(APIWindow apiWindow)
-{
-	glfwSetWindowAttrib(apiWindow, GLFW_DECORATED, true);
-}
-void apiMinimizeWindow(APIWindow apiWindow) {
-	glfwIconifyWindow(apiWindow);
-}
-void apiWindowUndecorate(APIWindow apiWindow)
-{
-	glfwSetWindowAttrib(apiWindow, GLFW_DECORATED, false);
-}
-void apiWindowSwapBuffers(APIWindow apiWindow)
-{
+void apiWindowRestore(const APIWindow apiWindow) { glfwRestoreWindow(apiWindow); }
+void apiMaximizeWindow(const APIWindow apiWindow) { glfwMaximizeWindow(apiWindow); }
+void apiWindowDecorate(const APIWindow apiWindow) { glfwSetWindowAttrib(apiWindow, GLFW_DECORATED, true); }
+void apiMinimizeWindow(const APIWindow apiWindow) { glfwIconifyWindow(apiWindow); }
+void apiWindowUndecorate(const APIWindow apiWindow) { glfwSetWindowAttrib(apiWindow, GLFW_DECORATED, false); }
+
+void apiWindowSwapBuffers(const APIWindow apiWindow) {
 	OPTICK_EVENT();
 	glfwSwapBuffers(apiWindow);
 }
-Bool apiWindowIsCapturing(APIWindow apiWindow)
-{
+
+Bool apiWindowIsCapturing(const APIWindow apiWindow) {
 	return glfwGetInputMode(apiWindow, GLFW_CURSOR) == GLFW_CURSOR_DISABLED;
 }
-Bool apiWindowIsDecorated(APIWindow apiWindow)
-{
-	return glfwGetWindowAttrib(apiWindow, GLFW_DECORATED);
-}
-Bool apiWindowIsFullscreen(APIWindow apiWindow)
-{
-	return glfwGetWindowMonitor(apiWindow) != NULL;
-}
-void apiWindowEnableCursor(APIWindow apiWindow)
-{
-	glfwSetInputMode(apiWindow, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-}
-void apiWindowDisableCursor(APIWindow apiWindow)
-{
+
+Bool apiWindowIsDecorated(const APIWindow apiWindow) { return glfwGetWindowAttrib(apiWindow, GLFW_DECORATED); }
+Bool apiWindowIsFullscreen(const APIWindow apiWindow) { return glfwGetWindowMonitor(apiWindow) != nullptr; }
+void apiWindowEnableCursor(const APIWindow apiWindow) { glfwSetInputMode(apiWindow, GLFW_CURSOR, GLFW_CURSOR_NORMAL); }
+
+void apiWindowDisableCursor(const APIWindow apiWindow) {
 	glfwSetInputMode(apiWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 }
-Bool apiGetWindowShouldClose(APIWindow apiWindow)
-{
-	return glfwWindowShouldClose(apiWindow);
-}
-Bool apiWindowCursorIsCaptured(APIWindow apiWindow)
-{
+
+Bool apiGetWindowShouldClose(const APIWindow apiWindow) { return glfwWindowShouldClose(apiWindow); }
+
+Bool apiWindowCursorIsCaptured(const APIWindow apiWindow) {
 	return glfwGetInputMode(apiWindow, GLFW_CURSOR) == GLFW_CURSOR_DISABLED;
 }
-Int apiWindowGetFramebufferWidth(APIWindow apiWindow)
-{
+
+Int apiWindowGetFramebufferWidth(const APIWindow apiWindow) {
 	Int width, height;
 	glfwGetFramebufferSize(apiWindow, &width, &height);
 	return width;
 }
-DVec2 apiWindowGetCursorPosition(APIWindow apiWindow)
-{
+
+DVec2 apiWindowGetCursorPosition(const APIWindow apiWindow) {
 	DVec2 cursorPosition;
 	glfwGetCursorPos(apiWindow, &cursorPosition.x, &cursorPosition.y);
 	return cursorPosition;
 }
-Area apiWindowGetFramebufferSize(APIWindow apiWindow)
-{
+
+Area apiWindowGetFramebufferSize(const APIWindow apiWindow) {
 	Area size;
 	glfwGetFramebufferSize(apiWindow, &size.x, &size.y);
 	return size;
 }
-Area apiWindowGetWindowFrameSize(APIWindow apiWindow)
-{
+
+Area apiWindowGetWindowFrameSize(const APIWindow apiWindow) {
 	Area area;
 	glfwGetWindowSize(apiWindow, &area.x, &area.y);
 	return area;
 }
-Int apiWindowGetFramebufferHeight(APIWindow apiWindow)
-{
+
+Int apiWindowGetFramebufferHeight(const APIWindow apiWindow) {
 	Int width, height;
 	glfwGetFramebufferSize(apiWindow, &width, &height);
 	return height;
 }
-Bool apiWindowKeyIsPressed(APIWindow apiWindow,Int key)
-{
-	return glfwGetKey(apiWindow, key) > 0;
+
+Bool apiWindowKeyIsPressed(const APIWindow apiWindow, const Int key) { return glfwGetKey(apiWindow, key) > 0; }
+
+APIWindow apiCreateWindow(const Area size, const Char* title, const APIWindow shared) {
+	return glfwCreateWindow(size.x, size.y, title, nullptr, shared);
 }
-APIWindow apiCreateWindow(Area size, const Char* title, APIWindow shared) {
-	return glfwCreateWindow(size.x, size.y, title, NULL, shared);
+
+void apiWindowSetExclusiveFullscreen(const APIWindow apiWindow) {
+	glfwSetWindowMonitor(apiWindow, glfwGetPrimaryMonitor(), 0, 0, glfwGetVideoMode(glfwGetPrimaryMonitor())->width,
+	                     glfwGetVideoMode(glfwGetPrimaryMonitor())->height, GLFW_DONT_CARE);
 }
-void apiWindowSetExclusiveFullscreen(APIWindow apiWindow)
-{
-	glfwSetWindowMonitor(apiWindow, glfwGetPrimaryMonitor(), 0, 0, glfwGetVideoMode(glfwGetPrimaryMonitor())->width, glfwGetVideoMode(glfwGetPrimaryMonitor())->height, GLFW_DONT_CARE);
-}
-TiledRectangle apiWindowGetWorkableArea(APIWindow apiWindow)
-{
+
+TiledRectangle apiWindowGetWorkableArea(APIWindow apiWindow) {
 	TiledRectangle rect;
 	glfwGetMonitorWorkarea(glfwGetPrimaryMonitor(), &rect.position.x, &rect.position.y, &rect.size.x, &rect.size.y);
 	return rect;
 }
-void apiWindowSetVisibility(APIWindow apiWindow, Bool visible) {
+
+void apiWindowSetVisibility(const APIWindow apiWindow, const Bool visible) {
 	if (visible)glfwShowWindow(apiWindow);
 	else glfwHideWindow(apiWindow);
 }
-void apiWindowResize(APIWindow apiWindow, Int width, Int height) {
+
+void apiWindowResize(const APIWindow apiWindow, const Int width, const Int height) {
 	glfwSetWindowSize(apiWindow, width, height);
 }
-void whenWindowAPIThrowsError(Int error, const Char* description)
-{
-	logError(description);
-}
-void apiSetWindowShouldClose(APIWindow apiWindow, Bool shouldClose)
-{
+
+void whenWindowAPIThrowsError(Int error, const Char* description) { logError(description); }
+
+void apiSetWindowShouldClose(const APIWindow apiWindow, const Bool shouldClose) {
 	glfwSetWindowShouldClose(apiWindow, shouldClose);
 }
-void apiWindowSetCursorPosition(APIWindow apiWindow, MouseMovement position)
-{
+
+void apiWindowSetCursorPosition(const APIWindow apiWindow, const MouseMovement position) {
 	glfwSetCursorPos(apiWindow, position.x, position.y);
 }
-void apiWindowSetWindowedMode(APIWindow apiWindow, TiledRectangle monitorArea)
-{
-	glfwSetWindowMonitor(apiWindow, nullptr, monitorArea.position.x, monitorArea.position.y, monitorArea.size.x, monitorArea.size.y, GLFW_DONT_CARE);
+
+void apiWindowSetWindowedMode(const APIWindow apiWindow, const TiledRectangle monitorArea) {
+	glfwSetWindowMonitor(apiWindow, nullptr, monitorArea.position.x, monitorArea.position.y, monitorArea.size.x,
+	                     monitorArea.size.y, GLFW_DONT_CARE);
 }

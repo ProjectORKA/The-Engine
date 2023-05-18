@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include "Game.hpp"
@@ -30,8 +29,8 @@ struct MelonRenderer : public GameRenderer {
 	MelonPlayer player;
 	Float mouseSensitivity = 0.0015;
 	Vec3 mousePosA, mousePosB, mousePosC = Vec3(0);
-	InputEvent exit = InputEvent(InputType::Mouse, RMB, 0);
-	InputEvent enter = InputEvent(InputType::Mouse, LMB, 1);
+	InputEvent exit = InputEvent(InputType::Mouse, RMB, false);
+	InputEvent enter = InputEvent(InputType::Mouse, LMB, true);
 
 	void update(Window& window) override;
 	void inputEvent(Window& window, InputEvent input) override;
@@ -39,7 +38,6 @@ struct MelonRenderer : public GameRenderer {
 };
 
 struct ProjectMelon {
-
 	ResourceManager resourceManager;
 	UserInterface ui;
 	MelonRenderer game;

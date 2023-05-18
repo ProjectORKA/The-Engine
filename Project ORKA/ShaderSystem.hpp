@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include "ShaderProgram.hpp"
@@ -16,8 +15,8 @@ struct ShaderSystem {
 	Index use(Index shaderID);
 	ShaderProgram& currentShaderProgram();
 	void create(ResourceManager& resourceManager);
-	void add(ResourceManager & resourceManager, Name name);
-	Index use(ResourceManager& resourceManager, Name name);
-	Index getShaderID(ResourceManager& resourceManager, Name name);
-	void add(Shader& vertexShader, Shader& fragmentShader, Name name);
+	void add(ResourceManager& resourceManager, const Name& name);
+	Index use(ResourceManager& resourceManager, const Name& name);
+	Index getShaderID(ResourceManager& resourceManager, const Name& name);
+	void add(const Shader& vertexShader, const Shader& fragmentShader, const Name& name);
 };

@@ -1,12 +1,9 @@
-
 #include "DungeonsAndDiscord.hpp"
 #include "Window.hpp"
 #include "Random.hpp"
 #include "FileSystem.hpp"
 
-Int diceRoll(Int diceCount) {
-	return 1 + randomInt(diceCount);
-}
+Int diceRoll(const Int diceCount) { return 1 + randomInt(diceCount); }
 
 void DNDRenderer::create(ResourceManager& resourceManager, Window& window) {
 	player.speedExponent = world->speedExponent;
@@ -17,8 +14,7 @@ void DNDRenderer::create(ResourceManager& resourceManager, Window& window) {
 	player.camera.location = world->location;
 }
 
-void DNDRenderer::update(Window& window)
-{
+void DNDRenderer::update(Window& window) {
 	player.update(window);
 
 	for (Path& path : window.droppedFilePaths) {
@@ -27,13 +23,14 @@ void DNDRenderer::update(Window& window)
 		//DNDEntity e;
 		//e.meshName = name;
 		//e.transform = Transform();
-		//world->entities.pushBack(e);
+		//world->entities.push_back(e);
 	}
 	window.droppedFilePaths.clear();
 }
+
 void DNDRenderer::render(ResourceManager& resourceManager, Window& window, TiledRectangle area) {
 	Renderer& r = window.renderer;
-	
+
 	//preprocess
 	r.setWireframeMode();
 	r.setCulling(false);
@@ -73,42 +70,41 @@ void DNDRenderer::render(ResourceManager& resourceManager, Window& window, Tiled
 	//r.clearDepth();
 	//r.setDepthTest(true);
 
-	
 
-		//for (Int i = 0; i < world->entities.size(); i++) {
-		//	//render selected objects with an orange highlight
-		//	if (true) {
-		//		if (std::find(selectedObjects.begin(), selectedObjects.end(), i) != selectedObjects.end()) r.setColor(Color(0.4, 0.25, 0.1, 0));
-		//		else r.setColor(Color(0, 0, 0, 0));
+	//for (Int i = 0; i < world->entities.size(); i++) {
+	//	//render selected objects with an orange highlight
+	//	if (true) {
+	//		if (std::find(selectedObjects.begin(), selectedObjects.end(), i) != selectedObjects.end()) r.setColor(Color(0.4, 0.25, 0.1, 0));
+	//		else r.setColor(Color(0, 0, 0, 0));
 
-		//		//render last object with brighter highlight
-		//		if (lastSelectedObject == i) r.setColor(Color(0.5, 0.4, 0.15, 0));
-		//	}
-		//	else r.setColor(Color(0, 0, 0, 0));
+	//		//render last object with brighter highlight
+	//		if (lastSelectedObject == i) r.setColor(Color(0.5, 0.4, 0.15, 0));
+	//	}
+	//	else r.setColor(Color(0, 0, 0, 0));
 
-		//	world->entities[i].render(e, r);
-		//}
+	//	world->entities[i].render(e, r);
+	//}
 
-		world->speedExponent = player.speedExponent;
-		world->fieldOfView = player.camera.fieldOfView;
-		world->nearClipValue = player.camera.nearClipValue;
-		world->farClipValue = player.camera.farClipValue;
-		world->location = player.camera.location;
-		world->rotation = player.camera.getRotation();
+	world->speedExponent = player.speedExponent;
+	world->fieldOfView = player.camera.fieldOfView;
+	world->nearClipValue = player.camera.nearClipValue;
+	world->farClipValue = player.camera.farClipValue;
+	world->location = player.camera.location;
+	world->rotation = player.camera.getRotation();
 }
-void DNDRenderer::inputEvent(Window& window, InputEvent input) {
 
+void DNDRenderer::inputEvent(Window& window, const InputEvent input) {
 	if (input == enter) window.captureCursor();
 	if (input == exit) window.uncaptureCursor();
 
 	if (input == select && window.capturing) {
-		Index objectID = window.renderer.idFramebuffer.objectID;
+		const Index objectID = window.renderer.idFramebuffer.objectID;
 
 		logDebug(objectID);
 
 		if (objectID != -1) {
 			if (!window.pressed(selectMultiple)) selectedObjects.clear();
-			selectedObjects.pushBack(objectID);
+			selectedObjects.push_back(objectID);
 			lastSelectedObject = objectID;
 		}
 		else {
@@ -121,8 +117,8 @@ void DNDRenderer::inputEvent(Window& window, InputEvent input) {
 
 	player.inputEvent(window, input);
 }
-void DNDRenderer::renderInteractive(ResourceManager& resourceManager, Window& window, TiledRectangle area)
-{
+
+void DNDRenderer::renderInteractive(ResourceManager& resourceManager, Window& window, TiledRectangle area) {
 	player.render(resourceManager, window);
 
 	if (world->loaded) {
@@ -143,15 +139,15 @@ void DNDWorld::save() {
 	save.write((Char*)&location, sizeof(Vec3));
 	save.write((Char*)&rotation, sizeof(DVec3));
 	save.write((Char*)&speedExponent, sizeof(Int));
-	
+
 	save.write((Char*)&entityCount, sizeof(UInt));
 	save.write((Char*)&entities[0], sizeof(DNDEntity) * entities.size());
 }
+
 void DNDWorld::load(ResourceManager& resourceManager) {
 	InFile save("Saves/dnd.save");
 
 	if (save.isOpen) {
-
 		save.read((Char*)&fieldOfView, sizeof(Float));
 		save.read((Char*)&nearClipValue, sizeof(Float));
 		save.read((Char*)&farClipValue, sizeof(Float));
@@ -167,8 +163,9 @@ void DNDWorld::load(ResourceManager& resourceManager) {
 		loaded = true;
 	}
 
-	scene.importFBX("dnd",resourceManager);
+	scene.importFBX("dnd", resourceManager);
 }
+
 void DNDEntity::render(ResourceManager& resourceManager, Renderer& renderer) {
 	transform.render(renderer);
 	renderer.renderMesh(resourceManager, meshName);

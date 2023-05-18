@@ -1,11 +1,10 @@
-
 #pragma once
 #include "Basics.hpp"
-#include "CPUMesh.hpp"
+#include "CpuMesh.hpp"
 #include "ResourceManager.hpp"
 
 struct Scene {
-	Vector<CPUMesh> meshes;
+	Vector<CpuMesh> meshes;
 	//materials
 	//textures
 	//animations

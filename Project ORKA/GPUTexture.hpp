@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include "CPUTexture.hpp"
@@ -17,12 +16,12 @@ struct GPUTexture {
 
 	void unload();
 	void resize(Area size);
-	void generateMipMaps();
-	void use(Index textureID);
-	void attachTexture(Int slot);
+	void generateMipMaps() const;
+	void use(Index textureID) const;
+	void attachTexture(Int slot) const;
 	void load(CPUTexture& cpuTexture);
 	void load(Vec2 size, Int channels, DataType type);
 	void setFilters(Filter nearFilter, Filter farFilter);
-	void load(ResourceManager& resourceManager, Name name);
-	void generateMipMaps(Filter nearFilter, Filter farFilter);
+	void load(ResourceManager& resourceManager, const Name& name);
+	void generateMipMaps(Filter nearFilter, Filter farFilter) const;
 };

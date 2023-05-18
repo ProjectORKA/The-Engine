@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include "Basics.hpp"
@@ -11,16 +10,16 @@ struct NeuralNet {
 	Vector<Vector<Vector<Float>>> weights;
 	Vector<Vector<Float>> neuronActivation;
 	Vector<Vector<Vector<Float>>> contribution;
-	
-	UInt layerCount();
+
+	UInt layerCount() const;
 	Vector<Float> output();
 	void propagateForward();
-	void input(Vector<Float> input);
-	UInt neuronCountAtLayer(UInt layerID);
+	void input(const Vector<Float>& input);
+	UInt neuronCountAtLayer(UInt layerID) const;
 	void propagateBackward(Vector<Float> target);
 	void render(ResourceManager& resourceManager, Renderer& renderer, Vec2 area);
-	Vec2 getNeuronPosition(Vec2 area, UInt layerID, UInt neuronID);
+	Vec2 getNeuronPosition(Vec2 area, UInt layerID, UInt neuronID) const;
 
 	NeuralNet() {};
-	NeuralNet(Vector<UInt> structure);
+	NeuralNet(const Vector<UInt>& structure);
 };

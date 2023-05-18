@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include "Camera.hpp"
@@ -26,20 +25,24 @@ struct Player {
 	//call render if you want to render from the players perspective
 	virtual void render(ResourceManager& resourceManager, Window& window);
 	//this gets called for every input event
-	virtual void inputEvent(Window& window, InputEvent input) {};
+	virtual void inputEvent(Window& window, InputEvent input);
+
+	bool operator==(const Player& other) const;
 };
 
 struct DebugPlayer : public Player {
 	//speed is calculated exponentially which is perfect for debugging purposes 
-	//you can zoom around at lightspeed or be slow as a snail
+	//you can zoom around at light speed or be slow as a snail
 	Int speedExponent = 0; //how fast are we going
-	Float baseNumber = 1.2; //how much does speed change
+	Float baseNumber = 1.2f; //how much does speed change
 
 	//input for speeding up / slowing down
-	InputEvent faster = InputEvent(InputType::Scroll, 1, 1);
-	InputEvent slower = InputEvent(InputType::Scroll, 1, 0);
+	InputEvent faster = InputEvent(InputType::Scroll, 1, true);
+	InputEvent slower = InputEvent(InputType::Scroll, 1, false);
 
 	//overrides update and inputEvent to work
 	void update(Window& window) override;
 	void inputEvent(Window& window, InputEvent input) override;
+
+	DebugPlayer() = default;
 };

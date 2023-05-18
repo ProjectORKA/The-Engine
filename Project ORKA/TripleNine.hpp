@@ -27,10 +27,8 @@ struct TripleNineEnemy : UIElement {
 	Vec3 position = Vec3(randomVec2(-85, 85), 0);
 	Index id = -1;
 
-	void die() {
-		position = Vec3(randomVec2(-85, 85), 0);
-	}
-	void render(ResourceManager& resourceManager, Renderer& renderer);
+	void die() { position = Vec3(randomVec2(-85, 85), 0); }
+	void render(ResourceManager& resourceManager, Renderer& renderer) const;
 	void renderInteractive(ResourceManager& resourceManager, Window& window, TiledRectangle area) override;
 };
 
@@ -57,20 +55,30 @@ struct TripleNinePlayer : public Player {
 	InputID crouch = InputID(InputType::KeyBoard, CTRL);
 	InputID precision = InputID(InputType::KeyBoard, ALT);
 	//event input
-	InputEvent jumpTrigger = InputEvent(InputType::KeyBoard, SPACE, 1);
+	InputEvent jumpTrigger = InputEvent(InputType::KeyBoard, SPACE, true);
 	//InputEvent jumpRelease = InputEvent(InputType::KeyBoard, SPACE, 0);
 
 	enum class State {
-		standing,		// ground
-		walking,		// ground, slowmove
-		sprinting,		// ground, fastmove
-		crouching,		// ground, crouch
-		sneaking,		// ground, crouch, slowmove
-		sliding,		// ground, crouch, fastmove
-		proning,		// ground, holding jump and crouch
-		crawling,		// ground, holding jump and crouch, slowmove
-		jumping,		// air, positive z velocity
-		falling,		// air, negative z velocity
+		standing,
+		// ground
+		walking,
+		// ground, slowmove
+		sprinting,
+		// ground, fastmove
+		crouching,
+		// ground, crouch
+		sneaking,
+		// ground, crouch, slowmove
+		sliding,
+		// ground, crouch, fastmove
+		proning,
+		// ground, holding jump and crouch
+		crawling,
+		// ground, holding jump and crouch, slowmove
+		jumping,
+		// air, positive z velocity
+		falling,
+		// air, negative z velocity
 	};
 
 	//global scale
@@ -95,7 +103,7 @@ struct TripleNinePlayer : public Player {
 	Bool doubleJumpCharge = false;
 
 	//speed
-	const Float walkingSpeed = 2 * unit;	//
+	const Float walkingSpeed = 2 * unit; //
 	const Float runningSpeed = 8 * unit;
 	const Float speedControlAcceleration = 200;
 	const Float speedControlDeceleration = 1;
@@ -109,9 +117,9 @@ struct TripleNinePlayer : public Player {
 	//Vec2 strafeControl = Vec2(0);
 
 	//player physique
-	const Float height = 1.8 * unit;				//total height when standing
-	const Float lowerChestHeightMultiplier = 0.6;	//height of lower chest based on total height //0.73
-	const Float eyeHeightMultilpier = 0.94;			//height of camera based on total height
+	const Float height = 1.8 * unit; //total height when standing
+	const Float lowerChestHeightMultiplier = 0.6; //height of lower chest based on total height //0.73
+	const Float eyeHeightMultilpier = 0.94; //height of camera based on total height
 	const Float lowerChestHeight = height * lowerChestHeightMultiplier;
 
 	//head movement
@@ -119,13 +127,13 @@ struct TripleNinePlayer : public Player {
 	Vec3 headOffset = Vec3(0);
 	//height
 
-	const Float eyeHeightNormal = height * eyeHeightMultilpier;				//standing
-	const Float eyeHeightFlying = height * 1.1 * eyeHeightMultilpier;		//off ground
-	const Float eyeHeightWalking = height * 0.9 * eyeHeightMultilpier;		//walking
-	const Float eyeHeightCrouching = height * 0.5 * eyeHeightMultilpier;	//charging jump
-	const Float eyeHeightRunning = height * 0.75 * eyeHeightMultilpier;		//running
-	const Float eyeHeightProning = height * 0.2 * eyeHeightMultilpier;		//proning
-	const Float eyeHeightSliding = height * 0.3 * eyeHeightMultilpier;		//sliding
+	const Float eyeHeightNormal = height * eyeHeightMultilpier; //standing
+	const Float eyeHeightFlying = height * 1.1 * eyeHeightMultilpier; //off ground
+	const Float eyeHeightWalking = height * 0.9 * eyeHeightMultilpier; //walking
+	const Float eyeHeightCrouching = height * 0.5 * eyeHeightMultilpier; //charging jump
+	const Float eyeHeightRunning = height * 0.75 * eyeHeightMultilpier; //running
+	const Float eyeHeightProning = height * 0.2 * eyeHeightMultilpier; //proning
+	const Float eyeHeightSliding = height * 0.3 * eyeHeightMultilpier; //sliding
 
 	const Float eyeMovementSpeed = 10;
 
@@ -166,7 +174,7 @@ struct TripleNinePlayer : public Player {
 	Vec3 velocity = Vec3(0);
 	Vec3 location = Vec3(0, 0, 0);
 	Vec3 acceleration = Vec3(0, 0, 0);
-	const Float gravity = 30;	//gravity of player is more than 10 because it makes it feel snappier
+	const Float gravity = 30; //gravity of player is more than 10 because it makes it feel snappier
 	const Float airTimeGravity = 16; //makes gravity less impactful when holding space in the air
 	const Float airResistance = 0.99;
 
@@ -182,7 +190,7 @@ struct TripleNinePlayer : public Player {
 
 	void jump();
 	void collisionResponse();
-	Bool isCollidingWithGround();
+	Bool isCollidingWithGround() const;
 	void update(Window& window) override;
 	void calculatePhysics(Window& window);
 	void calculateHeadPosition(Window& window, Float delta);
@@ -202,15 +210,15 @@ struct TripleNineRenderer : public GameRenderer {
 	Float mapSize = 0.85;
 	Vec3 sunDirection = normalize(Vec3(0.675394, -0.485956, 0.554698));
 
-	TripleNineSimulation * sim = nullptr;
+	TripleNineSimulation* sim = nullptr;
 
-	InputEvent enter = InputEvent(InputType::Mouse, LMB, 1);
-	InputEvent exit = InputEvent(InputType::Mouse, RMB, 0);
-	InputEvent toggleBloom = InputEvent(InputType::KeyBoard, B, 0);
-	InputEvent reloadShaders = InputEvent(InputType::KeyBoard, T, 0);
+	InputEvent enter = InputEvent(InputType::Mouse, LMB, true);
+	InputEvent exit = InputEvent(InputType::Mouse, RMB, false);
+	InputEvent toggleBloom = InputEvent(InputType::KeyBoard, B, false);
+	InputEvent reloadShaders = InputEvent(InputType::KeyBoard, T, false);
 
 	void update(Window& window) override;
-	void connect(TripleNineSimulation & sim);
+	void connect(TripleNineSimulation& sim);
 	void inputEvent(Window& window, InputEvent input) override;
 	void renderBloom(ResourceManager& resourceManager, Renderer& r);
 	void create(ResourceManager& resourceManager, Window& window) override;

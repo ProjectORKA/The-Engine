@@ -1,10 +1,9 @@
-
 #pragma once
 
 #include "Basics.hpp"
 #include "Keymap.hpp"
 
-using  Action = Bool&;
+using Action = Bool&;
 
 struct InputID {
 	Int type = InputType::UNKNOWN;

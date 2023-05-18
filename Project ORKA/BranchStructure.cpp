@@ -1,10 +1,9 @@
-
 #include "BranchStructure.hpp"
 
 #include "Renderer.hpp"
 
-void BranchStructure::render(Renderer& renderer, Vector<Vec3> points) {
-	CPUMesh mesh;
+void BranchStructure::render(Renderer& renderer, const Vector<Vec3>& points) const {
+	CpuMesh mesh;
 	mesh.drawMode = MeshDrawMode::dynamicMode;
 	mesh.name = "branchStructure";
 	mesh.normals = Vector<Vec3>(points.size(), Vec3(0, 0, 1));
@@ -12,13 +11,11 @@ void BranchStructure::render(Renderer& renderer, Vector<Vec3> points) {
 	mesh.positions = points;
 
 	for (int i = 0; i < connections.size(); i++) {
-		mesh.indices.pushBack(i);
-		mesh.indices.pushBack(connections[i]);
+		mesh.indices.push_back(i);
+		mesh.indices.push_back(connections[i]);
 	}
 
-	for (int i = 0; i < points.size(); i++) {
-		mesh.textureCoordinates.pushBack(Vec2(points[i].x, points[i].y));
-	}
+	for (auto point : points) { mesh.textureCoordinates.push_back(Vec2(point.x, point.y)); }
 
 	mesh.checkIntegrity();
 

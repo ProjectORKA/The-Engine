@@ -7,14 +7,15 @@ struct QuadtreeID {
 	ULLVec2 location = ULLVec2(0);
 	UShort level = 0;
 
-	Bool getX();
-	Bool getY();
+	Bool getX() const;
+	Bool getY() const;
 
 	void clean();
-	QuadtreeID parent();
-	Vector<QuadtreeID> parents() {
+	QuadtreeID parent() const;
+
+	Vector<QuadtreeID> parents() const {
 		Vector<QuadtreeID> vp;
-		vp.pushBack(parent());
+		vp.push_back(parent());
 
 		Bool x = getX();
 		Bool y = getY();

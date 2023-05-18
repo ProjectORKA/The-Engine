@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include "Basics.hpp"
@@ -15,8 +14,8 @@
 //struct DebugConsole {
 //	List<Command> commands;
 //	void addCommand(String command, String description, void(*function)(String)) {
-	//	commands.push_back(Command(command, description, function));
-	//}
+//	commands.push_back(Command(command, description, function));
+//}
 //	DebugConsole();
 //};
 

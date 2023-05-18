@@ -1,11 +1,11 @@
 #include "String.hpp"
 
-String toString(Bool b) {
+String toString(const Bool b) {
 	if (b) return "true";
-	else return "false";
+	return "false";
 }
 
-String toString(Vec3 v) {
+String toString(const Vec3 v) {
 	String s = "(";
 	s.append(toString(v.x));
 	s.append("|");

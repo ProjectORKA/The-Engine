@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include "Basics.hpp"
@@ -8,23 +7,24 @@
 
 using FileTime = std::filesystem::file_time_type;
 
-void deleteFile(Path path);
-String loadString(Path path);
+void deleteFile(const Path& path);
+UInt getFileSize(const Path& path);
+String loadString(const Path& path);
 Path getDirectory(Path path);
-Path makeAbsolute(Path path);
-Bool doesPathExist(Path path);
-String getFileName(Path path);
+Path makeAbsolute(const Path& path);
+Bool doesPathExist(const Path& path);
+String getFileName(const Path& path);
 Path removeFileName(Path path);
 void createDirectory(Path path);
-FileTime lastWrittenTime(Path path);
-Vector<String> loadStringVector(Path path);
-Vector<Path> getFilesInDirectory(Path path);
-Path nameToPath(Name name, String filetype);
-void copyFile(Path source, Path destination);
-Vector<Path> getAllPathsInDirectory(Path path);
-Vector<Path> getAllFilesInDirectory(Path path);
-FileTime getLastWrittenTimeOfFiles(Vector<Path> paths);
-Vector<Path> getFilesInDirectory(Path path, Vector<String> filter);
-Vector<Path> getAllFilesInDirectory(Path path, Vector<String> filter);
+FileTime lastWrittenTime(const Path& path);
+Vector<String> loadStringVector(const Path& path);
+Vector<Path> getFilesInDirectory(const Path& path);
+Path nameToPath(const Name& name, const String& filetype);
+void copyFile(const Path& source, const Path& destination);
+Vector<Path> getAllPathsInDirectory(const Path& path);
+Vector<Path> getAllFilesInDirectory(const Path& path);
+FileTime getLastWrittenTimeOfFiles(const Vector<Path>& paths);
+Vector<Path> getFilesInDirectory(const Path& path, const Vector<String>& filter);
+Vector<Path> getAllFilesInDirectory(const Path& path, const Vector<String>& filter);
 
 extern Path executablePath;

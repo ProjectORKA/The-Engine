@@ -8,23 +8,23 @@
 
 struct Company {
 	//primary keys
-	Index companyGUID;
+	Index companyGuid = -1;
 
 	//secondary keys
-	String companyName = "";
-	String domain = "";
+	String companyName;
+	String domain;
 };
 
 struct User {
 	//primary keys
-	Index userGUID;
-	Index companyGUID;
+	Index userGuid = -1;
+	Index companyGuid = -1;
 
 	//secondary keys
 	String firstName;
 	String lastName;
 	String email;
-	Vec2 position;
+	Vec2 position = Vec2(0, 0);
 };
 
 struct Task {
@@ -34,65 +34,35 @@ struct Task {
 	//TimePoint lastExecution = now();
 	//TimePoint creationDate = now();
 	//Duration preferredTimeBetweenExecutions = FHours(24);
-
-};
-
-struct Connection {
-	Vec3 start;
-	Vec3 end;
 };
 
 struct OrganizerRenderer : public GameRenderer {
 	DebugPlayer player;
 	Float mouseSensitivity = 0.0015f;
-	InputEvent enter = InputEvent(InputType::Mouse, LMB, 1);
-	InputEvent exit = InputEvent(InputType::Mouse, RMB, 0);
-	InputEvent wireframeToogle = InputEvent(InputType::KeyBoard, F, 1);
+	InputEvent enter = InputEvent(InputType::Mouse, LMB, true);
+	InputEvent exit = InputEvent(InputType::Mouse, RMB, false);
+	InputEvent wireFrameToggle = InputEvent(InputType::KeyBoard, F, true);
 
 	Vector<Company> companies;
 	Vector<User> users;
 	Vector<Task> tasks;
 
-	std::vector<Connection> connections;
+	Vector<Line3D> connections;
 
-	void addCompany(Index guid, String companyName, String domain) {
-		Company company;
-		company.companyGUID = guid;
-		company.companyName = companyName;
-		company.domain = domain;
-		companies.pushBack(company);
-	};
-	void addUser(Index userGUID, Index companyGUID, String firstName, String lastName, String email) {
-		User user;
-		user.companyGUID = companyGUID;
-		user.userGUID = userGUID;
-		user.firstName = firstName;
-		user.lastName = lastName;
-		user.email = email;
-
-		user.position = randomVec2(-100,100);
-
-		users.pushBack(user);
-	};
-	
-	void addTask(Task task);
+	void addTask(const Task& task);
 	void update(Window& window) override;
 	void inputEvent(Window& window, InputEvent input) override;
 	void create(ResourceManager& resourceManager, Window& window) override;
+	void renderConnections(ResourceManager& resourceManager, Renderer& r) const;
+	void addCompany(Index guid, const String& companyName, const String& domain);
 	void render(ResourceManager& resourceManager, Window& window, TiledRectangle area) override;
+	void addUser(Index userGuid, Index companyGuid, const String& firstName, const String& lastName);
 };
 
 struct Organizer {
 	UserInterface ui;
 	OrganizerRenderer renderer;
 	ResourceManager resourceManager;
-	void run() {
-		resourceManager.init();
 
-		ui.create();
-
-		ui.window("Organizer", Area(1920, 1080), true, WindowState::windowed, renderer, resourceManager);
-
-		ui.run();
-	}
+	void run();
 };

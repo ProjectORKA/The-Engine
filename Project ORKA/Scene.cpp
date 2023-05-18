@@ -1,4 +1,3 @@
-
 #include "Scene.hpp"
 #include "Transform.hpp"
 
@@ -13,38 +12,35 @@ void Scene::loadFBX(Path path, ResourceManager& resourceManager) {
 	String errorMessage = "";
 
 	if (doesPathExist(getDirectory(path))) {
-
-		logEvent(String("Loading mesh: (").append(path.stem().string()).append(") from (").append(path.string()).append(")"));
+		logEvent(
+			String("Loading mesh: (").append(path.stem().string()).append(") from (").append(path.string()).
+			                          append(")"));
 
 		Assimp::Importer importer;
 		const aiScene* assimpScene = importer.ReadFile(path.string(),
-			aiProcess_GenUVCoords |
-			aiProcess_Triangulate |
-			aiProcess_SortByPType |
-			aiProcess_FindInvalidData |
-			aiProcess_FindDegenerates |
-			aiProcess_CalcTangentSpace |
-			aiProcess_GenSmoothNormals |
-			aiProcess_ImproveCacheLocality |
-			aiProcess_ValidateDataStructure |
-			aiProcess_JoinIdenticalVertices |
-			aiProcess_RemoveRedundantMaterials |
-			0
+		                                               aiProcess_GenUVCoords |
+		                                               aiProcess_Triangulate |
+		                                               aiProcess_SortByPType |
+		                                               aiProcess_FindInvalidData |
+		                                               aiProcess_FindDegenerates |
+		                                               aiProcess_CalcTangentSpace |
+		                                               aiProcess_GenSmoothNormals |
+		                                               aiProcess_ImproveCacheLocality |
+		                                               aiProcess_ValidateDataStructure |
+		                                               aiProcess_JoinIdenticalVertices |
+		                                               aiProcess_RemoveRedundantMaterials |
+		                                               0
 		);
 
 		errorMessage = importer.GetErrorString();
-		if (errorMessage == "") {
-
+		if (errorMessage.empty()) {
 			if (assimpScene->HasMeshes()) {
-
 				for (Index objectID = 0; objectID < assimpScene->mRootNode->mNumChildren; objectID++) {
-
 					if (assimpScene->mRootNode->mChildren[objectID]->mNumMeshes > 0) {
-
 						//get all meshes of object
 						UInt numMeshes = assimpScene->mRootNode->mChildren[objectID]->mNumMeshes;
 
-						CPUMesh mesh;
+						CpuMesh mesh;
 						mesh.name = String(assimpScene->mRootNode->mChildren[objectID]->mName.C_Str());
 
 						UInt lastIndex = 0;
@@ -53,7 +49,8 @@ void Scene::loadFBX(Path path, ResourceManager& resourceManager) {
 							Index meshID = assimpScene->mRootNode->mChildren[objectID]->mMeshes[objectsMeshID];
 
 							aiColor4D diffuseColor(0.0f, 0.0f, 0.0f, 0.0f);
-							aiGetMaterialColor(assimpScene->mMaterials[assimpScene->mMeshes[meshID]->mMaterialIndex], AI_MATKEY_COLOR_DIFFUSE, &diffuseColor);
+							aiGetMaterialColor(assimpScene->mMaterials[assimpScene->mMeshes[meshID]->mMaterialIndex],
+							                   AI_MATKEY_COLOR_DIFFUSE, &diffuseColor);
 
 							Vec3 color(diffuseColor.r, diffuseColor.g, diffuseColor.b);
 
@@ -67,29 +64,31 @@ void Scene::loadFBX(Path path, ResourceManager& resourceManager) {
 									vertex.x = assimpScene->mMeshes[meshID]->mVertices[i].x;
 									vertex.y = assimpScene->mMeshes[meshID]->mVertices[i].y;
 									vertex.z = assimpScene->mMeshes[meshID]->mVertices[i].z;
-									mesh.positions.pushBack(vertex);
+									mesh.positions.push_back(vertex);
 
-									Vec2 texCoord = Vec2(0);
+									auto texCoord = Vec2(0);
 									if (assimpScene->mMeshes[meshID]->mTextureCoords[0]) {
 										texCoord.x = assimpScene->mMeshes[meshID]->mTextureCoords[0][i].x;
 										texCoord.y = assimpScene->mMeshes[meshID]->mTextureCoords[0][i].y;
 									}
-									mesh.textureCoordinates.pushBack(texCoord);
+									mesh.textureCoordinates.push_back(texCoord);
 
 									Vec3 normal;
 									normal.x = assimpScene->mMeshes[meshID]->mNormals[i].x;
 									normal.y = assimpScene->mMeshes[meshID]->mNormals[i].y;
 									normal.z = assimpScene->mMeshes[meshID]->mNormals[i].z;
-									mesh.normals.pushBack(normal);
+									mesh.normals.push_back(normal);
 
-									mesh.vertexColors.pushBack(color);
+									mesh.vertexColors.push_back(color);
 								}
 
 								if (assimpScene->mMeshes[meshID]->HasFaces()) {
 									for (UInt i = 0; i < assimpScene->mMeshes[meshID]->mNumFaces; i++) {
-										for (UInt j = 0; j < assimpScene->mMeshes[meshID]->mFaces->mNumIndices; j++) { //should always be 3 (0 -> 1 -> 2 <<)
-											Index index = lastIndex + assimpScene->mMeshes[meshID]->mFaces[i].mIndices[j];
-											mesh.indices.pushBack(index);
+										for (UInt j = 0; j < assimpScene->mMeshes[meshID]->mFaces->mNumIndices; j++) {
+											//should always be 3 (0 -> 1 -> 2 <<)
+											Index index = lastIndex + assimpScene->mMeshes[meshID]->mFaces[i].mIndices[
+												j];
+											mesh.indices.push_back(index);
 										}
 									}
 								}
@@ -100,27 +99,28 @@ void Scene::loadFBX(Path path, ResourceManager& resourceManager) {
 							lastIndex += assimpScene->mMeshes[meshID]->mNumVertices;
 						}
 
-						if (errorMessage.size()) {
-							logError(String("The model (").append(path.stem().string()).append(") could not be loaded! (").append(path.string()).append(")").append(" Error: ").append(errorMessage));
+						if (!errorMessage.empty()) {
+							logError(
+								String("The model (").append(path.stem().string()).append(") could not be loaded! (").
+								                      append(path.string()).append(")").append(" Error: ").append(
+									                      errorMessage));
 							mesh.loaded = false;
 							break;
 						}
-						else {
-							mesh.checkIntegrity();
-							mesh.saveMeshFile(resourceManager);
-						}
-						meshes.pushBack(mesh);
+						mesh.checkIntegrity();
+						mesh.saveMeshFile(resourceManager);
+						meshes.push_back(mesh);
 					}
 				}
 			}
 			else errorMessage = "No meshes in fbx scene!";
 		}
 	}
-	else {
-		errorMessage = path.parent_path().string().append(" does not exist!");
-	}
+	else { errorMessage = path.parent_path().string().append(" does not exist!"); }
 
-	if (errorMessage.size()) {
-		logError(String("The model (").append(path.stem().string()).append(") could not be loaded! (").append(path.string()).append(")").append(" Error: ").append(errorMessage));
+	if (!errorMessage.empty()) {
+		logError(
+			String("The model (").append(path.stem().string()).append(") could not be loaded! (").append(path.string()).
+			                      append(")").append(" Error: ").append(errorMessage));
 	}
 }

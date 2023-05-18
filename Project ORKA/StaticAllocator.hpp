@@ -1,12 +1,11 @@
-
 #pragma once
 
 #include "Basics.hpp"
 #include "Debug.hpp"
 #include "BaseAllocator.hpp"
 
-template<typename Allocator = BaseAllocator>
-struct StaticAllocator{
+template <typename Allocator = BaseAllocator>
+struct StaticAllocator {
 	SizeT size;
 	void* data = nullptr;
 	void* head = nullptr;
@@ -16,18 +15,15 @@ struct StaticAllocator{
 		if (data)this->size = size;
 		else logError("Could not allocate own memory!");
 	}
-	void* allocate(SizeT size) {
+
+	void* allocate(const SizeT size) {
 		if ((head + size) < (data + this->size)) {
 			void* oldHead = head;
 			head = head + size;
 			return oldHead;
 		}
-		else {
-			logError("Could not provide memory, increase initial allocation!");
-			return nullptr;
-		}
+		logError("Could not provide memory, increase initial allocation!");
+		return nullptr;
 	};
-	~StaticAllocator() {
-		free(data);
-	}
+	~StaticAllocator() { free(data); }
 };

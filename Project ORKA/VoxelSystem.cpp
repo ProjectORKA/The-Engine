@@ -1,4 +1,3 @@
-
 #include "VoxelSystem.hpp"
 
 #include "Renderer.hpp"
@@ -7,37 +6,36 @@ Chunk::Chunk() {
 	for (Int x = 0; x < VOXEL_CHUNK_SIZE; x++) {
 		for (Int y = 0; y < VOXEL_CHUNK_SIZE; y++) {
 			for (Int z = VOXEL_CHUNK_HEIGHT - 1; z > 0; z--) {
-				voxels[x][y][z] = (z / Float(VOXEL_CHUNK_HEIGHT) * 2) < 1 + noise.octaveNoise0_1(x / Float(VOXEL_CHUNK_SIZE), y / Float(VOXEL_CHUNK_SIZE), 16);
+				voxels[x][y][z] = (z / static_cast<Float>(VOXEL_CHUNK_HEIGHT) * 2) < 1 + noise.octaveNoise0_1(
+					x / static_cast<Float>(VOXEL_CHUNK_SIZE), y / static_cast<Float>(VOXEL_CHUNK_SIZE), 16);
 			}
 		}
 	}
 }
 
-CPUMesh Chunk::generateMesh(ResourceManager& resourceManager) {
-
-	CPUMesh terrain;
+CpuMesh Chunk::generateMesh(ResourceManager& resourceManager) const {
+	CpuMesh terrain;
 	terrain.name = "terrain";
 	terrain.drawMode = MeshDrawMode::staticMode;
 	terrain.primitiveMode = PrimitiveMode::Triangles;
 
-	CPUMesh topFace;
+	CpuMesh topFace;
 	topFace.load(resourceManager, "voxelTop");
-	CPUMesh bottomFace;
+	CpuMesh bottomFace;
 	bottomFace.load(resourceManager, "voxelBot");
-	CPUMesh rightFace;
+	CpuMesh rightFace;
 	rightFace.load(resourceManager, "voxelRight");
-	CPUMesh leftFace;
+	CpuMesh leftFace;
 	leftFace.load(resourceManager, "voxelLeft");
-	CPUMesh frontFace;
+	CpuMesh frontFace;
 	frontFace.load(resourceManager, "voxelFront");
-	CPUMesh backFace;
+	CpuMesh backFace;
 	backFace.load(resourceManager, "voxelBack");
 
 	for (Int x = 0; x < VOXEL_CHUNK_SIZE; x++) {
 		for (Int y = 0; y < VOXEL_CHUNK_SIZE; y++) {
 			for (Int z = 0; z < VOXEL_CHUNK_HEIGHT; z++) {
-
-				CPUMesh currentFace;
+				CpuMesh currentFace;
 
 				if (voxels[x][y][z]) {
 					//is terrain

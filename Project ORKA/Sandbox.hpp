@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include "Game.hpp"
@@ -11,13 +10,13 @@ struct SandboxRenderer : public GameRenderer {
 	DebugPlayer player;
 	Float mouseSensitivity = 0.0015f;
 
-	InputEvent enter = InputEvent(InputType::Mouse, LMB, 1);
-	InputEvent exit = InputEvent(InputType::Mouse, RMB, 0);
-	InputEvent wireframeToogle = InputEvent(InputType::KeyBoard, F, 1);
+	InputEvent enter = InputEvent(InputType::Mouse, LMB, true);
+	InputEvent exit = InputEvent(InputType::Mouse, RMB, false);
+	InputEvent wireframeToogle = InputEvent(InputType::KeyBoard, F, true);
 
 	void update(Window& window) override;
 	void inputEvent(Window& window, InputEvent input) override;
-	void create(ResourceManager& resourceManager, Window& window);
+	void create(ResourceManager& resourceManager, Window& window) override;
 	void render(ResourceManager& resourceManager, Window& window, TiledRectangle area) override;
 };
 

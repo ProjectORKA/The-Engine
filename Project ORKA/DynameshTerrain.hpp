@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include "Basics.hpp"
@@ -15,11 +14,9 @@ struct DynameshNode {
 	Vec3 position = Vec3(1);
 	Float size = 1.0f;
 
-	~DynameshNode() {
-		exists = false;
-	}
+	~DynameshNode() { exists = false; }
 
-	void render(ResourceManager& resourceManager, Renderer& renderer);
+	void render(ResourceManager& resourceManager, Renderer& renderer) const;
 };
 
 struct DynameshTerrain {

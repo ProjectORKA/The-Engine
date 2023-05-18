@@ -12,7 +12,7 @@ struct GPUSimRenderer : public GameRenderer {
 	UInt factionsID2 = 0;
 
 	void setup(Renderer& renderer) {
-		UInt worldSize = 1024;
+		const UInt worldSize = 1024;
 
 		CPUTexture cpuTexture;
 		cpuTexture.channels = 1;

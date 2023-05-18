@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include "Basics.hpp"
@@ -6,8 +5,8 @@
 struct TransformationStack {
 	Vector<Matrix> matrices;
 
-	Matrix get();
+	Matrix get() const;
 	void popMatrix();
-	void pushMatrix(Matrix matrix);
-	void overridePush(Matrix matrix);
+	void pushMatrix(const Matrix& matrix);
+	void overridePush(const Matrix& matrix);
 };

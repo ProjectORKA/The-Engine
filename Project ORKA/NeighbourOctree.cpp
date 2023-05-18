@@ -1,4 +1,3 @@
-
 #include "NeighbourOctree.hpp"
 #include "Renderer.hpp"
 #include "PerlinNoise.hpp"
@@ -15,82 +14,62 @@ void NeighbourOctree::create() {
 	root.isTerrain = true;
 	root.isSurface = true;
 }
-void NeighbourOctree::destroy() {
-	root.unsubdivide();
-}
-void NeighbourOctree::update(Vec3 location) {
-	root.update(location);
-}
+
+void NeighbourOctree::destroy() { root.unsubdivide(); }
+void NeighbourOctree::update(const Vec3 location) { root.update(location); }
 
 NeighbourOctreeNode& NeighbourOctreeNode::nlr() {
-	NeighbourOctreeNode* cur = this;
+	const NeighbourOctreeNode* cur = this;
 	while (!cur->nl) {
-		if (cur->parent) {
-			cur = cur->parent;
-		}
-		else {
-			logError("Quadtree Critical Failure!");
-		}
+		if (cur->parent) { cur = cur->parent; }
+		else { logError("Quadtree Critical Failure!"); }
 	}
 	return *cur->nl;
 }
+
 NeighbourOctreeNode& NeighbourOctreeNode::nrr() {
-	NeighbourOctreeNode* cur = this;
+	const NeighbourOctreeNode* cur = this;
 	while (!cur->nr) {
-		if (cur->parent) {
-			cur = cur->parent;
-		}
-		else {
-			logError("Quadtree Critical Failure!");
-		}
+		if (cur->parent) { cur = cur->parent; }
+		else { logError("Quadtree Critical Failure!"); }
 	}
 	return *cur->nr;
 }
+
 NeighbourOctreeNode& NeighbourOctreeNode::nbr() {
-	NeighbourOctreeNode* cur = this;
+	const NeighbourOctreeNode* cur = this;
 	while (!cur->nb) {
-		if (cur->parent) {
-			cur = cur->parent;
-		}
-		else {
-			logError("Quadtree Critical Failure!");
-		}
+		if (cur->parent) { cur = cur->parent; }
+		else { logError("Quadtree Critical Failure!"); }
 	}
 	return *cur->nb;
 }
+
 NeighbourOctreeNode& NeighbourOctreeNode::nfr() {
-	NeighbourOctreeNode* cur = this;
+	const NeighbourOctreeNode* cur = this;
 	while (!cur->nf) {
-		if (cur->parent) {
-			cur = cur->parent;
-		}
-		else {
-			logError("Quadtree Critical Failure!");
-		}
+		if (cur->parent) { cur = cur->parent; }
+		else { logError("Quadtree Critical Failure!"); }
 	}
 	return *cur->nf;
 }
+
 NeighbourOctreeNode& NeighbourOctreeNode::ntr() {
-	NeighbourOctreeNode* cur = this;
+	const NeighbourOctreeNode* cur = this;
 	while (!cur->nt) {
-		if (cur->parent) {
-			cur = cur->parent;
-		}
+		if (cur->parent) { cur = cur->parent; }
 		else {
 			logError("Quadtree Critical Failure!"); //will probably crash at root, because it doesent loop
 		}
 	}
 	return *cur->nt;
 }
+
 NeighbourOctreeNode& NeighbourOctreeNode::ndr() {
-	NeighbourOctreeNode* cur = this;
+	const NeighbourOctreeNode* cur = this;
 	while (!cur->nd) {
-		if (cur->parent) {
-			cur = cur->parent;
-		}
-		else {
-			logError("Quadtree Critical Failure!");
-		}
+		if (cur->parent) { cur = cur->parent; }
+		else { logError("Quadtree Critical Failure!"); }
 	}
 	return *cur->nd;
 }
@@ -106,18 +85,19 @@ void NeighbourOctreeNode::subdivide() {
 		c110 = new NeighbourOctreeNode();
 		c111 = new NeighbourOctreeNode();
 
-		c000->create(*this, 0, 0, 0);
-		c001->create(*this, 0, 0, 1);
-		c010->create(*this, 0, 1, 0);
-		c011->create(*this, 0, 1, 1);
-		c100->create(*this, 1, 0, 0);
-		c101->create(*this, 1, 0, 1);
-		c110->create(*this, 1, 1, 0);
-		c111->create(*this, 1, 1, 1);
+		c000->create(*this, false, false, false);
+		c001->create(*this, false, false, true);
+		c010->create(*this, false, true, false);
+		c011->create(*this, false, true, true);
+		c100->create(*this, true, false, false);
+		c101->create(*this, true, false, true);
+		c110->create(*this, true, true, false);
+		c111->create(*this, true, true, true);
 
 		subdivided = true;
 	}
 }
+
 void NeighbourOctreeNode::unsubdivide() {
 	if (subdivided) {
 		subdivided = false;
@@ -166,34 +146,29 @@ void NeighbourOctreeNode::unsubdivide() {
 		c101 = nullptr;
 		c110 = nullptr;
 		c111 = nullptr;
-
 	}
 }
-void NeighbourOctreeNode::updateIsSurface()
-{
+
+void NeighbourOctreeNode::updateIsSurface() {
 	if (hasAllNeighbours) {
-		if (isTerrain) {
-			isSurface = !(nfr().isTerrain && nbr().isTerrain && nlr().isTerrain && nrr().isTerrain);
-		}
-		else {
-			isSurface = nfr().isTerrain || nbr().isTerrain || nlr().isTerrain || nrr().isTerrain;
-		}
+		if (isTerrain) { isSurface = !(nfr().isTerrain && nbr().isTerrain && nlr().isTerrain && nrr().isTerrain); }
+		else { isSurface = nfr().isTerrain || nbr().isTerrain || nlr().isTerrain || nrr().isTerrain; }
 	}
 	else isSurface = true;
 
 	if (isSurface) {
-		NeighbourOctreeNode* curr = this;
+		auto curr = this;
 		while (curr) {
 			curr->isSurface = true;
 			curr = curr->parent;
 		}
 	}
 }
-void NeighbourOctreeNode::update(Vec3 location) {
 
-	inRenderDistance = withinDiamondArea(position - location, pow(2, 5 - level+1));
+void NeighbourOctreeNode::update(const Vec3 location) {
+	inRenderDistance = withinDiamondArea(position - location, pow(2, 5 - level + 1));
 
-	//if (!inRenderDistance) unsubdivide();
+	//if (!inRenderDistance) unSubdivide();
 
 	if (subdivided && inRenderDistance) {
 		c000->update(location);
@@ -208,10 +183,10 @@ void NeighbourOctreeNode::update(Vec3 location) {
 
 	if (inRenderDistance && isSurface) subdivide();
 }
-void NeighbourOctreeNode::updateHasAllNeighbours() {
-	hasAllNeighbours = (nl && nr && nb && nf && nt && nd);
-}
-void NeighbourOctreeNode::removeSelfFromNeighbours() {
+
+void NeighbourOctreeNode::updateHasAllNeighbours() { hasAllNeighbours = (nl && nr && nb && nf && nt && nd); }
+
+void NeighbourOctreeNode::removeSelfFromNeighbours() const {
 	if (nf)nf->nb = nullptr;
 	if (nb)nb->nf = nullptr;
 	if (nr)nr->nl = nullptr;
@@ -219,8 +194,8 @@ void NeighbourOctreeNode::removeSelfFromNeighbours() {
 	if (nt)nt->nd = nullptr;
 	if (nd)nd->nt = nullptr;
 }
-void NeighbourOctreeNode::create(NeighbourOctreeNode& parent, Bool x, Bool y, Bool z) {
 
+void NeighbourOctreeNode::create(NeighbourOctreeNode& parent, const Bool x, const Bool y, const Bool z) {
 	this->parent = &parent;
 	level = parent.level + 1;
 	if (x) position.x = parent.position.x + pow(2, 1 - level);
@@ -316,22 +291,47 @@ void NeighbourOctreeNode::create(NeighbourOctreeNode& parent, Bool x, Bool y, Bo
 		}
 	}
 
-	Float noiseSize = 4;
-	isTerrain = noise.octaveNoise0_1(position.x * noiseSize, position.y * noiseSize, position.z * noiseSize, 8) + position.z - 0.5 < 0.5;
+	const Float noiseSize = 4;
+	isTerrain = noise.octaveNoise0_1(position.x * noiseSize, position.y * noiseSize, position.z * noiseSize, 8) +
+		position.z - 0.5 < 0.5;
 
 	//make sure neighbours have connection to this (and update them for good measure)
-	if (nf) { nf->nb = this; nf->updateHasAllNeighbours(); nf->updateIsSurface();}
-	if (nb) { nb->nf = this; nb->updateHasAllNeighbours(); nb->updateIsSurface();}
-	if (nr) { nr->nl = this; nr->updateHasAllNeighbours(); nr->updateIsSurface();}
-	if (nl) { nl->nr = this; nl->updateHasAllNeighbours(); nl->updateIsSurface();}
-	if (nt) { nt->nd = this; nt->updateHasAllNeighbours(); nt->updateIsSurface();}
-	if (nd) { nd->nt = this; nd->updateHasAllNeighbours(); nd->updateIsSurface();}
+	if (nf) {
+		nf->nb = this;
+		nf->updateHasAllNeighbours();
+		nf->updateIsSurface();
+	}
+	if (nb) {
+		nb->nf = this;
+		nb->updateHasAllNeighbours();
+		nb->updateIsSurface();
+	}
+	if (nr) {
+		nr->nl = this;
+		nr->updateHasAllNeighbours();
+		nr->updateIsSurface();
+	}
+	if (nl) {
+		nl->nr = this;
+		nl->updateHasAllNeighbours();
+		nl->updateIsSurface();
+	}
+	if (nt) {
+		nt->nd = this;
+		nt->updateHasAllNeighbours();
+		nt->updateIsSurface();
+	}
+	if (nd) {
+		nd->nt = this;
+		nd->updateHasAllNeighbours();
+		nd->updateIsSurface();
+	}
 
 	updateHasAllNeighbours();
 	updateIsSurface();
 }
 
-void renderNeighbourOctreeNode(ResourceManager& resourceManager, NeighbourOctreeNode & node, Renderer& renderer) {
+void renderNeighbourOctreeNode(ResourceManager& resourceManager, const NeighbourOctreeNode& node, Renderer& renderer) {
 	if (!node.inRenderDistance || !node.subdivided) {
 		if (node.isTerrain) {
 			Transform t;

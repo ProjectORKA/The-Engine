@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include "Basics.hpp"
@@ -12,8 +11,8 @@ struct IdFramebuffer {
 	UInt triangleID = -1;
 	Index framebufferID = 0;
 
-	void read(Renderer& renderer);
-	void draw(Renderer& renderer);
-	void create(Renderer & renderer);
+	void read(Renderer& renderer) const;
+	void draw(Renderer& renderer) const;
+	void create(Renderer& renderer);
 	void updateIdsUnderCursor(Window& window);
 };

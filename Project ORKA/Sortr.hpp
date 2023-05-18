@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include "Game.hpp"
@@ -6,7 +5,7 @@
 
 struct Sortr : public GameRenderer {
 	Path unsortedFolder;
-	
+
 	Vector<Path> sortFolders;
 
 	void render(ResourceManager& resourceManager, Window& window, TiledRectangle area) override {};

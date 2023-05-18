@@ -1,4 +1,3 @@
-
 #include "Sandbox.hpp"
 #include "UserInterface.hpp"
 
@@ -6,12 +5,9 @@ void SandboxRenderer::create(ResourceManager& resourceManager, Window& window) {
 	player.camera.location = Vec3(0, -5, 0);
 }
 
-void SandboxRenderer::update(Window& window) {
-	player.update(window);
-}
+void SandboxRenderer::update(Window& window) { player.update(window); }
 
-void SandboxRenderer::inputEvent(Window& window, InputEvent input) {
-	
+void SandboxRenderer::inputEvent(Window& window, const InputEvent input) {
 	if (input == enter) window.captureCursor();
 	if (input == exit) window.uncaptureCursor();
 	if (input == wireframeToogle) window.renderer.wireframeMode = !window.renderer.wireframeMode;
@@ -39,10 +35,12 @@ void SandboxRenderer::render(ResourceManager& resourceManager, Window& window, T
 	r.setDepthTest(false); //disables depth to always draw on top
 	r.screenSpace(); // aligns coordinate system with screenspace
 
-	r.textRenderSystem.render(resourceManager,r, String("W A S D Q E to move"), Vec2(50, 250));
-	r.textRenderSystem.render(resourceManager,r, String("F for wireframe mode"), Vec2(50, 200));
-	r.textRenderSystem.render(resourceManager,r, String("Scroll to change speed"), Vec2(50,150));
-	r.textRenderSystem.render(resourceManager,r, String("FPS: ").append(toString(Int(1.0f / r.time.delta))), Vec2(50)); // renders current framerate to the screen
+	r.textRenderSystem.render(resourceManager, r, String("W A S D Q E to move"), Vec2(50, 250));
+	r.textRenderSystem.render(resourceManager, r, String("F for wireframe mode"), Vec2(50, 200));
+	r.textRenderSystem.render(resourceManager, r, String("Scroll to change speed"), Vec2(50, 150));
+	r.textRenderSystem.render(resourceManager, r,
+	                          String("FPS: ").append(toString(static_cast<Int>(1.0f / r.time.delta))), Vec2(50));
+	// renders current framerate to the screen
 }
 
 void Sandbox::run() {

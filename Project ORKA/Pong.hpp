@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include "Game.hpp"
@@ -11,7 +10,7 @@ struct Window;
 
 struct PongPlayer {
 	ULL score = 0;
-	Vec2 position = Vec2(0,0);
+	Vec2 position = Vec2(0, 0);
 	Vec2 direction = Vec2(1, 0);
 
 	Bool shoot = false;
@@ -35,7 +34,7 @@ struct Ball {
 	Bool stuckToPaddle = true;
 	Bool stuckToPaddle1 = true;
 
-	void render(ResourceManager& resourceManager, Renderer& renderer);
+	void render(ResourceManager& resourceManager, Renderer& renderer) const;
 	void update(Float deltaTime, PongPlayer players[2]);
 };
 
@@ -68,4 +67,4 @@ struct Pong {
 	};
 };
 
-Ball* getClosestBall(PongPlayer& player, Vector<Ball>& balls);
+Ball* getClosestBall(const PongPlayer& player, Vector<Ball>& balls);

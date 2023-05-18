@@ -1,9 +1,8 @@
-
 #include "ProjectMelon.hpp"
 #include "Window.hpp"
 #include "Random.hpp"
 
-void MelonRenderer::inputEvent(Window& window, InputEvent input) {
+void MelonRenderer::inputEvent(Window& window, const InputEvent input) {
 	if (input == enter) window.captureCursor();
 	if (input == exit) window.uncaptureCursor();
 
@@ -14,6 +13,7 @@ void MelonRenderer::update(Window& window) {
 	player.update(window);
 	world.update(player);
 }
+
 void MelonRenderer::render(ResourceManager& resourceManager, Window& window, TiledRectangle area) {
 	Renderer& r = window.renderer;
 
@@ -25,14 +25,14 @@ void MelonRenderer::render(ResourceManager& resourceManager, Window& window, Til
 	r.setWireframeMode(false);
 	r.setCulling(true);
 	r.setDepthTest(true);
-	
+
 	////setup
 	////background
 	r.clearColor(Vec4(0.25, 0.321, 0.0001, 0));
-	
-	r.fill(Color(1,0,0,1));
+
+	r.fill(Color(1, 0, 0, 1));
 	r.uniforms().sunDir(Vec4(normalize(Vec3(-0.666, 0.333, 1)), 1));
-	
+
 	r.useShader(resourceManager, "MelonUberShader");
 	player.render(resourceManager, window);
 
@@ -40,14 +40,6 @@ void MelonRenderer::render(ResourceManager& resourceManager, Window& window, Til
 	//r.renderMesh(resourceManager, "melonRock");
 
 	world.render(resourceManager, r);
-
-
-
-
-
-
-
-
 
 
 	////renderer.clearColor(Vec4(0));

@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include "Basics.hpp"
@@ -15,9 +14,8 @@ struct ClipMap {
 	GPUMesh terrain;
 
 
-	void render(Renderer& renderer, Vec3 location) {
-		
-	}
+	void render(Renderer& renderer, Vec3 location) { }
+
 	void create(Renderer& renderer, Vec3 location) {
 		heightmap.channels = 1;
 		heightmap.dataType = dataTypeFloat;

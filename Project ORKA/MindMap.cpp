@@ -1,21 +1,13 @@
-
 #include "MindMap.hpp"
 #include "Window.hpp"
 
-void MindMap::update()
-{
+void MindMap::update() {
 	static int t = 0;
-	if (nodeCount < 1)
-	{
-		addNode();
-	}
+	if (nodeCount < 1) { addNode(); }
 	t++;
 
 	//keep distance to nodes
-	for (UInt i = 0; i < connections.size(); i++)
-	{
-		MindmapConnection& c = connections[i];
-
+	for (auto& c : connections) {
 		Vec2 delta = positions[c.b] - positions[c.a];
 		//Float impact = length(delta/2.0f) - 2.0f;
 
@@ -24,21 +16,18 @@ void MindMap::update()
 
 		addForce(c.a, +delta / 1.0f);
 		addForce(c.b, -delta / 1.0f);
-
 	}
 
 	//calculate collisions
 	//for every node
-	for (UInt a = 0; a < nodeCount; a++)
-	{
+	for (UInt a = 0; a < nodeCount; a++) {
 		//get every other node
-		for (UInt b = a + 1; b < nodeCount; b++)
-		{
+		for (UInt b = a + 1; b < nodeCount; b++) {
 			Vec2 delta = positions[b] - positions[a];
 			if (delta != Vec2(0)) {
 				Float intersectionDistance = 2 - length(delta);
 
-				Float impact = 1 / length(delta);
+				const Float impact = 1 / length(delta);
 
 				if (impact > 0.0) {
 					//nodes colliding
@@ -51,10 +40,8 @@ void MindMap::update()
 		}
 	}
 
-	for (UInt i = 0; i < nodeCount; i++)
-	{
-		if (numforces[i])
-		{
+	for (UInt i = 0; i < nodeCount; i++) {
+		if (numforces[i]) {
 			positions[i] += forces[i] / numforces[i];
 			forces[i] = Vec2(0);
 			numforces[i] = 0;
@@ -62,20 +49,18 @@ void MindMap::update()
 	}
 
 	positions[0] = Vec2(-100, 0);
-
 }
-void MindMap::addNode()
-{
-	forces.emplaceBack();
-	numforces.emplaceBack();
-	for (Int i = 0; i < random(1) + 1; i++) connections.emplaceBack(random(nodeCount), nodeCount);
-	if (nodeCount) positions.pushBack(randomVec2(-1, 1) + positions[connections.last().a]);
-	else positions.pushBack(Vec2(0));
+
+void MindMap::addNode() {
+	forces.emplace_back();
+	numforces.emplace_back();
+	for (Int i = 0; i < random(1) + 1; i++) connections.emplace_back(random(nodeCount), nodeCount);
+	if (nodeCount) positions.push_back(randomVec2(-1, 1) + positions[connections.back().a]);
+	else positions.push_back(Vec2(0));
 	nodeCount++;
 }
-void MindMap::render(ResourceManager& resourceManager, Renderer& renderer)
-{
 
+void MindMap::render(ResourceManager& resourceManager, Renderer& renderer) const {
 	renderer.clearColor();
 	renderer.clearDepth();
 
@@ -84,26 +69,24 @@ void MindMap::render(ResourceManager& resourceManager, Renderer& renderer)
 
 	//render connections
 	renderer.fill(Color(0.5, 0.5, 0.5, 1));
-	for (UInt i = 0; i < connections.size(); i++) {
-		renderer.line(positions[connections[i].a], positions[connections[i].b], 0.05);
-	}
+	for (auto connection : connections) { renderer.line(positions[connection.a], positions[connection.b], 0.05); }
 
 	//render nodes
 	renderer.fill(Color(1));
-	for (UInt a = 0; a < positions.size(); a++) {
-		renderer.uniforms().mMatrix(matrixFromLocation(Vec3(positions[a], 0.0f)));
+	for (auto position : positions) {
+		renderer.uniforms().mMatrix(matrixFromLocation(Vec3(position, 0.0f)));
 		renderer.renderMesh(resourceManager, "centeredPlane");
 	}
 
 	renderer.setDepthTest(true);
 }
-void MindMap::addForce(Index a, Vec2 force)
-{
+
+void MindMap::addForce(const Index a, const Vec2 force) {
 	forces[a] += force;
 	numforces[a]++;
 }
-void MindMap::renderInteractive(ResourceManager& resourceManager, Window & window)
-{
+
+void MindMap::renderInteractive(ResourceManager& resourceManager, Window& window) const {
 	Renderer& renderer = window.renderer;
 
 	renderer.setDepthTest(false);
@@ -111,16 +94,14 @@ void MindMap::renderInteractive(ResourceManager& resourceManager, Window & windo
 
 	//render connections
 	renderer.fill(Color(0.5, 0.5, 0.5, 1));
-	for (UInt i = 0; i < connections.size(); i++)
-	{
+	for (UInt i = 0; i < connections.size(); i++) {
 		renderer.uniforms().objectID(i);
 		renderer.line(positions[connections[i].a], positions[connections[i].b], 0.05);
 	}
 
 	//render nodes
 	renderer.fill(Color(1));
-	for (UInt i = 0; i < positions.size(); i++)
-	{
+	for (UInt i = 0; i < positions.size(); i++) {
 		renderer.uniforms().objectID(connections.size() - 1 + i);
 		renderer.uniforms().mMatrix(matrixFromLocation(Vec3(positions[i], 0.0f)));
 		renderer.renderMesh(resourceManager, "1x1planeCentered");

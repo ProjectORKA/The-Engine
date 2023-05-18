@@ -8,7 +8,8 @@
 
 struct Renderer;
 
-void treeGeneration(Vector<Vec3>& leaves, Vector<Vec3>& branches, Vector<Index>& connections, Float segmentSize, Float killRadius, Float leafPull);
+void treeGeneration(Vector<Vec3>& leaves, Vector<Vec3>& branches, Vector<Index>& connections, Float segmentSize,
+                    Float killRadius, Float leafPull);
 
 struct TreeGenerator {
 	Bool treeGen = false;
@@ -18,7 +19,7 @@ struct TreeGenerator {
 	BranchStructure tree;
 
 	void run();
-	void render(Renderer & renderer);
+	void render(Renderer& renderer);
 };
 
 struct Tree {

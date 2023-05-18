@@ -1,26 +1,21 @@
 #include "Camera.hpp"
 
-DVec3 Camera::getRotation() {
-	return rotation;
-}
+DVec3 Camera::getRotation() const { return rotation; }
 
-Double Camera::getRotationZ() {
-	return rotation.z;
-}
+Double Camera::getRotationZ() const { return rotation.z; }
 
-Double Camera::getRotationX() {
-	return rotation.x;
-}
+Double Camera::getRotationX() const { return rotation.x; }
 
 void Camera::update() {
 	//prevent looking upside down
-	const Float cap = PI/2;
-	if (rotation.x < -cap) {rotation.x = -cap;} else
-	if (rotation.x > cap) { rotation.x = cap;}
+	const Float cap = PI / 2;
+	if (rotation.x < -cap) { rotation.x = -cap; }
+	else
+		if (rotation.x > cap) { rotation.x = cap; }
 
 	//figure out direction based on z rotation
-	DVec2 direction = DVec2(sin(rotation.z), cos(rotation.z)); //direction were facing
-	DVec2 direction2 = DVec2(direction.y, -direction.x);		 //90° right of direction
+	const auto direction = DVec2(sin(rotation.z), cos(rotation.z)); //direction were facing
+	const auto direction2 = DVec2(direction.y, -direction.x); //90° right of direction
 
 	//complicated math stuff
 	forwardVector = normalize(DVec3(
@@ -36,45 +31,50 @@ void Camera::update() {
 	//calculate up from existing info
 	upVector = normalize(cross(rightVector, forwardVector));
 }
-void Camera::rotate(DVec2 rotation) {
+
+void Camera::rotate(const DVec2 rotation) {
 	this->rotation.z += rotation.x;
 	this->rotation.x -= rotation.y;
 
 	update();
 }
-void Camera::render(Renderer & renderer) {
+
+void Camera::render(Renderer& renderer) {
 	renderer.uniforms().cameraVec() = Vec4(forwardVector, 1);
 	renderer.uniforms().cameraPos() = Vec4(location, 1);
 	renderer.uniforms().vMatrix() = viewMatrix();
 	renderer.uniforms().pMatrix() = projectionMatrix(renderer.getAspectRatio());
 }
-void Camera::setRotation(DVec3 rotation) {
+
+void Camera::setRotation(const DVec3& rotation) {
 	this->rotation = rotation;
 	update();
 };
-void Camera::renderOnlyRot(Renderer& renderer)
-{
+
+void Camera::renderOnlyRot(Renderer& renderer) {
 	renderer.uniforms().cameraVec() = Vec4(forwardVector, 1);
 	renderer.uniforms().cameraPos() = Vec4(location, 1);
 	renderer.uniforms().vMatrix() = viewMatrixOnlyRot();
 	renderer.uniforms().pMatrix() = projectionMatrix(renderer.getAspectRatio());
 }
 
-Matrix Camera::viewMatrix() {
-	return glm::lookAt(
+Matrix Camera::viewMatrix() const {
+	return lookAt(
 		location,
 		location + forwardVector,
 		upVector
 	);
 }
-Matrix Camera::viewMatrixOnlyRot() {
-	return glm::lookAt(
+
+Matrix Camera::viewMatrixOnlyRot() const {
+	return lookAt(
 		Vec3(0),
 		forwardVector,
 		upVector
 	);
 }
-Matrix Camera::projectionMatrix(Float aspectRatio) {
+
+Matrix Camera::projectionMatrix(const Float aspectRatio) const {
 	return glm::perspective(
 		glm::radians(fieldOfView),
 		aspectRatio,

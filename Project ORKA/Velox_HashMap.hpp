@@ -1,4 +1,3 @@
-
 #pragma once
 
 //written by Omarito
@@ -12,14 +11,13 @@
 #include "Velox_UtilityConcepts.hpp"
 #include "Velox_HashMapHelper.hpp"
 
-template<typename K, typename V>
-struct HashMap : public hashMapHelper<K, V, std::hash<K>, FibonacciHashPolicy, std::equal_to<K>>
-{
-    using size_type = size_t;
-    using pointer = value_type*;
-    using reference = value_type&;
-    using value_type = std::pair<K*, V*>;
-    using difference_type = std::ptrdiff_t;
-    using const_pointer = const value_type*;
-    using const_reference = const value_type&;
+template <typename K, typename V>
+struct HashMap : public hashMapHelper<K, V, std::hash<K>, FibonacciHashPolicy, std::equal_to<K>> {
+	using size_type = size_t;
+	using pointer = value_type*;
+	using reference = value_type&;
+	using value_type = std::pair<K*, V*>;
+	using difference_type = std::ptrdiff_t;
+	using const_pointer = const value_type*;
+	using const_reference = const value_type&;
 };

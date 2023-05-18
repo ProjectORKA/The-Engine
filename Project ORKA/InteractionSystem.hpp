@@ -1,10 +1,9 @@
-
 #pragma once
 
 #include "Basics.hpp"
 
 struct InteractiveObject {
-	virtual void onClick(){};
+	virtual void onClick() {};
 };
 
 struct InteractionSystem {

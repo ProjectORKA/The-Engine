@@ -1,12 +1,12 @@
 #pragma once
 
-#include "OctreeSystem.hpp"
+#include "OcTreeSystem.hpp"
 
 struct Renderer;
 struct PlanetSystemPlayer;
 
 struct OctreeNodeRenderData {
-	OctreeNode* equivalentOctreeNode = nullptr;
+	OcTreeNode* equivalentOctreeNode = nullptr;
 	//data
 	Vec3 cameraPosition = Vec3(0);
 	Bool inDrawDistance = false;
@@ -22,17 +22,17 @@ struct OctreeNodeRenderData {
 	OctreeNodeRenderData* c110 = nullptr;
 	OctreeNodeRenderData* c111 = nullptr;
 
-	void count();
+	void count() const;
 	void destroy();
 	void subdivide();
 	void unsubdivide();
-	void create(OctreeNode & octreeNode);
+	void create(OcTreeNode& octreeNode);
 	void update(PlanetSystemPlayer& player);
-	void render(ResourceManager& resourceManager, Renderer & renderer);
-	void renderWater(ResourceManager& resourceManager, Renderer & renderer);
-	void updateWithoutSubdivision(PlanetSystemPlayer & player);
-	void renderLevel(ResourceManager& resourceManager, UShort level, Renderer & renderer);
-	void renderWaterLevel(ResourceManager& resourceManager, UShort level, Renderer& renderer);
+	void render(ResourceManager& resourceManager, Renderer& renderer) const;
+	void renderWater(ResourceManager& resourceManager, Renderer& renderer) const;
+	void updateWithoutSubdivision(PlanetSystemPlayer& player);
+	void renderLevel(ResourceManager& resourceManager, UShort level, Renderer& renderer) const;
+	void renderWaterLevel(ResourceManager& resourceManager, UShort level, Renderer& renderer) const;
 };
 
 struct OctreeRenderSystem {
@@ -40,9 +40,9 @@ struct OctreeRenderSystem {
 
 	Index waterTextureID = 0;
 
-	void count();
+	void count() const;
 	void destroy();
 	void create(Renderer& renderer);
 	void update(PlanetSystemPlayer& player);
-	void renderLevel(ResourceManager& resourceManager, UShort level, Renderer& renderer);
+	void renderLevel(ResourceManager& resourceManager, UShort level, Renderer& renderer) const;
 };

@@ -1,9 +1,8 @@
-
 #pragma once
 
 #include "GLFW/glfw3.h"
 
-enum Key{
+enum Key {
 	UNKNOWN = GLFW_KEY_UNKNOWN,
 	SPACE = GLFW_KEY_SPACE,
 	APOSTROPHE = GLFW_KEY_APOSTROPHE,
@@ -169,4 +168,4 @@ enum {
 };
 
 using MouseMovement = DVec2;
-using MouseState = Bool[GLFW_MOUSE_BUTTON_LAST+1];
+using MouseState = Bool[GLFW_MOUSE_BUTTON_LAST + 1];

@@ -1,4 +1,3 @@
-
 #pragma once
 
 //created by Blendurian
@@ -11,9 +10,9 @@
 #include FT_FREETYPE_H
 
 struct CharData {
-	IVec2   size;       //size of glyph texture
-	IVec2   bearing;    //top left corner of glyph
-	UInt	advance;	//offset to next glyph
+	IVec2 size; //size of glyph texture
+	IVec2 bearing; //top left corner of glyph
+	UInt advance; //offset to next glyph
 };
 
 struct GPUFont {
@@ -25,7 +24,6 @@ struct GPUFont {
 };
 
 struct GlyphTextRenderSystem {
-
 	Vector<GPUFont> fonts;
 
 	Index currentFont = 0;

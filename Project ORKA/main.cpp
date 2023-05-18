@@ -50,28 +50,33 @@
 //#include "Pong.hpp"
 //#include "SimpleRTS.hpp"
 //#include "DungeonsAndDiscord.hpp"
-//#include "Mooncrash.hpp"
+//#include "MoonCrash.hpp"
 //#include "SceneSystem.hpp"
 //#include "Blob.hpp"
 //#include "SimpleRTS.hpp"
 //#include "ProjectMelon.hpp"
 //#include "PhysicsPlayground.hpp"
-#include "ImageViewer.hpp"
-//#include "Organizer.hpp"
+//#include "ImageViewer.hpp"
+//#include "MindMapper.hpp"
+#include "Organizer.hpp"
 
 //[TODO] move advanced rendering systems like textRenderSystem out of renderer and into window
-//(basically simplify renderer to barebones tech)
+//(basically simplify renderer to bare bones tech)
 //OR separate into renderer and lowLevelRenderer
 
 //[TODO] there is a bug where the window size is not set properly
 
-Int main(Int  argc, Char* argv[]) {
-	ImageViewer imageViewer;
-	imageViewer.run(argc, argv);
+//[TODO] remove Name and NameTable and replace it with Hash and HashTable
+
+Int main(Int argc, Char* argv[]) {
+	Organizer game;
+	game.run();
 	return 0;
 }
 
 //windows entry point
-Int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, Int nCmdShow) {
+#include "Platform.hpp"
+
+Int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, Int nShowCmd) {
 	return main(__argc, __argv);
 }
