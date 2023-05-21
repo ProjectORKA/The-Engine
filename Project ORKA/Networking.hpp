@@ -83,7 +83,7 @@ inline void client()
 		std::cout << "Enter ip address:" << "\n";
 		std::cin >> ipAddress;
 
-		socket.connect(asio::ip::tcp::endpoint(asio::ip::address::from_string("127.0.0.1"), 12297));
+		socket.connect(asio::ip::tcp::endpoint(asio::ip::address::from_string(ipAddress), 12297));
 		if(socket.is_open()) std::cout << "Connected to server!" << "\n";
 
 		Thread readThread(handleRead, true, std::ref(socket));
