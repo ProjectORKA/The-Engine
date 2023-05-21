@@ -2,13 +2,18 @@
 
 #include "UIElement.hpp"
 
-struct UIButton : public UIElement {
+struct UIButton : public UiElement
+{
 	Bool pressed = false;
-	UIElement* content = nullptr;
+	UiElement* content = nullptr;
 
 	UIButton();
-	UIButton& insert(UIElement& element);
-	virtual void doThis() { beep(); };
+	UIButton& insert(UiElement& element);
+
+	virtual void doThis()
+	{
+		beep();
+	};
 
 	void update(Window& window) override;
 	void inputEvent(Window& window, InputEvent input) override;

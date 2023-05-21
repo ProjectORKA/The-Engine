@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include "Math.hpp"
@@ -13,7 +12,7 @@ struct SimpleRTSTerrainSystem {
 };
 
 struct SimpleRTSTerrainRenderingSystem {
-	GPUMesh gpuTerrain;
+	GpuMesh gpuTerrain;
 	CpuMesh cpuTerrain;
 	Vec2 offset = Vec2(0);
 

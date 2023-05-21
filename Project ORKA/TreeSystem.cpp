@@ -12,12 +12,12 @@ void treeGeneration(Vector<Vec3>& leaves, Vector<Vec3>& branches, Vector<Index>&
 
 	//check every space
 	for (Int i = 0; i < leaves.size(); i++) {
-		Index closestID;
+		Index closestId;
 		Vec3 closestPoint;
-		getClosestPoint(leaves[i], branches, closestID, closestPoint);
+		getClosestPoint(leaves[i], branches, closestId, closestPoint);
 		//add pull force to branches
 		const Vec3 delta = vectorFromAToB(closestPoint, leaves[i]);
-		pullBranches[closestID] += delta;
+		pullBranches[closestId] += delta;
 		pullLeaves[i] -= delta;
 	}
 

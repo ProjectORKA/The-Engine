@@ -8,7 +8,8 @@ struct Window;
 
 #define PONG_DIFFICULTY_MODIFIER 1.05
 
-struct PongPlayer {
+struct PongPlayer
+{
 	ULL score = 0;
 	Vec2 position = Vec2(0, 0);
 	Vec2 direction = Vec2(1, 0);
@@ -26,7 +27,8 @@ struct PongPlayer {
 	void aiInput(Vector<Ball>& balls, Float deltaTime);
 };
 
-struct Ball {
+struct Ball
+{
 	//ball
 	Vec2 position = Vec2(0);
 	Vec2 velocity = Vec2(1, 0);
@@ -38,31 +40,34 @@ struct Ball {
 	void update(Float deltaTime, PongPlayer players[2]);
 };
 
-struct PongRenderer : public GameRenderer {
+struct PongRenderer : public GameRenderer
+{
 	//players
 	PongPlayer players[2];
 
-	InputID moveUpButton1 = InputID(InputType::KeyBoard, W);
-	InputID moveDownButton1 = InputID(InputType::KeyBoard, S);
-	InputID shootButton1 = InputID(InputType::KeyBoard, SPACE);
-	InputID shootButton1secondary = InputID(InputType::Mouse, 0);
+	InputId moveUpButton1 = InputId(InputType::KeyBoard, W);
+	InputId moveDownButton1 = InputId(InputType::KeyBoard, S);
+	InputId shootButton1 = InputId(InputType::KeyBoard, SPACE);
+	InputId shootButton1secondary = InputId(InputType::Mouse, 0);
 
-	InputID moveUpButton2 = InputID(InputType::KeyBoard, UP);
-	InputID moveDownButton2 = InputID(InputType::KeyBoard, DOWN);
-	InputID shootButton2 = InputID(InputType::KeyBoard, LEFT);
+	InputId moveUpButton2 = InputId(InputType::KeyBoard, UP);
+	InputId moveDownButton2 = InputId(InputType::KeyBoard, DOWN);
+	InputId shootButton2 = InputId(InputType::KeyBoard, LEFT);
 
 	Vector<Ball> balls;
 	void update(Window& window) override;
 	void render(ResourceManager& resourceManager, Window& window, TiledRectangle area) override;
 };
 
-struct Pong {
+struct Pong
+{
 	ResourceManager resourceManager;
 	UserInterface ui;
 	PongRenderer pongRenderer;
 
-	void run() {
-		ui.window("Pong", Area(1920, 1080), true, WindowState::fullscreen, pongRenderer, resourceManager);
+	void run()
+	{
+		ui.window("Pong", Area(1920, 1080), true, WindowState::Fullscreen, pongRenderer, resourceManager);
 		ui.run();
 	};
 };

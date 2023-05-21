@@ -35,7 +35,7 @@ void CpuMesh::checkIntegrity() {
 }
 
 CpuMesh::CpuMesh(const Graph& graph) {
-	drawMode = MeshDrawMode::dynamicMode;
+	drawMode = MeshDrawMode::DynamicMode;
 	name = "graph";
 	primitiveMode = PrimitiveMode::LineStrip;
 
@@ -78,7 +78,7 @@ void CpuMesh::merge(const CpuMesh& source) {
 }
 
 void CpuMesh::render(Renderer& renderer) const {
-	GPUMesh mesh;
+	GpuMesh mesh;
 	mesh.upload(*this);
 	mesh.render(renderer.uniforms());
 	mesh.unload();

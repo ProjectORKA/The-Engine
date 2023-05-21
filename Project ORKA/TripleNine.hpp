@@ -2,7 +2,6 @@
 
 #include "Game.hpp"
 #include "Player.hpp"
-#include "Profiler.hpp"
 #include "Random.hpp"
 
 //required
@@ -13,7 +12,8 @@
 //  targets explode
 //		decal splatter on objects
 
-enum class PlayerState {
+enum class PlayerState
+{
 	standing,
 	running,
 	crouching,
@@ -21,18 +21,24 @@ enum class PlayerState {
 	flying,
 };
 
-extern Index enemyID;
+extern Index enemyId;
 
-struct TripleNineEnemy : UIElement {
+struct TripleNineEnemy : UiElement
+{
 	Vec3 position = Vec3(randomVec2(-85, 85), 0);
 	Index id = -1;
 
-	void die() { position = Vec3(randomVec2(-85, 85), 0); }
+	void die()
+	{
+		position = Vec3(randomVec2(-85, 85), 0);
+	}
+
 	void render(ResourceManager& resourceManager, Renderer& renderer) const;
 	void renderInteractive(ResourceManager& resourceManager, Window& window, TiledRectangle area) override;
 };
 
-struct TripleNinePlayer : public Player {
+struct TripleNinePlayer : public Player
+{
 	// [TODO]
 	// implement direction vectors separate from camera
 	// crouching
@@ -42,43 +48,34 @@ struct TripleNinePlayer : public Player {
 	// either c alt or a and d to enable free cam while sprinting
 
 	//pressed input
-	InputID forward = InputID(InputType::KeyBoard, W);
-	InputID backward = InputID(InputType::KeyBoard, S);
-	InputID right = InputID(InputType::KeyBoard, D);
-	InputID left = InputID(InputType::KeyBoard, A);
-	InputID leanRight = InputID(InputType::KeyBoard, E);
-	InputID leanLeft = InputID(InputType::KeyBoard, Q);
-	InputID run = InputID(InputType::KeyBoard, SHIFT);
-	InputID shoot = InputID(InputType::Mouse, LMB);
-	InputID aim = InputID(InputType::Mouse, RMB);
-	InputID holdJump = InputID(InputType::KeyBoard, SPACE);
-	InputID crouch = InputID(InputType::KeyBoard, CTRL);
-	InputID precision = InputID(InputType::KeyBoard, ALT);
+	InputId forward = InputId(InputType::KeyBoard, W);
+	InputId backward = InputId(InputType::KeyBoard, S);
+	InputId right = InputId(InputType::KeyBoard, D);
+	InputId left = InputId(InputType::KeyBoard, A);
+	InputId leanRight = InputId(InputType::KeyBoard, E);
+	InputId leanLeft = InputId(InputType::KeyBoard, Q);
+	InputId run = InputId(InputType::KeyBoard, SHIFT);
+	InputId shoot = InputId(InputType::Mouse, LMB);
+	InputId aim = InputId(InputType::Mouse, RMB);
+	InputId holdJump = InputId(InputType::KeyBoard, SPACE);
+	InputId crouch = InputId(InputType::KeyBoard, CTRL);
+	InputId precision = InputId(InputType::KeyBoard, ALT);
 	//event input
 	InputEvent jumpTrigger = InputEvent(InputType::KeyBoard, SPACE, true);
 	//InputEvent jumpRelease = InputEvent(InputType::KeyBoard, SPACE, 0);
 
-	enum class State {
-		standing,
-		// ground
-		walking,
-		// ground, slowmove
-		sprinting,
-		// ground, fastmove
-		crouching,
-		// ground, crouch
-		sneaking,
-		// ground, crouch, slowmove
-		sliding,
-		// ground, crouch, fastmove
-		proning,
-		// ground, holding jump and crouch
-		crawling,
-		// ground, holding jump and crouch, slowmove
-		jumping,
-		// air, positive z velocity
-		falling,
-		// air, negative z velocity
+	enum class State
+	{
+		standing,	// ground
+		walking,	// ground, slow move
+		sprinting,	// ground, fast move
+		crouching,	// ground, crouch
+		sneaking,	// ground, crouch, slow move
+		sliding,	// ground, crouch, fast move
+		proning,	// ground, holding jump and crouch
+		crawling,	// ground, holding jump and crouch, slow move
+		jumping,	// air, positive z velocity
+		falling,	// air, negative z velocity
 	};
 
 	//global scale
@@ -197,14 +194,16 @@ struct TripleNinePlayer : public Player {
 	void inputEvent(Window& window, InputEvent input) override;
 };
 
-struct TripleNineSimulation : public GameSimulation {
+struct TripleNineSimulation : public GameSimulation
+{
 	Vector<TripleNineEnemy> enemies;
 
 	void create();
 	void createEnemy();
 };
 
-struct TripleNineRenderer : public GameRenderer {
+struct TripleNineRenderer : public GameRenderer
+{
 	Bool bloom = true;
 	TripleNinePlayer player;
 	Float mapSize = 0.85;
@@ -226,7 +225,8 @@ struct TripleNineRenderer : public GameRenderer {
 	void renderInteractive(ResourceManager& resourceManager, Window& window, TiledRectangle area) override;
 };
 
-struct TripleNine {
+struct TripleNine
+{
 	ResourceManager resourceManager;
 	UserInterface ui;
 	TripleNineRenderer renderer;

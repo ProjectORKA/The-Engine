@@ -37,7 +37,7 @@ void DNDRenderer::render(ResourceManager& resourceManager, Window& window, Tiled
 	r.setAlphaBlending(false);
 	r.setDepthTest(false);
 	r.fill(Color(1));
-	openglState;
+	openGlState;
 	r.clearColor();
 	r.clearDepth();
 	//renderer.renderSky(player.camera);
@@ -95,17 +95,17 @@ void DNDRenderer::render(ResourceManager& resourceManager, Window& window, Tiled
 
 void DNDRenderer::inputEvent(Window& window, const InputEvent input) {
 	if (input == enter) window.captureCursor();
-	if (input == exit) window.uncaptureCursor();
+	if (input == exit) window.unCaptureCursor();
 
 	if (input == select && window.capturing) {
-		const Index objectID = window.renderer.idFramebuffer.objectID;
+		const Index objectId = window.renderer.idFramebuffer.objectId;
 
-		logDebug(objectID);
+		logDebug(objectId);
 
-		if (objectID != -1) {
+		if (objectId != -1) {
 			if (!window.pressed(selectMultiple)) selectedObjects.clear();
-			selectedObjects.push_back(objectID);
-			lastSelectedObject = objectID;
+			selectedObjects.push_back(objectId);
+			lastSelectedObject = objectId;
 		}
 		else {
 			if (!window.pressed(selectMultiple)) {
@@ -123,7 +123,7 @@ void DNDRenderer::renderInteractive(ResourceManager& resourceManager, Window& wi
 
 	if (world->loaded) {
 		for (Int i = 0; i < world->entities.size(); i++) {
-			window.renderer.uniforms().objectID() = i;
+			window.renderer.uniforms().objectId() = i;
 			world->entities[i].render(resourceManager, window.renderer);
 		}
 	}
@@ -175,7 +175,7 @@ void DungeonsAndDiscord::run() {
 	sim.load(resourceManager);
 
 	renderer.world = &sim;
-	ui.window("Simple RTS", Area(1920, 1080), true, WindowState::windowed, renderer, resourceManager);
+	ui.window("Simple RTS", Area(1920, 1080), true, WindowState::Windowed, renderer, resourceManager);
 	ui.run();
 
 	sim.save();

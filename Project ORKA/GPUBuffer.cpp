@@ -1,4 +1,5 @@
 ﻿#include "GPUBuffer.hpp"
+#include "Debug.hpp"
 #include "GraphicsAPI.hpp"
 
 void GPUBuffer::create(const Vector<Vec4>& data, const Int location) {

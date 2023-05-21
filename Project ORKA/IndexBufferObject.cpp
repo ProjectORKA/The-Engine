@@ -1,17 +1,22 @@
 #include "IndexBufferObject.hpp"
 
-void IndexBufferObject::create(const Index* data, const UInt indexCount, const UInt usage) {
+void IndexBufferObject::create(const Index* data, const ULL indexCount, const MeshDrawMode usage)
+{
 	this->indexCount = indexCount;
 
-	apiGenBuffer(bufferID);
-	apiBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bufferID);
+	apiGenBuffer(bufferId);
+	apiBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bufferId);
 	apiBufferData(GL_ELEMENT_ARRAY_BUFFER, indexCount * sizeof(Index), data, usage);
 }
 
-void IndexBufferObject::update(const Index* data, const UInt indexCount, const UInt usage) {
+void IndexBufferObject::update(const Index* data, const ULL indexCount, const MeshDrawMode usage)
+{
 	this->indexCount = indexCount;
-	apiBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bufferID);
+	apiBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bufferId);
 	apiBufferData(GL_ELEMENT_ARRAY_BUFFER, indexCount * sizeof(Index), data, usage);
 }
 
-void IndexBufferObject::unload() const { apiDeleteBuffer(bufferID); }
+void IndexBufferObject::unload() const
+{
+	apiDeleteBuffer(bufferId);
+}

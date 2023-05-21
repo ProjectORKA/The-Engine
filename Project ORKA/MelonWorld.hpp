@@ -6,7 +6,7 @@
 struct MelonPlayer;
 struct Renderer;
 
-#define ROCKGRIDSIZE 128
+#define ROCKGRIdSIZE 128
 
 struct MelonWorld {
 	Mutex m;
@@ -14,7 +14,7 @@ struct MelonWorld {
 	List<Vec4> scenery;
 	IVec2 offset = IVec2(0);
 
-	Vec4 rocks[ROCKGRIDSIZE][ROCKGRIDSIZE];
+	Vec4 rocks[ROCKGRIdSIZE][ROCKGRIdSIZE];
 
 	void update(MelonPlayer& player);
 	void render(ResourceManager& resourceManager, Renderer& renderer);

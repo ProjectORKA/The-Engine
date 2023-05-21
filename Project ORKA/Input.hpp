@@ -5,19 +5,21 @@
 
 using Action = Bool&;
 
-struct InputID {
-	Int type = InputType::UNKNOWN;
+struct InputId
+{
+	InputType type = InputType::Unknown;
 	Int id;
 
-	InputID();
-	InputID(Int type, Int id);
-	auto operator<=>(const InputID&) const = default;
+	InputId();
+	InputId(InputType type, Int id);
+	auto operator<=>(const InputId&) const = default;
 };
 
-struct InputEvent {
-	InputID id;
+struct InputEvent
+{
+	InputId id;
 	Bool state = false;
 
-	InputEvent(Int type, Int id, Bool state);
+	InputEvent(InputType type, Int id, Bool state);
 	auto operator<=>(const InputEvent&) const = default;
 };

@@ -26,7 +26,7 @@ void OrganizerRenderer::update(Window& window) { player.update(window); }
 
 void OrganizerRenderer::inputEvent(Window& window, const InputEvent input) {
 	if (input == enter) window.captureCursor();
-	if (input == exit) window.uncaptureCursor();
+	if (input == exit) window.unCaptureCursor();
 	if (input == wireFrameToggle) window.renderer.wireframeMode = !window.renderer.wireframeMode;
 
 	player.inputEvent(window, input);
@@ -36,39 +36,39 @@ void OrganizerRenderer::create(ResourceManager& resourceManager, Window& window)
 	//setup renderer
 	player.camera.location = Vec3(0, 0, 10);
 
-	Index userGUID = 0;
+	Index userGUId = 0;
 
 	//load database
 	addCompany(0, "Project ORKA", "project-orka.com");
-	addUser(userGUID++, 0, "Firstname1", "Lastname1");
-	addUser(userGUID++, 0, "Firstname2", "Lastname2");
-	addUser(userGUID++, 0, "Firstname3", "Lastname3");
-	addUser(userGUID++, 0, "Firstname4", "Lastname4");
-	addUser(userGUID++, 0, "Firstname5", "Lastname5");
-	addUser(userGUID++, 0, "Firstname6", "Lastname6");
-	addUser(userGUID++, 0, "Firstname7", "Lastname7");
-	addUser(userGUID++, 0, "Firstname8", "Lastname8");
-	addUser(userGUID++, 0, "Firstname9", "Lastname9");
-	addUser(userGUID++, 0, "Firstname11", "Lastname10");
-	addUser(userGUID++, 0, "Firstname11", "Lastname11");
-	addUser(userGUID++, 0, "Firstname12", "Lastname12");
-	addUser(userGUID++, 0, "Firstname13", "Lastname13");
-	addUser(userGUID++, 0, "Firstname14", "Lastname14");
-	addUser(userGUID++, 0, "Firstname15", "Lastname15");
-	addUser(userGUID++, 0, "Firstname16", "Lastname16");
-	addUser(userGUID++, 0, "Firstname17", "Lastname17");
-	addUser(userGUID++, 0, "Firstname18", "Lastname18");
-	addUser(userGUID++, 0, "Firstname19", "Lastname19");
-	addUser(userGUID++, 0, "Firstname21", "Lastname20");
-	addUser(userGUID++, 0, "Firstname21", "Lastname21");
-	addUser(userGUID++, 0, "Firstname22", "Lastname22");
-	addUser(userGUID++, 0, "Firstname23", "Lastname23");
-	addUser(userGUID++, 0, "Firstname24", "Lastname24");
-	addUser(userGUID++, 0, "Firstname25", "Lastname25");
-	addUser(userGUID++, 0, "Firstname26", "Lastname26");
-	addUser(userGUID++, 0, "Firstname27", "Lastname27");
-	addUser(userGUID++, 0, "Firstname28", "Lastname28");
-	addUser(userGUID++, 0, "Firstname29", "Lastname29");
+	addUser(userGUId++, 0, "Firstname1", "Lastname1");
+	addUser(userGUId++, 0, "Firstname2", "Lastname2");
+	addUser(userGUId++, 0, "Firstname3", "Lastname3");
+	addUser(userGUId++, 0, "Firstname4", "Lastname4");
+	addUser(userGUId++, 0, "Firstname5", "Lastname5");
+	addUser(userGUId++, 0, "Firstname6", "Lastname6");
+	addUser(userGUId++, 0, "Firstname7", "Lastname7");
+	addUser(userGUId++, 0, "Firstname8", "Lastname8");
+	addUser(userGUId++, 0, "Firstname9", "Lastname9");
+	addUser(userGUId++, 0, "Firstname11", "Lastname10");
+	addUser(userGUId++, 0, "Firstname11", "Lastname11");
+	addUser(userGUId++, 0, "Firstname12", "Lastname12");
+	addUser(userGUId++, 0, "Firstname13", "Lastname13");
+	addUser(userGUId++, 0, "Firstname14", "Lastname14");
+	addUser(userGUId++, 0, "Firstname15", "Lastname15");
+	addUser(userGUId++, 0, "Firstname16", "Lastname16");
+	addUser(userGUId++, 0, "Firstname17", "Lastname17");
+	addUser(userGUId++, 0, "Firstname18", "Lastname18");
+	addUser(userGUId++, 0, "Firstname19", "Lastname19");
+	addUser(userGUId++, 0, "Firstname21", "Lastname20");
+	addUser(userGUId++, 0, "Firstname21", "Lastname21");
+	addUser(userGUId++, 0, "Firstname22", "Lastname22");
+	addUser(userGUId++, 0, "Firstname23", "Lastname23");
+	addUser(userGUId++, 0, "Firstname24", "Lastname24");
+	addUser(userGUId++, 0, "Firstname25", "Lastname25");
+	addUser(userGUId++, 0, "Firstname26", "Lastname26");
+	addUser(userGUId++, 0, "Firstname27", "Lastname27");
+	addUser(userGUId++, 0, "Firstname28", "Lastname28");
+	addUser(userGUId++, 0, "Firstname29", "Lastname29");
 
 	for (User& user1 : users) {
 		for (User& user2 : users) {
@@ -153,7 +153,7 @@ void Organizer::run() {
 
 	ui.create();
 
-	ui.window("Organizer", Area(1920, 1080), true, WindowState::windowed, renderer, resourceManager);
+	ui.window("Organizer", Area(1920, 1080), true, WindowState::Windowed, renderer, resourceManager);
 
 	ui.run();
 }

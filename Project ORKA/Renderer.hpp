@@ -71,7 +71,7 @@ struct Renderer {
 
 	//meshes
 	void rerenderMesh();
-	void renderMesh(Index meshID);
+	void renderMesh(Index meshId);
 	void useMesh(ResourceManager& resourceManager, const Name& name);
 	void renderMesh(ResourceManager& resourceManager, const Name& name);
 	void renderMeshInstanced(ResourceManager& resourceManager, const Name& name);
@@ -136,7 +136,7 @@ struct DepthTestOverride {
 
 	DepthTestOverride(const Bool value, Renderer& renderer) {
 		this->renderer = &renderer;
-		stored = openglState.depthTest;
+		stored = openGlState.depthTest;
 		this->renderer->setDepthTest(value);
 	};
 

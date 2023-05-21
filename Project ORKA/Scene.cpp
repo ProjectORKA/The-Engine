@@ -35,58 +35,58 @@ void Scene::loadFBX(Path path, ResourceManager& resourceManager) {
 		errorMessage = importer.GetErrorString();
 		if (errorMessage.empty()) {
 			if (assimpScene->HasMeshes()) {
-				for (Index objectID = 0; objectID < assimpScene->mRootNode->mNumChildren; objectID++) {
-					if (assimpScene->mRootNode->mChildren[objectID]->mNumMeshes > 0) {
+				for (Index objectId = 0; objectId < assimpScene->mRootNode->mNumChildren; objectId++) {
+					if (assimpScene->mRootNode->mChildren[objectId]->mNumMeshes > 0) {
 						//get all meshes of object
-						UInt numMeshes = assimpScene->mRootNode->mChildren[objectID]->mNumMeshes;
+						UInt numMeshes = assimpScene->mRootNode->mChildren[objectId]->mNumMeshes;
 
 						CpuMesh mesh;
-						mesh.name = String(assimpScene->mRootNode->mChildren[objectID]->mName.C_Str());
+						mesh.name = String(assimpScene->mRootNode->mChildren[objectId]->mName.C_Str());
 
 						UInt lastIndex = 0;
 
-						for (UInt objectsMeshID = 0; objectsMeshID < numMeshes; objectsMeshID++) {
-							Index meshID = assimpScene->mRootNode->mChildren[objectID]->mMeshes[objectsMeshID];
+						for (UInt objectsMeshId = 0; objectsMeshId < numMeshes; objectsMeshId++) {
+							Index meshId = assimpScene->mRootNode->mChildren[objectId]->mMeshes[objectsMeshId];
 
 							aiColor4D diffuseColor(0.0f, 0.0f, 0.0f, 0.0f);
-							aiGetMaterialColor(assimpScene->mMaterials[assimpScene->mMeshes[meshID]->mMaterialIndex],
+							aiGetMaterialColor(assimpScene->mMaterials[assimpScene->mMeshes[meshId]->mMaterialIndex],
 							                   AI_MATKEY_COLOR_DIFFUSE, &diffuseColor);
 
 							Vec3 color(diffuseColor.r, diffuseColor.g, diffuseColor.b);
 
 							logDebug(color);
 
-							if (assimpScene->mMeshes[meshID]->HasPositions()) {
-								for (UInt i = 0; i < assimpScene->mMeshes[meshID]->mNumVertices; i++) {
+							if (assimpScene->mMeshes[meshId]->HasPositions()) {
+								for (UInt i = 0; i < assimpScene->mMeshes[meshId]->mNumVertices; i++) {
 									mesh.primitiveMode = PrimitiveMode::Triangles;
 
 									Vec3 vertex;
-									vertex.x = assimpScene->mMeshes[meshID]->mVertices[i].x;
-									vertex.y = assimpScene->mMeshes[meshID]->mVertices[i].y;
-									vertex.z = assimpScene->mMeshes[meshID]->mVertices[i].z;
+									vertex.x = assimpScene->mMeshes[meshId]->mVertices[i].x;
+									vertex.y = assimpScene->mMeshes[meshId]->mVertices[i].y;
+									vertex.z = assimpScene->mMeshes[meshId]->mVertices[i].z;
 									mesh.positions.push_back(vertex);
 
 									auto texCoord = Vec2(0);
-									if (assimpScene->mMeshes[meshID]->mTextureCoords[0]) {
-										texCoord.x = assimpScene->mMeshes[meshID]->mTextureCoords[0][i].x;
-										texCoord.y = assimpScene->mMeshes[meshID]->mTextureCoords[0][i].y;
+									if (assimpScene->mMeshes[meshId]->mTextureCoords[0]) {
+										texCoord.x = assimpScene->mMeshes[meshId]->mTextureCoords[0][i].x;
+										texCoord.y = assimpScene->mMeshes[meshId]->mTextureCoords[0][i].y;
 									}
 									mesh.textureCoordinates.push_back(texCoord);
 
 									Vec3 normal;
-									normal.x = assimpScene->mMeshes[meshID]->mNormals[i].x;
-									normal.y = assimpScene->mMeshes[meshID]->mNormals[i].y;
-									normal.z = assimpScene->mMeshes[meshID]->mNormals[i].z;
+									normal.x = assimpScene->mMeshes[meshId]->mNormals[i].x;
+									normal.y = assimpScene->mMeshes[meshId]->mNormals[i].y;
+									normal.z = assimpScene->mMeshes[meshId]->mNormals[i].z;
 									mesh.normals.push_back(normal);
 
 									mesh.vertexColors.push_back(color);
 								}
 
-								if (assimpScene->mMeshes[meshID]->HasFaces()) {
-									for (UInt i = 0; i < assimpScene->mMeshes[meshID]->mNumFaces; i++) {
-										for (UInt j = 0; j < assimpScene->mMeshes[meshID]->mFaces->mNumIndices; j++) {
+								if (assimpScene->mMeshes[meshId]->HasFaces()) {
+									for (UInt i = 0; i < assimpScene->mMeshes[meshId]->mNumFaces; i++) {
+										for (UInt j = 0; j < assimpScene->mMeshes[meshId]->mFaces->mNumIndices; j++) {
 											//should always be 3 (0 -> 1 -> 2 <<)
-											Index index = lastIndex + assimpScene->mMeshes[meshID]->mFaces[i].mIndices[
+											Index index = lastIndex + assimpScene->mMeshes[meshId]->mFaces[i].mIndices[
 												j];
 											mesh.indices.push_back(index);
 										}
@@ -96,7 +96,7 @@ void Scene::loadFBX(Path path, ResourceManager& resourceManager) {
 							}
 							else errorMessage = "Mesh does not have positions stored!";
 
-							lastIndex += assimpScene->mMeshes[meshID]->mNumVertices;
+							lastIndex += assimpScene->mMeshes[meshId]->mNumVertices;
 						}
 
 						if (!errorMessage.empty()) {

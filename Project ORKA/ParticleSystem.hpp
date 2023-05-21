@@ -16,7 +16,7 @@ struct ParticleSystem {
 	Bool* alive = nullptr;
 	Float particlesPerUnit = 64;
 	//system data
-	U16 currentID = 0;
+	U16 currentId = 0;
 	Bool loaded = false;
 	U16 particleCount = 0;
 	Vec3 location = Vec3(0);

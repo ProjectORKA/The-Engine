@@ -95,14 +95,14 @@ void MindMap::renderInteractive(ResourceManager& resourceManager, Window& window
 	//render connections
 	renderer.fill(Color(0.5, 0.5, 0.5, 1));
 	for (UInt i = 0; i < connections.size(); i++) {
-		renderer.uniforms().objectID(i);
+		renderer.uniforms().objectId(i);
 		renderer.line(positions[connections[i].a], positions[connections[i].b], 0.05);
 	}
 
 	//render nodes
 	renderer.fill(Color(1));
 	for (UInt i = 0; i < positions.size(); i++) {
-		renderer.uniforms().objectID(connections.size() - 1 + i);
+		renderer.uniforms().objectId(connections.size() - 1 + i);
 		renderer.uniforms().mMatrix(matrixFromLocation(Vec3(positions[i], 0.0f)));
 		renderer.renderMesh(resourceManager, "1x1planeCentered");
 	}

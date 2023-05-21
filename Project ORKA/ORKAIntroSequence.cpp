@@ -2,12 +2,16 @@
 #include "Window.hpp"
 #include "Camera.hpp"
 
-void ORKAIntroSequence::init(GameRenderer& game) { gameStartingAfterIntro = &game; }
+void ORKAIntroSequence::init(GameRenderer& game)
+{
+	gameStartingAfterIntro = &game;
+}
 
-void ORKAIntroSequence::render(ResourceManager& resourceManager, Window& window, TiledRectangle area) {
+void ORKAIntroSequence::render(ResourceManager& resourceManager, Window& window, TiledRectangle area)
+{
 	Renderer& renderer = window.renderer;
 
-	window.undecorateWindow();
+	window.unDecorateWindow();
 
 	renderer.clearColor(Color(0));
 	renderer.clearDepth();
@@ -22,12 +26,12 @@ void ORKAIntroSequence::render(ResourceManager& resourceManager, Window& window,
 	c.render(renderer);
 
 	//logo stuff
-	Float animationLength = 1.1;
-	Float size = min(pow(1 + 1 / pow(animationLength, 5), pow(renderer.time.total - 2 * animationLength, 5)), 100.0);
-	Float tint = max(2 - size, 0.0f);
-	renderer.uniforms().customColor() = Color(tint, tint, tint, 1);
-	Matrix modelMatrix = scale(Matrix(1), Vec3(size, 1, size));
-	modelMatrix = rotate(modelMatrix, 20 / (pow(renderer.time.total, 4.0f) + 1), Vec3(0, 0, 1));
+	Float animationLength = 1.1f;
+	Float size = min(pow(1.0f + 1.0f / pow(animationLength, 5.0f), pow(renderer.time.total - 2.0f * animationLength, 5.0f)), 100.0f);
+	Float tint = max(2.0f - size, 0.0f);
+	renderer.uniforms().customColor() = Color(tint, tint, tint, 1.0f);
+	Matrix modelMatrix = scale(Matrix(1.0f), Vec3(size, 1.0f, size));
+	modelMatrix = rotate(modelMatrix, 20.0f / (pow(renderer.time.total, 4.0f) + 1.0f), Vec3(0.0f, 0.0f, 1.0f));
 	renderer.uniforms().mMatrix() = modelMatrix;
 
 	renderer.useShader(resourceManager, "unlit");
@@ -37,14 +41,15 @@ void ORKAIntroSequence::render(ResourceManager& resourceManager, Window& window,
 	renderer.postProcess(resourceManager, "orkaIntroSequence");
 
 	//start the time when we actually start rendering
-	static Bool f = true;
-	if (f) {
+	if(static Bool f = true)
+	{
 		renderer.time.reset();
 		f = false;
 	}
 
 	//swap the intro scene with the followup
-	if ((renderer.time.total > 5)) {
+	if((renderer.time.total > 5))
+	{
 		window.content = gameStartingAfterIntro;
 		window.decorateWindow();
 	}

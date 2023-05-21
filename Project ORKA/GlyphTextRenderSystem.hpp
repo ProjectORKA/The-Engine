@@ -17,7 +17,7 @@ struct CharData {
 
 struct GPUFont {
 	Bool loaded = false;
-	GPUTexture textureAtlas;
+	GpuTexture textureAtlas;
 	Vector<CharData> charData;
 
 	void load();

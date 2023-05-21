@@ -13,7 +13,7 @@ void SimpleRTSRenderer::create(ResourceManager& resourceManager, Window& window)
 
 void SimpleRTSRenderer::inputEvent(Window& window, const InputEvent input) {
 	if (input == enter) window.captureCursor();
-	if (input == exit) window.uncaptureCursor();
+	if (input == exit) window.unCaptureCursor();
 	if (input == toggleWireframe) wireframeMode = !wireframeMode;
 	player.inputEvent(window, input);
 }
@@ -105,36 +105,36 @@ void SimpleRTSRenderer::render(ResourceManager& resourceManager, Window& window,
 //Index SimpleRTSSimulation::getCuttableTree(Vec2 position) {
 //	return idOfClosestPointInLoopingSpace(position, treePosition, SIMPLERTS_MAPSIZE);
 //}
-//void SimpleRTSSimulation::spawnBase(UInt clanID) {
-//	spawnBase(clanID, randomVec2(-SIMPLERTS_MAPSIZE, SIMPLERTS_MAPSIZE));
+//void SimpleRTSSimulation::spawnBase(UInt clanId) {
+//	spawnBase(clanId, randomVec2(-SIMPLERTS_MAPSIZE, SIMPLERTS_MAPSIZE));
 //}
-//void SimpleRTSSimulation::spawnBase(UInt clanID, Vec2 position) {
-//	baseClanID.push_back(clanID);
+//void SimpleRTSSimulation::spawnBase(UInt clanId, Vec2 position) {
+//	baseClanId.push_back(clanId);
 //	basePosition.push_back(position);
 //	baseCount++;
 //}
-//void SimpleRTSSimulation::spawnHouse(UInt clanID) {
+//void SimpleRTSSimulation::spawnHouse(UInt clanId) {
 //
-//	Index currentID;
+//	Index currentId;
 //	do {
-//		currentID = randomInt(baseClanID.size());
-//	} while (baseClanID[currentID] != clanID);
+//		currentId = randomInt(baseClanId.size());
+//	} while (baseClanId[currentId] != clanId);
 //
-//	spawnBase(clanID, basePosition[currentID] + randomUnitVec2() * Vec2(10));
+//	spawnBase(clanId, basePosition[currentId] + randomUnitVec2() * Vec2(10));
 //}
-//void SimpleRTSSimulation::produceWorker(UInt baseID) {
-//	if (clanFood[baseClanID[baseID]] > 0 && clanWood[baseClanID[baseID]] >= 5) {
-//		clanFood[baseClanID[baseID]]--;
-//		clanWood[baseClanID[baseID]] -= 5;
-//		spawnHumanInBase(baseID);
+//void SimpleRTSSimulation::produceWorker(UInt baseId) {
+//	if (clanFood[baseClanId[baseId]] > 0 && clanWood[baseClanId[baseId]] >= 5) {
+//		clanFood[baseClanId[baseId]]--;
+//		clanWood[baseClanId[baseId]] -= 5;
+//		spawnHumanInBase(baseId);
 //	}
 //}
-//UInt SimpleRTSSimulation::getIndexOfClosestBaseOfClan(UInt clanID, Vec2 position) {
+//UInt SimpleRTSSimulation::getIndexOfClosestBaseOfClan(UInt clanId, Vec2 position) {
 //	Float smallestDistance = distanceToPointInLoopingSpace(basePosition[0], position, SIMPLERTS_MAPSIZE);
 //	UInt indexOfClosestPoint = 0;
 //	for (UInt i = 1; i < baseCount; i++) {
 //		Float currentDistance = distanceToPointInLoopingSpace(basePosition[i], position, SIMPLERTS_MAPSIZE);
-//		if (baseClanID[i] == clanID && currentDistance < smallestDistance) {
+//		if (baseClanId[i] == clanId && currentDistance < smallestDistance) {
 //			smallestDistance = currentDistance;
 //			indexOfClosestPoint = i;
 //		}
@@ -142,11 +142,11 @@ void SimpleRTSRenderer::render(ResourceManager& resourceManager, Window& window,
 //	return indexOfClosestPoint;
 //}
 //void SimpleRTSSimulation::updateHumans() {
-//	for (UInt humanID = 0; humanID < humanCount; humanID++) {
-//		switch (humanState[humanID]) {
-//		case SimpleRTSHumanState::Delivering: deliverItem(humanID); break;
-//		case SimpleRTSHumanState::LookingForWood: chopWood(humanID); break;
-//		case SimpleRTSHumanState::HuntingRabbit: huntRabbit(humanID); break;
+//	for (UInt humanId = 0; humanId < humanCount; humanId++) {
+//		switch (humanState[humanId]) {
+//		case SimpleRTSHumanState::Delivering: deliverItem(humanId); break;
+//		case SimpleRTSHumanState::LookingForWood: chopWood(humanId); break;
+//		case SimpleRTSHumanState::HuntingRabbit: huntRabbit(humanId); break;
 //		default: break;
 //		}
 //	}
@@ -170,16 +170,16 @@ void SimpleRTSRenderer::render(ResourceManager& resourceManager, Window& window,
 //	loopWithin(humanPositions[id], SIMPLERTS_MAPSIZE);
 //}
 //void SimpleRTSSimulation::huntRabbit(Index id) {
-//	humanTargetpositions[id] = rabbitPosition[humanTargetID[id]];
+//	humanTargetpositions[id] = rabbitPosition[humanTargetId[id]];
 //	moveHuman(id);
 //	if (humanPositions[id] == humanTargetpositions[id]) {
-//		killRabbit(humanTargetID[id]);
+//		killRabbit(humanTargetId[id]);
 //		humanCarriedItem[id] = SimpleRTSItem::Food;
 //		humanState[id] = SimpleRTSHumanState::Delivering;
 //
 //		for (Int i = 0; i < humanCount; i++) {
 //			if (humanState[i] == SimpleRTSHumanState::HuntingRabbit) {
-//				humanTargetID[i] = getClosestRabbit(humanPositions[i]);
+//				humanTargetId[i] = getClosestRabbit(humanPositions[i]);
 //			}
 //		}
 //
@@ -205,18 +205,18 @@ void SimpleRTSRenderer::render(ResourceManager& resourceManager, Window& window,
 //
 //		switch (getLowestResource(humanClan[id])) {
 //		case SimpleRTSItem::Food:
-//			humanTargetID[id] = getClosestRabbit(humanPositions[id]);
+//			humanTargetId[id] = getClosestRabbit(humanPositions[id]);
 //			humanState[id] = SimpleRTSHumanState::HuntingRabbit;
 //			break;
 //		case SimpleRTSItem::Wood:
 //			// get next tree to cut
-//			Index closestTreeID = getCuttableTree(humanPositions[id]);
+//			Index closestTreeId = getCuttableTree(humanPositions[id]);
 //			//set at target
-//			humanTargetpositions[id] = treePosition[closestTreeID];
+//			humanTargetpositions[id] = treePosition[closestTreeId];
 //			//change worker state
 //			humanState[id] = SimpleRTSHumanState::LookingForWood;
 //			//precut tree (its an optimization, renderer will render fake tree instead)
-//			cutTree(closestTreeID);
+//			cutTree(closestTreeId);
 //			break;
 //		};
 //	}
@@ -248,20 +248,20 @@ void SimpleRTSRenderer::render(ResourceManager& resourceManager, Window& window,
 //	clanCount++;
 //}
 //void SimpleRTSSimulation::updateBases() {
-//	for (UInt baseID = 0; baseID < baseCount; baseID++) {
-//		spawnHouse(baseClanID[baseID]);
+//	for (UInt baseId = 0; baseId < baseCount; baseId++) {
+//		spawnHouse(baseClanId[baseId]);
 //	}
 //}
-//SimpleRTSSimulation::SimpleRTSItem SimpleRTSSimulation::getLowestResource(Index clanID) {
+//SimpleRTSSimulation::SimpleRTSItem SimpleRTSSimulation::getLowestResource(Index clanId) {
 //	UInt res = -1;
 //	SimpleRTSItem resItem = SimpleRTSItem::Food;
 //
-//	if (clanFood[clanID] < res) {
-//		res = clanFood[clanID];
+//	if (clanFood[clanId] < res) {
+//		res = clanFood[clanId];
 //		resItem = SimpleRTSItem::Food;
 //	}
-//	if (clanWood[clanID] < res) {
-//		res = clanWood[clanID];
+//	if (clanWood[clanId] < res) {
+//		res = clanWood[clanId];
 //		resItem = SimpleRTSItem::Wood;
 //	}
 //	return resItem;
@@ -294,7 +294,7 @@ SimpleRTSSimulation::SimpleRTSSimulation() {
 	//}
 }
 
-void SimpleRTSSimulation::update(Float timestep) {
+void SimpleRTSSimulation::update(Float delta) {
 	//trees.update(*this);
 	//treeSimulation.update();
 	//humanitySimulation;

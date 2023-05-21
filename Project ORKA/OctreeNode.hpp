@@ -1,13 +1,13 @@
 #pragma once
 
 #include "OctreeData.hpp"
-#include "OctreeID.hpp"
+#include "OctreeId.hpp"
 #include "Basics.hpp"
 #include "QuadtreeNode.hpp"
 
 struct OcTreeNode {
 	OctreeNodeData data;
-	OctreeID id;
+	OctreeId id;
 	Bool isValid = false;
 	Mutex mutex;
 	UInt users = 0;

@@ -10,12 +10,12 @@ void RenderObjectSystem::destroy() {
 }
 
 void RenderObjectSystem::renderCurrent() {
-	shaderSystemPtr->use(current().shaderID);
-	textureSystemPtr->use(current().textureID);
-	meshSystemPtr->render(shaderSystemPtr->uniforms, current().meshID);
+	shaderSystemPtr->use(current().shaderId);
+	textureSystemPtr->use(current().textureId);
+	meshSystemPtr->render(shaderSystemPtr->uniforms, current().meshId);
 }
 
-void RenderObjectSystem::select(const Index id) { currentRenderobjectID = id; }
+void RenderObjectSystem::select(const Index id) { currentRenderobjectId = id; }
 
 void RenderObjectSystem::render(const Index id) {
 	select(id);
@@ -31,7 +31,7 @@ void RenderObjectSystem::select(ResourceManager& resourceManager, const Name& na
 	const auto it = nameToIndex.find(name);
 	if (it != nameToIndex.end()) {
 		//id found, set to current
-		currentRenderobjectID = it->second;
+		currentRenderobjectId = it->second;
 	}
 	else {
 		//id not found search in names list
@@ -44,13 +44,13 @@ void RenderObjectSystem::select(ResourceManager& resourceManager, const Name& na
 				if (shaderSystemPtr->currentShaderProgram().isLoaded && textureSystemPtr->currentTexture().loaded &&
 					meshSystemPtr->currentMesh().loaded) {
 					RenderObject renderObject;
-					renderObject.shaderID = shaderSystemPtr->currentShaderProgramID;
-					renderObject.textureID = textureSystemPtr->currentTextureID;
-					renderObject.meshID = meshSystemPtr->currentMeshID;
+					renderObject.shaderId = shaderSystemPtr->currentShaderProgramId;
+					renderObject.textureId = textureSystemPtr->currentTextureId;
+					renderObject.meshId = meshSystemPtr->currentMeshId;
 					renderObjects.push_back(renderObject);
 
-					currentRenderobjectID = renderObjects.size() - 1;
-					nameToIndex[name] = currentRenderobjectID;
+					currentRenderobjectId = renderObjects.size() - 1;
+					nameToIndex[name] = currentRenderobjectId;
 
 					//remove from queue
 					renderObjectNamesQueue.erase(renderObjectNamesQueue.begin() + i);
@@ -63,7 +63,7 @@ void RenderObjectSystem::select(ResourceManager& resourceManager, const Name& na
 	}
 }
 
-RenderObject& RenderObjectSystem::current() { return renderObjects[currentRenderobjectID]; }
+RenderObject& RenderObjectSystem::current() { return renderObjects[currentRenderobjectId]; }
 
 void RenderObjectSystem::create(Renderer& renderer) {
 	meshSystemPtr = &renderer.meshSystem;
@@ -73,8 +73,8 @@ void RenderObjectSystem::create(Renderer& renderer) {
 
 Index RenderObjectSystem::addRenderObject(const RenderObject& renderObject) {
 	renderObjects.push_back(renderObject);
-	currentRenderobjectID = renderObjects.size() - 1;
-	return currentRenderobjectID;
+	currentRenderobjectId = renderObjects.size() - 1;
+	return currentRenderobjectId;
 }
 
 void RenderObjectSystem::addRenderObject(const RenderObjectNames& renderobject) {

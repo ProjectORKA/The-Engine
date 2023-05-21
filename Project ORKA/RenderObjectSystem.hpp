@@ -8,9 +8,9 @@
 struct Renderer;
 
 struct RenderObject {
-	Index meshID = 0;
-	Index shaderID = 0;
-	Index textureID = 0;
+	Index meshId = 0;
+	Index shaderId = 0;
+	Index textureId = 0;
 };
 
 struct RenderObjectNames {
@@ -31,7 +31,7 @@ struct RenderObjectSystem {
 	Vector<RenderObject> renderObjects;
 	Vector<RenderObjectNames> renderObjectNamesQueue;
 
-	Index currentRenderobjectID = 0;
+	Index currentRenderobjectId = 0;
 
 	void destroy();
 	void renderCurrent();

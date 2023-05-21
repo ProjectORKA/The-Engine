@@ -7,7 +7,7 @@ void PointCloud::add(const Vec3 point) { points.push_back(point); }
 void PointCloudRenderer::update(PointCloud& pointCloud) {
 	if (gpuMesh.loaded)gpuMesh.unload();
 	CpuMesh mesh;
-	mesh.drawMode = MeshDrawMode::dynamicMode;
+	mesh.drawMode = MeshDrawMode::DynamicMode;
 	mesh.name = "PointCloud";
 	mesh.primitiveMode = PrimitiveMode::Points;
 

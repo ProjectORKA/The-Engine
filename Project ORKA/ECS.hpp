@@ -28,8 +28,8 @@ enum Components {
 };
 
 struct Entity {
-	U16 archetypeID = 0;
-	U16* componentIDs = nullptr;
+	U16 archetypeId = 0;
+	U16* componentIds = nullptr;
 };
 
 struct Archetype {

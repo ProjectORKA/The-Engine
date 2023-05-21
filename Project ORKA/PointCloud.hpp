@@ -12,7 +12,7 @@ struct PointCloud {
 };
 
 struct PointCloudRenderer {
-	GPUMesh gpuMesh;
+	GpuMesh gpuMesh;
 	UInt pointCloudSize = 0;
 	void update(PointCloud& pointCloud);
 	void render(PointCloud& pointCloud, Renderer& renderer);

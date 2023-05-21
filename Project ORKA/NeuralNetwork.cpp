@@ -7,18 +7,18 @@ UInt NeuralNet::layerCount() const { return structure.size(); }
 Vector<Float> NeuralNet::output() { return neuronActivation[layerCount() - 1]; }
 
 void NeuralNet::propagateForward() {
-	for (UInt layerID = 0; layerID < layerCount() - 1; layerID++) {
-		for (UInt neuronAID = 0; neuronAID < neuronCountAtLayer(layerID); neuronAID++) {
-			for (UInt neuronBID = 0; neuronBID < neuronCountAtLayer(layerID + 1); neuronBID++) {
+	for (UInt layerId = 0; layerId < layerCount() - 1; layerId++) {
+		for (UInt neuronAId = 0; neuronAId < neuronCountAtLayer(layerId); neuronAId++) {
+			for (UInt neuronBId = 0; neuronBId < neuronCountAtLayer(layerId + 1); neuronBId++) {
 				//reset the neuron
-				if (neuronAID == 0) neuronActivation[layerID + 1][neuronBID] = 0;
+				if (neuronAId == 0) neuronActivation[layerId + 1][neuronBId] = 0;
 
 				//calculate contribution
-				contribution[layerID][neuronAID][neuronBID] = neuronActivation[layerID][neuronAID] * weights[layerID][
-					neuronAID][neuronBID];
+				contribution[layerId][neuronAId][neuronBId] = neuronActivation[layerId][neuronAId] * weights[layerId][
+					neuronAId][neuronBId];
 
 				//accumulate inputs
-				neuronActivation[layerID + 1][neuronBID] += contribution[layerID][neuronAID][neuronBID];
+				neuronActivation[layerId + 1][neuronBId] += contribution[layerId][neuronAId][neuronBId];
 			}
 		}
 	}
@@ -41,50 +41,50 @@ NeuralNet::NeuralNet(const Vector<UInt>& structure) {
 	weights.resize(layerCount());
 	contribution.resize(layerCount());
 
-	for (UInt layerID = 0; layerID < layerCount() - 1; layerID++) {
-		weights[layerID].resize(neuronCountAtLayer(layerID));
-		contribution[layerID].resize(neuronCountAtLayer(layerID));
+	for (UInt layerId = 0; layerId < layerCount() - 1; layerId++) {
+		weights[layerId].resize(neuronCountAtLayer(layerId));
+		contribution[layerId].resize(neuronCountAtLayer(layerId));
 
-		for (UInt neuronAID = 0; neuronAID < neuronCountAtLayer(layerID); neuronAID++) {
-			weights[layerID][neuronAID].resize(neuronCountAtLayer(layerID + 1));
-			contribution[layerID][neuronAID].resize(neuronCountAtLayer(layerID + 1));
+		for (UInt neuronAId = 0; neuronAId < neuronCountAtLayer(layerId); neuronAId++) {
+			weights[layerId][neuronAId].resize(neuronCountAtLayer(layerId + 1));
+			contribution[layerId][neuronAId].resize(neuronCountAtLayer(layerId + 1));
 
-			for (UInt neuronBID = 0; neuronBID < neuronCountAtLayer(layerID + 1); neuronBID++) {
-				weights[layerID][neuronAID][neuronBID] = randomFloat();
-				contribution[layerID][neuronAID][neuronBID] = 0;
+			for (UInt neuronBId = 0; neuronBId < neuronCountAtLayer(layerId + 1); neuronBId++) {
+				weights[layerId][neuronAId][neuronBId] = randomFloat();
+				contribution[layerId][neuronAId][neuronBId] = 0;
 			}
 		}
 	}
 }
 
-UInt NeuralNet::neuronCountAtLayer(const UInt layerID) const { return structure[layerID]; }
+UInt NeuralNet::neuronCountAtLayer(const UInt layerId) const { return structure[layerId]; }
 void NeuralNet::propagateBackward(Vector<Float> target) {}
 
 void NeuralNet::render(ResourceManager& resourceManager, Renderer& renderer, const Vec2 area) {
 	renderer.fill(Color(1, 1, 1, 0.1));
 	//render connections
-	for (UInt layerID = 0; layerID < layerCount() - 1; layerID++) {
-		for (UInt neuronAID = 0; neuronAID < neuronCountAtLayer(layerID); neuronAID++) {
-			for (UInt neuronBID = 0; neuronBID < neuronCountAtLayer(layerID + 1); neuronBID++) {
-				renderer.fill(Color(1, 1, 1, contribution[layerID][neuronAID][neuronBID]));
-				renderer.lineRenderer.renderLine(renderer, getNeuronPosition(area, layerID, neuronAID),
-				                                 getNeuronPosition(area, layerID + 1, neuronBID),
-				                                 weights[layerID][neuronAID][neuronBID] * 3);
+	for (UInt layerId = 0; layerId < layerCount() - 1; layerId++) {
+		for (UInt neuronAId = 0; neuronAId < neuronCountAtLayer(layerId); neuronAId++) {
+			for (UInt neuronBId = 0; neuronBId < neuronCountAtLayer(layerId + 1); neuronBId++) {
+				renderer.fill(Color(1, 1, 1, contribution[layerId][neuronAId][neuronBId]));
+				renderer.lineRenderer.renderLine(renderer, getNeuronPosition(area, layerId, neuronAId),
+				                                 getNeuronPosition(area, layerId + 1, neuronBId),
+				                                 weights[layerId][neuronAId][neuronBId] * 3);
 			}
 		}
 	}
 
 	//render neurons
-	for (Int layerID = 0; layerID < layerCount(); layerID++) {
-		for (Int neuronID = 0; neuronID < structure[layerID]; neuronID++) {
-			renderer.uniforms().mMatrix() = matrixFromLocationAndSize(getNeuronPosition(area, layerID, neuronID), 10);
-			renderer.fill(Color(1, 1, 1, neuronActivation[layerID][neuronID]));
+	for (Int layerId = 0; layerId < layerCount(); layerId++) {
+		for (Int neuronId = 0; neuronId < structure[layerId]; neuronId++) {
+			renderer.uniforms().mMatrix() = matrixFromLocationAndSize(getNeuronPosition(area, layerId, neuronId), 10);
+			renderer.fill(Color(1, 1, 1, neuronActivation[layerId][neuronId]));
 			renderer.renderMesh(resourceManager, "sphere");
 		}
 	}
 }
 
-Vec2 NeuralNet::getNeuronPosition(const Vec2 area, const UInt layerID, const UInt neuronID) const {
-	return Vec2((layerID + 1) * area.x / static_cast<Float>(layerCount() + 1),
-	            (neuronID + 1) * area.y / static_cast<Float>(structure[layerID] + 1));
+Vec2 NeuralNet::getNeuronPosition(const Vec2 area, const UInt layerId, const UInt neuronId) const {
+	return Vec2((layerId + 1) * area.x / static_cast<Float>(layerCount() + 1),
+	            (neuronId + 1) * area.y / static_cast<Float>(structure[layerId] + 1));
 }

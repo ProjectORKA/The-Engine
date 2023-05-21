@@ -1,13 +1,13 @@
 #pragma once
 
 #include "Basics.hpp"
-#include "FileSystem.hpp"
+#include "GraphicsAPI.hpp"
 
 struct Shader {
-	Index shaderID;
+	Index shaderId = -1;
 	Bool isLoaded = false;
 
 	void destroy();
 	void create(const Path& path, const String& uniformBlock);
-	void loadShaderCode(Int shaderType, const String& shaderCode);
+	void loadShaderCode(ShaderType shaderType, const String& shaderCode);
 };

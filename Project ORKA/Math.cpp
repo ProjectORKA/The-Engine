@@ -18,20 +18,20 @@ void removePointsInRadius(const Vec3 point, Vector<Vec3>& points, const Float ra
 	points = available;
 }
 
-void getClosestPoint(const Vec3 point, const Vector<Vec3>& points, Index& closestID, Vec3& closestPoint) {
+void getClosestPoint(const Vec3 point, const Vector<Vec3>& points, Index& closestId, Vec3& closestPoint) {
 	Float minimalDistance = distance(point, points[0]);
-	Index closestPointID = 0;
+	Index closestPointId = 0;
 
 	for (Int i = 0; i < points.size(); i++) {
 		const Float currentDistance = distance(point, points[i]);
 		if (currentDistance < minimalDistance) {
 			minimalDistance = currentDistance;
-			closestPointID = i;
+			closestPointId = i;
 		}
 	}
 
-	closestID = closestPointID;
-	closestPoint = points[closestPointID];
+	closestId = closestPointId;
+	closestPoint = points[closestPointId];
 }
 
 void spaceColonization(Vector<Vec3>& points, Vector<Vec3>& branches, Vector<Index>& connections,
@@ -44,11 +44,11 @@ void spaceColonization(Vector<Vec3>& points, Vector<Vec3>& branches, Vector<Inde
 
 	//check every space
 	for (const Vec3& point : points) {
-		Index closestID;
+		Index closestId;
 		Vec3 closestPoint;
-		getClosestPoint(point, branches, closestID, closestPoint);
+		getClosestPoint(point, branches, closestId, closestPoint);
 		//add pull force to branches
-		pull[closestID] += vectorFromAToB(closestPoint, point);
+		pull[closestId] += vectorFromAToB(closestPoint, point);
 	}
 
 	Vector<Vec3> newBranches;

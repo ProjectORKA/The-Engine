@@ -3,7 +3,7 @@
 #include "Basics.hpp"
 #include "ULLUtil.hpp"
 
-struct QuadtreeID {
+struct QuadtreeId {
 	ULLVec2 location = ULLVec2(0);
 	UShort level = 0;
 
@@ -11,10 +11,10 @@ struct QuadtreeID {
 	Bool getY() const;
 
 	void clean();
-	QuadtreeID parent() const;
+	QuadtreeId parent() const;
 
-	Vector<QuadtreeID> parents() const {
-		Vector<QuadtreeID> vp;
+	Vector<QuadtreeId> parents() const {
+		Vector<QuadtreeId> vp;
 		vp.push_back(parent());
 
 		Bool x = getX();

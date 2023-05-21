@@ -11,12 +11,12 @@
 
 struct QuadTreeSystem;
 struct QuadtreeNode;
-struct QuadtreeID;
+struct QuadtreeId;
 struct TerrainSystem;
 
 struct Terrain {
 	AdvancedHeightMap heightmap;
-	Terrain(const TerrainSystem& terrainSystem, const QuadtreeID& id, const Terrain* parentTerrain, Bool cx, Bool cy);
+	Terrain(const TerrainSystem& terrainSystem, const QuadtreeId& id, const Terrain* parentTerrain, Bool cx, Bool cy);
 };
 
 struct HeightTexture {

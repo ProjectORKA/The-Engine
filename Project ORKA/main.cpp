@@ -46,7 +46,7 @@
 //#include "Basics.hpp"
 //#include "Debug.hpp"
 //#include "RedDotHack.hpp"
-//#include "TripleNine.hpp"
+#include "TripleNine.hpp"
 //#include "Pong.hpp"
 //#include "SimpleRTS.hpp"
 //#include "DungeonsAndDiscord.hpp"
@@ -58,7 +58,7 @@
 //#include "PhysicsPlayground.hpp"
 //#include "ImageViewer.hpp"
 //#include "MindMapper.hpp"
-#include "Organizer.hpp"
+//#include "Organizer.hpp"
 
 //[TODO] move advanced rendering systems like textRenderSystem out of renderer and into window
 //(basically simplify renderer to bare bones tech)
@@ -68,15 +68,34 @@
 
 //[TODO] remove Name and NameTable and replace it with Hash and HashTable
 
-Int main(Int argc, Char* argv[]) {
-	Organizer game;
-	game.run();
-	return 0;
+//[TODO] make sure all OpenGl enums are there to ensure type safety
+
+//[TODO] remove old thread system
+
+#include "Networking.hpp"
+
+Int main(Int argc, Char* argv[])
+{
+	//TripleNine game;
+	//game.run();
+
+
+	std::cout << "Do you want to host a server? (y/n)" << std::endl;
+
+	if(std::cin.get() == 'y')
+	{
+		server();
+	}
+	else
+	{
+		client();
+	}
 }
 
 //windows entry point
 #include "Platform.hpp"
 
-Int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, Int nShowCmd) {
+Int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, Int nShowCmd)
+{
 	return main(__argc, __argv);
 }

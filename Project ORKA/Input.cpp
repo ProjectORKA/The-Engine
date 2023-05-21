@@ -1,16 +1,16 @@
 #include "Input.hpp"
 
-InputID::InputID() {
+InputId::InputId() {
 	type = InputType::KeyBoard;
 	id = UNKNOWN;
 }
 
-InputID::InputID(const Int type, const Int id) {
+InputId::InputId(const InputType type, const Int id) {
 	this->type = type;
 	this->id = id;
 }
 
-InputEvent::InputEvent(const Int type, const Int id, const Bool state) {
-	this->id = InputID(type, id);
+InputEvent::InputEvent(const InputType type, const Int id, const Bool state) {
+	this->id = InputId(type, id);
 	this->state = state;
 }

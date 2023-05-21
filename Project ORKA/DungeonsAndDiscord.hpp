@@ -47,7 +47,7 @@ struct DNDRenderer : public GameRenderer {
 	Vector<Index> selectedObjects;
 	Float mouseSensitivity = 0.0015f;
 	InputEvent select = InputEvent(InputType::Mouse, LMB, true);
-	InputID selectMultiple = InputID(InputType::KeyBoard, SHIFT);
+	InputId selectMultiple = InputId(InputType::KeyBoard, SHIFT);
 
 	InputEvent exit = InputEvent(InputType::Mouse, RMB, false);
 	InputEvent enter = InputEvent(InputType::Mouse, LMB, true);

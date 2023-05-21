@@ -4,7 +4,7 @@
 
 void BranchStructure::render(Renderer& renderer, const Vector<Vec3>& points) const {
 	CpuMesh mesh;
-	mesh.drawMode = MeshDrawMode::dynamicMode;
+	mesh.drawMode = MeshDrawMode::DynamicMode;
 	mesh.name = "branchStructure";
 	mesh.normals = Vector<Vec3>(points.size(), Vec3(0, 0, 1));
 	mesh.primitiveMode = PrimitiveMode::Lines;

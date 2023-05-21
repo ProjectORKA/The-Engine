@@ -6,10 +6,10 @@ struct Renderer;
 struct FramebufferSystem;
 
 struct IdFramebuffer {
-	UInt objectID = -1;
-	UInt instanceID = -1;
-	UInt triangleID = -1;
-	Index framebufferID = 0;
+	UInt objectId = -1;
+	UInt instanceId = -1;
+	UInt triangleId = -1;
+	Index framebufferId = 0;
 
 	void read(Renderer& renderer) const;
 	void draw(Renderer& renderer) const;

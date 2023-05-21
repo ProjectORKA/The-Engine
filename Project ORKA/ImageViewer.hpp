@@ -15,7 +15,7 @@ struct ImageViewerResource {
 	Float priority = 0;
 	Index index = 0;
 	CPUTexture cpuTexture;
-	GPUTexture gpuTexture;
+	GpuTexture gpuTexture;
 
 	void destroy();
 	void calculateRating(Index currentImageIndex, UInt resourceCount);
@@ -28,7 +28,7 @@ struct ImageViewerRenderer : public GameRenderer {
 	UInt cpuMaxPreloadCount = 2;
 	UInt gpuMaxPreloadCount = 1;
 
-	Int currentImageID = 0;
+	Int currentImageId = 0;
 
 	Float frameRate = 15;
 	Float holdingDelay = 0.5;
@@ -56,11 +56,11 @@ struct ImageViewerRenderer : public GameRenderer {
 	InputEvent nextImageMouse = InputEvent(InputType::Mouse, MOUSE_BUTTON_4, false);
 	InputEvent previousImageMouse = InputEvent(InputType::Mouse, MOUSE_BUTTON_5, false);
 
-	InputID mouseDown = InputID(InputType::Mouse, LMB);
-	InputID nextImageHolding = InputID(InputType::KeyBoard, RIGHT);
-	InputID previousImageHolding = InputID(InputType::KeyBoard, LEFT);
-	InputID nextImageHoldingMouse = InputID(InputType::Mouse, MOUSE_BUTTON_4);
-	InputID previousImageHoldingMouse = InputID(InputType::Mouse, MOUSE_BUTTON_5);
+	InputId mouseDown = InputId(InputType::Mouse, LMB);
+	InputId nextImageHolding = InputId(InputType::KeyBoard, RIGHT);
+	InputId previousImageHolding = InputId(InputType::KeyBoard, LEFT);
+	InputId nextImageHoldingMouse = InputId(InputType::Mouse, MOUSE_BUTTON_4);
+	InputId previousImageHoldingMouse = InputId(InputType::Mouse, MOUSE_BUTTON_5);
 
 	void updateZoom();
 	void preloadImages();
@@ -78,7 +78,7 @@ struct ImageViewerRenderer : public GameRenderer {
 	Index indexOfGPUImageWithLowestPriority() const;
 	Index indexOfCPUImageWithHighestPriority() const;
 	Index indexOfGPUImageWithHighestPriority() const;
-	void preloadImage(const Path& path, GPUTexture& texture);
+	void preloadImage(const Path& path, GpuTexture& texture);
 	Vector<Index> indicesOfImagesSortedByPriority() const;
 	void inputEvent(Window& window, InputEvent input) override;
 	void render(ResourceManager& resourceManager, Window& window, TiledRectangle area) override;

@@ -117,7 +117,7 @@ void QuadtreeNode::subdivide(TerrainSystem& terrainSystem) {
 	}
 }
 
-QuadtreeNode& QuadtreeNode::get(TerrainSystem& terrainSystem, const QuadtreeID& id) {
+QuadtreeNode& QuadtreeNode::get(TerrainSystem& terrainSystem, const QuadtreeId& id) {
 	if (this->id.level = id.level) return *this;
 	const Bool x = BitSet<64>(id.location.x)[this->id.level];
 	const Bool y = BitSet<64>(id.location.y)[this->id.level];

@@ -174,7 +174,7 @@ using uintptr = uintptr_t;
 		#error "Can't determine the endianness."
 #endif
 
-#elif defined(OS_LINUX) || defined(OS_UNIX) || defined(OS_APPLE) || defined(OS_ANDROID)
+#elif defined(OS_LINUX) || defined(OS_UNIX) || defined(OS_APPLE) || defined(OS_ANDROId)
 
 	#include <sys/types.h>
 	

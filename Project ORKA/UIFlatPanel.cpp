@@ -22,16 +22,16 @@
 //	renderer.shaderSystem.uniforms.data.custom1 = 0.01;
 //	renderer.shaderSystem.uniforms.update();
 //
-//	Index imageID = 0;
-//	Index blurID = 1;
-//	Index maskID = 2;
-//	Index dropShadowID = 3;
+//	Index imageId = 0;
+//	Index blurId = 1;
+//	Index maskId = 2;
+//	Index dropShadowId = 3;
 //
 //	RenderRegion wholeArea = renderer.renderRegion;
 //
 //	//create mask
 //	renderer.renderRegion.set(wholeArea.region);
-//	renderer.framebufferSystem.use(maskID);
+//	renderer.framebufferSystem.use(maskId);
 //	renderer.clearColor(Color(1));
 //	renderer.renderRegion.set(screenArea);
 //	renderer.shaderSystem.use("unlit");
@@ -39,17 +39,17 @@
 //
 //	//create drop shadow
 //	renderer.renderRegion.set(wholeArea.region);
-//	renderer.createBlurTexture(maskID, dropShadowID);
+//	renderer.createBlurTexture(maskId, dropShadowId);
 //
 //	//create blur texture
-//	renderer.createBlurTexture(imageID, blurID);
+//	renderer.createBlurTexture(imageId, blurId);
 //
 //	//render ui
 //	renderer.framebufferSystem.use(0);
-//	renderer.framebufferSystem.framebuffers[imageID].colorTexture.use(0);
-//	renderer.framebufferSystem.framebuffers[maskID].colorTexture.use(1);
-//	renderer.framebufferSystem.framebuffers[dropShadowID].colorTexture.use(2);
-//	renderer.framebufferSystem.framebuffers[blurID].colorTexture.use(3);
+//	renderer.framebufferSystem.framebuffers[imageId].colorTexture.use(0);
+//	renderer.framebufferSystem.framebuffers[maskId].colorTexture.use(1);
+//	renderer.framebufferSystem.framebuffers[dropShadowId].colorTexture.use(2);
+//	renderer.framebufferSystem.framebuffers[blurId].colorTexture.use(3);
 //	renderer.textureSystem.use("noise", 4);
 //	renderer.shaderSystem.use("blurredUI");
 //	renderer.meshSystem.render("fullScreenQuad");

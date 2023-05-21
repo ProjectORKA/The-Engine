@@ -50,7 +50,7 @@ struct NameGenerator {
 		"GI",
 		"GO",
 		"ia",
-		"ID",
+		"Id",
 		"ih",
 		"iy",
 		"LO",

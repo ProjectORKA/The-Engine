@@ -8,7 +8,7 @@ inline CpuMesh convertLineToMesh(const Line3D& line);
 inline CpuMesh convertLinesToMesh(const Vector<Line3D>& lines);
 
 struct LineRenderer {
-	GPUMesh gpuMesh;
+	GpuMesh gpuMesh;
 	CpuMesh cpuMesh;
 
 	void create();

@@ -1,47 +1,27 @@
 #pragma once
+#include <string>
 
-#include "String.hpp"
+constexpr unsigned short nameSize = 64;
 
-#include <iostream>
+struct Name
+{
+	char data[nameSize] = {};
 
-#define NAME_SIZE 64
+	Name();
 
-struct Name {
-	char data[NAME_SIZE] = {};
+	// ReSharper disable once CppNonExplicitConvertingConstructor
+	Name(const std::string& name);
 
-	Name() { memset(&data[0], 0, NAME_SIZE); }
+	// ReSharper disable once CppNonExplicitConvertingConstructor
+	Name(const char* name);
 
-	Name(const String& name) { *this = name; }
+	Name& operator=(const char* other);
 
-	Name(const char* name) {
-		memset(&data[0], 0, NAME_SIZE);
-		for (int i = 0; i < NAME_SIZE; i++) {
-			if (name[i] != 0) data[i] = name[i];
-			else return;
-		}
-	}
+	Name& operator=(const std::string& other);
 
-	Name& operator=(const char* other) {
-		memset(&data[0], 0, NAME_SIZE);
-		for (int i = 0; i < NAME_SIZE; i++) {
-			if (other[i] != 0) data[i] = other[i];
-			else return *this;
-		}
-		return *this;
-	}
+	bool operator==(const Name& other) const;
 
-	Name& operator=(const String& other) {
-		memset(&data[0], 0, NAME_SIZE);
-		for (int i = 0; i < NAME_SIZE; i++) {
-			if (other[i] != 0) data[i] = other[i];
-			else return *this;
-		}
-		return *this;
-	}
-
-	bool operator==(const Name& other) const { return strncmp(data, other.data, NAME_SIZE) == 0; }
-
-	bool operator!=(const Name& other) const { return !(*this == other); }
+	bool operator!=(const Name& other) const;
 };
 
 bool operator<(const Name& l, const Name& r);

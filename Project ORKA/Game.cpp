@@ -14,11 +14,11 @@ void gameSimulationThread(GameSimulation& sim) {
 void GameSimulation::start(ResourceManager& resourceManager) {
 	logDebug("Starting game simulation thread!");
 	keepRunning = true;
-	thread.start(gameSimulationThread, *this);
+	thread = Thread(gameSimulationThread, std::ref(*this));
 }
 
 void GameSimulation::stop() {
 	logDebug("Stopping game simulation thread!");
 	keepRunning = false;
-	thread.stop();
+	thread.join();
 }

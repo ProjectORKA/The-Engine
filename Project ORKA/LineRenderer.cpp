@@ -2,7 +2,7 @@
 #include "Renderer.hpp"
 
 void LineRenderer::create() {
-	cpuMesh.drawMode = MeshDrawMode::dynamicMode;
+	cpuMesh.drawMode = MeshDrawMode::DynamicMode;
 	cpuMesh.indices.push_back(0);
 	cpuMesh.indices.push_back(1);
 	cpuMesh.indices.push_back(2);
@@ -51,7 +51,7 @@ CpuMesh convertLineToMesh(const Line3D& line) {
 	CpuMesh mesh;
 	mesh.name = "Line";
 	mesh.dataFlags = Positions;
-	mesh.drawMode = MeshDrawMode::dynamicMode;
+	mesh.drawMode = MeshDrawMode::DynamicMode;
 	mesh.primitiveMode = PrimitiveMode::Lines;
 	mesh.indices.push_back(0);
 	mesh.indices.push_back(1);
@@ -65,7 +65,7 @@ CpuMesh convertLinesToMesh(const Vector<Line3D>& lines) {
 	CpuMesh mesh;
 	mesh.name = "Lines";
 	mesh.dataFlags = Positions;
-	mesh.drawMode = MeshDrawMode::dynamicMode;
+	mesh.drawMode = MeshDrawMode::DynamicMode;
 	mesh.primitiveMode = PrimitiveMode::Lines;
 	for (ULL i = 0; i < lines.size(); i++) {
 		mesh.indices.push_back(i * 2);

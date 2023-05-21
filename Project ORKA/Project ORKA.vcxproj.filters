@@ -2,9 +2,6 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="String.cpp">
-      <Filter>Common\Datastructures\String</Filter>
-    </ClCompile>
     <ClCompile Include="Math.cpp">
       <Filter>Common\Math</Filter>
     </ClCompile>
@@ -13,9 +10,6 @@
     </ClCompile>
     <ClCompile Include="PerlinNoise.cpp">
       <Filter>Common\Math\Random\Noise</Filter>
-    </ClCompile>
-    <ClCompile Include="Debug.cpp">
-      <Filter>Common\Debug</Filter>
     </ClCompile>
     <ClCompile Include="BranchStructure.cpp">
       <Filter>Common\Math\Graphs\Branch Structure</Filter>
@@ -89,10 +83,10 @@
     <ClCompile Include="MindMap.cpp">
       <Filter>Systems\Mind Map</Filter>
     </ClCompile>
-    <ClCompile Include="NeighbourOctree.cpp">
+    <ClCompile Include="NeighborOctree.cpp">
       <Filter>Systems</Filter>
     </ClCompile>
-    <ClCompile Include="NeighbourQuadtree.cpp">
+    <ClCompile Include="NeighborQuadtree.cpp">
       <Filter>Systems</Filter>
     </ClCompile>
     <ClCompile Include="OcTreeNode.cpp">
@@ -293,9 +287,6 @@
     <ClInclude Include="Basics.hpp">
       <Filter>Common</Filter>
     </ClInclude>
-    <ClInclude Include="Color.hpp">
-      <Filter>Common</Filter>
-    </ClInclude>
     <ClInclude Include="Image.hpp">
       <Filter>Common</Filter>
     </ClInclude>
@@ -308,23 +299,8 @@
     <ClInclude Include="Platform.hpp">
       <Filter>Common</Filter>
     </ClInclude>
-    <ClInclude Include="bytell_hash_map.hpp">
-      <Filter>Common\Datastructures\Hash Map</Filter>
-    </ClInclude>
-    <ClInclude Include="flat_hash_map.hpp">
-      <Filter>Common\Datastructures\Hash Map</Filter>
-    </ClInclude>
-    <ClInclude Include="unordered_map.hpp">
-      <Filter>Common\Datastructures\Unordered Map</Filter>
-    </ClInclude>
     <ClInclude Include="Array2D.hpp">
       <Filter>Common\Datastructures\Array2D</Filter>
-    </ClInclude>
-    <ClInclude Include="Map.hpp">
-      <Filter>Common\Datastructures\Map</Filter>
-    </ClInclude>
-    <ClInclude Include="String.hpp">
-      <Filter>Common\Datastructures\String</Filter>
     </ClInclude>
     <ClInclude Include="Math.hpp">
       <Filter>Common\Math</Filter>
@@ -434,10 +410,10 @@
     <ClInclude Include="MindMap.hpp">
       <Filter>Systems\Mind Map</Filter>
     </ClInclude>
-    <ClInclude Include="NeighbourQuadtree.hpp">
+    <ClInclude Include="NeighborQuadtree.hpp">
       <Filter>Systems</Filter>
     </ClInclude>
-    <ClInclude Include="NeighbourOctree.hpp">
+    <ClInclude Include="NeighborOctree.hpp">
       <Filter>Systems</Filter>
     </ClInclude>
     <ClInclude Include="OctreeData.hpp">
@@ -499,9 +475,6 @@
     </ClInclude>
     <ClInclude Include="ULLUtil.hpp">
       <Filter>Common\ULLUtil</Filter>
-    </ClInclude>
-    <ClInclude Include="Threading.hpp">
-      <Filter>Common</Filter>
     </ClInclude>
     <ClInclude Include="TreeSystem.hpp">
       <Filter>Systems</Filter>
@@ -689,8 +662,6 @@
     <ClInclude Include="Velox_PlatformSIMDInclude.hpp" />
     <ClInclude Include="Velox_RandomAccessIterator.hpp" />
     <ClInclude Include="Velox_Singleton.hpp" />
-    <ClInclude Include="Velox_String.hpp" />
-    <ClInclude Include="Velox_StringView.hpp" />
     <ClInclude Include="Velox_UtilityConcepts.hpp" />
     <ClInclude Include="Velox_Utils.hpp" />
     <ClInclude Include="Velox_VecN.hpp" />
@@ -1015,20 +986,8 @@
     <Filter Include="Common\Datastructures">
       <UniqueIdentifier>{5a5dae91-e254-40ff-b04f-2df22cfa42e4}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Common\Datastructures\Unordered Map">
-      <UniqueIdentifier>{a45fde20-f6e1-437e-aed9-ab26e1ffbfd3}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Common\Datastructures\Hash Map">
-      <UniqueIdentifier>{7c564ada-c60c-49c6-a1b1-455f09b35d1b}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Common\Datastructures\Array2D">
       <UniqueIdentifier>{8144cab6-c05c-4cb3-9639-cba72a7e35e1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Common\Datastructures\Map">
-      <UniqueIdentifier>{a1dda0f2-0810-4942-bd9c-9e2d4bbeab24}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Common\Datastructures\String">
-      <UniqueIdentifier>{35eceee3-c67b-4b22-984e-1801bf9d5517}</UniqueIdentifier>
     </Filter>
     <Filter Include="Common\Math">
       <UniqueIdentifier>{51c441a2-072c-4a00-a326-c687f7d9bea1}</UniqueIdentifier>

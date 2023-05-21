@@ -3,15 +3,15 @@
 #include "GPUTexture.hpp"
 
 struct TextureSystem {
-	Index currentTextureID = 0;
+	Index currentTextureId = 0;
 	Map<Name, Index> textureNames;
-	Vector<GPUTexture> gpuTextures;
+	Vector<GpuTexture> gpuTextures;
 
 	void create();
 	void destroy();
 	void resize(Area size);
-	void use(Index textureID);
-	GPUTexture& currentTexture();
+	void use(Index textureId);
+	GpuTexture& currentTexture();
 	void add(CPUTexture& cpuTexture);
 	Index use(ResourceManager& resourceManager, const Name& name);
 	void use(ResourceManager& resourceManager, const Name& name, Index slot);
