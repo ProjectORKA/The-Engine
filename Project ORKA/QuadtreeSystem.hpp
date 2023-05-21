@@ -9,5 +9,5 @@ struct QuadTreeSystem {
 	ULLVec3 rayTrace(Ray ray);
 	void update(TerrainSystem& terrainSystem);
 	void create(TerrainSystem& terrainSystem);
-	QuadtreeNode& get(TerrainSystem& terrainSystem, const QuadtreeID& id) const;
+	QuadtreeNode& get(TerrainSystem& terrainSystem, const QuadtreeId& id) const;
 };

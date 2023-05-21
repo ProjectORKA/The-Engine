@@ -1,6 +1,6 @@
 #include "RelativeChunkOffset.hpp"
 
-Vec3 relativeCameraPosition(const OctreeID& id, const ULLVec3& chunkLocation, const Vec3 location) {
+Vec3 relativeCameraPosition(const OctreeId& id, const ULLVec3& chunkLocation, const Vec3 location) {
 	Vec3 chunkOffset;
 
 	const ULL cx = chunkLocation.x;

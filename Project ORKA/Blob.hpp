@@ -14,7 +14,7 @@ struct BlobRenderer : GameRenderer {
 
 	void inputEvent(Window& window, const InputEvent input) override {
 		if (input == enter) window.captureCursor();
-		if (input == exit) window.uncaptureCursor();
+		if (input == exit) window.unCaptureCursor();
 		if (input == reloadShaders) window.renderer.shaderSystem.rebuild();
 
 		player.inputEvent(window, input);
@@ -44,7 +44,7 @@ struct Blob {
 	UserInterface ui;
 
 	void run() {
-		ui.window("Blob", Area(1920, 1080), true, WindowState::windowed, renderer, resourceManager);
+		ui.window("Blob", Area(1920, 1080), true, WindowState::Windowed, renderer, resourceManager);
 		ui.run();
 	}
 };

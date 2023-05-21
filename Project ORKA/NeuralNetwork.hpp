@@ -15,10 +15,10 @@ struct NeuralNet {
 	Vector<Float> output();
 	void propagateForward();
 	void input(const Vector<Float>& input);
-	UInt neuronCountAtLayer(UInt layerID) const;
+	UInt neuronCountAtLayer(UInt layerId) const;
 	void propagateBackward(Vector<Float> target);
 	void render(ResourceManager& resourceManager, Renderer& renderer, Vec2 area);
-	Vec2 getNeuronPosition(Vec2 area, UInt layerID, UInt neuronID) const;
+	Vec2 getNeuronPosition(Vec2 area, UInt layerId, UInt neuronId) const;
 
 	NeuralNet() {};
 	NeuralNet(const Vector<UInt>& structure);

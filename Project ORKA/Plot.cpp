@@ -6,7 +6,7 @@ void Plot::add(const Vec2 value) { points.push_back(value); }
 CpuMesh Plot::createMesh() const {
 	CpuMesh mesh;
 
-	mesh.drawMode = MeshDrawMode::dynamicMode;
+	mesh.drawMode = MeshDrawMode::DynamicMode;
 	mesh.name = "plot";
 	mesh.primitiveMode = PrimitiveMode::LineStrip;
 

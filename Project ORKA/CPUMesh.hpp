@@ -33,8 +33,8 @@ struct CpuMesh {
 
 	Name name = "empty";
 	Short dataFlags = 0;
-	Int drawMode = MeshDrawMode::staticMode;
-	Int primitiveMode = PrimitiveMode::Triangles;
+	MeshDrawMode drawMode = MeshDrawMode::StaticMode;
+	PrimitiveMode primitiveMode = PrimitiveMode::Triangles;
 
 	Vector<Vec3> positions;
 	Vector<Vec2> textureCoordinates;
@@ -45,8 +45,8 @@ struct CpuMesh {
 
 	Vector<Index> indices;
 
-	CpuMesh() {}
-	~CpuMesh() {}
+	CpuMesh() = default;
+	~CpuMesh() = default;
 	explicit CpuMesh(const Graph& graph);
 
 	void clearGeometry();
@@ -68,7 +68,7 @@ private:
 struct MeshHeader1 {
 	UInt version = 1;
 	Name meshName = "";
-	Int primitiveMode = PrimitiveMode::Triangles;
+	PrimitiveMode primitiveMode = PrimitiveMode::Triangles;
 	UInt vertexCount = 0;
 	UInt uvCount = 0;
 	UInt normalCount = 0;
@@ -78,7 +78,7 @@ struct MeshHeader1 {
 struct MeshHeader2 {
 	UInt version = 2;
 	Name meshName = "";
-	Int primitiveMode = PrimitiveMode::Triangles;
+	PrimitiveMode primitiveMode = PrimitiveMode::Triangles;
 	UInt vertexCount = 0;
 	UInt uvCount = 0;
 	UInt normalCount = 0;

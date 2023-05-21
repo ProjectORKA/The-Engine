@@ -38,7 +38,7 @@ struct OctreeNodeRenderData {
 struct OctreeRenderSystem {
 	OctreeNodeRenderData root;
 
-	Index waterTextureID = 0;
+	Index waterTextureId = 0;
 
 	void count() const;
 	void destroy();

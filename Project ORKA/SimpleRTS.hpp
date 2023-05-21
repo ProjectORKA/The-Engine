@@ -40,7 +40,7 @@ struct RabbitSimulation {
 struct HouseSimulation {
 	UInt houseCount = 0;
 	Vector<Vec2> housePosition;
-	Vector<UInt> houseClanID;
+	Vector<UInt> houseClanId;
 };
 
 struct BushSimulation {
@@ -75,8 +75,8 @@ struct SimpleRTSSimulation : public GameSimulation {
 	SimpleRTSTerrainSystem terrainSystem;
 
 	SimpleRTSSimulation();
-	void update(Float timestep) override;
-	void render(ResourceManager& resourceManager, Renderer& renderer);
+	void update(Float delta) override;
+	static void render(ResourceManager& resourceManager, Renderer& renderer);
 };
 
 struct SimpleRTSRenderer : public GameRenderer {
@@ -105,7 +105,7 @@ struct SimpleRTS {
 
 	void run() {
 		renderer.sim = &sim;
-		ui.window("Simple RTS", Area(1920, 1080), true, WindowState::windowed, renderer, resourceManager);
+		ui.window("Simple RTS", Area(1920, 1080), true, WindowState::Windowed, renderer, resourceManager);
 		ui.run();
 	}
 };

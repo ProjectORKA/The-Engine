@@ -2,7 +2,8 @@
 
 #include "UserInterface.hpp"
 
-struct GameSimulation {
+struct GameSimulation
+{
 	virtual ~GameSimulation() = default;
 	Thread thread;
 	Bool loaded = false;
@@ -22,7 +23,8 @@ struct GameSimulation {
 
 void gameSimulationThread(GameSimulation& sim);
 
-struct GameRenderer : public UIElement {
+struct GameRenderer : public UiElement
+{
 	GameSimulation simulation;
 
 	GameRenderer() = default;

@@ -40,13 +40,13 @@ void MindMapperRenderer::render(ResourceManager& resourceManager, Window& window
 void MindMapper::run() {
 	resourceManager.create();
 	ui.create();
-	ui.window("ORKA MindMapper", Area(1920, 1080), true, WindowState::windowed, mindMapperRenderer, resourceManager);
+	ui.window("ORKA MindMapper", Area(1920, 1080), true, WindowState::Windowed, mindMapperRenderer, resourceManager);
 	ui.run();
 }
 
 void MindMapperRenderer::inputEvent(Window& window, const InputEvent input) {
 	if (input == growToggle)grow = !grow;
-	if (input == exit) window.uncaptureCursor();
+	if (input == exit) window.unCaptureCursor();
 	if (input == enter) window.captureCursor();
 	player.inputEvent(window, input);
 }

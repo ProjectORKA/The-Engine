@@ -44,7 +44,7 @@ void BitmapTextRenderSystem::render(ResourceManager& resourceManager, Renderer& 
 
 	cpuText.name = "text";
 	cpuText.clearGeometry();
-	cpuText.drawMode = MeshDrawMode::dynamicMode;
+	cpuText.drawMode = MeshDrawMode::DynamicMode;
 
 	for (UInt i = 0; i < length; i++) {
 		left = start + static_cast<Float>(i) * style.letterSpacing;

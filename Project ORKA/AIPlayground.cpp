@@ -1,12 +1,14 @@
 #include "AIPlayground.hpp"
 #include "Window.hpp"
 
-AIPlayground::AIPlayground() {
-	const Vector<UInt> structure = {4, 5, 5, 2, 1};
+AIPlayground::AIPlayground()
+{
+	const Vector<UInt> structure = { 4, 5, 5, 2, 1 };
 	network = NeuralNet(structure);
 }
 
-void AIPlayground::render(ResourceManager& resourceManager, Window& window, const TiledRectangle area) {
+void AIPlayground::render(ResourceManager& resourceManager, Window& window, const TiledRectangle area)
+{
 	Renderer& r = window.renderer;
 
 	r.screenSpace();
@@ -16,7 +18,10 @@ void AIPlayground::render(ResourceManager& resourceManager, Window& window, cons
 	Vector<Float> inputVector;
 	const Vector<Float> targetVector;
 
-	for (UInt i = 0; i < network.structure[0]; i++) { inputVector.push_back(randomFloat()); }
+	for(UInt i = 0; i < network.structure[0]; i++)
+	{
+		inputVector.push_back(randomFloat());
+	}
 
 	network.input(inputVector);
 	network.propagateForward();

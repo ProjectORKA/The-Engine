@@ -6,13 +6,15 @@
 #include "VertexBufferObject.hpp"
 #include "CpuMesh.hpp"
 
-struct VertexArrayObject {
-	Index arrayObjectID = 0;
+struct VertexArrayObject
+{
 	Bool instanced = false;
-	Vector<VertexBufferObject> buffers;
+	Index arrayObjectId = 0;
 	IndexBufferObject indexBuffer;
-	void select() const;
+	Vector<VertexBufferObject> buffers;
+
 	void unload();
+	void select() const;
 	void create(CpuMesh& mesh);
-	void add(Index location, float* data, UInt byteSize, UInt usage, Index components);
+	void add(Index location, const Float* data, UInt byteSize, MeshDrawMode usage, Index components);
 };

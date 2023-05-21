@@ -1,18 +1,24 @@
 #include "GPUMesh.hpp"
 #include "Uniforms.hpp"
 
-void GPUMesh::unload() {
+void GpuMesh::unload()
+{
 	//make unavailable for rendering
-	if (loaded) {
+	if(loaded)
+	{
 		vao.unload();
 		loaded = false;
 	}
 }
 
-void GPUMesh::upload(CpuMesh cpuMesh) {
-	if (!loaded) {
-		if (cpuMesh.loaded) {
-			if (!cpuMesh.positions.empty()) {
+void GpuMesh::upload(CpuMesh cpuMesh)
+{
+	if(! loaded)
+	{
+		if(cpuMesh.loaded)
+		{
+			if(! cpuMesh.positions.empty())
+			{
 				primitiveMode = cpuMesh.primitiveMode;
 
 				vao.create(cpuMesh);
@@ -20,25 +26,35 @@ void GPUMesh::upload(CpuMesh cpuMesh) {
 				loaded = true;
 			}
 		}
-		else { logDebug("CpuMesh not loaded! Cant upload!"); }
+		else
+		{
+			logDebug("CpuMesh not loaded! Cant upload!");
+		}
 	}
-	else { logDebug("GPUMesh already loaded!"); }
+	else
+	{
+		logDebug("GPUMesh already loaded!");
+	}
 }
 
-void GPUMesh::render(Uniforms& uniforms) {
-	if (loaded) {
+void GpuMesh::render(Uniforms& uniforms) const
+{
+	if(loaded)
+	{
 		uniforms.instanced(false);
 		uniforms.upload();
 		vao.select();
-		apiDrawElements(primitiveMode, vao.indexBuffer.indexCount, GL_UNSIGNED_INT, nullptr);
+		apiDrawElements(primitiveMode, vao.indexBuffer.indexCount, nullptr);
 	}
 }
 
-void GPUMesh::renderInstances(Uniforms& uniforms, const UInt instanceCount) {
-	if (loaded) {
+void GpuMesh::renderInstances(Uniforms& uniforms, const UInt instanceCount) const
+{
+	if(loaded)
+	{
 		uniforms.instanced(true);
 		uniforms.upload();
 		vao.select();
-		apiDrawElementsInstanced(primitiveMode, vao.indexBuffer.indexCount, GL_UNSIGNED_INT, nullptr, instanceCount);
+		apiDrawElementsInstanced(primitiveMode, vao.indexBuffer.indexCount, nullptr, instanceCount);
 	}
 }

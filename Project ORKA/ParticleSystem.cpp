@@ -23,18 +23,18 @@ ParticleSystem::~ParticleSystem() {
 
 void ParticleSystem::spawn(const Vec3 loc, const Vec3 vel) {
 	//advance to next particle slot
-	currentID++;
-	if (currentID >= particleCount) currentID = 0;
+	currentId++;
+	if (currentId >= particleCount) currentId = 0;
 
 	const Float force = length(vel);
 
-	transformation[currentID] = Vec4(loc, 0);
-	velocity[currentID] = -randomFloat(0.2) * vel + randomUnitVec3() * (randomFloat(0.01 * force));
-	velocity[currentID].z = abs(velocity[currentID].z);
-	maxSize[currentID] = 0.15f + force * 0.4f * randomFloat();
-	maxLifetime[currentID] = (1.0f + sq(force / 100)) / 2.0f;
-	lifetime[currentID] = 0;
-	alive[currentID] = true;
+	transformation[currentId] = Vec4(loc, 0);
+	velocity[currentId] = -randomFloat(0.2) * vel + randomUnitVec3() * (randomFloat(0.01 * force));
+	velocity[currentId].z = abs(velocity[currentId].z);
+	maxSize[currentId] = 0.15f + force * 0.4f * randomFloat();
+	maxLifetime[currentId] = (1.0f + sq(force / 100)) / 2.0f;
+	lifetime[currentId] = 0;
+	alive[currentId] = true;
 }
 
 void ParticleSystem::render(ResourceManager& resourceManager, Renderer& renderer) {

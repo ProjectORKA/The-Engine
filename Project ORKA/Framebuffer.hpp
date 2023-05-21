@@ -1,15 +1,14 @@
 #pragma once
 
-#include "Math.hpp"
-#include "Settings.hpp"
 #include "GPUTexture.hpp"
 #include "TiledMath.hpp"
 
 struct Renderer;
 
-struct FramebufferTexture {
+struct FramebufferTexture
+{
 	UInt slot = 0;
-	GPUTexture texture;
+	GpuTexture texture;
 	Bool isColor = true;
 
 	void destroy();
@@ -17,10 +16,12 @@ struct FramebufferTexture {
 	void resize(Area area);
 };
 
-struct Framebuffer {
+struct Framebuffer
+{
+	String name = "Framebuffer";
 	Area size = Area(1);
-	Index framebufferID = -1;
-	Vector<FramebufferTexture> frameBufferTextures;
+	Index framebufferId = -1;
+	Vector<FramebufferTexture> framebufferTextures;
 
 	Bool dynamicResize = true;
 	Float relativeScale = 1;
@@ -30,10 +31,10 @@ struct Framebuffer {
 	void destroy();
 	Float aspectRatio() const;
 	void blitFramebuffer() const;
-	void create(Area size);
 	void resize(Area resolution);
 	void setAsTexture(Index slot = 0) const;
+	void create(const String& name, Area dimensions);
 	void add(UInt components, DataType type, UInt slot);
-	Vector<UInt> readPixelsAtCenterUIntRGB(UInt attachment);
-	Vector<UInt> readPixelsUIntRGB(UInt x, UInt y, UInt attachment) const;
+	Vector<UInt> readPixelsAtCenterUIntRgb(UInt attachment) const;
+	Vector<UInt> readPixelsUIntRgb(UInt x, UInt y, UInt attachment) const;
 };

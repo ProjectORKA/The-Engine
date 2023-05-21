@@ -4,7 +4,7 @@
 
 void MelonRenderer::inputEvent(Window& window, const InputEvent input) {
 	if (input == enter) window.captureCursor();
-	if (input == exit) window.uncaptureCursor();
+	if (input == exit) window.unCaptureCursor();
 
 	player.inputEvent(window, input);
 }
@@ -62,6 +62,6 @@ void MelonRenderer::render(ResourceManager& resourceManager, Window& window, Til
 }
 
 void ProjectMelon::run() {
-	ui.window("Project Melon", Area(1920, 1080), true, WindowState::windowed, game, resourceManager);
+	ui.window("Project Melon", Area(1920, 1080), true, WindowState::Windowed, game, resourceManager);
 	ui.run();
 }

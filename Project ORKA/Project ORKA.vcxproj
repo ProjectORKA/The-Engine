@@ -66,8 +66,8 @@
     <ClCompile Include="Molecules2D.cpp" />
     <ClCompile Include="MoonCrash.cpp" />
     <ClCompile Include="Name.cpp" />
-    <ClCompile Include="NeighbourOctree.cpp" />
-    <ClCompile Include="NeighbourQuadtree.cpp" />
+    <ClCompile Include="NeighborOctree.cpp" />
+    <ClCompile Include="NeighborQuadtree.cpp" />
     <ClCompile Include="Networking.cpp" />
     <ClCompile Include="OcTreeNode.cpp" />
     <ClCompile Include="OcTreeSystem.cpp" />
@@ -132,12 +132,10 @@
     <ClCompile Include="SimpleRTS.cpp" />
     <ClCompile Include="Snake.cpp" />
     <ClCompile Include="Sortr.cpp" />
-    <ClCompile Include="String.cpp" />
     <ClCompile Include="TerrainRendering.cpp" />
     <ClCompile Include="TerrainSystem.cpp" />
     <ClCompile Include="Transform.cpp" />
     <ClCompile Include="TiledMath.cpp" />
-    <ClCompile Include="Debug.cpp" />
     <ClCompile Include="FileSystem.cpp" />
     <ClCompile Include="Math.cpp" />
     <ClCompile Include="TreeSystem.cpp" />
@@ -213,8 +211,8 @@
     <ClInclude Include="Molecules2D.hpp" />
     <ClInclude Include="MoonCrash.hpp" />
     <ClInclude Include="MSDFText.hpp" />
-    <ClInclude Include="NeighbourOctree.hpp" />
-    <ClInclude Include="NeighbourQuadtree.hpp" />
+    <ClInclude Include="NeighborOctree.hpp" />
+    <ClInclude Include="NeighborQuadtree.hpp" />
     <ClInclude Include="Networking.hpp" />
     <ClInclude Include="OctreeData.hpp" />
     <ClInclude Include="OctreeID.hpp" />
@@ -283,9 +281,7 @@
     <ClInclude Include="GeometryClipmapTerrain.hpp" />
     <ClInclude Include="LevelledGraph.hpp" />
     <ClInclude Include="NameGenerator.hpp" />
-    <ClInclude Include="Color.hpp" />
     <ClInclude Include="File.hpp" />
-    <ClInclude Include="Map.hpp" />
     <ClInclude Include="Name.hpp" />
     <ClInclude Include="ORKAIntroSequence.hpp" />
     <ClInclude Include="Ray.hpp" />
@@ -303,7 +299,6 @@
     <ClInclude Include="SphereMeshing.hpp" />
     <ClInclude Include="TerrainRendering.hpp" />
     <ClInclude Include="TerrainSystem.hpp" />
-    <ClInclude Include="Threading.hpp" />
     <ClInclude Include="AutoConstruct.hpp" />
     <ClInclude Include="Basics.hpp" />
     <ClInclude Include="Compiler.hpp" />
@@ -313,7 +308,6 @@
     <ClInclude Include="Debug.hpp" />
     <ClInclude Include="FileSystem.hpp" />
     <ClInclude Include="Math.hpp" />
-    <ClInclude Include="String.hpp" />
     <ClInclude Include="Transform.hpp" />
     <ClInclude Include="TreeSystem.hpp" />
     <ClInclude Include="Random.hpp" />
@@ -330,10 +324,7 @@
     <ClInclude Include="Uniforms.hpp" />
     <ClInclude Include="UserInterface.hpp" />
     <ClInclude Include="Vectors.hpp" />
-    <ClInclude Include="bytell_hash_map.hpp" />
-    <ClInclude Include="flat_hash_map.hpp" />
     <ClInclude Include="Platform.hpp" />
-    <ClInclude Include="unordered_map.hpp" />
     <ClInclude Include="Velox_AllocatorMisc.hpp" />
     <ClInclude Include="Velox_ArrayView.hpp" />
     <ClInclude Include="Velox_Common.hpp" />
@@ -355,8 +346,6 @@
     <ClInclude Include="Velox_PlatformSIMDInclude.hpp" />
     <ClInclude Include="Velox_RandomAccessIterator.hpp" />
     <ClInclude Include="Velox_Singleton.hpp" />
-    <ClInclude Include="Velox_String.hpp" />
-    <ClInclude Include="Velox_StringView.hpp" />
     <ClInclude Include="Velox_UtilityConcepts.hpp" />
     <ClInclude Include="Velox_Utils.hpp" />
     <ClInclude Include="Velox_VecN.hpp" />

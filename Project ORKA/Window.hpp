@@ -1,26 +1,28 @@
 #pragma once
 
-#include "Threading.hpp"
 #include "Renderer.hpp"
 #include "WindowAPI.hpp" //needs to be below the rendering stuff, e.g. "Renderer.hpp"
 #include "UIElement.hpp"
 #include "LifeTimeGuard.hpp"
 
-//#define DEBUG_ID_BUFFER
+//#define DEBUG_Id_BUFFER
 
-enum class WindowState {
-	minimized,
-	windowed,
-	maximized,
-	fullscreen
+enum class WindowState : Byte
+{
+	Minimized,
+	Windowed,
+	Maximized,
+	Fullscreen
 };
 
-enum WindowDecoration {
-	decorated = 1,
-	undecorated = 0,
+enum class WindowDecoration : Byte
+{
+	Decorated = 1,
+	Undecorated = 0,
 };
 
-struct Window : public LifetimeGuard {
+struct Window : LifetimeGuard
+{
 	Renderer renderer;
 
 	APIWindow apiWindow = nullptr;
@@ -31,11 +33,11 @@ struct Window : public LifetimeGuard {
 	IVec2 windowPosition;
 	Bool decorated = true;
 	Bool profiling = false;
-	Bool keeprunning = true;
-	UIElement* content = nullptr;
+	Bool keepRunning = true;
+	UiElement* content = nullptr;
 	Area windowedModeSize = Area(1);
 	Vector<Path> droppedFilePaths = {};
-	WindowState windowState = WindowState::windowed;
+	WindowState windowState = WindowState::Windowed;
 
 	//mouse
 	MouseState mouseState;
@@ -45,7 +47,7 @@ struct Window : public LifetimeGuard {
 	MouseMovement mousePosBotLeft = MouseMovement(0);
 
 	//input
-	InputID altKey = InputID(InputType::KeyBoard, ALT);
+	InputId altKey = InputId(InputType::KeyBoard, ALT);
 	InputEvent escape = InputEvent(InputType::KeyBoard, ESC, true);
 	InputEvent enter = InputEvent(InputType::KeyBoard, ENTER, true);
 
@@ -62,28 +64,28 @@ struct Window : public LifetimeGuard {
 	void captureCursor();
 	void decorateWindow();
 	void updatePosition();
-	void uncaptureCursor();
-	void undecorateWindow();
-	void destroyAPIWindow();
+	void unCaptureCursor();
+	void unDecorateWindow();
+	void destroyApiWindow();
 	void setIcon(const Path& path);
 	void updateWindowState();
 	void updateDecorations();
-	void initializeGraphicsAPI();
+	void initializeGraphicsApi();
 	void setPosition(IVec2 position);
 	void resize(Int width, Int height);
-	void createAPIWindow(const String& title, Area size);
+	void createApiWindow(const String& title, Area size);
 	void create(const String& title, Area size, Bool decorated, WindowState state, ResourceManager& resourceManager);
 
 	Bool shouldClose() const;
 	Bool isCapturing() const;
 	Bool isFullScreen() const;
 	Bool isKeyPressed(Int key) const;
-	Bool pressed(InputID input) const;
+	Bool pressed(InputId input) const;
 
 	Area getFrameSize() const;
 	Area getContentSize() const;
 
-	Window& insert(UIElement& element);
+	Window& insert(UiElement& element);
 };
 
 void windowThread(ResourceManager& resourceManager, Window& window);
@@ -98,4 +100,4 @@ void whenMouseIsScrolling(APIWindow apiWindow, Double xAxis, Double yAxis);
 void whenFilesDroppedOnWindow(APIWindow apiWindow, Int count, const Char** paths);
 void whenWindowContentScaleChanged(APIWindow apiWindow, Float xScale, Float yScale);
 void whenMouseIsPressed(APIWindow apiWindow, Int mouseButton, Int action, Int modifiers);
-void whenButtonIsPressed(APIWindow apiWindow, Int key, Int scancode, Int action, Int modifiers);
+void whenButtonIsPressed(APIWindow apiWindow, Int key, Int scanCode, Int action, Int modifiers);

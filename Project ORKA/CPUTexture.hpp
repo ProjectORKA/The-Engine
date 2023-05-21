@@ -26,7 +26,7 @@ enum class Filter : Int {
 struct CPUTexture {
 	Int width = 0;
 	Int height = 0;
-	Int channels = 0;
+	Byte channels = 0;
 	Name name = "NULL";
 	Bool loaded = false;
 	Filter farFilter = Filter::linear;

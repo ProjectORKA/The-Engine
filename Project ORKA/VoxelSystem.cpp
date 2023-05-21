@@ -1,6 +1,6 @@
 #include "VoxelSystem.hpp"
-
 #include "Renderer.hpp"
+#include "PerlinNoise.hpp"
 
 Chunk::Chunk() {
 	for (Int x = 0; x < VOXEL_CHUNK_SIZE; x++) {
@@ -16,7 +16,7 @@ Chunk::Chunk() {
 CpuMesh Chunk::generateMesh(ResourceManager& resourceManager) const {
 	CpuMesh terrain;
 	terrain.name = "terrain";
-	terrain.drawMode = MeshDrawMode::staticMode;
+	terrain.drawMode = MeshDrawMode::StaticMode;
 	terrain.primitiveMode = PrimitiveMode::Triangles;
 
 	CpuMesh topFace;

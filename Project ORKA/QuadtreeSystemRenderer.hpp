@@ -7,7 +7,7 @@ struct Renderer;
 struct PlanetSystemPlayer;
 
 struct QuadtreeNodeRenderData {
-	GPUMesh terrainMesh;
+	GpuMesh terrainMesh;
 
 	Vec3 cameraPosition = Vec3(0);
 	Bool drawn = false;

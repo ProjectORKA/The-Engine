@@ -3,7 +3,7 @@
 
 void RectangleRenderer::create(ResourceManager& resourceManager, Renderer& renderer) {
 	renderer.useMesh(resourceManager, "centeredPlane");
-	rectangleMeshId = renderer.meshSystem.currentMeshID;
+	rectangleMeshId = renderer.meshSystem.currentMeshId;
 }
 
 void RectangleRenderer::render(ResourceManager& resourceManager, Renderer& renderer, const Vec2 pos,

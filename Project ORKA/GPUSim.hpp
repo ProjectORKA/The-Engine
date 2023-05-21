@@ -8,8 +8,8 @@ struct GPUSimRenderer : public GameRenderer {
 
 	Bool swap = true;
 
-	UInt factionsID1 = 0;
-	UInt factionsID2 = 0;
+	UInt factionsId1 = 0;
+	UInt factionsId2 = 0;
 
 	void setup(Renderer& renderer) {
 		const UInt worldSize = 1024;

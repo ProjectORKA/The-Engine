@@ -78,7 +78,7 @@ struct PhysicsPlayground {
 		sim.start(resourceManager);
 
 		game.sim = &sim;
-		ui.window("Physics playground", 1024, true, WindowState::windowed, game, resourceManager);
+		ui.window("Physics playground", 1024, true, WindowState::Windowed, game, resourceManager);
 		ui.run();
 
 		//sim.stop();

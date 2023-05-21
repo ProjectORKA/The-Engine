@@ -84,29 +84,29 @@ void createTexture(const CPUTexture& cpuTexture) {
 	}
 }
 
-void GPUTexture::unload() {
+void GpuTexture::unload() {
 	if (loaded) {
 		apiBindTexture(GL_TEXTURE_2D, 0);
-		apiDeleteTexture(textureID);
+		apiDeleteTexture(textureId);
 		loaded = false;
 	}
 }
 
-void GPUTexture::load(ResourceManager& resourceManager, const Name& name) {
+void GpuTexture::load(ResourceManager& resourceManager, const Name& name) {
 	CPUTexture t;
 	t.load(resourceManager, name, Filter::linear, Filter::linearMM, Wrapping::repeat);
 	load(t);
 }
 
-void GPUTexture::setFilters(Filter nearFilter, Filter farFilter) {
+void GpuTexture::setFilters(Filter nearFilter, Filter farFilter) {
 	this->nearFilter = nearFilter;
 	this->farFilter = farFilter;
-	apiBindTexture(GL_TEXTURE_2D, textureID);
-	apiTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, static_cast<int>(nearFilter));
-	apiTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, static_cast<int>(farFilter));
+	apiBindTexture(GL_TEXTURE_2D, textureId);
+	apiTexParameterInt(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, static_cast<int>(nearFilter));
+	apiTexParameterInt(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, static_cast<int>(farFilter));
 }
 
-void GPUTexture::resize(Area size) {
+void GpuTexture::resize(Area size) {
 	//[IMPORTANT] apply same stuff as in creation
 
 	size.setMinimum(1);
@@ -114,7 +114,7 @@ void GPUTexture::resize(Area size) {
 	width = size.x;
 	height = size.y;
 
-	apiBindTexture(GL_TEXTURE_2D, textureID);
+	apiBindTexture(GL_TEXTURE_2D, textureId);
 
 	CPUTexture tex;
 	tex.channels = channels;
@@ -125,7 +125,7 @@ void GPUTexture::resize(Area size) {
 	createTexture(tex);
 }
 
-void GPUTexture::use(const Index textureSlot) const {
+void GpuTexture::use(const Index textureSlot) const {
 	if (loaded) {
 		switch (textureSlot) {
 			case 0: apiActiveTexture(GL_TEXTURE0);
@@ -160,56 +160,58 @@ void GPUTexture::use(const Index textureSlot) const {
 				break;
 			case 15: apiActiveTexture(GL_TEXTURE15);
 				break;
+			default: logError("Requesting texture slot 16 or higher!");
+				break;
 		}
 
-		apiBindTexture(GL_TEXTURE_2D, textureID);
+		apiBindTexture(GL_TEXTURE_2D, textureId);
 	}
 }
 
-void GPUTexture::attachTexture(const Int slot) const {
-	apiBindTexture(GL_TEXTURE_2D, textureID);
+void GpuTexture::attachTexture(const Int slot) const {
+	apiBindTexture(GL_TEXTURE_2D, textureId);
 	if (channels < 5) {
 		switch (slot) {
-			case 0: apiFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureID, 0);
+			case 0: apiFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureId, 0);
 				break;
-			case 1: apiFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, textureID, 0);
+			case 1: apiFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, textureId, 0);
 				break;
-			case 2: apiFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, textureID, 0);
+			case 2: apiFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, textureId, 0);
 				break;
-			case 3: apiFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT3, GL_TEXTURE_2D, textureID, 0);
+			case 3: apiFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT3, GL_TEXTURE_2D, textureId, 0);
 				break;
-			case 4: apiFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT4, GL_TEXTURE_2D, textureID, 0);
+			case 4: apiFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT4, GL_TEXTURE_2D, textureId, 0);
 				break;
-			case 5: apiFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT5, GL_TEXTURE_2D, textureID, 0);
+			case 5: apiFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT5, GL_TEXTURE_2D, textureId, 0);
 				break;
-			case 6: apiFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT6, GL_TEXTURE_2D, textureID, 0);
+			case 6: apiFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT6, GL_TEXTURE_2D, textureId, 0);
 				break;
-			case 7: apiFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT7, GL_TEXTURE_2D, textureID, 0);
+			case 7: apiFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT7, GL_TEXTURE_2D, textureId, 0);
 				break;
-			case 8: apiFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT8, GL_TEXTURE_2D, textureID, 0);
+			case 8: apiFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT8, GL_TEXTURE_2D, textureId, 0);
 				break;
-			case 9: apiFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT9, GL_TEXTURE_2D, textureID, 0);
+			case 9: apiFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT9, GL_TEXTURE_2D, textureId, 0);
 				break;
-			case 10: apiFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT10, GL_TEXTURE_2D, textureID, 0);
+			case 10: apiFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT10, GL_TEXTURE_2D, textureId, 0);
 				break;
-			case 11: apiFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT11, GL_TEXTURE_2D, textureID, 0);
+			case 11: apiFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT11, GL_TEXTURE_2D, textureId, 0);
 				break;
-			case 12: apiFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT12, GL_TEXTURE_2D, textureID, 0);
+			case 12: apiFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT12, GL_TEXTURE_2D, textureId, 0);
 				break;
-			case 13: apiFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT13, GL_TEXTURE_2D, textureID, 0);
+			case 13: apiFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT13, GL_TEXTURE_2D, textureId, 0);
 				break;
-			case 14: apiFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT14, GL_TEXTURE_2D, textureID, 0);
+			case 14: apiFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT14, GL_TEXTURE_2D, textureId, 0);
 				break;
-			case 15: apiFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT15, GL_TEXTURE_2D, textureID, 0);
+			case 15: apiFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT15, GL_TEXTURE_2D, textureId, 0);
 				break;
 			default: logError("Texture slot not supported!");
 				break;
 		}
 	}
-	else { apiFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, textureID, 0); }
+	else { apiFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, textureId, 0); }
 }
 
-void GPUTexture::load(CPUTexture& cpuTexture) {
+void GpuTexture::load(CPUTexture& cpuTexture) {
 	if (loaded)unload();
 
 	if (cpuTexture.loaded) {
@@ -222,15 +224,15 @@ void GPUTexture::load(CPUTexture& cpuTexture) {
 		height = cpuTexture.height;
 
 		//create texture
-		apiGenTexture(textureID);
-		apiBindTexture(GL_TEXTURE_2D, textureID);
+		apiGenTexture(textureId);
+		apiBindTexture(GL_TEXTURE_2D, textureId);
 
 		createTexture(cpuTexture);
 
 		//set texture wrapping
-		apiTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, static_cast<int>(wrapping));
-		apiTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, static_cast<int>(wrapping));
-		if (wrapping == Wrapping::border) apiTexParameterfv(
+		apiTexParameterInt(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, static_cast<int>(wrapping));
+		apiTexParameterInt(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, static_cast<int>(wrapping));
+		if (wrapping == Wrapping::border) apiTexParameterFloatValue(
 			GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, value_ptr(Color(0.0f, 0.0f, 0.0f, 1.0f)));
 
 		generateMipMaps(nearFilter, farFilter);
@@ -240,7 +242,7 @@ void GPUTexture::load(CPUTexture& cpuTexture) {
 	else { logWarning("CPUTexture not loaded!"); }
 }
 
-void GPUTexture::load(const Vec2 size, const Int channels, const DataType type) {
+void GpuTexture::load(const Vec2 size, const Int channels, const DataType type) {
 	CPUTexture cpuTexture;
 	cpuTexture.name = "generated";
 	cpuTexture.width = size.x;
@@ -254,25 +256,25 @@ void GPUTexture::load(const Vec2 size, const Int channels, const DataType type) 
 	load(cpuTexture);
 }
 
-void GPUTexture::generateMipMaps() const {
+void GpuTexture::generateMipMaps() const {
 	//select tecture
-	apiBindTexture(GL_TEXTURE_2D, textureID);
+	apiBindTexture(GL_TEXTURE_2D, textureId);
 
-	apiTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	apiTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	apiTexParameterInt(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	apiTexParameterInt(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 
 	//set up mip mapping
 	apiGenerateMipmap(GL_TEXTURE_2D);
 }
 
-void GPUTexture::generateMipMaps(Filter nearFilter, Filter farFilter) const {
+void GpuTexture::generateMipMaps(Filter nearFilter, Filter farFilter) const {
 	//select tecture
-	apiBindTexture(GL_TEXTURE_2D, textureID);
+	apiBindTexture(GL_TEXTURE_2D, textureId);
 
 	//set texture filter
-	apiTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, static_cast<int>(nearFilter));
-	apiTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, static_cast<int>(farFilter));
-	apiTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY, 1.0f);
+	apiTexParameterInt(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, static_cast<int>(nearFilter));
+	apiTexParameterInt(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, static_cast<int>(farFilter));
+	apiTexParameterFloat(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY, 1.0f);
 
 	//set up mip mapping
 	apiGenerateMipmap(GL_TEXTURE_2D);

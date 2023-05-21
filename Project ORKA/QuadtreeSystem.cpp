@@ -10,6 +10,6 @@ void QuadTreeSystem::create(TerrainSystem& terrainSystem) {
 
 void QuadTreeSystem::update(TerrainSystem& terrainSystem) { root->update(*this, terrainSystem); }
 
-QuadtreeNode& QuadTreeSystem::get(TerrainSystem& terrainSystem, const QuadtreeID& id) const {
+QuadtreeNode& QuadTreeSystem::get(TerrainSystem& terrainSystem, const QuadtreeId& id) const {
 	return root->get(terrainSystem, id);
 }

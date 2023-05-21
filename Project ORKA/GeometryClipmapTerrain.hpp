@@ -9,9 +9,9 @@
 
 struct ClipMap {
 	CPUTexture heightmap;
-	GPUTexture gpuHeightMap;
+	GpuTexture gpuHeightMap;
 
-	GPUMesh terrain;
+	GpuMesh terrain;
 
 
 	void render(Renderer& renderer, Vec3 location) { }

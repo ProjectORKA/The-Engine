@@ -56,7 +56,7 @@ void TerrainSystem::create(ResourceManager& resourceManager) {
 
 void terrainDistributionFunction(LDouble& height) { height = 4 * pow((height - 0.5), 3) + 0.5; }
 
-Terrain::Terrain(const TerrainSystem& terrainSystem, const QuadtreeID& id, const Terrain* parentTerrain, const Bool cx,
+Terrain::Terrain(const TerrainSystem& terrainSystem, const QuadtreeId& id, const Terrain* parentTerrain, const Bool cx,
                  const Bool cy) {
 	heightmap.upperLimit = 0;
 	heightmap.lowerLimit = static_cast<LDouble>(ULLONG_MAX);

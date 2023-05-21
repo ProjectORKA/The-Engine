@@ -5,10 +5,11 @@
 #include "PlanetSystemPlayer.hpp"
 #include "PlanetSystem.hpp"
 
-#define INITIAL_CAMERA_SPEED 200				//1 as fast as a human 400 as fast as light
+constexpr auto initialCameraSpeed = 200;				//1 as fast as a human 400 as fast as light;
 #define CAMERA_TERRAIN_LIMIT false
 
-struct MoonCrashPlayer : public PlanetSystemPlayer {
+struct MoonCrashPlayer : public PlanetSystemPlayer
+{
 	Matrix skyRotation = Matrix(1);
 
 	MoonCrashPlayer();
@@ -16,52 +17,44 @@ struct MoonCrashPlayer : public PlanetSystemPlayer {
 	void render(ResourceManager& resourceManager, Window& window) override;
 };
 
-struct MooncrashSimulation : public GameSimulation {
+struct MoonCrashSimulation final : public GameSimulation
+{
 	Time time;
 	PlanetSystem planetSystem;
+
 	void update(Float delta) override;
 	void create(ResourceManager& resourceManager) override;
 };
 
-struct MooncrashRenderer : public GameRenderer {
-	MooncrashSimulation* simulation = nullptr;
-
-	Vec3 sunDirection = Vec3(0, 0, 1);
-
-	Float mouseSensitivity = 0.0015f;
-
+struct MoonCrashRenderer final : public GameRenderer
+{
 	MoonCrashPlayer player;
-
-	//input
+	Float mouseSensitivity = 0.0015f;
+	Vec3 sunDirection = Vec3(0.0f, 0.0f, 1.0f);
+	MoonCrashSimulation* simulation = nullptr;
+	InputEvent exit = InputEvent(InputType::Mouse, RMB, false);
+	InputEvent enter = InputEvent(InputType::Mouse, LMB, true);
 	InputEvent vertexColorToggle = InputEvent(InputType::KeyBoard, H, false);
 	InputEvent wireFrameToggle = InputEvent(InputType::KeyBoard, F, false);
 	InputEvent countNodesButton = InputEvent(InputType::KeyBoard, G, false);
 	InputEvent worldDistortion = InputEvent(InputType::KeyBoard, K, true);
 	InputEvent rebuildShaders = InputEvent(InputType::KeyBoard, R, false);
-	InputEvent exit = InputEvent(InputType::Mouse, RMB, false);
-	InputEvent enter = InputEvent(InputType::Mouse, LMB, true);
-
 
 	void update(Window& window) override;
-	void create() { player.speedExponent = 200; };
 	void inputEvent(Window& window, InputEvent input) override;
+	void create(ResourceManager& resourceManager, Window& window) override;;
 	void render(ResourceManager& resourceManager, Window& window, TiledRectangle area) override;
 };
 
 void renderMoonCrashAtmosphere(ResourceManager& resourceManager, Renderer& renderer, MoonCrashPlayer& player);
-void renderPlanet(ResourceManager& resourceManager, Renderer& renderer, PlanetSystem& planetSystem,
-                  PlanetSystemPlayer& player);
+void renderPlanet(ResourceManager& resourceManager, Renderer& renderer, PlanetSystem& planetSystem, PlanetSystemPlayer& player);
 
-struct MoonCrash {
+struct MoonCrash
+{
 	ResourceManager resourceManager;
 	UserInterface ui;
-	MooncrashSimulation sim;
-	MooncrashRenderer renderer;
+	MoonCrashSimulation sim;
+	MoonCrashRenderer renderer;
 
-	void run() {
-		renderer.simulation = &sim;
-
-		ui.window("MoonCrash", Area(1920, 1080), true, WindowState::fullscreen, renderer, resourceManager);
-		ui.run();
-	}
+	void run();
 };

@@ -111,7 +111,7 @@ void QuadtreeNodeRenderData::update(PlanetSystemPlayer& player) { updateWithoutS
 
 void QuadtreeNodeRenderData::updateWithoutSubdivision(PlanetSystemPlayer& player) {
 	//create 3d chunk id
-	OctreeID tmp;
+	OctreeId tmp;
 
 	const QuadtreeNode& eq = *equivalentQuadtreeNode;
 

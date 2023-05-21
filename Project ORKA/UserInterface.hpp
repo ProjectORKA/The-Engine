@@ -3,12 +3,12 @@
 #include "UIElement.hpp"
 #include "UIButton.hpp"
 #include "Window.hpp"
-#include "LifeTimeGuard.hpp"
 
 struct Renderer;
 struct Window;
 
-struct UIImage : public UIElement {
+struct UIImage : UiElement
+{
 	Name name;
 
 	UIImage(const Name& name);
@@ -16,7 +16,8 @@ struct UIImage : public UIElement {
 	void render(ResourceManager& resourceManager, Window& window, TiledRectangle renderArea) override;
 };
 
-struct UITextBox : public UIElement {
+struct UITextBox : UiElement
+{
 	String* data;
 
 	UITextBox(String& data);
@@ -24,29 +25,32 @@ struct UITextBox : public UIElement {
 	void render(ResourceManager& resourceManager, Window& window, TiledRectangle renderArea) override;
 };
 
-struct UICheckBox : public UIElement {
-	Boolean* data;
-	UICheckBox(Boolean& data);
+struct UICheckBox : UiElement
+{
+	Bool* data;
+	UICheckBox(Bool& data);
 	void update(Window& window) override;
 	void render(ResourceManager& resourceManager, Window& window, TiledRectangle renderArea) override;
 };
 
-struct UIContainer : public UIElement {
-	Boolean renderVertical = false;
+struct UIContainer : UiElement
+{
+	Bool renderVertical = false;
 
-	Vector<UIElement*> contents;
+	Vector<UiElement*> contents;
 
 	UIContainer& vertical();
 	UIContainer& horizontal();
-	UIContainer& insert(UIElement& element);
+	UIContainer& insert(UiElement& element);
 	void update(Window& window) override;
 	void render(ResourceManager& resourceManager, Window& window, TiledRectangle renderArea) override;
 	void renderInteractive(ResourceManager& resourceManager, Window& window, TiledRectangle renderArea) override;
 };
 
-struct UserInterface {
+struct UserInterface
+{
 	Bool initialized = false;
-	UIElement* currentlyActive = nullptr;
+	UiElement* currentlyActive = nullptr;
 
 	List<UIImage> images;
 	List<Window> windows;
@@ -55,8 +59,10 @@ struct UserInterface {
 	List<UICheckBox> checkBoxes;
 	List<UIContainer> containers;
 
-	void create() {
-		if (glfwInit() != GLFW_TRUE) {
+	void create()
+	{
+		if(glfwInit() != GLFW_TRUE)
+		{
 			logError("GLFW could not be initialized");
 			return;
 		}
@@ -73,6 +79,5 @@ struct UserInterface {
 	UICheckBox& checkBox(Bool& data);
 	UITextBox& textBox(String& data);
 	Window& window(const String& title, Area size, Bool decorated, WindowState state, ResourceManager& resourceManager);
-	Window& window(const String& title, Area size, Bool decorated, WindowState state, UIElement& element,
-	               ResourceManager& resourceManager);
+	Window& window(const String& title, Area size, Bool decorated, WindowState state, UiElement& element, ResourceManager& resourceManager);
 };

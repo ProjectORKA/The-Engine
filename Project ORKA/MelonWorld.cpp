@@ -8,7 +8,7 @@ void MelonWorld::render(ResourceManager& resourceManager, Renderer& renderer) {
 
 	Vector<Vec4> arr;
 
-	for (auto& rock : rocks) { for (UInt y = 0; y < ROCKGRIDSIZE; y++) { arr.push_back(rock[y]); } }
+	for (auto& rock : rocks) { for (UInt y = 0; y < ROCKGRIdSIZE; y++) { arr.push_back(rock[y]); } }
 	renderer.uniforms().customColor(Vec4(0.1, 0.1, 0.1, 1));
 	renderer.matrixSystem.matrixArray(arr);
 	renderer.renderMeshInstanced(resourceManager, "melonRock");
@@ -55,10 +55,10 @@ void MelonWorld::generateScenery(Float& sceneryPersistencySize, const MelonPlaye
 	//	it++;
 	//}
 	const Float gridSize = 8.0f;
-	for (Int x = 0; x < ROCKGRIDSIZE; x++) {
-		for (Int y = 0; y < ROCKGRIDSIZE; y++) {
-			auto pos = Vec3(gridSize * (x - (ROCKGRIDSIZE / 2)) + snap(player.location.x, gridSize),
-			                gridSize * (y - (ROCKGRIDSIZE / 2)) + snap(player.location.y, gridSize), 0);
+	for (Int x = 0; x < ROCKGRIdSIZE; x++) {
+		for (Int y = 0; y < ROCKGRIdSIZE; y++) {
+			auto pos = Vec3(gridSize * (x - (ROCKGRIdSIZE / 2)) + snap(player.location.x, gridSize),
+			                gridSize * (y - (ROCKGRIdSIZE / 2)) + snap(player.location.y, gridSize), 0);
 			Vec3 closest = getClosestPoint(pos, nodes);
 			Float size = distance(pos, closest) - pathWidth;
 			//size = max(size,0);
@@ -76,7 +76,7 @@ void MelonWorld::generatePaths(const Float& generationSize, const MelonPlayer& p
 		Vec3 newNode = Vec3(normalize(randomVec2(-1, 1)) * Vec2(generationSize) * randomFloat(0.75, 1), 0) + player.
 			location;
 
-		Index closestID;
+		Index closestId;
 		Vec3 closestPos = getClosestPoint(newNode, nodes);
 
 		newNode = closestPos + normalize(newNode - closestPos) * Vec3(pathWidth / 2);

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "QuadtreeID.hpp"
+#include "QuadtreeId.hpp"
 #include "QuadtreeData.hpp"
 #include "Ray.hpp"
 
@@ -12,7 +12,7 @@ struct QuadtreeNode {
 	ULL users = 0; //number of active octree nodes related to this quadtree node
 	Bool subdivided = false;
 	UShort index = -1;
-	QuadtreeID id;
+	QuadtreeId id;
 
 	QuadtreeNode* parent = nullptr;
 	QuadtreeNode* c00 = nullptr;
@@ -37,7 +37,7 @@ struct QuadtreeNode {
 	void removeSelfFromNeighbours() const;
 	void subdivide(TerrainSystem& terrainSystem);
 	void createRootNode(TerrainSystem& terrainSystem);
-	QuadtreeNode& get(TerrainSystem& terrainSystem, const QuadtreeID& id);
+	QuadtreeNode& get(TerrainSystem& terrainSystem, const QuadtreeId& id);
 	void update(QuadTreeSystem& quadtreeSystem, TerrainSystem& terrainSystem);
 	void create(TerrainSystem& terrainSystem, QuadtreeNode* parent, Bool x, Bool y);
 };

@@ -176,7 +176,7 @@ void OctreeRenderSystem::destroy() { root.destroy(); }
 
 void OctreeRenderSystem::create(Renderer& renderer) {
 	//[TODO]
-	//waterTextureID = renderer.textureSystem.getTextureID("water");
+	//waterTextureId = renderer.textureSystem.getTextureId("water");
 }
 
 void OctreeRenderSystem::update(PlanetSystemPlayer& player) { root.update(player); }

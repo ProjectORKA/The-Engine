@@ -77,8 +77,8 @@
 	#define OS_LINUX
 #elif defined(__unix)
 	#define OS_UNIX
-#elif defined(__ANDROID__)
-	#define OS_ANDROID
+#elif defined(__ANDROId__)
+	#define OS_ANDROId
 #elif defined(__APPLE__)
 	#define OS_APPLE
 #else

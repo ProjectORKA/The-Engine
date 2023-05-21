@@ -4,11 +4,12 @@
 
 struct Renderer;
 
-struct Transform {
+struct Transform
+{
 	Vec3 location = Vec3(0);
 	Vec3 rotation = Vec3(0);
 	Vec3 scale = Vec3(0);
 
 	Matrix matrix() const;
-	void render(Renderer& renderer);
+	void render(Renderer& renderer) const;
 };

@@ -33,7 +33,7 @@ void TextureSystem::create() {
 }
 
 void TextureSystem::destroy() {
-	for (GPUTexture& gpuTexture : gpuTextures) { gpuTexture.unload(); }
+	for (GpuTexture& gpuTexture : gpuTextures) { gpuTexture.unload(); }
 	gpuTextures.clear();
 
 	textureNames.clear();
@@ -41,20 +41,20 @@ void TextureSystem::destroy() {
 
 Index TextureSystem::use(ResourceManager& resourceManager, const Name& name) {
 	use(resourceManager, name, 0);
-	return currentTextureID;
+	return currentTextureId;
 }
 
 void TextureSystem::resize(const Area size) { currentTexture().resize(size); }
 
 void TextureSystem::use(const Index textureIndex) {
-	currentTextureID = textureIndex;
+	currentTextureId = textureIndex;
 	currentTexture().use(0);
 }
 
 void TextureSystem::use(ResourceManager& resourceManager, const Name& name, const Index slot) {
 	auto it = textureNames.find(name);
 	if (it != textureNames.end()) {
-		currentTextureID = it->second;
+		currentTextureId = it->second;
 		currentTexture().use(slot);
 	}
 	else {
@@ -64,7 +64,7 @@ void TextureSystem::use(ResourceManager& resourceManager, const Name& name, cons
 
 		it = textureNames.find(name);
 		if (it != textureNames.end()) {
-			currentTextureID = it->second;
+			currentTextureId = it->second;
 			currentTexture().use(slot);
 		}
 		else {
@@ -77,8 +77,8 @@ void TextureSystem::use(ResourceManager& resourceManager, const Name& name, cons
 void TextureSystem::add(CPUTexture& cpuTexture) {
 	gpuTextures.emplace_back();
 	gpuTextures.back().load(cpuTexture);
-	currentTextureID = gpuTextures.size() - 1;
-	textureNames[cpuTexture.name] = currentTextureID;
+	currentTextureId = gpuTextures.size() - 1;
+	textureNames[cpuTexture.name] = currentTextureId;
 }
 
-GPUTexture& TextureSystem::currentTexture() { return gpuTextures[currentTextureID]; }
+GpuTexture& TextureSystem::currentTexture() { return gpuTextures[currentTextureId]; }

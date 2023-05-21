@@ -2,7 +2,8 @@
 
 #include "GLFW/glfw3.h"
 
-enum Key {
+enum Key
+{
 	UNKNOWN = GLFW_KEY_UNKNOWN,
 	SPACE = GLFW_KEY_SPACE,
 	APOSTROPHE = GLFW_KEY_APOSTROPHE,
@@ -111,7 +112,7 @@ enum Key {
 	NP_8 = GLFW_KEY_KP_8,
 	NP_9 = GLFW_KEY_KP_9,
 	NP_DECIMAL = GLFW_KEY_KP_DECIMAL,
-	NP_DIVIDE = GLFW_KEY_KP_DIVIDE,
+	NP_DIVIdE = GLFW_KEY_KP_DIVIDE,
 	NP_MULTIPLY = GLFW_KEY_KP_MULTIPLY,
 	NP_SUBTRACT = GLFW_KEY_KP_SUBTRACT,
 	NP_ADD = GLFW_KEY_KP_ADD,
@@ -140,17 +141,17 @@ enum Key {
 	MENU = GLFW_KEY_MENU
 };
 
-namespace InputType {
-	enum {
-		UNKNOWN = -1,
-		Scroll,
-		Mouse,
-		KeyBoard,
-		Controller
-	};
-}
+enum class InputType : UInt
+{
+	Unknown = -1,
+	Scroll,
+	Mouse,
+	KeyBoard,
+	Controller
+};
 
-enum {
+enum
+{
 	LMB = GLFW_MOUSE_BUTTON_1,
 	RMB = GLFW_MOUSE_BUTTON_2,
 	MMB = GLFW_MOUSE_BUTTON_3,
@@ -164,7 +165,7 @@ enum {
 	MOUSE_BUTTON_8 = GLFW_MOUSE_BUTTON_8,
 	LEFT_MOUSE_BUTTON = GLFW_MOUSE_BUTTON_1,
 	RIGHT_MOUSE_BUTTON = GLFW_MOUSE_BUTTON_2,
-	MIDDLE_MOUSE_BUTTON = GLFW_MOUSE_BUTTON_3,
+	MIdDLE_MOUSE_BUTTON = GLFW_MOUSE_BUTTON_3,
 };
 
 using MouseMovement = DVec2;

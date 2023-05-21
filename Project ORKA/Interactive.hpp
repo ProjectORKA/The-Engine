@@ -11,11 +11,11 @@ enum InteractiveObjectState {
 };
 
 struct Interactive : public Renderable {
-	Index objectID = 0;
+	Index objectId = 0;
 	InteractiveObjectState state;
 
 	virtual void onEnter() {};
 	virtual void onLeave() {};
-	virtual void onClick(Int buttonID) {};
-	virtual void onRelease(Int buttonID) {};
+	virtual void onClick(Int buttonId) {};
+	virtual void onRelease(Int buttonId) {};
 };

@@ -12,12 +12,12 @@ struct Player {
 	Double mouseSensitivity = 0.0015;
 
 	//input
-	InputID forward = InputID(InputType::KeyBoard, W);
-	InputID backward = InputID(InputType::KeyBoard, S);
-	InputID right = InputID(InputType::KeyBoard, D);
-	InputID left = InputID(InputType::KeyBoard, A);
-	InputID up = InputID(InputType::KeyBoard, E);
-	InputID down = InputID(InputType::KeyBoard, Q);
+	InputId forward = InputId(InputType::KeyBoard, W);
+	InputId backward = InputId(InputType::KeyBoard, S);
+	InputId right = InputId(InputType::KeyBoard, D);
+	InputId left = InputId(InputType::KeyBoard, A);
+	InputId up = InputId(InputType::KeyBoard, E);
+	InputId down = InputId(InputType::KeyBoard, Q);
 
 	//both functions need to be run in order for the player to work
 	//call update once in order to update player logic such as movement

@@ -108,7 +108,7 @@ Matrix matrixFromLocationDirectionAndSize(Vec2 pos, Vec2 dir, Float size);
 
 void loopWithinCentered(Vec2& point, Float extend);
 void removePointsInRadius(Vec3 point, Vector<Vec3>& points, Float radius);
-void getClosestPoint(Vec3 point, const Vector<Vec3>& points, Index& closestID, Vec3& closestPoint);
+void getClosestPoint(Vec3 point, const Vector<Vec3>& points, Index& closestId, Vec3& closestPoint);
 void spaceColonization(Vector<Vec3>& points, Vector<Vec3>& branches, Vector<Index>& connections, Float segmentSize,
                        Float killRadius);
 

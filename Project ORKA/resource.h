@@ -2,7 +2,7 @@
 // Microsoft Visual C++ generated include file.
 // Used by icon.rc
 //
-#define IDB_PNG1                        101
+#define IdB_PNG1                        101
 
 // Next default values for new objects
 // 

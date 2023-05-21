@@ -9,7 +9,7 @@ void SandboxRenderer::update(Window& window) { player.update(window); }
 
 void SandboxRenderer::inputEvent(Window& window, const InputEvent input) {
 	if (input == enter) window.captureCursor();
-	if (input == exit) window.uncaptureCursor();
+	if (input == exit) window.unCaptureCursor();
 	if (input == wireframeToogle) window.renderer.wireframeMode = !window.renderer.wireframeMode;
 
 	player.inputEvent(window, input);
@@ -44,6 +44,6 @@ void SandboxRenderer::render(ResourceManager& resourceManager, Window& window, T
 }
 
 void Sandbox::run() {
-	ui.window("ORKA Sandbox", Area(1920, 1080), true, WindowState::maximized, sandboxRenderer, resourceManager);
+	ui.window("ORKA Sandbox", Area(1920, 1080), true, WindowState::Maximized, sandboxRenderer, resourceManager);
 	ui.run();
 }
