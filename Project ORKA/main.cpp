@@ -90,6 +90,8 @@ Int main(Int argc, Char* argv[])
 	{
 		client();
 	}
+
+	system("pause");
 }
 
 //windows entry point

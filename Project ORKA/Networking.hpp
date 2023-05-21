@@ -4,6 +4,9 @@
 #include "Basics.hpp"
 #include "ASIONetworking.hpp"
 
+//constexpr UInt port = 12297;
+constexpr UInt port = 65084;
+
 struct Message
 {
 	static constexpr SizeT headerLength = 4;
@@ -83,7 +86,7 @@ inline void client()
 		std::cout << "Enter ip address:" << "\n";
 		std::cin >> ipAddress;
 
-		socket.connect(asio::ip::tcp::endpoint(asio::ip::address::from_string(ipAddress), 12297));
+		socket.connect(asio::ip::tcp::endpoint(asio::ip::address::from_string(ipAddress), port));
 		if(socket.is_open()) std::cout << "Connected to server!" << "\n";
 
 		Thread readThread(handleRead, true, std::ref(socket));
@@ -125,9 +128,9 @@ inline void server()
 		asio::io_context ioContext;
 
 		//create acceptor
-		asio::ip::tcp::acceptor acceptor(ioContext, asio::ip::tcp::endpoint(asio::ip::tcp::v4(), 12297));
+		asio::ip::tcp::acceptor acceptor(ioContext, asio::ip::tcp::endpoint(asio::ip::tcp::v4(), port));
 
-		std::cout << "Server started. Listening on port 12297..." << "\n";
+		std::cout << "Server started. Listening on port" << port <<  "..." << "\n";
 
 		while(true)
 		{
