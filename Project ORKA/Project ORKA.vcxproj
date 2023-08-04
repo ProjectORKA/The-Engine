@@ -33,6 +33,7 @@
     <ClCompile Include="DungeonsAndDiscord.cpp" />
     <ClCompile Include="DynameshTerrain.cpp" />
     <ClCompile Include="ECS.cpp" />
+    <ClCompile Include="FileType.cpp" />
     <ClCompile Include="Fonts.cpp" />
     <ClCompile Include="Framebuffer.cpp" />
     <ClCompile Include="FramebufferSystem.cpp" />
@@ -417,6 +418,8 @@
     <None Include="Data\Shaders\simpleRTS.vert" />
     <None Include="Data\Shaders\sky.frag" />
     <None Include="Data\Shaders\sky.vert" />
+    <None Include="Data\Shaders\sortr.frag" />
+    <None Include="Data\Shaders\sortr.vert" />
     <None Include="Data\Shaders\sphereRendering.frag" />
     <None Include="Data\Shaders\sphereRendering.vert" />
     <None Include="Data\Shaders\terrain.frag" />

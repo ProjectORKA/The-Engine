@@ -15,8 +15,8 @@ enum class Alignment {
 	middle = 1,
 	left = 0,
 	right = 2,
-	top = 0,
-	bottom = 2,
+	top = 2,
+	bottom = 0,
 };
 
 struct BitmapTextRenderSystem {

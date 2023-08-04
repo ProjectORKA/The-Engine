@@ -4,14 +4,14 @@
 #include "Debug.hpp"
 #include "Platform.hpp"
 
-ULL availablePhysicalMemory() {
+inline ULL availablePhysicalMemory() {
 	MEMORYSTATUSEX status;
 	status.dwLength = sizeof(status);
 	if (!GlobalMemoryStatusEx(&status)) { logError("Failed to get memory status"); }
 	return status.ullAvailPhys;
 }
 
-ULL totalPhysicalMemory() {
+inline ULL totalPhysicalMemory() {
 	MEMORYSTATUSEX status;
 	status.dwLength = sizeof(status);
 	if (!GlobalMemoryStatusEx(&status)) { logError("Failed to get memory status"); }
