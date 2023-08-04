@@ -1,30 +1,19 @@
-
 #include "ShaderSystem.hpp"
-#include "GraphicsAPI.hpp"
+#include <ranges>
+#include "Debug.hpp"
+#include "ResourceManager.hpp"
 
 String uniformName = "/uniforms.glsl";
 
-void ShaderSystem::create(ResourceManager& resourceManager)
-{
-	uniforms.create(resourceManager);
-	loadDefaultShader();
-}
-
 void ShaderSystem::rebuild()
 {
-	for(const auto& name : shaderNames)
-	{
-		shaderPrograms[name.second].destroy();
-	}
+	for(const auto& val : shaderNames | std::views::values) shaderPrograms[val].destroy();
 	shaderNames.clear();
 }
 
 void ShaderSystem::destroy()
 {
-	for(ShaderProgram& shaderProgram : shaderPrograms)
-	{
-		shaderProgram.destroy();
-	}
+	for(ShaderProgram& shaderProgram : shaderPrograms) shaderProgram.destroy();
 	shaderPrograms.clear();
 	shaderNames.clear();
 	uniforms.destroy();
@@ -32,48 +21,48 @@ void ShaderSystem::destroy()
 
 void ShaderSystem::loadDefaultShader()
 {
-	//create default vertex shader
-	String defaultvertexShaderCode = uniforms.uniformBlockShaderCode;
-	defaultvertexShaderCode.append("\n\
-void main()\n\
-{\n\
-	gl_Position = pMatrix * vMatrix * mMatrix * vec4(vertex, 1); \n\
-}");
+	String vertexShaderCode = uniforms.getUniformShaderCode();
+	vertexShaderCode.append("\n\nvoid main(){\ngl_Position = pMatrix * vMatrix * mMatrix * vec4(vertex, 1);\n}");
 
-	Shader vertexShader;
-	vertexShader.loadShaderCode(ShaderType::Vertex, defaultvertexShaderCode);
+	String fragmentShaderCode = uniforms.getUniformShaderCode();
+	fragmentShaderCode.append("\n\nout vec4 color;\n\nvoid main(){\ncolor = vec4(1.0f,0.0f,1.0f,1.0f);\n}");
 
-	//create default fragment shader
-	String defaultFragmentShaderCode = uniforms.uniformBlockShaderCode;
-	defaultFragmentShaderCode.append("\n\
-\n\
-out vec4 color;\n\
-\n\
-void main()\n\
-{\n\
-	//color = vec4(1.0f,0.0f,1.0f,1.0f);\n\
-}");
-	Shader fragmentShader;
-	fragmentShader.loadShaderCode(ShaderType::Fragment, defaultFragmentShaderCode);
-
-	add(vertexShader, fragmentShader, "default");
-	vertexShader.destroy();
-	fragmentShader.destroy();
+	add("default", vertexShaderCode, fragmentShaderCode);
 }
 
-Index ShaderSystem::use(const Index shaderProgramId)
+Index ShaderSystem::use(const Index shaderId)
 {
-	currentShaderProgramId = shaderProgramId;
-	currentShaderProgram().select();
+	currentShaderProgramId = shaderId;
+	currentShaderProgram().use();
 	return currentShaderProgramId;
+}
+
+ShaderProgram& ShaderSystem::currentShaderProgram()
+{
+	return shaderPrograms[currentShaderProgramId];
+}
+
+void ShaderSystem::create(const ResourceManager& resourceManager)
+{
+	uniforms.create(resourceManager);
+	loadDefaultShader();
 }
 
 void ShaderSystem::add(ResourceManager& resourceManager, const Name& name)
 {
-	shaderPrograms.emplace_back();
-	shaderPrograms.back().create(resourceManager, name, uniforms);
-	currentShaderProgramId = toUIntSafe(shaderPrograms.size() - 1);
-	shaderNames[name] = currentShaderProgramId;
+	const Path vertexShaderPath   = resourceManager.getVertexShaderResourcePath(name);
+	const Path fragmentShaderPath = resourceManager.getFragmentShaderResourcePath(name);
+
+	if(!doesPathExist(vertexShaderPath)) logError("Vertex shader not found");
+	if(!doesPathExist(fragmentShaderPath)) logError("Fragment shader not found");
+
+	String vertexShaderCode   = uniforms.getUniformShaderCode();
+	String fragmentShaderCode = uniforms.getUniformShaderCode();
+
+	vertexShaderCode.append(loadString(vertexShaderPath));
+	fragmentShaderCode.append(loadString(fragmentShaderPath));
+
+	add(name, vertexShaderCode, fragmentShaderCode);
 }
 
 Index ShaderSystem::use(ResourceManager& resourceManager, const Name& name)
@@ -85,24 +74,13 @@ Index ShaderSystem::use(ResourceManager& resourceManager, const Name& name)
 	}
 	else
 	{
-		//try loading the shader
+		// try loading the shader
 		add(resourceManager, name);
 		it = shaderNames.find(name);
-		if(it != shaderNames.end())
-		{
-			use(it->second);
-		}
-		else
-		{
-			logError("Shader could not be found!");
-		}
+		if(it != shaderNames.end()) use(it->second);
+		else logError("Shader could not be found!");
 	}
 	return currentShaderProgramId;
-}
-
-ShaderProgram& ShaderSystem::currentShaderProgram()
-{
-	return shaderPrograms[currentShaderProgramId];
 }
 
 Index ShaderSystem::getShaderId(ResourceManager& resourceManager, const Name& name)
@@ -111,10 +89,13 @@ Index ShaderSystem::getShaderId(ResourceManager& resourceManager, const Name& na
 	return currentShaderProgramId;
 }
 
-void ShaderSystem::add(const Shader& vertexShader, const Shader& fragmentShader, const Name& name)
+void ShaderSystem::add(const Name& name, const String& vertexShaderCode, const String& fragmentShaderCode)
 {
+	// reserve data for shader
 	shaderPrograms.emplace_back();
-	shaderPrograms.back().create(vertexShader, fragmentShader, uniforms);
-	currentShaderProgramId = shaderPrograms.size() - 1;
-	shaderNames[name] = currentShaderProgramId;
+	// create shader
+	shaderPrograms.back().create(name, vertexShaderCode, fragmentShaderCode);
+	// register the new shader
+	currentShaderProgramId = static_cast<UInt>(shaderPrograms.size()) - 1;
+	shaderNames[name]      = currentShaderProgramId;
 }

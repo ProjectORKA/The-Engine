@@ -1,266 +1,525 @@
 #include "GraphicsAPI.hpp"
-#include "Debug.hpp"
+#include "Math.hpp"
 
 OpenGlStateCopy openGlState;
 
-void OpenGlStateCopy::print() const
+void OpenGL::apiInit()
 {
-	logDebug(String("Culling: ").append(toString(culling)));
-	logDebug(String("Blending: ").append(toString(blending)));
-	logDebug(String("Depth Test: ").append(toString(depthTest)));
-	logDebug(String("Background Color: ").append(toString(clearColor)));
-	logDebug(String("Current Draw: ").append(toString(currentDrawFramebuffer)));
-	logDebug(String("Current Read: ").append(toString(currentReadFramebuffer)));
-	logDebug(String("Current Viewport: ").append(toString(viewportX)).append(" ").append(toString(viewportY)).append(" ").append(toString(viewportW)).append(" ").append(toString(viewportH)));
-	logDebug(String("Scissor Test: ").append(toString(scissorTest)));
-	logDebug(String("Current Scissor: ").append(toString(scissorX)).append(" ").append(toString(scissorY)).append(" ").append(toString(scissorW)).append(" ").append(toString(scissorH)));
+#ifdef TRACE_OPENGL
+		openGlState.write("glewInit();");
+#endif // TRACE_OPENGL
+
+	glewExperimental = GL_TRUE;
+	if(const auto glewInitResult = glewInit(); glewInit() != GLEW_OK)
+	{
+		std::cerr << "Failed to initialize GLEW: " << glewGetErrorString(glewInitResult) << std::endl;
+		return;
+	}
+
+	if(glewIsSupported("GL_ARB_direct_state_access")) logDebug("DSA is supported!");
+	else logError("DSA is not supported!");
+
+	openGlState.maxVertexAttributes = OpenGL::apiGetIntegerv(GetParameters::MaxVertexAttribs);
 }
 
-void apiClearColor()
+void OpenGL::apiFinish()
 {
+#ifdef TRACE_OPENGL
+		openGlState.write("glFinish();");
+#endif // TRACE_OPENGL
+	glFinish();
+}
+
+UInt OpenGL::apiGetError()
+{
+#ifdef TRACE_OPENGL
+		openGlState.write("glGetError();");
+#endif // TRACE_OPENGL
+	return glGetError();
+}
+
+void OpenGL::apiClearColor()
+{
+#ifdef TRACE_OPENGL
+		openGlState.write("glClear(...);");
+#endif // TRACE_OPENGL
 	glClear(GL_COLOR_BUFFER_BIT);
 }
 
-void apiClearDepth()
+void OpenGL::apiClearDepth()
 {
+#ifdef TRACE_OPENGL
+		openGlState.write("glClear(...);");
+#endif // TRACE_OPENGL
 	glClear(GL_DEPTH_BUFFER_BIT);
 }
 
-void apiEnableBlend()
+void OpenGLBuffer::bind() const
 {
-	glEnable(GL_BLEND);
+	OpenGL::Buffers::apiBindBuffer(target, bufferObjectID);
 }
 
-void apiGenVertexArray(UInt& id)
+void OpenGLBuffer::unbind() const
 {
-	glGenVertexArrays(1, &id);
+	OpenGL::Buffers::apiBindBuffer(target, 0);
 }
 
-void apiCullFace(const UInt mode)
+void OpenGLBuffer::destroy() const
 {
-	glCullFace(mode);
+	OpenGL::Buffers::apiDeleteBuffer(bufferObjectID);
 }
 
-void apiGenBuffer(UInt& bufferId)
+UInt OpenGLTexture2D::getID() const
 {
-	glGenBuffers(1, &bufferId);
+	return textureID;
 }
 
-void apiDepthFunc(const UInt func)
+void OpenGLShaderProgram::destroy()
 {
-	if(! openGlState.depthTest) logError("Depth is not being tested!");
-	glDepthFunc(func);
+	OpenGL::Shaders::apiDeleteProgram(programId);
+	programId = 0;
 }
 
-void apiDrawBuffer(const UInt mode)
+void OpenGlStateCopy::print() const
 {
-	glDrawBuffer(mode);
+	logDebug("Culling: " + toString(culling));
+	logDebug("Blending: " + toString(blending));
+	logDebug("Depth Test: " + toString(depthTest));
+	logDebug("Background Color: " + toString(clearColor));
+	logDebug("Current Draw: " + toString(currentDrawFramebuffer));
+	logDebug("Current Read: " + toString(currentReadFramebuffer));
+	logDebug("Current Viewport: " + toString(viewportX) + " " + toString(viewportY) + " " + toString(viewportW) + " " + toString(viewportH));
+	logDebug("Scissor Test: " + toString(scissorTest));
+	logDebug("Current Scissor: " + toString(scissorX) + " " + toString(scissorY) + " " + toString(scissorW) + " " + toString(scissorH));
 }
 
-void apiGenTexture(UInt& textureId)
+BufferID OpenGLBuffer::getID() const
 {
-	glGenTextures(1, &textureId);
+	return bufferObjectID;
 }
 
-void apiSetCulling(const Bool value)
+UInt OpenGLFramebuffer::getID() const
 {
-	if(value && ! openGlState.culling) glEnable(GL_CULL_FACE);
-	if(! value && openGlState.culling) glDisable(GL_CULL_FACE);
+	return framebufferID;
+}
+
+void OpenGLShaderProgram::use() const
+{
+	OpenGL::Shaders::apiUseProgram(programId);
+}
+
+void OpenGlStateCopy::enableLogging()
+{
+	loggingEnabled = true;
+}
+
+void OpenGLTexture2D::destroy() const
+{
+	OpenGL::Textures::apiDeleteTexture(textureID);
+}
+
+void OpenGLVertexArrayObject::create()
+{
+	vertexArrayID = OpenGL::VertexArray::apiCreateVertexArray();
+}
+
+void OpenGlStateCopy::disableLogging()
+{
+	loggingEnabled = false;
+}
+
+void OpenGLFramebuffer::destroy() const
+{
+	OpenGL::Framebuffer::apiDeleteFramebuffer(framebufferID);
+}
+
+void OpenGLFramebuffer::bindDraw() const
+{
+	OpenGL::apiBindDrawFramebuffer(framebufferID);
+}
+
+void OpenGLFramebuffer::bindRead() const
+{
+	OpenGL::apiBindReadFramebuffer(framebufferID);
+}
+
+void OpenGLVertexArrayObject::bind() const
+{
+	OpenGL::VertexArray::apiBindVertexArray(vertexArrayID);
+}
+
+Bool OpenGLFramebuffer::isComplete() const
+{
+	return OpenGL::Framebuffer::apiCheckNamedFramebufferStatus(framebufferID, FramebufferTarget::Draw) == FramebufferStatus::Complete;
+}
+
+BufferID OpenGL::Buffers::apiCreateBuffer()
+{
+	BufferID bufferID;
+	glCreateBuffers(1, &bufferID);
+
+#ifdef TRACE_OPENGL
+		openGlState.write("glCreateBuffers(1, " + toString(bufferID) + ");");
+#endif // TRACE_OPENGL
+
+	return bufferID;
+}
+
+void OpenGLTexture2D::generateMipMap() const
+{
+	OpenGL::Textures::apiGenerateTextureMipmap(textureID);
+}
+
+void OpenGLVertexArrayObject::unbind() const
+{
+	OpenGL::VertexArray::apiBindVertexArray(0);
+}
+
+void OpenGL::apiSetCulling(const Bool value)
+{
+	if(value && !openGlState.culling) apiEnable(EnableParameters::CullFace);
+	if(!value && openGlState.culling) apiDisable(EnableParameters::CullFace);
 	openGlState.culling = value;
 }
 
-void apiSetBlending(const Bool value)
+ProgramID OpenGL::Shaders::apiCreateProgram()
 {
-	if(value && ! openGlState.blending) glEnable(GL_BLEND);
-	if(! value && openGlState.blending) glDisable(GL_BLEND);
+#ifdef TRACE_OPENGL
+		openGlState.write("glCreateProgram(...);");
+#endif // TRACE_OPENGL
+	return glCreateProgram();
+}
+
+void OpenGL::apiSetBlending(const Bool value)
+{
+	if(value && !openGlState.blending) apiEnable(EnableParameters::Blend);
+	if(!value && openGlState.blending) apiDisable(EnableParameters::Blend);
 	openGlState.blending = value;
 }
 
-void apiSetDebugging(const Bool value)
+void OpenGLVertexArrayObject::destroy() const
 {
+	OpenGL::VertexArray::apiDeleteVertexArray(vertexArrayID);
+}
+
+void OpenGL::apiSetDepthTest(const Bool value)
+{
+	if(value && !openGlState.depthTest) apiEnable(EnableParameters::DepthTest);
+	if(!value && openGlState.depthTest) apiDisable(EnableParameters::DepthTest);
+	openGlState.depthTest = value;
+}
+
+void OpenGL::apiSetDebugging(const Bool value)
+{
+#ifdef TRACE_OPENGL
+		openGlState.write("glDebugMessageCallback(nullptr,nullptr);");
+#endif // TRACE_OPENGL
 	if(value)
 	{
 		glDebugMessageCallback(debugOutputCallback, nullptr);
-		glEnable(GL_DEBUG_OUTPUT);
-		glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+		apiEnable(EnableParameters::DebugOutput);
+		apiEnable(EnableParameters::DebugOutputSyncronous);
 	}
 	else
 	{
 		glDebugMessageCallback(nullptr, nullptr);
-		glDisable(GL_DEBUG_OUTPUT);
-		glDisable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+		apiDisable(EnableParameters::DebugOutput);
+		apiDisable(EnableParameters::DebugOutputSyncronous);
 	}
 	openGlState.debugging = value;
 }
 
-void apiSetDepthTest(const Bool value)
+void OpenGLTexture2D::create(const String& name)
 {
-	if(value && ! openGlState.depthTest) glEnable(GL_DEPTH_TEST);
-	if(! value && openGlState.depthTest) glDisable(GL_DEPTH_TEST);
-	openGlState.depthTest = value;
+	textureID = OpenGL::Textures::apiCreateTexture(TextureTarget::Texture2D);
+	OpenGL::apiObjectLabel(ObjectLabelType::Texture, textureID, name);
 }
 
-void apiDeleteBuffer(const UInt buffer)
+void OpenGL::apiSetScissorTest(const Bool value)
 {
-	glDeleteBuffers(1, &buffer);
-}
-
-void apiSetScissorTest(const Bool value)
-{
-	if(value && ! openGlState.scissorTest) glEnable(GL_SCISSOR_TEST);
-	if(! value && openGlState.scissorTest) glDisable(GL_SCISSOR_TEST);
+	if(value && !openGlState.scissorTest) apiEnable(EnableParameters::ScissorTest);
+	if(!value && openGlState.scissorTest) apiDisable(EnableParameters::ScissorTest);
 	openGlState.scissorTest = value;
 }
 
-void apiSetClearColor(const Color color)
+void OpenGL::apiSetClearColor(const Color color)
 {
-	if(openGlState.clearColor != color) glClearColor(color.r, color.g, color.b, color.a);
+#ifdef TRACE_OPENGL
+		openGlState.write("glClearColor(...);");
+#endif // TRACE_OPENGL
+	if(openGlState.clearColor != color)
+	{
+		openGlState.clearColor = color;
+		glClearColor(color.r, color.g, color.b, color.a);
+	}
 }
 
-void apiUseProgram(const UInt programId)
+void OpenGLFramebuffer::create(const String& name)
 {
-	glUseProgram(programId);
+	framebufferID = OpenGL::Framebuffer::apiCreateFramebuffer();
+	OpenGL::apiObjectLabel(ObjectLabelType::Framebuffer, framebufferID, name);
 }
 
-void apiGenerateMipmap(const UInt target)
+void OpenGL::apiEnable(EnableParameters parameter)
 {
-	glGenerateMipmap(target);
+#ifdef TRACE_OPENGL
+		openGlState.write("glEnable(" + toString(static_cast<UInt>(parameter)) + ");");
+#endif // TRACE_OPENGL
+	glEnable(static_cast<UInt>(parameter));
 }
 
-void apiLinkProgram(const UInt programId)
+void OpenGL::apiDisable(EnableParameters parameter)
 {
-	glLinkProgram(programId);
+#ifdef TRACE_OPENGL
+		openGlState.write("glDisable(" + toString(static_cast<UInt>(parameter)) + ");");
+#endif // TRACE_OPENGL
+
+	glDisable(static_cast<UInt>(parameter));
 }
 
-void apiDeleteShader(const UInt shaderId)
+Int OpenGL::apiGetIntegerv(GetParameters parameter)
 {
-	glDeleteShader(shaderId);
+#ifdef TRACE_OPENGL
+		openGlState.write("glGetIntegerv(...);");
+#endif // TRACE_OPENGL
+	Int result;
+	glGetIntegerv(static_cast<UInt>(parameter), &result);
+	return result;
 }
 
-void apiActiveTexture(const UInt texture)
+void OpenGLTexture2D::setBorderColor(Color color) const
 {
-	glActiveTexture(texture);
+	OpenGL::Textures::apiTextureParameterfv(textureID, TextureParameterSet::BorderColor, value_ptr(color));
 }
 
-void apiCompileShader(const Int shaderId)
+void OpenGLVertexArrayObject::unbindIndexBuffer() const
 {
-	glCompileShader(shaderId);
+	OpenGL::VertexArray::apiVertexArrayElementBuffer(vertexArrayID, 0);
 }
 
-void apiBindFramebuffer(const Index index)
+void OpenGlStateCopy::write(const String& message) const
 {
-	glBindFramebuffer(GL_FRAMEBUFFER, index);
+#ifdef TRACE_OPENGL
+		if(loggingEnabled) log.write(message);
+#endif
 }
 
-void apiDeleteTexture(const UInt textureId)
+void OpenGL::Buffers::apiDeleteBuffer(const UInt buffer)
 {
-	glDeleteTextures(1, &textureId);
+#ifdef TRACE_OPENGL
+		openGlState.write("glDeleteBuffers(...);");
+#endif // TRACE_OPENGL
+	glDeleteBuffers(1, &buffer);
 }
 
-void apiBindVertexArray(const UInt arrayId)
+VertexArrayID OpenGL::VertexArray::apiCreateVertexArray()
 {
-	glBindVertexArray(arrayId);
+	VertexArrayID vertexArrayID;
+	glCreateVertexArrays(1, &vertexArrayID);
+
+#ifdef TRACE_OPENGL
+		openGlState.write("glCreateVertexArrays(1," + toString(vertexArrayID) + ");");
+#endif // TRACE_OPENGL
+
+	return vertexArrayID;
 }
 
-void apiDeleteProgram(const UInt programId)
+FramebufferID OpenGL::Framebuffer::apiCreateFramebuffer()
 {
-	glDeleteProgram(programId);
+#ifdef TRACE_OPENGL
+		openGlState.write("glCreateFramebuffers(...);");
+#endif // TRACE_OPENGL
+	FramebufferID framebufferID;
+	glCreateFramebuffers(1, &framebufferID);
+	return framebufferID;
 }
 
-void apiGenFramebuffer(UInt& framebufferId)
+void OpenGLTexture2D::setWrapping(Wrapping wrapping) const
 {
-	glCreateFramebuffers(1, &framebufferId);
+	OpenGL::Textures::apiTextureParameteri(textureID, TextureParameterSet::WrapS, static_cast<Int>(wrapping));
+	OpenGL::Textures::apiTextureParameteri(textureID, TextureParameterSet::WrapT, static_cast<Int>(wrapping));
 }
 
-void apiDeleteVertexArray(const UInt arrayId)
+void OpenGlStateCopy::addTexture(const TextureID textureID)
 {
-	glDeleteVertexArrays(1, &arrayId);
+	textures.push_back(textureID);
 }
 
-void apiBindDrawFramebuffer(UInt framebufferId)
+void OpenGL::apiBlendEquation(const BlendEquation equation)
 {
-	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, framebufferId);
-#ifdef OPENGLSTATE
-	openglState.currentDrawFramebuffer = framebufferId;
-#endif // OPENGLSTATE
-}
-
-void apiBindReadFramebuffer(UInt framebufferId)
-{
-	glBindFramebuffer(GL_READ_FRAMEBUFFER, framebufferId);
-#ifdef OPENGLSTATE
-	openglState.currentReadFramebuffer = framebufferId;
-#endif // OPENGLSTATE
-}
-
-void apiDeleteFramebuffer(const UInt framebufferId)
-{
-	glDeleteFramebuffers(1, &framebufferId); //does not work. ask Nvidia
-}
-
-void apiBlendEquation(const BlendEquation equation)
-{
+#ifdef TRACE_OPENGL
+		openGlState.write("glBlendEquation(" + toString(static_cast<UInt>(equation)) + ");");
+#endif // TRACE_OPENGL
 	glBlendEquation(static_cast<UInt>(equation));
 }
 
-void apiEnableVertexAttributeArray(const UInt index)
+void OpenGL::apiPolygonMode(const UInt face, const UInt mode)
 {
-	glEnableVertexAttribArray(index);
-}
-
-void apiPolygonMode(const UInt face, const UInt mode)
-{
+#ifdef TRACE_OPENGL
+		openGlState.write("glPolygonMode(" + toString(face) + ", " + toString(mode) + ");");
+#endif // TRACE_OPENGL
 	glPolygonMode(face, mode);
 }
 
-void apiDisableVertexAttributeArray(const UInt index)
+void OpenGL::Shaders::apiUseProgram(const ProgramID programId)
 {
-	glDisableVertexAttribArray(index);
+#ifdef TRACE_OPENGL
+		openGlState.write("glUseProgram(...);");
+#endif // TRACE_OPENGL
+	glUseProgram(programId);
 }
 
-void apiUniformInt1(const Int location, const Int value)
+void OpenGlStateCopy::removeTexture(const TextureID textureID)
 {
-	glUniform1i(location, value);
+	for(UInt i = 0; i < textures.size(); i++) if(textures[i] == textureID) textures.erase(textures.begin() + i);
 }
 
-void apiClipControl(const UInt origin, const UInt depth)
+void OpenGL::Shaders::apiDeleteShader(const ShaderID shaderId)
 {
+#ifdef TRACE_OPENGL
+		openGlState.write("glDeleteShader(...);");
+#endif // TRACE_OPENGL
+	glDeleteShader(shaderId);
+}
+
+void OpenGL::Shaders::apiCompileShader(const ShaderID shaderId)
+{
+#ifdef TRACE_OPENGL
+		openGlState.write("glCompileShader(...);");
+#endif // TRACE_OPENGL
+	glCompileShader(shaderId);
+}
+
+void OpenGL::Shaders::apiLinkProgram(const ProgramID programId)
+{
+#ifdef TRACE_OPENGL
+		openGlState.write("glLinkProgram(...);");
+#endif // TRACE_OPENGL
+	glLinkProgram(programId);
+}
+
+ShaderID OpenGL::Shaders::apiCreateShader(const ShaderType type)
+{
+#ifdef TRACE_OPENGL
+		openGlState.write("glCreateShader(...);");
+#endif // TRACE_OPENGL
+	return glCreateShader(static_cast<UInt>(type));
+}
+
+void OpenGLFramebuffer::clearDepth(const Float clearDepth) const
+{
+	OpenGL::Framebuffer::apiClearNamedFramebufferfv(framebufferID, ClearBufferType::Depth, FramebufferAttachment::Depth, &clearDepth);
+}
+
+void OpenGL::apiClipControl(const UInt origin, const UInt depth)
+{
+#ifdef TRACE_OPENGL
+		openGlState.write("glClipControl(" + toString(origin) + ", " + toString(depth) + ");");
+#endif // TRACE_OPENGL
 	glClipControl(origin, depth);
 }
 
-void apiDrawBuffers(const Vector<UInt>& data) {
-	glDrawBuffers(toIntSafe(data.size()), data.data());
+void OpenGL::Shaders::apiDeleteProgram(const ProgramID programId)
+{
+#ifdef TRACE_OPENGL
+		openGlState.write("glDeleteProgram(...);");
+#endif // TRACE_OPENGL
+	glDeleteProgram(programId);
 }
 
-void apiBindBuffer(const UInt target, const UInt bufferId)
+TextureID OpenGL::Textures::apiCreateTexture(TextureTarget target)
 {
-	glBindBuffer(target, bufferId);
+	TextureID textureID;
+#ifdef TRACE_OPENGL
+		openGlState.write("glCreateTextures(...);");
+#endif // TRACE_OPENGL
+	glCreateTextures(static_cast<UInt>(target), 1, &textureID);
+#ifdef DEBUG_OPENGL
+		openGlState.addTexture(textureID);
+#endif // DEBUG_OPENGL
+	return textureID;
 }
 
-void apiBindTexture(const UInt target, const UInt textureId)
+void OpenGL::Textures::apiDeleteTexture(const TextureID textureID)
 {
-	glBindTexture(target, textureId);
+#ifdef TRACE_OPENGL
+		openGlState.write("glDeleteTextures(...);");
+#endif // TRACE_OPENGL
+	glDeleteTextures(1, &textureID);
+#ifdef DEBUG_OPENGL
+		openGlState.removeTexture(textureID);
+#endif // DEBUG_OPENGL
 }
 
-void apiNamedFramebufferDrawBuffer(const UInt framebufferId)
+String OpenGL::Shaders::apiGetShaderInfoLog(const ShaderID shaderId)
 {
-	glNamedFramebufferDrawBuffer(framebufferId, GL_COLOR_ATTACHMENT0);
+#ifdef TRACE_OPENGL
+		openGlState.write("glGetShaderInfoLog(...);");
+#endif // TRACE_OPENGL
+	const Int    logLength = apiGetShaderIntegerValue(shaderId, ShaderParameters::InfoLogLength);
+	Vector<Char> log(logLength);
+	glGetShaderInfoLog(shaderId, logLength, nullptr, log.data());
+	return {log.begin(), log.end()};
 }
 
-void apiAttachShader(const UInt programId, const UInt shaderId)
+void OpenGL::apiBindDrawFramebuffer(const FramebufferID framebufferID)
 {
-	glAttachShader(programId, shaderId);
+#ifdef TRACE_OPENGL
+		openGlState.write("glBindFramebuffer(" + toString(static_cast<UInt>(FramebufferTarget::Draw)) + "," + toString(framebufferID) + ");");
+#endif // TRACE_OPENGL
+	glBindFramebuffer(static_cast<UInt>(FramebufferTarget::Draw), framebufferID);
 }
 
-void apiDetachShader(const UInt programId, const UInt shaderId)
+void OpenGL::apiBindReadFramebuffer(const FramebufferID framebufferID)
 {
-	glDetachShader(programId, shaderId);
+#ifdef TRACE_OPENGL
+		openGlState.write("glBindFramebuffer(" + toString(static_cast<UInt>(FramebufferTarget::Read)) + "," + toString(framebufferID) + ");");
+#endif // TRACE_OPENGL
+	glBindFramebuffer(static_cast<UInt>(FramebufferTarget::Read), framebufferID);
 }
 
-void apiScissor(const Int x, const Int y, const Int w, const Int h)
+String OpenGL::Shaders::apiGetProgramInfoLog(const ProgramID programId)
 {
-	if((openGlState.scissorX != x) || (openGlState.scissorY != y) || (openGlState.scissorW != w) || (openGlState.scissorH != h))
+#ifdef TRACE_OPENGL
+		openGlState.write("glGetProgramInfoLog(...);");
+#endif // TRACE_OPENGL
+	const Int    logLength = apiGetProgramIntegerValue(programId, ShaderProgramParameters::InfoLogLength);
+	Vector<Char> log(logLength);
+	glGetProgramInfoLog(programId, logLength, nullptr, log.data());
+	return {log.begin(), log.end()};
+}
+
+void OpenGLTexture2D::useTextureInSlot(const UInt textureUnitSlot) const
+{
+	OpenGL::Textures::apiBindTextureUnit(textureUnitSlot, textureID);
+}
+
+void OpenGLFramebuffer::drawBuffers(const Vector<UInt>& attachments) const
+{
+	OpenGL::Framebuffer::apiNamedFramebufferDrawBuffers(framebufferID, attachments);
+}
+
+void OpenGL::Textures::apiGenerateTextureMipmap(const TextureID textureID)
+{
+#ifdef TRACE_OPENGL
+		openGlState.write("glGenerateTextureMipmap(...);");
+#endif // TRACE_OPENGL
+	glGenerateTextureMipmap(textureID);
+}
+
+void OpenGLTexture2D::setFilters(Filter nearFilter, Filter farFilter) const
+{
+	OpenGL::Textures::apiTextureParameteri(textureID, TextureParameterSet::MagFilter, static_cast<Int>(nearFilter));
+	OpenGL::Textures::apiTextureParameteri(textureID, TextureParameterSet::MinFilter, static_cast<Int>(farFilter));
+}
+
+void OpenGL::apiScissor(const Int x, const Int y, const Int w, const Int h)
+{
+	if(openGlState.scissorX != x || openGlState.scissorY != y || openGlState.scissorW != w || openGlState.scissorH != h)
 	{
+#ifdef TRACE_OPENGL
+			openGlState.write("glScissor(" + toString(x) + ", " + toString(y) + ", " + toString(w) + ", " + toString(h) + ");");
+#endif // TRACE_OPENGL
 		glScissor(x, y, w, h);
 		openGlState.scissorX = x;
 		openGlState.scissorY = y;
@@ -269,10 +528,19 @@ void apiScissor(const Int x, const Int y, const Int w, const Int h)
 	}
 }
 
-void apiViewport(const Int x, const Int y, const Int w, const Int h)
+Int OpenGL::Framebuffer::attachmentToIndex(FramebufferAttachment attachment)
 {
-	if((openGlState.viewportX != x) || (openGlState.viewportY != y) || (openGlState.viewportW != w) || (openGlState.viewportH != h))
+	if(attachment == FramebufferAttachment::Depth) return 0;
+	return static_cast<Int>(attachment) - GL_COLOR_ATTACHMENT0;
+}
+
+void OpenGL::apiViewport(const Int x, const Int y, const Int w, const Int h)
+{
+	if(openGlState.viewportX != x || openGlState.viewportY != y || openGlState.viewportW != w || openGlState.viewportH != h)
 	{
+#ifdef TRACE_OPENGL
+			openGlState.write("glViewport(" + toString(x) + ", " + toString(y) + ", " + toString(w) + ", " + toString(h) + ");");
+#endif // TRACE_OPENGL
 		glViewport(x, y, w, h);
 		openGlState.viewportX = x;
 		openGlState.viewportY = y;
@@ -281,197 +549,571 @@ void apiViewport(const Int x, const Int y, const Int w, const Int h)
 	}
 }
 
-void apiVertexAttributeDivisor(const UInt index, const UInt divisor)
+void OpenGL::VertexArray::apiBindVertexArray(const VertexArrayID vertexArrayID)
 {
-	glVertexAttribDivisor(index, divisor);
+#ifdef TRACE_OPENGL
+		openGlState.write("glBindVertexArray(...);");
+#endif // TRACE_OPENGL
+	glBindVertexArray(vertexArrayID);
 }
 
-void apiBlendEquationSeparate(const UInt modeRgb, const UInt modeAlpha)
+void OpenGLVertexArrayObject::bindIndexBuffer(const BufferID indexBufferID) const
 {
-	glBlendEquationSeparate(modeRgb, modeAlpha);
+	OpenGL::VertexArray::apiVertexArrayElementBuffer(vertexArrayID, indexBufferID);
 }
 
-void apiTexParameterInt(const UInt target, const UInt name, const Int param)
+void OpenGL::Framebuffer::apiDeleteFramebuffer(const FramebufferID framebufferID)
 {
-	glTexParameteri(target, name, param);
+#ifdef TRACE_OPENGL
+		openGlState.write("glDeleteFramebuffers(...);");
+#endif // TRACE_OPENGL
+	glDeleteFramebuffers(1, &framebufferID);
 }
 
-void apiBlitFramebuffer(const Int width, const Int height, const UInt filter)
+void OpenGL::VertexArray::apiDeleteVertexArray(const VertexArrayID& vertexArrayID)
 {
-	glBlitFramebuffer(0, 0, width, height, 0, 0, width, height, GL_COLOR_BUFFER_BIT, filter);
+#ifdef TRACE_OPENGL
+		openGlState.write("glDeleteVertexArrays(...);");
+#endif // TRACE_OPENGL
+	glDeleteVertexArrays(1, &vertexArrayID);
 }
 
-void apiBindBufferBase(const UInt target, const UInt index, const UInt buffer)
+void OpenGL::Buffers::apiBindBuffer(const BufferTarget target, const BufferID bufferID)
 {
-	glBindBufferBase(target, index, buffer);
+#ifdef TRACE_OPENGL
+		openGlState.write("glBindBuffer(...);");
+#endif // TRACE_OPENGL
+	glBindBuffer(static_cast<UInt>(target), bufferID);
 }
 
-void apiTexParameterFloat(const UInt target, const UInt name, const Float param)
+void OpenGL::Shaders::apiAttachShader(const ProgramID programId, const ShaderID shaderId)
 {
-	glTexParameterf(target, name, param);
+#ifdef TRACE_OPENGL
+		openGlState.write("glAttachShader(...);");
+#endif // TRACE_OPENGL
+	glAttachShader(programId, shaderId);
 }
 
-void apiDrawElements(const PrimitiveMode mode, const Int count, const void* indices)
+void OpenGL::Shaders::apiDetachShader(const ProgramID programId, const ShaderID shaderId)
 {
-	glDrawElements(static_cast<UInt>(mode), count, GL_UNSIGNED_INT, indices);
+#ifdef TRACE_OPENGL
+		openGlState.write("glDetachShader(...);");
+#endif // TRACE_OPENGL
+	glDetachShader(programId, shaderId);
 }
 
-void apiTexParameterFloatValue(const UInt target, const UInt name, const Float* param)
+void OpenGLVertexArrayObject::unbindVertexBuffer(const AttributeIndex attributeIndex) const
 {
-	glTexParameterfv(target, name, param);
+	OpenGL::VertexArray::apiVertexArrayVertexBuffer(vertexArrayID, attributeIndex, 0, 0, 0);
+	OpenGL::VertexArray::apiDisableVertexArrayAttrib(vertexArrayID, attributeIndex);
 }
 
-void apiObjectLabel(ObjectLabelType framebuffer, const Index index, const String& label)
+void OpenGL::apiObjectLabel(ObjectLabelType type, const UInt objectID, const String& label)
 {
-	glObjectLabel(static_cast<UInt>(framebuffer), index, static_cast<Int>(label.size()), label.c_str());
+#ifdef TRACE_OPENGL
+		openGlState.write("glObjectLabel(" + toString(static_cast<UInt>(type)) + "," + toString(objectID) + ",\"" + label + "\");");
+#endif // TRACE_OPENGL
+	glObjectLabel(static_cast<UInt>(type), objectID, static_cast<Int>(label.size()), label.c_str());
 }
 
-void apiBlendFunc(const BlendFunction sourceFactor, const BlendFunction destinationFactor)
+void OpenGLTexture2D::setDataToDepth(const Int width, const Int height, const void* data) const
 {
+	constexpr Float clearData = 1.0f;
+	OpenGL::Textures::apiTextureStorage2D(textureID, 1, SizedInternalFormat::Depth32F, width, height);
+	if(data) OpenGL::Textures::apiClearTexImage(textureID, 0, WritePixelsFormat::Depth, DataType::Float, data);
+	else OpenGL::Textures::apiClearTexImage(textureID, 0, WritePixelsFormat::Depth, DataType::Float, &clearData);
+}
+
+Vec4 OpenGLFramebuffer::readPixelVec4(const Int x, const Int y, const FramebufferMode mode) const
+{
+	auto           data   = Vec4(0);
+	constexpr Int  width  = 1;
+	constexpr Int  height = 1;
+	constexpr auto type   = DataType::Float;
+	constexpr auto format = ReadPixelsFormat::RGBA;
+	OpenGL::Framebuffer::apiNamedFramebufferReadBuffer(framebufferID, mode);
+	OpenGL::Framebuffer::apiReadPixels(x, y, width, height, format, type, glm::value_ptr(data));
+	return data;
+}
+
+void OpenGL::apiBlendFunc(const BlendFunction sourceFactor, const BlendFunction destinationFactor)
+{
+#ifdef TRACE_OPENGL
+		openGlState.write("glBlendFunc(" + toString(static_cast<UInt>(sourceFactor)) + ", " + toString(static_cast<UInt>(destinationFactor)) + ");");
+#endif // TRACE_OPENGL
 	glBlendFunc(static_cast<UInt>(sourceFactor), static_cast<UInt>(destinationFactor));
 }
 
-void apiBlitFramebuffer(const Int width, const Int height, const UInt mask, const UInt filter)
+IVec4 OpenGLFramebuffer::readPixelIVec4(const Int x, const Int y, const FramebufferMode mode) const
 {
-	glBlitFramebuffer(0, 0, width, height, 0, 0, width, height, mask, filter);
+	auto           data   = IVec4(0);
+	constexpr Int  width  = 1;
+	constexpr Int  height = 1;
+	constexpr auto type   = DataType::UInt;
+	constexpr auto format = ReadPixelsFormat::RGBAInteger;
+	OpenGL::Framebuffer::apiNamedFramebufferReadBuffer(framebufferID, mode);
+	OpenGL::Framebuffer::apiReadPixels(x, y, width, height, format, type, glm::value_ptr(data));
+	return data;
 }
 
-void apiBufferData(const UInt target, const LL size, const void* data, const MeshDrawMode usage)
+void OpenGLFramebuffer::clearColor(const FramebufferAttachment attachmentSlot, const Vec4 color) const
 {
-	glBufferData(target, size, data, static_cast<UInt>(usage));
+	OpenGL::Framebuffer::apiClearNamedFramebufferfv(framebufferID, ClearBufferType::Color, attachmentSlot, glm::value_ptr(color));
 }
 
-void apiUniformBlockBinding(const UInt programId, const UInt uniformBlockIndex, const UInt value)
+void OpenGLFramebuffer::clearColor(const FramebufferAttachment attachmentSlot, const IVec4 color) const
 {
-	glUniformBlockBinding(programId, uniformBlockIndex, value);
+	OpenGL::Framebuffer::apiClearNamedFramebufferiv(framebufferID, ClearBufferType::Color, attachmentSlot, glm::value_ptr(color));
 }
 
-void apiShaderSource(const UInt shaderId, const Int count, const Char* const* string, const Int* length)
+void OpenGL::Textures::apiBindTextureUnit(const TextureSlot textureUnitSlot, const TextureID textureID)
 {
-	glShaderSource(shaderId, count, string, length);
+#ifdef TRACE_OPENGL
+		openGlState.write("glBindTextureUnit(...);");
+#endif // TRACE_OPENGL
+	glBindTextureUnit(textureUnitSlot, textureID);
 }
 
-void apiBlitFramebuffer(const Int srcX, const Int srcY, const Int dstX, const Int dstY, const UInt filter)
+Int OpenGL::Shaders::apiGetShaderIntegerValue(const ShaderID shaderId, const ShaderParameters parameter)
 {
-	glBlitFramebuffer(0, 0, srcX, srcY, 0, 0, dstX, dstY, GL_COLOR_BUFFER_BIT, filter);
-}
-
-void apiDrawElementsInstanced(const PrimitiveMode mode, const Int size, const void* data, const Int primitiveCount)
-{
-	glDrawElementsInstanced(static_cast<UInt>(mode), size, GL_UNSIGNED_INT, data, primitiveCount);
-}
-
-void apiBlitFramebuffer(const Int srcX, const Int srcY, const Int dstX, const Int dstY, const UInt mask, const UInt filter)
-{
-	glBlitFramebuffer(0, 0, srcX, srcY, 0, 0, dstX, dstY, mask, filter);
-}
-
-void apiFramebufferTexture2D(const UInt target, const UInt attachment, const UInt texTarget, const UInt texture, const Int level)
-{
-	glFramebufferTexture2D(target, attachment, texTarget, texture, level);
-}
-
-void apiVertexAttributePointer(const UInt index, const Int size, const UInt type, const Bool normalized, const Int stride, const void* pointer)
-{
-	glVertexAttribPointer(index, size, type, normalized, stride, pointer);
-}
-
-void apiBlendFuncSeparate(const UInt sourceFactorRgb, const UInt destinationFactorRgb, const UInt sourceFactorAlpha, const UInt destinationFactorAlpha)
-{
-	glBlendFuncSeparate(sourceFactorRgb, destinationFactorRgb, sourceFactorAlpha, destinationFactorAlpha);
-}
-
-void __stdcall debugOutputCallback(const UInt source, const UInt type, UInt id, const UInt severity, Int length, const Char* message, const void* userParam)
-{
-	if(severity != GL_DEBUG_SEVERITY_NOTIFICATION)
-	{
-		String outputMessage = "OpenGL Debug Output message : ";
-
-		if(source == GL_DEBUG_SOURCE_API_ARB) outputMessage = "Source : API; ";
-		else if(source == GL_DEBUG_SOURCE_WINDOW_SYSTEM_ARB) outputMessage = "Source : WINDOW_SYSTEM; ";
-		else if(source == GL_DEBUG_SOURCE_SHADER_COMPILER_ARB) outputMessage = "Source : SHADER_COMPILER; ";
-		else if(source == GL_DEBUG_SOURCE_THIRD_PARTY_ARB) outputMessage = "Source : THIRD_PARTY; ";
-		else if(source == GL_DEBUG_SOURCE_APPLICATION_ARB) outputMessage = "Source : APPLICATION; ";
-		else if(source == GL_DEBUG_SOURCE_OTHER_ARB) outputMessage = "Source : OTHER; ";
-
-		if(type == GL_DEBUG_TYPE_ERROR_ARB) outputMessage.append("Type : ERROR; ");
-		else if(type == GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR_ARB) outputMessage.append("Type : DEPRECATED_BEHAVIOR; ");
-		else if(type == GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR_ARB) outputMessage.append("Type : UNDEFINED_BEHAVIOR; ");
-		else if(type == GL_DEBUG_TYPE_PORTABILITY_ARB) outputMessage.append("Type : PORTABILITY; ");
-		else if(type == GL_DEBUG_TYPE_PERFORMANCE_ARB) outputMessage.append("Type : PERFORMANCE; ");
-		else if(type == GL_DEBUG_TYPE_OTHER_ARB) outputMessage.append("Type : OTHER; ");
-
-		if(severity == GL_DEBUG_SEVERITY_HIGH_ARB) outputMessage.append("Severity : HIGH; ");
-		else if(severity == GL_DEBUG_SEVERITY_MEDIUM_ARB) outputMessage.append("Severity : MEDIUM; ");
-		else if(severity == GL_DEBUG_SEVERITY_LOW_ARB) outputMessage.append("Severity : LOW; ");
-
-		outputMessage.append(message);
-
-		if(severity == GL_DEBUG_SEVERITY_HIGH_ARB) logError(outputMessage);
-		else if(severity == GL_DEBUG_SEVERITY_MEDIUM_ARB) logWarning(outputMessage);
-		else logDebug(outputMessage);
-	}
-}
-
-void apiTexImage2D(const UInt target, const Int level, const Int internalFormat, const Int width, const Int height, const Int border, const UInt format, const UInt type, const void* pixels)
-{
-	glTexImage2D(target, level, internalFormat, width, height, border, format, type, pixels);
-}
-
-UInt apiGetError()
-{
-	return glGetError();
-}
-
-Int apiCreateProgram()
-{
-	return glCreateProgram();
-}
-
-Int apiCreateShader(const ShaderType type)
-{
-	return glCreateShader(static_cast<UInt>(type));
-}
-
-Int apiCheckFramebufferStatus(const UInt target)
-{
-	return glCheckFramebufferStatus(target);
-}
-
-Int apiGetUniformLocation(const UInt programId, const Char* name)
-{
-	return glGetUniformLocation(programId, name);
-}
-
-Int apiGetUniformBlockIndex(const UInt programId, const Char* name)
-{
-	return glGetUniformBlockIndex(programId, name);
-}
-
-Int apiGetShaderIntegerValue(const UInt shaderId, const UInt valueType)
-{
+#ifdef TRACE_OPENGL
+		openGlState.write("glGetShaderiv(...);");
+#endif // TRACE_OPENGL
 	Int result;
-	glGetShaderiv(shaderId, valueType, &result);
+	glGetShaderiv(shaderId, static_cast<UInt>(parameter), &result);
 	return result;
 }
 
-Int apiGetProgramIntegerValue(const UInt programId, const UInt valueType)
+void OpenGLIndexBuffer::create(const Vector<UInt>& indices, const BufferUsage usage, const String& name)
 {
+	OpenGLBuffer::create(BufferTarget::ElementArray, indices, usage, name, 0);
+}
+
+void OpenGL::VertexArray::apiDrawElements(const PrimitiveMode mode, const Int indexCount, const void* indices)
+{
+	// mode:		the primitives opengl can construct and draw e.g. triangle, triangle strip, line, etc.
+	// indexCount:	the number of indices that will be used for rendering, equivalent to the total number of indices unless partial or batch rendering is used
+	// indices:		would read from an actual array of indices on cpu side, however when a VAO is used, it represents an offset instead, usually 0
+#ifdef TRACE_OPENGL
+		openGlState.write("glDrawElements(" + toString(static_cast<UInt>(mode)) + ", " + toString(indexCount) + ", " + toString(GL_UNSIGNED_INT) + ", [...]);");
+#endif // TRACE_OPENGL
+	glDrawElements(static_cast<UInt>(mode), indexCount, GL_UNSIGNED_INT, indices);
+}
+
+void OpenGLFramebuffer::attachTexture(const FramebufferAttachment attachment, const TextureID textureId) const
+{
+	constexpr UInt mipMapLevel = 0;
+	OpenGL::Framebuffer::apiNamedFramebufferTexture(framebufferID, attachment, textureId, mipMapLevel);
+}
+
+void OpenGL::Framebuffer::apiNamedFramebufferReadBuffer(const FramebufferID framebufferID, FramebufferMode mode)
+{
+#ifdef TRACE_OPENGL
+		openGlState.write("glNamedFramebufferReadBuffer(...);");
+#endif // TRACE_OPENGL
+	glNamedFramebufferReadBuffer(framebufferID, static_cast<UInt>(mode));
+}
+
+Int OpenGL::Shaders::apiGetProgramIntegerValue(const ProgramID programId, const ShaderProgramParameters parameter)
+{
+#ifdef TRACE_OPENGL
+		openGlState.write("glGetProgramiv(...);");
+#endif // TRACE_OPENGL
 	Int value;
-	glGetProgramiv(programId, valueType, &value);
+	glGetProgramiv(programId, static_cast<UInt>(parameter), &value);
 	return value;
 }
 
-String apiGetShaderInfoLog(const UInt shaderId, const Int infoLogLength)
+void OpenGL::VertexArray::apiVertexArrayElementBuffer(const VertexArrayID vertexArrayID, const BufferID indexBufferID)
 {
-	Vector<Char> log(1024);
-	glGetShaderInfoLog(shaderId, infoLogLength, nullptr, log.data());
-	return { log.begin(), log.end() };
+#ifdef TRACE_OPENGL
+		openGlState.write("glVertexArrayElementBuffer(" + toString(vertexArrayID) + ", " + toString(indexBufferID) + ");");
+#endif // TRACE_OPENGL
+	glVertexArrayElementBuffer(vertexArrayID, indexBufferID);
 }
 
-String apiGetProgramInfoLog(const UInt programId, const Int infoLogLength)
+void OpenGL::Textures::apiTextureParameteri(const TextureID textureId, TextureParameterSet parameter, const Int value)
 {
-	Vector<Char> log(1024);
-	glGetProgramInfoLog(programId, infoLogLength, nullptr, log.data());
-	return { log.begin(), log.end() };
+#ifdef TRACE_OPENGL
+		openGlState.write("glTextureParameteri(...);");
+#endif // TRACE_OPENGL
+	glTextureParameteri(textureId, static_cast<UInt>(parameter), value);
+}
+
+void OpenGL::Framebuffer::apiNamedFramebufferDrawBuffers(const FramebufferID framebuffer, const Vector<UInt>& buffers)
+{
+#ifdef TRACE_OPENGL
+		openGlState.write("glNamedFramebufferDrawBuffers(...);");
+#endif // TRACE_OPENGL
+	glNamedFramebufferDrawBuffers(framebuffer, static_cast<Int>(buffers.size()), buffers.data());
+}
+
+void OpenGL::Textures::apiTextureParameterf(const TextureID textureId, TextureParameterSet parameter, const Float value)
+{
+#ifdef TRACE_OPENGL
+		openGlState.write("glTextureParameterf(...);");
+#endif // TRACE_OPENGL
+	glTextureParameterf(textureId, static_cast<UInt>(parameter), value);
+}
+
+void OpenGL::Textures::apiTextureParameteriv(const TextureID textureId, TextureParameterSet parameter, const Int* value)
+{
+#ifdef TRACE_OPENGL
+		openGlState.write("glTextureParameteriv(...);");
+#endif // TRACE_OPENGL
+	glTextureParameteriv(textureId, static_cast<UInt>(parameter), value);
+}
+
+void OpenGL::VertexArray::apiEnableVertexArrayAttrib(const VertexArrayID vertexArrayID, const AttributeIndex attributeID)
+{
+#ifdef CHECK_OPENGL
+		if(attributeID > openGlState.maxVertexAttributes - 1) logError("Attribute Index out of bounds!");
+#endif // CHECK_OPENGL
+
+#ifdef TRACE_OPENGL
+		openGlState.write("glEnableVertexArrayAttrib(" + toString(vertexArrayID) + ", " + toString(attributeID) + ");");
+#endif // TRACE_OPENGL
+
+	glEnableVertexArrayAttrib(vertexArrayID, attributeID);
+}
+
+void OpenGL::Textures::apiTextureParameterIiv(const TextureID textureId, TextureParameterSet parameter, const Int* value)
+{
+#ifdef TRACE_OPENGL
+		openGlState.write("glTextureParameterIiv(...);");
+#endif // TRACE_OPENGL
+	glTextureParameterIiv(textureId, static_cast<UInt>(parameter), value);
+}
+
+void OpenGL::VertexArray::apiDisableVertexArrayAttrib(const VertexArrayID vertexArrayID, const AttributeIndex attributeID)
+{
+#ifdef CHECK_OPENGL
+		if(attributeID > openGlState.maxVertexAttributes - 1) logError("Attribute Index out of bounds!");
+#endif // CHECK_OPENGL
+
+#ifdef TRACE_OPENGL
+		openGlState.write("glDisableVertexArrayAttrib(...);");
+#endif // TRACE_OPENGL
+	glDisableVertexArrayAttrib(vertexArrayID, attributeID);
+}
+
+void OpenGL::Textures::apiGetTextureParameteriv(const TextureID textureID, TextureParameterGet parameterName, Int& output)
+{
+#ifdef TRACE_OPENGL
+		openGlState.write("glGetTextureParameteriv(...);");
+#endif // TRACE_OPENGL
+	glGetTextureParameteriv(textureID, static_cast<UInt>(parameterName), &output);
+}
+
+Bool OpenGLShaderProgram::create(const String& name, const String& vertexShaderSource, const String& fragmentShaderSource)
+{
+	const UInt vertexShaderId   = OpenGL::Shaders::apiCreateShader(ShaderType::Vertex);
+	const UInt fragmentShaderId = OpenGL::Shaders::apiCreateShader(ShaderType::Fragment);
+
+	const char* vertexShaderSourcePtr   = vertexShaderSource.c_str();
+	const char* fragmentShaderSourcePtr = fragmentShaderSource.c_str();
+
+	OpenGL::Shaders::apiShaderSource(vertexShaderId, 1, &vertexShaderSourcePtr, nullptr);
+	OpenGL::Shaders::apiShaderSource(fragmentShaderId, 1, &fragmentShaderSourcePtr, nullptr);
+
+	OpenGL::Shaders::apiCompileShader(vertexShaderId);
+	OpenGL::Shaders::apiCompileShader(fragmentShaderId);
+
+	const Int vertexCompileStatus   = OpenGL::Shaders::apiGetShaderIntegerValue(vertexShaderId, ShaderParameters::CompileStatus);
+	const Int fragmentCompileStatus = OpenGL::Shaders::apiGetShaderIntegerValue(fragmentShaderId, ShaderParameters::CompileStatus);
+
+	if(vertexCompileStatus != true)
+	{
+		const String vertexInfoLog = OpenGL::Shaders::apiGetShaderInfoLog(vertexShaderId);
+		logError("Linking shader program (" + name + ")failed. Error: " + vertexInfoLog);
+	}
+
+	if(fragmentCompileStatus != true)
+	{
+		const String fragmentInfoLog = OpenGL::Shaders::apiGetShaderInfoLog(fragmentShaderId);
+		logError("Linking shader program (" + name + ")failed. Error: " + fragmentInfoLog);
+	}
+
+	programId = OpenGL::Shaders::apiCreateProgram();
+
+	OpenGL::Shaders::apiAttachShader(programId, vertexShaderId);
+	OpenGL::Shaders::apiAttachShader(programId, fragmentShaderId);
+
+	OpenGL::Shaders::apiLinkProgram(programId);
+
+	const Int linkStatus = OpenGL::Shaders::apiGetProgramIntegerValue(programId, ShaderProgramParameters::LinkStatus);
+
+	if(linkStatus != true)
+	{
+		const String log = OpenGL::Shaders::apiGetProgramInfoLog(programId);
+		logError("Linking shader program (" + name + ")failed. Error: " + log);
+	}
+
+	if(!linkStatus || !vertexCompileStatus || !fragmentCompileStatus)
+	{
+		OpenGL::Shaders::apiDeleteShader(vertexShaderId);
+		OpenGL::Shaders::apiDeleteShader(fragmentShaderId);
+		OpenGL::Shaders::apiDeleteProgram(programId);
+		programId = -1;
+		return false;
+	}
+
+	OpenGL::Shaders::apiUniformBlockBinding(programId, 0, 0);
+
+	OpenGL::Shaders::apiDetachShader(programId, vertexShaderId);
+	OpenGL::Shaders::apiDetachShader(programId, fragmentShaderId);
+
+	OpenGL::Shaders::apiDeleteShader(vertexShaderId);
+	OpenGL::Shaders::apiDeleteShader(fragmentShaderId);
+
+	return true;
+}
+
+void OpenGL::Textures::apiTextureParameterfv(const TextureID textureId, TextureParameterSet parameter, const Float* value)
+{
+#ifdef TRACE_OPENGL
+		openGlState.write("glTextureParameterfv(...);");
+#endif // TRACE_OPENGL
+	glTextureParameterfv(textureId, static_cast<UInt>(parameter), value);
+}
+
+void OpenGL::Buffers::apiNamedBufferData(const BufferID bufferID, const ULL byteCount, const void* data, BufferUsage usage)
+{
+#ifdef TRACE_OPENGL
+		openGlState.write("glNamedBufferData(" + toString(bufferID) + ", " + toString(byteCount) + ", [...] , " + toString(static_cast<UInt>(usage)) + ");");
+#endif // TRACE_OPENGL
+	// use for dynamic buffer data, like uniform buffer
+	glNamedBufferData(bufferID, static_cast<LL>(byteCount), data, static_cast<UInt>(usage));
+}
+
+void OpenGL::Textures::apiGetTextureParameterIiv(const TextureID textureID, TextureParameterGet parameterName, Int* output)
+{
+#ifdef TRACE_OPENGL
+		openGlState.write("glGetTextureParameterIiv(...);");
+#endif // TRACE_OPENGL
+	glGetTextureParameterIiv(textureID, static_cast<UInt>(parameterName), output);
+}
+
+void OpenGL::Textures::apiTextureParameterIuiv(const TextureID textureId, TextureParameterSet parameter, const UInt* value)
+{
+#ifdef TRACE_OPENGL
+		openGlState.write("glTextureParameterIuiv(...);");
+#endif // TRACE_OPENGL
+	glTextureParameterIuiv(textureId, static_cast<UInt>(parameter), value);
+}
+
+void OpenGL::Textures::apiGetTextureParameterfv(const TextureID textureID, TextureParameterGet parameterName, Float& output)
+{
+#ifdef TRACE_OPENGL
+		openGlState.write("glGetTextureParameterfv(...);");
+#endif // TRACE_OPENGL
+	glGetTextureParameterfv(textureID, static_cast<UInt>(parameterName), &output);
+}
+
+void OpenGL::Textures::apiGetTextureParameterIuiv(const TextureID textureID, TextureParameterGet parameterName, UInt* output)
+{
+#ifdef TRACE_OPENGL
+		openGlState.write("glGetTextureParameterIuiv(...);");
+#endif // TRACE_OPENGL
+	glGetTextureParameterIuiv(textureID, static_cast<UInt>(parameterName), output);
+}
+
+void OpenGL::Buffers::apiBindBufferBase(const BufferTarget target, const BindingPoint bindingLocation, const BufferID buffer)
+{
+	// binds a buffer to a binding point for that particular target
+	// e.g. you can bind a uniform buffer using its bufferID to BufferTarget::Uniform at binding point 0
+
+#ifdef TRACE_OPENGL
+		openGlState.write("glBindBufferBase(...);");
+#endif // TRACE_OPENGL
+	glBindBufferBase(static_cast<UInt>(target), bindingLocation, buffer);
+}
+
+void OpenGL::Shaders::apiShaderSource(const ShaderID shaderId, const Int count, const Char* const* string, const Int* length)
+{
+#ifdef TRACE_OPENGL
+		openGlState.write("glShaderSource(...);");
+#endif // TRACE_OPENGL
+	glShaderSource(shaderId, count, string, length);
+}
+
+void OpenGLVertexArrayObject::render(const PrimitiveMode primitiveMode, const Int indexCount, const void* indicesOrOffset) const
+{
+	OpenGL::VertexArray::apiDrawElements(primitiveMode, indexCount, indicesOrOffset);
+}
+
+FramebufferStatus OpenGL::Framebuffer::apiCheckNamedFramebufferStatus(const FramebufferID framebufferID, FramebufferTarget target)
+{
+#ifdef TRACE_OPENGL
+		openGlState.write("glCheckNamedFramebufferStatus(...);");
+#endif // TRACE_OPENGL
+	return static_cast<FramebufferStatus>(glCheckNamedFramebufferStatus(framebufferID, static_cast<UInt>(target)));
+}
+
+void OpenGL::VertexArray::apiVertexArrayBindingDivisor(const VertexArrayID vertexArrayID, const Index layoutBinding, const UInt divisor)
+{
+#ifdef TRACE_OPENGL
+		openGlState.write("glVertexArrayBindingDivisor(" + toString(vertexArrayID) + ", " + toString(layoutBinding) + ", " + toString(divisor) + ");");
+#endif // TRACE_OPENGL
+	glVertexArrayBindingDivisor(vertexArrayID, layoutBinding, divisor);
+}
+
+void OpenGL::VertexArray::apiDrawElementsInstanced(const PrimitiveMode mode, const Int indexCount, const void* indices, const Int primitiveCount)
+{
+	// mode:			the primitives opengl can construct and draw e.g. triangle, triangle strip, line, etc.
+	// indexCount:		the number of indices that will be used for rendering, equivalent to the total number of indices unless partial or batch rendering is used
+	// indices:			would read from an actual array of indices on cpu side, however when a VBO is used, it represents an offset instead, usually nullptr
+	// primitiveCount:	the number of instances, usually the number of total instances unless instances are partially rendered
+#ifdef TRACE_OPENGL
+		openGlState.write("glDrawElementsInstanced(...);");
+#endif // TRACE_OPENGL
+	glDrawElementsInstanced(static_cast<UInt>(mode), indexCount, GL_UNSIGNED_INT, indices, primitiveCount);
+}
+
+void OpenGL::Textures::apiClearTexImage(const TextureID texture, const Int mipmapLevel, WritePixelsFormat format, DataType type, const void* data)
+{
+#ifdef TRACE_OPENGL
+		openGlState.write("glClearTexImage(...);");
+#endif // TRACE_OPENGL
+	glClearTexImage(texture, mipmapLevel, static_cast<UInt>(format), static_cast<UInt>(type), data);
+}
+
+void OpenGL::Textures::apiTextureStorage2D(const TextureID texture, const Int mipmapLevel, SizedInternalFormat internalFormat, Int width, Int height)
+{
+	width  = max(1, width);
+	height = max(1, height);
+
+#ifdef TRACE_OPENGL
+		openGlState.write("glTextureStorage2D(...);");
+#endif // TRACE_OPENGL
+	glTextureStorage2D(texture, mipmapLevel, static_cast<UInt>(internalFormat), width, height);
+}
+
+void OpenGL::VertexArray::apiVertexArrayAttribBinding(const VertexArrayID vertexArrayID, const AttributeIndex attributeID, const Index layoutBinding)
+{
+#ifdef CHECK_OPENGL
+		if(attributeID > openGlState.maxVertexAttributes - 1) logError("Attribute Index out of bounds!");
+#endif // CHECK_OPENGL
+
+#ifdef TRACE_OPENGL
+		openGlState.write("glVertexArrayAttribBinding(" + toString(vertexArrayID) + ", " + toString(attributeID) + ", " + toString(layoutBinding) + ");");
+#endif // TRACE_OPENGL
+	glVertexArrayAttribBinding(vertexArrayID, attributeID, layoutBinding);
+}
+
+void OpenGL::Shaders::apiUniformBlockBinding(const ProgramID programId, const UniformBlockID uniformBlockIndex, const BindingPoint uniformBlockBinding)
+{
+	// binds the uniform block id of each shader to a predefined binding point that shaders attach to
+#ifdef TRACE_OPENGL
+		openGlState.write("glUniformBlockBinding(...);");
+#endif // TRACE_OPENGL
+	glUniformBlockBinding(programId, uniformBlockIndex, uniformBlockBinding);
+}
+
+void OpenGL::Framebuffer::apiReadPixels(const Int x, const Int y, const Int width, const Int height, ReadPixelsFormat format, DataType type, void* data)
+{
+#ifdef TRACE_OPENGL
+		openGlState.write("glReadPixels(...);");
+#endif // TRACE_OPENGL
+	glReadPixels(x, y, width, height, static_cast<UInt>(format), static_cast<UInt>(type), data);
+}
+
+void OpenGLVertexArrayObject::renderInstanced(const PrimitiveMode primitiveMode, const Int indexCount, const void* indicesOrOffset, const Int instanceCount) const
+{
+	OpenGL::VertexArray::apiDrawElementsInstanced(primitiveMode, indexCount, indicesOrOffset, instanceCount);
+}
+
+void OpenGL::Framebuffer::apiClearNamedFramebufferiv(const FramebufferID framebufferID, ClearBufferType buffer, const FramebufferAttachment attachmentSlot, const Int* value)
+{
+#ifdef TRACE_OPENGL
+		openGlState.write("glClearNamedFramebufferiv(...);");
+#endif // TRACE_OPENGL
+	glClearNamedFramebufferiv(framebufferID, static_cast<UInt>(buffer), attachmentToIndex(attachmentSlot), value);
+}
+
+void OpenGL::Framebuffer::apiClearNamedFramebufferfv(const FramebufferID framebufferID, ClearBufferType buffer, const FramebufferAttachment attachmentSlot, const Float* value)
+{
+#ifdef TRACE_OPENGL
+		openGlState.write("glClearNamedFramebufferfv(...);");
+#endif // TRACE_OPENGL
+	glClearNamedFramebufferfv(framebufferID, static_cast<UInt>(buffer), attachmentToIndex(attachmentSlot), value);
+}
+
+void OpenGL::Framebuffer::apiClearNamedFramebufferuiv(const FramebufferID framebufferID, ClearBufferType buffer, const FramebufferAttachment attachmentSlot, const UInt* value)
+{
+#ifdef TRACE_OPENGL
+		openGlState.write("glClearNamedFramebufferuiv(...);");
+#endif // TRACE_OPENGL
+	glClearNamedFramebufferuiv(framebufferID, static_cast<UInt>(buffer), attachmentToIndex(attachmentSlot), value);
+}
+
+void OpenGL::Framebuffer::apiNamedFramebufferTexture(const FramebufferID framebufferID, const FramebufferAttachment attachmentID, const TextureID texture, const Int mipmapLevel)
+{
+#ifdef TRACE_OPENGL
+		openGlState.write("glNamedFramebufferTexture(...);");
+#endif // TRACE_OPENGL
+	glNamedFramebufferTexture(framebufferID, static_cast<UInt>(attachmentID), texture, mipmapLevel);
+}
+
+void OpenGL::VertexArray::apiVertexArrayVertexBuffer(const VertexArrayID vertexArrayID, const UInt layoutBinding, const VertexBufferID buffer, const LL offset, const Int stride)
+{
+#ifdef TRACE_OPENGL
+		openGlState.write("glVertexArrayVertexBuffer(" + toString(vertexArrayID) + ", " + toString(layoutBinding) + ", " + toString(buffer) + ", " + toString(offset) + ", " + toString(stride) + ");");
+#endif // TRACE_OPENGL
+	glVertexArrayVertexBuffer(vertexArrayID, layoutBinding, buffer, offset, stride);
+}
+
+void OpenGLTexture2D::setData(const SizedInternalFormat internalFormat, const Int width, const Int height, const WritePixelsFormat colorFormat, const DataType dataType, const void* data) const
+{
+	OpenGL::Textures::apiTextureStorage2D(textureID, 1, internalFormat, width, height);
+	if(data) OpenGL::Textures::apiTextureSubImage2D(textureID, 0, 0, 0, width, height, colorFormat, dataType, data);
+}
+
+void OpenGL::Framebuffer::apiClearNamedFramebufferfi(const FramebufferID framebufferID, ClearBufferType buffer, const FramebufferAttachment attachmentSlot, const Float depth, const Int stencil)
+{
+#ifdef TRACE_OPENGL
+		openGlState.write("glClearNamedFramebufferfi(...);");
+#endif // TRACE_OPENGL
+	glClearNamedFramebufferfi(framebufferID, static_cast<UInt>(buffer), attachmentToIndex(attachmentSlot), depth, stencil);
+}
+
+void OpenGL::VertexArray::apiVertexArrayAttribFormat(const VertexArrayID vertexArrayID, const AttributeIndex attributeID, const Int size, DataType type, const Bool normalized, const UInt relativeOffset)
+{
+#ifdef CHECK_OPENGL
+		if(attributeID > openGlState.maxVertexAttributes - 1) logError("Attribute Index out of bounds!");
+#endif // CHECK_OPENGL
+
+#ifdef TRACE_OPENGL
+		openGlState.write("glVertexArrayAttribFormat(" + toString(vertexArrayID) + ", " + toString(attributeID) + ", " + toString(size) + ", " + toString(static_cast<UInt>(type)) + ", " + toString(normalized) + ", " + toString(relativeOffset) + ");");
+#endif // TRACE_OPENGL
+	glVertexArrayAttribFormat(vertexArrayID, attributeID, size, static_cast<UInt>(type), normalized, relativeOffset);
+}
+
+void OpenGL::Textures::apiTextureSubImage2D(const TextureID texture, const Int mipmapLevel, const Int xOffset, const Int yOffset, const Int width, const Int height, WritePixelsFormat format, DataType type, const void* pixels)
+{
+#ifdef TRACE_OPENGL
+		openGlState.write("glTextureSubImage2D(...);");
+#endif // TRACE_OPENGL
+	glPixelStorei(GL_PACK_ALIGNMENT, 1);
+
+	glTextureSubImage2D(texture, mipmapLevel, xOffset, yOffset, width, height, static_cast<UInt>(format), static_cast<UInt>(type), pixels);
+}
+
+void OpenGLVertexArrayObject::bindVertexBuffer(const AttributeIndex attributeIndex, const BufferID bufferID, const LL offset, const Int stride, const UInt divisor, const Int numComponents, const DataType type, const Bool normalized, const UInt relativeOffset) const
+{
+	// attribute index:	the hardcoded index that represents the vertex data e.g. pos = 0, uv = 1, norm = 2 etc.
+	// buffer id:		the id of the vertex buffer you are attaching to the array
+	// offset:			the offset at which the first byte is read (usually 0)
+	// stride:			the number of bytes moved forward to read the next vertex data (also the full size of each packed value)
+	// divisor:			0 if non instanced 1 or greater if instanced
+	// numComponents	assuming Float or Int how many are there in the current field e.g. Vec4 -> 4 Float
+	// type				the data type stored in the buffer usually Float
+	// normalized:		normalizes the value when accessed
+	// relativeOffset:	the relative offset of the desired attribute within each stride/vertex usually 0 for non packed data
+
+	OpenGL::VertexArray::apiEnableVertexArrayAttrib(vertexArrayID, attributeIndex);
+	OpenGL::VertexArray::apiVertexArrayAttribBinding(vertexArrayID, attributeIndex, attributeIndex);
+	OpenGL::VertexArray::apiVertexArrayVertexBuffer(vertexArrayID, attributeIndex, bufferID, offset, stride);
+	OpenGL::VertexArray::apiVertexArrayBindingDivisor(vertexArrayID, attributeIndex, divisor);
+	OpenGL::VertexArray::apiVertexArrayAttribFormat(vertexArrayID, attributeIndex, numComponents, type, normalized, relativeOffset);
 }

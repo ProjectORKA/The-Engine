@@ -1,29 +1,29 @@
 #pragma once
 
 #include "Basics.hpp"
-#include "File.hpp"
-#include "FileSystem.hpp"
 
-
-enum class SimpleRTSHumanState {
+enum class SimpleRTSHumanState
+{
 	LookingForWood,
 	Delivering,
 	HuntingRabbit,
 };
 
-struct SimpleRTSHuman {
-	String name;
-	String surname;
-	Vec3 position;
-	Vec3 targetPosition;
+struct SimpleRTSHuman
+{
+	String              name;
 	SimpleRTSHumanState state;
+	String              surname;
+	Vec3                position;
+	Vec3                targetPosition;
 
 	void spawn(Vec3 position);
 };
 
-struct SimpleRTSHumanSystem {
+struct SimpleRTSHumanSystem
+{
 	Vector<SimpleRTSHuman> humans;
-	Vector<String> simpleRTSHumanMaleNames;
-	
+	Vector<String>         simpleRTSHumanMaleNames;
+
 	void create();
 };

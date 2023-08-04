@@ -2,9 +2,10 @@
 
 #include "Basics.hpp"
 
-struct OctreeId {
+struct OctreeId
+{
+	Short   level    = 0;
 	ULLVec3 location = ULLVec3(0);
-	Short level = 0;
 
-	Double size() const { return pow(2, 64 - level); }
+	Double size() const;
 };

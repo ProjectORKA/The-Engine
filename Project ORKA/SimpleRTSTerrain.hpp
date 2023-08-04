@@ -1,22 +1,21 @@
 #pragma once
 
-#include "Math.hpp"
 #include "GPUMesh.hpp"
 #include "ResourceManager.hpp"
 #include "Renderer.hpp"
-#include "PerlinNoise.hpp"
 
-
-struct SimpleRTSTerrainSystem {
-	Float simpleRTSTerrainFunction(Vec2 position);
+struct SimpleRTSTerrainSystem
+{
+	[[nodiscard]] Float simpleRTSTerrainFunction(Vec2 position) const;
 };
 
-struct SimpleRTSTerrainRenderingSystem {
-	GpuMesh gpuTerrain;
-	CpuMesh cpuTerrain;
-	Vec2 offset = Vec2(0);
+struct SimpleRTSTerrainRenderingSystem
+{
+	CPUMesh cpuTerrain;
+	GPUMesh gpuTerrain;
+	Vec2    offset = Vec2(0);
 
+	void render(Renderer& renderer) const;
 	void create(ResourceManager& resourceManager);
-	void render(Renderer& renderer);
-	void update(SimpleRTSTerrainSystem& terrainSystem, Vec2 cameraPos);
+	void update(const SimpleRTSTerrainSystem& terrainSystem, Vec2 cameraPos);
 };

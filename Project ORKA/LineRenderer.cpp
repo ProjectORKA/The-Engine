@@ -1,8 +1,9 @@
 #include "LineRenderer.hpp"
 #include "Renderer.hpp"
 
-void LineRenderer::create() {
-	cpuMesh.drawMode = MeshDrawMode::DynamicMode;
+void LineRenderer::create()
+{
+	cpuMesh.drawMode = BufferUsage::DynamicDraw;
 	cpuMesh.indices.push_back(0);
 	cpuMesh.indices.push_back(1);
 	cpuMesh.indices.push_back(2);
@@ -24,34 +25,11 @@ void LineRenderer::create() {
 	cpuMesh.positions.resize(4);
 }
 
-void LineRenderer::renderLine(Renderer& renderer, const Vec3 start, const Vec3 end, const Float width) {
-	renderer.uniforms().mMatrix(Matrix(1));
-	const Vec3 dir = normalize(start - end);
-	const Vec3 extend = cross(dir, Vec3(0, 0, 1));
-	cpuMesh.positions[0] = (start + extend * width);
-	cpuMesh.positions[1] = (start - extend * width);
-	cpuMesh.positions[2] = (end + extend * width);
-	cpuMesh.positions[3] = (end - extend * width);
-
-	cpuMesh.checkIntegrity();
-	gpuMesh.upload(cpuMesh);
-	gpuMesh.render(renderer.uniforms());
-	gpuMesh.unload();
-}
-
-void LineRenderer::renderLines(Renderer& renderer, const Vector<Line3D>& lines) {
-	renderer.uniforms().mMatrix(Matrix(1));
-	cpuMesh = convertLinesToMesh(lines);
-	gpuMesh.upload(cpuMesh);
-	gpuMesh.render(renderer.uniforms());
-	gpuMesh.unload();
-}
-
-CpuMesh convertLineToMesh(const Line3D& line) {
-	CpuMesh mesh;
-	mesh.name = "Line";
-	mesh.dataFlags = Positions;
-	mesh.drawMode = MeshDrawMode::DynamicMode;
+CPUMesh convertLineToMesh(const Line3D& line)
+{
+	CPUMesh mesh;
+	mesh.name          = "Line";
+	mesh.drawMode      = BufferUsage::DynamicDraw;
 	mesh.primitiveMode = PrimitiveMode::Lines;
 	mesh.indices.push_back(0);
 	mesh.indices.push_back(1);
@@ -61,13 +39,14 @@ CpuMesh convertLineToMesh(const Line3D& line) {
 	return mesh;
 }
 
-CpuMesh convertLinesToMesh(const Vector<Line3D>& lines) {
-	CpuMesh mesh;
-	mesh.name = "Lines";
-	mesh.dataFlags = Positions;
-	mesh.drawMode = MeshDrawMode::DynamicMode;
+CPUMesh convertLinesToMesh(const Vector<Line3D>& lines)
+{
+	CPUMesh mesh;
+	mesh.name          = "Lines";
+	mesh.drawMode      = BufferUsage::DynamicDraw;
 	mesh.primitiveMode = PrimitiveMode::Lines;
-	for (ULL i = 0; i < lines.size(); i++) {
+	for(ULL i = 0; i < lines.size(); i++)
+	{
 		mesh.indices.push_back(i * 2);
 		mesh.indices.push_back(i * 2 + 1);
 		mesh.positions.push_back(lines[i].start);
@@ -77,6 +56,32 @@ CpuMesh convertLinesToMesh(const Vector<Line3D>& lines) {
 	return mesh;
 }
 
-void LineRenderer::renderLine(Renderer& renderer, const Vec2 start, const Vec2 end, const Float width) {
+void LineRenderer::renderLines(Renderer& renderer, const Vector<Line3D>& lines)
+{
+	renderer.uniforms().setMMatrix(Matrix(1));
+	cpuMesh = convertLinesToMesh(lines);
+	gpuMesh.upload(cpuMesh);
+	gpuMesh.render(renderer.uniforms());
+	gpuMesh.unload();
+}
+
+void LineRenderer::renderLine(Renderer& renderer, const Vec2 start, const Vec2 end, const Float width)
+{
 	renderLine(renderer, Vec3(start, 0), Vec3(end, 0), width);
+}
+
+void LineRenderer::renderLine(Renderer& renderer, const Vec3 start, const Vec3 end, const Float width)
+{
+	renderer.uniforms().setMMatrix(Matrix(1));
+	const Vec3 dir       = normalize(start - end);
+	const Vec3 extend    = cross(dir, Vec3(0, 0, 1));
+	cpuMesh.positions[0] = start + extend * width;
+	cpuMesh.positions[1] = start - extend * width;
+	cpuMesh.positions[2] = end + extend * width;
+	cpuMesh.positions[3] = end - extend * width;
+
+	cpuMesh.checkIntegrity();
+	gpuMesh.upload(cpuMesh);
+	gpuMesh.render(renderer.uniforms());
+	gpuMesh.unload();
 }

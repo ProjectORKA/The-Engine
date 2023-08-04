@@ -1,30 +1,31 @@
 #pragma once
 
 #include "Basics.hpp"
-#include "Debug.hpp"
-#include "Image.hpp"
-#include "File.hpp"
 
 using FileTime = std::filesystem::file_time_type;
 
-void deleteFile(const Path& path);
-UInt getFileSize(const Path& path);
-String loadString(const Path& path);
-Path getDirectory(Path path);
-Path makeAbsolute(const Path& path);
-Bool doesPathExist(const Path& path);
-String getFileName(const Path& path);
-Path removeFileName(Path path);
 void createDirectory(Path path);
-FileTime lastWrittenTime(const Path& path);
-Vector<String> loadStringVector(const Path& path);
-Vector<Path> getFilesInDirectory(const Path& path);
-Path nameToPath(const Name& name, const String& filetype);
+void deleteFile(const Path& path);
+void setCurrentPath(const Path& path);
 void copyFile(const Path& source, const Path& destination);
-Vector<Path> getAllPathsInDirectory(const Path& path);
-Vector<Path> getAllFilesInDirectory(const Path& path);
-FileTime getLastWrittenTimeOfFiles(const Vector<Path>& paths);
-Vector<Path> getFilesInDirectory(const Path& path, const Vector<String>& filter);
-Vector<Path> getAllFilesInDirectory(const Path& path, const Vector<String>& filter);
+
+[[nodiscard]] Path           getCurrentPath();
+[[nodiscard]] Path           getDirectory(Path path);
+[[nodiscard]] Path           removeFileName(Path path);
+[[nodiscard]] String         loadString(const Path& path);
+[[nodiscard]] UInt           getFileSize(const Path& path);
+[[nodiscard]] String         getFileName(const Path& path);
+[[nodiscard]] Path           makeAbsolute(const Path& path);
+[[nodiscard]] Bool           doesPathExist(const Path& path);
+[[nodiscard]] Bool           doesFileExist(const Path& path);
+[[nodiscard]] FileTime       lastWrittenTime(const Path& path);
+[[nodiscard]] Vector<String> loadStringVector(const Path& path);
+[[nodiscard]] Vector<Path>   getFilesInDirectory(const Path& path);
+[[nodiscard]] Vector<Path>   getAllFilesInDirectory(const Path& path);
+[[nodiscard]] Vector<Path>   getAllPathsInDirectory(const Path& path);
+[[nodiscard]] FileTime       getLastWrittenTimeOfFiles(const Vector<Path>& paths);
+[[nodiscard]] Path           nameToPath(const Name& name, const String& fileType);
+[[nodiscard]] Vector<Path>   getFilesInDirectory(const Path& path, const Vector<String>& filter);
+[[nodiscard]] Vector<Path>   getAllFilesInDirectory(const Path& path, const Vector<String>& filter);
 
 extern Path executablePath;

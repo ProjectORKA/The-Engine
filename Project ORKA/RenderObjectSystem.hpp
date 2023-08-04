@@ -7,42 +7,43 @@
 
 struct Renderer;
 
-struct RenderObject {
-	Index meshId = 0;
-	Index shaderId = 0;
+struct RenderObject
+{
+	Index meshId    = 0;
+	Index shaderId  = 0;
 	Index textureId = 0;
 };
 
-struct RenderObjectNames {
+struct RenderObjectNames
+{
 	Name renderObjectName = "default";
-	Name meshName = "default";
-	Name shaderName = "default";
-	Name textureName = "default";
+	Name meshName         = "default";
+	Name shaderName       = "default";
+	Name textureName      = "default";
+
 	RenderObjectNames();
 	RenderObjectNames(const String& name, const String& mesh, const String& texture, const String& shader);
 };
 
-struct RenderObjectSystem {
-	MeshSystem* meshSystemPtr;
-	TextureSystem* textureSystemPtr;
-	ShaderSystem* shaderSystemPtr;
-
-	Map<Name, Index> nameToIndex;
-	Vector<RenderObject> renderObjects;
+struct RenderObjectSystem
+{
+	Map<Name, Index>          nameToIndex;
+	MeshSystem*               meshSystemPtr;
+	Vector<RenderObject>      renderObjects;
+	ShaderSystem*             shaderSystemPtr;
+	TextureSystem*            textureSystemPtr;
 	Vector<RenderObjectNames> renderObjectNamesQueue;
-
-	Index currentRenderobjectId = 0;
-
-	void destroy();
-	void renderCurrent();
-	void select(Index id);
-	void render(Index id);
-	void create(Renderer& renderer);
-	void render(ResourceManager& resourceManager, const Name& name);
-	void select(ResourceManager& resourceManager, const Name& name);
-	Index addRenderObject(const RenderObject& renderObject);
-	void addRenderObject(const RenderObjectNames& renderobject);
-	void addRenderObject(const Name& name, const Name& meshName, const Name& textureName, const Name& shaderName);
+	Index                     currentRenderobjectId = 0;
 
 	RenderObject& current();
+	void          destroy();
+	void          renderCurrent();
+	void          select(Index id);
+	void          render(Index id);
+	void          create(Renderer& renderer);
+	Index         addRenderObject(const RenderObject& renderObject);
+	void          addRenderObject(const RenderObjectNames& renderobject);
+	void          render(ResourceManager& resourceManager, const Name& name);
+	void          select(ResourceManager& resourceManager, const Name& name);
+	void          addRenderObject(const Name& name, const Name& meshName, const Name& textureName, const Name& shaderName);
 };

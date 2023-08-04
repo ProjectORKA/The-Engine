@@ -4,7 +4,6 @@
 #include "Game.hpp"
 #include "KeyMap.hpp"
 #include "Player.hpp"
-#include "ECS.hpp"
 #include "SceneSystem.hpp"
 
 // todo list
@@ -16,54 +15,61 @@
 struct Renderer;
 struct Window;
 
-struct DNDEntity {
-	Name meshName = "empty";
+struct DNDEntity
+{
+	// DO NOT REORDER !!!
+	Name      meshName = "empty";
 	Transform transform;
-	void render(ResourceManager& resourceManager, Renderer& renderer);
+	// DO NOT REORDER !!!
+
+	void render(ResourceManager& resourceManager, Renderer& renderer) const;
 };
 
-struct DNDWorld : public GameSimulation {
-	//savedata for camera
-	Float fieldOfView = 80.0;
-	Float nearClipValue = 0.1;
-	Float farClipValue = 100000;
-	Vec3 location = Vec3(0);
-	DVec3 rotation = Vec3(0);
-	//player data
-	Int speedExponent = 1;
-
-	Scene2 scene;
-
+struct DNDSimulation final : GameSimulation
+{
+	// savedata for camera
+	Scene2            scene;
 	Vector<DNDEntity> entities;
+	Int               speedExponent = 1;
+	Float             nearClipValue = 0.1f;
+	Float             fieldOfView   = 80.0f;
+	Float             farClipValue  = 100000.0f;
+	Vec3              location      = Vec3(0.0f);
+	DVec3             rotation      = Vec3(0.0f);
 
-	void load(ResourceManager& resourceManager);
-	void save();
+	void destroy() override;
+	void update(Float delta) override;
+	void create(ResourceManager& resourceManager) override;
 };
 
-struct DNDRenderer : public GameRenderer {
-	DebugPlayer player;
-	DNDWorld* world = nullptr;
-	Index lastSelectedObject = -1;
-	Vector<Index> selectedObjects;
-	Float mouseSensitivity = 0.0015f;
-	InputEvent select = InputEvent(InputType::Mouse, LMB, true);
-	InputId selectMultiple = InputId(InputType::KeyBoard, SHIFT);
-
-	InputEvent exit = InputEvent(InputType::Mouse, RMB, false);
-	InputEvent enter = InputEvent(InputType::Mouse, LMB, true);
+struct DNDRenderer final : GameRenderer
+{
+	DebugPlayer    player;
+	Framebuffer    framebuffer;
+	Vector<Index>  selectedObjects;
+	Index          lastSelectedObject  = -1;
+	Float          mouseSensitivity    = 0.0015f;
+	DNDSimulation* world               = nullptr;
+	InputId        selectMultiple      = InputId(InputType::KeyBoard, SHIFT);
+	InputEvent     select              = InputEvent(InputType::Mouse, LMB, true);
+	InputEvent     enter               = InputEvent(InputType::Mouse, LMB, true);
+	InputEvent     exit                = InputEvent(InputType::Mouse, RMB, false);
+	InputEvent     toggleWireframeMode = InputEvent(InputType::KeyBoard, F, true);
 
 	void update(Window& window) override;
-	void create(ResourceManager& resourceManager, Window& window) override;
+	void destroy(Window& window) override;
 	void inputEvent(Window& window, InputEvent input) override;
+	void create(ResourceManager& resourceManager, Window& window) override;
 	void render(ResourceManager& resourceManager, Window& window, TiledRectangle area) override;
 	void renderInteractive(ResourceManager& resourceManager, Window& window, TiledRectangle area) override;
 };
 
-struct DungeonsAndDiscord {
-	DNDWorld sim;
+struct DungeonsAndDiscord
+{
+	UserInterface   ui;
+	DNDSimulation   sim;
+	DNDRenderer     renderer;
 	ResourceManager resourceManager;
-	UserInterface ui;
-	DNDRenderer renderer;
 
 	void run();
 };

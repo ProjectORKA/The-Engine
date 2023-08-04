@@ -1,29 +1,25 @@
 #pragma once
 
 #include "Basics.hpp"
-#include "Random.hpp"
 #include "ResourceManager.hpp"
 
 struct Renderer;
 
-struct LevelledGraphConnection {
+struct LeveledGraphConnection
+{
 	Index a;
 	Index b;
 
-	LevelledGraphConnection(const Index a, const Index b) {
-		this->a = a;
-		this->b = b;
-	};
+	LeveledGraphConnection(Index a, Index b);
 };
 
-struct LevelledGraph {
-	UInt nodeCount = 0;
-
-	Vector<Vec2> positions;
-	Vector<Vec2> forces;
-	Vector<Float> numforces;
-
-	Vector<LevelledGraphConnection> connections;
+struct LeveledGraph
+{
+	Vector<Vec2>                   forces;
+	Vector<Float>                  numForces;
+	Vector<Vec2>                   positions;
+	Vector<LeveledGraphConnection> connections;
+	UInt                           nodeCount = 0;
 
 	void update();
 	void addNode();

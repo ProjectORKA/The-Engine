@@ -28,7 +28,7 @@ void main(){
 //		sampleCount++;
 //	}
 
-	//if(distance(rayOrigin, sampleLocation) > 10) discard;
+	// if(distance(rayOrigin, sampleLocation) > 10) discard;
 
 	fragmentColor = vec4(vec3(texelFetch(texture0,ivec2(gl_FragCoord.xy),0).xyz * 100000000),1);
 };

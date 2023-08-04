@@ -1,28 +1,33 @@
 #pragma once
-
 #include "CPUTexture.hpp"
 #include "TiledMath.hpp"
 
-struct GpuTexture
+struct GPUTexture
 {
-	UInt width = 1;
-	UInt height = 1;
-	Byte channels = 4;
-	Index textureId = 0;
-	Bool loaded = false;
-	Wrapping wrapping = Wrapping::repeat;
-	DataType dataType = DataType::dataTypeByte;
-	Filter nearFilter = Filter::linear;
-	Filter farFilter = Filter::linearMM;
+	[[nodiscard]] Bool              isLoaded() const;
+	[[nodiscard]] WritePixelsFormat getFormat() const;
+	[[nodiscard]] UInt              getOpenGLID() const;
 
 	void unload();
 	void resize(Area size);
 	void generateMipMaps() const;
-	void use(Index textureSlot) const;
-	void load(CPUTexture& cpuTexture);
-	void attachTexture(Int slot) const;
-	void load(Vec2 size, Int channels, DataType type);
-	void setFilters(Filter nearFilter, Filter farFilter);
+	void load(const CPUTexture& cpuTexture);
+	void useTextureInSlot(UInt textureSlot) const;
 	void load(ResourceManager& resourceManager, const Name& name);
-	void generateMipMaps(Filter nearFilter, Filter farFilter) const;
+	void setFilters(Filter nearFilterValue, Filter farFilterValue);
+	void generateMipMaps(Filter nearFilterValue, Filter farFilterValue);
+	void load(IVec2 size, WritePixelsFormat format, DataType type, Wrapping wrapping);
+private:
+	Int               width  = 1;
+	Int               height = 1;
+	Name              name   = "";
+	OpenGLTexture2D   openglTexture;
+	Bool              loaded     = false;
+	Filter            nearFilter = Filter::Linear;
+	Filter            farFilter  = Filter::LinearMm;
+	Wrapping          wrapping   = Wrapping::Repeat;
+	DataType          dataType   = DataType::Byte;
+	WritePixelsFormat format     = WritePixelsFormat::RGBA;
+
+	void setData(DataType dataType, WritePixelsFormat format, Int width, Int height, const Byte* data);
 };

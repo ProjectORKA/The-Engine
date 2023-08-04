@@ -2,34 +2,77 @@
 
 #include "Basics.hpp"
 #include "Game.hpp"
+#include "Random.hpp"
 #include "Transform.hpp"
+#include "Camera.hpp"
 
-namespace FlappyBird {
-	struct Bird {
-		Transform transform;
+struct FlappyBirdPipes
+{
+	Float     maxGap     = 1.5f;
+	Float     minGap     = 0.6f;
+	Float     width      = 0.3f;
+	Float     spacing    = 1.5f;
+	Float     gap        = 0.5f;
+	Float     size       = 0.1f;
+	Float     speed      = 1.0f;
+	Float     posX       = 0.0f;
+	Float     posY       = -0.5f;
+	Transform transform1 = Transform(Vec3(posX, posY - gap / 2.0f, 0.0f), Vec3(0.0f), Vec3(size));
+	Transform transform2 = Transform(Vec3(posX, posY + gap / 2.0f, 0.0f), Vec3(0.0f, 0.0f, 180.0f), Vec3(size));
 
-		void render(ResourceManager& resourceManager, Window& window) {
-			window.renderer.uniforms().mMatrix(matrixFromRotation(PI / 2, 0,PI / 2));
-			window.renderer.useShader(resourceManager, "vertexColor");
-			window.renderer.renderMesh(resourceManager, "flappyBird");
-		}
-	};
+	void     randomize();
+	void     update(Float delta);
+	explicit FlappyBirdPipes(Int id);
+	void     render(ResourceManager& rm, Renderer& r) const;
+};
 
-	struct Pipe { };
+struct FlappyBirdBird
+{
+	Bool      isColliding = false;
+	Float     size        = 0.05f;
+	Bool      alive       = true;
+	Bool      heldInPlace = true;
+	Vec3      velocity    = Vec3(0);
+	Transform transform;
 
-	struct Game : public GameRenderer {
-		Bird bird;
-		Vector<Pipe> pipes;
+	InputEvent jumpButton = InputEvent(InputType::KeyBoard, SPACE, true);
 
-		void render(ResourceManager& resourceManager, Window& window, TiledRectangle area) override {
-			Renderer& renderer = window.renderer;
-			renderer.normalizedSpaceWithAspectRatio(2);
+	void                          jump();
+	void                          reset();
+	void                          inputEvent(InputEvent input);
+	void                          render(ResourceManager& rm, Renderer& r) const;
+	void                          update(const Vector<FlappyBirdPipes>& pipeColumns, Float delta);
+	void                          updateAI(const Vector<FlappyBirdPipes>& pipeColumns, Float delta);
+	[[nodiscard]] FlappyBirdPipes getClosestPipeColumn(const Vector<FlappyBirdPipes>& pipeColumns) const;
+};
 
-			renderer.clearColor(Color(0.1, 1.0, 0, 1));
+struct FlappyBirdRenderer final : GameRenderer
+{
+	const Int   flappyBirdCount = 300;
+	const Bool  enableAI        = true;
+	const Float gameSpeed       = 1.0f;
+	const Float slowMotionSpeed = 0.5f;
 
-			bird.render(resourceManager, window);
-		};
+	Vector<FlappyBirdBird>  birds;
+	Camera                  camera;
+	Vector<FlappyBirdPipes> pipeColumns;
 
-		void update(Window& window) override { };
-	};
-}
+	InputEvent reloadShaders   = InputEvent(InputType::KeyBoard, T, true);
+	InputEvent toggleWireFrame = InputEvent(InputType::KeyBoard, F, true);
+
+	void update(Window& window) override;
+	void destroy(Window& window) override;
+	void inputEvent(Window& window, InputEvent input) override;
+	void create(ResourceManager& resourceManager, Window& window) override;
+	void render(ResourceManager& rm, Window& window, TiledRectangle area) override;
+	void renderInteractive(ResourceManager& resourceManager, Window& window, TiledRectangle area) override;
+};
+
+struct FlappyBird
+{
+	UserInterface      ui;
+	ResourceManager    resourceManager;
+	FlappyBirdRenderer flappyBirdRenderer;
+
+	void run();
+};

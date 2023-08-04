@@ -4,33 +4,21 @@
 #include "RelativeChunkOffset.hpp"
 #include "PlanetSystemPlayer.hpp"
 
-void OctreeNodeRenderData::count() const {
-	static Int nodeCount = 0;
-	if (equivalentOctreeNode->id.level == 0) { nodeCount = 0; }
-	nodeCount++;
-	if (subdivided) {
-		c000->count();
-		c001->count();
-		c010->count();
-		c011->count();
-		c100->count();
-		c101->count();
-		c110->count();
-		c111->count();
-	}
-
-	if (equivalentOctreeNode->id.level == 0) {
-		logDebug(String("OctreeNodeRenderDataCount: ").append(toString(nodeCount)));
-	}
+void OctreeRenderSystem::destroy()
+{
+	root.destroy();
 }
 
-void OctreeNodeRenderData::destroy() {
+void OctreeNodeRenderData::destroy()
+{
 	unsubdivide();
 	equivalentOctreeNode->decrementUser();
 }
 
-void OctreeNodeRenderData::subdivide() {
-	if (!subdivided) {
+void OctreeNodeRenderData::subdivide()
+{
+	if(!subdivided)
+	{
 		c000 = new OctreeNodeRenderData();
 		c001 = new OctreeNodeRenderData();
 		c010 = new OctreeNodeRenderData();
@@ -53,8 +41,35 @@ void OctreeNodeRenderData::subdivide() {
 	}
 }
 
-void OctreeNodeRenderData::unsubdivide() {
-	if (subdivided) {
+void OctreeRenderSystem::count() const
+{
+	root.count();
+}
+
+void OctreeNodeRenderData::count() const
+{
+	static Int nodeCount = 0;
+	if(equivalentOctreeNode->id.level == 0) nodeCount = 0;
+	nodeCount++;
+	if(subdivided)
+	{
+		c000->count();
+		c001->count();
+		c010->count();
+		c011->count();
+		c100->count();
+		c101->count();
+		c110->count();
+		c111->count();
+	}
+
+	if(equivalentOctreeNode->id.level == 0) logDebug("OctreeNodeRenderDataCount: " + toString(nodeCount));
+}
+
+void OctreeNodeRenderData::unsubdivide()
+{
+	if(subdivided)
+	{
 		c000->destroy();
 		c001->destroy();
 		c010->destroy();
@@ -86,30 +101,29 @@ void OctreeNodeRenderData::unsubdivide() {
 	}
 }
 
-void OctreeNodeRenderData::render(ResourceManager& resourceManager, Renderer& renderer) const {
-	renderer.uniforms().cameraPos() = Vec4(cameraPosition, 1);
-	renderer.uniforms().worldOffset() = Vec4(equivalentOctreeNode->id.location.x, equivalentOctreeNode->id.location.y,
-	                                         equivalentOctreeNode->id.location.z, equivalentOctreeNode->id.level);
-
-	if (renderer.planetRenderSystem.chunkBorders)renderer.renderMesh(resourceManager, "gizmo");
-}
-
-void OctreeNodeRenderData::create(OcTreeNode& octreeNode) {
+void OctreeNodeRenderData::create(OctreeNode& octreeNode)
+{
 	equivalentOctreeNode = &octreeNode;
 	octreeNode.incrementUser();
 }
 
-void OctreeNodeRenderData::renderWater(ResourceManager& resourceManager, Renderer& renderer) const {
-	renderer.uniforms().cameraPos() = Vec4(cameraPosition, 1);
-	renderer.uniforms().worldOffset() = Vec4(equivalentOctreeNode->id.location.x, equivalentOctreeNode->id.location.y,
-	                                         equivalentOctreeNode->id.location.z, equivalentOctreeNode->id.level);
-	renderer.renderMesh(resourceManager, "waterPlane");
+void OctreeRenderSystem::create(Renderer& renderer) const
+{
+	// [TODO]
+	// waterTextureId = renderer.textureSystem.getTextureId("water");
 }
 
-void OctreeNodeRenderData::update(PlanetSystemPlayer& player) {
+void OctreeRenderSystem::update(PlanetSystemPlayer& player)
+{
+	root.update(player);
+}
+
+void OctreeNodeRenderData::update(PlanetSystemPlayer& player)
+{
 	updateWithoutSubdivision(player);
 
-	if (equivalentOctreeNode->subdivided && !subdivided && inDrawDistance) {
+	if(equivalentOctreeNode->subdivided && !subdivided && inDrawDistance)
+	{
 		subdivide();
 		c000->updateWithoutSubdivision(player);
 		c001->updateWithoutSubdivision(player);
@@ -122,44 +136,17 @@ void OctreeNodeRenderData::update(PlanetSystemPlayer& player) {
 	}
 }
 
-void OctreeNodeRenderData::renderLevel(ResourceManager& resourceManager, const UShort level, Renderer& renderer) const {
-	if (subdivided) {
-		c000->renderLevel(resourceManager, level, renderer);
-		c001->renderLevel(resourceManager, level, renderer);
-		c010->renderLevel(resourceManager, level, renderer);
-		c011->renderLevel(resourceManager, level, renderer);
-		c100->renderLevel(resourceManager, level, renderer);
-		c101->renderLevel(resourceManager, level, renderer);
-		c110->renderLevel(resourceManager, level, renderer);
-		c111->renderLevel(resourceManager, level, renderer);
-	}
-	else { if (equivalentOctreeNode->id.level == level) { render(resourceManager, renderer); } }
-}
-
-void OctreeNodeRenderData::renderWaterLevel(ResourceManager& resourceManager, const UShort level,
-                                            Renderer& renderer) const {
-	if (subdivided) {
-		c000->renderWaterLevel(resourceManager, level, renderer);
-		c001->renderWaterLevel(resourceManager, level, renderer);
-		c010->renderWaterLevel(resourceManager, level, renderer);
-		c011->renderWaterLevel(resourceManager, level, renderer);
-		c100->renderWaterLevel(resourceManager, level, renderer);
-		c101->renderWaterLevel(resourceManager, level, renderer);
-		c110->renderWaterLevel(resourceManager, level, renderer);
-		c111->renderWaterLevel(resourceManager, level, renderer);
-	}
-	else { if (equivalentOctreeNode->id.level == level) { renderWater(resourceManager, renderer); } }
-}
-
-void OctreeNodeRenderData::updateWithoutSubdivision(PlanetSystemPlayer& player) {
-	//get camera relative location
-	cameraPosition = relativeCameraPosition(equivalentOctreeNode->id, player.chunkLocation, player.camera.location);
+void OctreeNodeRenderData::updateWithoutSubdivision(PlanetSystemPlayer& player)
+{
+	// get camera relative location
+	cameraPosition = relativeCameraPosition(equivalentOctreeNode->id, player.chunkLocation, player.camera.getLocation());
 
 	inDrawDistance = length(cameraPosition - Vec3(0.5, 0.5, 0)) < drawDistance;
 
-	if (!inDrawDistance) unsubdivide();
+	if(!inDrawDistance) unsubdivide();
 
-	if (subdivided) {
+	if(subdivided)
+	{
 		c000->update(player);
 		c001->update(player);
 		c010->update(player);
@@ -171,16 +158,60 @@ void OctreeNodeRenderData::updateWithoutSubdivision(PlanetSystemPlayer& player) 
 	}
 }
 
-void OctreeRenderSystem::count() const { root.count(); }
-void OctreeRenderSystem::destroy() { root.destroy(); }
+void OctreeNodeRenderData::render(ResourceManager& resourceManager, Renderer& renderer) const
+{
+	renderer.uniforms().setCameraPos(Vec4(cameraPosition, 1));
+	renderer.uniforms().setWorldOffset(Vec4(equivalentOctreeNode->id.location.x, equivalentOctreeNode->id.location.y, equivalentOctreeNode->id.location.z, equivalentOctreeNode->id.level));
 
-void OctreeRenderSystem::create(Renderer& renderer) {
-	//[TODO]
-	//waterTextureId = renderer.textureSystem.getTextureId("water");
+	if(renderer.planetRenderSystem.chunkBorders) renderer.renderMesh(resourceManager, "gizmo");
 }
 
-void OctreeRenderSystem::update(PlanetSystemPlayer& player) { root.update(player); }
+void OctreeNodeRenderData::renderWater(ResourceManager& resourceManager, Renderer& renderer) const
+{
+	renderer.uniforms().setCameraPos(Vec4(cameraPosition, 1));
+	renderer.uniforms().setWorldOffset(Vec4(equivalentOctreeNode->id.location.x, equivalentOctreeNode->id.location.y, equivalentOctreeNode->id.location.z, equivalentOctreeNode->id.level));
+	renderer.renderMesh(resourceManager, "waterPlane");
+}
 
-void OctreeRenderSystem::renderLevel(ResourceManager& resourceManager, const UShort level, Renderer& renderer) const {
+void OctreeRenderSystem::renderLevel(ResourceManager& resourceManager, const UShort level, Renderer& renderer) const
+{
 	root.renderLevel(resourceManager, level, renderer);
+}
+
+void OctreeNodeRenderData::renderLevel(ResourceManager& resourceManager, const UShort level, Renderer& renderer) const
+{
+	if(subdivided)
+	{
+		c000->renderLevel(resourceManager, level, renderer);
+		c001->renderLevel(resourceManager, level, renderer);
+		c010->renderLevel(resourceManager, level, renderer);
+		c011->renderLevel(resourceManager, level, renderer);
+		c100->renderLevel(resourceManager, level, renderer);
+		c101->renderLevel(resourceManager, level, renderer);
+		c110->renderLevel(resourceManager, level, renderer);
+		c111->renderLevel(resourceManager, level, renderer);
+	}
+	else
+	{
+		if(equivalentOctreeNode->id.level == level) render(resourceManager, renderer);
+	}
+}
+
+void OctreeNodeRenderData::renderWaterLevel(ResourceManager& resourceManager, const UShort level, Renderer& renderer) const
+{
+	if(subdivided)
+	{
+		c000->renderWaterLevel(resourceManager, level, renderer);
+		c001->renderWaterLevel(resourceManager, level, renderer);
+		c010->renderWaterLevel(resourceManager, level, renderer);
+		c011->renderWaterLevel(resourceManager, level, renderer);
+		c100->renderWaterLevel(resourceManager, level, renderer);
+		c101->renderWaterLevel(resourceManager, level, renderer);
+		c110->renderWaterLevel(resourceManager, level, renderer);
+		c111->renderWaterLevel(resourceManager, level, renderer);
+	}
+	else
+	{
+		if(equivalentOctreeNode->id.level == level) renderWater(resourceManager, renderer);
+	}
 }

@@ -1,18 +1,24 @@
+// ReSharper disable CppDeletingVoidPointer
 #pragma once
+#include "Basics.hpp"
 
-#include <memory>
+class Memory
+{
+public:
+	Memory();
+	~Memory();
+	explicit Memory(SizeT size);
+	Memory(const Memory& other);
+	Memory(const void* source, SizeT size);
 
-#define WHOLEPROGRAM_MAX_MEMORY (1024 * 1024)
+	void destroy();
 
-struct Memory {
-	void* memory = nullptr;
+	Memory& operator=(const Memory& other);
 
-	Memory() {
-		//memory = malloc(WHOLEPROGRAM_MAX_MEMORY);
-	}
-
-	void allocate() { };
-	void free() { };
+	[[nodiscard]] Bool  isValid() const;
+	[[nodiscard]] Byte* getData() const;
+	[[nodiscard]] SizeT getSize() const;
+private:
+	Byte* data;
+	SizeT size;
 };
-
-extern Memory memory;

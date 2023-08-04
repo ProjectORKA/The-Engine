@@ -5,21 +5,23 @@
 
 struct Renderer;
 
-struct NeuralNet {
-	Vector<UInt> structure;
+struct NeuralNet
+{
 	Vector<Vector<Vector<Float>>> weights;
-	Vector<Vector<Float>> neuronActivation;
+	Vector<UInt>                  structure;
 	Vector<Vector<Vector<Float>>> contribution;
+	Vector<Vector<Float>>         neuronActivation;
 
-	UInt layerCount() const;
-	Vector<Float> output();
+	NeuralNet() = default;
+	NeuralNet(const Vector<UInt>& structure);
+
 	void propagateForward();
 	void input(const Vector<Float>& input);
-	UInt neuronCountAtLayer(UInt layerId) const;
-	void propagateBackward(Vector<Float> target);
-	void render(ResourceManager& resourceManager, Renderer& renderer, Vec2 area);
-	Vec2 getNeuronPosition(Vec2 area, UInt layerId, UInt neuronId) const;
+	void propagateBackward(Vector<Float> target) const;
+	void render(ResourceManager& resourceManager, Renderer& renderer, Vec2 area) const;
 
-	NeuralNet() {};
-	NeuralNet(const Vector<UInt>& structure);
+	[[nodiscard]] Vector<Float> output();
+	[[nodiscard]] UInt          layerCount() const;
+	[[nodiscard]] UInt          neuronCountAtLayer(UInt layerId) const;
+	[[nodiscard]] Vec2          getNeuronPosition(Vec2 area, UInt layerId, UInt neuronId) const;
 };

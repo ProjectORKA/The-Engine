@@ -1,27 +1,26 @@
 #pragma once
+
 #include <string>
+#include "Basics.hpp"
 
 constexpr unsigned short nameSize = 64;
 
 struct Name
 {
-	char data[nameSize] = {};
-
 	Name();
-
-	// ReSharper disable once CppNonExplicitConvertingConstructor
-	Name(const std::string& name);
-
-	// ReSharper disable once CppNonExplicitConvertingConstructor
 	Name(const char* name);
-
+	Name(const String& name);
 	Name& operator=(const char* other);
-
-	Name& operator=(const std::string& other);
-
-	bool operator==(const Name& other) const;
-
-	bool operator!=(const Name& other) const;
+	Name& operator=(const String& other);
+	[[nodiscard]] String toString() const;
+	[[nodiscard]] bool  operator<(const Name& other) const;
+	[[nodiscard]] bool  operator==(const Name& other) const;
+	[[nodiscard]] bool  operator!=(const Name& other) const;
+private:
+	char data[nameSize] = {};
 };
 
-bool operator<(const Name& l, const Name& r);
+inline String toString(const Name& name)
+{
+	return name.toString();
+}

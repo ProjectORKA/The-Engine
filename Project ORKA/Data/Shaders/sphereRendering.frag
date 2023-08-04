@@ -61,7 +61,7 @@ void main(){
 	
     if(!hit) discard;
     
-    //if(distance(cameraPosition.xyz,pos)>distance(cameraPosition.xyz,worldPos.xyz)) discard;
+    // if(distance(cameraPosition.xyz,pos)>distance(cameraPosition.xyz,worldPos.xyz)) discard;
 
 	color = vec4(pos,1);
 };

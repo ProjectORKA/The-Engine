@@ -1,28 +1,37 @@
 #pragma once
 
 #include "Basics.hpp"
-#include "Debug.hpp"
 
-struct Area : public IVec2 {
-	Area() {};
-	Area(Int a);
-	Area center() const;
+struct Area : IVec2
+{
+	Area() = default;
 	Area(Int x, Int y);
-	Area operator*(Float value) const;
+	explicit Area(Int a);
+
 	void setMinimum(Int minimumSize);
 	void setMinimum(Area minimumSize);
+
+	[[nodiscard]] Area  center() const;
+	[[nodiscard]] Float getAspectRatio() const;
+	[[nodiscard]] Area  operator*(Float value) const;
 };
 
 void logDebug(Area t);
 
-struct TiledRectangle {
-	Area size = Area(1);
+struct TiledRectangle
+{
+	Area  size     = Area(1);
 	IVec2 position = IVec2(0);
 
-	IVec2 center() const;
-	TiledRectangle() {};
-	TiledRectangle(Area area);
-	TiledRectangle operator*(Float value) const;
-	Bool positionInsideArea(IVec2 position) const;
-	TiledRectangle(Int x, Int y, Int w, Int h);
+	TiledRectangle();
+	explicit TiledRectangle(Int size);
+	explicit TiledRectangle(Area area);
+	explicit TiledRectangle(Int x, Int y);
+	explicit TiledRectangle(Int x, Int y, Int w, Int h);
+
+	void operator=(const Area& other);
+
+	[[nodiscard]] IVec2          center() const;
+	[[nodiscard]] Bool           positionInsideArea(IVec2 position) const;
+	[[nodiscard]] TiledRectangle operator*(Float value) const;
 };

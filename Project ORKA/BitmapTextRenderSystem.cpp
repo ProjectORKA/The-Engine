@@ -1,61 +1,67 @@
 #include "BitmapTextRenderSystem.hpp"
-
 #include "Renderer.hpp"
 #include "ResourceManager.hpp"
 
-void BitmapTextRenderSystem::destroy() {
+void BitmapTextRenderSystem::destroy()
+{
 	gpuText.unload();
 	textTexture.unload();
 }
 
-void BitmapTextRenderSystem::create(ResourceManager& resourceManager, Renderer& renderer) {
+void BitmapTextRenderSystem::create(ResourceManager& resourceManager, Renderer& renderer)
+{
 	CPUTexture cpuTextTexture;
-	cpuTextTexture.load(resourceManager, "font", Filter::nearest, Filter::linear, Wrapping::repeat);
+	cpuTextTexture.load(resourceManager, "font", Filter::Nearest, Filter::Linear, Wrapping::Repeat);
 	textTexture.load(cpuTextTexture);
 	renderer.shaderSystem.add(resourceManager, "text");
 }
 
-void BitmapTextRenderSystem::render(ResourceManager& resourceManager, Renderer& renderer, const String& text,
-                                    const Vec2 position, const Alignment x, const Alignment y, const FontStyle style) {
+void BitmapTextRenderSystem::render(ResourceManager& resourceManager, Renderer& renderer, const String& text, const Vec2 position, const Alignment x, const Alignment y, const FontStyle style)
+{
 	renderer.setDepthTest(false);
-	const UInt length = text.size();
-	const Float size = style.absoluteSize;
-	Float up = 1.0;
-	Float down = 0.0;
-	Float left = 0;
-	Float right = 0;
-	Float start = 0;
+	const UInt  length = static_cast<UInt>(text.size());
+	const Float size   = style.absoluteSize;
+	Float up = 0, down = 0, start = 0;
 
-	if (y == Alignment::start) {
-		up = 0.0;
+	if(y == Alignment::top)
+	{
+		up   = 0.0;
 		down = -1;
 	}
 
-	if (y == Alignment::center) {
-		up = 0.5;
+	if(y == Alignment::middle)
+	{
+		up   = 0.5;
 		down = -0.5;
 	}
 
-	if (x == Alignment::start) { start = -(length * style.letterSpacing); }
+	if(y == Alignment::bottom)
+	{
+		up   = 1.0;
+		down = 0.0;
+	}
 
-	if (x == Alignment::center) { start = -(static_cast<Float>(length) * style.letterSpacing) / 2.0f; }
+	if(x == Alignment::left) start = 0;
 
-	if (x == Alignment::end) { start = 0; }
+	if(x == Alignment::center) start = -(static_cast<Float>(length) * style.letterSpacing) / 2.0f;
+
+	if(x == Alignment::right) start = -(static_cast<Float>(length) * style.letterSpacing);
 
 	cpuText.name = "text";
 	cpuText.clearGeometry();
-	cpuText.drawMode = MeshDrawMode::DynamicMode;
+	cpuText.drawMode = BufferUsage::DynamicDraw;
 
-	for (UInt i = 0; i < length; i++) {
-		left = start + static_cast<Float>(i) * style.letterSpacing;
-		right = left + 1.0f;
+	for(UInt i = 0; i < length; i++)
+	{
+		const Float left  = start + static_cast<Float>(i) * style.letterSpacing;
+		const Float right = left + 1.0f;
 
 		const Int character = static_cast<unsigned char>(text[i]);
 
-		const Float uvUp = 1 - static_cast<Float>(character / 16) / 16.0f;
-		const Float uvLeft = static_cast<Float>(character % 16) / 16.0f;
+		const Float uvUp    = 1.0f - static_cast<Float>(character / 16) / 16.0f;
+		const Float uvLeft  = static_cast<Float>(character % 16) / 16.0f;
 		const Float uvRight = uvLeft + 1.0f / 16.0f;
-		const Float uvDown = uvUp - 1.0f / 16.0f;
+		const Float uvDown  = uvUp - 1.0f / 16.0f;
 
 		cpuText.positions.push_back(Vec3(position.x + size * left, position.y + size * up, 0));
 		cpuText.positions.push_back(Vec3(position.x + size * left, position.y + size * down, 0));
@@ -81,7 +87,7 @@ void BitmapTextRenderSystem::render(ResourceManager& resourceManager, Renderer& 
 	gpuText.upload(cpuText);
 
 	renderer.useShader(resourceManager, "text");
-	textTexture.use(0);
+	textTexture.useTextureInSlot(0);
 
 	renderer.setAlphaBlending(true);
 

@@ -1,55 +1,77 @@
 #include "UISandbox.hpp"
-
 #include "Window.hpp"
 
-#include "Random.hpp"
+void Toggle::doThis()
+{
+	toggle = !toggle;
+}
 
-UISandbox::UISandbox() { pauseButton.padding(50); }
+void UISandbox::run()
+{
+	resourceManager.create();
+	ui.create();
+	ui.window("ORKA UI Sandbox", Area(settings.defaultWindowWidth, settings.defaultWindowHeight), true, true, WindowState::Windowed, renderer, resourceManager);
+	ui.run();
+}
 
-void UISandbox::update(Window& window) {
+void Toggle::destroy(Window& window) {}
+
+void Toggle::update(Window& window)
+{
+	if(content) content->update(window);
+}
+
+UISandboxRenderer::UISandboxRenderer()
+{
+	pauseButton.padding(50);
+}
+
+void UISandboxRenderer::destroy(Window& window) {}
+
+void UISandboxRenderer::update(Window& window)
+{
 	pauseButton.update(window);
 	saveButton.update(window);
 }
 
-void UISandbox::render(ResourceManager& resourceManager, Window& window, TiledRectangle area) {
-	Renderer& renderer = window.renderer;
+void Toggle::create(ResourceManager& resourceManager, Window& window) {}
 
-	renderer.clearColor(Color(0.008, 0.008, 0.009, 1));
-
-	pauseButton.render(resourceManager, window, area);
-
-	if (paused) {
-		area.size.x /= 2;
-		area.size.y /= 2;
-		area.position.x + 10;
-		area.position.y + 10;
-
-		saveButton.render(resourceManager, window, area);
-	}
-}
-
-void UISandbox::inputEvent(Window& window, const InputEvent input) {
+void UISandboxRenderer::inputEvent(Window& window, const InputEvent input)
+{
 	saveButton.inputEvent(window, input);
 	pauseButton.inputEvent(window, input);
 
 	paused = pauseButton.toggle;
 }
 
-void UISandbox::renderInteractive(ResourceManager& resourceManager, Window& window, TiledRectangle area) {
-	Renderer& renderer = window.renderer;
+void UISandboxRenderer::create(ResourceManager& resourceManager, Window& window) {}
 
-	pauseButton.renderInteractive(resourceManager, window, area);
+void UISandboxRenderer::render(ResourceManager& resourceManager, Window& window, TiledRectangle area)
+{
+	const Renderer& renderer = window.renderer;
 
-	if (paused) {
+	renderer.clearBackground(Color(0.008, 0.008, 0.009, 1));
+
+	pauseButton.render(resourceManager, window, area);
+
+	if(paused)
+	{
 		area.size.x /= 2;
 		area.size.y /= 2;
-		area.position.x + 10;
-		area.position.y + 10;
+
+		saveButton.render(resourceManager, window, area);
+	}
+}
+
+void UISandboxRenderer::renderInteractive(ResourceManager& resourceManager, Window& window, TiledRectangle area)
+{
+	pauseButton.renderInteractive(resourceManager, window, area);
+
+	if(paused)
+	{
+		area.size.x /= 2;
+		area.size.y /= 2;
 
 		saveButton.renderInteractive(resourceManager, window, area);
 	}
 }
-
-void Toggle::update(Window& window) { content->update(window); }
-
-void Toggle::doThis() { toggle = !toggle; }

@@ -54,18 +54,18 @@ using pool_t = void*;
 /* Create/destroy a memory pool. */
 tlsf_t tlsf_create(void* mem);
 tlsf_t tlsf_create_with_pool(void* mem, size_t bytes);
-void tlsf_destroy(tlsf_t tlsf);
+void   tlsf_destroy(tlsf_t tlsf);
 pool_t tlsf_get_pool(tlsf_t tlsf);
 
 /* Add/remove memory pools. */
 pool_t tlsf_add_pool(tlsf_t tlsf, void* mem, size_t bytes);
-void tlsf_remove_pool(tlsf_t tlsf, pool_t pool);
+void   tlsf_remove_pool(tlsf_t tlsf, pool_t pool);
 
 /* malloc/memalign/realloc/free replacements. */
 void* tlsf_malloc(tlsf_t tlsf, size_t bytes);
 void* tlsf_memalign(tlsf_t tlsf, size_t align, size_t bytes);
 void* tlsf_realloc(tlsf_t tlsf, void* ptr, size_t size);
-void tlsf_free(tlsf_t tlsf, void* ptr);
+void  tlsf_free(tlsf_t tlsf, void* ptr);
 
 /* Returns internal block size, not original request size */
 size_t tlsf_block_size(void* ptr);
@@ -86,7 +86,7 @@ int tlsf_check(tlsf_t tlsf);
 int tlsf_check_pool(pool_t pool);
 
 #if defined(__cplusplus)
-};
+}
 #endif
 
 #endif

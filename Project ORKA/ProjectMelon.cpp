@@ -2,47 +2,61 @@
 #include "Window.hpp"
 #include "Random.hpp"
 
-void MelonRenderer::inputEvent(Window& window, const InputEvent input) {
-	if (input == enter) window.captureCursor();
-	if (input == exit) window.unCaptureCursor();
+void ProjectMelon::run()
+{
+	resourceManager.create();
+	ui.create();
+	ui.window("Project Melon", Area(1920, 1080), true, true, WindowState::Windowed, game, resourceManager);
+	ui.run();
+}
+
+void MelonRenderer::destroy(Window& window) {}
+
+void MelonRenderer::update(Window& window)
+{
+	player.update(window);
+	//world.update(player);
+}
+
+void MelonRenderer::create(ResourceManager& resourceManager, Window& window) {}
+
+void MelonRenderer::inputEvent(Window& window, const InputEvent input)
+{
+	if(input == enter) window.captureCursor();
+	if(input == exit) window.unCaptureCursor();
 
 	player.inputEvent(window, input);
 }
 
-void MelonRenderer::update(Window& window) {
-	player.update(window);
-	world.update(player);
-}
-
-void MelonRenderer::render(ResourceManager& resourceManager, Window& window, TiledRectangle area) {
+void MelonRenderer::render(ResourceManager& resourceManager, Window& window, TiledRectangle area)
+{
 	Renderer& r = window.renderer;
 
-	r.draw("main");
-	r.clearColor(Color(Vec3(1), 1.0));
-	r.clearDepth();
+	r.clearBackground(Color(0, 0, 0, 1));
+
 	r.uniforms().reset();
 
 	r.setWireframeMode(false);
 	r.setCulling(true);
 	r.setDepthTest(true);
 
-	////setup
-	////background
-	r.clearColor(Vec4(0.25, 0.321, 0.0001, 0));
+	// setup
+	// background
+	//r.clearBackground(Color(0.25, 0.321, 0.0001, 1));
+	r.clearBackground(Color(0,0,0,1));
 
 	r.fill(Color(1, 0, 0, 1));
-	r.uniforms().sunDir(Vec4(normalize(Vec3(-0.666, 0.333, 1)), 1));
+	r.uniforms().setSunDir(Vec4(normalize(Vec3(-0.666, 0.333, 1)), 1));
 
 	r.useShader(resourceManager, "MelonUberShader");
 	player.render(resourceManager, window);
 
-	//r.uniforms().mMatrix(matrixFromScale(Vec3(100,100,1)));
-	//r.renderMesh(resourceManager, "melonRock");
+	// r.uniforms().mMatrix(matrixFromScale(Vec3(100,100,1)));
+	// r.renderMesh(resourceManager, "melonRock");
 
-	world.render(resourceManager, r);
+	//world.render(resourceManager, r);
 
-
-	////renderer.clearColor(Vec4(0));
+	////renderer.clearBackground(Vec4(0));
 
 	////render scene
 
@@ -52,16 +66,15 @@ void MelonRenderer::render(ResourceManager& resourceManager, Window& window, Til
 	//renderer.uniforms().mMatrix(Matrix(1));
 	//renderer.renderMesh(resourceManager, "monkey");
 
-	//
-	////ui
-	//renderer.uniforms().mMatrix(Matrix(1));
-	//renderer.setDepthTest(false);
-	//renderer.screenSpace();
-	//renderer.textRenderSystem.alignText(Alignment::end, Alignment::start);
-	//renderer.textRenderSystem.render(resourceManager,renderer, toString(1 / renderer.time.delta), Vec2(30));
+	//ui
+	r.uniforms().setMMatrix(Matrix(1));
+	r.setDepthTest(false);
+	r.screenSpace();
+	r.textRenderSystem.setStyle(fonts.paragraph);
+	r.textRenderSystem.alignText(Alignment::left, Alignment::bottom);
+	r.textRenderSystem.render(resourceManager,r, "FPS: " + toString(1 / r.time.delta), Vec2(30, 30));
+	r.textRenderSystem.render(resourceManager,r, "player Location: " + toString(player.location), Vec2(30, 60));
+	r.textRenderSystem.render(resourceManager,r, "Camera Location: " + toString(player.camera.getLocation()), Vec2(30, 90));
 }
 
-void ProjectMelon::run() {
-	ui.window("Project Melon", Area(1920, 1080), true, WindowState::Windowed, game, resourceManager);
-	ui.run();
-}
+void MelonRenderer::renderInteractive(ResourceManager& resourceManager, Window& window, TiledRectangle area) {}

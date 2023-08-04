@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Basics.hpp"
+#include "Framebuffer.hpp"
 #include "OctreeSystemRenderer.hpp"
 #include "QuadtreeSystemRenderer.hpp"
 
@@ -8,16 +9,15 @@ struct Renderer;
 struct PlanetSystem;
 struct PlanetSystemPlayer;
 
-struct PlanetRenderSystem {
-	Bool chunkBorders = true;
-	Bool vertexColors = false;
-	Bool worldDistortion = true;
+struct PlanetRenderSystem
+{
 	QuadtreeRenderSystem quadtreeRenderSystem;
+	Bool                 chunkBorders    = true;
+	Bool                 worldDistortion = true;
+	Bool                 vertexColors    = false;
 
 	void destroy();
 	void update(const PlanetSystem& planetSystem, PlanetSystemPlayer& player);
-	void renderLevel(ResourceManager& resourceManager, PlanetSystem& planetSystem, Renderer& renderer,
-	                 PlanetSystemPlayer& player, UShort level);
-	void renderAllLevels(ResourceManager& resourceManager, PlanetSystem& planetSystem, Renderer& renderer,
-	                     PlanetSystemPlayer& player);
+	void renderAllLevels(ResourceManager& resourceManager, PlanetSystem& planetSystem, Renderer& renderer, const PlanetSystemPlayer& player, const Framebuffer& framebuffer);
+	void renderLevel(ResourceManager& resourceManager, PlanetSystem& planetSystem, Renderer& renderer, const PlanetSystemPlayer& player, UShort level, const Framebuffer& framebuffer);
 };

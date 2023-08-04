@@ -28,7 +28,6 @@ vec3 mix(vec3 a, vec3 b, float alpha){
 }
 
 void main(){
-
 	vec3 fragmentViewVector = normalize(vertexPosition);
 	vec3 reflection = normalize(reflect(fragmentViewVector,normal));
 
@@ -38,9 +37,6 @@ void main(){
 	float ambient = 0.0001f;
 
 	float coloredLight = fresnel + ambient + diffuse;
-
-	//vec2 newtextureCorrdinate = mod((textureCoordinate / pow(2,worldOffset.w-uvLevel)) + worldOffset.xy / pow(2,64-uvLevel),1);
-	//vec2 newtextureCorrdinate = vec2(worldOffset.x / pow(2,64-uvLevel));//vec2(mod(worldOffset.x,16),mod(worldOffset.y,16));
 
 	vec3 color = texture(texture0, uvCoordsAtLevel(0)).rgb +
 	texture(texture0, uvCoordsAtLevel(4)).rgb +
@@ -62,45 +58,5 @@ void main(){
 	vec3 belowWaterline = mix(beachWater,deepWater,clamp(pow(4*(0.5 - worldCoordinate.z),0.01),0,1));
 	if(worldCoordinate.z < 0.5) color = mix(color,belowWaterline,0.75);
 
-	//	if(distortion) color = texture(texture2, textureCoordinate).xyz;
-	//	else color = normal;
-	//vec3 color = vec3(newtextureCorrdinate,0);
-
-	//draw phong lighting
 	gBufferColor = vec4(pow(color,vec3(2)) * vec3(coloredLight * 10),1);
-
-	//gBufferColor = vec4(vec3(color),1);
-
-	//noise
-	//fragmentColor = vec4(normalize(vec3(fractalNoise(worldCoordinate.xy))),1.0);
-
-	//draw color only
-	//fragmentColor = vec4(color,1);
-
-	//draw heightmap
-	//fragmentColor = vec4(vec3(worldCoordinate.z)*100, 1);
-
-	//draw lighting only
-	//fragmentColor = vec4(vec3(coloredLight) + vec3(externalLight),1);
-
-	//draw worldLocation
-	//fragmentColor = vec4(worldCoordinate,1.0);
-
-	//draw normals
-	//fragmentColor  = vec4(vec3(abs(normal.x)),1.0f);
-
-	//draw vertexColor
-	//fragmentColor  = vec4(vertexColor,1.0f);
-
-	//draw uvs
-	//fragmentColor  = vec4(textureCoordinate,0.0f,1.0f);
-
-	//draw lighting
-	//fragmentColor = vec4(vec3(lighting),1);
-	
-	//draw depth
-	//fragmentColor = vec4(vec3(depth/pow(2,worldOffset.w)),1);
-	
-	//draw texture
-	//fragmentColor = texture(texture1,textureCoordinate);
 };

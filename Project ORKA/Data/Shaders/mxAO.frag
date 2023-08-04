@@ -1,26 +1,26 @@
 
 #ifndef MXAO_MIPLEVEL_AO
- #define MXAO_MIPLEVEL_AO		0	//[0 to 2]      Miplevel of AO texture. 0 = fullscreen, 1 = 1/2 screen width/height, 2 = 1/4 screen width/height and so forth. Best results: IL MipLevel = AO MipLevel + 2
+ #define MXAO_MIPLEVEL_AO		0	// [0 to 2]      Miplevel of AO texture. 0 = fullscreen, 1 = 1/2 screen width/height, 2 = 1/4 screen width/height and so forth. Best results: IL MipLevel = AO MipLevel + 2
 #endif
 
 #ifndef MXAO_MIPLEVEL_IL
- #define MXAO_MIPLEVEL_IL		2	//[0 to 4]      Miplevel of IL texture. 0 = fullscreen, 1 = 1/2 screen width/height, 2 = 1/4 screen width/height and so forth.
+ #define MXAO_MIPLEVEL_IL		2	// [0 to 4]      Miplevel of IL texture. 0 = fullscreen, 1 = 1/2 screen width/height, 2 = 1/4 screen width/height and so forth.
 #endif
 
 #ifndef MXAO_ENABLE_IL
- #define MXAO_ENABLE_IL			0	//[0 or 1]	    Enables Indirect Lighting calculation. Will cause a major fps hit.
+ #define MXAO_ENABLE_IL			0	// [0 or 1]	    Enables Indirect Lighting calculation. Will cause a major fps hit.
 #endif
 
 #ifndef MXAO_SMOOTHNORMALS
- #define MXAO_SMOOTHNORMALS     0   //[0 or 1]      This feature makes low poly surfaces smoother, especially useful on older games.
+ #define MXAO_SMOOTHNORMALS     0   // [0 or 1]      This feature makes low poly surfaces smoother, especially useful on older games.
 #endif
 
 #ifndef MXAO_TWO_LAYER
- #define MXAO_TWO_LAYER         0   //[0 or 1]      Splits MXAO into two separate layers that allow for both large and fine AO.
+ #define MXAO_TWO_LAYER         0   // [0 or 1]      Splits MXAO into two separate layers that allow for both large and fine AO.
 #endif
 
 #ifndef MXAO_HQ
- #define MXAO_HQ                0   //[0 or 1]      Enables a different, more physically accurate but slower SSAO mode. Based on Ground Truth Ambient Occlusion by Activision. No IL yet.
+ #define MXAO_HQ                0   // [0 or 1]      Enables a different, more physically accurate but slower SSAO mode. Based on Ground Truth Ambient Occlusion by Activision. No IL yet.
 #endif
 
 /*=============================================================================
@@ -35,7 +35,7 @@
 // Very High (32 samples)
 // Ultra (64 samples)
 // Maximum (255 samples)
-//Global quality control, main performance knob. Higher radii might require higher quality.
+// Global quality control, main performance knob. Higher radii might require higher quality.
 int MXAO_GLOBAL_SAMPLE_QUALITY_PRESET = 2;
 
 // Sample Radius
@@ -52,7 +52,7 @@ float MXAO_SAMPLE_RADIUS = 2.5;
     // Occlusion Cone bias to reduce self-occlusion of surfaces that have a low angle to each other.
     float MXAO_SAMPLE_NORMAL_BIAS = 0.2;
 #else
-    float MXAO_SAMPLE_NORMAL_BIAS = 0       //don't break PS which needs this, cleaner this way
+    float MXAO_SAMPLE_NORMAL_BIAS = 0       // don't break PS which needs this, cleaner this way
 #endif
 
 // Render Size Scale
@@ -116,7 +116,7 @@ int MXAO_BLEND_TYPE = 0;
 //    ui_label = "Blending Mode";
 //	ui_tooltip = "Different blending modes for merging AO/IL with original color.\0Blending mode 0 matches formula of MXAO 2.0 and older.";
 //    ui_category = "Blending";
-//> = 0;
+// > = 0;
 
 float MXAO_FADE_DEPTH_START = 0.05;
 //	ui_type = "drag";
@@ -124,7 +124,7 @@ float MXAO_FADE_DEPTH_START = 0.05;
 //	ui_min = 0.00; ui_max = 1.00;
 //	ui_tooltip = "Distance where MXAO starts to fade out. 0.0 = camera, 1.0 = sky. Must be less than Fade Out End.";
 //    ui_category = "Blending";
-//> = 0.05;
+// > = 0.05;
 
 float MXAO_FADE_DEPTH_END = 0.4;
 //	ui_type = "drag";
@@ -132,7 +132,7 @@ float MXAO_FADE_DEPTH_END = 0.4;
 //	ui_min = 0.00; ui_max = 1.00;
 //	ui_tooltip = "Distance where MXAO completely fades out. 0.0 = camera, 1.0 = sky. Must be greater than Fade Out Start.";
 //    ui_category = "Blending";
-//> = 0.4;
+// > = 0.4;
 
 int MXAO_DEBUG_VIEW_ENABLE = 0;
 //	ui_type = "combo";
@@ -140,7 +140,7 @@ int MXAO_DEBUG_VIEW_ENABLE = 0;
 //	ui_items = "None\0AO/IL channel\0Normal vectors\0";
 //	ui_tooltip = "Different debug outputs";
 //    ui_category = "Debug";
-//> = 0;
+// > = 0;
 
 /*=============================================================================
 	Textures, Samplers, Globals
@@ -197,22 +197,22 @@ uniform int BUFFER_HEIGHT;
 uniform int BUFFER_RCP_HEIGHT;
 uniform int BUFFER_RCP_WIDTH;
 
-//namespace qUINT_
-//{
-//    float FRAME_TIME = 0.0f; //[TODO] add frametime
-//	int FRAME_COUNT = 0; //[TODO] add framecount
+// namespace qUINT_
+// {
+//    float FRAME_TIME = 0.0f; // [TODO] add frametime
+//	int FRAME_COUNT = 0; // [TODO] add framecount
 
-    //vec2 qUINT_ASPECT_RATIO = vec2(1.0, BUFFER_WIDTH * BUFFER_RCP_HEIGHT);
-	//vec2 qUINT_PIXEL_SIZE   = vec2(BUFFER_RCP_WIDTH, BUFFER_RCP_HEIGHT);
-	//vec2 SCREEN_SIZE        = vec2(BUFFER_WIDTH, BUFFER_HEIGHT);
+    // vec2 qUINT_ASPECT_RATIO = vec2(1.0, BUFFER_WIDTH * BUFFER_RCP_HEIGHT);
+	// vec2 qUINT_PIXEL_SIZE   = vec2(BUFFER_RCP_WIDTH, BUFFER_RCP_HEIGHT);
+	// vec2 SCREEN_SIZE        = vec2(BUFFER_WIDTH, BUFFER_HEIGHT);
 
 	// Global textures and samplers
-    //textures
-	uniform sampler2D qUINT_BackBufferTex;  //color texture
-	uniform sampler2D qUINT_DepthBufferTex; //depth texture
-    //sampler
-	uniform sampler2D qUINT_sBackBufferTex; //color sampler
-	uniform sampler2D qUINT_sDepthBufferTex; //depth sampler
+    // textures
+	uniform sampler2D qUINT_BackBufferTex;   // color texture
+	uniform sampler2D qUINT_DepthBufferTex;  // depth texture
+    // sampler
+	uniform sampler2D qUINT_sBackBufferTex;  // color sampler
+	uniform sampler2D qUINT_sDepthBufferTex; // depth sampler
 
     // Helper functions
 	float qUINT_linear_depth(vec2 uv)
@@ -236,31 +236,31 @@ uniform int BUFFER_RCP_WIDTH;
 
 		return saturate(depth);
 	}
-//}
+// }
 
 // Vertex shader generating a triangle covering the entire screen
-//void PostProcessVS(in uint id : SV_VertexID, out vec4 vpos : SV_Position, out vec2 uv : TEXCOORD)
-//{
+// void PostProcessVS(in uint id : SV_VertexID, out vec4 vpos : SV_Position, out vec2 uv : TEXCOORD)
+// {
 //	uv.x = (id == 2) ? 2.0 : 0.0;
 //	uv.y = (id == 1) ? 2.0 : 0.0;
 //	vpos = vec4(uv * vec2(2.0, -2.0) + vec2(-1.0, 1.0), 0.0, 1.0);
-//}
+// }
 
 
 
-//texture2D MXAO_ColorTex 	{ Width = BUFFER_WIDTH;   Height = BUFFER_HEIGHT;   Format = RGBA8; MipLevels = 3+MXAO_MIPLEVEL_IL;};
-//texture2D MXAO_DepthTex 	{ Width = BUFFER_WIDTH;   Height = BUFFER_HEIGHT;   Format = R16F;  MipLevels = 3+MXAO_MIPLEVEL_AO;};
-//texture2D MXAO_NormalTex	{ Width = BUFFER_WIDTH;   Height = BUFFER_HEIGHT;   Format = RGBA8; MipLevels = 3+MXAO_MIPLEVEL_IL;};
+// texture2D MXAO_ColorTex 	{ Width = BUFFER_WIDTH;   Height = BUFFER_HEIGHT;   Format = RGBA8; MipLevels = 3+MXAO_MIPLEVEL_IL;};
+// texture2D MXAO_DepthTex 	{ Width = BUFFER_WIDTH;   Height = BUFFER_HEIGHT;   Format = R16F;  MipLevels = 3+MXAO_MIPLEVEL_AO;};
+// texture2D MXAO_NormalTex	{ Width = BUFFER_WIDTH;   Height = BUFFER_HEIGHT;   Format = RGBA8; MipLevels = 3+MXAO_MIPLEVEL_IL;};
 
-//{ Texture = MXAO_ColorTex;	};
+// { Texture = MXAO_ColorTex;	};
 uniform sampler2D sMXAO_ColorTex;
-//{ Texture = MXAO_DepthTex;	};
+// { Texture = MXAO_DepthTex;	};
 uniform sampler2D sMXAO_DepthTex;
-//{ Texture = MXAO_NormalTex;	};
+// { Texture = MXAO_NormalTex;	};
 uniform sampler2D sMXAO_NormalTex;
 
-//texture2D CommonTex0 	{ Width = BUFFER_WIDTH;   Height = BUFFER_HEIGHT;   Format = RGBA8; };
-//{ Texture = CommonTex0;	};
+// texture2D CommonTex0 	{ Width = BUFFER_WIDTH;   Height = BUFFER_HEIGHT;   Format = RGBA8; };
+// { Texture = CommonTex0;	};
 uniform sampler2D sCommonTex0;
 
 //texture2D CommonTex1 	{ Width = BUFFER_WIDTH;   Height = BUFFER_HEIGHT;   Format = RGBA8; };

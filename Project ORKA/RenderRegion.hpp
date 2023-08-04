@@ -1,14 +1,15 @@
 #pragma once
 
-#include "Math.hpp"
 #include "TiledMath.hpp"
 #include "Basics.hpp"
-#include "GraphicsAPI.hpp"
 
-struct RenderRegion {
+struct RenderRegion
+{
+	RenderRegion();
+	void                set(Area area);
+	[[nodiscard]] Float getAspectRatio() const;
+	explicit            RenderRegion(Area area);
+	void                set(const TiledRectangle& newRegion);
+private:
 	TiledRectangle region;
-
-	void set(Area area);
-	void set(TiledRectangle region);
-	Float getAspectRatio() const;
 };

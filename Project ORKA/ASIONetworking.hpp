@@ -10,15 +10,16 @@
 #include "asio/ts/internet.hpp"
 
 using NetworkingContext = asio::io_context;
-using NetworkingTimer = asio::steady_timer;
-using NetworkingThread = asio::thread;
+// using NetworkingTimer = asio::steady_timer;
+// using NetworkingThread = asio::thread;
 using NetworkingAddress = asio::ip::address;
 
-using NetworkingUdpEndpoint = asio::ip::udp::endpoint;
-using NetworkingUdpSocket = asio::ip::udp::socket;
+// using NetworkingUdpEndpoint = asio::ip::udp::endpoint;
+// using NetworkingUdpSocket = asio::ip::udp::socket;
 
 using NetworkingTcpEndpoint = asio::ip::tcp::endpoint;
 using NetworkingTcpSocket = asio::ip::tcp::socket;
-using NetworkingBuffer = asio::mutable_buffer;
+// using NetworkingBuffer = asio::mutable_buffer;
 using NetworkingErrorCode = asio::error_code;
-using NetworkingTcpResolver = asio::ip::tcp::resolver;
+// using NetworkingTcpResolver = asio::ip::tcp::resolver;
+using NetworkingTcpAcceptor = asio::ip::tcp::acceptor;

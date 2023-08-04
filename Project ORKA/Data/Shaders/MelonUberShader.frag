@@ -14,7 +14,4 @@ void main(){
 	float lighting = fresnel + ambient + diffuse;
 
 	fragmentColor = vec4(customColor.xyz * lighting,1);
-	
-	//debug normal
-	//fragmentColor = vec4(normal,1);
 };

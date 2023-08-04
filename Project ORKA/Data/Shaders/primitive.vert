@@ -1,7 +1,6 @@
 
 //! #include "uniforms.glsl"
 
-//output
 out float depth;
 out vec3 normal;
 out vec3 vertexPosition;
@@ -41,10 +40,9 @@ void main() {
 
 	vec3 worldColor = ((vertex) + vec3(0.5,0.5,0.0) + worldOffset.xyz)/vec3(pow(2,worldOffset.w),pow(2,worldOffset.w),pow(2,worldOffset.w-1));
 
-	//outputs
 	gl_Position  = pMatrix * vMatrix * vec4(cameraRelativePosition.xyz,1);
 
-	//gl_Position = vpMatrix * (vec4(chunkOffsetVector,0) + (mMatrix * vec4(vertex,1)));
+	// gl_Position = vpMatrix * (vec4(chunkOffsetVector,0) + (mMatrix * vec4(vertex,1)));
 
 	vertexPosition = vertex;
 	depth = gl_Position.w;

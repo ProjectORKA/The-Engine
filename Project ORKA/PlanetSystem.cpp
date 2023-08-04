@@ -1,20 +1,27 @@
 #include "PlanetSystem.hpp"
 
-void PlanetSystem::create(ResourceManager& resourceManager) {
-	quadtreeSystem.create(terrainSystem);
-	octreeSystem.create(quadtreeSystem);
-	terrainSystem.create(resourceManager);
+void PlanetSystem::update()
+{
+	quadtreeSystem.update(terrainSystem);
+	octreeSystem.update();
 }
 
-PlanetSystem::~PlanetSystem() { octreeSystem.destroy(); }
+void PlanetSystem::destroy()
+{
+	octreeSystem.destroy();
+	quadtreeSystem.destroy();
+}
 
-//planetSystem
-void PlanetSystem::count() {
+void PlanetSystem::count() const
+{
 	octreeSystem.count();
 	quadtreeSystem.count();
 }
 
-void PlanetSystem::update() {
-	quadtreeSystem.update(terrainSystem);
-	octreeSystem.update();
+void PlanetSystem::create(ResourceManager& resourceManager)
+{
+	terrainSystem.create(resourceManager);
+
+	quadtreeSystem.create(terrainSystem);
+	octreeSystem.create(quadtreeSystem);
 }

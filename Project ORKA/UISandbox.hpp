@@ -2,28 +2,42 @@
 
 #include "Game.hpp"
 #include "Basics.hpp"
-#include "KeyMap.hpp"
 #include "Player.hpp"
 #include "UIButton.hpp"
 
 struct Renderer;
 struct Window;
 
-struct Toggle : public UIButton {
+struct Toggle final : UIButton
+{
 	Bool toggle = false;
 
 	void doThis() override;
 	void update(Window& window) override;
+	void destroy(Window& window) override;
+	void create(ResourceManager& resourceManager, Window& window) override;
 };
 
-struct UISandbox : public GameRenderer {
-	Bool paused = false;
-	Toggle pauseButton;
+struct UISandboxRenderer final : GameRenderer
+{
 	UIButton saveButton;
+	Toggle   pauseButton;
+	Bool     paused = false;
 
-	UISandbox();
+	UISandboxRenderer();
 	void update(Window& window) override;
+	void destroy(Window& window) override;
 	void inputEvent(Window& window, InputEvent input) override;
+	void create(ResourceManager& resourceManager, Window& window) override;
 	void render(ResourceManager& resourceManager, Window& window, TiledRectangle area) override;
 	void renderInteractive(ResourceManager& resourceManager, Window& window, TiledRectangle area) override;
+};
+
+struct UISandbox
+{
+	UserInterface     ui;
+	UISandboxRenderer renderer;
+	ResourceManager   resourceManager;
+
+	void run();
 };

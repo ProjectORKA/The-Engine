@@ -2,102 +2,6 @@
 #include "ResourceManager.hpp"
 #include "UserInterface.hpp"
 
-void SimpleRTSRenderer::update(Window& window) {
-	terrainRenderingSystem.update(sim->terrainSystem, player.camera.location);
-	player.update(window);
-}
-
-void SimpleRTSRenderer::create(ResourceManager& resourceManager, Window& window) {
-	terrainRenderingSystem.create(resourceManager);
-};
-
-void SimpleRTSRenderer::inputEvent(Window& window, const InputEvent input) {
-	if (input == enter) window.captureCursor();
-	if (input == exit) window.unCaptureCursor();
-	if (input == toggleWireframe) wireframeMode = !wireframeMode;
-	player.inputEvent(window, input);
-}
-
-void SimpleRTSRenderer::render(ResourceManager& resourceManager, Window& window, TiledRectangle area) {
-	Renderer& renderer = window.renderer;
-
-	mutex.lock();
-
-	renderer.setWireframeMode();
-	renderer.setCulling(true);
-	renderer.clearDepth();
-
-	//sky
-	renderer.setDepthTest(false);
-	renderer.useShader(resourceManager, "color");
-	renderer.fill(Color(0.207143, 0.722031, 1.0f, 1));
-	renderer.uniforms().sunDir(Vec4(normalize(Vec3(1)), 1));
-	renderer.renderMesh(resourceManager, "fullScreenQuad");
-	renderer.setDepthTest(true);
-
-	renderer.fill(Color(1.0f));
-
-	renderer.setWireframeMode(wireframeMode);
-
-	//prepare rendering scene
-	renderer.uniforms().mMatrix() = Matrix(1);
-	renderer.useShader(resourceManager, "simpleRTS");
-	player.render(resourceManager, window);
-
-	renderer.fill(Color(0.1, 0.4, 0.0f, 1));
-	terrainRenderingSystem.render(renderer);
-
-	////render trees that are about to be cut
-	//for (UInt i = 0; i < sim->humanCount; i++) {
-	//	if (sim->humanState[i] == SimpleRTSSimulation::SimpleRTSHumanState::LookingForWood) {
-	//		renderer.uniforms().mMatrix(matrixFromLocation(sim->humanTargetpositions[i]));
-	//		renderer.renderMesh("Tree");
-	//	}
-	//}
-
-	//prepare for instancing
-	renderer.uniforms().mMatrix(Matrix(1));
-
-
-	sim->render(resourceManager, renderer);
-
-
-	////berry bushes
-	//renderer.matrixSystem.matrixArray(sim->bushPosition, sim->bushDirection);
-	//renderer.renderMeshInstanced("Bush");
-
-	////berry bushes
-	//renderer.matrixSystem.matrixArray(sim->berryBushPosition, sim->berryBushDirection);
-	//renderer.renderMeshInstanced("BerryBush");
-
-	////render tree stumps
-	//renderer.matrixSystem.matrixArray(sim->treeStumpPosition);
-	//renderer.renderMeshInstanced("TreeStump");
-
-	////render humans
-	//renderer.matrixSystem.matrixArray(sim->humanPositions, sim->humanDirection);
-	//renderer.renderMeshInstanced("Human");
-
-	////render bases
-	//renderer.matrixSystem.matrixArray(sim->basePosition);
-	//renderer.renderMeshInstanced("Base");
-
-	////render rabbits
-	//renderer.matrixSystem.matrixArray(sim->rabbitPosition, sim->rabbitVelocity);
-	//renderer.renderMeshInstanced("Rabbit");
-
-	//ui
-	renderer.setDepthTest(false);
-	renderer.screenSpace();
-	renderer.textRenderSystem.setStyle(fonts.heading);
-	renderer.textRenderSystem.render(resourceManager, renderer, String(toString(1.0f / renderer.time.delta)), Vec2(50));
-	renderer.textRenderSystem.setStyle(fonts.debug);
-	////////////////////////
-
-	mutex.unlock();
-}
-
-
 //void SimpleRTSSimulation::spawnTreeStump() {
 //	treeStumpPosition.push_back(randomVec2(-SIMPLERTS_MAPSIZE, SIMPLERTS_MAPSIZE));
 //	treeStumpCount++;
@@ -267,7 +171,44 @@ void SimpleRTSRenderer::render(ResourceManager& resourceManager, Window& window,
 //	return resItem;
 //}
 
-SimpleRTSSimulation::SimpleRTSSimulation() {
+void SimpleRTS::run()
+{
+	resourceManager.create();
+	ui.create();
+	sim.start(resourceManager);
+	renderer.sim = &sim;
+	ui.window("Simple RTS", Area(1920, 1080), true, true, WindowState::Windowed, renderer, resourceManager);
+	ui.run();
+	sim.stop();
+}
+
+Vec2 randomSpawnPosition()
+{
+	return randomVec2(SIMPLERTS_MAPSIZE);
+}
+
+void SimpleRTSSimulation::destroy() {}
+
+void SimpleRTSRenderer::destroy(Window& window) {}
+
+void SimpleRTSSimulation::update(Float delta)
+{
+	//trees.update(*this);
+	//treeSimulation.update();
+	//humanitySimulation;
+	//bushSimulation;
+	//houseSimulation;
+	//rabbitSimulation;
+}
+
+void SimpleRTSRenderer::update(Window& window)
+{
+	terrainRenderingSystem.update(sim->terrainSystem, player.camera.getLocation());
+	player.update(window);
+}
+
+void SimpleRTSSimulation::create(ResourceManager& resourceManager)
+{
 	//trees.create(*this);
 
 	//generateTerrain();
@@ -284,7 +225,6 @@ SimpleRTSSimulation::SimpleRTSSimulation() {
 	//	bushDirection.push_back(randomUnitVec2());
 	//}
 
-
 	//while (treeStumpCount < 3000) {
 	//	spawnTreeStump();
 	//}
@@ -294,17 +234,100 @@ SimpleRTSSimulation::SimpleRTSSimulation() {
 	//}
 }
 
-void SimpleRTSSimulation::update(Float delta) {
-	//trees.update(*this);
-	//treeSimulation.update();
-	//humanitySimulation;
-	//bushSimulation;
-	//houseSimulation;
-	//rabbitSimulation;
+void SimpleRTSRenderer::inputEvent(Window& window, const InputEvent input)
+{
+	if(input == enter) window.captureCursor();
+	if(input == exit) window.unCaptureCursor();
+	if(input == toggleWireframe) wireframeMode = !wireframeMode;
+	player.inputEvent(window, input);
 }
 
-void SimpleRTSSimulation::render(ResourceManager& resourceManager, Renderer& renderer) {
+void SimpleRTSRenderer::create(ResourceManager& resourceManager, Window& window)
+{
+	terrainRenderingSystem.create(resourceManager);
+}
+
+void SimpleRTSSimulation::render(ResourceManager& resourceManager, Renderer& renderer) const
+{
 	//trees.render(resourceManager, renderer);
 }
 
-Vec2 randomSpawnPosition() { return randomVec2(SIMPLERTS_MAPSIZE); }
+void SimpleRTSRenderer::render(ResourceManager& resourceManager, Window& window, TiledRectangle area)
+{
+	Renderer& renderer = window.renderer;
+
+	mutex.lock();
+
+	renderer.setWireframeMode();
+	renderer.setCulling(true);
+	renderer.clearBackground(Color(0, 0, 0, 1));
+
+	//sky
+	renderer.setDepthTest(false);
+	renderer.useShader(resourceManager, "color");
+	renderer.fill(Color(0.207143, 0.722031, 1.0f, 1));
+	renderer.uniforms().setSunDir(Vec4(normalize(Vec3(1)), 1));
+	renderer.renderMesh(resourceManager, "fullScreenQuad");
+	renderer.setDepthTest(true);
+
+	renderer.fill(Color(1.0f));
+
+	renderer.setWireframeMode(wireframeMode);
+
+	//prepare rendering scene
+	renderer.uniforms().setMMatrix(Matrix(1));
+	renderer.useShader(resourceManager, "simpleRTS");
+	player.render(resourceManager, window);
+
+	renderer.fill(Color(0.1, 0.4, 0.0f, 1));
+	terrainRenderingSystem.render(renderer);
+
+	////render trees that are about to be cut
+	//for (UInt i = 0; i < sim->humanCount; i++) {
+	//	if (sim->humanState[i] == SimpleRTSSimulation::SimpleRTSHumanState::LookingForWood) {
+	//		renderer.uniforms().mMatrix(matrixFromLocation(sim->humanTargetpositions[i]));
+	//		renderer.renderMesh("Tree");
+	//	}
+	//}
+
+	//prepare for instancing
+	renderer.uniforms().setMMatrix(Matrix(1));
+
+	sim->render(resourceManager, renderer);
+
+	////berry bushes
+	//renderer.matrixSystem.matrixArray(sim->bushPosition, sim->bushDirection);
+	//renderer.renderMeshInstanced("Bush");
+
+	////berry bushes
+	//renderer.matrixSystem.matrixArray(sim->berryBushPosition, sim->berryBushDirection);
+	//renderer.renderMeshInstanced("BerryBush");
+
+	////render tree stumps
+	//renderer.matrixSystem.matrixArray(sim->treeStumpPosition);
+	//renderer.renderMeshInstanced("TreeStump");
+
+	////render humans
+	//renderer.matrixSystem.matrixArray(sim->humanPositions, sim->humanDirection);
+	//renderer.renderMeshInstanced("Human");
+
+	////render bases
+	//renderer.matrixSystem.matrixArray(sim->basePosition);
+	//renderer.renderMeshInstanced("Base");
+
+	////render rabbits
+	//renderer.matrixSystem.matrixArray(sim->rabbitPosition, sim->rabbitVelocity);
+	//renderer.renderMeshInstanced("Rabbit");
+
+	//ui
+	renderer.setDepthTest(false);
+	renderer.screenSpace();
+	renderer.textRenderSystem.setStyle(fonts.heading);
+	renderer.textRenderSystem.render(resourceManager, renderer, toString(1.0f / renderer.time.delta), Vec2(50));
+	renderer.textRenderSystem.setStyle(fonts.debug);
+	////////////////////////
+
+	mutex.unlock();
+}
+
+void SimpleRTSRenderer::renderInteractive(ResourceManager& resourceManager, Window& window, TiledRectangle area) {}

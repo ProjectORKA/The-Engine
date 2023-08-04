@@ -1,19 +1,21 @@
 #pragma once
 
 #include "Transform.hpp"
-#include "CpuMesh.hpp"
+#include "CPUMesh.hpp"
 
-struct SceneNode {
-	String name;
-	Transform transform;
+struct SceneNode
+{
+	String            name;
+	Vector<Index>     meshes;
 	Vector<SceneNode> children;
-	Vector<Index> meshes;
+	Transform         transform;
 };
 
-struct Scene2 {
-	SceneNode root;
+struct Scene2
+{
+	SceneNode         root;
 	Vector<SceneNode> nodes;
-	Vector<CpuMesh> meshes;
+	Vector<CPUMesh>   meshes;
 
 	void importFBX(Path path, ResourceManager& resourceManager);
 };

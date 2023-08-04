@@ -3,7 +3,6 @@
 
 #define PI 3.14159265359
 
-//output
 out vec3 normal;
 out float slope;
 out vec4 vertexColor;
@@ -27,7 +26,6 @@ void calculateDistortion2(inout vec3 location, inout vec3 normal){
 }
 
 void main(){
-
 	vec3 positionInChunk = (mMatrix * vec4(vertex, 1)).xyz;
 	vec3 cameraRelativePosition = positionInChunk - cameraPosition.xyz;
 	vec3 customNormal = normalize(mat3(transpose(inverse(mMatrix))) * normals);
@@ -40,9 +38,8 @@ void main(){
 
 	vec4 screenSpacePosition = pMatrix * vMatrix * vec4(cameraRelativePosition.xyz,1);
 	worldCoordinate = positionInChunk / pow(2,worldOffset.w) + worldOffset.xyz;
-	gl_Position  = screenSpacePosition;
-
 	vertexPosition = cameraRelativePosition.xyz;
 	normal = customNormal;
 	textureCoordinate = uvs;
+	gl_Position  = screenSpacePosition;
 };

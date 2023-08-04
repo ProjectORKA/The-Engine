@@ -1,64 +1,57 @@
 #pragma once
-
-#include "GraphicsAPI.hpp"
+#include "Image.hpp"
 #include "ResourceManager.hpp"
+#include "GraphicsAPI.hpp"
 
-enum class DataType : UInt {
-	dataTypeByte = GL_UNSIGNED_BYTE,
-	dataTypeFloat = GL_FLOAT,
-	dataTypeUInt = GL_UNSIGNED_INT
-};
+struct CPUTexture
+{
+	CPUTexture& operator=(const CPUTexture& other);
 
-enum class Wrapping : Int {
-	repeat = GL_REPEAT,
-	mirrored = GL_MIRRORED_REPEAT,
-	clamped = GL_CLAMP_TO_EDGE,
-	border = GL_CLAMP_TO_BORDER
-};
+	~CPUTexture();
+	CPUTexture() = default;
+	CPUTexture(const CPUTexture& other);
+	CPUTexture(Int width, Int height, const Name& name, Filter farFilter, Filter nearFilter, DataType dataType, Wrapping wrapping, WritePixelsFormat format);
 
-enum class Filter : Int {
-	nearest = GL_NEAREST,
-	nearestMM = GL_NEAREST_MIPMAP_NEAREST,
-	linear = GL_LINEAR,
-	linearMM = GL_LINEAR_MIPMAP_LINEAR
-};
+	[[nodiscard]] Name              getName() const;
+	[[nodiscard]] Int               getWidth() const;
+	[[nodiscard]] Bool              isLoaded() const;
+	[[nodiscard]] Int               getHeight() const;
+	[[nodiscard]] const Byte*       getPixels() const;
+	[[nodiscard]] WritePixelsFormat getFormat() const;
+	[[nodiscard]] DataType          getDataType() const;
+	[[nodiscard]] Wrapping          getWrapping() const;
+	[[nodiscard]] Filter            getFarFilter() const;
+	[[nodiscard]] Filter            getNearFilter() const;
+	[[nodiscard]] Int               getNumberOfChannels() const;
 
-struct CPUTexture {
-	Int width = 0;
-	Int height = 0;
-	Byte channels = 0;
-	Name name = "NULL";
-	Bool loaded = false;
-	Filter farFilter = Filter::linear;
-	Filter nearFilter = Filter::linear;
-	Wrapping wrapping = Wrapping::repeat;
-	DataType dataType = DataType::dataTypeByte;
+	[[nodiscard]] Float             getRed(UInt x, UInt y) const;
+	// [[nodiscard]] Float             getBlue(UInt x, UInt y) const;
+	// [[nodiscard]] Float             getGreen(UInt x, UInt y) const;
+	// [[nodiscard]] Float             getAlpha(UInt x, UInt y) const;
 
-	Vector<Byte> bytePixels;
-	Vector<Float> floatPixels;
-	Vector<UInt> uIntPixels;
+	[[nodiscard]] Float             getRed(Float x, Float y) const;
+	// [[nodiscard]] Float             getBlue(Float x, Float y) const;
+	// [[nodiscard]] Float             getGreen(Float x, Float y) const;
+	// [[nodiscard]] Float             getAlpha(Float x, Float y) const;
 
-	Float getRed(UInt x, UInt y);
-	Float getGreen(UInt x, UInt y);
-	Float getBlue(UInt x, UInt y);
-	Float getAlpha(UInt x, UInt y);
-
-	Float getRed(Float x, Float y);
-	Float getGreen(Float x, Float y);
-	Float getBlue(Float x, Float y);
-	Float getAlpha(Float x, Float y);
+	[[nodiscard]] Index             xyToIndex(Int x, Int y, Int channel, Int numBytes) const;
 
 	void unload();
+	void checkIntegrity();
 	void load(const Path& path, Filter nearFilter, Filter farFilter, Wrapping wrapping);
 	void load(const Path& path, const Name& name, Filter nearFilter, Filter farFilter, Wrapping wrapping);
 	void load(const Image& image, Filter nearFilter, Filter farFilter, Wrapping wrapping, const Name& name);
-	void load(ResourceManager& resourceManager, const Name& name, Filter nearFilter, Filter farFilter,
-	          Wrapping wrapping);
-
-	Index xyToIndex(Int x, Int y, Int channel) const;
-
-	CPUTexture();
-	~CPUTexture();
-	CPUTexture(const CPUTexture& other);
-	CPUTexture& operator=(const CPUTexture& other);
+	void load(ResourceManager& resourceManager, const Name& name, Filter nearFilter, Filter farFilter, Wrapping wrapping);
+private:
+	Memory      pixelMemory;
+	Int               width      = 0; // needs to be int for OpenGL and error correction
+	Int               height     = 0; // needs to be int for OpenGL and error correction
+	Name              name       = "NULL";
+	Bool              loaded     = false;
+	Filter            farFilter  = Filter::Linear;
+	Filter            nearFilter = Filter::Linear;
+	DataType          dataType   = DataType::Byte;
+	Wrapping          wrapping   = Wrapping::Repeat;
+	WritePixelsFormat format     = WritePixelsFormat::RGBA;
+	/*Byte*             pixels     = nullptr;*/
 };

@@ -1,16 +1,17 @@
 #pragma once
 
-#include "OcTreeSystem.hpp"
-#include "QuadTreeSystem.hpp"
+#include "OctreeSystem.hpp"
+#include "QuadtreeSystem.hpp"
 #include "TerrainSystem.hpp"
 
-struct PlanetSystem {
-	OcTreeSystem octreeSystem;
-	QuadTreeSystem quadtreeSystem;
-	TerrainSystem terrainSystem;
+struct PlanetSystem
+{
+	OctreeSystem   octreeSystem;
+	TerrainSystem  terrainSystem;
+	QuadtreeSystem quadtreeSystem;
 
-	void count();
 	void update();
+	void destroy();
+	void count() const;
 	void create(ResourceManager& resourceManager);
-	~PlanetSystem();
 };

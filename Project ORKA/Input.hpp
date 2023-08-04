@@ -7,8 +7,8 @@ using Action = Bool&;
 
 struct InputId
 {
+	Int       id;
 	InputType type = InputType::Unknown;
-	Int id;
 
 	InputId();
 	InputId(InputType type, Int id);
@@ -18,7 +18,7 @@ struct InputId
 struct InputEvent
 {
 	InputId id;
-	Bool state = false;
+	Bool    state = false;
 
 	InputEvent(InputType type, Int id, Bool state);
 	auto operator<=>(const InputEvent&) const = default;

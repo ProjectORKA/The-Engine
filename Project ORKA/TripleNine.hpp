@@ -1,16 +1,9 @@
 #pragma once
 
 #include "Game.hpp"
+#include "ORKAIntroSequence.hpp"
 #include "Player.hpp"
 #include "Random.hpp"
-
-//required
-//	physics
-//	crouch walking
-//	sliding
-//  bullet traces
-//  targets explode
-//		decal splatter on objects
 
 enum class PlayerState
 {
@@ -21,23 +14,22 @@ enum class PlayerState
 	flying,
 };
 
-extern Index enemyId;
-
-struct TripleNineEnemy : UiElement
+struct TripleNineEnemy final : UIElement
 {
-	Vec3 position = Vec3(randomVec2(-85, 85), 0);
-	Index id = -1;
+	Index id       = static_cast<Index>(-1);
+	Vec3  position = Vec3(randomVec2(-85, 85), 0);
 
-	void die()
-	{
-		position = Vec3(randomVec2(-85, 85), 0);
-	}
-
+	void die();
+	void update(Window& window) override;
+	void destroy(Window& window) override;
+	void inputEvent(Window& window, InputEvent input) override;
+	void create(ResourceManager& resourceManager, Window& window) override;
 	void render(ResourceManager& resourceManager, Renderer& renderer) const;
+	void render(ResourceManager& resourceManager, Window& window, TiledRectangle area) override;
 	void renderInteractive(ResourceManager& resourceManager, Window& window, TiledRectangle area) override;
 };
 
-struct TripleNinePlayer : public Player
+struct TripleNinePlayer final : Player
 {
 	// [TODO]
 	// implement direction vectors separate from camera
@@ -47,179 +39,191 @@ struct TripleNinePlayer : public Player
 	// sprint jump charge
 	// either c alt or a and d to enable free cam while sprinting
 
-	//pressed input
-	InputId forward = InputId(InputType::KeyBoard, W);
-	InputId backward = InputId(InputType::KeyBoard, S);
-	InputId right = InputId(InputType::KeyBoard, D);
-	InputId left = InputId(InputType::KeyBoard, A);
+	// pressed input
+	InputId forward   = InputId(InputType::KeyBoard, W);
+	InputId backward  = InputId(InputType::KeyBoard, S);
+	InputId right     = InputId(InputType::KeyBoard, D);
+	InputId left      = InputId(InputType::KeyBoard, A);
 	InputId leanRight = InputId(InputType::KeyBoard, E);
-	InputId leanLeft = InputId(InputType::KeyBoard, Q);
-	InputId run = InputId(InputType::KeyBoard, SHIFT);
-	InputId shoot = InputId(InputType::Mouse, LMB);
-	InputId aim = InputId(InputType::Mouse, RMB);
-	InputId holdJump = InputId(InputType::KeyBoard, SPACE);
-	InputId crouch = InputId(InputType::KeyBoard, CTRL);
+	InputId leanLeft  = InputId(InputType::KeyBoard, Q);
+	InputId run       = InputId(InputType::KeyBoard, SHIFT);
+	InputId shoot     = InputId(InputType::Mouse, LMB);
+	InputId aim       = InputId(InputType::Mouse, RMB);
+	InputId holdJump  = InputId(InputType::KeyBoard, SPACE);
+	InputId crouch    = InputId(InputType::KeyBoard, CTRL);
 	InputId precision = InputId(InputType::KeyBoard, ALT);
-	//event input
+	// event input
 	InputEvent jumpTrigger = InputEvent(InputType::KeyBoard, SPACE, true);
-	//InputEvent jumpRelease = InputEvent(InputType::KeyBoard, SPACE, 0);
+	// InputEvent jumpRelease = InputEvent(InputType::KeyBoard, SPACE, 0);
 
 	enum class State
 	{
-		standing,	// ground
-		walking,	// ground, slow move
-		sprinting,	// ground, fast move
-		crouching,	// ground, crouch
-		sneaking,	// ground, crouch, slow move
-		sliding,	// ground, crouch, fast move
-		proning,	// ground, holding jump and crouch
-		crawling,	// ground, holding jump and crouch, slow move
-		jumping,	// air, positive z velocity
-		falling,	// air, negative z velocity
+		standing,
+		// ground
+		walking,
+		// ground, slow move
+		sprinting,
+		// ground, fast move
+		crouching,
+		// ground, crouch
+		sneaking,
+		// ground, crouch, slow move
+		sliding,
+		// ground, crouch, fast move
+		proning,
+		// ground, holding jump and crouch
+		crawling,
+		// ground, holding jump and crouch, slow move
+		jumping,
+		// air, positive z velocity
+		falling,
+		// air, negative z velocity
 	};
 
-	//global scale
-	const Float unit = 1;
+	// global scale
+	const Float unit = 1.0f;
 
-	//temporary input data
-	DVec2 targetCameraRotation = DVec2(0);
-	Float inputTurnX = 0;
-	Bool movementInput = false;
+	// temporary input data
+	Vec2  targetCameraRotation = Vec2(0.0f);
+	Float inputTurnX           = 0.0f;
+	Bool  movementInput        = false;
 
 	State state = State::standing;
 
-	//player vectors
-	Vec3 forwardVector = Vec3(0, 1, 0);
-	Vec3 rightVector = Vec3(1, 0, 0);
+	// player vectors
+	Vec3 forwardVector = Vec3(0.0f, 1.0f, 0.0f);
+	Vec3 rightVector   = Vec3(1.0f, 0.0f, 0.0f);
 
-	//jump
-	const Float minJumpVelocity = 10 * unit;
-	const Float maxJumpVelocity = 15 * unit;
-	Float jumpCharge = 0;
-	//Bool queueJump = false;
+	// jump
+	const Float minJumpVelocity = 10.0f * unit;
+	const Float maxJumpVelocity = 15.0f * unit;
+	Float       jumpCharge      = 0.0f;
+	// Bool queueJump = false;
 	Bool doubleJumpCharge = false;
 
-	//speed
-	const Float walkingSpeed = 2 * unit; //
-	const Float runningSpeed = 8 * unit;
-	const Float speedControlAcceleration = 200;
-	const Float speedControlDeceleration = 1;
-	Bool isMoving = false;
-	Float speedControl = 0;
-	Vec3 movementControl = Vec3(0);
+	// speed
+	const Float walkingSpeed             = 2.0f * unit;
+	const Float runningSpeed             = 8.0f * unit;
+	const Float speedControlAcceleration = 200.0f;
+	const Float speedControlDeceleration = 1.0f;
+	Bool        isMoving                 = false;
+	Float       speedControl             = 0.0f;
+	Vec3        movementControl          = Vec3(0.0f);
 
-	//strafe
-	const Float maxStrafeSpeed = 5;
-	const Float maxStrafeAcceleration = 55;
-	//Vec2 strafeControl = Vec2(0);
+	// strafe
+	const Float maxStrafeSpeed        = 5.0f;
+	const Float maxStrafeAcceleration = 55.0f;
+	// Vec2 strafeControl = Vec2(0);
 
-	//player physique
-	const Float height = 1.8 * unit; //total height when standing
-	const Float lowerChestHeightMultiplier = 0.6; //height of lower chest based on total height //0.73
-	const Float eyeHeightMultilpier = 0.94; //height of camera based on total height
-	const Float lowerChestHeight = height * lowerChestHeightMultiplier;
+	// player physique
+	const Float height                     = 1.8f * unit; // total height when standing
+	const Float lowerChestHeightMultiplier = 0.6f; // height of lower chest based on total height //0.73
+	const Float eyeHeightMultilpier        = 0.94f; // height of camera based on total height
+	const Float lowerChestHeight           = height * lowerChestHeightMultiplier;
 
-	//head movement
-	Float walkCycle = 0;
-	Vec3 headOffset = Vec3(0);
-	//height
+	// head movement
+	Float walkCycle  = 0;
+	Vec3  headOffset = Vec3(0);
 
-	const Float eyeHeightNormal = height * eyeHeightMultilpier; //standing
-	const Float eyeHeightFlying = height * 1.1 * eyeHeightMultilpier; //off ground
-	const Float eyeHeightWalking = height * 0.9 * eyeHeightMultilpier; //walking
-	const Float eyeHeightCrouching = height * 0.5 * eyeHeightMultilpier; //charging jump
-	const Float eyeHeightRunning = height * 0.75 * eyeHeightMultilpier; //running
-	const Float eyeHeightProning = height * 0.2 * eyeHeightMultilpier; //proning
-	const Float eyeHeightSliding = height * 0.3 * eyeHeightMultilpier; //sliding
+	// height
+	const Float eyeHeightNormal    = height * eyeHeightMultilpier; // standing
+	const Float eyeHeightFlying    = height * 1.1f * eyeHeightMultilpier; // off ground
+	const Float eyeHeightWalking   = height * 0.9f * eyeHeightMultilpier; // walking
+	const Float eyeHeightCrouching = height * 0.5f * eyeHeightMultilpier; // charging jump
+	const Float eyeHeightRunning   = height * 0.75f * eyeHeightMultilpier; // running
+	const Float eyeHeightProning   = height * 0.2f * eyeHeightMultilpier; // proning
+	const Float eyeHeightSliding   = height * 0.3f * eyeHeightMultilpier; // sliding
 
-	const Float eyeMovementSpeed = 10;
+	const Float eyeMovementSpeed = 10.0f;
 
-	Float eyeHeight = 0;
+	Float eyeHeight = 0.0f;
 
-	//headbob
-	const Float headBobSpeed = 1.4;
-	const Float headBobIntensity = 0.01;
-	Float headBob = 0;
+	// headbob
+	const Float headBobSpeed     = 1.4f;
+	const Float headBobIntensity = 0.01f;
+	Float       headBob          = 0.0f;
 
-	//lean
-	//upper body lean
-	const Float upperBodyLeanSpeed = 10;
-	const Float upperBodyMaxLeanAngle = 0.8;
-	const Float upperBodyLeanHeadTiltFactor = 0.4;
-	Float upperBodyLean = 0;
-	Float upperBodyLeanAngle = 0;
-	Float upperBodyLeanControl = 0.0;
-	//full body lean
-	const Float fullBodyLeanSpeed = 5;
-	const Float fullBodyMaxLeanAngle = 0.6;
-	Float fullBodyLean = 0;
-	Float fullBodyLeanAngle = 0;
-	Float fullBodyLeanControl = 0.0;
+	// lean
+	// upper body lean
+	const Float upperBodyLeanSpeed          = 10.0f;
+	const Float upperBodyMaxLeanAngle       = 0.8f;
+	const Float upperBodyLeanHeadTiltFactor = 0.4f;
+	Float       upperBodyLean               = 0.0f;
+	Float       upperBodyLeanAngle          = 0.0f;
+	Float       upperBodyLeanControl        = 0.0f;
+	// full body lean
+	const Float fullBodyLeanSpeed    = 5.0f;
+	const Float fullBodyMaxLeanAngle = 0.6f;
+	Float       fullBodyLean         = 0.0f;
+	Float       fullBodyLeanAngle    = 0.0f;
+	Float       fullBodyLeanControl  = 0.0f;
 
-	//sway
-	const Float headSwayImpact = 0.02;
-	Float sway = 0;
+	// sway
+	const Float headSwayImpact = 0.02f;
+	Float       sway           = 0.0f;
 
-	//state
-	Bool onGround = false;
-	Float actualSpeed = 0;
-	Float targetSpeed = walkingSpeed;
-	Float actualInputSpeed = 0;
+	// state
+	Bool  onGround         = false;
+	Float actualSpeed      = 0.0f;
+	Float targetSpeed      = walkingSpeed;
+	Float actualInputSpeed = 0.0f;
 
-	//physics
-	Float mass = 80; //kg
-	Vec3 velocity = Vec3(0);
-	Vec3 location = Vec3(0, 0, 0);
-	Vec3 acceleration = Vec3(0, 0, 0);
-	const Float gravity = 30; //gravity of player is more than 10 because it makes it feel snappier
-	const Float airTimeGravity = 16; //makes gravity less impactful when holding space in the air
-	const Float airResistance = 0.99;
+	// physics
+	Float       mass           = 80.0f; // kg
+	Vec3        velocity       = Vec3(0.0f);
+	Vec3        location       = Vec3(0.0f);
+	Vec3        acceleration   = Vec3(0.0f);
+	const Float gravity        = 30.0f; // gravity of player is more than 10 because it makes it feel snappier
+	const Float airTimeGravity = 16.0f; // makes gravity less impactful when holding space in the air
+	const Float airResistance  = 0.99f;
 
-	//friction
-	const Float iceFrictionFactor = 0.1;
-	const Float normalFrictionFactor = 1;
-	Float stopFriction = 12;
-	Float movementFriction = 0;
-	Float actualFriction = stopFriction;
+	// friction
+	const Float iceFrictionFactor    = 0.1f;
+	const Float normalFrictionFactor = 1.0f;
+	Float       stopFriction         = 12.0f;
+	Float       movementFriction     = 0.0f;
+	Float       actualFriction       = stopFriction;
 
-	//debug
-	Float debugCurrentMaxJumpHeight = 0;
+	// debug
+	Float debugCurrentMaxJumpHeight = 0.0f;
 
-	void jump();
-	void collisionResponse();
-	Bool isCollidingWithGround() const;
-	void update(Window& window) override;
-	void calculatePhysics(Window& window);
-	void calculateHeadPosition(Window& window, Float delta);
-	void inputEvent(Window& window, InputEvent input) override;
+	void               jump();
+	void               collisionResponse();
+	[[nodiscard]] Bool isCollidingWithGround() const;
+	void               update(Window& window) override;
+	void               calculatePhysics(const Window& window);
+	void               calculateHeadPosition(Window& window, Float delta);
+	void               inputEvent(Window& window, InputEvent input) override;
 };
 
-struct TripleNineSimulation : public GameSimulation
+struct TripleNineSimulation final : GameSimulation
 {
 	Vector<TripleNineEnemy> enemies;
 
-	void create();
 	void createEnemy();
+	void destroy() override;
+	void update(Float delta) override;
+	void create(ResourceManager& resourceManager) override;
 };
 
-struct TripleNineRenderer : public GameRenderer
+struct TripleNineRenderer final : GameRenderer
 {
-	Bool bloom = true;
-	TripleNinePlayer player;
-	Float mapSize = 0.85;
-	Vec3 sunDirection = normalize(Vec3(0.675394, -0.485956, 0.554698));
-
-	TripleNineSimulation* sim = nullptr;
-
-	InputEvent enter = InputEvent(InputType::Mouse, LMB, true);
-	InputEvent exit = InputEvent(InputType::Mouse, RMB, false);
-	InputEvent toggleBloom = InputEvent(InputType::KeyBoard, B, false);
-	InputEvent reloadShaders = InputEvent(InputType::KeyBoard, T, false);
+	TripleNinePlayer      player;
+	Framebuffer           framebuffer;
+	Float                 mapSize       = 0.5f;
+	Bool                  bloom         = false;
+	TripleNineSimulation* sim           = nullptr;
+	InputEvent            enter         = InputEvent(InputType::Mouse, LMB, true);
+	InputEvent            exit          = InputEvent(InputType::Mouse, RMB, false);
+	InputEvent            toggleBloom   = InputEvent(InputType::KeyBoard, B, false);
+	InputEvent            reloadShaders = InputEvent(InputType::KeyBoard, T, false);
+	Vec3                  sunDirection  = normalize(Vec3(0.675394f, -0.485956f, 0.554698f));
 
 	void update(Window& window) override;
+	void destroy(Window& window) override;
 	void connect(TripleNineSimulation& sim);
 	void inputEvent(Window& window, InputEvent input) override;
-	void renderBloom(ResourceManager& resourceManager, Renderer& r);
+	void renderBloom(ResourceManager& resourceManager, Renderer& r) const;
 	void create(ResourceManager& resourceManager, Window& window) override;
 	void render(ResourceManager& resourceManager, Window& window, TiledRectangle area) override;
 	void renderInteractive(ResourceManager& resourceManager, Window& window, TiledRectangle area) override;
@@ -227,10 +231,11 @@ struct TripleNineRenderer : public GameRenderer
 
 struct TripleNine
 {
-	ResourceManager resourceManager;
-	UserInterface ui;
-	TripleNineRenderer renderer;
+	UserInterface        ui;
+	ORKAIntroSequence    intro;
+	TripleNineRenderer   renderer;
 	TripleNineSimulation simulation;
+	ResourceManager      resourceManager;
 
 	void run();
 };

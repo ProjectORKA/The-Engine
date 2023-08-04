@@ -3,39 +3,26 @@
 #include "Game.hpp"
 #include "ResourceManager.hpp"
 
-struct GPUSimRenderer : public GameRenderer {
-	Bool initialized = false;
+struct GPUSimRenderer final : GameRenderer
+{
+	Framebuffer framebuffer1;
+	Framebuffer framebuffer2;
+	Bool        flipFlop = true;
+	const Int   worldSize = 1024;
 
-	Bool swap = true;
+	void update(Window& window) override;
+	void destroy(Window& window) override;
+	void create(ResourceManager& rm, Window& window) override;
+	void inputEvent(Window& window, InputEvent input) override;
+	void render(ResourceManager& rm, Window& window, TiledRectangle area) override;
+	void renderInteractive(ResourceManager& resourceManager, Window& window, TiledRectangle area) override;
+};
 
-	UInt factionsId1 = 0;
-	UInt factionsId2 = 0;
+struct GPUSim
+{
+	UserInterface   ui;
+	GPUSimRenderer  gpuSimRenderer;
+	ResourceManager resourceManager;
 
-	void setup(Renderer& renderer) {
-		const UInt worldSize = 1024;
-
-		CPUTexture cpuTexture;
-		cpuTexture.channels = 1;
-		cpuTexture.dataType = DataType::dataTypeFloat;
-		cpuTexture.farFilter = Filter::nearest;
-		cpuTexture.nearFilter = Filter::nearest;
-		cpuTexture.width = worldSize;
-		cpuTexture.height = worldSize;
-		cpuTexture.wrapping = Wrapping::repeat;
-		cpuTexture.loaded = true;
-
-		//worldFramebufferTexture.texture.load(cpuTexture);
-
-		//worldFramebuffer.add(1, DataType::dataTypeFloat, 0);
-		//worldFramebuffer.resize(Area(worldSize));
-
-		//worldFramebuffer.use();
-
-		//renderer.rectangle();
-		//
-		//renderer.renderMesh("fullScreenQuad");
-	}
-
-	void update(Window& window) override {};
-	void render(ResourceManager& resourceManager, Window& window, TiledRectangle area) override;
+	void run();
 };
