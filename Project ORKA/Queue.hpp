@@ -47,10 +47,7 @@ template <typename T> void ORKAQueue<T>::remove(T data)
 				*nodePtrPtr             = (*nodePtrPtr)->next;
 				delete tmp;
 			}
-			else
-			{
-				nodePtrPtr = &(*nodePtrPtr)->next;
-			}
+			else nodePtrPtr = &(*nodePtrPtr)->next;
 		}
 	}
 }

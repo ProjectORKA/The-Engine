@@ -1,4 +1,4 @@
-#include "Physics.hpp"
+#include "Basics.hpp"
 
 void verletPhysics(Vec3& location, Vec3& velocity, const Vec3& acceleration, const Float delta)
 {
@@ -32,7 +32,7 @@ void verletPhysics(Vec2& location, Vec2& velocity, const Vec2& acceleration, con
 	velocity = velocity2;
 }
 
-void collisionBetween2DSphereAndWall(Vec2& velocity, const Vec2 wallDirection, Vec2 locationOfSphereOnCoantact)
+void collisionBetween2DSphereAndWall(Vec2& velocity, const Vec2 wallDirection)
 {
 	velocity = reflect(velocity, wallDirection);
 }

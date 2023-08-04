@@ -60,10 +60,7 @@ void MeshSystem::addMesh(const CPUMesh& cpuMesh)
 		use(toUIntSafe(gpuMeshes.size() - 1));
 		meshNames.add(cpuMesh.name, currentMeshId);
 	}
-	else
-	{
-		logWarning("Mesh could not be loaded!");
-	}
+	else logWarning("Mesh could not be loaded!");
 }
 
 void NameTable::add(const Name& name, const Index id)
@@ -100,10 +97,7 @@ void MeshSystem::render(Uniforms& uniforms, const Index meshId)
 void MeshSystem::use(ResourceManager& resourceManager, const Name& name)
 {
 	Index id;
-	if(meshNames.find(name, id))
-	{
-		currentMeshId = id;
-	}
+	if(meshNames.find(name, id)) currentMeshId = id;
 	else
 	{
 		CPUMesh mesh;

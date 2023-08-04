@@ -32,10 +32,7 @@ InFile::InFile(const Path& location)
 	fileLocation = makeAbsolute(location);
 
 	file = std::ifstream(location, std::ios::binary);
-	if(file.is_open())
-	{
-		isOpen = true;
-	}
+	if(file.is_open()) isOpen = true;
 	else
 	{
 		isOpen = false;
@@ -56,10 +53,7 @@ OutFile::OutFile(const Path& location)
 	}
 
 	file = std::ofstream(fileLocation, std::ios::trunc | std::ios::binary | std::ios::out);
-	if(file.is_open())
-	{
-		isOpen = true;
-	}
+	if(file.is_open()) isOpen = true;
 	else
 	{
 		isOpen = false;

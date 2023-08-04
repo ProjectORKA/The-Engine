@@ -21,10 +21,7 @@ void CPUMesh::removeDoubles()
 		Vec3       current   = positions[i];
 		const auto currentId = static_cast<Index>(i);
 
-		for(Index j = 0; j < positions.size(); j++)
-		{
-			if(positions[j] == current) for(Index& index : indices) if(index == j) index = currentId;
-		}
+		for(Index j = 0; j < positions.size(); j++) if(positions[j] == current) for(Index& index : indices) if(index == j) index = currentId;
 	}
 }
 
@@ -251,10 +248,7 @@ void CPUMesh::load(ResourceManager& resourceManager, Name name)
 				error = true;
 			}
 		}
-		else
-		{
-			error = true;
-		}
+		else error = true;
 
 		if(error)
 		{
@@ -264,10 +258,7 @@ void CPUMesh::load(ResourceManager& resourceManager, Name name)
 		}
 		checkIntegrity();
 	}
-	else
-	{
-		logWarning("Mesh (" + toString(name) + ") not found as resource!");
-	}
+	else logWarning("Mesh (" + toString(name) + ") not found as resource!");
 }
 
 void CPUMesh::saveMeshFile(const ResourceManager& resourceManager)

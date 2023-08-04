@@ -67,10 +67,7 @@ void GPUTexture::load(const CPUTexture& cpuTexture)
 
 		loaded = true;
 	}
-	else
-	{
-		logWarning("CPUTexture not loaded!");
-	}
+	else logWarning("CPUTexture not loaded!");
 }
 
 void GPUTexture::useTextureInSlot(const UInt textureSlot) const

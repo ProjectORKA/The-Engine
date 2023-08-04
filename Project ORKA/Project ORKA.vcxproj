@@ -31,6 +31,7 @@
     <ClCompile Include="FlappyBird.cpp" />
     <ClCompile Include="Hello Triangle.cpp" />
     <ClCompile Include="ImguiExample.cpp" />
+    <ClCompile Include="Input.cpp" />
     <ClCompile Include="Logger.cpp" />
     <ClCompile Include="MSDFText.cpp" />
     <ClCompile Include="NameGenerator.cpp" />
@@ -54,7 +55,6 @@
     <ClCompile Include="ImageViewer.cpp" />
     <ClCompile Include="IndexBufferObject.cpp" />
     <ClCompile Include="InfiniteDetailPrototype.cpp" />
-    <ClCompile Include="Input.cpp" />
     <ClCompile Include="JobSystem.cpp" />
     <ClCompile Include="LevelledGraph.cpp" />
     <ClCompile Include="LineRenderer.cpp" />
@@ -116,6 +116,7 @@
     <ClCompile Include="SimpleRTSHuman.cpp" />
     <ClCompile Include="SimpleRTSTerrain.cpp" />
     <ClCompile Include="SimpleRTSTreeSystem.cpp" />
+    <ClCompile Include="Sortr.cpp" />
     <ClCompile Include="TextRenderSystem.cpp" />
     <ClCompile Include="TextureSystem.cpp" />
     <ClCompile Include="TLSFAllocator.cpp" />
@@ -255,6 +256,7 @@
     <ClInclude Include="SimpleRTSTerrain.hpp" />
     <ClInclude Include="SimpleRTSTreeSystem.hpp" />
     <ClInclude Include="Device.hpp" />
+    <ClInclude Include="Sortr.hpp" />
     <ClInclude Include="TextRenderSystem.hpp" />
     <ClInclude Include="TextureSystem.hpp" />
     <ClInclude Include="TLSFAllocator.h" />
@@ -366,6 +368,8 @@
     <None Include="Data\Shaders\simpleRTS.vert" />
     <None Include="Data\Shaders\sky.frag" />
     <None Include="Data\Shaders\sky.vert" />
+    <None Include="Data\Shaders\sortr.frag" />
+    <None Include="Data\Shaders\sortr.vert" />
     <None Include="Data\Shaders\sphereRendering.frag" />
     <None Include="Data\Shaders\sphereRendering.vert" />
     <None Include="Data\Shaders\terrain.frag" />

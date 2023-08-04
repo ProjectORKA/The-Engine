@@ -168,15 +168,9 @@ void QuadtreeNode::update(QuadtreeSystem& quadtreeSystem, TerrainSystem& terrain
 			c10->update(quadtreeSystem, terrainSystem);
 			c11->update(quadtreeSystem, terrainSystem);
 		}
-		else
-		{
-			subdivide(terrainSystem);
-		}
+		else subdivide(terrainSystem);
 	}
-	else
-	{
-		unsubdivide();
-	}
+	else unsubdivide();
 }
 
 void QuadtreeNode::create(const TerrainSystem& terrainSystem, QuadtreeNode* parent, const Bool x, const Bool y)

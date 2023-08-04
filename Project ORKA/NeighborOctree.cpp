@@ -107,10 +107,7 @@ void NeighborOctreeNode::updateIsSurface()
 		if(isTerrain) isSurface = !(nfr().isTerrain && nbr().isTerrain && nlr().isTerrain && nrr().isTerrain);
 		else isSurface          = nfr().isTerrain || nbr().isTerrain || nlr().isTerrain || nrr().isTerrain;
 	}
-	else
-	{
-		isSurface = true;
-	}
+	else isSurface = true;
 
 	if(isSurface)
 	{

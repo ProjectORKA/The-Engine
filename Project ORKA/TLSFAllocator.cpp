@@ -1161,15 +1161,9 @@ void* tlsf_realloc(const tlsf_t tlsf, void* ptr, const size_t size)
 	void*      p       = nullptr;
 
 	/* Zero-size requests are treated as free. */
-	if(ptr && size == 0)
-	{
-		tlsf_free(tlsf, ptr);
-	}
-	/* Requests with NULL pointers are treated as malloc. */
-	else if(!ptr)
-	{
-		p = tlsf_malloc(tlsf, size);
-	}
+	if(ptr && size == 0) tlsf_free(tlsf, ptr);
+		/* Requests with NULL pointers are treated as malloc. */
+	else if(!ptr) p = tlsf_malloc(tlsf, size);
 	else
 	{
 		block_header_t*       block = block_from_ptr(ptr);

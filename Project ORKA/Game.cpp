@@ -10,10 +10,7 @@ void GameSimulation::stop()
 		loaded = false;
 		thread.join();
 	}
-	else
-	{
-		logError("Simulation not initialized!");
-	}
+	else logError("Simulation not initialized!");
 }
 
 GameSimulation::~GameSimulation() = default;
@@ -46,10 +43,7 @@ void gameSimulationThread(GameSimulation& sim)
 		}
 		logDebug("Game simulation stopped!");
 	}
-	else
-	{
-		logError("Simulation not initialized!");
-	}
+	else logError("Simulation not initialized!");
 }
 
 void GameSimulation::start(ResourceManager& resourceManager)
@@ -62,8 +56,5 @@ void GameSimulation::start(ResourceManager& resourceManager)
 		keepRunning = true;
 		thread      = Thread(gameSimulationThread, std::ref(*this));
 	}
-	else
-	{
-		logError("Simulation already initialized!");
-	}
+	else logError("Simulation already initialized!");
 }

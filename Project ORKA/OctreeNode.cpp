@@ -22,15 +22,9 @@ void OctreeNode::update()
 			c110->update();
 			c111->update();
 		}
-		else
-		{
-			subdivide();
-		}
+		else subdivide();
 	}
-	else
-	{
-		unSubdivide();
-	}
+	else unSubdivide();
 }
 
 void OctreeNode::subdivide()

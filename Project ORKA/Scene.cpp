@@ -33,6 +33,7 @@ void Scene::loadFBX(Path path, ResourceManager& resourceManager)
 		if(errorMessage.empty())
 		{
 			if(assimpScene->HasMeshes())
+			{
 				for(Index objectId = 0; objectId < assimpScene->mRootNode->mNumChildren; objectId++)
 				{
 					if(assimpScene->mRootNode->mChildren[objectId]->mNumMeshes > 0)
@@ -86,6 +87,7 @@ void Scene::loadFBX(Path path, ResourceManager& resourceManager)
 								}
 
 								if(assimpScene->mMeshes[meshId]->HasFaces())
+								{
 									for(UInt i = 0; i < assimpScene->mMeshes[meshId]->mNumFaces; i++)
 									{
 										for(UInt j = 0; j < assimpScene->mMeshes[meshId]->mFaces->mNumIndices; j++)
@@ -95,12 +97,10 @@ void Scene::loadFBX(Path path, ResourceManager& resourceManager)
 											mesh.indices.push_back(index);
 										}
 									}
+								}
 								else errorMessage = "Mesh does not have faces!";
 							}
-							else
-							{
-								errorMessage = "Mesh does not have positions stored!";
-							}
+							else errorMessage = "Mesh does not have positions stored!";
 
 							lastIndex += assimpScene->mMeshes[meshId]->mNumVertices;
 						}
@@ -111,13 +111,11 @@ void Scene::loadFBX(Path path, ResourceManager& resourceManager)
 						meshes.push_back(mesh);
 					}
 				}
+			}
 			else errorMessage = "No meshes in fbx scene!";
 		}
 	}
-	else
-	{
-		errorMessage = path.parent_path().string() + " does not exist!";
-	}
+	else errorMessage = path.parent_path().string() + " does not exist!";
 
 	if(!errorMessage.empty()) logError("The scene (" + path.stem().string() + ") could not be loaded! (" + path.string() + ") Error: " + errorMessage);
 }

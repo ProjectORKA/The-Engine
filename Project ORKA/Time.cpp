@@ -46,10 +46,7 @@ void Time::update()
 		delta = deltaDuration.count();
 		total = totalDuration.count();
 	}
-	else
-	{
-		deltaDuration = std::chrono::seconds::zero();
-	}
+	else deltaDuration = std::chrono::seconds::zero();
 }
 
 void Timer::start()

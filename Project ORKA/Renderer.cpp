@@ -262,10 +262,7 @@ void Renderer::setAlphaBlending(const Bool blending) const
 		OpenGL::apiBlendFunc(BlendFunction::SrcAlpha, BlendFunction::OneMinusSrcAlpha);
 		OpenGL::apiBlendEquation(BlendEquation::Add);
 	}
-	else
-	{
-		OpenGL::apiSetBlending(false);
-	}
+	else OpenGL::apiSetBlending(false);
 }
 
 void Renderer::setRenderRegion(const TiledRectangle region)

@@ -102,10 +102,7 @@ Terrain::Terrain(const TerrainSystem& terrainSystem, const QuadtreeId& id, const
 
 				heightmap.height[x][y] = (ah + bh + ch + dh) / 4.0;
 			}
-			else
-			{
-				heightmap.height[x][y] = ULLONG_MAX / 2;
-			}
+			else heightmap.height[x][y] = ULLONG_MAX / 2;
 		}
 	}
 	for(UInt x = 0; x < TERRAIN_MAP_SIZE; x++)

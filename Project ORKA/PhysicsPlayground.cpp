@@ -1,5 +1,5 @@
 #include "PhysicsPlayground.hpp"
-#include "Physics.hpp"
+#include "PhysicsSystem.hpp"
 
 void PhysicsPlayground::run()
 {
@@ -54,10 +54,7 @@ void PhysicsPlaygroundSimulation::connectByDistance()
 
 	for(Int a = 0; a < nodes.size(); a++)
 	{
-		for(Int b = a; b < nodes.size(); b++)
-		{
-			if(a != b) if(distance(nodes[a].position, nodes[b].position) < connectionDistance) connections.emplace_back(a, b);
-		}
+		for(Int b = a; b < nodes.size(); b++) if(a != b) if(distance(nodes[a].position, nodes[b].position) < connectionDistance) connections.emplace_back(a, b);
 	}
 }
 
@@ -307,10 +304,7 @@ void PhysicsPlaygroundSimulation::connectNeighborOfNeighborToSelf()
 	Vector<PhysicsPlaygroundConnection> cons;
 
 	// for all nodes
-	for(Int i = 0; i < nodeCount; i++)
-	{
-		for(Int n = 0; n < nodes[i].connected.size(); n++) for(int c = 0; c < nodes[nodes[i].connected[n]].connected.size(); c++) cons.emplace_back(i, nodes[nodes[i].connected[n]].connected[c]);
-	}
+	for(Int i = 0; i < nodeCount; i++) for(Int n = 0; n < nodes[i].connected.size(); n++) for(int c = 0; c < nodes[nodes[i].connected[n]].connected.size(); c++) cons.emplace_back(i, nodes[nodes[i].connected[n]].connected[c]);
 
 	for(const auto c : cons) makeConnection(c.a, c.b);
 }
@@ -453,10 +447,7 @@ void PhysicsPlayGroundRenderer::render(ResourceManager& resourceManager, Window&
 
 		for(Index i = 0; i < smoothCurve.size() - 1; i++) lines.push_back(Line3D(smoothCurve[i], smoothCurve[i + 1]));
 	}
-	else
-	{
-		for(const PhysicsPlaygroundConnection& c : sim->connections) lines.push_back(Line3D(sim->nodes[c.a].position, sim->nodes[c.b].position));
-	}
+	else for(const PhysicsPlaygroundConnection& c : sim->connections) lines.push_back(Line3D(sim->nodes[c.a].position, sim->nodes[c.b].position));
 
 	renderer.fill(Color(1));
 	renderer.useShader(resourceManager, "color");

@@ -27,11 +27,13 @@ void UIButton::inputEvent(Window& window, const InputEvent input)
 {
 	if(input == InputEvent(InputType::Mouse, 0, true)) pressed = window.renderer.objectId == id;
 	if(input == InputEvent(InputType::Mouse, 0, false))
+	{
 		if(pressed)
 		{
 			pressed = false;
 			doThis();
 		}
+	}
 
 	if(content) content->inputEvent(window, input);
 }
@@ -43,10 +45,7 @@ void UIButton::render(ResourceManager& resourceManager, Window& window, TiledRec
 	constraints.update(renderArea);
 
 	renderer.useShader(resourceManager, "color");
-	if(pressed)
-	{
-		renderer.uniforms().setCustomColor(Color(1, 1, 0, 1));
-	}
+	if(pressed) renderer.uniforms().setCustomColor(Color(1, 1, 0, 1));
 	else
 	{
 		const UInt objectId = renderer.objectId;

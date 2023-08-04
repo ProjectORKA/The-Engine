@@ -96,10 +96,7 @@ void TripleNinePlayer::update(Window& window)
 				if(window.pressed(run)) state = State::sprinting;
 				else state                    = State::walking;
 			}
-			else
-			{
-				state = State::standing;
-			}
+			else state = State::standing;
 		}
 	}
 	else
@@ -128,10 +125,7 @@ void TripleNinePlayer::update(Window& window)
 		actualFriction *= normalFrictionFactor;
 		velocity /= 1 + delta * actualFriction;
 	}
-	else
-	{
-		onGround = false;
-	}
+	else onGround = false;
 	if(state == State::jumping) debugCurrentMaxJumpHeight = location.z;
 	isMoving = movementControl != Vec3(0);
 	// air strafing
@@ -211,10 +205,7 @@ void TripleNinePlayer::inputEvent(Window& window, const InputEvent input)
 {
 	if(input == jumpTrigger)
 	{
-		if(onGround)
-		{
-			jump();
-		}
+		if(onGround) jump();
 		else
 		{
 			if(doubleJumpCharge)
@@ -233,10 +224,7 @@ void TripleNineRenderer::inputEvent(Window& window, const InputEvent input)
 {
 	if(input == enter)
 	{
-		if(!window.capturing)
-		{
-			window.captureCursor();
-		}
+		if(!window.capturing) window.captureCursor();
 		else
 		{
 			if(window.renderer.objectId != static_cast<UInt>(-1)) sim->enemies[window.renderer.objectId].die();

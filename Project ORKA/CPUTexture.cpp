@@ -426,10 +426,7 @@ void CPUTexture::load(const Image& image, const Filter nearFilter, const Filter 
 				break;
 		}
 	}
-	else
-	{
-		logWarning("Image could not be loaded into texture!");
-	}
+	else logWarning("Image could not be loaded into texture!");
 }
 
 void CPUTexture::load(ResourceManager& resourceManager, const Name& name, const Filter nearFilter, const Filter farFilter, const Wrapping wrapping)
