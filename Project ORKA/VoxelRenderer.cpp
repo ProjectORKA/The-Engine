@@ -1,4 +1,4 @@
-#include "VoxelSystem.hpp"
+#include "VoxelRenderer.hpp"
 #include "Renderer.hpp"
 #include "PerlinNoise.hpp"
 
@@ -8,10 +8,7 @@ Chunk::Chunk()
 	{
 		for(Int y = 0; y < VOXEL_CHUNK_SIZE; y++)
 		{
-			for(Int z = VOXEL_CHUNK_HEIGHT - 1; z > 0; z--)
-			{
-				voxels[x][y][z] = z / static_cast<Float>(VOXEL_CHUNK_HEIGHT) * 2 < 1 + noise.octaveNoise0_1(x / static_cast<Float>(VOXEL_CHUNK_SIZE), y / static_cast<Float>(VOXEL_CHUNK_SIZE), 16);
-			}
+			for(Int z = VOXEL_CHUNK_HEIGHT - 1; z > 0; z--) voxels[x][y][z] = z / static_cast<Float>(VOXEL_CHUNK_HEIGHT) * 2 < 1 + noise.octaveNoise0_1(x / static_cast<Float>(VOXEL_CHUNK_SIZE), y / static_cast<Float>(VOXEL_CHUNK_SIZE), 16);
 		}
 	}
 }

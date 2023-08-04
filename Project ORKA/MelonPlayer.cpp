@@ -20,10 +20,7 @@ void MelonPlayer::update(Window& window)
 		velocity = Vec3(0);
 		targetLocation += delta;
 	}
-	else
-	{
-		targetLocation = Vec3(window.mousePosBotLeft, 0);
-	}
+	else targetLocation = Vec3(window.mousePosBotLeft, 0);
 
 	// get frequently used info
 	const Float delta = window.renderer.deltaTime();

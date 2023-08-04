@@ -6,10 +6,7 @@
 void ResourceManager::create()
 {
 	// make sure the resource manager is only initialized once
-	if(initialized)
-	{
-		logError("Resource manager already initialized!");
-	}
+	if(initialized) logError("Resource manager already initialized!");
 	else
 	{
 		// the "ORKA" location is the folder that contains the executable

@@ -64,49 +64,22 @@
 #include "SDFRenderer.hpp"
 #include "SimpleRTS.hpp"
 #include "Snake.hpp"
+#include "Sortr.hpp"
 #include "TripleNine.hpp"
 #include "UISandbox.hpp"
 
-//#include "Basics.hpp"
-//#include "Debug.hpp"
-//#include "RedDotHack.hpp"
-//#include "Pong.hpp"
-//#include "SimpleRTS.hpp"
-//#include "MoonCrash.hpp"
-//#include "SceneSystem.hpp"
-//#include "SimpleRTS.hpp"
-//#include "ProjectMelon.hpp"
-//#include "PhysicsPlayground.hpp"
-//#include "ImageViewer.hpp"
-//#include "Organizer.hpp"
-//#include "Hello Triangle.hpp"
-//#include "Sandbox.hpp"
-//#include "TripleNine.hpp"
-
-// [TODO] use modern (bindless) opengl
-// [TODO] replace old opengl calls with new ones
-// [TODO] comment all functions that are not inside the opengl classes
-// [TODO] remove opengl from all other code
-// [TODO] implement opengl functionality into GPUTexture
 // [TODO] implement opengl logger into all opengl functions
-// [TODO] fix invalid texture bug
 // [TODO] fix vertex shader recompilation
-// [TODO] test all image extensions for functionality
-// [TODO] fix the ORKA icon being upside down
-// [TODO] fix filters
 // [TODO] move advanced rendering systems like textRenderSystem out of renderer and into window
 // (basically simplify renderer to bare bones rendering tech)
 // OR separate into renderer and lowLevelRenderer
-// [TODO] remove Name and NameTable and replace it with Hash and HashTable
-// [TODO] use OpenGl enums to ensure type safety
+// [TODO] remove Name and NameTable and replace it with Hash and HashTabl
 // [TODO] remove old thread system
 
 Int main(const Int argc, Char* argv[])
 {
-	UISandbox game;
+	TripleNine game;
 	game.run();
-
-	Scene s;
 
 	//cheatTest();
 }

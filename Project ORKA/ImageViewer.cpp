@@ -412,11 +412,13 @@ Index ImageViewerRenderer::indexOfCpuImageWithHighestPriority() const
 	for(Index i = highestPriorityIndex; i < images.size(); i++)
 	{
 		if(!images[i].inRam())
+		{
 			if(images[i].getPriority() > highestPriority)
 			{
 				highestPriority      = images[i].getPriority();
 				highestPriorityIndex = i;
 			}
+		}
 	}
 
 	return highestPriorityIndex;
@@ -443,11 +445,13 @@ Index ImageViewerRenderer::indexOfGpuImageWithHighestPriority() const
 	for(Index i = highestPriorityIndex; i < images.size(); i++)
 	{
 		if(images[i].inRam() && !images[i].onGpu())
+		{
 			if(images[i].getPriority() > highestPriority)
 			{
 				highestPriority      = images[i].getPriority();
 				highestPriorityIndex = i;
 			}
+		}
 	}
 
 	return highestPriorityIndex;
@@ -485,6 +489,7 @@ void ImageViewerRenderer::inputEvent(Window& window, const InputEvent input)
 	if(input == previousImage || input == previousImageMouse) showPrevImage();
 
 	if(input == deleteImage)
+	{
 		if(!images.empty())
 		{
 			deleteFile(images[currentImageId].getPath());
@@ -492,6 +497,7 @@ void ImageViewerRenderer::inputEvent(Window& window, const InputEvent input)
 			images.erase(images.begin() + currentImageId);
 			if(currentImageId >= images.size()) currentImageId--;
 		}
+	}
 
 	if(input == resetView)
 	{

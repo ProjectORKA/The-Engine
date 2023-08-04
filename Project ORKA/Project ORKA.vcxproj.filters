@@ -380,6 +380,9 @@
     <ClCompile Include="GlyphTextRenderSystem.cpp">
       <Filter>Systems\UserInterface\Window\Renderer\TextRenderSystem\GlyphTextRenderSystem</Filter>
     </ClCompile>
+    <ClCompile Include="DynameshTerrain.cpp" />
+    <ClCompile Include="ECS.cpp" />
+    <ClCompile Include="Sortr.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Basics.hpp">
@@ -836,6 +839,7 @@
     <ClInclude Include="GlyphTextRenderSystem.hpp">
       <Filter>Systems\UserInterface\Window\Renderer\TextRenderSystem\GlyphTextRenderSystem</Filter>
     </ClInclude>
+    <ClInclude Include="Sortr.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Files\Data\Shaders\water.vert">
@@ -1117,6 +1121,8 @@
     <None Include="Data\shaders\MelonUberShader.vert">
       <Filter>Apps\3D Apps\Project Melon\Shaders</Filter>
     </None>
+    <None Include="Data\Shaders\sortr.frag" />
+    <None Include="Data\Shaders\sortr.vert" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Common">

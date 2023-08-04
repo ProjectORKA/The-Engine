@@ -8,6 +8,7 @@ void createDirectory(Path path);
 void deleteFile(const Path& path);
 void setCurrentPath(const Path& path);
 void copyFile(const Path& source, const Path& destination);
+void moveFile(const Path& source, const Path& destination);
 
 [[nodiscard]] Path           getCurrentPath();
 [[nodiscard]] Path           getDirectory(Path path);

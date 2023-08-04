@@ -218,10 +218,7 @@ void Window::setIcon(const Path& path) const
 		icon.height = static_cast<Int>(logo.getHeight());
 		glfwSetWindowIcon(apiWindow, 1, &icon);
 	}
-	else
-	{
-		logWarning("Logo could not be Loaded!");
-	}
+	else logWarning("Logo could not be Loaded!");
 }
 
 void Window::setPosition(const IVec2 position)
@@ -306,10 +303,7 @@ void Window::createApiWindow(const String& title, const Area size)
 
 		if(glfwRawMouseMotionSupported()) glfwSetInputMode(apiWindow, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
 	}
-	else
-	{
-		logError("Window already exists!");
-	}
+	else logError("Window already exists!");
 }
 
 void windowThread(ResourceManager& resourceManager, Window& window)
@@ -463,10 +457,7 @@ void whenButtonIsPressed(const APIWindow apiWindow, const Int key, Int scanCode,
 		window.profiling = false;
 		OPTICK_STOP_CAPTURE() OPTICK_SAVE_CAPTURE("profileDump");
 	}
-	if(input == window.reloadShaders)
-	{
-		window.renderer.shaderSystem.rebuild();
-	}
+	if(input == window.reloadShaders) window.renderer.shaderSystem.rebuild();
 
 	if(window.content) window.content->inputEvent(window, input);
 }

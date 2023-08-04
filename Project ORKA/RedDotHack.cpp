@@ -80,10 +80,7 @@ void cheatTest()
 				Sleep(50);
 			}
 		}
-		else
-		{
-			break;
-		}
+		else break;
 	}
 
 	ReleaseDC(gameWindow, device);

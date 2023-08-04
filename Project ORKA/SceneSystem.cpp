@@ -91,6 +91,7 @@ void loadAssimpMesh(CPUMesh& destinationMesh, aiMesh& sourceMesh)
 	}
 
 	if(sourceMesh.GetNumColorChannels() > 0)
+	{
 		for(Int vertexIndex = 0; vertexIndex < sourceMesh.mNumVertices; vertexIndex++)
 		{
 			// colors
@@ -101,6 +102,7 @@ void loadAssimpMesh(CPUMesh& destinationMesh, aiMesh& sourceMesh)
 			vertexColor.w = sourceMesh.mColors[0][vertexIndex].a;
 			destinationMesh.vertexColors.push_back(vertexColor);
 		}
+	}
 
 	Index index;
 	for(UInt faceIndex = 0; faceIndex < sourceMesh.mNumFaces; faceIndex++)
@@ -140,10 +142,7 @@ void Scene2::importFBX(Path path, ResourceManager& resourceManager)
 
 		if(errorMessage.empty()) loadAssimpScene(*this, *assimpScene);
 	}
-	else
-	{
-		errorMessage = path.parent_path().string() + " does not exist!";
-	}
+	else errorMessage = path.parent_path().string() + " does not exist!";
 
 	if(!errorMessage.empty()) logError("The model (" + path.stem().string() + ") could not be loaded! (" + path.string() + ")" + " Error: " + errorMessage);
 }

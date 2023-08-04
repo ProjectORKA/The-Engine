@@ -7,6 +7,7 @@ void UserInterface::run()
 	if(initialized)
 	{
 		if(!windows.empty())
+		{
 			while(!windows.empty())
 			{
 				glfwPollEvents();
@@ -20,6 +21,7 @@ void UserInterface::run()
 					}
 				}
 			}
+		}
 		else logError("No windows to render!");
 
 		for(Window& window : windows) window.destroy();
@@ -27,10 +29,7 @@ void UserInterface::run()
 		glfwPollEvents();
 		glfwTerminate();
 	}
-	else
-	{
-		logError("UserInterface not initialized!");
-	}
+	else logError("UserInterface not initialized!");
 }
 
 void UserInterface::create()

@@ -19,12 +19,14 @@ void TreeGenerator::run()
 
 	// generate points
 	if(leaves.points.empty() && branches.points.size() < 100000 && treeGen)
+	{
 		for(int i = 0; i < 10000; i++)
 		{
 			const Float height = sqrt(randomFloat());
 			const Vec3  p      = randomPointInSphere(height) * Vec3(sqrt(randomFloat())) - Vec3(0, 0, 2 * height - 2);
 			leaves.add(p);
 		}
+	}
 
 	treeGeneration(leaves.points, branches.points, tree.connections, 0.01f, 0.04f, 0.2f);
 }

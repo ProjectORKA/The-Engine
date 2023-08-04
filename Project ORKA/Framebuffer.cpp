@@ -42,10 +42,7 @@ Int Framebuffer::getWidth() const
 void Framebuffer::checkComplete()
 {
 	// makes sure the framebuffer is complete
-	if(openglFramebuffer.isComplete())
-	{
-		complete = true;
-	}
+	if(openglFramebuffer.isComplete()) complete = true;
 	else
 	{
 		complete = false;

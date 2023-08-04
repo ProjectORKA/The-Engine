@@ -105,10 +105,7 @@ void QuadtreeNodeRenderData::renderTerrain(Renderer& renderer)
 	loadTerrainMesh();
 	const Double actualHeight = node.data.terrain->heightmap.upperLimit - node.data.terrain->heightmap.lowerLimit;
 	Double       heightScale;
-	if(actualHeight == 0.0)
-	{
-		heightScale = 1.0;
-	}
+	if(actualHeight == 0.0f) heightScale = 1.0f;
 	else
 	{
 		const Double currentScale = pow(2, 64 - node.id.level);
@@ -198,10 +195,7 @@ void QuadtreeNodeRenderData::updateWithoutSubdivision(PlanetSystemPlayer& player
 			{
 				if(needsSubDiv->nodeDrawDistance > nodeDrawDistance) needsSubDiv = this;
 			}
-			else
-			{
-				needsSubDiv = this;
-			}
+			else needsSubDiv = this;
 		}
 	}
 }

@@ -68,10 +68,7 @@ void ShaderSystem::add(ResourceManager& resourceManager, const Name& name)
 Index ShaderSystem::use(ResourceManager& resourceManager, const Name& name)
 {
 	auto it = shaderNames.find(name);
-	if(it != shaderNames.end())
-	{
-		use(it->second);
-	}
+	if(it != shaderNames.end()) use(it->second);
 	else
 	{
 		// try loading the shader

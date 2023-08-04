@@ -2,7 +2,6 @@
 
 #include "Basics.hpp"
 #include "Game.hpp"
-#include "Random.hpp"
 #include "Transform.hpp"
 #include "Camera.hpp"
 
@@ -28,21 +27,22 @@ struct FlappyBirdPipes
 
 struct FlappyBirdBird
 {
+	Transform transform;
 	Bool      isColliding = false;
 	Float     size        = 0.05f;
 	Bool      alive       = true;
 	Bool      heldInPlace = true;
 	Vec3      velocity    = Vec3(0);
-	Transform transform;
 
 	InputEvent jumpButton = InputEvent(InputType::KeyBoard, SPACE, true);
 
-	void                          jump();
-	void                          reset();
-	void                          inputEvent(InputEvent input);
-	void                          render(ResourceManager& rm, Renderer& r) const;
-	void                          update(const Vector<FlappyBirdPipes>& pipeColumns, Float delta);
-	void                          updateAI(const Vector<FlappyBirdPipes>& pipeColumns, Float delta);
+	void jump();
+	void reset();
+	void inputEvent(InputEvent input);
+	void render(ResourceManager& rm, Renderer& r) const;
+	void update(const Vector<FlappyBirdPipes>& pipeColumns, Float delta);
+	void updateAI(const Vector<FlappyBirdPipes>& pipeColumns, Float delta);
+
 	[[nodiscard]] FlappyBirdPipes getClosestPipeColumn(const Vector<FlappyBirdPipes>& pipeColumns) const;
 };
 

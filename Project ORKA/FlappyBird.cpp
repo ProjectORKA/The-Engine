@@ -1,4 +1,5 @@
 #include "FlappyBird.hpp"
+#include "Random.hpp"
 
 void FlappyBird::run()
 {
@@ -173,11 +174,13 @@ void FlappyBirdBird::update(const Vector<FlappyBirdPipes>& pipeColumns, const Fl
 			const Vec3 location = transform.getLocation();
 
 			if(location.x < pipes.posX + pipes.width / 2.0f)
+			{
 				if(location.x > pipes.posX - pipes.width / 2.0f)
 				{
 					if(location.y > pipes.posY + pipes.gap / 2.0f) isColliding = true;
 					if(location.y < pipes.posY - pipes.gap / 2.0f) isColliding = true;
 				}
+			}
 		}
 		// check ground collisions
 		if(transform.getLocation().y < -1.0f) reset();
