@@ -3,6 +3,8 @@
 
 Path executablePath = "";
 
+//[TODO] fix recycle bin
+
 void deleteFile(const Path& path) {
 	//if operating system is windows
 	if constexpr (_WIN32) {

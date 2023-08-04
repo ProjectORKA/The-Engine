@@ -59,6 +59,7 @@
 //#include "ImageViewer.hpp"
 //#include "MindMapper.hpp"
 //#include "Organizer.hpp"
+//#include "Sortr.hpp"
 
 //[TODO] move advanced rendering systems like textRenderSystem out of renderer and into window
 //(basically simplify renderer to bare bones tech)
@@ -72,26 +73,16 @@
 
 //[TODO] remove old thread system
 
-#include "Networking.hpp"
+//#include "Networking.hpp"
 
 Int main(Int argc, Char* argv[])
 {
-	//TripleNine game;
-	//game.run();
 
+	//ImageViewer game(argc, argv);
+	//Sortr game(argc, argv);
+	TripleNine game;
+	game.run();
 
-	std::cout << "Do you want to host a server? (y/n)" << std::endl;
-
-	if(std::cin.get() == 'y')
-	{
-		server();
-	}
-	else
-	{
-		client();
-	}
-
-	system("pause");
 }
 
 //windows entry point

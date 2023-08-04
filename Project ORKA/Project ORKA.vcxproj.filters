@@ -282,6 +282,9 @@
     <ClCompile Include="PhysicsPlayground.cpp">
       <Filter>Apps\2D Apps\Physics Playground</Filter>
     </ClCompile>
+    <ClCompile Include="FileType.cpp">
+      <Filter>Common\FileSystem\File\FileTypes</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Basics.hpp">
@@ -966,6 +969,12 @@
     <None Include="Data\Shaders\imageViewer.vert">
       <Filter>Apps\2D Apps\Image Viewer\Shaders</Filter>
     </None>
+    <None Include="Data\Shaders\sortr.frag">
+      <Filter>Apps\2D Apps\Sortr\shaders</Filter>
+    </None>
+    <None Include="Data\Shaders\sortr.vert">
+      <Filter>Apps\2D Apps\Sortr\shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Common">
@@ -1171,6 +1180,9 @@
     </Filter>
     <Filter Include="Apps\2D Apps\Organizer\Shaders">
       <UniqueIdentifier>{a2b39c4c-33a5-4821-8044-99b8ad6abe47}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Apps\2D Apps\Sortr\shaders">
+      <UniqueIdentifier>{d4210497-1154-4308-9027-fa7872538738}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
