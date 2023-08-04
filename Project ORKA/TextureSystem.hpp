@@ -2,17 +2,18 @@
 
 #include "GPUTexture.hpp"
 
-struct TextureSystem {
-	Index currentTextureId = 0;
-	Map<Name, Index> textureNames;
-	Vector<GpuTexture> gpuTextures;
+struct TextureSystem
+{
+	Vector<GPUTexture> gpuTextures;
+	Map<Name, Index>   textureNames;
+	Index              currentTextureId = 0;
 
-	void create();
-	void destroy();
-	void resize(Area size);
-	void use(Index textureId);
-	GpuTexture& currentTexture();
-	void add(CPUTexture& cpuTexture);
-	Index use(ResourceManager& resourceManager, const Name& name);
-	void use(ResourceManager& resourceManager, const Name& name, Index slot);
+	void        create();
+	void        destroy();
+	GPUTexture& currentTexture();
+	void        resize(Area size);
+	void        use(Index textureId);
+	void        add(const CPUTexture& cpuTexture);
+	Index       use(ResourceManager& resourceManager, const Name& name);
+	void        use(ResourceManager& resourceManager, const Name& name, Index slot);
 };

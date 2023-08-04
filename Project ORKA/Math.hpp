@@ -6,23 +6,30 @@
 
 struct TiledRectangle;
 
-struct Line2D {
+struct Line2D
+{
 	Vec2 start;
 	Vec2 end;
 };
 
-struct Line3D {
-	Vec3 start;
-	Vec3 end;
+struct Line3D
+{
+	Vec3 start = Vec3(0);
+	Vec3 end = Vec3(0);
+
+	Line3D(Vec3 start, Vec3 end);
+	Line3D(Vec2 start, Vec2 end);
 };
 
-struct Graph {
+struct Graph
+{
 	Vector<Float> points;
 
 	void add(Float value);
 };
 
-struct Orientation {
+struct Orientation
+{
 	Vec3 x = Vec3(1, 0, 0);
 	Vec3 y = Vec3(0, 1, 0);
 	Vec3 z = Vec3(0, 0, 1);
@@ -40,8 +47,8 @@ Bool isNear(Float a, Float b, Float error);
 Bool pointInsideSphere(Vec3 point, Sphere sphere);
 Bool pointInsideSpheres(Vec3 point, List<Sphere> spheres);
 Bool pointInsideSpheres(Vec3 point, const Vector<Sphere>& spheres);
-Bool isWithinDistanceOfOtherPoints(Vec2 point, Vector<Vec2>& points, Float dist);
 Bool pointInsideSphereAtlocationWithRadius(Vec3 point, Vec3 position, Float radius);
+Bool isWithinDistanceOfOtherPoints(Vec2 point, const Vector<Vec2>& points, Float dist);
 
 UInt max(UInt a, UInt b);
 UInt nextPowerOfTwo(const UInt& value);
@@ -52,8 +59,10 @@ Index idOfClosestPoint(Vec2 origin, const Vector<Vec2>& positions);
 Index idOfClosestPointInLoopingSpace(Vec2 origin, const Vector<Vec2>& positions, Float extend);
 
 Int max(Int a, Int b);
+Int mod(Int a, Int b);
 
 Float sq(Float a);
+Vec3  normalize(Vec3 a);
 Float min(Float a, Float b);
 Float mod(Float a, Float b);
 Float snap(Float a, Float b);
@@ -63,8 +72,8 @@ Float lerp(Float a, Float b, Float alpha);
 Float clerp(Float a, Float b, Float alpha);
 Float approach(Float input, Float maxValue);
 Float deltaInLoopingSpace(Float a, Float b, Float extend);
-Float getDistanceToClosestPoint(Vec3 point, const Vector<Vec3>& points);
 Float distanceToPointInLoopingSpace(Vec2 a, Vec2 b, Float extend);
+Float getDistanceToClosestPoint(Vec3 point, const Vector<Vec3>& points);
 
 LDouble dmod(LDouble x, LDouble y);
 LDouble lerp(LDouble a, LDouble b, LDouble alpha);
@@ -89,9 +98,9 @@ Matrix matrixFromScale(Vec3 s);
 Matrix matrixFromScale(Float size);
 Matrix matrixFromLocation(Vec2 location);
 Matrix matrixFromLocation(Vec3 location);
-Matrix matrixFromOrientation(const Orientation& o);
 Matrix matrixFromAxis(Vec3 x, Vec3 y, Vec3 z);
 Matrix clerp(Matrix a, Matrix b, Float alpha);
+Matrix matrixFromOrientation(const Orientation& o);
 Matrix screenSpaceMatrix(Float width, Float height);
 Matrix matrixFromTiledRectangle(TiledRectangle area);
 Matrix matrixFromRotation(Float x, Float y, Float z);
@@ -100,30 +109,34 @@ Matrix matrixFromPositionAndDirection(Vec2 pos, Vec2 dir);
 Matrix matrixFromLocationAndSize(Vec4 compressedTransform);
 Matrix matrixFromLocationAndSize(Vec3 location, Float size);
 Matrix matrixFromLocationAndSize(Vec2 location, Float size);
-Matrix matrixFromOrientation(const Orientation& o, Vec3 position, Float size);
 Matrix matrixFromLocationAndSize2D(Float x, Float y, Float w, Float h);
 Matrix matrixFromAxis(Vec3 x, Vec3 y, Vec3 z, Vec3 position, Float size);
 Matrix matrixFromLocationDirectionAndSize(Vec2 pos, Vec2 dir, Float size);
-
+Matrix matrixFromOrientation(const Orientation& o, Vec3 position, Float size);
 
 void loopWithinCentered(Vec2& point, Float extend);
 void removePointsInRadius(Vec3 point, Vector<Vec3>& points, Float radius);
 void getClosestPoint(Vec3 point, const Vector<Vec3>& points, Index& closestId, Vec3& closestPoint);
-void spaceColonization(Vector<Vec3>& points, Vector<Vec3>& branches, Vector<Index>& connections, Float segmentSize,
-                       Float killRadius);
+void spaceColonization(Vector<Vec3>& points, Vector<Vec3>& branches, Vector<Index>& connections, Float segmentSize, Float killRadius);
 
-template <typename T, typename R>
-T max(T a, R b) { return (a < b) ? b : a; }
+template <typename T, typename R> T max(T a, R b)
+{
+	return a < b ? b : a;
+}
 
-template <typename T, typename R>
-T min(T a, R b) { return !(b < a) ? a : b; }
+template <typename T, typename R> T min(T a, R b)
+{
+	return !(b < a) ? a : b;
+}
 
-template <typename T, typename R, typename E>
-T clamp(T a, R min, E max) {
-	if (a > max) return max;
-	if (a < min) return min;
+template <typename T, typename R, typename E> T clamp(T a, R min, E max)
+{
+	if(a > max) return max;
+	if(a < min) return min;
 	return a;
 }
 
-template <typename T>
-void approach(T& a, T b, Float rateOfChange) { a = clerp(a, b, rateOfChange); }
+template <typename T> void approach(T& a, T b, Float rateOfChange)
+{
+	a = clerp(a, b, rateOfChange);
+}

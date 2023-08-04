@@ -2,18 +2,21 @@
 
 #include "Game.hpp"
 
-struct MSDFTextRenderer : public GameRenderer {
-	void render(ResourceManager& resourceManager, Window& window, TiledRectangle area) override {
-		Renderer& renderer = window.renderer;
+struct MSDFTextRenderer : GameRenderer
+{
+	void update(Window& window) override;
+	void destroy(Window& window) override;
+	void inputEvent(Window& window, InputEvent input) override;
+	void create(ResourceManager& resourceManager, Window& window) override;
+	void render(ResourceManager& resourceManager, Window& window, TiledRectangle area) override;
+	void renderInteractive(ResourceManager& resourceManager, Window& window, TiledRectangle area) override;
+};
 
-		renderer.clearColor(Color(0, 0, 0, 1));
-		renderer.aspectCorrectNormalizedSpace();
+struct MSDFText
+{
+	UserInterface    ui;
+	ResourceManager  resourceManager;
+	MSDFTextRenderer msdfTextRenderer;
 
-		//renderer.fill(Color(1));
-		renderer.useShader(resourceManager, "msdfFont");
-		renderer.useTexture(resourceManager, "msdfFont");
-
-		renderer.uniforms().mMatrix(matrixFromLocationAndSize2D(Vec2(0), Vec2(2)));
-		renderer.renderMesh(resourceManager, "centeredPlane");
-	};
+	void run();
 };

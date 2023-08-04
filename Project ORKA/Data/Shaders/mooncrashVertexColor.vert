@@ -3,7 +3,6 @@
 
 #define PI 3.14159265359
 
-//output
 out vec3 vertexColor;
 
 void calculateDistortion2(inout vec3 location, inout vec3 normal){

@@ -25,36 +25,35 @@ void main(){
 	float coloredLight = fresnel + ambient + diffuse;
 	float externalLight = specular;
 	
-	//vec3 color = (worldCoordinate + texture(texture0, textureCoordinate).rgb)/2;
-	//vec3 color = texture(texture0, textureCoordinate).rgb;
-	//vec3 color = vec3(textureCoordinate,1);
+	// vec3 color = (worldCoordinate + texture(texture0, textureCoordinate).rgb)/2;
+	// vec3 color = texture(texture0, textureCoordinate).rgb;
+	// vec3 color = vec3(textureCoordinate,1);
 
-	//
 	fragmentColor = vec4((vec3(worldCoordinate.xy,0) + vertexPosition)/2,1.0f);
 
-	//draw phong lighting
-	//fragmentColor = vec4(color * vec3(coloredLight) + vec3(externalLight),1);
+	// draw phong lighting
+	// fragmentColor = vec4(color * vec3(coloredLight) + vec3(externalLight),1);
 
-	//draw lighting only
-	//fragmentColor = vec4(vec3(coloredLight) + vec3(externalLight),1);
+	// draw lighting only
+	// fragmentColor = vec4(vec3(coloredLight) + vec3(externalLight),1);
 
-	//draw worldLocation
-	//fragmentColor = vec4(worldCoordinate,1.0);
+	// draw worldLocation
+	// fragmentColor = vec4(worldCoordinate,1.0);
 
-	//draw normals
-	//fragmentColor  = vec4(normalize(normal),1.0f);
+	// draw normals
+	// fragmentColor  = vec4(normalize(normal),1.0f);
 
-	//draw vertexColor
-	//fragmentColor  = vec4(vertexColor,1.0f);
+	// draw vertexColor
+	// fragmentColor  = vec4(vertexColor,1.0f);
 
-	//draw uvs
-	//fragmentColor  = vec4(textureCoordinate,0.0f,1.0f);
+	// draw uvs
+	// fragmentColor  = vec4(textureCoordinate,0.0f,1.0f);
 
-	//draw lighting
-	//fragmentColor = vec4(vec3(lighting),1);
+	// draw lighting
+	// fragmentColor = vec4(vec3(lighting),1);
 	
-	//draw depth
-	//fragmentColor = vec4(vec3(depth/pow(2,worldOffset.w)),1);
+	// draw depth
+	// fragmentColor = vec4(vec3(depth/pow(2,worldOffset.w)),1);
 	
-	//fragmentColor = vec4(vec3(sqrt(vertexColor.z / pow(2,worldOffset.w))),1);
+	// fragmentColor = vec4(vec3(sqrt(vertexColor.z / pow(2,worldOffset.w))),1);
 };

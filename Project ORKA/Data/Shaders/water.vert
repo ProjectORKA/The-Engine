@@ -1,7 +1,6 @@
 
 //! #include "uniforms.glsl"
 
-//output
 out vec3 position;
 out vec2 textureCoordinate;
 

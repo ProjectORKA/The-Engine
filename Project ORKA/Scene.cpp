@@ -1,63 +1,65 @@
 #include "Scene.hpp"
-#include "Transform.hpp"
-
-using TReal = Float;
+#include "FileSystem.hpp"
 
 #include <assimp/Importer.hpp>
 #include <assimp/postprocess.h>
 #include <assimp/scene.h>
 
-void Scene::loadFBX(Path path, ResourceManager& resourceManager) {
-	//check if file is valid
+void Scene::loadFBX(Path path, ResourceManager& resourceManager)
+{
+	// check if file is valid
 	String errorMessage = "";
 
-	if (doesPathExist(getDirectory(path))) {
-		logEvent(
-			String("Loading mesh: (").append(path.stem().string()).append(") from (").append(path.string()).
-			                          append(")"));
+	if(doesPathExist(getDirectory(path)))
+	{
+		logDebug("Loading mesh: (" + path.stem().string() + ") from (" + path.string() + ")");
 
 		Assimp::Importer importer;
-		const aiScene* assimpScene = importer.ReadFile(path.string(),
-		                                               aiProcess_GenUVCoords |
-		                                               aiProcess_Triangulate |
-		                                               aiProcess_SortByPType |
-		                                               aiProcess_FindInvalidData |
-		                                               aiProcess_FindDegenerates |
-		                                               aiProcess_CalcTangentSpace |
-		                                               aiProcess_GenSmoothNormals |
-		                                               aiProcess_ImproveCacheLocality |
-		                                               aiProcess_ValidateDataStructure |
-		                                               aiProcess_JoinIdenticalVertices |
-		                                               aiProcess_RemoveRedundantMaterials |
-		                                               0
+		const aiScene*   assimpScene = importer.ReadFile(path.string(),
+		                                                 // aiProcess_GenUVCoords |
+		                                                 aiProcess_Triangulate | 0
+		                                                 // aiProcess_SortByPType |
+		                                                 // aiProcess_FindInvalidData |
+		                                                 // aiProcess_FindDegenerates |
+		                                                 // aiProcess_CalcTangentSpace |
+		                                                 // aiProcess_GenSmoothNormals |
+		                                                 // aiProcess_ImproveCacheLocality |
+		                                                 // aiProcess_ValidateDataStructure |
+		                                                 // aiProcess_JoinIdenticalVertices |
+		                                                 // aiProcess_RemoveRedundantMaterials
 		);
 
 		errorMessage = importer.GetErrorString();
-		if (errorMessage.empty()) {
-			if (assimpScene->HasMeshes()) {
-				for (Index objectId = 0; objectId < assimpScene->mRootNode->mNumChildren; objectId++) {
-					if (assimpScene->mRootNode->mChildren[objectId]->mNumMeshes > 0) {
-						//get all meshes of object
+		if(errorMessage.empty())
+		{
+			if(assimpScene->HasMeshes())
+				for(Index objectId = 0; objectId < assimpScene->mRootNode->mNumChildren; objectId++)
+				{
+					if(assimpScene->mRootNode->mChildren[objectId]->mNumMeshes > 0)
+					{
+						// get all meshes of object
 						UInt numMeshes = assimpScene->mRootNode->mChildren[objectId]->mNumMeshes;
 
-						CpuMesh mesh;
-						mesh.name = String(assimpScene->mRootNode->mChildren[objectId]->mName.C_Str());
+						CPUMesh mesh;
+						mesh.name = assimpScene->mRootNode->mChildren[objectId]->mName.C_Str();
 
 						UInt lastIndex = 0;
 
-						for (UInt objectsMeshId = 0; objectsMeshId < numMeshes; objectsMeshId++) {
+						for(UInt objectsMeshId = 0; objectsMeshId < numMeshes; objectsMeshId++)
+						{
 							Index meshId = assimpScene->mRootNode->mChildren[objectId]->mMeshes[objectsMeshId];
 
 							aiColor4D diffuseColor(0.0f, 0.0f, 0.0f, 0.0f);
-							aiGetMaterialColor(assimpScene->mMaterials[assimpScene->mMeshes[meshId]->mMaterialIndex],
-							                   AI_MATKEY_COLOR_DIFFUSE, &diffuseColor);
+							aiGetMaterialColor(assimpScene->mMaterials[assimpScene->mMeshes[meshId]->mMaterialIndex], AI_MATKEY_COLOR_DIFFUSE, &diffuseColor);
 
 							Vec3 color(diffuseColor.r, diffuseColor.g, diffuseColor.b);
 
 							logDebug(color);
 
-							if (assimpScene->mMeshes[meshId]->HasPositions()) {
-								for (UInt i = 0; i < assimpScene->mMeshes[meshId]->mNumVertices; i++) {
+							if(assimpScene->mMeshes[meshId]->HasPositions())
+							{
+								for(UInt i = 0; i < assimpScene->mMeshes[meshId]->mNumVertices; i++)
+								{
 									mesh.primitiveMode = PrimitiveMode::Triangles;
 
 									Vec3 vertex;
@@ -67,7 +69,8 @@ void Scene::loadFBX(Path path, ResourceManager& resourceManager) {
 									mesh.positions.push_back(vertex);
 
 									auto texCoord = Vec2(0);
-									if (assimpScene->mMeshes[meshId]->mTextureCoords[0]) {
+									if(assimpScene->mMeshes[meshId]->mTextureCoords[0])
+									{
 										texCoord.x = assimpScene->mMeshes[meshId]->mTextureCoords[0][i].x;
 										texCoord.y = assimpScene->mMeshes[meshId]->mTextureCoords[0][i].y;
 									}
@@ -82,45 +85,39 @@ void Scene::loadFBX(Path path, ResourceManager& resourceManager) {
 									mesh.vertexColors.push_back(color);
 								}
 
-								if (assimpScene->mMeshes[meshId]->HasFaces()) {
-									for (UInt i = 0; i < assimpScene->mMeshes[meshId]->mNumFaces; i++) {
-										for (UInt j = 0; j < assimpScene->mMeshes[meshId]->mFaces->mNumIndices; j++) {
-											//should always be 3 (0 -> 1 -> 2 <<)
-											Index index = lastIndex + assimpScene->mMeshes[meshId]->mFaces[i].mIndices[
-												j];
+								if(assimpScene->mMeshes[meshId]->HasFaces())
+									for(UInt i = 0; i < assimpScene->mMeshes[meshId]->mNumFaces; i++)
+									{
+										for(UInt j = 0; j < assimpScene->mMeshes[meshId]->mFaces->mNumIndices; j++)
+										{
+											// should always be 3 (0 -> 1 -> 2 <<)
+											Index index = lastIndex + assimpScene->mMeshes[meshId]->mFaces[i].mIndices[j];
 											mesh.indices.push_back(index);
 										}
 									}
-								}
 								else errorMessage = "Mesh does not have faces!";
 							}
-							else errorMessage = "Mesh does not have positions stored!";
+							else
+							{
+								errorMessage = "Mesh does not have positions stored!";
+							}
 
 							lastIndex += assimpScene->mMeshes[meshId]->mNumVertices;
 						}
 
-						if (!errorMessage.empty()) {
-							logError(
-								String("The model (").append(path.stem().string()).append(") could not be loaded! (").
-								                      append(path.string()).append(")").append(" Error: ").append(
-									                      errorMessage));
-							mesh.loaded = false;
-							break;
-						}
+						if(!errorMessage.empty()) logError("The model (" + path.stem().string() + ") could not be loaded! (" + path.string() + ") Error: " + errorMessage);
 						mesh.checkIntegrity();
 						mesh.saveMeshFile(resourceManager);
 						meshes.push_back(mesh);
 					}
 				}
-			}
 			else errorMessage = "No meshes in fbx scene!";
 		}
 	}
-	else { errorMessage = path.parent_path().string().append(" does not exist!"); }
-
-	if (!errorMessage.empty()) {
-		logError(
-			String("The model (").append(path.stem().string()).append(") could not be loaded! (").append(path.string()).
-			                      append(")").append(" Error: ").append(errorMessage));
+	else
+	{
+		errorMessage = path.parent_path().string() + " does not exist!";
 	}
+
+	if(!errorMessage.empty()) logError("The scene (" + path.stem().string() + ") could not be loaded! (" + path.string() + ") Error: " + errorMessage);
 }

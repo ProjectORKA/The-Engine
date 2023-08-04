@@ -24,12 +24,3 @@ void main() {
     float alpha = float(msd.a > 0);
     fragmentColor = mix(vec4(0,0,0,1), vec4(alpha), opacity);
 }
-
-
-//void main() {
-//    vec3 msd = texture(texture0, textureCoordinate).rgb;
-//    float sd = median(msd.r, msd.g, msd.b);
-//    float screenPxDistance = screenPxRange()*(sd - 0.5);
-//    float opacity = clamp(screenPxDistance + 0.5, 0.0, 1.0);
-//    fragmentColor = mix(vec4(0,0,0,1), vec4(1), opacity);
-//}

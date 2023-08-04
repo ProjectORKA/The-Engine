@@ -2,8 +2,17 @@
 
 #include "Basics.hpp"
 
-struct Message {
-	Index type = 0;
-	UInt byteSize = 0;
-	Vector<Byte> data;
+struct MessageHeader
+{
+	SizeT bufferSize = 0;
+};
+
+struct Message
+{
+	String                 data;
+	MessageHeader          header;
+	static constexpr SizeT headerLength = sizeof(MessageHeader);
+
+	Vector<Byte>   serialize();
+	static Message deserialize(const Vector<Byte>& buffer);
 };

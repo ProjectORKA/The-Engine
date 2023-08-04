@@ -1,87 +1,91 @@
 #pragma once
 
-#include "Memory.hpp"
 #include "Basics.hpp"
 #include "Math.hpp"
-#include "Debug.hpp"
 #include "Array2D.hpp"
-#include "FileSystem.hpp"
-#include "GraphicsAPI.hpp"
 #include "ResourceManager.hpp"
+#include "GraphicsAPI.hpp"
 
 struct Renderer;
 struct ResourceManager;
 
-enum class VertexDataLocation {
-	Position = 0,
-	Normals = 1,
+enum class VertexDataLocation
+{
+	Position           = 0,
+	Normals            = 1,
 	TextureCoordinates = 2,
-	Indices = 16,
+	Indices            = 16,
 };
 
-enum MeshData : Short {
-	Positions = 1,
+enum class MeshDataFlags : UShort
+{
+	Positions     = 1,
 	TextureCoords = 2,
-	Normals = 4,
-	Tangents = 8,
-	BiTangents = 16,
-	VertexColor = 32,
+	Normals       = 4,
+	Tangents      = 8,
+	BiTangents    = 16,
+	VertexColor   = 32,
 };
 
-struct CpuMesh {
-	Bool loaded = false;
-
-	Name name = "empty";
-	Short dataFlags = 0;
-	MeshDrawMode drawMode = MeshDrawMode::StaticMode;
+struct CPUMesh
+{
+	Name          name          = "empty";
+	BufferUsage   drawMode      = BufferUsage::StaticDraw;
 	PrimitiveMode primitiveMode = PrimitiveMode::Triangles;
-
-	Vector<Vec3> positions;
-	Vector<Vec2> textureCoordinates;
-	Vector<Vec3> normals;
-	Vector<Vec3> tangents;
-	Vector<Vec3> biTangents;
-	Vector<Vec3> vertexColors;
-
+	Vector<Vec3>  positions;
+	Vector<Vec2>  textureCoordinates;
+	Vector<Vec3>  normals;
+	Vector<Vec3>  tangents;
+	Vector<Vec3>  biTangents;
+	Vector<Vec3>  vertexColors;
 	Vector<Index> indices;
 
-	CpuMesh() = default;
-	~CpuMesh() = default;
-	explicit CpuMesh(const Graph& graph);
-
-	void clearGeometry();
-	void removeDoubles();
-	void checkIntegrity();
-	void move(Vec3 moveVector);
-	void merge(const CpuMesh& source);
-	void calculateSmoothNormals();
-	void render(Renderer& renderer) const;
-	void saveMeshFile(const ResourceManager& resourceManager);
-	void load(ResourceManager& resourceManager, Name name);
-	void meshFromHeightMap(Array2D<Float>& heightMap, UInt size);
-
+	CPUMesh();
+	void               clearGeometry();
+	void               removeDoubles();
+	void               checkIntegrity();
+	void               move(Vec3 moveVector);
+	void               calculateSmoothNormals();
+	void               merge(const CPUMesh& source);
+	[[nodiscard]] Bool isLoaded() const;
+	explicit           CPUMesh(const Graph& graph);
+	void               render(Renderer& renderer) const;
+	[[nodiscard]] Bool hasNormals() const;
+	[[nodiscard]] Bool hasTangents() const;
+	[[nodiscard]] Bool hasPositions() const;
+	[[nodiscard]] Bool hasBiTangents() const;
+	[[nodiscard]] Bool hasVertexColors() const;
+	[[nodiscard]] Bool hasTextureCoordinates() const;
+	void               load(ResourceManager& resourceManager, Name name);
+	void               saveMeshFile(const ResourceManager& resourceManager);
+	void               meshFromHeightMap(Array2D<Float>& heightMap, UInt size);
 private:
+	Bool   loaded    = false;
+	UShort dataFlags = 0;
+
 	void calculateSmoothNormalsForTriangleMesh();
 	void calculateSmoothNormalsForTriangleStrip();
 };
 
-struct MeshHeader1 {
-	UInt version = 1;
-	Name meshName = "";
+struct MeshHeader1
+{
+	UInt          version       = 1;
+	Name          meshName      = "";
 	PrimitiveMode primitiveMode = PrimitiveMode::Triangles;
-	UInt vertexCount = 0;
-	UInt uvCount = 0;
-	UInt normalCount = 0;
-	UInt indexCount = 0;
+	UInt          vertexCount   = 0;
+	UInt          uvCount       = 0;
+	UInt          normalCount   = 0;
+	UInt          indexCount    = 0;
 };
 
-struct MeshHeader2 {
-	UInt version = 2;
-	Name meshName = "";
+struct MeshHeader2
+{
+	UInt          version       = 2;
+	Name          meshName      = "";
 	PrimitiveMode primitiveMode = PrimitiveMode::Triangles;
-	UInt vertexCount = 0;
-	UInt uvCount = 0;
-	UInt normalCount = 0;
-	UInt colorCount = 0;
-	UInt indexCount = 0;
+	SizeT         vertexCount   = 0;
+	SizeT         uvCount       = 0;
+	SizeT         normalCount   = 0;
+	SizeT         colorCount    = 0;
+	SizeT         indexCount    = 0;
 };

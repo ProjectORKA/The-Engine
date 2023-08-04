@@ -5,7 +5,8 @@
 
 struct Renderer;
 
-struct RectangleRenderer {
+struct RectangleRenderer
+{
 	Index rectangleMeshId = -1;
 
 	void create(ResourceManager& resourceManager, Renderer& renderer);

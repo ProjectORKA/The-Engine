@@ -1,29 +1,31 @@
 #include "SimpleRTSTerrain.hpp"
+#include "PerlinNoise.hpp"
 
-void SimpleRTSTerrainRenderingSystem::create(ResourceManager& resourceManager) {
+void SimpleRTSTerrainRenderingSystem::render(Renderer& renderer) const
+{
+	renderer.uniforms().setMMatrix(matrixFromLocation(offset));
+	gpuTerrain.render(renderer.uniforms());
+}
+
+void SimpleRTSTerrainRenderingSystem::create(ResourceManager& resourceManager)
+{
 	cpuTerrain.load(resourceManager, "simplertsTerrain");
 	gpuTerrain.upload(cpuTerrain);
 }
 
-void SimpleRTSTerrainRenderingSystem::render(Renderer& renderer) {
-	renderer.uniforms().mMatrix(matrixFromLocation(offset));
-	gpuTerrain.render(renderer.uniforms());
-}
-
-Float SimpleRTSTerrainSystem::simpleRTSTerrainFunction(const Vec2 position) {
-	const Float height = 15 * noise.octaveNoise0_1(position.x, position.y, 16);
-	//logDebug(height);
+Float SimpleRTSTerrainSystem::simpleRTSTerrainFunction(const Vec2 position) const
+{
+	const Float height = 15.0f * static_cast<Float>(noise.octaveNoise0_1(position.x, position.y, 16.0f));
 	return height;
 }
 
-void SimpleRTSTerrainRenderingSystem::update(SimpleRTSTerrainSystem& terrainSystem, const Vec2 cameraPos) {
+void SimpleRTSTerrainRenderingSystem::update(const SimpleRTSTerrainSystem& terrainSystem, const Vec2 cameraPos)
+{
 	offset = cameraPos;
 
-	const Float size = 100;
+	constexpr Float size = 100;
 
-	for (Vec3& v : cpuTerrain.positions) {
-		v.z = terrainSystem.simpleRTSTerrainFunction((offset + Vec2(v.x, v.y)) / size);
-	}
+	for(Vec3& v : cpuTerrain.positions) v.z = terrainSystem.simpleRTSTerrainFunction((offset + Vec2(v.x, v.y)) / size);
 
 	cpuTerrain.calculateSmoothNormals();
 

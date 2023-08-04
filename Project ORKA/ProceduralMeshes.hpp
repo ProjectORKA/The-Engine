@@ -1,8 +1,8 @@
 #pragma once
 
 #include "Basics.hpp"
-#include "CpuMesh.hpp"
+#include "CPUMesh.hpp"
 
-void proceduralWireframeAxisLines(CpuMesh& cpuMesh);
-void proceduralPlaneMesh(CpuMesh& cpuMesh, Float width, Float height);
-void proceduralWireframeCubeMesh(CpuMesh& cpuMesh, Float size, Float size2);
+void proceduralWireframeAxisLines(CPUMesh& cpuMesh);
+void proceduralPlaneMesh(CPUMesh& cpuMesh, Float width, Float height);
+void proceduralWireframeCubeMesh(CPUMesh& cpuMesh, Float size, Float size2);

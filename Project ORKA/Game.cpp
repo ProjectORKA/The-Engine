@@ -1,24 +1,69 @@
 #include "Game.hpp"
 
-void gameSimulationThread(GameSimulation& sim) {
-	TimePoint t;
-	logDebug("Game simulation started!");
-	while (sim.keepRunning) {
-		t = Clock::now() + Milliseconds(static_cast<Int>(1000.0f / sim.tickRate));
-		sim.update(1.0f / sim.tickRate);
-		sleepUntil(t);
+void GameSimulation::stop()
+{
+	if(loaded)
+	{
+		logDebug("Stopping game simulation thread!");
+		keepRunning = false;
+		destroy();
+		loaded = false;
+		thread.join();
 	}
-	logDebug("Game simulation stopped!");
+	else
+	{
+		logError("Simulation not initialized!");
+	}
 }
 
-void GameSimulation::start(ResourceManager& resourceManager) {
-	logDebug("Starting game simulation thread!");
-	keepRunning = true;
-	thread = Thread(gameSimulationThread, std::ref(*this));
+GameSimulation::~GameSimulation() = default;
+
+Bool GameSimulation::isLoaded() const
+{
+	return loaded;
 }
 
-void GameSimulation::stop() {
-	logDebug("Stopping game simulation thread!");
-	keepRunning = false;
-	thread.join();
+Float GameSimulation::getTickRate() const
+{
+	return tickRate;
+}
+
+Bool GameSimulation::getKeepRunning() const
+{
+	return keepRunning;
+}
+
+void gameSimulationThread(GameSimulation& sim)
+{
+	if(sim.isLoaded())
+	{
+		logDebug("Game simulation started!");
+		while(sim.getKeepRunning())
+		{
+			TimePoint t = Clock::now() + Milliseconds(static_cast<Int>(1000.0f / sim.getTickRate()));
+			sim.update(1.0f / sim.getTickRate());
+			sleepUntil(t);
+		}
+		logDebug("Game simulation stopped!");
+	}
+	else
+	{
+		logError("Simulation not initialized!");
+	}
+}
+
+void GameSimulation::start(ResourceManager& resourceManager)
+{
+	if(!loaded)
+	{
+		create(resourceManager);
+		loaded = true;
+		logDebug("Starting game simulation thread!");
+		keepRunning = true;
+		thread      = Thread(gameSimulationThread, std::ref(*this));
+	}
+	else
+	{
+		logError("Simulation already initialized!");
+	}
 }

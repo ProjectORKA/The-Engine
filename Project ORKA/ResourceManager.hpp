@@ -6,38 +6,43 @@
 // TODO
 // add file watcher that reloads resources if they were changed
 
-struct ResourceManager {
-	Bool initialized = false;
+struct ResourceManagerConfig
+{
+	FileTime lastTimeFbxWasEdited;
+	UInt     lastNumberOfFbxFiles;
+};
 
+struct ResourceManager
+{
 	void create();
 	void reloadAllResources();
 	void addResource(const Path& path);
 	void loadResourcesFromFbxFiles();
 
-	Path getOrkaDataLocation() const;
-	Path getOrkaCacheLocation() const;
-	Path getOrkaCachedMeshLocation() const;
-	Path getResourceManagerConfigPath() const;
+	[[nodiscard]] Path getOrkaDataLocation() const;
+	[[nodiscard]] Path getOrkaCacheLocation() const;
+	[[nodiscard]] Path getOrkaCachedMeshLocation() const;
+	[[nodiscard]] Path getResourceManagerConfigPath() const;
 
-	Bool hasMeshResource(const Name& name) const;
-	Bool hasTextureResource(const Name& name) const;
-	Bool hasVertexShaderResource(const Name& name) const;
-	Bool hasFragmentShaderResource(const Name& name) const;
+	[[nodiscard]] Bool hasMeshResource(const Name& name) const;
+	[[nodiscard]] Bool hasTextureResource(const Name& name) const;
+	[[nodiscard]] Bool hasVertexShaderResource(const Name& name) const;
+	[[nodiscard]] Bool hasFragmentShaderResource(const Name& name) const;
 
-	Path getMeshResourcePath(const Name& name);;
-	Path getTextureResourcePath(const Name& name);;
-	Path getVertexShaderResourcePath(const Name& name);;
-	Path getFragmentShaderResourcePath(const Name& name);;
-
+	Path getMeshResourcePath(const Name& name);
+	Path getTextureResourcePath(const Name& name);
+	Path getVertexShaderResourcePath(const Name& name);
+	Path getFragmentShaderResourcePath(const Name& name);
 private:
-	//paths
+	Bool initialized = false;
+	// paths
 	Path orkaLocation;
 	Path orkaDataLocation;
 	Path orkaCacheLocation;
 	Path orkaCachedMeshLocation;
 	Path resourceManagerConfigPath;
 
-	//resources
+	// resources
 	Map<Name, Path> meshResources;
 	Map<Name, Path> textureResources;
 	Map<Name, Path> vertexShaderResources;

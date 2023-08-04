@@ -34,7 +34,7 @@ vec3 filmicToneMappingWithGamma(vec3 color)
 void main(){
     vec3 orig = vec4(texture(texture0,textureCoordinate)).xyz;
 
-	//color correction
+	// color correction
 	float exposure = 1;
 	float brightness = 0.0;
 	float contrast = 1.05;
@@ -60,14 +60,14 @@ void main(){
 	vec3 color3 = filmicToneMappingWithGamma(colorCorrected);
 //	vec3 color4 = 1.2 * pow(ACESFilm(colorCorrected),vec3(1.8));
 //	vec3 color5 = 1.2 * pow(Unreal3(colorCorrected),vec3(1.8));
-
-	//split screen
+	vec3 color6 = pow(filmicToneMappingWithGamma(colorCorrected),vec3(1.6f));
+	// split screen
 //	if(textureCoordinate.x < 0.25)	fragmentColor = vec4(color1, 1);
 //	else if(textureCoordinate.x < 0.5) fragmentColor = vec4(color2, 1);
 //	else if(textureCoordinate.x < 0.75) fragmentColor = vec4(color3, 1);
 //	else fragmentColor = vec4(color4, 1);
 
-	vec3 outColor = clamp(color3,0,1);
+	vec3 outColor = clamp(color6,0,1);
 
 	fragmentColor = vec4(outColor, 1);
 };

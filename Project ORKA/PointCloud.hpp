@@ -4,16 +4,18 @@
 #include "GPUMesh.hpp"
 
 struct Renderer;
-struct CpuMesh;
+struct CPUMesh;
 
-struct PointCloud {
+struct PointCloud
+{
 	Vector<Vec3> points;
-	void add(Vec3 point);
+	void         add(Vec3 point);
 };
 
-struct PointCloudRenderer {
-	GpuMesh gpuMesh;
-	UInt pointCloudSize = 0;
-	void update(PointCloud& pointCloud);
-	void render(PointCloud& pointCloud, Renderer& renderer);
+struct PointCloudRenderer
+{
+	GPUMesh gpuMesh;
+	UInt    pointCloudSize = 0;
+	void    update(PointCloud& pointCloud);
+	void    render(PointCloud& pointCloud, Renderer& renderer);
 };

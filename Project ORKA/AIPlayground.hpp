@@ -2,13 +2,27 @@
 
 #include "Game.hpp"
 #include "NeuralNetwork.hpp"
-#include "Random.hpp"
 
 struct Window;
 
-struct AIPlayground : public GameRenderer {
-	NeuralNet network;
+struct AIPlaygroundRenderer : GameRenderer
+{
+	Framebuffer framebuffer;
+	NeuralNet   network = NeuralNet({9, 15, 16, 5, 3});
 
-	AIPlayground();
+	void update(Window& window) override;
+	void destroy(Window& window) override;
+	void inputEvent(Window& window, InputEvent input) override;
+	void create(ResourceManager& resourceManager, Window& window) override;
 	void render(ResourceManager& resourceManager, Window& window, TiledRectangle area) override;
+	void renderInteractive(ResourceManager& resourceManager, Window& window, TiledRectangle area) override;
+};
+
+struct AIPlayground
+{
+	UserInterface        ui;
+	ResourceManager      resourceManager;
+	AIPlaygroundRenderer sandboxRenderer;
+
+	void run();
 };

@@ -14,14 +14,15 @@ using FHours = std::chrono::duration<float, std::chrono::hours::period>;
 TimePoint now();
 
 // a timer that can keep track of certain things, like delta from one update to the other or total execution time
-struct Time {
-	Bool paused = false;
+struct Time
+{
 	TimePoint lastTime;
 	TimePoint currentTime;
-	Duration deltaDuration = Duration(0);
-	Duration totalDuration = Duration(0);
-	Float delta = 0.0f;
-	Float total = 0.0f;
+	Bool      paused        = false;
+	Float     delta         = 0.0f;
+	Float     total         = 0.0f;
+	Duration  deltaDuration = Duration(0);
+	Duration  totalDuration = Duration(0);
 
 	void reset();
 	void pause();
@@ -30,17 +31,18 @@ struct Time {
 };
 
 // a simple timer that can measure the time between execution of start and stop
-struct Timer {
-	TimePoint startTP;
+struct Timer
+{
 	TimePoint stopTP;
-	Duration deltaDuration = Duration(0);
-	Float delta = 0.0f;
+	TimePoint startTP;
+	Float     delta         = 0.0f;
+	Duration  deltaDuration = Duration(0);
 
-	void start();
 	void stop();
+	void start();
 };
 
 // puts threads to sleep for a certain amount of time
 void sleep();
-void sleep(UInt millseconds);
+void sleep(UInt milliseconds);
 void sleepUntil(const TimePoint& t);

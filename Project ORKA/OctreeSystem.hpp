@@ -1,14 +1,15 @@
 #pragma once
 
-#include "OcTreeNode.hpp"
+#include "OctreeNode.hpp"
 
-struct QuadTreeSystem;
+struct QuadtreeSystem;
 
-struct OcTreeSystem {
-	OcTreeNode* root = nullptr;
+struct OctreeSystem
+{
+	OctreeNode* root = nullptr;
 
+	void destroy();
 	void count() const;
 	void update() const;
-	void destroy();
-	void create(const QuadTreeSystem& quadTreeSystem);
+	void create(const QuadtreeSystem& quadTreeSystem);
 };

@@ -1,7 +1,6 @@
 
 //! #include "uniforms.glsl"
 
-//output
 out vec3 dir; 
 
 void main(){

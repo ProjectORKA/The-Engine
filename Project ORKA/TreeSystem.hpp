@@ -2,30 +2,30 @@
 
 #include "Basics.hpp"
 #include "Random.hpp"
-#include "Math.hpp"
 #include "PointCloud.hpp"
 #include "BranchStructure.hpp"
 
 struct Renderer;
 
-void treeGeneration(Vector<Vec3>& leaves, Vector<Vec3>& branches, Vector<Index>& connections, Float segmentSize,
-                    Float killRadius, Float leafPull);
+void treeGeneration(Vector<Vec3>& leaves, Vector<Vec3>& branches, Vector<Index>& connections, Float segmentSize, Float killRadius, Float leafPull);
 
-struct TreeGenerator {
-	Bool treeGen = false;
-
-	PointCloud leaves;
-	PointCloud branches;
+struct TreeGenerator
+{
 	BranchStructure tree;
+	PointCloud      leaves;
+	PointCloud      branches;
+	Bool            treeGen = false;
 
 	void run();
 	void render(Renderer& renderer);
 };
 
-struct Tree {
+struct Tree
+{
 	Vec3 position = Vec3(randomFloat(), randomFloat(), randomFloat());
 };
 
-struct TreeSystem {
+struct TreeSystem
+{
 	Vector<Tree> trees;
 };

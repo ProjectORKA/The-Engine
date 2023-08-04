@@ -2,6 +2,7 @@
 
 #include "TerrainSystem.hpp"
 
-struct QuadtreeData {
+struct QuadtreeData
+{
 	Terrain* terrain = nullptr;
 };

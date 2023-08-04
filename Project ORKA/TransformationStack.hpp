@@ -2,11 +2,12 @@
 
 #include "Basics.hpp"
 
-struct TransformationStack {
+struct TransformationStack
+{
 	Vector<Matrix> matrices;
 
-	Matrix get() const;
-	void popMatrix();
-	void pushMatrix(const Matrix& matrix);
-	void overridePush(const Matrix& matrix);
+	[[nodiscard]] Matrix get() const;
+	void                 popMatrix();
+	void                 pushMatrix(const Matrix& matrix);
+	void                 overridePush(const Matrix& matrix);
 };

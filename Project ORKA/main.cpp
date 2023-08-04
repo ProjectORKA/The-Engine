@@ -38,63 +38,80 @@
 //		keyboard input
 //		window events
 // filesystem
-//		meshimport
+//		mesh import
 //		texture loading
 // easy to use algorithms
 // multiple window support
 
+#include "AIPlayground.hpp"
+#include "DungeonsAndDiscord.hpp"
+#include "FlappyBird.hpp"
+#include "MindMapper.hpp"
+#include "GPUSim.hpp"
+#include "GuessingGame.hpp"
+#include "Hello Triangle.hpp"
+#include "ImageViewer.hpp"
+#include "ImguiExample.hpp"
+#include "MoonCrash.hpp"
+#include "MSDFText.hpp"
+#include "NameGenerator.hpp"
+#include "Organizer.hpp"
+#include "PhysicsPlayground.hpp"
+#include "Pong.hpp"
+#include "ProjectMelon.hpp"
+#include "RedDotHack.hpp"
+#include "Sandbox.hpp"
+#include "SDFRenderer.hpp"
+#include "SimpleRTS.hpp"
+#include "Snake.hpp"
+#include "TripleNine.hpp"
+#include "UISandbox.hpp"
+
 //#include "Basics.hpp"
 //#include "Debug.hpp"
 //#include "RedDotHack.hpp"
-#include "TripleNine.hpp"
 //#include "Pong.hpp"
 //#include "SimpleRTS.hpp"
-//#include "DungeonsAndDiscord.hpp"
 //#include "MoonCrash.hpp"
 //#include "SceneSystem.hpp"
-//#include "Blob.hpp"
 //#include "SimpleRTS.hpp"
 //#include "ProjectMelon.hpp"
 //#include "PhysicsPlayground.hpp"
 //#include "ImageViewer.hpp"
-//#include "MindMapper.hpp"
 //#include "Organizer.hpp"
+//#include "Hello Triangle.hpp"
+//#include "Sandbox.hpp"
+//#include "TripleNine.hpp"
 
-//[TODO] move advanced rendering systems like textRenderSystem out of renderer and into window
-//(basically simplify renderer to bare bones tech)
-//OR separate into renderer and lowLevelRenderer
+// [TODO] use modern (bindless) opengl
+// [TODO] replace old opengl calls with new ones
+// [TODO] comment all functions that are not inside the opengl classes
+// [TODO] remove opengl from all other code
+// [TODO] implement opengl functionality into GPUTexture
+// [TODO] implement opengl logger into all opengl functions
+// [TODO] fix invalid texture bug
+// [TODO] fix vertex shader recompilation
+// [TODO] test all image extensions for functionality
+// [TODO] fix the ORKA icon being upside down
+// [TODO] fix filters
+// [TODO] move advanced rendering systems like textRenderSystem out of renderer and into window
+// (basically simplify renderer to bare bones rendering tech)
+// OR separate into renderer and lowLevelRenderer
+// [TODO] remove Name and NameTable and replace it with Hash and HashTable
+// [TODO] use OpenGl enums to ensure type safety
+// [TODO] remove old thread system
 
-//[TODO] there is a bug where the window size is not set properly
-
-//[TODO] remove Name and NameTable and replace it with Hash and HashTable
-
-//[TODO] make sure all OpenGl enums are there to ensure type safety
-
-//[TODO] remove old thread system
-
-#include "Networking.hpp"
-
-Int main(Int argc, Char* argv[])
+Int main(const Int argc, Char* argv[])
 {
-	//TripleNine game;
-	//game.run();
+	UISandbox game;
+	game.run();
 
+	Scene s;
 
-	std::cout << "Do you want to host a server? (y/n)" << std::endl;
-
-	if(std::cin.get() == 'y')
-	{
-		server();
-	}
-	else
-	{
-		client();
-	}
-
-	system("pause");
+	//cheatTest();
 }
 
-//windows entry point
+// windows entry point
 #include "Platform.hpp"
 
 Int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, Int nShowCmd)

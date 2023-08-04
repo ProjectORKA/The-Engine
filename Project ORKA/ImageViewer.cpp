@@ -1,53 +1,6 @@
 #include "ImageViewer.hpp"
+#include "FileSystem.hpp"
 #include "FileTypes.hpp"
-#include "System.hpp"
-
-ImageViewer::ImageViewer(const Int argc, Char* argv[])
-{
-	//file management
-	Path currentPath = getDirectory(std::filesystem::current_path());
-	Vector<Path> filePaths;
-
-	// process parameters
-	for(Index i = 0; i < argc; i++)
-	{
-		Path path = argv[i];
-		if(isExecutableFile(path))
-		{
-			executablePath = getDirectory(path);
-			current_path(executablePath);
-		}
-		else
-		{
-			if(isImageFile(path))
-			{
-				filePaths.push_back(path);
-			}
-			else
-			{
-				logWarning(String("Can't process input: ").append(path.string()));
-			}
-		}
-	}
-
-	ui.create();
-
-	logDebug(executablePath);
-
-	resourceManager.create();
-
-	Window& w = ui.window("ORKA Image Viewer", Area(1920, 1080), true, WindowState::Maximized, renderer, resourceManager);
-
-	for(auto& path : filePaths)
-	{
-		if(isImageFile(path))
-		{
-			w.droppedFilePaths.push_back(path);
-		}
-	}
-
-	ui.run();
-}
 
 void ImageViewerResource::destroy()
 {
@@ -55,20 +8,53 @@ void ImageViewerResource::destroy()
 	gpuTexture.unload();
 }
 
-void ImageViewerResource::calculateRating(const Index currentImageIndex, const UInt resourceCount)
+Path& ImageViewerResource::getPath()
 {
-	const Float b = resourceCount;
-	const Float a = currentImageIndex;
-	const Float x = index;
-	const Float diff_a_x = abs(a - x);
-	priority = b / 2.0 - min(abs(a - x - b), min(diff_a_x, abs(a - x + b)));
+	return path;
 }
 
 void ImageViewerRenderer::updateZoom()
 {
 	const Float oldZoom = zoom;
-	zoom = pow(zoomfactor, zoomLevel);
+	zoom                = powf(zoomFactor, static_cast<Float>(zoomLevel));
 	offset *= zoom / oldZoom;
+}
+
+void ImageViewerResource::loadOntoGpu()
+{
+	gpuTexture.load(cpuTexture);
+}
+
+void ImageViewerResource::loadIntoRam()
+{
+	cpuTexture.load(path, getFileName(path), Filter::Nearest, Filter::Linear, Wrapping::Clamped);
+	if(!cpuTexture.isLoaded()) loadAttemptFailed = true;
+}
+
+void ImageViewerRenderer::removeImage()
+{
+	images.erase(images.begin() + currentImageId);
+	if(currentImageId >= images.size()) currentImageId--;
+}
+
+Bool ImageViewerResource::inRam() const
+{
+	return cpuTexture.isLoaded();
+}
+
+Bool ImageViewerResource::onGpu() const
+{
+	return gpuTexture.isLoaded();
+}
+
+void ImageViewerResource::unloadFromGpu()
+{
+	gpuTexture.unload();
+}
+
+void ImageViewerResource::unloadFromRam()
+{
+	cpuTexture.unload();
 }
 
 void ImageViewerRenderer::showNextImage()
@@ -78,8 +64,94 @@ void ImageViewerRenderer::showNextImage()
 	{
 		lastImageRefresh = currentTime;
 		currentImageId++;
-		if(currentImageId >= images.size()) currentImageId = 0;
+		if(currentImageId >= static_cast<Int>(images.size())) currentImageId = 0;
 	}
+}
+
+void ImageViewerRenderer::preLoadImages()
+{
+	// load resources
+	calculatePriorities();
+
+	// if there are images
+	if(!images.empty())
+	{
+		// get vector of indices sorted by priority
+		Vector<Index> sortedIndices = indicesOfImagesSortedByPriority();
+
+		// make sure were not loading more than we can
+		if(sortedIndices.size() > cpuMaxPreLoadCount) sortedIndices.resize(cpuMaxPreLoadCount);
+
+		// load images
+		for(UInt order = 0; order < sortedIndices.size(); order++)
+		{
+			// get the image index by sorted order
+			const Index          currentImageIndex = sortedIndices[order];
+			ImageViewerResource& img               = images[currentImageIndex];
+
+			// load all images within the pre load range but unload the rest
+			if(order <= cpuMaxPreLoadCount)
+			{
+				// image is in cpu pre load range
+
+				if(!img.inRam())
+				{
+					img.loadIntoRam();
+					if(img.inRam()) gpuLoadedCount++;
+				}
+
+				if(order < gpuMaxPreLoadCount)
+				{
+					// image is in gpu pre load range
+					if(!img.onGpu())
+					{
+						img.loadOntoGpu();
+						if(img.onGpu()) gpuLoadedCount++;
+					}
+				}
+				else
+				{
+					// image not in gpu pre load range, so unload it
+					if(img.onGpu())
+					{
+						img.unloadFromGpu();
+						gpuLoadedCount--;
+					}
+				}
+			}
+			else
+			{
+				// image outside load range
+
+				if(img.onGpu())
+				{
+					img.unloadFromGpu();
+					gpuLoadedCount--;
+					logDebug(gpuLoadedCount);
+				}
+
+				if(img.inRam())
+				{
+					img.unloadFromRam();
+					cpuLoadedCount--;
+					logDebug(cpuLoadedCount);
+				}
+			}
+		}
+	}
+
+	// if (cpuLoadedCount >= cpuMaxPreLoadCount - 1)
+	// {
+	//	if (cpuMaxPreLoadCount < images.size())
+	//	{
+	//		if (availablePhysicalMemory() > 512 * 1024 * 1024)
+	//		{
+	//			cpuMaxPreLoadCount++;
+	//			gpuMaxPreLoadCount = cpuMaxPreLoadCount;
+	//			logDebug(cpuMaxPreLoadCount);
+	//		}
+	//	}
+	// }
 }
 
 void ImageViewerRenderer::showPrevImage()
@@ -93,82 +165,82 @@ void ImageViewerRenderer::showPrevImage()
 	}
 }
 
-void ImageViewerRenderer::loadGPUResource()
+Int ImageViewerResource::getWidth() const
 {
-	if(! images.empty())
-	{
-		//if max loaded image count is reached
-		if(gpuLoadedCount >= gpuMaxPreloadCount)
-		{
-			unloadGPUImageWithLowestPriority();
-		}
+	return cpuTexture.getWidth();
+}
 
-		//if there are images available to load into ram and we still have space
-		if(gpuLoadedCount <= min(gpuMaxPreloadCount, images.size()))
-		{
-			loadGPUImageWithHighestPriority();
-		}
+Int ImageViewerResource::getHeight() const
+{
+	return cpuTexture.getHeight();
+}
+
+void ImageViewerRenderer::loadGpuResource()
+{
+	if(!images.empty())
+	{
+		// if max loaded image count is reached
+		if(gpuLoadedCount >= gpuMaxPreLoadCount) unloadGpuImageWithLowestPriority();
+
+		// if there are images available to load into ram and we still have space
+		if(gpuLoadedCount <= min(gpuMaxPreLoadCount, images.size())) loadGpuImageWithHighestPriority();
 	}
 }
 
-void ImageViewerRenderer::loadCPUResource()
+void ImageViewerRenderer::loadCpuResource()
 {
-	if(! images.empty())
+	if(!images.empty())
 	{
-		//if max loaded image count is reached
-		if(cpuLoadedCount >= cpuMaxPreloadCount)
-		{
-			unloadCPUImageWithLowestPriority();
-		}
+		// if max loaded image count is reached
+		if(cpuLoadedCount >= cpuMaxPreLoadCount) unloadCpuImageWithLowestPriority();
 
-		//if there are images available to load into ram and we still have space
-		if(cpuLoadedCount <= min(cpuMaxPreloadCount, images.size()))
-		{
-			loadCPUImageWithHighestPriority();
-		}
+		// if there are images available to load into ram and we still have space
+		if(cpuLoadedCount <= min(cpuMaxPreLoadCount, images.size())) loadCpuImageWithHighestPriority();
 	}
+}
+
+Float ImageViewerResource::getPriority() const
+{
+	return priority;
 }
 
 void ImageViewerRenderer::calculatePriorities()
 {
-	for(auto& image : images)
-	{
-		image.calculateRating(currentImageId, images.size());
-	}
+	for(auto& image : images) image.calculateRating(currentImageId, images.size());
 }
 
 void ImageViewerRenderer::update(Window& window)
 {
-	//load new images if dropped
-	if(! window.droppedFilePaths.empty())
+	// load new images if dropped
+	if(!window.droppedFilePaths.empty())
 	{
-		//image path to load folder from
+		// image path to load folder from
 		Path imagePath = "";
 
-		//check for new paths
+		// check for new paths
 		for(auto p : window.droppedFilePaths)
 		{
-			//get last path that is actually an image
+			// get last path that is actually an image
 			if(isImageFile(p)) imagePath = p;
 		}
 
-		//clear queue
+		// clear queue
 		window.droppedFilePaths.clear();
 
-		//only if there is a valid image should we reload resources
+		// only if there is a valid image should we reload resources
 		if(imagePath != "")
 		{
-			//delete currently loaded resource
+			// delete currently loaded resource
 			for(auto i : images) i.destroy();
 			images.clear();
 
-			//get folder
+			// get folder
 			Path folderPath = getDirectory(imagePath);
 
-			//get all images in folder
+			// get all images in folder
 			Vector<Path> paths = getFilesInDirectory(folderPath, imageExtensions);
 
-			//set current index to the originally loaded image
+			// set current index to the originally loaded image
 			for(Index i = 0; i < paths.size(); i++)
 			{
 				if(paths[i] == imagePath)
@@ -178,88 +250,219 @@ void ImageViewerRenderer::update(Window& window)
 				}
 			}
 
-			//set images to new paths
+			// set images to new paths
 			for(Index i = 0; i < paths.size(); i++)
 			{
-				ImageViewerResource image;
-				image.path = paths[i];
-				image.index = i;
+				ImageViewerResource image(paths[i], i);
 				images.push_back(image);
 			}
 		}
 	}
 
-	//input
-	if(window.pressed(mouseDown))
-	{
-		offset += window.mouseDelta;
-	}
+	// input
+	if(window.pressed(mouseDown)) offset += window.mouseDelta;
 
-	if(window.pressed(nextImageHolding) || window.pressed(nextImageHoldingMouse))
-	{
-		if(now() > lastButtonInput + Milliseconds(static_cast<Int>(1000 * holdingDelay))) showNextImage();
-	}
+	if(window.pressed(nextImageHolding) || window.pressed(nextImageHoldingMouse)) if(now() > lastButtonInput + Milliseconds(static_cast<Int>(1000 * holdingDelay))) showNextImage();
 
-	if(window.pressed(previousImageHolding) || window.pressed(previousImageHoldingMouse))
-	{
-		if(now() > lastButtonInput + Milliseconds(static_cast<Int>(1000 * holdingDelay))) showPrevImage();
-	}
+	if(window.pressed(previousImageHolding) || window.pressed(previousImageHoldingMouse)) if(now() > lastButtonInput + Milliseconds(static_cast<Int>(1000 * holdingDelay))) showPrevImage();
 }
 
-void ImageViewerRenderer::loadGPUImageWithHighestPriority()
+void ImageViewerRenderer::destroy(Window& window)
 {
-	if(! images.empty())
+	// resourceLoaderThreads.waitStop();
+}
+
+void ImageViewer::run(const Int argc, Char* argv[])
+{
+	// file management
+	Path         currentPath = getCurrentPath();
+	Vector<Path> filePaths;
+	// process parameters
+	for(Int i = 0; i < argc; i++)
 	{
-		const Index imageId = indexOfGPUImageWithHighestPriority();
-		images[imageId].gpuTexture.load(images[imageId].cpuTexture);
-		if(images[imageId].gpuTexture.loaded) gpuLoadedCount++;
+		if(Path path = argv[i]; isExecutableFile(path))
+		{
+			executablePath = getDirectory(path);
+			setCurrentPath(executablePath);
+		}
+		else
+		{
+			if(isImageFile(path)) filePaths.push_back(path);
+			else logWarning("Can't process input: " + path.string());
+		}
+	}
+	ui.create();
+	logDebug(executablePath);
+	resourceManager.create();
+	Window& w = ui.window("ORKA Image Viewer", Area(1920, 1080), true, true, WindowState::Maximized, renderer, resourceManager);
+	for(auto& path : filePaths) if(isImageFile(path)) w.droppedFilePaths.push_back(path);
+	ui.run();
+}
+
+Bool ImageViewerResource::hasLoadAttemptFailed() const
+{
+	return loadAttemptFailed;
+}
+
+void ImageViewerResource::use(const Int textureSlot) const
+{
+	gpuTexture.useTextureInSlot(textureSlot);
+}
+
+void ImageViewerRenderer::loadGpuImageWithHighestPriority()
+{
+	if(!images.empty())
+	{
+		const Index imageId = indexOfGpuImageWithHighestPriority();
+
+		images[imageId].loadOntoGpu();
+		if(images[imageId].onGpu()) gpuLoadedCount++;
 		else logError("Image could not be loaded!");
 	}
 }
 
-void ImageViewerRenderer::loadCPUImageWithHighestPriority()
+void ImageViewerRenderer::loadCpuImageWithHighestPriority()
 {
-	if(! images.empty())
+	if(!images.empty())
 	{
-		const Index imageId = indexOfCPUImageWithHighestPriority();
-		images[imageId].cpuTexture.load(images[imageId].path, "imageViewerImage", Filter::nearest, Filter::linear, Wrapping::clamped);
-		if(images[imageId].cpuTexture.loaded) cpuLoadedCount++;
+		const Index imageId = indexOfCpuImageWithHighestPriority();
+		images[imageId].loadIntoRam();
+		if(images[imageId].inRam()) cpuLoadedCount++;
 		else logError("Image could not be loaded!");
 	}
 }
 
-void ImageViewerRenderer::unloadGPUImageWithLowestPriority()
+void ImageViewerRenderer::unloadGpuImageWithLowestPriority()
 {
-	if(! images.empty())
+	if(!images.empty())
 	{
-		const Index imageId = indexOfGPUImageWithLowestPriority();
-		images[imageId].gpuTexture.unload();
-		if(! images[imageId].gpuTexture.loaded) gpuLoadedCount--;
+		const Index imageId = indexOfGpuImageWithLowestPriority();
+		images[imageId].unloadFromGpu();
+		if(!images[imageId].onGpu()) gpuLoadedCount--;
 		else logError("Image could not be unloaded!");
 	}
 }
 
-void ImageViewerRenderer::unloadCPUImageWithLowestPriority()
+void ImageViewerRenderer::unloadCpuImageWithLowestPriority()
 {
-	if(! images.empty())
+	if(!images.empty())
 	{
-		const Index imageId = indexOfCPUImageWithLowestPriority();
-		images[imageId].cpuTexture.unload();
-		if(! images[imageId].cpuTexture.loaded) cpuLoadedCount--;
+		const Index imageId = indexOfCpuImageWithLowestPriority();
+		images[imageId].unloadFromRam();
+		if(!images[imageId].inRam()) cpuLoadedCount--;
 		else logError("Image could not be unloaded!");
 	}
 }
 
-void ImageViewerRenderer::preloadImage(const Path& path, GpuTexture& texture)
+Index ImageViewerRenderer::indexOfGpuImageWithLowestPriority() const
 {
-	if(texture.loaded) texture.unload();
-	CPUTexture cpuTexture;
-	cpuTexture.unload();
-	cpuTexture.nearFilter = Filter::nearest;
-	cpuTexture.wrapping = Wrapping::clamped;
-	cpuTexture.load(path, "imageViewerImage", Filter::nearest, Filter::linear, Wrapping::clamped);
-	texture.load(cpuTexture);
-};
+	if(images.empty()) logError("No images to get index from!");
+
+	Float lowestPriority; // [TODO] fix this
+	Index lowestPriorityIndex = 0;
+	for(Int i = 0; i < images.size(); i++)
+	{
+		if(images[i].onGpu())
+		{
+			lowestPriority      = images[i].getPriority();
+			lowestPriorityIndex = i;
+		}
+	}
+	return lowestPriorityIndex;
+}
+
+Index ImageViewerRenderer::indexOfCpuImageWithLowestPriority() const
+{
+	if(images.empty()) logError("No images to get index from!");
+
+	Float lowestPriority      = 0; // [TODO] fix this
+	Index lowestPriorityIndex = 0;
+
+	for(Int i = 0; i < images.size(); i++)
+	{
+		if(images[i].inRam() && !images[i].onGpu())
+		{
+			lowestPriority      = images[i].getPriority();
+			lowestPriorityIndex = i;
+		}
+	}
+
+	return lowestPriorityIndex;
+}
+
+Index ImageViewerRenderer::indexOfCpuImageWithHighestPriority() const
+{
+	if(images.empty()) logError("No images to get index from!");
+
+	Float highestPriority      = 0;
+	Index highestPriorityIndex = 0;
+
+	// find the first image that is not yet loaded
+	for(Int i = 0; i < images.size(); i++)
+	{
+		if(!images[i].inRam())
+		{
+			highestPriority      = images[i].getPriority();
+			highestPriorityIndex = i;
+			break;
+		}
+	}
+
+	// get the image with the highest priority
+	for(Index i = highestPriorityIndex; i < images.size(); i++)
+	{
+		if(!images[i].inRam())
+			if(images[i].getPriority() > highestPriority)
+			{
+				highestPriority      = images[i].getPriority();
+				highestPriorityIndex = i;
+			}
+	}
+
+	return highestPriorityIndex;
+}
+
+Index ImageViewerRenderer::indexOfGpuImageWithHighestPriority() const
+{
+	if(images.empty()) logError("No images to get index from!");
+
+	Float highestPriority      = 0;
+	Index highestPriorityIndex = 0;
+	// find the first image that is not yet loaded
+	for(Int i = 0; i < images.size(); i++)
+	{
+		if(images[i].inRam() && !images[i].onGpu())
+		{
+			highestPriority      = images[i].getPriority();
+			highestPriorityIndex = i;
+			break;
+		}
+	}
+
+	// get the image with the highest priority
+	for(Index i = highestPriorityIndex; i < images.size(); i++)
+	{
+		if(images[i].inRam() && !images[i].onGpu())
+			if(images[i].getPriority() > highestPriority)
+			{
+				highestPriority      = images[i].getPriority();
+				highestPriorityIndex = i;
+			}
+	}
+
+	return highestPriorityIndex;
+}
+
+Vector<Index> ImageViewerRenderer::indicesOfImagesSortedByPriority() const
+{
+	Vector<Index> indices;
+	for(Index i = 0; i < images.size(); i++) indices.push_back(i);
+	std::sort(indices.begin(), indices.end(), [&](const Index a, const Index b)
+	{
+		return images[a].getPriority() > images[b].getPriority();
+	});
+	return indices;
+}
 
 void ImageViewerRenderer::inputEvent(Window& window, const InputEvent input)
 {
@@ -277,120 +480,45 @@ void ImageViewerRenderer::inputEvent(Window& window, const InputEvent input)
 		updateZoom();
 	}
 
-	if(input == nextImage || input == nextImageMouse)
-	{
-		showNextImage();
-	}
+	if(input == nextImage || input == nextImageMouse) showNextImage();
 
-	if(input == previousImage || input == previousImageMouse)
-	{
-		showPrevImage();
-	}
+	if(input == previousImage || input == previousImageMouse) showPrevImage();
 
 	if(input == deleteImage)
-	{
-		if(! images.empty())
+		if(!images.empty())
 		{
-			deleteFile(images[currentImageId].path);
+			deleteFile(images[currentImageId].getPath());
 			images[currentImageId].destroy();
 			images.erase(images.begin() + currentImageId);
 			if(currentImageId >= images.size()) currentImageId--;
 		}
-	}
 
 	if(input == resetView)
 	{
-		offset = Vec2(0);
+		offset    = Vec2(0);
 		zoomLevel = 0;
 		updateZoom();
 	}
 }
 
-void ImageViewerRenderer::preloadImages()
+ImageViewerResource::ImageViewerResource(const Path& path, const Index index)
 {
-	//load resources
-	calculatePriorities();
+	this->path  = path;
+	this->index = index;
+}
 
-	//if there are images
-	if(! images.empty())
-	{
-		//get vector of indices sorted by priority
-		Vector<Index> sortedIndices = indicesOfImagesSortedByPriority();
+void ImageViewerRenderer::create(ResourceManager& resourceManager, Window& window)
+{
+	// resourceLoaderThreads.start();
+}
 
-		//make sure were not loading more than we can
-		if(sortedIndices.size() > cpuMaxPreloadCount) sortedIndices.resize(cpuMaxPreloadCount);
-
-		//load images
-		for(UInt order = 0; order < sortedIndices.size(); order++)
-		{
-			//get the image index by sorted order
-			const Index currentImageIndex = sortedIndices[order];
-
-			//load all images within the preload range but unload the rest
-			if(order <= cpuMaxPreloadCount)
-			{
-				//load cpu image
-				if(! images[currentImageIndex].cpuTexture.loaded)
-				{
-					images[currentImageIndex].cpuTexture.load(images[currentImageIndex].path, "imageViewerImage", Filter::nearest, Filter::linear, Wrapping::clamped);
-					cpuLoadedCount++;
-					logDebug(cpuLoadedCount);
-				}
-
-				if(order < gpuMaxPreloadCount)
-				{
-					//load gpu image
-					if(! images[currentImageIndex].gpuTexture.loaded)
-					{
-						images[currentImageIndex].gpuTexture.load(images[currentImageIndex].cpuTexture);
-						gpuLoadedCount++;
-						logDebug(gpuLoadedCount);
-					}
-				}
-				else
-				{
-					//unload gpu image
-					if(images[currentImageIndex].gpuTexture.loaded)
-					{
-						images[currentImageIndex].gpuTexture.unload();
-						gpuLoadedCount--;
-						logDebug(gpuLoadedCount);
-					}
-				}
-			}
-			else
-			{
-				//unload cpu image
-				if(images[currentImageIndex].cpuTexture.loaded)
-				{
-					images[currentImageIndex].cpuTexture.unload();
-					cpuLoadedCount--;
-					logDebug(cpuLoadedCount);
-				}
-
-				//unload gpu image just to be safe
-				if(images[currentImageIndex].gpuTexture.loaded)
-				{
-					images[currentImageIndex].gpuTexture.unload();
-					gpuLoadedCount--;
-					logDebug(gpuLoadedCount);
-				}
-			}
-		}
-	}
-
-	if(cpuLoadedCount >= cpuMaxPreloadCount - 1)
-	{
-		if(cpuMaxPreloadCount < images.size())
-		{
-			if(availablePhysicalMemory() > 512 * 1024 * 1024)
-			{
-				cpuMaxPreloadCount++;
-				gpuMaxPreloadCount = cpuMaxPreloadCount;
-				logDebug(cpuMaxPreloadCount);
-			}
-		}
-	}
+void ImageViewerResource::calculateRating(const Index currentImageIndex, const UInt resourceCount)
+{
+	const Float b      = static_cast<Float>(resourceCount);
+	const Float a      = static_cast<Float>(currentImageIndex);
+	const Float x      = static_cast<Float>(index);
+	const Float diffAx = abs(a - x);
+	priority           = b / 2.0f - min(abs(a - x - b), min(diffAx, abs(a - x + b)));
 }
 
 void ImageViewerRenderer::render(ResourceManager& resourceManager, Window& window, TiledRectangle area)
@@ -399,9 +527,7 @@ void ImageViewerRenderer::render(ResourceManager& resourceManager, Window& windo
 
 	renderer.uniforms().reset();
 
-	renderer.draw("main");
-
-	renderer.clearColor(Color(0.08, 0.08, 0.08, 1));
+	renderer.clearBackground(Color(0.08, 0.08, 0.08, 1));
 
 	renderer.setAlphaBlending(true, BlendFunction::One, BlendFunction::OneMinusSrcAlpha, BlendEquation::Add);
 
@@ -410,147 +536,34 @@ void ImageViewerRenderer::render(ResourceManager& resourceManager, Window& windo
 	Float imgX = 0;
 	Float imgY = 0;
 
-	if(! images.empty())
+	if(!images.empty() && images[currentImageId].onGpu())
 	{
-		images[currentImageId].gpuTexture.use(0);
-		imgX = images[currentImageId].cpuTexture.width;
-		imgY = images[currentImageId].cpuTexture.height;
+		images[currentImageId].use(0);
+		imgX = images[currentImageId].getWidth();
+		imgY = images[currentImageId].getHeight();
 	}
 
-	const Float winX = renderer.renderRegion.region.size.x;
-	const Float winY = renderer.renderRegion.region.size.y;
+	const auto winX = static_cast<Float>(renderer.getWindowWidth());
+	const auto winY = static_cast<Float>(renderer.getWindowHeight());
 
 	const Float size = min(winX / imgX, winY / imgY);
 
 	auto finalMatrix = Matrix(1);
-	finalMatrix = translate(finalMatrix, Vec3(offset, 0));
-	finalMatrix = scale(finalMatrix, Vec3(size * imgX, size * imgY, 0));
-	finalMatrix = scale(finalMatrix, Vec3(zoom));
+	finalMatrix      = translate(finalMatrix, Vec3(offset, 0));
+	finalMatrix      = scale(finalMatrix, Vec3(size * imgX, size * imgY, 0));
+	finalMatrix      = scale(finalMatrix, Vec3(zoom));
 
-	//approach(actualMatrix, finalMatrix, renderer.deltaTime() * 20);
+	approach(actualMatrix, finalMatrix, renderer.deltaTime() * 30);
 	actualMatrix = finalMatrix;
 
-	renderer.uniforms().mMatrix() = actualMatrix;
+	renderer.uniforms().setMMatrix(actualMatrix);
 
 	renderer.useShader(resourceManager, "imageViewer");
 	renderer.renderMesh(resourceManager, "centeredPlane");
 
-	preloadImages();
+	preLoadImages();
+
+	for(Index i = 0; i < images.size(); i++) if(images[i].hasLoadAttemptFailed()) images.erase(images.begin() + i);
 }
 
-Index ImageViewerRenderer::indexOfGPUImageWithLowestPriority() const
-{
-	if(images.empty()) logError("No images to get index from!");
-
-	Float lowestPriority = 0;
-	Index lowestPriorityIndex = 0;
-	for(Int i = 0; i < images.size(); i++)
-	{
-		if(images[i].gpuTexture.loaded)
-		{
-			lowestPriority = images[i].priority;
-			lowestPriorityIndex = i;
-		}
-	}
-	return lowestPriorityIndex;
-}
-
-Index ImageViewerRenderer::indexOfCPUImageWithLowestPriority() const
-{
-	if(images.empty()) logError("No images to get index from!");
-
-	Float lowestPriority = 0;
-	Index lowestPriorityIndex = 0;
-
-	for(Int i = 0; i < images.size(); i++)
-	{
-		if(images[i].cpuTexture.loaded && images[i].gpuTexture.loaded != true)
-		{
-			lowestPriority = images[i].priority;
-			lowestPriorityIndex = i;
-		}
-	}
-
-	return lowestPriorityIndex;
-}
-
-Index ImageViewerRenderer::indexOfCPUImageWithHighestPriority() const
-{
-	if(images.empty()) logError("No images to get index from!");
-
-	Float highestPriority = 0;
-	Index highestPriorityIndex = 0;
-
-	//find the first image that is not yet loaded
-	for(Int i = 0; i < images.size(); i++)
-	{
-		if(images[i].cpuTexture.loaded != true)
-		{
-			highestPriority = images[i].priority;
-			highestPriorityIndex = i;
-			break;
-		}
-	}
-
-	//get the image with the highest priority
-	for(Index i = highestPriorityIndex; i < images.size(); i++)
-	{
-		if(images[i].cpuTexture.loaded != true)
-		{
-			if(images[i].priority > highestPriority)
-			{
-				highestPriority = images[i].priority;
-				highestPriorityIndex = i;
-			}
-		}
-	}
-
-	return highestPriorityIndex;
-}
-
-Index ImageViewerRenderer::indexOfGPUImageWithHighestPriority() const
-{
-	if(images.empty()) logError("No images to get index from!");
-
-	Float highestPriority = 0;
-	Index highestPriorityIndex = 0;
-	//find the first image that is not yet loaded
-	for(Int i = 0; i < images.size(); i++)
-	{
-		if(images[i].cpuTexture.loaded && ! images[i].gpuTexture.loaded)
-		{
-			highestPriority = images[i].priority;
-			highestPriorityIndex = i;
-			break;
-		}
-	}
-
-	//get the image with the highest priority
-	for(Index i = highestPriorityIndex; i < images.size(); i++)
-	{
-		if(images[i].cpuTexture.loaded && ! images[i].gpuTexture.loaded)
-		{
-			if(images[i].priority > highestPriority)
-			{
-				highestPriority = images[i].priority;
-				highestPriorityIndex = i;
-			}
-		}
-	}
-
-	return highestPriorityIndex;
-}
-
-Vector<Index> ImageViewerRenderer::indicesOfImagesSortedByPriority() const
-{
-	Vector<Index> indices;
-	for(Index i = 0; i < images.size(); i++)
-	{
-		indices.push_back(i);
-	}
-	std::sort(indices.begin(), indices.end(), [&](const Index a, const Index b)
-	{
-		return images[a].priority > images[b].priority;
-	});
-	return indices;
-}
+void ImageViewerRenderer::renderInteractive(ResourceManager& resourceManager, Window& window, TiledRectangle area) { }

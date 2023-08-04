@@ -17,28 +17,28 @@ float fogFunction(in float range){
 };
 
 void main(){
-    //define the sky color so we can fake some sky light
+    // define the sky color so we can fake some sky light
     vec3 skyColor = vec3(0.207143f, 0.722031f, 1.0f);
     vec3 sunColor = vec3(1.0f, 0.9f, 0.6f) * 3;
 
-    //calculate the correct view position
-    //this needs to happen in the fragment shader
+    // calculate the correct view position
+    // this needs to happen in the fragment shader
     vec3 viewPosition = normalize(worldPosition.xyz - cameraPosition.xyz);
 
-    //calculate the incoming light
-    //get the ambient light
+    // calculate the incoming light
+    // get the ambient light
 	vec3 ambient = skyColor / 4;
 	float sunlight = max(dot(normal,normalize(vec3(sunDir))),0);
     vec3 light = vec3(sunColor * sunlight + ambient);
 
-    //calculate reflection
+    // calculate reflection
 	float fres = pow(1-dot(-viewPosition,normal),8) / 50;
     vec3 refl = skyColor * fres;
     
-    //calculate fog
+    // calculate fog
     float fog = clamp(fogFunction(distance(worldPosition.xyz,cameraPosition.xyz)/10000),0,1);
 
-    //output to GBuffer
+    // output to GBuffer
 	gBufferColor = vec4(customColor.xyz + mix(vertexColor * light + refl, skyColor, fog), 1);
     gBufferPosition  = worldPosition.xyz;
 	gBufferNormal = normal;

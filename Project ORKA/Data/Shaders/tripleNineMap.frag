@@ -23,22 +23,28 @@ vec2 dirToUV(vec3 dir){
 }
 
 void main(){
-	vec3 fragmentViewVector = normalize(viewDir);
-	vec3 reflection = normalize(reflect(fragmentViewVector,normal));
+	// vec3 fragmentViewVector = normalize(viewDir);
+	//	vec3 reflection = normalize(reflect(fragmentViewVector,normal));
+	//
+	//	float diffuse =  clamp(dot(normalize(normal),sunDir.xyz),0,1);
+	//	float specular = 0; // clamp(1 * pow(max(dot(reflection, sunDir.xyz), 0.0f), 4.0f),0,1);
+	//	float fresnel = clamp(0.1f * (1-dot(-fragmentViewVector,normalize(normal))),0,1);
+	//	float ambient = 0.05f;
+	//
+	//
+	//	float coloredLight = diffuse;
+	//	float externalLight = specular + fresnel + ambient;
+	//	vec3 skyReflection = texture(texture0,dirToUV(reflection)).xyz;
+	//
+	//	vec3 outCol = customColor.xyz * coloredLight + externalLight * skyReflection;
+	//
+	//
+	//	gBufferColor = vec4(vec3(outCol),1);
+	//	gBufferPosition = worldPos;
 
-	float diffuse =  clamp(dot(normalize(normal),sunDir.xyz),0,1);
-	float specular = 0; //clamp(1 * pow(max(dot(reflection, sunDir.xyz), 0.0f), 4.0f),0,1);
-	float fresnel = clamp(0.1f * (1-dot(-fragmentViewVector,normalize(normal))),0,1);
-	float ambient = 0.05f;
+	vec3 texColor =  texture(texture0, textureCoordinate).xyz;
 
+	texColor = pow(texColor,vec3(1.3f));
 
-	float coloredLight = diffuse;
-	float externalLight = specular + fresnel + ambient;
-	vec3 skyReflection = texture(texture0,dirToUV(reflection)).xyz;
-
-	vec3 outCol = customColor.xyz * coloredLight + externalLight * skyReflection;
-
-
-	gBufferColor = vec4(vec3(outCol),1);
-	gBufferPosition = worldPos;
+	gBufferColor = vec4(texColor,1);
 };

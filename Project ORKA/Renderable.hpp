@@ -2,6 +2,7 @@
 
 struct Renderer;
 
-struct Renderable {
-	virtual void render(Renderer& renderer);
+struct Renderable
+{
+	virtual void render(Renderer& renderer) = 0;
 };

@@ -1,72 +1,89 @@
 #include "MelonPlayer.hpp"
 #include "Window.hpp"
 
-MelonPlayer::MelonPlayer() {
-	camera.fieldOfView = 90;
-	camera.nearClipValue = 0.125;
-	camera.farClipValue = 256;
+MelonPlayer::MelonPlayer()
+{
+	camera.setFieldOfView(90.0f);
+	camera.setNearClipValue(0.125f);
+	camera.setFarClipValue(256.0f);
+
+	trail.resize(1000);
 }
 
-void MelonPlayer::update(Window& window) {
-	//mouse input
-	if (window.capturing) {
+void MelonPlayer::update(Window& window)
+{
+	// mouse input
+	if(window.capturing)
+	{
 		auto delta = Vec3(Vec2(window.mouseDelta) * Vec2(mouseSensitivity), 0);
-		delta *= (camera.location.z);
+		delta *= camera.getLocation().z;
 		velocity = Vec3(0);
 		targetLocation += delta;
 	}
-	else { targetLocation = Vec3(window.mousePosBotLeft, 0); }
+	else
+	{
+		targetLocation = Vec3(window.mousePosBotLeft, 0);
+	}
 
-	//get frequently used info
+	// get frequently used info
 	const Float delta = window.renderer.deltaTime();
 
-	//update target location
+	// update target location
 	targetLocation += velocity * delta;
 
 	approach(location, targetLocation, delta * 300);
 
-	//player location (smoothed)
-	deltaLocation = location - lastLocation;
-	lastLocationAtDistance = location + 0.01f * normalize(lastLocationAtDistance - location);
+	// player location (smoothed)
+	deltaLocation                            = location - lastLocation;
+	lastLocationAtDistance                   = location + 0.01f * normalize(lastLocationAtDistance - location);
 	const Vec3 deltaToLastLocationAtDistance = location - lastLocationAtDistance;
-	distanceTraveled = length(deltaLocation);
+	distanceTraveled                         = length(deltaLocation);
 	distanceInRadians += distanceTraveled;
 	distanceInRadians = mod(distanceInRadians, PI);
-	if (distanceTraveled != 0) direction = normalize(deltaToLastLocationAtDistance);
+	if(distanceTraveled != 0.0f) direction = normalize(deltaToLastLocationAtDistance);
 
-	//update smoke
+	// update smoke
 	smoke.update(location, window.renderer);
 
-	//player rotation
+	// player rotation
 	approach(currentVisibleDirection, direction, delta * 8);
-	orientation = Orientation(currentVisibleDirection);
+	orientation  = Orientation(currentVisibleDirection);
 	lastLocation = location;
 
-	//update camera
-	const Vec3 cameraTargetLocation = location + Vec3(0, 0, 1 + pow(1.2, zoomFactor));
-	const Vec3 cameraDesiredDelta = cameraTargetLocation - camera.location;
-	camera.location += cameraDesiredDelta * delta * 10.0f;
+	// update camera
+	const Vec3 cameraTargetLocation = location + Vec3(0.0f, 0.0f, 1.0f + powf(1.2f, static_cast<Float>(zoomFactor)));
+	const Vec3 cameraDesiredDelta   = cameraTargetLocation - camera.getLocation();
+	camera.setLocation(camera.getLocation() + cameraDesiredDelta * delta * 10.0f);
+
+	trail[0] = location;
+
+	for(Int i = static_cast<Int>(trail.size() - 1); i > 1; i--) trail[i] = trail[i - 1];
 }
 
-void MelonPlayer::render(ResourceManager& resourceManager, Window& window) {
+void MelonPlayer::inputEvent(Window& window, const InputEvent input)
+{
+	if(input == zoomIn) zoomFactor++;
+	if(input == zoomOut) zoomFactor--;
+	zoomFactor = clamp(zoomFactor, -3, 30);
+}
+
+void MelonPlayer::render(ResourceManager& resourceManager, Window& window)
+{
 	Renderer& renderer = window.renderer;
 
 	camera.setRotation(DVec3(PI / 2, 0, 0));
 
 	camera.render(renderer);
 
-	//render player
+	// render player
 	renderer.useShader(resourceManager, "MelonUberShader");
-	renderer.uniforms().mMatrix(
-		matrixFromOrientation(orientation, location, 0.5) * rotate(Matrix(1), -2 * distanceInRadians, Vec3(1, 0, 0)));
-	renderer.uniforms().customColor(Vec4(1));
+	renderer.uniforms().setMMatrix(matrixFromOrientation(orientation, location, 0.5) * rotate(Matrix(1), -2 * distanceInRadians, Vec3(1, 0, 0)));
+	renderer.uniforms().setCustomColor(Vec4(1));
 	renderer.renderMesh(resourceManager, "melonPlayerRolling");
 
-	smoke.render(resourceManager, renderer);
-}
+	Vector<Line3D> lines;
+	for(Int i = 0; i < static_cast<Int>(trail.size()) - 1; i++) lines.push_back(Line3D(trail[i], trail[i + 1]));
+	renderer.lines(lines);
 
-void MelonPlayer::inputEvent(Window& window, const InputEvent input) {
-	if (input == zoomIn)zoomFactor++;
-	if (input == zoomOut)zoomFactor--;
-	zoomFactor = clamp(zoomFactor, -3, 30);
+	smoke.render(resourceManager, renderer);
 }

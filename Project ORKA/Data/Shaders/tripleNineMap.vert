@@ -1,7 +1,6 @@
 
 //! #include "uniforms.glsl"
 
-//output
 out float depth;
 out vec3 normal;
 out vec3 worldPos;

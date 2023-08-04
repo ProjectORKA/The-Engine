@@ -1,7 +1,6 @@
 
 //! #include "uniforms.glsl"
 
-//output
 out vec3 rayOrigin;
 out highp vec3 rayDirection;
 

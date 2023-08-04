@@ -1,13 +1,11 @@
 #pragma once
 
-#include "Basics.hpp"
 #include "GraphicsAPI.hpp"
 
-struct IndexBufferObject
+struct IndexBuffer : OpenGLIndexBuffer
 {
-	Index bufferId = -1;
-	ULL indexCount = 0;
-	void create(const Index* data, ULL indexCount, MeshDrawMode usage);
-	void update(const Index* data, ULL indexCount, MeshDrawMode usage);
-	void unload() const;
+	Int indexCount = -1; // needs to be Int because of glDrawElements
+
+	void update(const Vector<UInt>& indices);
+	void create(const Vector<UInt>& indices, BufferUsage usage, const String& name);
 };

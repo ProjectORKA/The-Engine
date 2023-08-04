@@ -27,20 +27,20 @@ struct NeighborOctreeNode
 	NeighborOctreeNode* nt = nullptr;
 	NeighborOctreeNode* nd = nullptr;
 
-	NeighborOctreeNode& nlr();
-	NeighborOctreeNode& nrr();
-	NeighborOctreeNode& nbr();
-	NeighborOctreeNode& nfr();
-	NeighborOctreeNode& ntr();
-	NeighborOctreeNode& ndr();
+	[[nodiscard]] NeighborOctreeNode& nlr() const;
+	[[nodiscard]] NeighborOctreeNode& nrr() const;
+	[[nodiscard]] NeighborOctreeNode& nbr() const;
+	[[nodiscard]] NeighborOctreeNode& nfr() const;
+	[[nodiscard]] NeighborOctreeNode& ntr() const;
+	[[nodiscard]] NeighborOctreeNode& ndr() const;
 
-	Byte level = 0;
+	Byte level            = 0;
 	Bool inRenderDistance = false;
-	Bool isTerrain = false;
-	Bool isSurface = false;
-	Vec3 position = Vec3(0);
-	Bool subdivided = false;
-	Bool hasAllNeighbors = false;
+	Bool isTerrain        = false;
+	Bool isSurface        = false;
+	Bool subdivided       = false;
+	Bool hasAllNeighbors  = false;
+	Vec3 position         = Vec3(0);
 
 	void subdivide();
 	void unSubdivide();
@@ -54,9 +54,9 @@ struct NeighborOctreeNode
 struct NeighborOctree
 {
 	NeighborOctreeNode root;
-	void create();
-	void destroy();
-	void update(Vec3 location);
+	void               create();
+	void               destroy();
+	void               update(Vec3 location);
 };
 
 void renderNeighborOctreeNode(ResourceManager& resourceManager, const NeighborOctreeNode& node, Renderer& renderer);

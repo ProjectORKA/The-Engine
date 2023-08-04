@@ -1,29 +1,24 @@
 #pragma once
-
-#include "Random.hpp"
 #include "Window.hpp"
 #include "ResourceManager.hpp"
 
 struct Renderer;
 
-struct MindmapConnection {
+struct MindMapConnection
+{
 	Index a;
 	Index b;
 
-	MindmapConnection(const Index a, const Index b) {
-		this->a = a;
-		this->b = b;
-	};
+	MindMapConnection(Index a, Index b);
 };
 
-struct MindMap {
-	UInt nodeCount = 0;
-
-	Vector<Vec2> positions;
-	Vector<Vec2> forces;
-	Vector<Float> numforces;
-
-	Vector<MindmapConnection> connections;
+struct MindMap
+{
+	Vector<Vec2>              forces;
+	Vector<UInt>              numForces;
+	Vector<Vec2>              positions;
+	Vector<MindMapConnection> connections;
+	UInt                      nodeCount = 0;
 
 	void update();
 	void addNode();

@@ -11,7 +11,7 @@ void NeighborOctree::create()
 	root.nt = &root;
 	root.nd = &root;
 
-	root.position = Vec3(10, 10, 0);
+	root.position  = Vec3(10, 10, 0);
 	root.isTerrain = true;
 	root.isSurface = true;
 }
@@ -21,116 +21,9 @@ void NeighborOctree::destroy()
 	root.unSubdivide();
 }
 
-void NeighborOctree::update(const Vec3 location)
-{
-	root.update(location);
-}
-
-NeighborOctreeNode& NeighborOctreeNode::nlr()
-{
-	const NeighborOctreeNode* cur = this;
-	while(! cur->nl)
-	{
-		if(cur->parent)
-		{
-			cur = cur->parent;
-		}
-		else
-		{
-			logError("Quadtree Critical Failure!");
-		}
-	}
-	return *cur->nl;
-}
-
-NeighborOctreeNode& NeighborOctreeNode::nrr()
-{
-	const NeighborOctreeNode* cur = this;
-	while(! cur->nr)
-	{
-		if(cur->parent)
-		{
-			cur = cur->parent;
-		}
-		else
-		{
-			logError("Quadtree Critical Failure!");
-		}
-	}
-	return *cur->nr;
-}
-
-NeighborOctreeNode& NeighborOctreeNode::nbr()
-{
-	const NeighborOctreeNode* cur = this;
-	while(! cur->nb)
-	{
-		if(cur->parent)
-		{
-			cur = cur->parent;
-		}
-		else
-		{
-			logError("Quadtree Critical Failure!");
-		}
-	}
-	return *cur->nb;
-}
-
-NeighborOctreeNode& NeighborOctreeNode::nfr()
-{
-	const NeighborOctreeNode* cur = this;
-	while(! cur->nf)
-	{
-		if(cur->parent)
-		{
-			cur = cur->parent;
-		}
-		else
-		{
-			logError("Quadtree Critical Failure!");
-		}
-	}
-	return *cur->nf;
-}
-
-NeighborOctreeNode& NeighborOctreeNode::ntr()
-{
-	const NeighborOctreeNode* cur = this;
-	while(! cur->nt)
-	{
-		if(cur->parent)
-		{
-			cur = cur->parent;
-		}
-		else
-		{
-			logError("Quadtree Critical Failure!"); //will probably crash at root, because it doesent loop
-		}
-	}
-	return *cur->nt;
-}
-
-NeighborOctreeNode& NeighborOctreeNode::ndr()
-{
-	const NeighborOctreeNode* cur = this;
-	while(! cur->nd)
-	{
-		if(cur->parent)
-		{
-			cur = cur->parent;
-		}
-		else
-		{
-			logError("Quadtree Critical Failure!");
-		}
-	}
-	return *cur->nd;
-}
-
 void NeighborOctreeNode::subdivide()
 {
-	if(! subdivided && (level < 12))
+	if(!subdivided && level < 12)
 	{
 		c000 = new NeighborOctreeNode();
 		c001 = new NeighborOctreeNode();
@@ -178,14 +71,14 @@ void NeighborOctreeNode::unSubdivide()
 		c110->removeSelfFromNeighbors();
 		c111->removeSelfFromNeighbors();
 
-		//c000->data.destroy();
-		//c001->data.destroy();
-		//c010->data.destroy();
-		//c011->data.destroy();
-		//c100->data.destroy();
-		//c101->data.destroy();
-		//c110->data.destroy();
-		//c111->data.destroy();
+		// c000->data.destroy();
+		// c001->data.destroy();
+		// c010->data.destroy();
+		// c011->data.destroy();
+		// c100->data.destroy();
+		// c101->data.destroy();
+		// c110->data.destroy();
+		// c111->data.destroy();
 
 		delete c000;
 		delete c001;
@@ -211,16 +104,13 @@ void NeighborOctreeNode::updateIsSurface()
 {
 	if(hasAllNeighbors)
 	{
-		if(isTerrain)
-		{
-			isSurface = ! (nfr().isTerrain && nbr().isTerrain && nlr().isTerrain && nrr().isTerrain);
-		}
-		else
-		{
-			isSurface = nfr().isTerrain || nbr().isTerrain || nlr().isTerrain || nrr().isTerrain;
-		}
+		if(isTerrain) isSurface = !(nfr().isTerrain && nbr().isTerrain && nlr().isTerrain && nrr().isTerrain);
+		else isSurface          = nfr().isTerrain || nbr().isTerrain || nlr().isTerrain || nrr().isTerrain;
 	}
-	else isSurface = true;
+	else
+	{
+		isSurface = true;
+	}
 
 	if(isSurface)
 	{
@@ -228,16 +118,92 @@ void NeighborOctreeNode::updateIsSurface()
 		while(curr)
 		{
 			curr->isSurface = true;
-			curr = curr->parent;
+			curr            = curr->parent;
 		}
 	}
 }
 
+void NeighborOctree::update(const Vec3 location)
+{
+	root.update(location);
+}
+
+void NeighborOctreeNode::updateHasAllNeighbors()
+{
+	hasAllNeighbors = nl && nr && nb && nf && nt && nd;
+}
+
+NeighborOctreeNode& NeighborOctreeNode::nlr() const
+{
+	const NeighborOctreeNode* cur = this;
+	while(!cur->nl)
+	{
+		if(cur->parent) cur = cur->parent;
+		else logError("Quadtree Critical Failure!");
+	}
+	return *cur->nl;
+}
+
+NeighborOctreeNode& NeighborOctreeNode::nrr() const
+{
+	const NeighborOctreeNode* cur = this;
+	while(!cur->nr)
+	{
+		if(cur->parent) cur = cur->parent;
+		else logError("Quadtree Critical Failure!");
+	}
+	return *cur->nr;
+}
+
+NeighborOctreeNode& NeighborOctreeNode::nbr() const
+{
+	const NeighborOctreeNode* cur = this;
+	while(!cur->nb)
+	{
+		if(cur->parent) cur = cur->parent;
+		else logError("Quadtree Critical Failure!");
+	}
+	return *cur->nb;
+}
+
+NeighborOctreeNode& NeighborOctreeNode::nfr() const
+{
+	const NeighborOctreeNode* cur = this;
+	while(!cur->nf)
+	{
+		if(cur->parent) cur = cur->parent;
+		else logError("Quadtree Critical Failure!");
+	}
+	return *cur->nf;
+}
+
+NeighborOctreeNode& NeighborOctreeNode::ntr() const
+{
+	const NeighborOctreeNode* cur = this;
+	while(!cur->nt)
+	{
+		if(cur->parent) cur = cur->parent;
+		else logError("Quadtree Critical Failure!"); // will probably crash at root, because it doesn't loop
+	}
+	return *cur->nt;
+}
+
+NeighborOctreeNode& NeighborOctreeNode::ndr() const
+{
+	const NeighborOctreeNode* cur = this;
+	while(!cur->nd)
+	{
+		if(cur->parent) cur = cur->parent;
+		else logError("Quadtree Critical Failure!");
+	}
+	return *cur->nd;
+}
+
 void NeighborOctreeNode::update(const Vec3 location)
 {
-	inRenderDistance = withinDiamondArea(position - location, pow(2, 5 - level + 1));
+	inRenderDistance = withinDiamondArea(position - location, powf(2, 5 - level + 1));
 
-	//if (!inRenderDistance) unSubdivide();
+	// if (!inRenderDistance) unSubdivide();
 
 	if(subdivided && inRenderDistance)
 	{
@@ -254,11 +220,6 @@ void NeighborOctreeNode::update(const Vec3 location)
 	if(inRenderDistance && isSurface) subdivide();
 }
 
-void NeighborOctreeNode::updateHasAllNeighbors()
-{
-	hasAllNeighbors = (nl && nr && nb && nf && nt && nd);
-}
-
 void NeighborOctreeNode::removeSelfFromNeighbors() const
 {
 	if(nf) nf->nb = nullptr;
@@ -272,22 +233,22 @@ void NeighborOctreeNode::removeSelfFromNeighbors() const
 void NeighborOctreeNode::create(NeighborOctreeNode& parent, const Bool x, const Bool y, const Bool z)
 {
 	this->parent = &parent;
-	level = parent.level + 1;
-	if(x) position.x = parent.position.x + pow(2, 1 - level);
-	else position.x = parent.position.x - pow(2, 1 - level);
-	if(y) position.y = parent.position.y + pow(2, 1 - level);
-	else position.y = parent.position.y - pow(2, 1 - level);
-	if(z) position.z = parent.position.z + pow(2, 1 - level);
-	else position.z = parent.position.z - pow(2, 1 - level);
+	level        = parent.level + 1;
+	if(x) position.x = parent.position.x + powf(2, 1 - level);
+	else position.x  = parent.position.x - powf(2, 1 - level);
+	if(y) position.y = parent.position.y + powf(2, 1 - level);
+	else position.y  = parent.position.y - powf(2, 1 - level);
+	if(z) position.z = parent.position.z + powf(2, 1 - level);
+	else position.z  = parent.position.z - powf(2, 1 - level);
 
-	//calculate neighbours
+	// calculate neighbours
 	if(x)
 	{
 		if(y)
 		{
 			if(z)
 			{
-				//111
+				// 111
 				if(parent.nt && parent.nt->subdivided) nt = parent.nt->c110;
 				nd = parent.c110;
 				if(parent.nf && parent.nf->subdivided) nf = parent.nf->c101;
@@ -297,7 +258,7 @@ void NeighborOctreeNode::create(NeighborOctreeNode& parent, const Bool x, const 
 			}
 			else
 			{
-				//110
+				// 110
 				nt = parent.c111;
 				if(parent.nd && parent.nd->subdivided) nd = parent.nd->c111;
 				if(parent.nf && parent.nf->subdivided) nf = parent.nf->c100;
@@ -310,7 +271,7 @@ void NeighborOctreeNode::create(NeighborOctreeNode& parent, const Bool x, const 
 		{
 			if(z)
 			{
-				//101
+				// 101
 				if(parent.nt && parent.nt->subdivided) nt = parent.nt->c100;
 				nd = parent.c100;
 				nf = parent.c111;
@@ -320,7 +281,7 @@ void NeighborOctreeNode::create(NeighborOctreeNode& parent, const Bool x, const 
 			}
 			else
 			{
-				//100
+				// 100
 				nt = parent.c101;
 				if(parent.nd && parent.nd->subdivided) nd = parent.nd->c101;
 				nf = parent.c110;
@@ -336,7 +297,7 @@ void NeighborOctreeNode::create(NeighborOctreeNode& parent, const Bool x, const 
 		{
 			if(z)
 			{
-				//011
+				// 011
 				if(parent.nt && parent.nt->subdivided) nt = parent.nt->c010;
 				nd = parent.c010;
 				if(parent.nf && parent.nf->subdivided) nf = parent.nf->c001;
@@ -346,7 +307,7 @@ void NeighborOctreeNode::create(NeighborOctreeNode& parent, const Bool x, const 
 			}
 			else
 			{
-				//010
+				// 010
 				nt = parent.c011;
 				if(parent.nd && parent.nd->subdivided) nd = parent.nd->c011;
 				if(parent.nf && parent.nf->subdivided) nf = parent.nf->c000;
@@ -359,7 +320,7 @@ void NeighborOctreeNode::create(NeighborOctreeNode& parent, const Bool x, const 
 		{
 			if(z)
 			{
-				//001
+				// 001
 				if(parent.nt && parent.nt->subdivided) nt = parent.nt->c000;
 				nd = parent.c000;
 				nf = parent.c011;
@@ -369,7 +330,7 @@ void NeighborOctreeNode::create(NeighborOctreeNode& parent, const Bool x, const 
 			}
 			else
 			{
-				//000
+				// 000
 				nt = parent.c001;
 				if(parent.nd && parent.nd->subdivided) nd = parent.nd->c001;
 				nf = parent.c010;
@@ -381,9 +342,9 @@ void NeighborOctreeNode::create(NeighborOctreeNode& parent, const Bool x, const 
 	}
 
 	const Float noiseSize = 4;
-	isTerrain = noise.octaveNoise0_1(position.x * noiseSize, position.y * noiseSize, position.z * noiseSize, 8) + position.z - 0.5 < 0.5;
+	isTerrain             = noise.octaveNoise0_1(position.x * noiseSize, position.y * noiseSize, position.z * noiseSize, 8) + position.z - 0.5 < 0.5;
 
-	//make sure neighbours have connection to this (and update them for good measure)
+	// make sure neighbours have connection to this (and update them for good measure)
 	if(nf)
 	{
 		nf->nb = this;
@@ -427,13 +388,13 @@ void NeighborOctreeNode::create(NeighborOctreeNode& parent, const Bool x, const 
 
 void renderNeighborOctreeNode(ResourceManager& resourceManager, const NeighborOctreeNode& node, Renderer& renderer)
 {
-	if(! node.inRenderDistance || ! node.subdivided)
+	if(!node.inRenderDistance || !node.subdivided)
 	{
 		if(node.isTerrain)
 		{
 			Transform t;
-			t.location = node.position;
-			t.scale = Vec3(pow(2, -node.level + 2));
+			t.setLocation(node.position);
+			t.setSize(Vec3(pow(2, -node.level + 2)));
 			t.render(renderer);
 			renderer.renderMesh(resourceManager, "centeredCube");
 		}

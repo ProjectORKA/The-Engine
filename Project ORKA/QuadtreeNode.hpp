@@ -2,42 +2,41 @@
 
 #include "QuadtreeId.hpp"
 #include "QuadtreeData.hpp"
-#include "Ray.hpp"
 
-struct QuadTreeSystem;
+struct QuadtreeSystem;
 
-struct QuadtreeNode {
+struct QuadtreeNode
+{
+	QuadtreeId   id;
 	QuadtreeData data;
-
-	ULL users = 0; //number of active octree nodes related to this quadtree node
-	Bool subdivided = false;
-	UShort index = -1;
-	QuadtreeId id;
+	ULL          users      = 0; // number of active octree nodes related to this quadtree node
+	UShort       index      = -1;
+	Bool         subdivided = false;
 
 	QuadtreeNode* parent = nullptr;
-	QuadtreeNode* c00 = nullptr;
-	QuadtreeNode* c01 = nullptr;
-	QuadtreeNode* c10 = nullptr;
-	QuadtreeNode* c11 = nullptr;
-	QuadtreeNode* nl = nullptr;
-	QuadtreeNode* nr = nullptr;
-	QuadtreeNode* nb = nullptr;
-	QuadtreeNode* nf = nullptr;
+	QuadtreeNode* c00    = nullptr;
+	QuadtreeNode* c01    = nullptr;
+	QuadtreeNode* c10    = nullptr;
+	QuadtreeNode* c11    = nullptr;
+	QuadtreeNode* nl     = nullptr;
+	QuadtreeNode* nr     = nullptr;
+	QuadtreeNode* nb     = nullptr;
+	QuadtreeNode* nf     = nullptr;
 
-	QuadtreeNode& nlr();
-	QuadtreeNode& nrr();
-	QuadtreeNode& nbr();
-	QuadtreeNode& nfr();
+	[[nodiscard]] QuadtreeNode& nlr() const;
+	[[nodiscard]] QuadtreeNode& nrr() const;
+	[[nodiscard]] QuadtreeNode& nbr() const;
+	[[nodiscard]] QuadtreeNode& nfr() const;
 
-	void count() const;
-	void destroy();
-	void unsubdivide();
-	void decrementUsers();
-	void incrementUsers();
-	void removeSelfFromNeighbours() const;
-	void subdivide(TerrainSystem& terrainSystem);
-	void createRootNode(TerrainSystem& terrainSystem);
+	void          destroy();
+	void          unsubdivide();
+	void          count() const;
+	void          decrementUsers();
+	void          incrementUsers();
+	void          removeSelfFromNeighbors() const;
+	void          subdivide(const TerrainSystem& terrainSystem);
+	void          createRootNode(const TerrainSystem& terrainSystem);
 	QuadtreeNode& get(TerrainSystem& terrainSystem, const QuadtreeId& id);
-	void update(QuadTreeSystem& quadtreeSystem, TerrainSystem& terrainSystem);
-	void create(TerrainSystem& terrainSystem, QuadtreeNode* parent, Bool x, Bool y);
+	void          update(QuadtreeSystem& quadtreeSystem, TerrainSystem& terrainSystem);
+	void          create(const TerrainSystem& terrainSystem, QuadtreeNode* parent, Bool x, Bool y);
 };

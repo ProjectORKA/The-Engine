@@ -3,42 +3,46 @@
 #include "PlanetSystem.hpp"
 #include "PlanetSystemPlayer.hpp"
 
-void PlanetRenderSystem::destroy() { quadtreeRenderSystem.destroy(); }
+void PlanetRenderSystem::destroy()
+{
+	quadtreeRenderSystem.destroy();
+}
 
-void PlanetRenderSystem::update(const PlanetSystem& planetSystem, PlanetSystemPlayer& player) {
-	//create if necessary
-	if (quadtreeRenderSystem.root.equivalentQuadtreeNode == nullptr) quadtreeRenderSystem.root.create(
-		*planetSystem.quadtreeSystem.root);
+void PlanetRenderSystem::update(const PlanetSystem& planetSystem, PlanetSystemPlayer& player)
+{
+	// create if necessary
+	if(quadtreeRenderSystem.root.equivalentQuadtreeNode == nullptr) quadtreeRenderSystem.root.create(*planetSystem.quadtreeSystem.root);
 
 	//update before rendering
 	quadtreeRenderSystem.update(player);
 }
 
-void PlanetRenderSystem::renderAllLevels(ResourceManager& resourceManager, PlanetSystem& planetSystem,
-                                         Renderer& renderer, PlanetSystemPlayer& player) {
-	//renderer.uniforms().customInt1() = Int(renderer.planetRenderSystem.worldDistortion);
-	renderer.uniforms().mMatrix() = Matrix(1);
+void PlanetRenderSystem::renderAllLevels(ResourceManager& resourceManager, PlanetSystem& planetSystem, Renderer& renderer, const PlanetSystemPlayer& player, const Framebuffer& framebuffer)
+{
+	// renderer.uniforms().customInt1() = Int(renderer.planetRenderSystem.worldDistortion);
+	renderer.uniforms().setMMatrix(Matrix(1));
 	player.camera.renderOnlyRot(renderer);
 	renderer.setDepthTest(true);
 
-	for (UShort level = 0; level < MAX_CHUNK_LEVEL; level++) {
-		renderer.clearDepth();
-		if (vertexColors)renderer.shaderSystem.use(resourceManager, "mooncrashVertexColor");
+	for(UShort level = 0; level < MAX_CHUNK_LEVEL; level++)
+	{
+		framebuffer.clearDepth();
+		if(vertexColors) renderer.shaderSystem.use(resourceManager, "mooncrashVertexColor");
 		else renderer.shaderSystem.use(resourceManager, "terrain");
 		renderer.textureSystem.use(resourceManager, "terrainColor");
 		quadtreeRenderSystem.renderLevel(level, renderer);
 	}
 }
 
-void PlanetRenderSystem::renderLevel(ResourceManager& resourceManager, PlanetSystem& planetSystem, Renderer& renderer,
-                                     PlanetSystemPlayer& player, const UShort level) {
-	//renderer.uniforms().customInt1() = Int(renderer.planetRenderSystem.worldDistortion);
-	renderer.uniforms().mMatrix() = Matrix(1);
+void PlanetRenderSystem::renderLevel(ResourceManager& resourceManager, PlanetSystem& planetSystem, Renderer& renderer, const PlanetSystemPlayer& player, const UShort level, const Framebuffer& framebuffer)
+{
+	// renderer.uniforms().customInt1() = Int(renderer.planetRenderSystem.worldDistortion);
+	renderer.uniforms().setMMatrix(Matrix(1));
 	player.camera.renderOnlyRot(renderer);
 	renderer.setDepthTest(true);
 
-	renderer.clearDepth();
-	if (vertexColors)renderer.shaderSystem.use(resourceManager, "mooncrashVertexColor");
+	framebuffer.clearDepth();
+	if(vertexColors) renderer.shaderSystem.use(resourceManager, "mooncrashVertexColor");
 	else renderer.shaderSystem.use(resourceManager, "terrain");
 	renderer.textureSystem.use(resourceManager, "terrainColor");
 	quadtreeRenderSystem.renderLevel(level, renderer);

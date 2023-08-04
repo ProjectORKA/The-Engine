@@ -1,5 +1,5 @@
 
-#version 450
+#version 460
 
 layout(std140, binding = 0) uniform GlobalUniforms
 {
@@ -49,5 +49,7 @@ layout(binding = 15) uniform sampler2D texture15;
 layout(location = 0) in vec3 vertex;
 layout(location = 1) in vec2 uvs;
 layout(location = 2) in vec3 normals;
-layout(location = 3) in vec3 colors;
-layout(location = 4) in mat4 transform;
+layout(location = 3) in vec3 tangents;
+layout(location = 4) in vec3 bitangents;
+layout(location = 5) in vec3 colors;
+layout(location = 6) in mat4 transform;
