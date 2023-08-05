@@ -3,9 +3,7 @@
 #include "Game.hpp"
 #include "NeuralNetwork.hpp"
 
-struct Window;
-
-struct AIPlaygroundRenderer : GameRenderer
+struct AIPlaygroundRenderer final : GameRenderer
 {
 	Framebuffer framebuffer;
 	NeuralNet   network = NeuralNet({9, 15, 16, 5, 3});

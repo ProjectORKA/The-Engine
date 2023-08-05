@@ -48,7 +48,7 @@ void AIPlaygroundRenderer::render(ResourceManager& resourceManager, Window& wind
 	Vector<Float>       inputVector;
 	const Vector<Float> targetVector;
 
-	for(UInt i = 0; i < network.structure[0]; i++) inputVector.push_back(randomFloat());
+	for(UInt i = 0; i < network.structure[0]; i++) inputVector.push_back(randomFloatFast());
 
 	network.input(inputVector);
 	network.propagateForward();

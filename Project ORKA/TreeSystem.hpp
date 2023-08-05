@@ -22,7 +22,7 @@ struct TreeGenerator
 
 struct Tree
 {
-	Vec3 position = Vec3(randomFloat(), randomFloat(), randomFloat());
+	Vec3 position = randomVec3Fast(0.0f, 1.0f);
 };
 
 struct TreeSystem

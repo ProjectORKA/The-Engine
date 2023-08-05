@@ -17,7 +17,7 @@ inline void guessingGame()
 	Int           guessCount = 0;
 	constexpr Int maxNumber  = 1000;
 	String        name       = "Player";
-	const Int     target     = random(maxNumber);
+	const Int     target     = randomIntFast(maxNumber);
 
 	std::cout << "Welcome to the number guessing game, whats your name?\n";
 	std::cin >> name;

@@ -272,9 +272,6 @@
     <ClCompile Include="TextRenderSystem.cpp">
       <Filter>Systems\UserInterface\Window\Renderer\TextRenderSystem</Filter>
     </ClCompile>
-    <ClCompile Include="TLSFAllocator.cpp">
-      <Filter>Common\Memory\TLSFAllocator</Filter>
-    </ClCompile>
     <ClCompile Include="TransformationStack.cpp">
       <Filter>Systems\UserInterface\Window\Renderer\MatrixSystem\TransformationStack</Filter>
     </ClCompile>
@@ -380,9 +377,9 @@
     <ClCompile Include="GlyphTextRenderSystem.cpp">
       <Filter>Systems\UserInterface\Window\Renderer\TextRenderSystem\GlyphTextRenderSystem</Filter>
     </ClCompile>
-    <ClCompile Include="DynameshTerrain.cpp" />
-    <ClCompile Include="ECS.cpp" />
-    <ClCompile Include="Sortr.cpp" />
+    <ClCompile Include="Sortr.cpp">
+      <Filter>Apps\2D Apps\Sortr</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Basics.hpp">
@@ -713,9 +710,6 @@
     <ClInclude Include="TextRenderSystem.hpp">
       <Filter>Systems\UserInterface\Window\Renderer\TextRenderSystem</Filter>
     </ClInclude>
-    <ClInclude Include="TLSFAllocator.h">
-      <Filter>Common\Memory\TLSFAllocator</Filter>
-    </ClInclude>
     <ClInclude Include="TransformationStack.hpp">
       <Filter>Systems\UserInterface\Window\Renderer\MatrixSystem\TransformationStack</Filter>
     </ClInclude>
@@ -839,7 +833,9 @@
     <ClInclude Include="GlyphTextRenderSystem.hpp">
       <Filter>Systems\UserInterface\Window\Renderer\TextRenderSystem\GlyphTextRenderSystem</Filter>
     </ClInclude>
-    <ClInclude Include="Sortr.hpp" />
+    <ClInclude Include="Sortr.hpp">
+      <Filter>Apps\2D Apps\Sortr</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Files\Data\Shaders\water.vert">
@@ -1121,8 +1117,12 @@
     <None Include="Data\shaders\MelonUberShader.vert">
       <Filter>Apps\3D Apps\Project Melon\Shaders</Filter>
     </None>
-    <None Include="Data\Shaders\sortr.frag" />
-    <None Include="Data\Shaders\sortr.vert" />
+    <None Include="Data\Shaders\sortr.frag">
+      <Filter>Apps\2D Apps\Sortr\Shaders</Filter>
+    </None>
+    <None Include="Data\Shaders\sortr.vert">
+      <Filter>Apps\2D Apps\Sortr\Shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Common">
@@ -1548,9 +1548,6 @@
     <Filter Include="Common\Memory">
       <UniqueIdentifier>{10696ce8-f30f-48a1-b6ba-39e9b05a2dd8}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Common\Memory\TLSFAllocator">
-      <UniqueIdentifier>{276ba223-9f5f-4ce1-8b14-275b4e7be97e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Common\Math\Graphs\PointCloud">
       <UniqueIdentifier>{6da55ed9-d36c-45b1-87ee-393fcbfc3506}</UniqueIdentifier>
     </Filter>
@@ -1574,6 +1571,12 @@
     </Filter>
     <Filter Include="Systems\UserInterface\Window\Renderer\TextRenderSystem\GlyphTextRenderSystem">
       <UniqueIdentifier>{da9bdab7-ed9c-4cfe-9970-0efefa63f748}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Apps\2D Apps\Sortr">
+      <UniqueIdentifier>{e619be1b-9cc6-4c11-bf34-1d6112e20c11}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Apps\2D Apps\Sortr\Shaders">
+      <UniqueIdentifier>{be219d48-db7a-4136-95c2-23b31f4dcb33}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

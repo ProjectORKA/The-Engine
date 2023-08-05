@@ -119,7 +119,6 @@
     <ClCompile Include="Sortr.cpp" />
     <ClCompile Include="TextRenderSystem.cpp" />
     <ClCompile Include="TextureSystem.cpp" />
-    <ClCompile Include="TLSFAllocator.cpp" />
     <ClCompile Include="TransformationStack.cpp" />
     <ClCompile Include="TripleNine.cpp" />
     <ClCompile Include="Random.cpp" />
@@ -259,7 +258,6 @@
     <ClInclude Include="Sortr.hpp" />
     <ClInclude Include="TextRenderSystem.hpp" />
     <ClInclude Include="TextureSystem.hpp" />
-    <ClInclude Include="TLSFAllocator.h" />
     <ClInclude Include="TransformationStack.hpp" />
     <ClInclude Include="TripleNine.hpp" />
     <ClInclude Include="RedDotHack.hpp" />

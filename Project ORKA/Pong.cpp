@@ -66,7 +66,7 @@ void Ball::update(const Float deltaTime, PongPlayer players[2])
 			{
 				stuckToPaddle = false;
 				velocity.x    = 1;
-				velocity.y    = randomFloat(-1, 1);
+				velocity.y    = randomFloatFast(-1.0f, 1.0f);
 				desiredSpeed  = 2;
 			}
 		}
@@ -78,7 +78,7 @@ void Ball::update(const Float deltaTime, PongPlayer players[2])
 			{
 				stuckToPaddle = false;
 				velocity.x    = -1;
-				velocity.y    = randomFloat(-1, 1);
+				velocity.y    = randomFloatFast(-1.0f, 1.0f);
 				desiredSpeed  = 2;
 			}
 		}
@@ -111,7 +111,7 @@ void Ball::update(const Float deltaTime, PongPlayer players[2])
 				{
 					// ball did collide
 					velocity.x = -1;
-					velocity.y = randomFloat(-1, 1);
+					velocity.y = randomFloatFast(-1.0f, 1.0f);
 				}
 			}
 		}
@@ -135,7 +135,7 @@ void Ball::update(const Float deltaTime, PongPlayer players[2])
 				{
 					// ball did collide
 					velocity.x = 1;
-					velocity.y = randomFloat(-1, 1);
+					velocity.y = randomFloatFast(-1.0f, 1.0f);
 				}
 			}
 		}
@@ -169,7 +169,7 @@ Ball* getClosestBall(const PongPlayer& player, Vector<Ball>& balls)
 
 void PongPlayer::aiInput(Vector<Ball>& balls, const Float deltaTime)
 {
-	shoot = random(1000) < 1;
+	shoot = randomIntFast(1000) < 1;
 	logDebug(shoot);
 	const Ball* ball = getClosestBall(*this, balls);
 	if(ball)

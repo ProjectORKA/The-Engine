@@ -1,32 +1,47 @@
 #pragma once
-
-#include <random>
 #include "Basics.hpp"
 
-extern std::random_device seed;
+// there are two types of randomness ORKA provides
+// fast and slow
+// FAST: is really fast, but will repeat if the sequence is started over
+// SLOW: is based on seed and time, which makes it unpredictable, but at the cost of performance
+void randomizeSeed();
 
-ULong xorshf96();
-Vec2  randomVec2();
-Vec3  randomVec3();
-Float randomFloat();
-void  randomizeSeed();
-ULL   random(ULL size);
-Vec3  randomUnitVec3();
-Vec2  randomUnitVec2();
-Int   randomInt(Int max);
-UInt  randomUInt(UInt max);
-Vec3  randomVec3(Vec3 max);
-Vec2  randomVec2(Float max);
-Vec3  randomVec3(Float max);
-ULL   random(ULL min, ULL max);
-Float randomFloat(Float max);
-Vec3  randomVec3(Vec3 min, Vec3 max);
-Vec4  randomVec4(Float min, Float max);
-Vec2  randomVec2(Float min, Float max);
-Vec3  randomPointInSphere(Float radius);
-Vec2  randomPointInCircle(Float radius);
-Vec3  randomPointOnSphere(Float radius);
-Vec3  randomVec3(Float min, Float max);
-Float randomFloat(Float min, Float max);
-Vec3  randomPointOnSphereAtLocation(Vec4 sphere);
-Vec3  randomPointOnSphereAtLocation(Float radius, Vec3 location);
+// fast variants
+ULL   randomULLFast();
+Vec3  randomVec3Fast();
+Vec2  randomVec2Fast();
+Float randomFloatFast();
+Vec3  randomUnitVec3Fast();
+Vec2  randomUnitVec2Fast();
+Int   randomIntFast(Int max);
+Int   randomIntFast(UInt max);
+Int   randomIntFast(SizeT max);
+UInt  randomUIntFast(UInt max);
+Vec3  randomVec3Fast(Vec3 max);
+Vec2  randomVec2Fast(Float max);
+Vec3  randomVec3Fast(Float max);
+Float randomFloatFast(Float max);
+Vec3  randomVec3Fast(Vec3 min, Vec3 max);
+Vec2  randomVec2Fast(Float min, Float max);
+Vec4  randomVec4Fast(Float min, Float max);
+Vec3  randomVec3Fast(Float min, Float max);
+Vec2  randomPointInCircleFast(Float radius);
+Vec3  randomPointInSphereFast(Float radius);
+Vec3  randomPointOnSphereFast(Float radius);
+Float randomFloatFast(Float min, Float max);
+Float randomFloatFast(Double min, Double max);
+Vec3  randomPointOnSphereAtLocationFast(Vec4 sphere);
+Vec3  randomPointOnSphereAtLocationFast(Float radius, Vec3 location);
+
+// slow variants
+ULL   randomULLSlow();
+Int   randomIntSlow();
+Vec3  randomVec3Slow();
+Float randomFloatSlow();
+Int   randomIntSlow(Int max);
+ULL   randomULLSlow(ULL max);
+Int   randomIntSlow(SizeT max);
+ULL   randomULLSlow(ULL min, ULL max);
+Float randomFloatSlow(Float min, Float max);
+Float randomFloatSlow(Double min, Double max);

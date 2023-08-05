@@ -65,9 +65,9 @@ using I32 = std::int32_t;
 using I64 = std::int64_t;
 
 // pointers
+template <typename T> using WeakPointer = std::weak_ptr<T>;
 template <typename T> using UniquePointer = std::unique_ptr<T>;
 template <typename T> using SharedPointer = std::shared_ptr<T>;
-template <typename T> using WeakPointer = std::weak_ptr<T>;
 
 using String = std::string;
 
@@ -86,16 +86,13 @@ using Matrix = glm::mat4;
 #include "glm/gtx/euler_angles.hpp"
 #include "glm/gtx/projection.hpp"
 
-using Quaternion = glm::quat;
-using Rotation = glm::quat;
-
-using Path = std::filesystem::path;
-
-using Thread = std::thread;
-
-template <typename T> using Function = std::function<T>;
 using Mutex = std::mutex;
+using Rotation = glm::quat;
+using Thread = std::thread;
+using Quaternion = glm::quat;
+using Path = std::filesystem::path;
 using SharedMutex = std::shared_mutex;
+template <typename T> using Function = std::function<T>;
 template <typename T> using LockGuard = std::lock_guard<T>;
 
 inline String threadId()
@@ -105,19 +102,18 @@ inline String threadId()
 	return oss.str();
 }
 
+template <typename T> using Set = std::set<T>;
 template <typename T> using List = std::list<T>;
-
+template <typename T> using Deque = std::deque<T>;
 template <typename T> using Vector = std::vector<T>;
-
+template <std::size_t T> using BitSet = std::bitset<T>;
+template <typename T, typename K> using Map = std::map<T, K>;
 template <typename T, size_t size> using Array = std::array<T, size>;
 
-template <typename T> using Set = std::set<T>;
-
-template <typename T, typename K> using Map = std::map<T, K>;
-
-template <std::size_t T> using BitSet = std::bitset<T>;
-
-template <typename T> using Deque = std::deque<T>;
+inline Float toFloat(const Byte v)
+{
+	return v;
+}
 
 inline Int toIntSafe(const ULL size)
 {
@@ -134,11 +130,6 @@ inline UInt toUIntSafe(const ULL size)
 	return std::numeric_limits<UInt>::max();
 }
 
-inline Float toFloat(const Byte v)
-{
-	return v;
-}
-
 // to String functions
 
 inline String toString(const LL v)
@@ -153,7 +144,7 @@ inline String toString(const Int v)
 
 inline String toString(const ULL v)
 {
-	return std::to_string(v);
+	return "(" + BitSet<sizeof(ULL) * 8>(v).to_string() + ") = " + std::to_string(v);
 }
 
 inline String toString(const Bool v)

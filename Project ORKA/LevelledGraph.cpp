@@ -62,17 +62,17 @@ void LeveledGraph::update()
 
 void LeveledGraph::addNode()
 {
-	positions.push_back(randomVec2(-1, 1));
+	positions.push_back(randomVec2Fast(-1, 1));
 	forces.emplace_back();
 	numForces.emplace_back();
-	for(Int i = 0; i < random(2) + 1; i++) connections.emplace_back(random(nodeCount), nodeCount);
+	for(Int i = 0; i < randomIntFast(2) + 1; i++) connections.emplace_back(randomIntFast(nodeCount), nodeCount);
 	nodeCount++;
 }
 
 Vec3 LeveledGraph::getPos(const Index x, const Index y)
 {
-	const Float size = 2;
-	return Vec3(x * size, positions[x][y] * size, 0);
+	constexpr Float size = 2;
+	return {x * size, positions[x][y] * size, 0};
 }
 
 void LeveledGraph::addForce(const Index a, const Vec2 force)

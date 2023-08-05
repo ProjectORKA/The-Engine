@@ -48,9 +48,9 @@ void ParticleSystem::spawn(const Vec3 loc, const Vec3 vel)
 	const Float force = length(vel);
 
 	transformation[currentId] = Vec4(loc, 0);
-	velocity[currentId]       = -randomFloat(0.2f) * vel + randomUnitVec3() * randomFloat(0.01f * force);
+	velocity[currentId]       = -randomFloatFast(0.2f) * vel + randomUnitVec3Fast() * randomFloatFast(0.01f * force);
 	velocity[currentId].z     = abs(velocity[currentId].z);
-	maxSize[currentId]        = 0.15f + force * 0.4f * randomFloat();
+	maxSize[currentId]        = 0.15f + force * 0.4f * randomFloatFast();
 	maxLifetime[currentId]    = (1.0f + sq(force / 100)) / 2.0f;
 	lifetime[currentId]       = 0.0f;
 	alive[currentId]          = true;

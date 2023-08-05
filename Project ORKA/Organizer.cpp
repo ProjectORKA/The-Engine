@@ -14,6 +14,8 @@ void Organizer::run()
 	ui.run();
 }
 
+void OrganizerRenderer::destroy(Window& window) {}
+
 void OrganizerRenderer::update(Window& window)
 {
 	player.update(window);
@@ -154,6 +156,8 @@ void OrganizerRenderer::addCompany(const Index guid, const String& companyName, 
 	companies.push_back(company);
 }
 
+void OrganizerRenderer::renderInteractive(ResourceManager& resourceManager, Window& window, TiledRectangle area) {}
+
 void OrganizerRenderer::addUser(const Index userGuid, const Index companyGuid, const String& firstName, const String& lastName)
 {
 	User user;
@@ -162,10 +166,6 @@ void OrganizerRenderer::addUser(const Index userGuid, const Index companyGuid, c
 	user.firstName   = firstName;
 	user.lastName    = lastName;
 	user.email       = firstName + "." + lastName + "@project-orka.com";
-	user.position    = randomVec2(-100, 100);
+	user.position    = randomVec2Fast(-100.0f, 100.0f);
 	users.push_back(user);
 }
-
-void OrganizerRenderer::destroy(Window& window) {}
-
-void OrganizerRenderer::renderInteractive(ResourceManager& resourceManager, Window& window, TiledRectangle area) {}

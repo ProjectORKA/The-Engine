@@ -22,8 +22,8 @@ void TreeGenerator::run()
 	{
 		for(int i = 0; i < 10000; i++)
 		{
-			const Float height = sqrt(randomFloat());
-			const Vec3  p      = randomPointInSphere(height) * Vec3(sqrt(randomFloat())) - Vec3(0, 0, 2 * height - 2);
+			const Float height = sqrt(randomFloatFast());
+			const Vec3  p      = randomPointInSphereFast(height) * Vec3(sqrt(randomFloatFast())) - Vec3(0, 0, 2 * height - 2);
 			leaves.add(p);
 		}
 	}

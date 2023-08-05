@@ -17,7 +17,7 @@ enum class PlayerState
 struct TripleNineEnemy final : UIElement
 {
 	Index id       = static_cast<Index>(-1);
-	Vec3  position = Vec3(randomVec2(-85, 85), 0);
+	Vec3  position = Vec3(randomVec2Fast(-85, 85), 0);
 
 	void die();
 	void update(Window& window) override;

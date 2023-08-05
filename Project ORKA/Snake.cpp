@@ -16,8 +16,8 @@ void Snake::addSegment()
 
 void SnakeFood::update()
 {
-	foodPosition += randomVec2(-0.02f, 0.02f);
-	foodColor = randomVec4(0.0f, 1.0f);
+	foodPosition += randomVec2Fast(-0.02f, 0.02f);
+	foodColor = randomVec4Fast(0.0f, 1.0f);
 }
 
 void SnakeRenderer::destroy(Window& window) {}
@@ -54,7 +54,7 @@ void Snake::update(SnakeFood& snakeFood, const Float deltaTime)
 	headPosition += direction * deltaTime;
 	if(length(snakeFood.foodPosition - headPosition) < 0.06f)
 	{
-		snakeFood.foodPosition = randomVec2(-1, 1);
+		snakeFood.foodPosition = randomVec2Fast(-1, 1);
 		addSegment();
 	}
 

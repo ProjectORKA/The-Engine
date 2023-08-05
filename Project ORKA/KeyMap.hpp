@@ -143,11 +143,11 @@ enum Key
 
 enum class InputType : UInt
 {
-	Unknown = -1,
-	Scroll,
-	Mouse,
-	KeyBoard,
-	Controller
+	Unknown    = static_cast<UInt>(-1),
+	Scroll     = 0,
+	Mouse      = 1,
+	KeyBoard   = 2,
+	Controller = 3
 };
 
 enum

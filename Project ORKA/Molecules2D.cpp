@@ -37,7 +37,7 @@ void Molecules2D::update(const Vec3 location)
 	while(molecules.size() < 2000)
 	{
 		molecules.emplace_back();
-		molecules.back().pos = randomVec2(-1, 1);
+		molecules.back().pos = randomVec2Fast(-1.0, 1.0);
 	}
 
 	for(UInt i = 0; i < molecules.size(); i++) for(UInt j = i + 1; j < molecules.size(); j++) molecules[i].collide(molecules[j]);

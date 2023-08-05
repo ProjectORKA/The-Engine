@@ -25,8 +25,8 @@ void FlappyBirdBird::reset()
 
 void FlappyBirdPipes::randomize()
 {
-	gap  = randomFloat(minGap, maxGap);
-	posY = randomFloat(-0.9f + gap / 2.0f, 0.9f - gap / 2.0f);
+	gap  = randomFloatFast(minGap, maxGap);
+	posY = randomFloatFast(-0.9f + gap / 2.0f, 0.9f - gap / 2.0f);
 }
 
 void FlappyBirdRenderer::destroy(Window& window) {}
@@ -125,7 +125,6 @@ void FlappyBirdRenderer::create(ResourceManager& resourceManager, Window& window
 	const FlappyBirdPipes p(0);
 
 	for(Int i = 0; static_cast<Float>(i) < 10.0f / p.spacing; i++) pipeColumns.push_back(FlappyBirdPipes(3 + i));
-
 }
 
 void FlappyBirdRenderer::render(ResourceManager& rm, Window& window, TiledRectangle area)
@@ -204,12 +203,12 @@ void FlappyBirdBird::updateAI(const Vector<FlappyBirdPipes>& pipeColumns, const 
 
 	if(lowestJumpPoint > highestJumpPoint) logError("Cant calculate jump point!");
 
-	if(transform.getLocation().y + velocity.y * delta <= randomFloat(lowestJumpPoint, highestJumpPoint)) jump();
+	if(transform.getLocation().y + velocity.y * delta <= randomFloatFast(lowestJumpPoint, highestJumpPoint)) jump();
 }
 
 FlappyBirdPipes FlappyBirdBird::getClosestPipeColumn(const Vector<FlappyBirdPipes>& pipeColumns) const
 {
-	FlappyBirdPipes closest(1000.0f);
+	FlappyBirdPipes closest(1000);
 
 	for(auto& pipes : pipeColumns)
 	{

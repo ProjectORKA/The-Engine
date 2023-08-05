@@ -81,7 +81,7 @@ void generateSolarSystem(Thing& thing)
 	thing.content.emplace_back(ThingType::Star);
 
 	// add planets
-	const UInt numberOfPlanets = randomInt(10);
+	const UInt numberOfPlanets = randomUIntFast(10);
 	for(UInt i = 0; i < numberOfPlanets; i++) thing.content.emplace_back(ThingType::Planet);
 
 	// generate contents
