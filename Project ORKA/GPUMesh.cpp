@@ -109,6 +109,6 @@ void GPUMesh::renderInstances(Uniforms& uniforms, const Vector<Matrix> & transfo
 		uniforms.setInstanced(true);
 		uniforms.upload();
 		vao.bind();
-		vao.renderInstanced(primitiveMode, indexBuffer.indexCount, nullptr, transforms.size());
+		vao.renderInstanced(primitiveMode, indexBuffer.indexCount, nullptr, toIntSafe(transforms.size()));
 	}
 }

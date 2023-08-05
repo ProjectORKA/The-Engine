@@ -5,7 +5,7 @@ void FlappyBird::run()
 {
 	resourceManager.create();
 	ui.create();
-	ui.window("ORKA Sandbox", Area(settings.defaultWindowWidth, settings.defaultWindowHeight), true, true, WindowState::Windowed, flappyBirdRenderer, resourceManager);
+	ui.window("ORKA Flappy Bird", Area(settings.defaultWindowWidth, settings.defaultWindowHeight), true, true, WindowState::Windowed, flappyBirdRenderer, resourceManager);
 	ui.run();
 }
 

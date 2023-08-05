@@ -822,13 +822,13 @@ Bool OpenGLShaderProgram::create(const String& name, const String& vertexShaderS
 	const Int vertexCompileStatus   = OpenGL::Shaders::apiGetShaderIntegerValue(vertexShaderId, ShaderParameters::CompileStatus);
 	const Int fragmentCompileStatus = OpenGL::Shaders::apiGetShaderIntegerValue(fragmentShaderId, ShaderParameters::CompileStatus);
 
-	if(vertexCompileStatus != true)
+	if(vertexCompileStatus != 1)
 	{
 		const String vertexInfoLog = OpenGL::Shaders::apiGetShaderInfoLog(vertexShaderId);
 		logError("Linking shader program (" + name + ")failed. Error: " + vertexInfoLog);
 	}
 
-	if(fragmentCompileStatus != true)
+	if(fragmentCompileStatus != 1)
 	{
 		const String fragmentInfoLog = OpenGL::Shaders::apiGetShaderInfoLog(fragmentShaderId);
 		logError("Linking shader program (" + name + ")failed. Error: " + fragmentInfoLog);
@@ -843,7 +843,7 @@ Bool OpenGLShaderProgram::create(const String& name, const String& vertexShaderS
 
 	const Int linkStatus = OpenGL::Shaders::apiGetProgramIntegerValue(programId, ShaderProgramParameters::LinkStatus);
 
-	if(linkStatus != true)
+	if(linkStatus != 1)
 	{
 		const String log = OpenGL::Shaders::apiGetProgramInfoLog(programId);
 		logError("Linking shader program (" + name + ")failed. Error: " + log);
