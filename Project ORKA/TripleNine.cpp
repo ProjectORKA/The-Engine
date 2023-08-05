@@ -14,7 +14,7 @@ void TripleNine::run()
 
 void TripleNineEnemy::die()
 {
-	position = Vec3(randomVec2(-85.0f, 85.0f), 0.0f);
+	position = Vec3(randomVec2Fast(-85.0f, 85.0f), 0.0f);
 }
 
 void TripleNinePlayer::jump()

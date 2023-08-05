@@ -66,7 +66,7 @@ NeuralNet::NeuralNet(const Vector<UInt>& structure)
 
 			for(UInt neuronBId = 0; neuronBId < neuronCountAtLayer(layerId + 1); neuronBId++)
 			{
-				weights[layerId][neuronAId][neuronBId]      = randomFloat(-1, 1);
+				weights[layerId][neuronAId][neuronBId]      = randomFloatFast(-1.0f, 1.0f);
 				contribution[layerId][neuronAId][neuronBId] = 0;
 			}
 		}

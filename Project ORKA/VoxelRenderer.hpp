@@ -4,14 +4,14 @@
 #include "CPUMesh.hpp"
 #include "GPUMesh.hpp"
 
-#define VOXEL_CHUNK_SIZE 64
-#define VOXEL_CHUNK_HEIGHT 64
+constexpr auto voxelChunkSize   = 64;
+constexpr auto voxelChunkHeight = 64;
 
 struct Renderer;
 
 struct Chunk
 {
-	Bool voxels[VOXEL_CHUNK_SIZE][VOXEL_CHUNK_SIZE][VOXEL_CHUNK_HEIGHT];
+	Bool voxels[voxelChunkSize][voxelChunkSize][voxelChunkHeight];
 
 	Chunk();
 	CPUMesh generateMesh(ResourceManager& resourceManager) const;

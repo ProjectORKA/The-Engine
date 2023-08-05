@@ -57,8 +57,8 @@ void MindMap::addNode()
 {
 	forces.emplace_back();
 	numForces.emplace_back();
-	connections.emplace_back(random(nodeCount), nodeCount);
-	if(nodeCount) positions.push_back(randomVec2(-1, 1) + positions[connections.back().a]);
+	connections.emplace_back(randomIntFast(nodeCount), nodeCount);
+	if(nodeCount) positions.push_back(randomVec2Fast(-1.0f, 1.0f) + positions[connections.back().a]);
 	else positions.push_back(Vec2(0));
 	nodeCount++;
 }

@@ -24,7 +24,7 @@ struct NeighborQuadtreeNode
 	Byte level      = 0;
 	Bool subdivided = false;
 	Vec3 position   = Vec3(0);
-	Vec4 color      = Vec4(randomVec3(), 1);
+	Vec4 color      = Vec4(randomVec3Fast(), 1);
 
 	[[nodiscard]] NeighborQuadtreeNode& nlr() const;
 	[[nodiscard]] NeighborQuadtreeNode& nrr() const;

@@ -184,7 +184,7 @@ void SimpleRTS::run()
 
 Vec2 randomSpawnPosition()
 {
-	return randomVec2(SIMPLERTS_MAPSIZE);
+	return randomVec2Fast(SIMPLERTS_MAPSIZE);
 }
 
 void SimpleRTSSimulation::destroy() {}

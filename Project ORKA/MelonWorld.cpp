@@ -73,7 +73,7 @@ void MelonWorld::generatePaths(const Float& generationSize, const MelonPlayer& p
 {
 	while(nodes.size() < 1000)
 	{
-		Vec3 newNode    = Vec3(normalize(randomVec2(-1, 1)) * Vec2(generationSize) * randomFloat(0.75, 1), 0) + player.location;
+		Vec3 newNode    = Vec3(normalize(randomVec2Fast(-1.0f, 1.0f)) * Vec2(generationSize) * randomFloatFast(0.75f, 1.0f), 0) + player.location;
 		Vec3 closestPos = getClosestPoint(newNode, nodes);
 
 		newNode = closestPos + normalize(newNode - closestPos) * Vec3(pathWidth / 2);

@@ -14,8 +14,8 @@ struct PhysicsParticle
 {
 	Vector<Index> connected   = {};
 	Bool          isColliding = false;
-	Vec2          position    = randomVec2(-1, 1);
-	Vec2          velocity    = randomVec2(-startingVelocity, startingVelocity);
+	Vec2          position    = randomVec2Fast(-1, 1);
+	Vec2          velocity    = randomVec2Fast(-startingVelocity, startingVelocity);
 
 	void render(ResourceManager& resourceManager, Window& window, Vector<PhysicsParticle>& particles) const;
 };

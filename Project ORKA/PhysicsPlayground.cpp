@@ -29,12 +29,12 @@ void PhysicsPlaygroundSimulation::swapIntersecting()
 			{
 				if(a != b && doIntersect(a, a + 1, b, b + 1))
 				{
-					const Index start = min(a, b) + 1;
-					const Index end   = max(a, b);
+					const Int start = min(a, b) + 1;
+					const Int end   = max(a, b);
 
 					Vector<PhysicsParticle> reordered(nodes.size());
 
-					for(Int i = 0; i < nodes.size(); i++)
+					for(Int i = 0; i < static_cast<Int>(nodes.size()); i++)
 					{
 						if(i < start || i > end) reordered[i] = nodes[i];
 						else reordered[i]                     = nodes[end - (i - start)];
@@ -52,10 +52,7 @@ void PhysicsPlaygroundSimulation::connectByDistance()
 {
 	connections.clear();
 
-	for(Int a = 0; a < nodes.size(); a++)
-	{
-		for(Int b = a; b < nodes.size(); b++) if(a != b) if(distance(nodes[a].position, nodes[b].position) < connectionDistance) connections.emplace_back(a, b);
-	}
+	for(Int a = 0; a < static_cast<Int>(nodes.size()); a++) for(Int b = a; b < static_cast<Int>(nodes.size()); b++) if(a != b) if(distance(nodes[a].position, nodes[b].position) < connectionDistance) connections.emplace_back(a, b);
 }
 
 void PhysicsPlaygroundSimulation::removeIntersecting()

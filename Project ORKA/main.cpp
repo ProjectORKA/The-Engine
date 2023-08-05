@@ -43,30 +43,30 @@
 // easy to use algorithms
 // multiple window support
 
-#include "AIPlayground.hpp"
-#include "DungeonsAndDiscord.hpp"
+//#include "AIPlayground.hpp"
+//#include "DungeonsAndDiscord.hpp"
 #include "FlappyBird.hpp"
-#include "MindMapper.hpp"
-#include "GPUSim.hpp"
-#include "GuessingGame.hpp"
-#include "Hello Triangle.hpp"
-#include "ImageViewer.hpp"
-#include "ImguiExample.hpp"
-#include "MoonCrash.hpp"
-#include "MSDFText.hpp"
-#include "NameGenerator.hpp"
-#include "Organizer.hpp"
-#include "PhysicsPlayground.hpp"
-#include "Pong.hpp"
-#include "ProjectMelon.hpp"
-#include "RedDotHack.hpp"
-#include "Sandbox.hpp"
-#include "SDFRenderer.hpp"
-#include "SimpleRTS.hpp"
-#include "Snake.hpp"
-#include "Sortr.hpp"
-#include "TripleNine.hpp"
-#include "UISandbox.hpp"
+//#include "MindMapper.hpp"
+//#include "GPUSim.hpp"
+//#include "GuessingGame.hpp"
+//#include "Hello Triangle.hpp"
+//#include "ImageViewer.hpp"
+//#include "ImguiExample.hpp"
+//#include "MoonCrash.hpp"
+//#include "MSDFText.hpp"
+//#include "NameGenerator.hpp"
+//#include "Organizer.hpp"
+//#include "PhysicsPlayground.hpp"
+//#include "Pong.hpp"
+//#include "ProjectMelon.hpp"
+//#include "RedDotHack.hpp"
+//#include "Sandbox.hpp"
+//#include "SDFRenderer.hpp"
+//#include "SimpleRTS.hpp"
+//#include "Snake.hpp"
+//#include "Sortr.hpp"
+//#include "TripleNine.hpp"
+//#include "UISandbox.hpp"
 
 // [TODO] implement opengl logger into all opengl functions
 // [TODO] fix vertex shader recompilation
@@ -78,7 +78,7 @@
 
 Int main(const Int argc, Char* argv[])
 {
-	TripleNine game;
+	FlappyBird game;
 	game.run();
 
 	//cheatTest();

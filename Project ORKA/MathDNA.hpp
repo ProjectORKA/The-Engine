@@ -15,7 +15,7 @@ struct DNAResult
 		// e
 	} type = DNAinput;
 
-	Float variable = randomFloat(-2, 2);
+	Float variable = randomFloatFast(-2.0, 2.0);
 
 	virtual void  print();
 	virtual Float calculate();

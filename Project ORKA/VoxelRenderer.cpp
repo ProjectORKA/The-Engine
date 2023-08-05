@@ -4,11 +4,11 @@
 
 Chunk::Chunk()
 {
-	for(Int x = 0; x < VOXEL_CHUNK_SIZE; x++)
+	for(Int x = 0; x < voxelChunkSize; x++)
 	{
-		for(Int y = 0; y < VOXEL_CHUNK_SIZE; y++)
+		for(Int y = 0; y < voxelChunkSize; y++)
 		{
-			for(Int z = VOXEL_CHUNK_HEIGHT - 1; z > 0; z--) voxels[x][y][z] = z / static_cast<Float>(VOXEL_CHUNK_HEIGHT) * 2 < 1 + noise.octaveNoise0_1(x / static_cast<Float>(VOXEL_CHUNK_SIZE), y / static_cast<Float>(VOXEL_CHUNK_SIZE), 16);
+			for(Int z = voxelChunkHeight - 1; z > 0; z--) voxels[x][y][z] = z / static_cast<Float>(voxelChunkHeight) * 2 < 1 + noise.octaveNoise0_1(x / static_cast<Float>(voxelChunkSize), y / static_cast<Float>(voxelChunkSize), 16);
 		}
 	}
 }
@@ -33,18 +33,18 @@ CPUMesh Chunk::generateMesh(ResourceManager& resourceManager) const
 	CPUMesh backFace;
 	backFace.load(resourceManager, "voxelBack");
 
-	for(Int x = 0; x < VOXEL_CHUNK_SIZE; x++)
+	for(Int x = 0; x < voxelChunkSize; x++)
 	{
-		for(Int y = 0; y < VOXEL_CHUNK_SIZE; y++)
+		for(Int y = 0; y < voxelChunkSize; y++)
 		{
-			for(Int z = 0; z < VOXEL_CHUNK_HEIGHT; z++)
+			for(Int z = 0; z < voxelChunkHeight; z++)
 			{
 				CPUMesh currentFace;
 
 				if(voxels[x][y][z])
 				{
 					// is terrain
-					if(x < VOXEL_CHUNK_SIZE - 1 && !voxels[x + 1][y][z])
+					if(x < voxelChunkSize - 1 && !voxels[x + 1][y][z])
 					{
 						currentFace = rightFace;
 						currentFace.move(Vec3(2 * x, 2 * y, 2 * z));
@@ -57,7 +57,7 @@ CPUMesh Chunk::generateMesh(ResourceManager& resourceManager) const
 						terrain.merge(currentFace);
 					}
 
-					if(y < VOXEL_CHUNK_SIZE - 1 && !voxels[x][y + 1][z])
+					if(y < voxelChunkSize - 1 && !voxels[x][y + 1][z])
 					{
 						currentFace = frontFace;
 						currentFace.move(Vec3(2 * x, 2 * y, 2 * z));
@@ -69,7 +69,7 @@ CPUMesh Chunk::generateMesh(ResourceManager& resourceManager) const
 						currentFace.move(Vec3(2 * x, 2 * y, 2 * z));
 						terrain.merge(currentFace);
 					}
-					if(z < VOXEL_CHUNK_HEIGHT && !voxels[x][y][z + 1])
+					if(z < voxelChunkHeight && !voxels[x][y][z + 1])
 					{
 						currentFace = topFace;
 						currentFace.move(Vec3(2 * x, 2 * y, 2 * z));

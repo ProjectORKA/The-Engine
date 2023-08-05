@@ -5,13 +5,14 @@
 
 struct FramebufferTexture
 {
-	void                                destroy();
 	[[nodiscard]] Bool                  isColor() const;
 	[[nodiscard]] TextureID             getGLID() const;
-	void                                resize(Area area);
 	[[nodiscard]] FramebufferAttachment getAttachmentSlot() const;
-	void                                useTextureInSlot(TextureSlot textureSlot) const;
-	void                                create(const Area size, const WritePixelsFormat format, const DataType type, const FramebufferAttachment framebufferAttachmentSlot, const Wrapping wrapping);
+
+	void destroy();
+	void resize(Area area);
+	void useTextureInSlot(TextureSlot textureSlot) const;
+	void create(Area size, WritePixelsFormat format, DataType type, FramebufferAttachment framebufferAttachmentSlot, Wrapping wrapping);
 private:
 	GPUTexture            texture;
 	DataType              type                      = DataType::Float;
