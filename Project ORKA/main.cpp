@@ -73,12 +73,12 @@
 // [TODO] move advanced rendering systems like textRenderSystem out of renderer and into window
 // (basically simplify renderer to bare bones rendering tech)
 // OR separate into renderer and lowLevelRenderer
-// [TODO] remove Name and NameTable and replace it with Hash and HashTabl
+// [TODO] remove Name and NameTable and replace it with Hash and HashTable
 // [TODO] remove old thread system
 
 Int main(const Int argc, Char* argv[])
 {
-	MoonCrash game;
+	TripleNine game;
 	game.run();
 
 	//cheatTest();
