@@ -78,7 +78,7 @@
 
 Int main(const Int argc, Char* argv[])
 {
-	MoonCrash game;
+	TripleNine game;
 	game.run();
 
 	//cheatTest();
