@@ -1,5 +1,4 @@
 #pragma once
-
 #include "Game.hpp"
 #include "ORKAIntroSequence.hpp"
 #include "Player.hpp"
@@ -38,7 +37,6 @@ struct TripleNinePlayer final : Player
 	// coyote time
 	// sprint jump charge
 	// either c alt or a and d to enable free cam while sprinting
-
 	// pressed input
 	InputId forward   = InputId(InputType::KeyBoard, W);
 	InputId backward  = InputId(InputType::KeyBoard, S);
@@ -54,8 +52,8 @@ struct TripleNinePlayer final : Player
 	InputId precision = InputId(InputType::KeyBoard, ALT);
 	// event input
 	InputEvent jumpTrigger = InputEvent(InputType::KeyBoard, SPACE, true);
-	// InputEvent jumpRelease = InputEvent(InputType::KeyBoard, SPACE, 0);
 
+	// InputEvent jumpRelease = InputEvent(InputType::KeyBoard, SPACE, 0);
 	enum class State
 	{
 		standing,
@@ -82,25 +80,20 @@ struct TripleNinePlayer final : Player
 
 	// global scale
 	const Float unit = 1.0f;
-
 	// temporary input data
 	Vec2  targetCameraRotation = Vec2(0.0f);
 	Float inputTurnX           = 0.0f;
 	Bool  movementInput        = false;
-
-	State state = State::standing;
-
+	State state                = State::standing;
 	// player vectors
 	Vec3 forwardVector = Vec3(0.0f, 1.0f, 0.0f);
 	Vec3 rightVector   = Vec3(1.0f, 0.0f, 0.0f);
-
 	// jump
 	const Float minJumpVelocity = 10.0f * unit;
 	const Float maxJumpVelocity = 15.0f * unit;
 	Float       jumpCharge      = 0.0f;
 	// Bool queueJump = false;
 	Bool doubleJumpCharge = false;
-
 	// speed
 	const Float walkingSpeed             = 2.0f * unit;
 	const Float runningSpeed             = 8.0f * unit;
@@ -109,22 +102,18 @@ struct TripleNinePlayer final : Player
 	Bool        isMoving                 = false;
 	Float       speedControl             = 0.0f;
 	Vec3        movementControl          = Vec3(0.0f);
-
 	// strafe
 	const Float maxStrafeSpeed        = 5.0f;
 	const Float maxStrafeAcceleration = 55.0f;
 	// Vec2 strafeControl = Vec2(0);
-
 	// player physique
 	const Float height                     = 1.8f * unit; // total height when standing
 	const Float lowerChestHeightMultiplier = 0.6f; // height of lower chest based on total height //0.73
 	const Float eyeHeightMultilpier        = 0.94f; // height of camera based on total height
 	const Float lowerChestHeight           = height * lowerChestHeightMultiplier;
-
 	// head movement
 	Float walkCycle  = 0;
 	Vec3  headOffset = Vec3(0);
-
 	// height
 	const Float eyeHeightNormal    = height * eyeHeightMultilpier; // standing
 	const Float eyeHeightFlying    = height * 1.1f * eyeHeightMultilpier; // off ground
@@ -133,16 +122,12 @@ struct TripleNinePlayer final : Player
 	const Float eyeHeightRunning   = height * 0.75f * eyeHeightMultilpier; // running
 	const Float eyeHeightProning   = height * 0.2f * eyeHeightMultilpier; // proning
 	const Float eyeHeightSliding   = height * 0.3f * eyeHeightMultilpier; // sliding
-
-	const Float eyeMovementSpeed = 10.0f;
-
-	Float eyeHeight = 0.0f;
-
+	const Float eyeMovementSpeed   = 10.0f;
+	Float       eyeHeight          = 0.0f;
 	// headbob
 	const Float headBobSpeed     = 1.4f;
 	const Float headBobIntensity = 0.01f;
 	Float       headBob          = 0.0f;
-
 	// lean
 	// upper body lean
 	const Float upperBodyLeanSpeed          = 10.0f;
@@ -157,17 +142,14 @@ struct TripleNinePlayer final : Player
 	Float       fullBodyLean         = 0.0f;
 	Float       fullBodyLeanAngle    = 0.0f;
 	Float       fullBodyLeanControl  = 0.0f;
-
 	// sway
 	const Float headSwayImpact = 0.02f;
 	Float       sway           = 0.0f;
-
 	// state
 	Bool  onGround         = false;
 	Float actualSpeed      = 0.0f;
 	Float targetSpeed      = walkingSpeed;
 	Float actualInputSpeed = 0.0f;
-
 	// physics
 	Float       mass           = 80.0f; // kg
 	Vec3        velocity       = Vec3(0.0f);
@@ -176,24 +158,23 @@ struct TripleNinePlayer final : Player
 	const Float gravity        = 30.0f; // gravity of player is more than 10 because it makes it feel snappier
 	const Float airTimeGravity = 16.0f; // makes gravity less impactful when holding space in the air
 	const Float airResistance  = 0.99f;
-
 	// friction
 	const Float iceFrictionFactor    = 0.1f;
 	const Float normalFrictionFactor = 1.0f;
 	Float       stopFriction         = 12.0f;
 	Float       movementFriction     = 0.0f;
 	Float       actualFriction       = stopFriction;
-
 	// debug
 	Float debugCurrentMaxJumpHeight = 0.0f;
 
-	void               jump();
-	void               collisionResponse();
 	[[nodiscard]] Bool isCollidingWithGround() const;
-	void               update(Window& window) override;
-	void               calculatePhysics(const Window& window);
-	void               calculateHeadPosition(Window& window, Float delta);
-	void               inputEvent(Window& window, InputEvent input) override;
+
+	void jump();
+	void collisionResponse();
+	void update(Window& window) override;
+	void calculatePhysics(const Window& window);
+	void calculateHeadPosition(Window& window, Float delta);
+	void inputEvent(Window& window, InputEvent input) override;
 };
 
 struct TripleNineSimulation final : GameSimulation
@@ -211,6 +192,7 @@ struct TripleNineRenderer final : GameRenderer
 	TripleNinePlayer      player;
 	Framebuffer           framebuffer;
 	Float                 mapSize       = 0.5f;
+	Bool                  renderText    = false;
 	Bool                  bloom         = false;
 	TripleNineSimulation* sim           = nullptr;
 	InputEvent            enter         = InputEvent(InputType::Mouse, LMB, true);

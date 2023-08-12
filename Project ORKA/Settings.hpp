@@ -3,10 +3,11 @@
 #include "Basics.hpp"
 
 // debugging
-#define DEBUG
-#define WARNING_LOG
-#define ERROR_LOG
-// #define MEMORY_LEAK_DETECTION //slows down the program a lot
+constexpr Bool debugLoggingIsEnabled = true;
+constexpr Bool errorLoggingIsEnabled = true;
+constexpr Bool warningLoggingIsEnabled = true;
+constexpr Bool debugImageLoadingIsEnabled = false;
+constexpr Bool debugFramebuffersIsEnabled = false;
 
 // planet renderer
 #define MAX_CHUNK_LEVEL 63			// 52 is millimeter precision

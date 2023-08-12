@@ -272,3 +272,5 @@ __pycache__/
 *.blend2
 *.blend3
 *.save
+/Project ORKA/Cache/Meshes/dnd.mesh
+/Project ORKA/Data/DungeonsAndDiscord/dnd.fbx

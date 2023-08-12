@@ -1,6 +1,5 @@
 #include "TripleNine.hpp"
 #include "Window.hpp"
-
 void TripleNine::run()
 {
 	resourceManager.create();
@@ -11,12 +10,10 @@ void TripleNine::run()
 	ui.window("Triple Nine", Area(1920, 1080), true, false, WindowState::Windowed, intro, resourceManager);
 	ui.run();
 }
-
 void TripleNineEnemy::die()
 {
 	position = Vec3(randomVec2Fast(-85.0f, 85.0f), 0.0f);
 }
-
 void TripleNinePlayer::jump()
 {
 	if(isMoving)
@@ -48,13 +45,11 @@ void TripleNineSimulation::createEnemy()
 	enemies.emplace_back();
 	enemies.back().id = static_cast<Index>(enemies.size()) - static_cast<Index>(1);
 }
-
 void TripleNinePlayer::collisionResponse()
 {
 	if(velocity.z < 0) velocity.z = 0;
 	if(location.z < 0) location.z = 0;
 }
-
 void TripleNinePlayer::update(Window& window)
 {
 	// set up temporary data
@@ -155,22 +150,18 @@ void TripleNinePlayer::update(Window& window)
 	// reset delta
 	targetCameraRotation = DVec2(0);
 }
-
 void TripleNineRenderer::update(Window& window)
 {
 	player.update(window);
 }
-
 void TripleNineRenderer::destroy(Window& window)
 {
 	framebuffer.destroy();
 }
-
 Bool TripleNinePlayer::isCollidingWithGround() const
 {
 	return location.z <= 0;
 }
-
 void TripleNineRenderer::connect(TripleNineSimulation& sim)
 {
 	this->sim = &sim;
@@ -192,7 +183,6 @@ void TripleNinePlayer::calculatePhysics(const Window& window)
 	const Vec3 velocity2 = velocity1 + acceleration * window.renderer.deltaTime() / Vec3(2);
 	velocity             = velocity2 * pow(airResistance, window.renderer.deltaTime());
 }
-
 void TripleNineSimulation::create(ResourceManager& resourceManager)
 {
 	// create targets
@@ -219,7 +209,6 @@ void TripleNinePlayer::inputEvent(Window& window, const InputEvent input)
 		}
 	}
 }
-
 void TripleNineRenderer::inputEvent(Window& window, const InputEvent input)
 {
 	if(input == enter)
@@ -235,7 +224,6 @@ void TripleNineRenderer::inputEvent(Window& window, const InputEvent input)
 	if(input == toggleBloom) bloom = !bloom;
 	player.inputEvent(window, input);
 }
-
 void TripleNinePlayer::calculateHeadPosition(Window& window, const Float delta)
 {
 	Float eyeHeightTarget = eyeHeightNormal;
@@ -305,7 +293,6 @@ void TripleNinePlayer::calculateHeadPosition(Window& window, const Float delta)
 	const auto headHeight3D = Vec3(0, 0, eyeHeight + bobTarget);
 	camera.setLocation(location + sway3D + headHeight3D + lean3D);
 }
-
 void TripleNineRenderer::create(ResourceManager& resourceManager, Window& window)
 {
 	framebuffer.create("MainFramebuffer", Area(1920, 1080));
@@ -328,13 +315,11 @@ void TripleNineRenderer::create(ResourceManager& resourceManager, Window& window
 	player.camera.setNearClipValue(0.01f);
 	player.camera.setFarClipValue(1000.0f);
 }
-
 void TripleNineEnemy::render(ResourceManager& resourceManager, Renderer& renderer) const
 {
 	renderer.uniforms().setMMatrix(matrixFromLocationAndSize(position, 1));
 	renderer.renderMesh(resourceManager, "tripleNineTarget");
 }
-
 void TripleNineRenderer::renderBloom(ResourceManager& resourceManager, Renderer& r) const
 {
 	//	FramebufferSystem& fs = r.framebufferSystem;
@@ -500,23 +485,27 @@ void TripleNineRenderer::render(ResourceManager& resourceManager, Window& window
 	r.fill(1, 1, 1);
 	r.uniforms().setMMatrix(matrixFromLocationAndSize(Vec2(window.getFrameSize() / 2), 2));
 	r.renderMesh(resourceManager, "circle");
-	r.screenSpace();
-	Int             i       = 1;
-	constexpr Float spacing = 30.0f;
-	r.uniforms().setMMatrix(Matrix(1));
-	r.textRenderSystem.setStyle(fonts.paragraph);
-	r.textRenderSystem.alignText(Alignment::left, Alignment::bottom);
-	r.textRenderSystem.render(resourceManager, r, "on Ground: " + toString(player.onGround), Vec2(spacing, static_cast<Float>(i++) * spacing));
-	r.textRenderSystem.render(resourceManager, r, "horizontal speed: " + toString(length(player.velocity * Vec3(1, 1, 0))), Vec2(spacing, static_cast<Float>(i++) * spacing));
-	r.textRenderSystem.render(resourceManager, r, "is moving: " + toString(player.isMoving), Vec2(spacing, static_cast<Float>(i++) * spacing));
-	r.textRenderSystem.render(resourceManager, r, "full body lean: " + toString(player.fullBodyLeanAngle), Vec2(spacing, static_cast<Float>(i++) * spacing));
-	r.textRenderSystem.render(resourceManager, r, "upper body lean: " + toString(player.upperBodyLeanAngle), Vec2(spacing, static_cast<Float>(i++) * spacing));
-	r.textRenderSystem.render(resourceManager, r, "target id: " + toString(r.objectId), Vec2(spacing, static_cast<Float>(i++) * spacing));
-	r.textRenderSystem.render(resourceManager, r, "vertical speed: " + toString(player.velocity.z), Vec2(spacing, static_cast<Float>(i++) * spacing));
-	r.textRenderSystem.render(resourceManager, r, "double jump: " + toString(player.doubleJumpCharge), Vec2(spacing, static_cast<Float>(i++) * spacing));
-	r.textRenderSystem.render(resourceManager, r, "max jump height: " + toString(player.debugCurrentMaxJumpHeight), Vec2(spacing, static_cast<Float>(i++) * spacing));
-	r.textRenderSystem.render(resourceManager, r, "cameraForwardVector: " + toString(player.camera.getForwardVector()), Vec2(spacing, static_cast<Float>(i++) * spacing));
-	r.textRenderSystem.render(resourceManager, r, "fps: " + toString(1.0f / r.time.delta), Vec2(spacing, static_cast<Float>(i) * spacing));
+
+	if(renderText)
+	{
+		r.screenSpace();
+		Int             i       = 1;
+		constexpr Float spacing = 30.0f;
+		r.uniforms().setMMatrix(Matrix(1));
+		r.textRenderSystem.setStyle(fonts.paragraph);
+		r.textRenderSystem.alignText(Alignment::left, Alignment::bottom);
+		r.textRenderSystem.render(resourceManager, r, "on Ground: " + toString(player.onGround), Vec2(spacing, static_cast<Float>(i++) * spacing));
+		r.textRenderSystem.render(resourceManager, r, "horizontal speed: " + toString(length(player.velocity * Vec3(1, 1, 0))), Vec2(spacing, static_cast<Float>(i++) * spacing));
+		r.textRenderSystem.render(resourceManager, r, "is moving: " + toString(player.isMoving), Vec2(spacing, static_cast<Float>(i++) * spacing));
+		r.textRenderSystem.render(resourceManager, r, "full body lean: " + toString(player.fullBodyLeanAngle), Vec2(spacing, static_cast<Float>(i++) * spacing));
+		r.textRenderSystem.render(resourceManager, r, "upper body lean: " + toString(player.upperBodyLeanAngle), Vec2(spacing, static_cast<Float>(i++) * spacing));
+		r.textRenderSystem.render(resourceManager, r, "target id: " + toString(r.objectId), Vec2(spacing, static_cast<Float>(i++) * spacing));
+		r.textRenderSystem.render(resourceManager, r, "vertical speed: " + toString(player.velocity.z), Vec2(spacing, static_cast<Float>(i++) * spacing));
+		r.textRenderSystem.render(resourceManager, r, "double jump: " + toString(player.doubleJumpCharge), Vec2(spacing, static_cast<Float>(i++) * spacing));
+		r.textRenderSystem.render(resourceManager, r, "max jump height: " + toString(player.debugCurrentMaxJumpHeight), Vec2(spacing, static_cast<Float>(i++) * spacing));
+		r.textRenderSystem.render(resourceManager, r, "cameraForwardVector: " + toString(player.camera.getForwardVector()), Vec2(spacing, static_cast<Float>(i++) * spacing));
+		r.textRenderSystem.render(resourceManager, r, "fps: " + toString(1.0f / r.time.delta), Vec2(spacing, static_cast<Float>(i) * spacing));
+	}
 
 	// render to window
 	r.setDepthTest(false);
@@ -524,14 +513,12 @@ void TripleNineRenderer::render(ResourceManager& resourceManager, Window& window
 	r.drawToWindow();
 	r.fullScreenShader(resourceManager, "tonemapping");
 }
-
 void TripleNineEnemy::renderInteractive(ResourceManager& resourceManager, Window& window, TiledRectangle area)
 {
 	window.renderer.uniforms().setMMatrix(matrixFromLocationAndSize(position, 1));
 	window.renderer.uniforms().setObjectId(id);
 	window.renderer.renderMesh(resourceManager, "tripleNineTarget");
 }
-
 void TripleNineRenderer::renderInteractive(ResourceManager& resourceManager, Window& window, const TiledRectangle area)
 {
 	Renderer& r = window.renderer;

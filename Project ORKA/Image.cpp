@@ -39,6 +39,8 @@ SizeT Image::getByteSize() const
 
 void Image::load(const Path& path)
 {
+	if(debugImageLoadingIsEnabled) logDebug("Loading (" + path.string() + ")");
+
 	// make sure file exists
 	if(!doesPathExist(path)) logError("File not found! (" + path.string() + ")");
 
