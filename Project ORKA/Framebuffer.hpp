@@ -2,10 +2,6 @@
 
 #include "FramebufferTexture.hpp"
 
-#ifdef DEBUG
-#define DEBUG_FRAMEBUFFER
-#endif
-
 struct Framebuffer
 {
 	void                destroy();

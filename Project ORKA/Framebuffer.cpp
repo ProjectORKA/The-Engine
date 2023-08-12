@@ -4,10 +4,7 @@
 void Framebuffer::destroy()
 {
 	// destroys the framebuffer and resets it to the default values just in case
-
-#ifdef DEBUG_FRAMEBUFFER
-	if(!complete) logError("Framebuffer not complete!");
-#endif
+	if(debugFramebuffersIsEnabled) if(!complete) logError("Framebuffer not complete!");
 
 	openglFramebuffer.destroy();
 	for(auto f : framebufferTextures) f.destroy();
@@ -23,9 +20,7 @@ void Framebuffer::clear() const
 	// clears the framebuffer to be black
 	// it loops through all color and depth textures
 
-#ifdef DEBUG_FRAMEBUFFER
-	if(!complete) logError("Framebuffer not complete!");
-#endif
+	if(debugFramebuffersIsEnabled) if(!complete) logError("Framebuffer not complete!");
 
 	for(const FramebufferTexture& framebufferTexture : framebufferTextures)
 	{
@@ -57,9 +52,7 @@ Int Framebuffer::getHeight() const
 
 void Framebuffer::bindDraw() const
 {
-#ifdef DEBUG_FRAMEBUFFER
-	if(!complete) logError("Framebuffer not complete!");
-#endif
+	if(debugFramebuffersIsEnabled) if(!complete) logError("Framebuffer not complete!");
 
 	openglFramebuffer.bindDraw();
 	OpenGL::apiViewport(0, 0, size.x, size.y);
@@ -68,18 +61,14 @@ void Framebuffer::bindDraw() const
 
 void Framebuffer::bindRead() const
 {
-#ifdef DEBUG_FRAMEBUFFER
-	if(!complete) logError("Framebuffer not complete!");
-#endif
+	if(debugFramebuffersIsEnabled) if(!complete) logError("Framebuffer not complete!");
 
 	openglFramebuffer.bindRead();
 }
 
 void Framebuffer::clearDepth() const
 {
-#ifdef DEBUG_FRAMEBUFFER
-	if(!complete) logError("Framebuffer not complete!");
-#endif
+	if(debugFramebuffersIsEnabled) if(!complete) logError("Framebuffer not complete!");
 
 	constexpr Float clearDepth = 1.0f;
 	openglFramebuffer.clearDepth(clearDepth);
@@ -95,9 +84,8 @@ void Framebuffer::resize(const Area resolution)
 	// resizes a framebuffer
 	// all textures have to be deleted and recreated at the appropriate size
 
-#ifdef DEBUG_FRAMEBUFFER
-	if(!complete) logError("Framebuffer not complete!");
-#endif
+	if(debugFramebuffersIsEnabled) if(!complete) logError("Framebuffer not complete!");
+
 	if(complete)
 	{
 		// only resize if necessary
@@ -118,18 +106,14 @@ void Framebuffer::resize(const Area resolution)
 
 void Framebuffer::clearColor(const Vec4 clearColor) const
 {
-#ifdef DEBUG_FRAMEBUFFER
-	if(!complete) logError("Framebuffer not complete!");
-#endif
+	if(debugFramebuffersIsEnabled) if(!complete) logError("Framebuffer not complete!");
 
 	for(const FramebufferTexture& framebufferTexture : framebufferTextures) if(framebufferTexture.isColor()) openglFramebuffer.clearColor(framebufferTexture.getAttachmentSlot(), clearColor);
 }
 
 void Framebuffer::clearColor(const IVec4 clearColor) const
 {
-#ifdef DEBUG_FRAMEBUFFER
-	if(!complete) logError("Framebuffer not complete!");
-#endif
+	if(debugFramebuffersIsEnabled) if(!complete) logError("Framebuffer not complete!");
 
 	for(const auto& framebufferTexture : framebufferTextures) if(framebufferTexture.isColor()) openglFramebuffer.clearColor(framebufferTexture.getAttachmentSlot(), clearColor);
 }
@@ -138,9 +122,7 @@ void Framebuffer::setAsTexture(const TextureSlot slot) const
 {
 	// uses the first color attachment of the framebuffer as a texture in the specified slot
 
-#ifdef DEBUG_FRAMEBUFFER
-	if(!complete) logError("Framebuffer not complete!");
-#endif
+	if(debugFramebuffersIsEnabled) if(!complete) logError("Framebuffer not complete!");
 
 	for(const FramebufferTexture& framebufferTexture : framebufferTextures)
 	{
@@ -174,18 +156,14 @@ void Framebuffer::attachTexture(const FramebufferTexture& framebufferTexture)
 
 IVec4 Framebuffer::readPixelsAtCenterUIntRgb(const FramebufferMode attachment) const
 {
-#ifdef DEBUG_FRAMEBUFFER
-	if(!complete) logError("Framebuffer not complete!");
-#endif
+	if(debugFramebuffersIsEnabled) if(!complete) logError("Framebuffer not complete!");
 
 	return readPixelsUIntRgb(size.x / 2, size.y / 2, attachment);
 }
 
 IVec4 Framebuffer::readPixelsUIntRgb(const Int x, const Int y, const FramebufferMode attachment) const
 {
-#ifdef DEBUG_FRAMEBUFFER
-	if(!complete) logError("Framebuffer not complete!");
-#endif
+	if(debugFramebuffersIsEnabled) if(!complete) logError("Framebuffer not complete!");
 
 	return openglFramebuffer.readPixelIVec4(x, y, attachment);
 }

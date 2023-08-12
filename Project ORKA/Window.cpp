@@ -289,9 +289,7 @@ void Window::createApiWindow(const String& title, const Area size)
 		if(!decorated) glfwWindowHint(GLFW_DECORATED, false);
 		else glfwWindowHint(GLFW_DECORATED, true);
 
-#ifdef DEBUG
-		glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
-#endif
+		if(debugLoggingIsEnabled) glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
 
 		apiWindow = apiCreateWindow(size, title.c_str(), nullptr);
 
