@@ -1,48 +1,31 @@
-//	Welcome fellow programmer!
+//	Welcome to Project ORKA!
 //	My name is Samuel and im the creator of Project ORKA.
-//	This is the open source code for the games and game resourceManager
-//	Feel free to take a look at the code and point out all the errors :)
+//	This is the open source code for the engine, systems and some projects build with Project ORKA
+//	Feel free to take a look at the code, play around and point out all the errors :)
+
 //	If you want to report bugs, request features or add your own code take a look at our GitHub:
 //	https://github.com/ProjectORKA/Project-ORKA
+
 //	If you want to know what Project ORKA is all about please visit:
 //	https://project-orka.com
 
+//  If you want to chat with us or ask questions here's a Discord link:
+//  https://discord.gg/NUH4bRzqwJ
+
 //	Legal stuff:
-//	You can do whatever you want as long as its not used commercially!
-//	Modify, hack, tinker around
+//	You can do whatever you want as long as its not used commercially or redistributed as your own!
+//	Modify, hack and tinker around as you please.
+//	If you've got something that you would like to share, you can upload your work to Project ORKA
+//  (Theres no simple process yet, so if you dont know how to make pull requests, just get in touch with us.)
 
-//	About the code:
-//	The following C++ code is meant to be as clean and humanly readable as possible.
-//	If you are a human and you find that you can not read it please contact me :)
-//	The "Project ORKA" resourceManager is divided into
-//		1. data stored in structs (yes everything is public)
-//		2. functions that act on that data in form of void or member functions
-//	We are trying to avoid con/destructors and inheritance and advanced features like macros, lambdas, templates, etc...
-//	Ideally a beginner programmer will be able to get started very quickly.
-//	Everything is written in camelCase and datatypes starts with upper case while variables and functions start with lower case
-//	For example "ThisIsADataType" vs "thisIsAFunction"
+//	Disclaimer:
+//	This engine uses a left-handed coordinate system like Blender: +X = right +Y = forward +Z = up
+//  This engine has clear conventions for objects, functions, variables, files, etc.. please try to respect them
+//	The following code is meant to be as clean and readable as possible adhering to that standard is advised
+//  Base types (float, int, bool) have been overridden as a design choice and to clearly differentiate between data and functions
 
-//	About the resourceManager:
-//	This resourceManager uses a left-handed coordinate system like Blender:
-//	+X = right
-//	+Y = forward
-//	+Z = up
-
-// FEATURE LIST:
-// gbuffer
-// multithreading
-// particle system
-// mesh instancing
-// input
-//		mouse input
-//		keyboard input
-//		window events
-// filesystem
-//		mesh import
-//		texture loading
-// easy to use algorithms
-// multiple window support
-
+//  You can already choose some games and projects to play around in.
+//  Just replace the Game in the main() function with one of the projects underneath
 #include "AIPlayground.hpp"
 #include "DungeonsAndDiscord.hpp"
 #include "FlappyBird.hpp"
@@ -68,25 +51,14 @@
 #include "TripleNine.hpp"
 #include "UISandbox.hpp"
 
-// [TODO] implement opengl logger into all opengl functions
-// [TODO] fix vertex shader recompilation
-// [TODO] move advanced rendering systems like textRenderSystem out of renderer and into window
-// (basically simplify renderer to bare bones rendering tech)
-// OR separate into renderer and lowLevelRenderer
-// [TODO] remove Name and NameTable and replace it with Hash and HashTable
-// [TODO] remove old thread system
-
 Int main(const Int argc, Char* argv[])
 {
 	TripleNine game;
 	game.run();
-
-	//cheatTest();
 }
 
-// windows entry point
+// windows entry point (ignore)
 #include "Platform.hpp"
-
 Int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, Int nShowCmd)
 {
 	return main(__argc, __argv);
