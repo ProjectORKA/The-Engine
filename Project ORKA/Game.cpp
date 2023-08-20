@@ -13,8 +13,6 @@ void GameSimulation::stop()
 	else logError("Simulation not initialized!");
 }
 
-GameSimulation::~GameSimulation() = default;
-
 Bool GameSimulation::isLoaded() const
 {
 	return loaded;

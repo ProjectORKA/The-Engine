@@ -18,10 +18,12 @@ void SignedDistanceFieldRenderer::destroy(Window& window)
 	framebuffer.destroy();
 }
 
+void SignedDistanceFieldRenderer::connect(GameSimulation& simulation) {}
+
 void SignedDistanceFieldRenderer::inputEvent(Window& window, const InputEvent input)
 {
 	if(input == enter) window.captureCursor();
-	if(input == exit) window.unCaptureCursor();
+	if(input == exit) window.releaseCursor();
 	if(input == reloadShaders) window.renderer.shaderSystem.rebuild();
 
 	player.inputEvent(window, input);

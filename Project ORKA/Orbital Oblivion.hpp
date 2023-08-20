@@ -1,0 +1,98 @@
+#pragma once
+
+#include "Game.hpp"
+#include "Player.hpp"
+#include "Input.hpp"
+#include "Random.hpp"
+
+constexpr auto orbitalOblivionPlayfieldSize = 500;
+
+struct OOPlanet
+{
+	Vec2 location;
+
+	void render(Renderer& r) const;
+};
+
+struct OrbitalOblivionPlayer final : DebugPlayer
+{
+	Int        speedExponent = 0;
+	Float      baseNumber    = 1.2f;
+	Bool       debugMode     = true;
+	InputEvent faster        = InputEvent(InputType::Scroll, 1, true);
+	InputEvent slower        = InputEvent(InputType::Scroll, 1, false);
+
+	void update(Window& window);
+	void inputEvent(Window& window, InputEvent input);
+};
+
+struct OOTeam
+{
+	Index id;
+	Color color{};
+
+	OOTeam(Index id, Color color);
+};
+
+struct OOUnit
+{
+	Index team;
+	Float speed        = 1;
+	Float viewDistance = 10;
+	Float turnRate     = 0.1f;
+	Vec2  direction    = randomUnitVec2Fast();
+	Vec2  location     = randomVec2Fast(orbitalOblivionPlayfieldSize);
+	Vec2  target       = randomVec2Fast(orbitalOblivionPlayfieldSize);
+
+	OOUnit(Index team);
+	void updatePosition();
+	OOUnit(Index team, Vec2 location, Vec2 direction);
+	OOPlanet& getClosestPlanet(Vector<OOPlanet>& planets) const;
+	void      render(ResourceManager& resourceManager, Renderer& renderer) const;
+	void      updateDirection(Vector<OOUnit>& neighbors, Vector<OOPlanet>& planets);
+};
+
+struct OrbitalOblivionSimulation final : GameSimulation
+{
+	Vector<OOTeam>   teams;
+	Vector<OOUnit>   units;
+	Vector<OOPlanet> planets;
+	UInt             planetCount    = 5;
+	Float            planetDistance = 200;
+
+	void destroy() override;
+	void update(Float delta) override;
+	void create(ResourceManager& resourceManager) override;
+};
+
+struct OrbitalOblivionRenderer final : GameRenderer
+{
+	OrbitalOblivionPlayer      player;
+	GPUMesh*                   unitMesh;
+	Bool                       bloom           = true;
+	OrbitalOblivionSimulation* sim             = nullptr;
+	InputEvent                 enter           = InputEvent(InputType::Mouse, LMB, true);
+	InputEvent                 exit            = InputEvent(InputType::Mouse, RMB, false);
+	InputEvent                 toggleWireframe = InputEvent(InputType::KeyBoard, F, true);
+	InputEvent                 toggleBloom     = InputEvent(InputType::KeyBoard, T, true);
+	InputEvent                 pause           = InputEvent(InputType::KeyBoard, P, true);
+
+	void update(Window& window) override;
+	void destroy(Window& window) override;
+	void connect(GameSimulation& simulation) override;
+	void inputEvent(Window& window, InputEvent input) override;
+	//void renderBloom(ResourceManager& resourceManager, Renderer& r);
+	void create(ResourceManager& resourceManager, Window& window) override;
+	void render(ResourceManager& resourceManager, Window& window, TiledRectangle area) override;
+	void renderInteractive(ResourceManager& resourceManager, Window& window, TiledRectangle area) override;
+};
+
+struct OrbitalOblivion
+{
+	UserInterface             ui;
+	OrbitalOblivionRenderer   renderer;
+	OrbitalOblivionSimulation simulation;
+	ResourceManager           resourceManager;
+
+	void run();
+};

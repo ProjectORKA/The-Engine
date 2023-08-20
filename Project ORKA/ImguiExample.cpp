@@ -20,6 +20,8 @@ void ImguiWrapperRenderer::destroy(Window& window)
 	ImGui::DestroyContext();
 }
 
+void ImguiWrapperRenderer::connect(GameSimulation& simulation) {}
+
 void ImguiWrapperRenderer::inputEvent(Window& window, InputEvent input) {}
 
 void ImguiWrapperRenderer::create(ResourceManager& resourceManager, Window& window)

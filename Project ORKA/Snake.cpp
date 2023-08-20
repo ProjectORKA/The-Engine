@@ -1,7 +1,7 @@
 #include "Snake.hpp"
 #include "Random.hpp"
 
-void SnakeGame::run()
+void Snake::run()
 {
 	resourceManager.create();
 	ui.create();
@@ -9,7 +9,7 @@ void SnakeGame::run()
 	ui.run();
 }
 
-void Snake::addSegment()
+void SnakeSnake::addSegment()
 {
 	bodySegments.push_back(Vec2(0, 0));
 }
@@ -22,7 +22,9 @@ void SnakeFood::update()
 
 void SnakeRenderer::destroy(Window& window) {}
 
-void Snake::dumbAI(const SnakeFood& f)
+void SnakeRenderer::connect(GameSimulation& simulation) {}
+
+void SnakeSnake::dumbAI(const SnakeFood& f)
 {
 	direction = speed * normalize(f.foodPosition - headPosition);
 }
@@ -41,7 +43,7 @@ void SnakeRenderer::update(Window& window)
 	}
 }
 
-void Snake::inputEvent(Window& window, const InputEvent input)
+void SnakeSnake::inputEvent(Window& window, const InputEvent input)
 {
 	if(input == forward) direction = Vec2(0, speed);
 	if(input == left) direction = Vec2(-speed, 0);
@@ -49,7 +51,7 @@ void Snake::inputEvent(Window& window, const InputEvent input)
 	if(input == right) direction = Vec2(speed, 0);
 }
 
-void Snake::update(SnakeFood& snakeFood, const Float deltaTime)
+void SnakeSnake::update(SnakeFood& snakeFood, const Float deltaTime)
 {
 	headPosition += direction * deltaTime;
 	if(length(snakeFood.foodPosition - headPosition) < 0.06f)
@@ -65,7 +67,7 @@ void Snake::update(SnakeFood& snakeFood, const Float deltaTime)
 	}
 }
 
-void Snake::render(ResourceManager& resourceManager, Window& window)
+void SnakeSnake::render(ResourceManager& resourceManager, Window& window)
 {
 	window.renderer.fill(Color(snakeColor));
 	window.renderer.useShader(resourceManager, "color");

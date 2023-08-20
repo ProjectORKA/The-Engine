@@ -12,6 +12,8 @@ void MSDFTextRenderer::update(Window& window) {}
 
 void MSDFTextRenderer::destroy(Window& window) {}
 
+void MSDFTextRenderer::connect(GameSimulation& simulation) {}
+
 void MSDFTextRenderer::inputEvent(Window& window, InputEvent input) {}
 
 void MSDFTextRenderer::create(ResourceManager& resourceManager, Window& window) {}

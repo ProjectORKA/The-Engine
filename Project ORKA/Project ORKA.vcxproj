@@ -36,13 +36,13 @@
     <ClCompile Include="MSDFText.cpp" />
     <ClCompile Include="NameGenerator.cpp" />
     <ClCompile Include="OctreeID.cpp" />
+    <ClCompile Include="Orbital Oblivion.cpp" />
     <ClCompile Include="SDFRenderer.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Collision.cpp" />
     <ClCompile Include="CPUMesh.cpp" />
     <ClCompile Include="CPUTexture.cpp" />
     <ClCompile Include="DungeonsAndDiscord.cpp" />
-    <ClCompile Include="Fonts.cpp" />
     <ClCompile Include="Framebuffer.cpp" />
     <ClCompile Include="FramebufferTexture.cpp" />
     <ClCompile Include="Game.cpp" />
@@ -167,7 +167,6 @@
     <ClInclude Include="CPUTexture.hpp" />
     <ClInclude Include="DungeonsAndDiscord.hpp" />
     <ClInclude Include="FlappyBird.hpp" />
-    <ClInclude Include="Fonts.hpp" />
     <ClInclude Include="Framebuffer.hpp" />
     <ClInclude Include="Game.hpp" />
     <ClInclude Include="GlyphTextRenderSystem.hpp" />
@@ -221,6 +220,7 @@
     <ClInclude Include="optick\optick_miniz.h" />
     <ClInclude Include="optick\optick_serialization.h" />
     <ClInclude Include="optick\optick_server.h" />
+    <ClInclude Include="Orbital Oblivion.hpp" />
     <ClInclude Include="Organizer.hpp" />
     <ClInclude Include="ParticleSystem.hpp" />
     <ClInclude Include="PhysicsSystem.hpp" />

@@ -17,6 +17,8 @@ void AIPlaygroundRenderer::destroy(Window& window)
 	framebuffer.destroy();
 }
 
+void AIPlaygroundRenderer::connect(GameSimulation& simulation) {}
+
 void AIPlaygroundRenderer::inputEvent(Window& window, InputEvent input) {}
 
 void AIPlaygroundRenderer::create(ResourceManager& resourceManager, Window& window)

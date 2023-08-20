@@ -8,14 +8,14 @@ void TextRenderSystem::destroy()
 	bitmapTextRenderSystem.destroy();
 }
 
+void TextRenderSystem::setSize(const Float fontSize)
+{
+	this->fontSize = fontSize;
+}
+
 void TextRenderSystem::setOffset(const Vec2 offset)
 {
 	currentOffset = offset;
-}
-
-void TextRenderSystem::setStyle(const FontStyle style)
-{
-	currentStyle = style;
 }
 
 void TextRenderSystem::alignText(const Alignment x, const Alignment y)
@@ -31,27 +31,33 @@ void TextRenderSystem::create(ResourceManager& resourceManager, Renderer& render
 
 void TextRenderSystem::render(ResourceManager& resourceManager, Renderer& renderer, const String& text)
 {
-	renderAdvanced(resourceManager, renderer, text, currentOffset, alignmentX, alignmentY, currentStyle);
+	renderAdvanced(resourceManager, renderer, text, currentOffset, alignmentX, alignmentY, fontSize, letterSpacing);
 }
 
 void TextRenderSystem::render(ResourceManager& resourceManager, Renderer& renderer, const String& text, const Vec2 position)
 {
-	renderAdvanced(resourceManager, renderer, text, position, alignmentX, alignmentY, currentStyle);
+	renderAdvanced(resourceManager, renderer, text, position, alignmentX, alignmentY, fontSize, letterSpacing);
 }
 
-void TextRenderSystem::render(ResourceManager& resourceManager, Renderer& renderer, const String& text, const FontStyle style)
+void TextRenderSystem::render(ResourceManager& resourceManager, Renderer& renderer, const String& text, const Float fontSize, const Float letterSpacing)
 {
-	renderAdvanced(resourceManager, renderer, text, currentOffset, alignmentX, alignmentY, style);
+	renderAdvanced(resourceManager, renderer, text, currentOffset, alignmentX, alignmentY, fontSize, letterSpacing);
 }
 
-void TextRenderSystem::render(ResourceManager& resourceManager, Renderer& renderer, const String& text, const Vec2 position, const FontStyle style)
+void TextRenderSystem::render(ResourceManager& resourceManager, Renderer& renderer, const String& text, const Vec2 position, const Float fontSize, const Float letterSpacing)
 {
-	renderAdvanced(resourceManager, renderer, text, position, alignmentX, alignmentY, style);
+	renderAdvanced(resourceManager, renderer, text, position, alignmentX, alignmentY, fontSize, letterSpacing);
 }
 
-void TextRenderSystem::renderAdvanced(ResourceManager& resourceManager, Renderer& renderer, const String& text, const Vec2 position, const Alignment x, const Alignment y, const FontStyle style)
+void TextRenderSystem::setLetterSpacing(const Float letterSpacing)
+{
+	this->letterSpacing = letterSpacing;
+}
+
+void TextRenderSystem::renderAdvanced(ResourceManager& resourceManager, Renderer& renderer, const String& text, const Vec2 position, const Alignment x, const Alignment y, const Float fontSize, const Float letterSpacing)
 {
 	alignText(x, y);
-	setStyle(style);
-	bitmapTextRenderSystem.render(resourceManager, renderer, text, position, alignmentX, alignmentY, style);
+	setSize(fontSize);
+	setLetterSpacing(letterSpacing);
+	bitmapTextRenderSystem.render(resourceManager, renderer, text, position, alignmentX, alignmentY, fontSize, letterSpacing);
 }

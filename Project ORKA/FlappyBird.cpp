@@ -74,6 +74,8 @@ void FlappyBirdRenderer::update(Window& window)
 	for(auto& bird : birds) bird.update(pipeColumns, delta);
 }
 
+void FlappyBirdRenderer::connect(GameSimulation& simulation) {}
+
 void FlappyBirdBird::inputEvent(const InputEvent input)
 {
 	if(input == jumpButton) jump();

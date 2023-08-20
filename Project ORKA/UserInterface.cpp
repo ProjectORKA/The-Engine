@@ -188,7 +188,8 @@ void UITextBox::render(ResourceManager& resourceManager, Window& window, const T
 	renderer.screenSpaceFromTopLeft();
 	const Matrix m = matrixFromLocation(Vec3(renderArea.position.x, renderArea.position.y, 0));
 	renderer.uniforms().setMMatrix(m);
-	renderer.textRenderSystem.setStyle(fonts.paragraph);
+	renderer.textRenderSystem.setSize(16.0f);
+	renderer.textRenderSystem.setLetterSpacing(0.6f);
 	renderer.textRenderSystem.render(resourceManager, renderer, *data);
 }
 

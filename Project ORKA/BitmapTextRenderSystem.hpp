@@ -3,7 +3,6 @@
 #include "GPUMesh.hpp"
 #include "CPUMesh.hpp"
 #include "GPUTexture.hpp"
-#include "Fonts.hpp"
 
 struct Renderer;
 struct ResourceManager;
@@ -28,5 +27,5 @@ struct BitmapTextRenderSystem
 
 	void destroy();
 	void create(ResourceManager& resourceManager, Renderer& renderer);
-	void render(ResourceManager& resourceManager, Renderer& renderer, const String& text, Vec2 position, Alignment x, Alignment y, FontStyle style);
+	void render(ResourceManager& resourceManager, Renderer& renderer, const String& text, Vec2 position, Alignment x, Alignment y, Float absoluteSize, Float letterSpacing);
 };

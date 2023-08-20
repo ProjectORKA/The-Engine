@@ -15,24 +15,26 @@ void Pong::run()
 
 void PongRenderer::destroy(Window& window) {}
 
-void PongRenderer::update(Window& w)
-{
-	const Float delta = w.renderer.deltaTime();
-	if(w.pressed(moveUpButton1)) players[0].position.y += paddleSpeed * delta;
-	if(w.pressed(moveDownButton1)) players[0].position.y -= paddleSpeed * delta;
-	players[0].shoot = w.pressed(shootButton1) || w.pressed(shootButton1secondary);
-
-	if(w.pressed(moveUpButton2)) players[1].position.y += paddleSpeed * delta;
-	if(w.pressed(moveDownButton2)) players[1].position.y -= paddleSpeed * delta;
-	// players[1].shoot = w.pressed(shootButton2);
-
-	for(PongPlayer& p : players) p.update(w);
-}
-
 void PongPlayer::update(Window& window)
 {
 	position.y = clamp(position.y, -0.9f, 0.9f);
 }
+
+void PongRenderer::update(Window& window)
+{
+	const Float delta = window.renderer.deltaTime();
+	if(window.pressed(moveUpButton1)) players[0].position.y += paddleSpeed * delta;
+	if(window.pressed(moveDownButton1)) players[0].position.y -= paddleSpeed * delta;
+	players[0].shoot = window.pressed(shootButton1) || window.pressed(shootButton1secondary);
+
+	if(window.pressed(moveUpButton2)) players[1].position.y += paddleSpeed * delta;
+	if(window.pressed(moveDownButton2)) players[1].position.y -= paddleSpeed * delta;
+	// players[1].shoot = w.pressed(shootButton2);
+
+	for(PongPlayer& p : players) p.update(window);
+}
+
+void PongRenderer::connect(GameSimulation& simulation) {}
 
 void PongPlayer::ballLocationInput(Vector<Ball>& balls)
 {
@@ -192,7 +194,10 @@ void PongPlayer::aiInput(Vector<Ball>& balls, const Float deltaTime)
 	}
 }
 
-void PongRenderer::create(ResourceManager& resourceManager, Window& window) {}
+void PongRenderer::create(ResourceManager& resourceManager, Window& window)
+{
+	while(balls.size() < ballCount) balls.emplace_back();
+}
 
 void Ball::render(ResourceManager& resourceManager, Renderer& renderer) const
 {
@@ -217,8 +222,6 @@ void PongRenderer::render(ResourceManager& resourceManager, Window& window, Tile
 
 	players[0].position.x = -0.9f;
 	players[1].position.x = +0.9f;
-
-	if(balls.size() <= 1) balls.emplace_back();
 
 	r.aspectCorrectNormalizedSpace();
 	const Vec2 normalizedCursorPosition = Vec2(2) * (Vec2(window.mousePosBotLeft) / Vec2(r.getWindowSize()) - Vec2(0.5));
@@ -270,18 +273,17 @@ void PongRenderer::render(ResourceManager& resourceManager, Window& window, Tile
 	const Float width  = r.getWindowWidth();
 
 	// text
-	FontStyle style;
-	style.absoluteSize = 50;
 	r.uniforms().setMMatrix(Matrix(1));
 	r.screenSpace();
 	r.fill(Color(1));
+	r.textRenderSystem.setSize(50);
+	r.textRenderSystem.setLetterSpacing(0.6f);
 	r.textRenderSystem.alignText(Alignment::left, Alignment::top);
-	r.textRenderSystem.setStyle(style);
+
 	r.textRenderSystem.render(resourceManager, r, toString(players[0].score), Vec2(10, height - 100));
 	r.textRenderSystem.render(resourceManager, r, toString(players[1].difficulty), Vec2(10, height - 200));
 	r.textRenderSystem.alignText(Alignment::right, Alignment::top);
 	r.textRenderSystem.render(resourceManager, r, toString(players[1].score), Vec2(width - 100, height - 100));
-	r.textRenderSystem.setStyle(fonts.debug);
 }
 
 void PongRenderer::renderInteractive(ResourceManager& resourceManager, Window& window, TiledRectangle area) {}

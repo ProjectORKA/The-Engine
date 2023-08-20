@@ -10,6 +10,8 @@ void MindMapper::run()
 
 void MindMapperRenderer::destroy(Window& window) {}
 
+void MindMapperRenderer::connect(GameSimulation& simulation) {}
+
 void MindMapperRenderer::update(Window& window)
 {
 	player.update(window);
@@ -22,7 +24,7 @@ void MindMapperRenderer::update(Window& window)
 void MindMapperRenderer::inputEvent(Window& window, const InputEvent input)
 {
 	if(input == growToggle) grow = !grow;
-	if(input == exit) window.unCaptureCursor();
+	if(input == exit) window.releaseCursor();
 	if(input == enter) window.captureCursor();
 	player.inputEvent(window, input);
 }

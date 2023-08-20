@@ -7,11 +7,11 @@
 
 struct FlappyBirdPipes
 {
-	Float     maxGap     = 1.5f;
+	Float     maxGap     = 1.0f;
 	Float     minGap     = 0.6f;
 	Float     width      = 0.3f;
 	Float     spacing    = 1.5f;
-	Float     gap        = 0.5f;
+	Float     gap        = 0.6f;
 	Float     size       = 0.1f;
 	Float     speed      = 1.0f;
 	Float     posX       = 0.0f;
@@ -48,8 +48,8 @@ struct FlappyBirdBird
 
 struct FlappyBirdRenderer final : GameRenderer
 {
-	const Int   flappyBirdCount = 300;
-	const Bool  enableAI        = true;
+	const Int   flappyBirdCount = 1;
+	const Bool  enableAI        = false;
 	const Float gameSpeed       = 1.0f;
 	const Float slowMotionSpeed = 0.5f;
 
@@ -62,6 +62,7 @@ struct FlappyBirdRenderer final : GameRenderer
 
 	void update(Window& window) override;
 	void destroy(Window& window) override;
+	void connect(GameSimulation& simulation) override;
 	void inputEvent(Window& window, InputEvent input) override;
 	void create(ResourceManager& resourceManager, Window& window) override;
 	void render(ResourceManager& rm, Window& window, TiledRectangle area) override;

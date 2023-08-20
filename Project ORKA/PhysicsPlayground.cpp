@@ -19,6 +19,8 @@ void PhysicsPlayGroundRenderer::update(Window& window) {}
 
 void PhysicsPlayGroundRenderer::destroy(Window& window) {}
 
+void PhysicsPlayGroundRenderer::connect(GameSimulation& simulation) {}
+
 void PhysicsPlaygroundSimulation::swapIntersecting()
 {
 	if(nodes.size() >= 4)

@@ -26,29 +26,31 @@
 
 //  You can already choose some games and projects to play around in.
 //  Just replace the Game in the main() function with one of the projects underneath
+#include "FlappyBird.hpp"
+#include "MoonCrash.hpp"
+#include "Orbital Oblivion.hpp"
+#include "ProjectMelon.hpp"
+#include "Pong.hpp"
+#include "TripleNine.hpp"
+
 #include "AIPlayground.hpp"
 #include "DungeonsAndDiscord.hpp"
-#include "FlappyBird.hpp"
 #include "MindMapper.hpp"
 #include "GPUSim.hpp"
 #include "GuessingGame.hpp"
 #include "Hello Triangle.hpp"
 #include "ImageViewer.hpp"
 #include "ImguiExample.hpp"
-#include "MoonCrash.hpp"
 #include "MSDFText.hpp"
 #include "NameGenerator.hpp"
 #include "Organizer.hpp"
 #include "PhysicsPlayground.hpp"
-#include "Pong.hpp"
-#include "ProjectMelon.hpp"
 #include "RedDotHack.hpp"
 #include "Sandbox.hpp"
 #include "SDFRenderer.hpp"
 #include "SimpleRTS.hpp"
 #include "Snake.hpp"
 #include "Sortr.hpp"
-#include "TripleNine.hpp"
 #include "UISandbox.hpp"
 
 Int main(const Int argc, Char* argv[])
@@ -59,6 +61,7 @@ Int main(const Int argc, Char* argv[])
 
 // windows entry point (ignore)
 #include "Platform.hpp"
+
 Int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, Int nShowCmd)
 {
 	return main(__argc, __argv);
