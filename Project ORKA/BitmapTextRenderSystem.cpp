@@ -16,12 +16,12 @@ void BitmapTextRenderSystem::create(ResourceManager& resourceManager, Renderer& 
 	renderer.shaderSystem.add(resourceManager, "text");
 }
 
-void BitmapTextRenderSystem::render(ResourceManager& resourceManager, Renderer& renderer, const String& text, const Vec2 position, const Alignment x, const Alignment y, const FontStyle style)
+void BitmapTextRenderSystem::render(ResourceManager& resourceManager, Renderer& renderer, const String& text, const Vec2 position, const Alignment x, const Alignment y, const Float absoluteSize, const Float letterSpacing)
 {
 	renderer.setDepthTest(false);
 	const UInt  length = static_cast<UInt>(text.size());
-	const Float size   = style.absoluteSize;
-	Float up = 0, down = 0, start = 0;
+	const Float size   = absoluteSize;
+	Float       up     = 0, down = 0, start = 0;
 
 	if(y == Alignment::top)
 	{
@@ -43,9 +43,9 @@ void BitmapTextRenderSystem::render(ResourceManager& resourceManager, Renderer& 
 
 	if(x == Alignment::left) start = 0;
 
-	if(x == Alignment::center) start = -(static_cast<Float>(length) * style.letterSpacing) / 2.0f;
+	if(x == Alignment::center) start = -(static_cast<Float>(length) * letterSpacing) / 2.0f;
 
-	if(x == Alignment::right) start = -(static_cast<Float>(length) * style.letterSpacing);
+	if(x == Alignment::right) start = -(static_cast<Float>(length) * letterSpacing);
 
 	cpuText.name = "text";
 	cpuText.clearGeometry();
@@ -53,7 +53,7 @@ void BitmapTextRenderSystem::render(ResourceManager& resourceManager, Renderer& 
 
 	for(UInt i = 0; i < length; i++)
 	{
-		const Float left  = start + static_cast<Float>(i) * style.letterSpacing;
+		const Float left  = start + static_cast<Float>(i) * letterSpacing;
 		const Float right = left + 1.0f;
 
 		const Int character = static_cast<unsigned char>(text[i]);

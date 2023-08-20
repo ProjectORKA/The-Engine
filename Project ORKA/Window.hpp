@@ -56,7 +56,7 @@ struct Window : LifetimeGuard
 	void setFullscreen();
 	void captureCursor();
 	void decorateWindow();
-	void unCaptureCursor();
+	void releaseCursor();
 	void unDecorateWindow();
 	void destroyApiWindow();
 	void updateWindowState();

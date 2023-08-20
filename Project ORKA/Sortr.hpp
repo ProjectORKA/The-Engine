@@ -81,6 +81,7 @@ struct SortrRenderer final : GameRenderer
 	void loadGPUImageWithHighestPriority();
 	void unloadGPUImageWithLowestPriority();
 	void unloadCPUImageWithLowestPriority();
+	void connect(GameSimulation& simulation) override;
 	void inputEvent(Window& window, InputEvent input) override;
 	void preloadImage(const Path& path, GPUTexture& texture) const;
 	void create(ResourceManager& resourceManager, Window& window) override;

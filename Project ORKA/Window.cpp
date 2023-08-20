@@ -75,7 +75,7 @@ void Window::decorateWindow()
 	decorated = true;
 }
 
-void Window::unCaptureCursor()
+void Window::releaseCursor()
 {
 	if(capturing)
 	{
@@ -96,7 +96,7 @@ void Window::destroyApiWindow()
 {
 	checkLifetime();
 
-	unCaptureCursor();
+	releaseCursor();
 	if(apiWindow)
 	{
 		glfwDestroyWindow(apiWindow);
@@ -208,7 +208,7 @@ void Window::setIcon(const Path& path) const
 	checkLifetime();
 
 	Image logo;
-	logo.loadOther(makeAbsolute(path), false); // [TODO] replace by "load()" if pngs are loaded correctly
+	logo.loadOther(makeAbsolute(path), false); // [TODO] replace by "load()" if PNGs are loaded correctly
 
 	if(logo.getDataType() == ImageDataType::Byte)
 	{
@@ -357,7 +357,9 @@ void windowThread(ResourceManager& resourceManager, Window& window)
 			if constexpr(USE_OPTICK)
 			{
 				renderer.aspectCorrectNormalizedSpace();
-				if(window.profiling) renderer.textRenderSystem.render(resourceManager, renderer, "[R]", Vec2(0.9f), FontStyle(0.02f));
+				renderer.textRenderSystem.setSize(0.02f);
+				renderer.textRenderSystem.setLetterSpacing(0.6f);
+				if(window.profiling) renderer.textRenderSystem.render(resourceManager, renderer, "[R]", Vec2(0.9f));
 			}
 
 			OPTICK_PUSH("Finalize");
@@ -468,7 +470,8 @@ void Window::create(const String& title, const Area size, const Bool decorated, 
 	this->windowState      = state;
 	this->id               = nextWindowId++;
 	this->windowedModeSize = size;
-	createApiWindow(title, size); // needs to be in this thread
+	createApiWindow(title, size);	// needs to be in this thread
+	setVisible(visible);			// glfw does weird stuff, so we need to force it
 	setCallbacks();
 	thread = Thread(windowThread, std::ref(resourceManager), std::ref(*this));
 	logDebug("Created Window in Main Thread!");

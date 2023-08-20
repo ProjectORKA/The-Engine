@@ -58,6 +58,8 @@ void DNDRenderer::destroy(Window& window)
 	framebuffer.destroy();
 }
 
+void DNDRenderer::connect(GameSimulation& simulation) {}
+
 void DNDSimulation::create(ResourceManager& resourceManager)
 {
 	InFile save("Saves/dnd.save");
@@ -81,7 +83,7 @@ void DNDSimulation::create(ResourceManager& resourceManager)
 void DNDRenderer::inputEvent(Window& window, const InputEvent input)
 {
 	if(input == enter) window.captureCursor();
-	if(input == exit) window.unCaptureCursor();
+	if(input == exit) window.releaseCursor();
 	if(input == select && window.capturing)
 	{
 		const Index objectId = window.renderer.objectId;

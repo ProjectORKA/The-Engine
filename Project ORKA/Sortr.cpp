@@ -275,8 +275,8 @@ void Sortr::run(const Int argc, Char* argv[])
 
 	resourceManager.create();
 	ui.create();
-	Window& w = ui.window("Sortr", Area(1920, 1080), true, true, WindowState::Fullscreen, renderer, resourceManager);
-	for(auto& path : filePaths) if(isImageFile(path)) w.droppedFilePaths.push_back(path);
+	Vector<Path>& windowFilePaths = ui.window("Sortr", Area(1920, 1080), true, true, WindowState::Fullscreen, renderer, resourceManager).droppedFilePaths;
+	for(auto& path : filePaths) if(isImageFile(path)) windowFilePaths.push_back(path);
 	ui.run();
 }
 
@@ -323,6 +323,8 @@ void SortrRenderer::unloadCPUImageWithLowestPriority()
 		else logError("Image could not be unloaded!");
 	}
 }
+
+void SortrRenderer::connect(GameSimulation& simulation) {}
 
 Index SortrRenderer::indexOfGPUImageWithLowestPriority() const
 {
@@ -508,8 +510,8 @@ void SortrFolderRing::render(Renderer& renderer, ResourceManager& resourceManage
 		renderer.renderMesh(resourceManager, "centeredPlane");
 		renderer.fill(Color(0, 0.5, 0.5, 1));
 		renderer.textRenderSystem.alignText(Alignment::middle, Alignment::top);
-		fonts.paragraph.setSize(0.3f);
-		renderer.textRenderSystem.setStyle(fonts.paragraph);
+		renderer.textRenderSystem.setSize(0.3f);
+		renderer.textRenderSystem.setLetterSpacing(0.6f);
 		renderer.textRenderSystem.render(resourceManager, renderer, String("image"), Vec2(0, 0));
 	};
 }
@@ -565,7 +567,8 @@ void SortrRenderer::render(ResourceManager& resourceManager, Window& window, Til
 	renderer.uniforms().setMMatrix(Matrix(1));
 	renderer.fill(Color(1));
 	renderer.screenSpace();
-	renderer.textRenderSystem.setStyle(fonts.debug);
+	renderer.textRenderSystem.setSize(16.0f);
+	renderer.textRenderSystem.setLetterSpacing(0.6f);
 	renderer.textRenderSystem.alignText(Alignment::left, Alignment::bottom);
 	renderer.textRenderSystem.render(resourceManager, renderer, "Left click to add nodes", Vec2(50));
 

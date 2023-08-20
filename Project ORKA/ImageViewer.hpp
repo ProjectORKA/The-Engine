@@ -91,6 +91,7 @@ struct ImageViewerRenderer final : GameRenderer
 	void loadGpuImageWithHighestPriority();
 	void unloadGpuImageWithLowestPriority();
 	void unloadCpuImageWithLowestPriority();
+	void connect(GameSimulation& simulation) override;
 	void inputEvent(Window& window, InputEvent input) override;
 	void create(ResourceManager& resourceManager, Window& window) override;
 	void render(ResourceManager& resourceManager, Window& window, TiledRectangle area) override;

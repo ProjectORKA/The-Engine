@@ -6,6 +6,8 @@ void ORKAIntroSequence::update(Window& window) {}
 
 void ORKAIntroSequence::destroy(Window& window) {}
 
+void ORKAIntroSequence::connect(GameSimulation& simulation) {}
+
 void ORKAIntroSequence::init(GameRenderer& game)
 {
 	gameStartingAfterIntro = &game;

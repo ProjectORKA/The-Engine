@@ -191,6 +191,8 @@ void SimpleRTSSimulation::destroy() {}
 
 void SimpleRTSRenderer::destroy(Window& window) {}
 
+void SimpleRTSRenderer::connect(GameSimulation& simulation) {}
+
 void SimpleRTSSimulation::update(Float delta)
 {
 	//trees.update(*this);
@@ -237,7 +239,7 @@ void SimpleRTSSimulation::create(ResourceManager& resourceManager)
 void SimpleRTSRenderer::inputEvent(Window& window, const InputEvent input)
 {
 	if(input == enter) window.captureCursor();
-	if(input == exit) window.unCaptureCursor();
+	if(input == exit) window.releaseCursor();
 	if(input == toggleWireframe) wireframeMode = !wireframeMode;
 	player.inputEvent(window, input);
 }
@@ -322,9 +324,10 @@ void SimpleRTSRenderer::render(ResourceManager& resourceManager, Window& window,
 	//ui
 	renderer.setDepthTest(false);
 	renderer.screenSpace();
-	renderer.textRenderSystem.setStyle(fonts.heading);
+	renderer.fill(Color(1));
+	renderer.textRenderSystem.setSize(16.0f);
+	renderer.textRenderSystem.setLetterSpacing(0.6f);
 	renderer.textRenderSystem.render(resourceManager, renderer, toString(1.0f / renderer.time.delta), Vec2(50));
-	renderer.textRenderSystem.setStyle(fonts.debug);
 	////////////////////////
 
 	mutex.unlock();

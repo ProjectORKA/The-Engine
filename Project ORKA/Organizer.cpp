@@ -16,6 +16,8 @@ void Organizer::run()
 
 void OrganizerRenderer::destroy(Window& window) {}
 
+void OrganizerRenderer::connect(GameSimulation& simulation) {}
+
 void OrganizerRenderer::update(Window& window)
 {
 	player.update(window);
@@ -29,7 +31,7 @@ void OrganizerRenderer::addTask(const Task& task)
 void OrganizerRenderer::inputEvent(Window& window, const InputEvent input)
 {
 	if(input == enter) window.captureCursor();
-	if(input == exit) window.unCaptureCursor();
+	if(input == exit) window.releaseCursor();
 	if(input == wireFrameToggle) window.renderer.wireframeMode = !window.renderer.wireframeMode;
 
 	player.inputEvent(window, input);
@@ -139,7 +141,8 @@ void OrganizerRenderer::render(ResourceManager& resourceManager, Window& window,
 	r.setDepthTest(false); // disables depth to always draw on top
 	r.screenSpace(); // aligns coordinate system with screen space
 	r.textRenderSystem.alignText(Alignment::left, Alignment::top);
-	r.textRenderSystem.setStyle(fonts.paragraph);
+	r.textRenderSystem.setSize(16.0f);
+	r.textRenderSystem.setLetterSpacing(0.6f);
 	r.textRenderSystem.render(resourceManager, r, "W A S D Q E to move"), Vec2(50, 250);
 	r.textRenderSystem.render(resourceManager, r, "F for wire frame mode"), Vec2(50, 200);
 	r.textRenderSystem.render(resourceManager, r, "Scroll to change speed"), Vec2(50, 150);

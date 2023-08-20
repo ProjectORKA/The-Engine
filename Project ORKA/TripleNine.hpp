@@ -192,7 +192,7 @@ struct TripleNineRenderer final : GameRenderer
 	TripleNinePlayer      player;
 	Framebuffer           framebuffer;
 	Float                 mapSize       = 0.5f;
-	Bool                  renderText    = false;
+	Bool                  renderText    = true;
 	Bool                  bloom         = false;
 	TripleNineSimulation* sim           = nullptr;
 	InputEvent            enter         = InputEvent(InputType::Mouse, LMB, true);
@@ -203,7 +203,7 @@ struct TripleNineRenderer final : GameRenderer
 
 	void update(Window& window) override;
 	void destroy(Window& window) override;
-	void connect(TripleNineSimulation& sim);
+	void connect(GameSimulation& simulation) override;
 	void inputEvent(Window& window, InputEvent input) override;
 	void renderBloom(ResourceManager& resourceManager, Renderer& r) const;
 	void create(ResourceManager& resourceManager, Window& window) override;

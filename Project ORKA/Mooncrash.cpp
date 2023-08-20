@@ -24,6 +24,8 @@ void MoonCrashSimulation::destroy()
 
 void MoonCrashRenderer::destroy(Window& window) {}
 
+void MoonCrashRenderer::connect(GameSimulation& simulation) {}
+
 void MoonCrashPlayer::update(Window& window)
 {
 	// get frequently used info
@@ -157,7 +159,7 @@ void MoonCrashRenderer::inputEvent(Window& window, const InputEvent input)
 		window.renderer.mutex.unlock();
 	}
 	if(input == enter) window.captureCursor();
-	if(input == exit) window.unCaptureCursor();
+	if(input == exit) window.releaseCursor();
 
 	player.inputEvent(window, input);
 }
@@ -205,7 +207,8 @@ void MoonCrashRenderer::render(ResourceManager& rm, Window& window, TiledRectang
 	r.setWireframeMode(false);
 	r.setDepthTest(false);
 	r.screenSpace();
-	r.textRenderSystem.setStyle(fonts.paragraph);
+	r.textRenderSystem.setSize(16.0f);
+	r.textRenderSystem.setLetterSpacing(0.6f);
 	constexpr Float textSpacing = 20;
 	r.textRenderSystem.alignText(Alignment::left, Alignment::bottom);
 

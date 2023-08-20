@@ -21,12 +21,9 @@ void Toggle::update(Window& window)
 	if(content) content->update(window);
 }
 
-UISandboxRenderer::UISandboxRenderer()
-{
-	pauseButton.padding(50);
-}
-
 void UISandboxRenderer::destroy(Window& window) {}
+
+void UISandboxRenderer::connect(GameSimulation& simulation) {}
 
 void UISandboxRenderer::update(Window& window)
 {
@@ -44,7 +41,10 @@ void UISandboxRenderer::inputEvent(Window& window, const InputEvent input)
 	paused = pauseButton.toggle;
 }
 
-void UISandboxRenderer::create(ResourceManager& resourceManager, Window& window) {}
+void UISandboxRenderer::create(ResourceManager& resourceManager, Window& window)
+{
+	pauseButton.padding(50);
+}
 
 void UISandboxRenderer::render(ResourceManager& resourceManager, Window& window, TiledRectangle area)
 {

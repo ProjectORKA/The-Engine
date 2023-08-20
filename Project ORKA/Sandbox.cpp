@@ -19,10 +19,12 @@ void SandboxRenderer::destroy(Window& window)
 	framebuffer.destroy();
 }
 
+void SandboxRenderer::connect(GameSimulation& simulation) {}
+
 void SandboxRenderer::inputEvent(Window& window, const InputEvent input)
 {
 	if(input == enter) window.captureCursor();
-	if(input == exit) window.unCaptureCursor();
+	if(input == exit) window.releaseCursor();
 	if(input == wireframeToggle) window.renderer.wireframeMode = !window.renderer.wireframeMode;
 
 	player.inputEvent(window, input);
@@ -61,7 +63,8 @@ void SandboxRenderer::render(ResourceManager& resourceManager, Window& window, c
 	r.setDepthTest(false); // disables depth to always draw on top
 	r.screenSpace(); // aligns coordinate system with screenspace
 	r.uniforms().setMMatrix(Matrix(1));
-	r.textRenderSystem.setStyle(fonts.paragraph);
+	r.textRenderSystem.setSize(16.0f);
+	r.textRenderSystem.setLetterSpacing(0.6f);
 	r.textRenderSystem.alignText(Alignment::left, Alignment::bottom);
 	r.textRenderSystem.render(rm, r, "W A S D Q E to move", Vec2(50, 250));
 	r.textRenderSystem.render(rm, r, "F for wireframe mode", Vec2(50, 200));

@@ -18,6 +18,8 @@ void HelloTriangleRenderer::destroy(Window& window)
 	mainFramebuffer.destroy();
 }
 
+void HelloTriangleRenderer::connect(GameSimulation& simulation) {}
+
 void HelloTriangleRenderer::inputEvent(Window& window, InputEvent input) {}
 
 void HelloTriangleRenderer::create(ResourceManager& rm, Window& window)

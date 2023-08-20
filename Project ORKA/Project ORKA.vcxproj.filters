@@ -371,14 +371,14 @@
     <ClCompile Include="BitmapTextRenderSystem.cpp">
       <Filter>Systems\UserInterface\Window\Renderer\TextRenderSystem\BitmapTextRenderSystem</Filter>
     </ClCompile>
-    <ClCompile Include="Fonts.cpp">
-      <Filter>Systems\UserInterface\Window\Renderer\TextRenderSystem\Fonts</Filter>
-    </ClCompile>
     <ClCompile Include="GlyphTextRenderSystem.cpp">
       <Filter>Systems\UserInterface\Window\Renderer\TextRenderSystem\GlyphTextRenderSystem</Filter>
     </ClCompile>
     <ClCompile Include="Sortr.cpp">
       <Filter>Apps\2D Apps\Sortr</Filter>
+    </ClCompile>
+    <ClCompile Include="Orbital Oblivion.cpp">
+      <Filter>Apps\3D Apps\OrbitalOblivion</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -827,14 +827,14 @@
     <ClInclude Include="BitmapTextRenderSystem.hpp">
       <Filter>Systems\UserInterface\Window\Renderer\TextRenderSystem\BitmapTextRenderSystem</Filter>
     </ClInclude>
-    <ClInclude Include="Fonts.hpp">
-      <Filter>Systems\UserInterface\Window\Renderer\TextRenderSystem\Fonts</Filter>
-    </ClInclude>
     <ClInclude Include="GlyphTextRenderSystem.hpp">
       <Filter>Systems\UserInterface\Window\Renderer\TextRenderSystem\GlyphTextRenderSystem</Filter>
     </ClInclude>
     <ClInclude Include="Sortr.hpp">
       <Filter>Apps\2D Apps\Sortr</Filter>
+    </ClInclude>
+    <ClInclude Include="Orbital Oblivion.hpp">
+      <Filter>Apps\3D Apps\OrbitalOblivion</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1566,9 +1566,6 @@
     <Filter Include="Systems\UserInterface\Window\Renderer\TextRenderSystem\BitmapTextRenderSystem">
       <UniqueIdentifier>{494ff01b-3242-497b-b2e2-0261890654b7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Systems\UserInterface\Window\Renderer\TextRenderSystem\Fonts">
-      <UniqueIdentifier>{dfc6a81a-6605-4c07-b470-d2cde5812500}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Systems\UserInterface\Window\Renderer\TextRenderSystem\GlyphTextRenderSystem">
       <UniqueIdentifier>{da9bdab7-ed9c-4cfe-9970-0efefa63f748}</UniqueIdentifier>
     </Filter>
@@ -1577,6 +1574,9 @@
     </Filter>
     <Filter Include="Apps\2D Apps\Sortr\Shaders">
       <UniqueIdentifier>{be219d48-db7a-4136-95c2-23b31f4dcb33}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Apps\3D Apps\OrbitalOblivion">
+      <UniqueIdentifier>{ce54fd96-eda5-4f48-b8ed-613b0d9da0bd}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

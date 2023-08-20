@@ -294,8 +294,9 @@ void ImageViewer::run(const Int argc, Char* argv[])
 	ui.create();
 	logDebug(executablePath);
 	resourceManager.create();
-	Window& w = ui.window("ORKA Image Viewer", Area(1920, 1080), true, true, WindowState::Maximized, renderer, resourceManager);
-	for(auto& path : filePaths) if(isImageFile(path)) w.droppedFilePaths.push_back(path);
+	auto& windowFilePaths = ui.window("ORKA Image Viewer", Area(1920, 1080), true, true, WindowState::Maximized, renderer, resourceManager).droppedFilePaths;
+	for(auto& path : filePaths) if(isImageFile(path)) windowFilePaths.push_back(path);
+
 	ui.run();
 }
 
@@ -353,6 +354,8 @@ void ImageViewerRenderer::unloadCpuImageWithLowestPriority()
 		else logError("Image could not be unloaded!");
 	}
 }
+
+void ImageViewerRenderer::connect(GameSimulation& simulation) {}
 
 Index ImageViewerRenderer::indexOfGpuImageWithLowestPriority() const
 {
