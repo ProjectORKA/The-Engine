@@ -25,18 +25,62 @@ float box( vec3 p, vec3 b )
   return length(max(q,0.0)) + min(max(q.x,max(q.y,q.z)),0.0);
 }
 
+float roundedBox( vec3 p, vec3 b )
+{
+  vec3 q = abs(p) - b;
+  return length(max(q,0.0)) + min(max(q.x,max(q.y,q.z)),0.0) - 0.1;
+}
+
+float rollingSquareFunctionCut(vec3 p){
+    return min(p.z, box(
+    vec3(
+    0,
+    mod(p.y + time,0.4) - 0.2,
+    p.z
+    ),
+    vec3(0.1))   
+    );
+}
+
+float sineFunctionCut(vec3 p){
+    return 0.05 * sin(5 * time + p.y * 10) + p.z - 0.2;
+}
+
+float sineFunctionCutInverse(vec3 p){
+    return 0.05 * -sin(5 * time + p.y * 10) - p.z - 0.2;
+}
+
+float opSmoothSubtraction( float d1, float d2, float k ) {
+    float h = clamp( 0.5 - 0.5*(d2+d1)/k, 0.0, 1.0 );
+    return mix( d2, -d1, h ) + k*h*(1.0-h);
+}
+
 float scene(vec3 p){
-	return
-	min(
-		min(
-			min(
-				box(p,vec3(1)),
-				sphere(p, vec3(0,3,1), 1)
-			),
-			sphere(p, vec3(1,3,0.5), 1)
-		),
-		plane(p)
-	) - 0.01;
+    return
+    min(
+        min(
+		    min(
+			    min(
+				    box(p,vec3(1)),
+				    sphere(p, vec3(0,3,1), 1)
+			    ),
+			    sphere(p, vec3(1,3,0.5), 1)
+	    	),
+	    	plane(p)
+	    ) - 0.01f,
+        min(
+            opSmoothSubtraction(
+                sineFunctionCut(p+vec3(0,0,-3)),
+                box(p-vec3(0,0,+3),vec3(0,1,0.75)),
+                0.2
+            ) - 0.2,
+            opSmoothSubtraction(
+                sineFunctionCutInverse(p+vec3(0,0,-3)),
+                box(p-vec3(0,0,+3),vec3(0,1,0.75)),
+                0.2
+            ) - 0.2
+        )
+    );
 }
 
 vec3 getNormal(vec3 p)
@@ -50,7 +94,7 @@ vec3 getNormal(vec3 p)
     return normalize(n);
 }
 
-float calcSoftshadow( in vec3 ro, in vec3 rd, in float mint, in float tmax, int technique )
+float calcSoftShadow( in vec3 ro, in vec3 rd, in float mint, in float tmax, int technique )
 {
 	float res = 1.0;
     float t = mint;
@@ -88,7 +132,6 @@ float calcSoftshadow( in vec3 ro, in vec3 rd, in float mint, in float tmax, int 
 }
 
 float ao(vec3 p, vec3 n){
-    
     float target = eps;
     
     float ao = 0;
@@ -106,36 +149,22 @@ float ao(vec3 p, vec3 n){
 }
 
 void main(){
-
-
 	vec3 dir = normalize(rayDirection);
 	vec3 orig = cameraPosition.xyz;
 	vec3 curr = orig;
-
 	eps = scene(orig) / 10000;
     maxDist = 1000;
-
-
 	float dist = 4 * eps;
-
-
 	int i = 0;
-
 	while(dist < maxDist && dist > eps){
 		dist = scene(curr);
 		curr += dir * dist;
 		if(i++ > steps) break;
 	}
-
 	vec3 normal = normalize(getNormal(curr));
-
 	vec3 surfacePos = curr;
-
 	vec3 col = vec3(dot(normal, sunDir.xyz));
-
-	float shadow = (1+calcSoftshadow(surfacePos,sunDir.xyz,eps * 100, 10.0, 1))/2; 
-	
+	float shadow = (1+calcSoftShadow(surfacePos,sunDir.xyz,eps * 100, 10.0, 1))/2; 
 	float ambientOcclusion = (1 + ao(surfacePos, normal))/2;
-
 	fragmentColor = vec4(col * ambientOcclusion * shadow,1);
 };
