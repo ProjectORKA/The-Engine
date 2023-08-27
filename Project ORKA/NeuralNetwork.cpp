@@ -88,6 +88,7 @@ Vec2 NeuralNet::getNeuronPosition(const Vec2 area, const UInt layerId, const UIn
 void NeuralNet::render(ResourceManager& resourceManager, Renderer& renderer, const Vec2 area) const
 {
 	renderer.fill(Color(1, 1, 1, 0.1));
+	renderer.setDepthTest(false);
 	// render connections
 	for(UInt layerId = 0; layerId < layerCount() - 1; layerId++)
 	{
@@ -95,8 +96,9 @@ void NeuralNet::render(ResourceManager& resourceManager, Renderer& renderer, con
 		{
 			for(UInt neuronBId = 0; neuronBId < neuronCountAtLayer(layerId + 1); neuronBId++)
 			{
-				renderer.fill(Color(1, 1, 1, contribution[layerId][neuronAId][neuronBId]));
-				renderer.lineRenderer.renderLine(renderer, getNeuronPosition(area, layerId, neuronAId), getNeuronPosition(area, layerId + 1, neuronBId), weights[layerId][neuronAId][neuronBId] * 3);
+				const Color color = lerp(Color(1, 0, 0, 1), Color(0, 1, 0, 1), contribution[layerId][neuronAId][neuronBId]);
+				renderer.fill(color);
+				renderer.lineRenderer.renderLineAdvanced(renderer, getNeuronPosition(area, layerId, neuronAId), getNeuronPosition(area, layerId + 1, neuronBId), weights[layerId][neuronAId][neuronBId] * 3);
 			}
 		}
 	}
@@ -106,9 +108,9 @@ void NeuralNet::render(ResourceManager& resourceManager, Renderer& renderer, con
 	{
 		for(Int neuronId = 0; neuronId < structure[layerId]; neuronId++)
 		{
-			renderer.uniforms().setMMatrix(matrixFromLocationAndSize(getNeuronPosition(area, layerId, neuronId), 10));
-			renderer.fill(Color(1, 1, 1, neuronActivation[layerId][neuronId]));
-			renderer.renderMesh(resourceManager, "sphere");
+			const Color color = lerp(Color(1, 0, 0, 1), Color(0, 1, 0, 1), neuronActivation[layerId][neuronId]);
+			renderer.fill(color);
+			renderer.circle(resourceManager, getNeuronPosition(area, layerId, neuronId), 10);
 		}
 	}
 }

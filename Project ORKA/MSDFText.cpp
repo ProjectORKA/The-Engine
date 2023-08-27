@@ -28,7 +28,7 @@ void MSDFTextRenderer::render(ResourceManager& resourceManager, Window& window, 
 	renderer.useShader(resourceManager, "msdfFont");
 	renderer.useTexture(resourceManager, "msdfFont");
 
-	renderer.uniforms().setMMatrix(matrixFromLocationAndSize2D(Vec2(0), Vec2(2)));
+	renderer.uniforms().setMMatrix(matrixFromPositionAndSize(Vec2(0), Vec2(2)));
 	renderer.renderMesh(resourceManager, "centeredPlane");
 }
 

@@ -108,7 +108,7 @@ void OrganizerRenderer::render(ResourceManager& resourceManager, Window& window,
 	for(const User& user : users)
 	{
 		r.useShader(resourceManager, "normals"); // sets the color / material for the rendered objects
-		r.uniforms().setMMatrix(matrixFromLocation(user.position));
+		r.uniforms().setMMatrix(matrixFromPosition(user.position));
 		r.renderMesh(resourceManager, "organizer user");
 	}
 
@@ -132,7 +132,7 @@ void OrganizerRenderer::render(ResourceManager& resourceManager, Window& window,
 		if(pos.z < 0) pos = Vec4(0);
 		pos /= pos.z;
 		pos.y -= 10;
-		r.uniforms().setMMatrix(matrixFromLocation(Vec3(pos)));
+		r.uniforms().setMMatrix(matrixFromPosition(Vec3(pos)));
 		r.textRenderSystem.render(resourceManager, r, user.firstName + " " + user.lastName);
 	}
 

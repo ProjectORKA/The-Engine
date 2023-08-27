@@ -4,6 +4,7 @@
 
 void MindMap::update()
 {
+	LockGuard  lock(mutex);
 	static int t = 0;
 	if(nodeCount < 1) addNode();
 	t++;
@@ -11,10 +12,11 @@ void MindMap::update()
 	// keep distance to nodes
 	for(const auto& c : connections)
 	{
-		Vec2 delta = positions[c.b] - positions[c.a];
-
-		addForce(c.a, +delta / 1.0f);
-		addForce(c.b, -delta / 1.0f);
+		const Vec2 delta = positions[c.b] - positions[c.a];
+		forces[c.a] += delta / 1.0f;
+		numForces[c.a]++;
+		forces[c.b] -= delta / 1.0f;
+		numForces[c.b]++;
 	}
 
 	// calculate collisions for every node
@@ -30,11 +32,11 @@ void MindMap::update()
 
 				if(impact > 0.0f)
 				{
-					// nodes colliding
-					Vec2 force = normalize(delta) * impact;
-					// add force to b
-					addForce(b, force);
-					addForce(a, -force);
+					const Vec2 force = normalize(delta) * impact;
+					forces[b] += force;
+					numForces[b]++;
+					forces[a] -= force;
+					numForces[a]++;
 				}
 			}
 		}
@@ -55,18 +57,14 @@ void MindMap::update()
 
 void MindMap::addNode()
 {
+	LockGuard lock(mutex);
 	forces.emplace_back();
 	numForces.emplace_back();
-	connections.emplace_back(randomIntFast(nodeCount), nodeCount);
+	Index a = randomIntFast(nodeCount);
+	connections.emplace_back(a, nodeCount);
 	if(nodeCount) positions.push_back(randomVec2Fast(-1.0f, 1.0f) + positions[connections.back().a]);
 	else positions.push_back(Vec2(0));
 	nodeCount++;
-}
-
-void MindMap::addForce(const Index a, const Vec2 force)
-{
-	forces[a] += force;
-	numForces[a]++;
 }
 
 MindMapConnection::MindMapConnection(const Index a, const Index b)
@@ -82,16 +80,22 @@ void MindMap::render(ResourceManager& resourceManager, Renderer& renderer) const
 
 	// render connections
 	renderer.fill(Color(0.5, 0.5, 0.5, 1));
-	for(const auto connection : connections) renderer.line(positions[connection.a], positions[connection.b], 0.05f);
+
+	Vector<Vec2> lines;
+
+	for(const auto connection : connections)
+	{
+		lines.push_back(positions[connection.a]);
+		lines.push_back(positions[connection.b]);
+	}
+	renderer.lines(lines);
 
 	// render nodes
 	renderer.fill(Color(1));
-	for(auto position : positions)
-	{
-		renderer.uniforms().setMMatrix(matrixFromLocation(Vec3(position, 0.0f)));
-		renderer.renderMesh(resourceManager, "centeredPlane");
-	}
+	Vector<Vec3> posArray;
+	for(auto position : positions) posArray.push_back(Vec3(position, 0.0f));
 
+	renderer.renderMeshInstanced(resourceManager, "centeredPlane", posArray);
 	renderer.setDepthTest(true);
 }
 
@@ -115,7 +119,7 @@ void MindMap::renderInteractive(ResourceManager& resourceManager, Window& window
 	// for(UInt i = 0; i < positions.size(); i++)
 	// {
 	//	renderer.uniforms().setObjectId(static_cast<UInt>(connections.size()) - static_cast<UInt>(1) + i);
-	//	renderer.uniforms().setMMatrix(matrixFromLocation(Vec3(positions[i], 0.0f)));
+	//	renderer.uniforms().setMMatrix(matrixFromPosition(Vec3(positions[i], 0.0f)));
 	//	renderer.renderMesh(resourceManager, "1x1planeCentered");
 	// }
 

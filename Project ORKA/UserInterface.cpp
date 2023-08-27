@@ -176,7 +176,7 @@ void UIImage::render(ResourceManager& resourceManager, Window& window, const Til
 	renderer.useTexture(resourceManager, "default");
 	renderer.setColor(Color(1.0f));
 	renderer.screenSpace();
-	const Matrix m = matrixFromLocationAndSize(Vec4(renderArea.position.x, renderArea.position.y, 0, min(renderArea.size.x, renderArea.size.x)));
+	const Matrix m = matrixFromPositionAndSize(Vec4(renderArea.position.x, renderArea.position.y, 0, min(renderArea.size.x, renderArea.size.x)));
 	renderer.uniforms().setMMatrix(m);
 	renderer.renderMesh(resourceManager, "plane");
 }
@@ -186,7 +186,7 @@ void UITextBox::render(ResourceManager& resourceManager, Window& window, const T
 	Renderer& renderer = window.renderer;
 
 	renderer.screenSpaceFromTopLeft();
-	const Matrix m = matrixFromLocation(Vec3(renderArea.position.x, renderArea.position.y, 0));
+	const Matrix m = matrixFromPosition(Vec3(renderArea.position.x, renderArea.position.y, 0));
 	renderer.uniforms().setMMatrix(m);
 	renderer.textRenderSystem.setSize(16.0f);
 	renderer.textRenderSystem.setLetterSpacing(0.6f);

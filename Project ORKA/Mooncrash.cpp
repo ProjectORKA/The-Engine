@@ -22,7 +22,10 @@ void MoonCrashSimulation::destroy()
 	planetSystem.destroy();
 }
 
-void MoonCrashRenderer::destroy(Window& window) {}
+void MoonCrashRenderer::destroy(Window& window)
+{
+	mainFramebuffer.destroy();
+}
 
 void MoonCrashRenderer::connect(GameSimulation& simulation) {}
 

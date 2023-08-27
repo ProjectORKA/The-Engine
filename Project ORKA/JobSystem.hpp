@@ -15,11 +15,21 @@ public:
 	// stop job system
 	void waitStop();
 	void forceStop();
+
+	void wait() const;
+
 	// add work
-	template <typename Func, typename... Args> void enqueue(Func&& function, Args&&... args);
+	template <typename Func, typename... Args> void enqueue(Func&& function, Args&&... args)
+	{
+		LockGuard                   lock(mutex);
+		const std::function<void()> job = std::bind(std::forward<Func>(function), std::forward<Args>(args)...);
+		jobQueue.push_back(job);
+	}
+
 	// extra stuff
-	[[nodiscard]] Bool isRunning() const;
 	Function<void()>   next();
+	[[nodiscard]] Bool isRunning() const;
+
 private:
 	Mutex                  mutex;
 	Bool                   running = true;

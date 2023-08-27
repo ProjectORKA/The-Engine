@@ -37,6 +37,7 @@
     <ClCompile Include="NameGenerator.cpp" />
     <ClCompile Include="OctreeID.cpp" />
     <ClCompile Include="Orbital Oblivion.cpp" />
+    <ClCompile Include="PrototypingSandbox.cpp" />
     <ClCompile Include="SDFRenderer.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Collision.cpp" />
@@ -155,6 +156,7 @@
     <ClInclude Include="Array2D.hpp" />
     <ClInclude Include="ASIONetworking.hpp" />
     <ClInclude Include="AudioSystem.hpp" />
+    <ClInclude Include="AxisNeighborPrototype.hpp" />
     <ClInclude Include="BitmapTextRenderSystem.hpp" />
     <ClInclude Include="Camera.hpp" />
     <ClInclude Include="Client.hpp" />
@@ -234,6 +236,8 @@
     <ClInclude Include="ProceduralMeshes.hpp" />
     <ClInclude Include="Profiler.hpp" />
     <ClInclude Include="ProjectMelon.hpp" />
+    <ClInclude Include="Prototype.hpp" />
+    <ClInclude Include="PrototypingSandbox.hpp" />
     <ClInclude Include="QuadtreeData.hpp" />
     <ClInclude Include="QuadtreeID.hpp" />
     <ClInclude Include="QuadtreeNode.hpp" />

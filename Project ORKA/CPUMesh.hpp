@@ -32,33 +32,37 @@ struct CPUMesh
 	Name          name          = "empty";
 	BufferUsage   drawMode      = BufferUsage::StaticDraw;
 	PrimitiveMode primitiveMode = PrimitiveMode::Triangles;
-	Vector<Vec3>  positions;
-	Vector<Vec2>  textureCoordinates;
-	Vector<Vec3>  normals;
-	Vector<Vec3>  tangents;
-	Vector<Vec3>  biTangents;
-	Vector<Vec3>  vertexColors;
+
+	Vector<Vec3>  positions;			// 0
+	Vector<Vec2>  textureCoordinates;	// 1
+	Vector<Vec3>  normals;				// 2
+	Vector<Vec3>  tangents;				// 3
+	Vector<Vec3>  biTangents;			// 4
+	Vector<Vec3>  vertexColors;			// 5
 	Vector<Index> indices;
 
-	CPUMesh();
-	void               clearGeometry();
-	void               removeDoubles();
-	void               checkIntegrity();
-	void               move(Vec3 moveVector);
-	void               calculateSmoothNormals();
-	void               merge(const CPUMesh& source);
 	[[nodiscard]] Bool isLoaded() const;
-	explicit           CPUMesh(const Graph& graph);
-	void               render(Renderer& renderer) const;
 	[[nodiscard]] Bool hasNormals() const;
 	[[nodiscard]] Bool hasTangents() const;
 	[[nodiscard]] Bool hasPositions() const;
 	[[nodiscard]] Bool hasBiTangents() const;
 	[[nodiscard]] Bool hasVertexColors() const;
 	[[nodiscard]] Bool hasTextureCoordinates() const;
-	void               load(ResourceManager& resourceManager, Name name);
-	void               saveMeshFile(const ResourceManager& resourceManager);
-	void               meshFromHeightMap(Array2D<Float>& heightMap, UInt size);
+
+	CPUMesh();
+	explicit CPUMesh(const Graph& graph);
+
+	void clearGeometry();
+	void removeDoubles();
+	void checkIntegrity();
+	void move(Vec3 moveVector);
+	void calculateSmoothNormals();
+	void merge(const CPUMesh& source);
+	void render(Renderer& renderer) const;
+	void load(ResourceManager& resourceManager, Name name);
+	void saveMeshFile(const ResourceManager& resourceManager);
+	void meshFromHeightMap(Array2D<Float>& heightMap, UInt size);
+
 private:
 	Bool   loaded    = false;
 	UShort dataFlags = 0;

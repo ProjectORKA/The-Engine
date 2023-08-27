@@ -101,7 +101,7 @@ void GPUMesh::render(Uniforms& uniforms) const
 	}
 }
 
-void GPUMesh::renderInstances(Uniforms& uniforms, const Vector<Matrix> & transforms) const
+void GPUMesh::renderInstances(Uniforms& uniforms, const Vector<Matrix>& transforms) const
 {
 	if(loaded)
 	{

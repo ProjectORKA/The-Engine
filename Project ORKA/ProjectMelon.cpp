@@ -53,7 +53,7 @@ void MelonRenderer::render(ResourceManager& resourceManager, Window& window, Til
 	r.useShader(resourceManager, "MelonUberShader");
 	player.render(resourceManager, window);
 
-	// r.uniforms().mMatrix(matrixFromScale(Vec3(100,100,1)));
+	// r.uniforms().mMatrix(matrixFromSize(Vec3(100,100,1)));
 	// r.renderMesh(resourceManager, "melonRock");
 
 	//world.render(resourceManager, r);

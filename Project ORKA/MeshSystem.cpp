@@ -54,9 +54,8 @@ void MeshSystem::addMesh(const CPUMesh& cpuMesh)
 {
 	if(cpuMesh.isLoaded())
 	{
-		GPUMesh gpuMesh;
-		gpuMesh.upload(cpuMesh);
-		gpuMeshes.push_back(gpuMesh);
+		gpuMeshes.emplace_back();
+		gpuMeshes.back().upload(cpuMesh);
 		use(toUIntSafe(gpuMeshes.size() - 1));
 		meshNames.add(cpuMesh.name, currentMeshId);
 	}
@@ -114,7 +113,8 @@ void MeshSystem::render(ResourceManager& resourceManager, Uniforms& uniforms, co
 	currentMesh().render(uniforms);
 }
 
-void MeshSystem::renderInstanced(ResourceManager& resourceManager, Uniforms& uniforms, const Name& meshName, const Vector<Matrix>& transforms) {
+void MeshSystem::renderInstanced(ResourceManager& resourceManager, Uniforms& uniforms, const Name& meshName, const Vector<Matrix>& transforms)
+{
 	use(resourceManager, meshName);
 	currentMesh().renderInstances(uniforms, transforms);
 }

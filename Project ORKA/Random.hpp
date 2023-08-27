@@ -33,6 +33,7 @@ Float randomFloatFast(Float min, Float max);
 Float randomFloatFast(Double min, Double max);
 Vec3  randomPointOnSphereAtLocationFast(Vec4 sphere);
 Vec3  randomPointOnSphereAtLocationFast(Float radius, Vec3 location);
+Vec3  randomVec3Fast(Float xMin, Float xMax, Float yMin, Float yMax, Float zMin, Float zMax);
 
 // slow variants
 ULL   randomULLSlow();

@@ -162,9 +162,9 @@ void DNDRenderer::render(ResourceManager& resourceManager, Window& window, const
 
 	// background scene
 	r.useShader(resourceManager, "dndUberShader");
-	r.uniforms().setMMatrix(matrixFromLocationAndSize(Vec4(0, 0, 0, 100)));
+	r.uniforms().setMMatrix(matrixFromPositionAndSize(Vec4(0, 0, 0, 100)));
 	r.renderMesh(resourceManager, "dndGroundPlane");
-	r.uniforms().setMMatrix(matrixFromLocationAndSize(Vec4(0, 0, 0, 10000)));
+	r.uniforms().setMMatrix(matrixFromPositionAndSize(Vec4(0, 0, 0, 10000)));
 	r.renderMesh(resourceManager, "centeredDetailedGrid");
 
 	// objects

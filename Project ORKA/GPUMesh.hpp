@@ -11,7 +11,8 @@ struct GPUMesh
 	[[nodiscard]] Bool isLoaded() const;
 	void               upload(const CPUMesh& cpuMesh);
 	void               render(Uniforms& uniforms) const;
-	void               renderInstances(Uniforms& uniforms, const Vector<Matrix> & transforms) const;
+	void               renderInstances(Uniforms& uniforms, const Vector<Matrix>& transforms) const;
+
 private:
 	OpenGLVertexArrayObject vao;
 	IndexBuffer             indexBuffer;

@@ -45,6 +45,7 @@
 #include "NameGenerator.hpp"
 #include "Organizer.hpp"
 #include "PhysicsPlayground.hpp"
+#include "PrototypingSandbox.hpp"
 #include "RedDotHack.hpp"
 #include "Sandbox.hpp"
 #include "SDFRenderer.hpp"

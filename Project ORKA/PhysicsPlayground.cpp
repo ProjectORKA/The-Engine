@@ -5,10 +5,9 @@ void PhysicsPlayground::run()
 {
 	resourceManager.create();
 	sim.start(resourceManager);
-	game.sim = &sim;
+	renderer.connect(sim);
 	ui.create();
-	// ui.window("Physics playground 1", Area(1024, 1024), true, true, WindowState::Windowed, game, resourceManager);
-	ui.window("Physics playground 2", Area(1024, 1024), true, true, WindowState::Windowed, game, resourceManager);
+	ui.window("Physics Playground", Area(1024, 1024), true, true, WindowState::Windowed, renderer, resourceManager);
 	ui.run();
 	sim.stop();
 }
@@ -18,8 +17,6 @@ void PhysicsPlaygroundSimulation::destroy() {}
 void PhysicsPlayGroundRenderer::update(Window& window) {}
 
 void PhysicsPlayGroundRenderer::destroy(Window& window) {}
-
-void PhysicsPlayGroundRenderer::connect(GameSimulation& simulation) {}
 
 void PhysicsPlaygroundSimulation::swapIntersecting()
 {
@@ -298,6 +295,11 @@ void PhysicsPlaygroundSimulation::makeConnection(Index a, Index b)
 	connections.emplace_back(a, b);
 }
 
+void PhysicsPlayGroundRenderer::connect(GameSimulation& simulation)
+{
+	this->sim = static_cast<PhysicsPlaygroundSimulation*>(&simulation);
+}
+
 void PhysicsPlaygroundSimulation::connectNeighborOfNeighborToSelf()
 {
 	Vector<PhysicsPlaygroundConnection> cons;
@@ -428,7 +430,7 @@ void PhysicsPlayGroundRenderer::render(ResourceManager& resourceManager, Window&
 {
 	Renderer& renderer = window.renderer;
 
-	renderer.clearBackground(Color(0));
+	renderer.clearBackground(Color(0, 0, 0, 1));
 
 	renderer.aspectCorrectNormalizedSpace();
 

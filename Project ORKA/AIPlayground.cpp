@@ -1,4 +1,5 @@
 #include "AIPlayground.hpp"
+#include "PerlinNoise.hpp"
 #include "Random.hpp"
 #include "Window.hpp"
 
@@ -6,11 +7,22 @@ void AIPlayground::run()
 {
 	resourceManager.create();
 	ui.create();
-	ui.window("ORKA AI Playground", Area(settings.defaultWindowWidth, settings.defaultWindowHeight), true, true, WindowState::Windowed, sandboxRenderer, resourceManager);
+	ui.window("ORKA AI Playground", Area(settings.defaultWindowWidth, settings.defaultWindowHeight), true, true, WindowState::Windowed, renderer, resourceManager);
 	ui.run();
 }
 
-void AIPlaygroundRenderer::update(Window& window) {}
+void AIPlaygroundRenderer::update(Window& window)
+{
+	Vector<Float> inputVector;
+	//Vector<Float> targetVector;
+
+	for(UInt i = 0; i < network.structure[0]; i++) inputVector.push_back(static_cast<Float>(noise.octaveNoise0_1(window.renderer.time.total, i, 16) * 2.0));
+
+	network.input(inputVector);
+	network.propagateForward();
+
+	//network.propagateBackward(targetVector);
+}
 
 void AIPlaygroundRenderer::destroy(Window& window)
 {
@@ -47,15 +59,7 @@ void AIPlaygroundRenderer::render(ResourceManager& resourceManager, Window& wind
 	r.useShader(resourceManager, "color");
 	r.setAlphaBlending(true);
 
-	Vector<Float>       inputVector;
-	const Vector<Float> targetVector;
-
-	for(UInt i = 0; i < network.structure[0]; i++) inputVector.push_back(randomFloatFast());
-
-	network.input(inputVector);
-	network.propagateForward();
 	network.render(resourceManager, r, area.size);
-	network.propagateBackward(targetVector);
 
 	r.screenSpace();
 	r.uniforms().setMMatrix(Matrix(1));

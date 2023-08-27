@@ -503,7 +503,7 @@ void SortrFolderRing::render(Renderer& renderer, ResourceManager& resourceManage
 {
 	for(const auto& element : elements)
 	{
-		renderer.uniforms().setMMatrix(matrixFromLocationAndSize(element.position, element.size));
+		renderer.uniforms().setMMatrix(matrixFromPositionAndSize(element.position, element.size));
 		renderer.fill(Color(0.2f, 0.2f, 0.65f, 1.0f));
 		renderer.aspectCorrectNormalizedSpace();
 		renderer.useShader(resourceManager, "color");

@@ -20,8 +20,8 @@ struct AIPlaygroundRenderer final : GameRenderer
 struct AIPlayground
 {
 	UserInterface        ui;
+	AIPlaygroundRenderer renderer;
 	ResourceManager      resourceManager;
-	AIPlaygroundRenderer sandboxRenderer;
 
 	void run();
 };

@@ -1,5 +1,4 @@
 #include "FramebufferTexture.hpp"
-#include "Profiler.hpp"
 
 void FramebufferTexture::destroy()
 {

@@ -1,6 +1,5 @@
 #include "JobSystem.hpp"
 #include "Debug.hpp"
-#include "Random.hpp"
 
 void JobSystem::start()
 {
@@ -20,6 +19,11 @@ void JobSystem::forceStop()
 	running = false;
 	jobQueue.clear();
 	for(Thread& worker : workers) worker.join();
+}
+
+void JobSystem::wait() const
+{
+	while(!jobQueue.empty()) {}
 }
 
 Bool JobSystem::isRunning() const
@@ -47,11 +51,4 @@ void JobSystem::start(const UInt numThreads)
 	logDebug("Job system running with " + toString(numThreads) + " threads");
 
 	for(UInt i = 0; i < numThreads; ++i) workers.emplace_back(workerThread, std::ref(*this));
-}
-
-template <typename Func, typename... Args> void JobSystem::enqueue(Func&& function, Args&&... args)
-{
-	LockGuard              lock(mutex);
-	const Function<void()> job = std::bind(std::forward<Func>(function), std::forward<Args>(args)...);
-	jobQueue.push_back(job);
 }

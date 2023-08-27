@@ -373,6 +373,8 @@ void windowThread(ResourceManager& resourceManager, Window& window)
 	}
 
 	renderer.destroy();
+
+	if(window.content) window.content->destroy(window);
 }
 
 void whenFramebufferIsResized(const APIWindow apiWindow, const Int width, const Int height)

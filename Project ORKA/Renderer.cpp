@@ -25,6 +25,7 @@ void Renderer::sync()
 
 void Renderer::destroy()
 {
+	lineRenderer.destroy();
 	idFramebuffer.destroy();
 	postProcessFramebuffer.destroy();
 
@@ -192,6 +193,16 @@ Matrix Renderer::getScreenSpaceMatrix() const
 	return screenSpaceMatrix(width, height);
 }
 
+void Renderer::lines(const Vector<Vec2>& lines)
+{
+	lineRenderer.renderLines(*this, lines);
+}
+
+void Renderer::lines(const Vector<Vec3>& lines)
+{
+	lineRenderer.renderLines(*this, lines);
+}
+
 void Renderer::lines(const Vector<Line3D>& lines)
 {
 	lineRenderer.renderLines(*this, lines);
@@ -207,6 +218,16 @@ void Renderer::setFramebufferSize(const Area area)
 void Renderer::setCulling(const Bool culling) const
 {
 	OpenGL::apiSetCulling(culling);
+}
+
+void Renderer::line(const Vec3 start, const Vec3 end)
+{
+	lineRenderer.renderLine(*this, start, end);
+}
+
+void Renderer::line(const Vec2 start, const Vec2 end)
+{
+	lineRenderer.renderLine(*this, Vec3(start, 0.0f), Vec3(end, 0.0f));
 }
 
 void Renderer::clearBackground(const Color color) const
@@ -228,9 +249,9 @@ void Renderer::create(ResourceManager& resourceManager)
 	textureSystem.create();
 	meshSystem.create();
 	shaderSystem.create(resourceManager);
-	lineRenderer.create();
 
 	// advanced systems
+	lineRenderer.create();
 	textRenderSystem.create(resourceManager, *this);
 	renderObjectSystem.create(*this);
 	rectangleRenderer.create(resourceManager, *this);
@@ -319,16 +340,6 @@ void Renderer::normalizedSpaceWithAspectRatio(const Float aspectRatio)
 	uniforms().setPMatrix(scale(pMatrix, Vec3(Vec2(1.0f) / view, 1.0f)));
 }
 
-void Renderer::line(const Vec3 start, const Vec3 end, const Float width)
-{
-	lineRenderer.renderLine(*this, start, end, width);
-}
-
-void Renderer::line(const Vec2 start, const Vec2 end, const Float width)
-{
-	lineRenderer.renderLine(*this, Vec3(start, 0.0f), Vec3(end, 0.0f), width);
-}
-
 void Renderer::useMesh(ResourceManager& resourceManager, const Name& name)
 {
 	// selects a mesh to be rendered but doesn't render it
@@ -390,17 +401,15 @@ void Renderer::arrow(ResourceManager& resourceManager, const Vec2 start, const V
 void Renderer::arrow(ResourceManager& resourceManager, const Vec3 start, const Vec3 end)
 {
 	useShader(resourceManager, "color");
-	uniforms().setCustomColor(Vec4(1, 0, 0, 1));
-	const Float       length    = distance(start, end) / 20;
-	const Vec3        direction = end - start;
-	const Orientation o(direction, Vec3(0, 0, 1));
-	uniforms().setMMatrix(matrixFromOrientation(o, start, length));
+	fill(Vec4(1, 0, 0, 1));
+	const Vec3 direction = end - start;
+	uniforms().setMMatrix(matrixFromDirectionAndLocation(direction, start));
 	renderMesh(resourceManager, "arrow");
 }
 
 void Renderer::circle(ResourceManager& resourceManager, const Vec2 pos, const Float radius)
 {
-	uniforms().setMMatrix(matrixFromLocationAndSize(pos, radius));
+	uniforms().setMMatrix(matrixFromPositionAndSize(pos, radius));
 	renderMesh(resourceManager, "circle");
 }
 
@@ -429,6 +438,11 @@ void Renderer::renderAtmosphere(ResourceManager& resourceManager, const Player& 
 	setDepthTest(true);
 }
 
+void Renderer::renderMeshInstanced(ResourceManager& resourceManager, const Name& name, const Vector<Vec3>& positions)
+{
+	renderMeshInstanced(resourceManager, name, matrixArrayFromPositions(positions));
+}
+
 void Renderer::renderMeshInstanced(ResourceManager& resourceManager, const Name& name, const Vector<Matrix>& transforms)
 {
 	meshSystem.renderInstanced(resourceManager, uniforms(), name, transforms);
@@ -439,6 +453,11 @@ void Renderer::setAlphaBlending(const Bool enable, const BlendFunction src, cons
 	OpenGL::apiSetBlending(enable);
 	OpenGL::apiBlendFunc(src, dst);
 	OpenGL::apiBlendEquation(eq);
+}
+
+void Renderer::renderMeshInstanced(ResourceManager& resourceManager, const Name& name, const Vector<Vec3>& positions, const Float size)
+{
+	renderMeshInstanced(resourceManager, name, matrixArrayFromPositionsAndSize(positions, size));
 }
 
 void Renderer::postProcess(ResourceManager& resourceManager, const Name& name, const Framebuffer& source, const Framebuffer& destination)

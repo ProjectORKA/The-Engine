@@ -102,6 +102,6 @@ void ParticleSystem::render(ResourceManager& resourceManager, Renderer& renderer
 {
 	static Vector<Matrix> pos;
 	pos.clear();
-	for(Int i = 0; i < particleCount; i++) if(alive[i]) pos.push_back(matrixFromLocationAndSize(transformation[i]));
+	for(Int i = 0; i < particleCount; i++) if(alive[i]) pos.push_back(matrixFromPositionAndSize(transformation[i]));
 	renderer.renderMeshInstanced(resourceManager, "melonSmokeParticle", pos);
 }
