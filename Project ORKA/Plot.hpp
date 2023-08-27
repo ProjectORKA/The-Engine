@@ -13,5 +13,4 @@ struct Plot
 	[[nodiscard]] CPUMesh createMesh() const;
 	void                  add(Float a, Float b);
 	void                  render(Renderer& renderer) const;
-	void                  render(Renderer& renderer, Float lineWidth) const;
 };

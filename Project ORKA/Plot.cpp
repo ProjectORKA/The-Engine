@@ -35,7 +35,7 @@ void Plot::render(Renderer& renderer) const
 
 	for(Vec2 p : points)
 	{
-		renderer.lineRenderer.renderLine(renderer, Vec3(last, 0), Vec3(p, 0), 1);
+		renderer.lineRenderer.renderLine(renderer, Vec3(last, 0), Vec3(p, 0));
 		last = p;
 	}
 }
@@ -43,15 +43,4 @@ void Plot::render(Renderer& renderer) const
 void Plot::add(const Float a, const Float b)
 {
 	add(Vec2(a, b));
-}
-
-void Plot::render(Renderer& renderer, const Float lineWidth) const
-{
-	Vec2 last = points[0];
-
-	for(Vec2 p : points)
-	{
-		renderer.lineRenderer.renderLine(renderer, Vec3(last, 0), Vec3(p, 0), lineWidth);
-		last = p;
-	}
 }

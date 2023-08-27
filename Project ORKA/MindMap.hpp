@@ -1,5 +1,6 @@
 #pragma once
 #include "Window.hpp"
+#include "JobSystem.hpp"
 #include "ResourceManager.hpp"
 
 struct Renderer;
@@ -14,6 +15,7 @@ struct MindMapConnection
 
 struct MindMap
 {
+	Mutex                     mutex;
 	Vector<Vec2>              forces;
 	Vector<UInt>              numForces;
 	Vector<Vec2>              positions;
@@ -22,7 +24,6 @@ struct MindMap
 
 	void update();
 	void addNode();
-	void addForce(Index a, Vec2 force);
 	void render(ResourceManager& resourceManager, Renderer& renderer) const;
 	void renderInteractive(ResourceManager& resourceManager, Window& window) const;
 };

@@ -56,39 +56,9 @@ void MatrixSystem::setProjection(const Matrix& matrix)
 	projectionMatrix = matrix;
 }
 
-void MatrixSystem::matrixArray(const Vector<Vec2>& pos)
-{
-	modelMatrixArray.resize(pos.size());
-	for(UInt i = 0; i < pos.size(); i++) modelMatrixArray[i] = matrixFromLocation(pos[i]);
-}
-
 void MatrixSystem::applyToUniforms(Uniforms& uniforms) const
 {
 	uniforms.setMMatrix(getModel());
 	uniforms.setVMatrix(getView());
 	uniforms.setPMatrix(getProjection());
-}
-
-void MatrixSystem::matrixArray(const Vector<Vec4>& compactTransform)
-{
-	modelMatrixArray.resize(compactTransform.size());
-	for(UInt i = 0; i < compactTransform.size(); i++) modelMatrixArray[i] = matrixFromLocationAndSize(compactTransform[i]);
-}
-
-void MatrixSystem::matrixArray(const Vector<Vec2>& pos, const Float size)
-{
-	modelMatrixArray.resize(pos.size());
-	for(UInt i = 0; i < pos.size(); i++) modelMatrixArray[i] = matrixFromLocationAndSize(pos[i], size);
-}
-
-void MatrixSystem::matrixArray(const Vector<Vec2>& pos, const Vector<Vec2>& dir)
-{
-	modelMatrixArray.resize(pos.size());
-	for(UInt i = 0; i < pos.size(); i++) modelMatrixArray[i] = matrixFromPositionAndDirection(pos[i], dir[i]);
-}
-
-void MatrixSystem::matrixArray(const Vector<Vec2>& position, const Vector<Vec2>& direction, const Vector<Float>& size)
-{
-	modelMatrixArray.resize(position.size());
-	for(UInt i = 0; i < position.size(); i++) modelMatrixArray[i] = matrixFromLocationDirectionAndSize(position[i], direction[i], size[i]);
 }

@@ -77,7 +77,7 @@ struct PhysicsPlayground
 {
 	UserInterface               ui;
 	PhysicsPlaygroundSimulation sim;
-	PhysicsPlayGroundRenderer   game;
+	PhysicsPlayGroundRenderer   renderer;
 	ResourceManager             resourceManager;
 
 	void run();

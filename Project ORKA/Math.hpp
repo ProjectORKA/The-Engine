@@ -15,7 +15,7 @@ struct Line2D
 struct Line3D
 {
 	Vec3 start = Vec3(0);
-	Vec3 end = Vec3(0);
+	Vec3 end   = Vec3(0);
 
 	Line3D(Vec3 start, Vec3 end);
 	Line3D(Vec2 start, Vec2 end);
@@ -34,7 +34,7 @@ struct Orientation
 	Vec3 y = Vec3(0, 1, 0);
 	Vec3 z = Vec3(0, 0, 1);
 
-	Orientation(Vec3 direction);
+	explicit Orientation(Vec3 direction);
 	Orientation(Vec3 direction, Vec3 up);
 };
 
@@ -51,7 +51,7 @@ Bool pointInsideSphereAtlocationWithRadius(Vec3 point, Vec3 position, Float radi
 Bool isWithinDistanceOfOtherPoints(Vec2 point, const Vector<Vec2>& points, Float dist);
 
 UInt max(UInt a, UInt b);
-UInt nextPowerOfTwo(const UInt& value);
+UInt nextPowerOfTwo(UInt value);
 UInt countBitsInFlags(Short flags);
 UInt fibonacciSequence(UInt iterations);
 
@@ -93,26 +93,35 @@ Vec3 quadraticInterpolation(Vec3 start, Vec3 control, Vec3 end, Float time);
 
 Rotation getRotationBetweenVectors(Vec3 start, Vec3 dest);
 
-Matrix matrixFromScale(Vec2 s);
-Matrix matrixFromScale(Vec3 s);
-Matrix matrixFromScale(Float size);
-Matrix matrixFromLocation(Vec2 location);
-Matrix matrixFromLocation(Vec3 location);
+Matrix matrixFromSize(Vec2 s);
+Matrix matrixFromSize(Vec3 s);
+Matrix matrixFromSize(Float size);
+Matrix matrixFromPosition(Vec2 location);
+Matrix matrixFromPosition(Vec3 location);
 Matrix matrixFromAxis(Vec3 x, Vec3 y, Vec3 z);
 Matrix clerp(Matrix a, Matrix b, Float alpha);
 Matrix matrixFromOrientation(const Orientation& o);
 Matrix screenSpaceMatrix(Float width, Float height);
 Matrix matrixFromTiledRectangle(TiledRectangle area);
 Matrix matrixFromRotation(Float x, Float y, Float z);
-Matrix matrixFromLocationAndSize2D(Vec2 pos, Vec2 size);
+Matrix matrixFromPositionAndSize(Vec2 pos, Vec2 size);
 Matrix matrixFromPositionAndDirection(Vec2 pos, Vec2 dir);
-Matrix matrixFromLocationAndSize(Vec4 compressedTransform);
-Matrix matrixFromLocationAndSize(Vec3 location, Float size);
-Matrix matrixFromLocationAndSize(Vec2 location, Float size);
-Matrix matrixFromLocationAndSize2D(Float x, Float y, Float w, Float h);
+Matrix matrixFromPositionAndSize(Vec4 compressedTransform);
+Matrix matrixFromPositionAndSize(Vec3 location, Float size);
+Matrix matrixFromPositionAndSize(Vec2 location, Float size);
+Matrix matrixFromDirectionAndLocation(Vec3 direction, Vec3 location);
+Matrix matrixFromPositionAndSize(Float x, Float y, Float w, Float h);
 Matrix matrixFromAxis(Vec3 x, Vec3 y, Vec3 z, Vec3 position, Float size);
-Matrix matrixFromLocationDirectionAndSize(Vec2 pos, Vec2 dir, Float size);
+Matrix matrixFromPositionDirectionAndSize(Vec2 pos, Vec2 dir, Float size);
 Matrix matrixFromOrientation(const Orientation& o, Vec3 position, Float size);
+
+[[nodiscard]] Vector<Matrix> matrixArrayFromPositions(const Vector<Vec3>& positions);
+[[nodiscard]] Vector<Matrix> matrixArrayFromPositions(const Vector<Vec2>& positions);
+[[nodiscard]] Vector<Matrix> matrixArrayFromCompactVec4(const Vector<Vec4>& compactTransform);
+[[nodiscard]] Vector<Matrix> matrixArrayFromPositionsAndSize(const Vector<Vec2>& positions, Float size);
+[[nodiscard]] Vector<Matrix> matrixArrayFromPositionsAndSize(const Vector<Vec3>& positions, Float size);
+[[nodiscard]] Vector<Matrix> matrixArrayFromPositionsAndDirections(const Vector<Vec2>& pos, const Vector<Vec2>& dir);
+[[nodiscard]] Vector<Matrix> matrixArrayFromPositionsDirectionsAndSizes(const Vector<Vec2>& position, const Vector<Vec2>& direction, const Vector<Float>& size);
 
 void loopWithinCentered(Vec2& point, Float extend);
 void removePointsInRadius(Vec3 point, Vector<Vec3>& points, Float radius);

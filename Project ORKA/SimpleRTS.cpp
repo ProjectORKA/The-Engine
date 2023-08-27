@@ -287,7 +287,7 @@ void SimpleRTSRenderer::render(ResourceManager& resourceManager, Window& window,
 	////render trees that are about to be cut
 	//for (UInt i = 0; i < sim->humanCount; i++) {
 	//	if (sim->humanState[i] == SimpleRTSSimulation::SimpleRTSHumanState::LookingForWood) {
-	//		renderer.uniforms().mMatrix(matrixFromLocation(sim->humanTargetpositions[i]));
+	//		renderer.uniforms().mMatrix(matrixFromPosition(sim->humanTargetpositions[i]));
 	//		renderer.renderMesh("Tree");
 	//	}
 	//}

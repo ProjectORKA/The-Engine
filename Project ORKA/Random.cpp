@@ -68,13 +68,13 @@ Int randomIntFast(const Int max)
 Int randomIntFast(const UInt max)
 {
 	if(max < 1) return 0;
-	return static_cast<Int>(randomULLFast()) % static_cast<Int>(max);
+	return static_cast<Int>(randomULLFast() % static_cast<ULL>(max));
 }
 
 Int randomIntFast(const SizeT max)
 {
 	if(max < 1) return 0;
-	return mod(static_cast<Int>(randomULLFast()), static_cast<Int>(max));
+	return static_cast<Int>(randomULLFast() % static_cast<ULL>(max));
 }
 
 UInt randomUIntFast(const UInt max)
@@ -162,6 +162,11 @@ Vec3 randomPointOnSphereAtLocationFast(const Vec4 sphere)
 Vec3 randomPointOnSphereAtLocationFast(const Float radius, const Vec3 location)
 {
 	return randomPointOnSphereFast(radius) + location;
+}
+
+Vec3 randomVec3Fast(const Float xMin, const Float xMax, const Float yMin, const Float yMax, const Float zMin, const Float zMax)
+{
+	return {randomFloatFast(xMin, xMax), randomFloatFast(yMin, yMax), randomFloatFast(zMin, zMax)};
 }
 
 // SLOW:

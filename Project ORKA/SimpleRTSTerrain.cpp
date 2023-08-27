@@ -3,7 +3,7 @@
 
 void SimpleRTSTerrainRenderingSystem::render(Renderer& renderer) const
 {
-	renderer.uniforms().setMMatrix(matrixFromLocation(offset));
+	renderer.uniforms().setMMatrix(matrixFromPosition(offset));
 	gpuTerrain.render(renderer.uniforms());
 }
 

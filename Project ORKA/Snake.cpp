@@ -71,11 +71,11 @@ void SnakeSnake::render(ResourceManager& resourceManager, Window& window)
 {
 	window.renderer.fill(Color(snakeColor));
 	window.renderer.useShader(resourceManager, "color");
-	window.renderer.uniforms().setMMatrix(matrixFromLocationAndSize(headPosition, segmentRadius));
+	window.renderer.uniforms().setMMatrix(matrixFromPositionAndSize(headPosition, segmentRadius));
 	window.renderer.renderMesh(resourceManager, "circle");
 	for(const auto& bodySegment : bodySegments)
 	{
-		window.renderer.uniforms().setMMatrix(matrixFromLocationAndSize(bodySegment, segmentRadius));
+		window.renderer.uniforms().setMMatrix(matrixFromPositionAndSize(bodySegment, segmentRadius));
 		window.renderer.renderMesh(resourceManager, "circle");
 	}
 }
@@ -91,7 +91,7 @@ void SnakeFood::render(ResourceManager& resourceManager, Window& window)
 {
 	window.renderer.fill(Color(foodColor));
 	window.renderer.useShader(resourceManager, "color");
-	window.renderer.uniforms().setMMatrix(matrixFromLocationAndSize(foodPosition, 0.03f));
+	window.renderer.uniforms().setMMatrix(matrixFromPositionAndSize(foodPosition, 0.03f));
 	window.renderer.renderMesh(resourceManager, "circle");
 }
 

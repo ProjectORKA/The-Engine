@@ -331,7 +331,7 @@ void TripleNineRenderer::create(ResourceManager& resourceManager, Window& window
 
 void TripleNineEnemy::render(ResourceManager& resourceManager, Renderer& renderer) const
 {
-	renderer.uniforms().setMMatrix(matrixFromLocationAndSize(position, 1));
+	renderer.uniforms().setMMatrix(matrixFromPositionAndSize(position, 1));
 	renderer.renderMesh(resourceManager, "tripleNineTarget");
 }
 
@@ -448,7 +448,7 @@ void TripleNineRenderer::render(ResourceManager& resourceManager, Window& window
 	r.fill(Vec3(1));
 	r.useShader(resourceManager, "tripleNineMap");
 	// r.useTexture(resourceManager, "tripleNineReflection");
-	r.uniforms().setMMatrix(matrixFromScale(mapSize));
+	r.uniforms().setMMatrix(matrixFromSize(mapSize));
 	r.useTexture(resourceManager, "Map1 HDR");
 	r.renderMesh(resourceManager, "Map1");
 	r.useTexture(resourceManager, "Map2 HDR");
@@ -474,7 +474,7 @@ void TripleNineRenderer::render(ResourceManager& resourceManager, Window& window
 	// sphere
 	r.useShader(resourceManager, "color");
 	r.uniforms().setCustomColor(Vec4(1000000));
-	r.uniforms().setMMatrix(matrixFromLocation(Vec3(160, 50, 15 * pow(abs(sin(r.time.total * 2)), 0.5) + 1)));
+	r.uniforms().setMMatrix(matrixFromPosition(Vec3(160, 50, 15 * pow(abs(sin(r.time.total * 2)), 0.5) + 1)));
 	r.renderMesh(resourceManager, "sphere");
 
 	r.setDepthTest(false);
@@ -487,10 +487,10 @@ void TripleNineRenderer::render(ResourceManager& resourceManager, Window& window
 	r.screenSpace();
 	r.fill(0.1f, 0.1f, 0.1f);
 	r.useShader(resourceManager, "color");
-	r.uniforms().setMMatrix(matrixFromLocationAndSize(Vec2(window.getFrameSize() / 2), 3));
+	r.uniforms().setMMatrix(matrixFromPositionAndSize(Vec2(window.getFrameSize() / 2), 3));
 	r.renderMesh(resourceManager, "circle");
 	r.fill(1, 1, 1);
-	r.uniforms().setMMatrix(matrixFromLocationAndSize(Vec2(window.getFrameSize() / 2), 2));
+	r.uniforms().setMMatrix(matrixFromPositionAndSize(Vec2(window.getFrameSize() / 2), 2));
 	r.renderMesh(resourceManager, "circle");
 
 	if(renderText)
@@ -524,7 +524,7 @@ void TripleNineRenderer::render(ResourceManager& resourceManager, Window& window
 
 void TripleNineEnemy::renderInteractive(ResourceManager& resourceManager, Window& window, TiledRectangle area)
 {
-	window.renderer.uniforms().setMMatrix(matrixFromLocationAndSize(position, 1));
+	window.renderer.uniforms().setMMatrix(matrixFromPositionAndSize(position, 1));
 	window.renderer.uniforms().setObjectId(id);
 	window.renderer.renderMesh(resourceManager, "tripleNineTarget");
 }
@@ -543,7 +543,7 @@ void TripleNineRenderer::renderInteractive(ResourceManager& resourceManager, Win
 	r.setAlphaBlending(false);
 	player.render(resourceManager, window);
 	r.useShader(resourceManager, "idShader");
-	r.uniforms().setMMatrix(matrixFromScale(mapSize));
+	r.uniforms().setMMatrix(matrixFromSize(mapSize));
 	r.renderMesh(resourceManager, "Map1");
 	r.renderMesh(resourceManager, "Map2");
 	r.renderMesh(resourceManager, "Map3");

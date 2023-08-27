@@ -111,7 +111,7 @@ void QuadtreeNodeRenderData::renderTerrain(Renderer& renderer)
 		const Double currentScale = pow(2, 64 - node.id.level);
 		heightScale               = actualHeight / currentScale;
 	}
-	const Matrix m = matrixFromScale(Vec3(1, 1, heightScale));
+	const Matrix m = matrixFromSize(Vec3(1, 1, heightScale));
 	renderer.uniforms().setMMatrix(m);
 	renderer.uniforms().setWorldOffset(Vec4(node.id.location.x, node.id.location.y, node.data.terrain->heightmap.lowerLimit / static_cast<LDouble>(ULLONG_MAX), node.id.level));
 

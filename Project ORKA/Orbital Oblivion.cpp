@@ -148,9 +148,11 @@ void OrbitalOblivionSimulation::destroy() {}
 
 void OOPlanet::render(Renderer& r) const
 {
-	r.uniforms().setMMatrix(matrixFromLocationAndSize(location, 10));
+	r.uniforms().setMMatrix(matrixFromPositionAndSize(location, 10));
 	r.rerenderMesh();
 }
+
+void OrbitalOblivionRenderer::update(Window& window) {}
 
 void OrbitalOblivionRenderer::destroy(Window& window) {}
 
@@ -187,8 +189,6 @@ void OrbitalOblivionPlayer::update(Window& window)
 		camera.setLocation(camera.getLocation() + movementVector);				//add it to cameras location
 	}
 }
-
-void OrbitalOblivionRenderer::update(Window& window) {}
 
 void OrbitalOblivionSimulation::update(const Float delta)
 {

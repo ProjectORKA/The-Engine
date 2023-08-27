@@ -380,6 +380,9 @@
     <ClCompile Include="Orbital Oblivion.cpp">
       <Filter>Apps\3D Apps\OrbitalOblivion</Filter>
     </ClCompile>
+    <ClCompile Include="PrototypingSandbox.cpp">
+      <Filter>Apps\3D Apps\Prototyping</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Basics.hpp">
@@ -835,6 +838,15 @@
     </ClInclude>
     <ClInclude Include="Orbital Oblivion.hpp">
       <Filter>Apps\3D Apps\OrbitalOblivion</Filter>
+    </ClInclude>
+    <ClInclude Include="PrototypingSandbox.hpp">
+      <Filter>Apps\3D Apps\Prototyping</Filter>
+    </ClInclude>
+    <ClInclude Include="Prototype.hpp">
+      <Filter>Apps\3D Apps\Prototyping</Filter>
+    </ClInclude>
+    <ClInclude Include="AxisNeighborPrototype.hpp">
+      <Filter>Apps\3D Apps\Prototyping\Prototypes</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1577,6 +1589,12 @@
     </Filter>
     <Filter Include="Apps\3D Apps\OrbitalOblivion">
       <UniqueIdentifier>{ce54fd96-eda5-4f48-b8ed-613b0d9da0bd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Apps\3D Apps\Prototyping">
+      <UniqueIdentifier>{82ce95f2-55d9-4b6d-a69c-3beba743d426}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Apps\3D Apps\Prototyping\Prototypes">
+      <UniqueIdentifier>{38bedf0a-6557-44cd-bfb3-cf948b1aae12}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

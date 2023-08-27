@@ -79,7 +79,9 @@ struct Renderer
 	void renderMesh(Index meshId);
 	void useMesh(ResourceManager& resourceManager, const Name& name);
 	void renderMesh(ResourceManager& resourceManager, const Name& name);
+	void renderMeshInstanced(ResourceManager& resourceManager, const Name& name, const Vector<Vec3>& positions);
 	void renderMeshInstanced(ResourceManager& resourceManager, const Name& name, const Vector<Matrix>& transforms);
+	void renderMeshInstanced(ResourceManager& resourceManager, const Name& name, const Vector<Vec3>& positions, Float size);
 
 	//shaders
 	void  fill(Vec3 color);
@@ -92,9 +94,11 @@ struct Renderer
 	void  postProcess(ResourceManager& resourceManager, const Name& name, const Framebuffer& source, const Framebuffer& destination);
 
 	//primitives
+	void line(Vec2 start, Vec2 end);
+	void line(Vec3 start, Vec3 end);
+	void lines(const Vector<Vec2>& lines);
+	void lines(const Vector<Vec3>& lines);
 	void lines(const Vector<Line3D>& lines);
-	void line(Vec3 start, Vec3 end, Float width);
-	void line(Vec2 start, Vec2 end, Float width);
 	void arrow(ResourceManager& resourceManager, Vec2 start, Vec2 end);
 	void arrow(ResourceManager& resourceManager, Vec3 start, Vec3 end);
 	void rectangle(ResourceManager& resourceManager, Vec2 pos, Vec2 size);
@@ -112,6 +116,7 @@ struct Renderer
 	[[nodiscard]] Matrix getScreenSpaceMatrix() const;
 
 	Uniforms& uniforms();
+
 private:
 	RenderRegion renderRegion;
 	Area         windowSize = Area(0);

@@ -69,6 +69,11 @@ void OpenGLBuffer::destroy() const
 	OpenGL::Buffers::apiDeleteBuffer(bufferObjectID);
 }
 
+OpenGlStateCopy::~OpenGlStateCopy()
+{
+	if(!textures.empty()) logError("Not all textures have been unloaded!");
+}
+
 UInt OpenGLTexture2D::getID() const
 {
 	return textureID;
@@ -103,29 +108,31 @@ UInt OpenGLFramebuffer::getID() const
 	return framebufferID;
 }
 
-void OpenGLShaderProgram::use() const
-{
-	OpenGL::Shaders::apiUseProgram(programId);
-}
-
 void OpenGlStateCopy::enableLogging()
 {
 	loggingEnabled = true;
 }
 
+void OpenGLShaderProgram::use() const
+{
+	OpenGL::Shaders::apiUseProgram(programId);
+}
+
 void OpenGLTexture2D::destroy() const
 {
 	OpenGL::Textures::apiDeleteTexture(textureID);
-}
-
-void OpenGLVertexArrayObject::create()
-{
-	vertexArrayID = OpenGL::VertexArray::apiCreateVertexArray();
+	openGlState.removeTexture(textureID);
 }
 
 void OpenGlStateCopy::disableLogging()
 {
 	loggingEnabled = false;
+}
+
+void OpenGLVertexArrayObject::create()
+{
+	vertexArrayID = OpenGL::VertexArray::apiCreateVertexArray();
+	openGlState.addVAO(vertexArrayID);
 }
 
 void OpenGLFramebuffer::destroy() const
@@ -200,6 +207,7 @@ void OpenGL::apiSetBlending(const Bool value)
 void OpenGLVertexArrayObject::destroy() const
 {
 	OpenGL::VertexArray::apiDeleteVertexArray(vertexArrayID);
+	openGlState.removeVAO(vertexArrayID);
 }
 
 void OpenGL::apiSetDepthTest(const Bool value)
@@ -233,6 +241,7 @@ void OpenGLTexture2D::create(const String& name)
 {
 	textureID = OpenGL::Textures::apiCreateTexture(TextureTarget::Texture2D);
 	OpenGL::apiObjectLabel(ObjectLabelType::Texture, textureID, name);
+	openGlState.addTexture(textureID);
 }
 
 void OpenGL::apiSetScissorTest(const Bool value)
@@ -342,7 +351,12 @@ void OpenGLTexture2D::setWrapping(Wrapping wrapping) const
 
 void OpenGlStateCopy::addTexture(const TextureID textureID)
 {
-	textures.push_back(textureID);
+	if(openglStateTracking)
+	{
+		const auto it = std::ranges::find(textures, textureID);
+		if(it != textures.end() && errorCheckingEnabled) logError("Texture with same ID has already been created!");
+		textures.push_back(textureID);
+	}
 }
 
 void OpenGL::apiBlendEquation(const BlendEquation equation)
@@ -371,7 +385,11 @@ void OpenGL::Shaders::apiUseProgram(const ProgramID programId)
 
 void OpenGlStateCopy::removeTexture(const TextureID textureID)
 {
-	for(UInt i = 0; i < textures.size(); i++) if(textures[i] == textureID) textures.erase(textures.begin() + i);
+	if(openglStateTracking)
+	{
+		if(std::ranges::find(textures, textureID) != textures.end()) textures.remove(textureID);
+		else if(errorCheckingEnabled) logError("Deleting texture ID that does not exist!");
+	}
 }
 
 void OpenGL::Shaders::apiDeleteShader(const ShaderID shaderId)
@@ -380,6 +398,16 @@ void OpenGL::Shaders::apiDeleteShader(const ShaderID shaderId)
 		openGlState.write("glDeleteShader(...);");
 #endif // TRACE_OPENGL
 	glDeleteShader(shaderId);
+}
+
+void OpenGlStateCopy::addVAO(const VertexArrayID vertexArrayID)
+{
+	if(openglStateTracking)
+	{
+		const auto it = std::ranges::find(vaos, vertexArrayID);
+		if(it != vaos.end() && errorCheckingEnabled) logError("VAO with same ID has already been created!");
+		vaos.push_back(vertexArrayID);
+	}
 }
 
 void OpenGL::Shaders::apiCompileShader(const ShaderID shaderId)
@@ -425,6 +453,15 @@ void OpenGL::Shaders::apiDeleteProgram(const ProgramID programId)
 		openGlState.write("glDeleteProgram(...);");
 #endif // TRACE_OPENGL
 	glDeleteProgram(programId);
+}
+
+void OpenGlStateCopy::removeVAO(const VertexArrayID vertexArrayID)
+{
+	if(openglStateTracking)
+	{
+		if(std::ranges::find(vaos, vertexArrayID) != vaos.end()) vaos.remove(vertexArrayID);
+		else if(errorCheckingEnabled) logError("Deleting VAO ID that does not exist!");
+	}
 }
 
 TextureID OpenGL::Textures::apiCreateTexture(TextureTarget target)

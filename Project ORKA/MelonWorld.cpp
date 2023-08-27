@@ -28,7 +28,7 @@ void MelonWorld::render(ResourceManager& resourceManager, Renderer& renderer)
 
 	for(const auto& rock : rocks) for(UInt y = 0; y < ROCKGRIDSIZE; y++) arr.push_back(rock[y]);
 	renderer.uniforms().setCustomColor(Vec4(0.1, 0.1, 0.1, 1));
-	renderer.matrixSystem.matrixArray(arr);
+	// renderer.matrixSystem.matrixArray(arr);
 	// renderer.renderMeshInstanced(resourceManager, "melonRock"); //[TODO] replace with instancing system
 
 	m.unlock();

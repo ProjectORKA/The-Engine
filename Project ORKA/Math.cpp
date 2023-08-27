@@ -32,16 +32,6 @@ Int max(const Int a, const Int b)
 	return b;
 }
 
-Line3D::Line3D(const Vec3 start, const Vec3 end) {
-	this->start = start;
-	this->end   = end;
-}
-
-Line3D::Line3D(const Vec2 start, const Vec2 end) {
-	this->start = Vec3(start,0);
-	this->end   =  Vec3(end,0);
-}
-
 void Graph::add(const Float value)
 {
 	points.push_back(value);
@@ -66,6 +56,26 @@ Vec3 projectToCube(const Vec3 vec)
 	return vec / Vec3(max);
 }
 
+Matrix matrixFromSize(const Vec2 s)
+{
+	Matrix m;
+	m[0] = Vec4(s.x, 0, 0, 0);
+	m[1] = Vec4(0, s.y, 0, 0);
+	m[2] = Vec4(0, 0, 1, 0);
+	m[3] = Vec4(0, 0, 0, 1);
+	return m;
+}
+
+Matrix matrixFromSize(const Vec3 s)
+{
+	Matrix m;
+	m[0] = Vec4(s.x, 0, 0, 0);
+	m[1] = Vec4(0, s.y, 0, 0);
+	m[2] = Vec4(0, 0, s.z, 0);
+	m[3] = Vec4(0, 0, 0, 1);
+	return m;
+}
+
 UInt max(const UInt a, const UInt b)
 {
 	if(a > b) return a;
@@ -77,27 +87,7 @@ Vec3 max(const Vec3 a, const Vec3 b)
 	return Vec3(max(a.x, b.x), max(a.y, b.y), max(a.z, b.z));
 }
 
-Matrix matrixFromScale(const Vec2 s)
-{
-	Matrix m;
-	m[0] = Vec4(s.x, 0, 0, 0);
-	m[1] = Vec4(0, s.y, 0, 0);
-	m[2] = Vec4(0, 0, 1, 0);
-	m[3] = Vec4(0, 0, 0, 1);
-	return m;
-}
-
-Matrix matrixFromScale(const Vec3 s)
-{
-	Matrix m;
-	m[0] = Vec4(s.x, 0, 0, 0);
-	m[1] = Vec4(0, s.y, 0, 0);
-	m[2] = Vec4(0, 0, s.z, 0);
-	m[3] = Vec4(0, 0, 0, 1);
-	return m;
-}
-
-UInt nextPowerOfTwo(const UInt& value)
+UInt nextPowerOfTwo(const UInt value)
 {
 	UInt powerOfTwo = 1;
 	while(powerOfTwo < value) powerOfTwo <<= 1;
@@ -115,12 +105,7 @@ Float mod(const Float a, const Float b)
 	return std::fmod(a, b);
 }
 
-Float snap(const Float a, const Float b)
-{
-	return std::round(a / b) * b;
-}
-
-Matrix matrixFromScale(const Float size)
+Matrix matrixFromSize(const Float size)
 {
 	Matrix m;
 	m[0] = Vec4(size, 0, 0, 0);
@@ -128,6 +113,11 @@ Matrix matrixFromScale(const Float size)
 	m[2] = Vec4(0, 0, size, 0);
 	m[3] = Vec4(0, 0, 0, 1);
 	return m;
+}
+
+Float snap(const Float a, const Float b)
+{
+	return std::round(a / b) * b;
 }
 
 Float distance(const Vec2 a, const Vec2 b)
@@ -178,13 +168,29 @@ LDouble dmod(const LDouble x, const LDouble y)
 
 Orientation::Orientation(const Vec3 direction)
 {
-	// this function just assumes +Z is up
-	z = normalize(direction);
-	x = cross(normalize(z), Vec3(0, 0, 1));
-	y = cross(normalize(z), x);
+	x                  = Vec3(1, 0, 0);
+	y                  = Vec3(0, 1, 0);
+	z                  = Vec3(0, 0, 1);
+	Vec3 dirNormalized = normalize(direction);
+
+	// handle edge cases
+	if(dirNormalized != Vec3(0, 0, 1))
+	{
+		if(dirNormalized != Vec3(0, 0, -1))
+		{
+			z = dirNormalized;
+			x = normalize(cross(dirNormalized, Vec3(0, 0, 1)));
+			y = normalize(cross(z, x));
+		}
+		else
+		{
+			x *= -1;
+			y *= -1;
+		}
+	}
 }
 
-Matrix matrixFromLocation(const Vec2 location)
+Matrix matrixFromPosition(const Vec2 location)
 {
 	Matrix m(1);
 	m[3].x = location.x;
@@ -192,7 +198,7 @@ Matrix matrixFromLocation(const Vec2 location)
 	return m;
 }
 
-Matrix matrixFromLocation(const Vec3 location)
+Matrix matrixFromPosition(const Vec3 location)
 {
 	Matrix m(1);
 	m[3] = Vec4(location, 1);
@@ -207,6 +213,18 @@ Vec2 vectorFromAToB(const Vec2 a, const Vec2 b)
 Vec3 vectorFromAToB(const Vec3 a, const Vec3 b)
 {
 	return b - a;
+}
+
+Line3D::Line3D(const Vec3 start, const Vec3 end)
+{
+	this->start = start;
+	this->end   = end;
+}
+
+Line3D::Line3D(const Vec2 start, const Vec2 end)
+{
+	this->start = Vec3(start, 0);
+	this->end   = Vec3(end, 0);
 }
 
 Matrix matrixFromOrientation(const Orientation& o)
@@ -285,7 +303,7 @@ Rotation getRotationBetweenVectors(Vec3 start, Vec3 dest)
 		// there is no "ideal" rotation axis
 		// So guess one; any will do as long as it's perpendicular to start
 		rotationAxis = cross(Vec3(0.0f, 0.0f, 1.0f), start);
-		if(length2(rotationAxis) < 0.01) // bad luck, they were parallel, try again!
+		if(length2(rotationAxis) < 0.01f) // bad luck, they were parallel, try again!
 			rotationAxis = cross(Vec3(1.0f, 0.0f, 0.0f), start);
 
 		rotationAxis = normalize(rotationAxis);
@@ -364,7 +382,7 @@ Matrix screenSpaceMatrix(const Float width, const Float height)
 {
 	auto matrix = Matrix(1);
 	matrix      = translate(matrix, Vec3(-1, -1, 0));
-	matrix      = scale(matrix, Vec3(2.0 / width, 2.0 / height, 1));
+	matrix      = scale(matrix, Vec3(2.0f / width, 2.0f / height, 1.0f));
 	return matrix;
 }
 
@@ -388,7 +406,7 @@ Vec3 getClosestPoint(const Vec3 point, const List<Vec3>& points)
 	return closestPointTMP;
 }
 
-Matrix matrixFromLocationAndSize(const Vec4 compressedTransform)
+Matrix matrixFromPositionAndSize(const Vec4 compressedTransform)
 {
 	Matrix m(compressedTransform.w);
 	m[3]   = compressedTransform;
@@ -396,12 +414,7 @@ Matrix matrixFromLocationAndSize(const Vec4 compressedTransform)
 	return m;
 }
 
-LDouble lerp(const LDouble a, const LDouble b, const LDouble alpha)
-{
-	return a * (1 - alpha) + b * alpha;
-}
-
-Matrix matrixFromLocationAndSize2D(const Vec2 pos, const Vec2 size)
+Matrix matrixFromPositionAndSize(const Vec2 pos, const Vec2 size)
 {
 	Matrix m(1);
 	m[0] = Vec4(size.x, 0, 0, 0);
@@ -409,6 +422,11 @@ Matrix matrixFromLocationAndSize2D(const Vec2 pos, const Vec2 size)
 	m[2] = Vec4(0, 0, 1, 0);
 	m[3] = Vec4(pos.x, pos.y, 0, 1);
 	return m;
+}
+
+LDouble lerp(const LDouble a, const LDouble b, const LDouble alpha)
+{
+	return a * (1 - alpha) + b * alpha;
 }
 
 Matrix matrixFromPositionAndDirection(const Vec2 pos, const Vec2 dir)
@@ -421,19 +439,35 @@ Matrix matrixFromPositionAndDirection(const Vec2 pos, const Vec2 dir)
 	return m;
 }
 
+Vector<Matrix> matrixArrayFromPositions(const Vector<Vec3>& positions)
+{
+	Vector<Matrix> matrixArray;
+	matrixArray.resize(positions.size());
+	for(UInt i = 0; i < positions.size(); i++) matrixArray[i] = matrixFromPosition(positions[i]);
+	return matrixArray;
+}
+
+Vector<Matrix> matrixArrayFromPositions(const Vector<Vec2>& positions)
+{
+	Vector<Matrix> matrixArray;
+	matrixArray.resize(positions.size());
+	for(UInt i = 0; i < positions.size(); i++) matrixArray[i] = matrixFromPosition(positions[i]);
+	return matrixArray;
+}
+
 Matrix matrixFromRotation(const Float x, const Float y, const Float z)
 {
 	return glm::eulerAngleYXZ(z, x, y);
 }
 
-Matrix matrixFromLocationAndSize(const Vec3 location, const Float size)
+Matrix matrixFromPositionAndSize(const Vec3 location, const Float size)
 {
 	Matrix m(size);
 	m[3] = Vec4(location, 1);
 	return m;
 }
 
-Matrix matrixFromLocationAndSize(const Vec2 location, const Float size)
+Matrix matrixFromPositionAndSize(const Vec2 location, const Float size)
 {
 	Matrix m(size);
 	m[3] = Vec4(location, 0, 1);
@@ -487,6 +521,21 @@ Float getDistanceToClosestPoint(const Vec3 point, const Vector<Vec3>& points)
 	return minimalDistance;
 }
 
+Vector<Matrix> matrixArrayFromCompactVec4(const Vector<Vec4>& compactTransform)
+{
+	Vector<Matrix> matrixArray;
+	matrixArray.resize(compactTransform.size());
+	for(UInt i = 0; i < compactTransform.size(); i++) matrixArray[i] = matrixFromPositionAndSize(compactTransform[i]);
+	return matrixArray;
+}
+
+Matrix matrixFromDirectionAndLocation(const Vec3 direction, const Vec3 location)
+{
+	const Float       size = length(direction);
+	const Orientation orientation(direction);
+	return matrixFromOrientation(orientation, location, size);
+}
+
 Float distanceToPointInLoopingSpace(const Vec2 a, const Vec2 b, const Float extend)
 {
 	return length(deltaInLoopingSpace(a, b, extend));
@@ -501,7 +550,7 @@ void removePointsInRadius(const Vec3 point, Vector<Vec3>& points, const Float ra
 	points = available;
 }
 
-Matrix matrixFromLocationDirectionAndSize(const Vec2 pos, Vec2 dir, const Float size)
+Matrix matrixFromPositionDirectionAndSize(const Vec2 pos, Vec2 dir, const Float size)
 {
 	Matrix m(1);
 	dir *= size;
@@ -517,7 +566,7 @@ Matrix matrixFromOrientation(const Orientation& o, const Vec3 position, const Fl
 	return matrixFromAxis(o.x, o.y, o.z, position, size);
 }
 
-Matrix matrixFromLocationAndSize2D(const Float x, const Float y, const Float w, const Float h)
+Matrix matrixFromPositionAndSize(const Float x, const Float y, const Float w, const Float h)
 {
 	Matrix m(1);
 	m[0] = Vec4(w, 0, 0, 0);
@@ -525,6 +574,22 @@ Matrix matrixFromLocationAndSize2D(const Float x, const Float y, const Float w, 
 	m[2] = Vec4(0, 0, 1, 0);
 	m[3] = Vec4(x, y, 0, 1);
 	return m;
+}
+
+Vector<Matrix> matrixArrayFromPositionsAndSize(const Vector<Vec2>& positions, const Float size)
+{
+	Vector<Matrix> matrixArray;
+	matrixArray.resize(positions.size());
+	for(UInt i = 0; i < positions.size(); i++) matrixArray[i] = matrixFromPositionAndSize(positions[i], size);
+	return matrixArray;
+}
+
+Vector<Matrix> matrixArrayFromPositionsAndSize(const Vector<Vec3>& positions, const Float size)
+{
+	Vector<Matrix> matrixArray;
+	matrixArray.resize(positions.size());
+	for(UInt i = 0; i < positions.size(); i++) matrixArray[i] = matrixFromPositionAndSize(positions[i], size);
+	return matrixArray;
 }
 
 Bool isWithinDistanceOfOtherPoints(const Vec2 point, const Vector<Vec2>& points, const Float dist)
@@ -541,6 +606,14 @@ Vec3 quadraticInterpolation(const Vec3 start, const Vec3 control, const Vec3 end
 Bool pointInsideSphereAtlocationWithRadius(const Vec3 point, const Vec3 position, const Float radius)
 {
 	return distance(point, position) < radius;
+}
+
+Vector<Matrix> matrixArrayFromPositionsAndDirections(const Vector<Vec2>& pos, const Vector<Vec2>& dir)
+{
+	Vector<Matrix> matrixArray;
+	matrixArray.resize(pos.size());
+	for(UInt i = 0; i < pos.size(); i++) matrixArray[i] = matrixFromPositionAndDirection(pos[i], dir[i]);
+	return matrixArray;
 }
 
 Matrix matrixFromAxis(const Vec3 x, const Vec3 y, const Vec3 z, const Vec3 position, const Float size)
@@ -586,6 +659,14 @@ Index idOfClosestPointInLoopingSpace(const Vec2 origin, const Vector<Vec2>& posi
 		}
 	}
 	return index;
+}
+
+Vector<Matrix> matrixArrayFromPositionsDirectionsAndSizes(const Vector<Vec2>& position, const Vector<Vec2>& direction, const Vector<Float>& size)
+{
+	Vector<Matrix> matrixArray;
+	matrixArray.resize(position.size());
+	for(UInt i = 0; i < position.size(); i++) matrixArray[i] = matrixFromPositionDirectionAndSize(position[i], direction[i], size[i]);
+	return matrixArray;
 }
 
 void spaceColonization(Vector<Vec3>& points, Vector<Vec3>& branches, Vector<Index>& connections, const Float segmentSize, const Float killRadius)

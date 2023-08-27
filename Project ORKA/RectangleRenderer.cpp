@@ -10,6 +10,6 @@ void RectangleRenderer::create(ResourceManager& resourceManager, Renderer& rende
 void RectangleRenderer::render(ResourceManager& resourceManager, Renderer& renderer, const Vec2 pos, const Vec2 size) const
 {
 	renderer.useShader(resourceManager, "color");
-	renderer.uniforms().setMMatrix(matrixFromLocationAndSize2D(pos, size));
+	renderer.uniforms().setMMatrix(matrixFromPositionAndSize(pos, size));
 	renderer.renderMesh(rectangleMeshId);
 }

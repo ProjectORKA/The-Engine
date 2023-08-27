@@ -4,7 +4,6 @@
 #include "GL/glew.h"
 #include "Debug.hpp"
 
-// #define OPENGLSTATE
 // #define DEBUG_OPENGL
 // #define TRACE_OPENGL
 // #define CHECK_OPENGL
@@ -835,7 +834,9 @@ inline void __stdcall debugOutputCallback(const UInt source, const UInt type, UI
 
 struct OpenGlStateCopy
 {
-	Bool loggingEnabled = false;
+	const Bool openglStateTracking  = true;
+	const Bool errorCheckingEnabled = true;
+	Bool       loggingEnabled       = false;
 #ifdef TRACE_OPENGL
 	Logger log            = Logger("OpenGL");
 #endif
@@ -857,17 +858,21 @@ struct OpenGlStateCopy
 	Int   scissorH               = -1;
 	Color clearColor             = Color(0, 0, 0, 0);
 	// objects
-	Vector<TextureID> textures;
+	List<TextureID>     textures;
+	List<VertexArrayID> vaos;
 
 	// static state
 	UInt maxVertexAttributes = 0;
 
 	void print() const;
+	~OpenGlStateCopy();
 	void enableLogging();
 	void disableLogging();
-	void write(const String& message) const;
 	void addTexture(TextureID textureID);
+	void write(const String& message) const;
 	void removeTexture(TextureID textureID);
+	void addVAO(VertexArrayID vertexArrayID);
+	void removeVAO(VertexArrayID vertexArrayID);
 };
 
 extern OpenGlStateCopy openGlState;
@@ -992,6 +997,7 @@ struct OpenGLTexture2D
 	void setFilters(Filter nearFilter, Filter farFilter) const;
 	void setDataToDepth(Int width, Int height, const void* data) const;
 	void setData(SizedInternalFormat internalFormat, Int width, Int height, WritePixelsFormat colorFormat, DataType dataType, const void* data) const;
+
 private:
 	UInt textureID = -1;
 };
@@ -1008,6 +1014,7 @@ struct OpenGLBuffer
 	template <typename T> void update(const Vector<T>& data) const;
 	template <typename T> void create(BufferTarget targetValue, T data, BufferUsage usageValue, const String& name, BindingPoint bindingLocation);
 	template <typename T> void create(BufferTarget targetValue, const Vector<T>& data, BufferUsage usageValue, const String& name, BindingPoint bindingLocation);
+
 private:
 	BufferTarget   target         = BufferTarget::Array;
 	BufferUsage    usage          = BufferUsage::StaticDraw;
@@ -1041,6 +1048,7 @@ struct OpenGLVertexArrayObject
 	void render(PrimitiveMode primitiveMode, Int indexCount, const void* indicesOrOffset) const;
 	void renderInstanced(PrimitiveMode primitiveMode, Int indexCount, const void* indicesOrOffset, Int instanceCount) const;
 	void bindVertexBuffer(AttributeIndex attributeIndex, BufferID bufferID, LL offset, Int stride, UInt divisor, Int numComponents, DataType type, Bool normalized, UInt relativeOffset) const;
+
 private:
 	VertexArrayID vertexArrayID = -1;
 };
@@ -1061,6 +1069,7 @@ struct OpenGLFramebuffer
 	void clearColor(FramebufferAttachment attachmentSlot, Vec4 color) const;
 	void clearColor(FramebufferAttachment attachmentSlot, IVec4 color) const;
 	void attachTexture(FramebufferAttachment attachment, TextureID textureId) const;
+
 private:
 	UInt framebufferID = -1;
 };
@@ -1070,6 +1079,7 @@ struct OpenGLShaderProgram
 	void               destroy();
 	void               use() const;
 	[[nodiscard]] Bool create(const String& name, const String& vertexShaderSource, const String& fragmentShaderSource);
+
 private:
 	GLuint programId = -1;
 };

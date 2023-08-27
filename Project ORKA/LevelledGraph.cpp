@@ -83,8 +83,8 @@ void LeveledGraph::addForce(const Index a, const Vec2 force)
 
 Vec3 LeveledGraph::getPos(const Index x, const Index y, const Float z)
 {
-	const Float size = 2;
-	return Vec3(x * size, positions[x][y] * size, z);
+	constexpr Float size = 2;
+	return {x * size, positions[x][y] * size, z};
 }
 
 LeveledGraphConnection::LeveledGraphConnection(const Index a, const Index b)
@@ -100,13 +100,13 @@ void LeveledGraph::render(ResourceManager& resourceManager, Renderer& renderer) 
 
 	// render connections
 	renderer.fill(Color(0.5, 0.5, 0.5, 1));
-	for(const auto connection : connections) renderer.line(positions[connection.a], positions[connection.b], 0.05f);
+	for(const auto connection : connections) renderer.line(positions[connection.a], positions[connection.b]);
 
 	// render nodes
 	renderer.fill(Color(1));
 	for(auto position : positions)
 	{
-		renderer.uniforms().setMMatrix(matrixFromLocation(Vec3(position, 0.0f)));
+		renderer.uniforms().setMMatrix(matrixFromPosition(Vec3(position, 0.0f)));
 		renderer.renderMesh(resourceManager, "1x1planeCentered");
 	}
 

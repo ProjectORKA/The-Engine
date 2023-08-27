@@ -76,6 +76,25 @@ using String = std::string;
 
 using Color = glm::vec4;
 
+constexpr UInt colorToRGBHex(const Color color)
+{
+	const auto red   = static_cast<Byte>(color.r * 255);
+	const auto green = static_cast<Byte>(color.g * 255);
+	const auto blue  = static_cast<Byte>(color.b * 255);
+
+	return red << 16 | green << 8 | blue;
+}
+
+constexpr UInt colorToRGBAHex(const Color color)
+{
+	const auto red   = static_cast<Byte>(color.r * 255);
+	const auto green = static_cast<Byte>(color.g * 255);
+	const auto blue  = static_cast<Byte>(color.b * 255);
+	const auto alpha = static_cast<Byte>(color.a * 255);
+
+	return red << 24 | green << 16 | blue << 8 | alpha;
+}
+
 using Sphere = Vec4;
 
 #include "glm/glm.hpp"
