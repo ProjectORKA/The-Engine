@@ -383,6 +383,12 @@
     <ClCompile Include="PrototypingSandbox.cpp">
       <Filter>Apps\3D Apps\Prototyping</Filter>
     </ClCompile>
+    <ClCompile Include="PongPlayer.cpp">
+      <Filter>Apps\2D Apps\Pong</Filter>
+    </ClCompile>
+    <ClCompile Include="PongBall.cpp">
+      <Filter>Apps\2D Apps\Pong</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Basics.hpp">
@@ -847,6 +853,15 @@
     </ClInclude>
     <ClInclude Include="AxisNeighborPrototype.hpp">
       <Filter>Apps\3D Apps\Prototyping\Prototypes</Filter>
+    </ClInclude>
+    <ClInclude Include="ORKAJump.hpp">
+      <Filter>Apps\3D Apps\ORKAJump</Filter>
+    </ClInclude>
+    <ClInclude Include="PongBall.hpp">
+      <Filter>Apps\2D Apps\Pong</Filter>
+    </ClInclude>
+    <ClInclude Include="PongPlayer.hpp">
+      <Filter>Apps\2D Apps\Pong</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1595,6 +1610,9 @@
     </Filter>
     <Filter Include="Apps\3D Apps\Prototyping\Prototypes">
       <UniqueIdentifier>{38bedf0a-6557-44cd-bfb3-cf948b1aae12}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Apps\3D Apps\ORKAJump">
+      <UniqueIdentifier>{2a62b69c-295e-425c-ae46-b9eeba3056c0}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

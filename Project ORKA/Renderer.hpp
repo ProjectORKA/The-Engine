@@ -96,6 +96,8 @@ struct Renderer
 	//primitives
 	void line(Vec2 start, Vec2 end);
 	void line(Vec3 start, Vec3 end);
+	void line(const List<Vec2>& line);
+	void line(const List<Vec3>& line);
 	void lines(const Vector<Vec2>& lines);
 	void lines(const Vector<Vec3>& lines);
 	void lines(const Vector<Line3D>& lines);

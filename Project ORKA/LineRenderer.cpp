@@ -193,6 +193,20 @@ void LineRenderer::renderLine(Renderer& renderer, const Vec2 start, const Vec2 e
 	renderLine(renderer, line);
 }
 
+void LineRenderer::renderLine(Renderer& renderer, const List<Vec2>& line)
+{
+	Vector<Vec3> tmp;
+	for (auto& l : line)tmp.push_back(Vec3(l,0));
+	renderLine(renderer, tmp);
+}
+
+void LineRenderer::renderLine(Renderer& renderer, const List<Vec3>& line)
+{
+	Vector<Vec3> tmp;
+	for (auto& l : line)tmp.push_back(l);
+	renderLine(renderer, tmp);
+}
+
 void LineRenderer::renderLine(Renderer& renderer, const Vec3 start, const Vec3 end)
 {
 	Vector<Vec3> line(2);

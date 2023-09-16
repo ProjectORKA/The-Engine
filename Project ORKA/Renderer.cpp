@@ -230,6 +230,16 @@ void Renderer::line(const Vec2 start, const Vec2 end)
 	lineRenderer.renderLine(*this, Vec3(start, 0.0f), Vec3(end, 0.0f));
 }
 
+void Renderer::line(const List<Vec2>& line)
+{
+	lineRenderer.renderLine(*this, line);
+}
+
+void Renderer::line(const List<Vec3>& line)
+{
+	lineRenderer.renderLine(*this, line);
+}
+
 void Renderer::clearBackground(const Color color) const
 {
 	OpenGL::apiSetClearColor(color);
