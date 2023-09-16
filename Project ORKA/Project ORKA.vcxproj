@@ -37,6 +37,8 @@
     <ClCompile Include="NameGenerator.cpp" />
     <ClCompile Include="OctreeID.cpp" />
     <ClCompile Include="Orbital Oblivion.cpp" />
+    <ClCompile Include="PongBall.cpp" />
+    <ClCompile Include="PongPlayer.cpp" />
     <ClCompile Include="PrototypingSandbox.cpp" />
     <ClCompile Include="SDFRenderer.cpp" />
     <ClCompile Include="Camera.cpp" />
@@ -224,6 +226,7 @@
     <ClInclude Include="optick\optick_server.h" />
     <ClInclude Include="Orbital Oblivion.hpp" />
     <ClInclude Include="Organizer.hpp" />
+    <ClInclude Include="ORKAJump.hpp" />
     <ClInclude Include="ParticleSystem.hpp" />
     <ClInclude Include="PhysicsSystem.hpp" />
     <ClInclude Include="PhysicsPlayground.hpp" />
@@ -233,6 +236,8 @@
     <ClInclude Include="Player.hpp" />
     <ClInclude Include="PointCloud.hpp" />
     <ClInclude Include="Pong.hpp" />
+    <ClInclude Include="PongBall.hpp" />
+    <ClInclude Include="PongPlayer.hpp" />
     <ClInclude Include="ProceduralMeshes.hpp" />
     <ClInclude Include="Profiler.hpp" />
     <ClInclude Include="ProjectMelon.hpp" />

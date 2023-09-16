@@ -20,6 +20,8 @@ struct LineRenderer
 	void destroy();
 	void renderLine(Renderer& renderer, Vec2 start, Vec2 end);
 	void renderLine(Renderer& renderer, Vec3 start, Vec3 end);
+	void renderLine(Renderer& renderer, const List<Vec2>& line);
+	void renderLine(Renderer& renderer, const List<Vec3>& line);
 	void renderLine(Renderer& renderer, const Vector<Vec2>& line);
 	void renderLine(Renderer& renderer, const Vector<Vec3>& line);
 	void renderLines(Renderer& renderer, const Vector<Vec2>& lines);
