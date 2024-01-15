@@ -1,7 +1,7 @@
 #pragma once
 
 #include "GPUMesh.hpp"
-#include "ResourceManager.hpp"
+
 #include "Renderer.hpp"
 
 struct SimpleRTSTerrainSystem
@@ -16,6 +16,6 @@ struct SimpleRTSTerrainRenderingSystem
 	Vec2    offset = Vec2(0);
 
 	void render(Renderer& renderer) const;
-	void create(ResourceManager& resourceManager);
+	void create();
 	void update(const SimpleRTSTerrainSystem& terrainSystem, Vec2 cameraPos);
 };

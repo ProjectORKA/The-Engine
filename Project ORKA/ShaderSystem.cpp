@@ -42,13 +42,13 @@ ShaderProgram& ShaderSystem::currentShaderProgram()
 	return shaderPrograms[currentShaderProgramId];
 }
 
-void ShaderSystem::create(const ResourceManager& resourceManager)
+void ShaderSystem::create()
 {
-	uniforms.create(resourceManager);
+	uniforms.create();
 	loadDefaultShader();
 }
 
-void ShaderSystem::add(ResourceManager& resourceManager, const Name& name)
+void ShaderSystem::add(const Name& name)
 {
 	const Path vertexShaderPath   = resourceManager.getVertexShaderResourcePath(name);
 	const Path fragmentShaderPath = resourceManager.getFragmentShaderResourcePath(name);
@@ -65,14 +65,14 @@ void ShaderSystem::add(ResourceManager& resourceManager, const Name& name)
 	add(name, vertexShaderCode, fragmentShaderCode);
 }
 
-Index ShaderSystem::use(ResourceManager& resourceManager, const Name& name)
+Index ShaderSystem::use(const Name& name)
 {
 	auto it = shaderNames.find(name);
 	if(it != shaderNames.end()) use(it->second);
 	else
 	{
 		// try loading the shader
-		add(resourceManager, name);
+		add(name);
 		it = shaderNames.find(name);
 		if(it != shaderNames.end()) use(it->second);
 		else logError("Shader could not be found!");
@@ -80,9 +80,9 @@ Index ShaderSystem::use(ResourceManager& resourceManager, const Name& name)
 	return currentShaderProgramId;
 }
 
-Index ShaderSystem::getShaderId(ResourceManager& resourceManager, const Name& name)
+Index ShaderSystem::getShaderId(const Name& name)
 {
-	use(resourceManager, name);
+	use(name);
 	return currentShaderProgramId;
 }
 

@@ -116,7 +116,7 @@ void loadAssimpMesh(CPUMesh& destinationMesh, aiMesh& sourceMesh)
 	}
 }
 
-void Scene2::importFBX(Path path, ResourceManager& resourceManager)
+void Scene2::importFBX(Path path)
 {
 	path = makeAbsolute(path);
 	// check if file is valid

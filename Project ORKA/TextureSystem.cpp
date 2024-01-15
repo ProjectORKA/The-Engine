@@ -61,13 +61,13 @@ void TextureSystem::add(const CPUTexture& cpuTexture)
 	textureNames[cpuTexture.getName()] = currentTextureId;
 }
 
-Index TextureSystem::use(ResourceManager& resourceManager, const Name& name)
+Index TextureSystem::use(const Name& name)
 {
-	use(resourceManager, name, 0);
+	use(name, 0);
 	return currentTextureId;
 }
 
-void TextureSystem::use(ResourceManager& resourceManager, const Name& name, const Index slot)
+void TextureSystem::use(const Name& name, const Index slot)
 {
 	auto it = textureNames.find(name);
 	if(it != textureNames.end())
@@ -79,7 +79,7 @@ void TextureSystem::use(ResourceManager& resourceManager, const Name& name, cons
 	{
 		CPUTexture cpuTexture;
 
-		cpuTexture.load(resourceManager, name, Filter::Linear, Filter::LinearMm, Wrapping::Repeat);
+		cpuTexture.load(name, Filter::Linear, Filter::LinearMm, Wrapping::Repeat);
 
 		add(cpuTexture);
 
@@ -92,7 +92,7 @@ void TextureSystem::use(ResourceManager& resourceManager, const Name& name, cons
 		else
 		{
 			logError("Could not find Texture!");
-			use(resourceManager, "empty");
+			use("empty");
 		}
 	}
 }

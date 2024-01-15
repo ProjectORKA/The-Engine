@@ -1,16 +1,5 @@
 #include "MindMapper.hpp"
 
-void MindMapper::run()
-{
-	resourceManager.create();
-	sim.start(resourceManager);
-	renderer.connect(sim);
-	ui.create();
-	ui.window("ORKA MindMapper", Area(1920, 1080), true, true, WindowState::Windowed, renderer, resourceManager);
-	ui.run();
-	sim.stop();
-}
-
 void MindMapperSim::destroy() {}
 
 void MindMapperSim::update(Float delta)
@@ -32,7 +21,7 @@ void MindMapperRenderer::connect(GameSimulation& simulation)
 	this->sim = static_cast<MindMapperSim*>(&simulation);
 }
 
-void MindMapperSim::create(ResourceManager& resourceManager)
+void MindMapperSim::create()
 {
 	for(Int i = 0; i < nodeCount; i++) system.addNode();
 }
@@ -45,13 +34,13 @@ void MindMapperRenderer::inputEvent(Window& window, const InputEvent input)
 	player.inputEvent(window, input);
 }
 
-void MindMapperRenderer::create(ResourceManager& resourceManager, Window& window)
+void MindMapperRenderer::create(Window& window)
 {
 	player.camera.setLocation(0.0f, 0.0f, 150.0f);
 	player.camera.setRotation(DVec3(PI, 0, 0));
 }
 
-void MindMapperRenderer::render(ResourceManager& resourceManager, Window& window, TiledRectangle area)
+void MindMapperRenderer::render(Window& window, TiledRectangle area)
 {
 	Renderer& r = window.renderer;
 
@@ -61,11 +50,11 @@ void MindMapperRenderer::render(ResourceManager& resourceManager, Window& window
 	r.setCulling(true);
 	r.setDepthTest(true);
 
-	player.render(resourceManager, window);
+	player.render(window);
 	r.uniforms().setMMatrix(Matrix(1));
-	r.shaderSystem.use(resourceManager, "debug");
+	r.shaderSystem.use("debug");
 
-	sim->system.render(resourceManager, r);
+	sim->system.render(r);
 }
 
-void MindMapperRenderer::renderInteractive(ResourceManager& resourceManager, Window& window, TiledRectangle area) {}
+void MindMapperRenderer::renderInteractive(Window& window, TiledRectangle area) {}

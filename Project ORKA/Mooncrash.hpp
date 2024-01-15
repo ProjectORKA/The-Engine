@@ -14,7 +14,7 @@ struct MoonCrashPlayer final : PlanetSystemPlayer
 
 	MoonCrashPlayer();
 	void update(Window& window) override;
-	void render(ResourceManager& resourceManager, Window& window) override;
+	void render(Window& window) override;
 };
 
 struct MoonCrashSimulation final : GameSimulation
@@ -22,9 +22,9 @@ struct MoonCrashSimulation final : GameSimulation
 	Time         time;
 	PlanetSystem planetSystem;
 
+	void create() override;
 	void destroy() override;
 	void update(Float delta) override;
-	void create(ResourceManager& resourceManager) override;
 };
 
 struct MoonCrashRenderer final : GameRenderer
@@ -46,21 +46,29 @@ struct MoonCrashRenderer final : GameRenderer
 	void destroy(Window& window) override;
 	void connect(GameSimulation& simulation) override;
 	void inputEvent(Window& window, InputEvent input) override;
-	void create(ResourceManager& resourceManager, Window& window) override;
-	void render(ResourceManager& resourceManager, Window& window, TiledRectangle area) override;
+	void create(Window& window) override;
+	void render(Window& window, TiledRectangle area) override;
 
-	void renderInteractive(ResourceManager& resourceManager, Window& window, TiledRectangle area) override {}
+	void renderInteractive(Window& window, TiledRectangle area) override {}
 };
 
-void renderMoonCrashAtmosphere(ResourceManager& resourceManager, Renderer& renderer, MoonCrashPlayer& player, Framebuffer& framebuffer);
-void renderPlanet(ResourceManager& resourceManager, Renderer& renderer, PlanetSystem& planetSystem, const PlanetSystemPlayer& player, const Framebuffer& framebuffer);
+void renderMoonCrashAtmosphere(Renderer& renderer, MoonCrashPlayer& player, Framebuffer& framebuffer);
+void renderPlanet(Renderer& renderer, PlanetSystem& planetSystem, const PlanetSystemPlayer& player, const Framebuffer& framebuffer);
 
 struct MoonCrash
 {
 	UserInterface       ui;
 	MoonCrashSimulation sim;
+	Window              window;
 	MoonCrashRenderer   renderer;
-	ResourceManager     resourceManager;
 
-	void run();
+	void run()
+	{
+		ui.create();
+		sim.start();
+		renderer.connect(sim);
+		ui.window("MoonCrash", Area(1920, 1080), true, true, WindowState::Windowed, renderer);
+		ui.run();
+		sim.stop();
+	}
 };

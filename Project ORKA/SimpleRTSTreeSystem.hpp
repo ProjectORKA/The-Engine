@@ -27,5 +27,5 @@
 //};
 //
 //struct SimpleRTSTreeSystemRenderer {
-//	void render(SimpleRTSTreeSystem & treeSystem, ResourceManager& resourceManager, Renderer& renderer);
+//	void render(SimpleRTSTreeSystem & treeSystem, Renderer& renderer);
 //};

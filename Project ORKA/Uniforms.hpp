@@ -2,7 +2,7 @@
 
 #include "Basics.hpp"
 #include "GraphicsAPI.hpp"
-#include "ResourceManager.hpp"
+
 
 struct GlobalUniformData
 {
@@ -37,7 +37,7 @@ struct Uniforms
 	void   destroy() const;
 	void   resetMatrices();
 	String getUniformShaderCode();
-	void   create(const ResourceManager& resourceManager);
+	void   create();
 
 	[[nodiscard]] Float  getTime() const;
 	[[nodiscard]] UInt   getOpenGLID() const;

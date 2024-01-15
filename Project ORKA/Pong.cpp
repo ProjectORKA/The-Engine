@@ -5,14 +5,6 @@
 Float ballSpeedReduction = 1.5;
 Float paddleSpeed        = 2.5;
 
-void Pong::run()
-{
-	resourceManager.create();
-	ui.create();
-	ui.window("Pong", Area(1920, 1080), true, true, WindowState::Fullscreen, pongRenderer, resourceManager);
-	ui.run();
-}
-
 void PongRenderer::destroy(Window& window) {}
 
 void PongPlayer::update(Window& window)
@@ -194,18 +186,18 @@ void PongPlayer::aiInput(Vector<Ball>& balls, const Float deltaTime)
 	}
 }
 
-void PongRenderer::create(ResourceManager& resourceManager, Window& window)
+void PongRenderer::create(Window& window)
 {
 	while(balls.size() < ballCount) balls.emplace_back();
 }
 
-void Ball::render(ResourceManager& resourceManager, Renderer& renderer) const
+void Ball::render(Renderer& renderer) const
 {
 	renderer.uniforms().setMMatrix(scale(translate(Matrix(1), Vec3(position, 0)), Vec3(0.01, 0.01, 0.5)));
-	renderer.renderMesh(resourceManager, "centeredCube");
+	renderer.renderMesh("centeredCube");
 }
 
-void PongRenderer::render(ResourceManager& resourceManager, Window& window, TiledRectangle area)
+void PongRenderer::render(Window& window, TiledRectangle area)
 {
 	Renderer& r = window.renderer;
 
@@ -244,30 +236,30 @@ void PongRenderer::render(ResourceManager& resourceManager, Window& window, Tile
 	r.clearBackground(Color(0, 0, 0, 1));
 
 	r.aspectCorrectNormalizedSpace();
-	r.useShader(resourceManager, "color");
+	r.useShader("color");
 	r.uniforms().setCustomColor(Vec4(1));
 
 	// paddle 1
 	r.uniforms().setMMatrix(scale(translate(Matrix(1), Vec3(players[0].position, 0)), Vec3(0.01, 0.2, 0.5)));
-	r.renderMesh(resourceManager, "centeredCube");
+	r.renderMesh("centeredCube");
 	// paddle 2
 	r.uniforms().setMMatrix(scale(translate(Matrix(1), Vec3(players[1].position, 0)), Vec3(0.01, 0.2, 0.5)));
-	r.renderMesh(resourceManager, "centeredCube");
+	r.renderMesh("centeredCube");
 	// ball
-	for(Ball& ball : balls) ball.render(resourceManager, r);
+	for(Ball& ball : balls) ball.render(r);
 
 	// walls
 	r.uniforms().setMMatrix(scale(translate(Matrix(1), Vec3(0, 1, 0)), Vec3(2, 0.01, 0.5)));
-	r.renderMesh(resourceManager, "centeredCube");
+	r.renderMesh("centeredCube");
 
 	r.uniforms().setMMatrix(scale(translate(Matrix(1), Vec3(0, -1, 0)), Vec3(2, 0.01, 0.5)));
-	r.renderMesh(resourceManager, "centeredCube");
+	r.renderMesh("centeredCube");
 
 	r.uniforms().setMMatrix(scale(translate(Matrix(1), Vec3(1, 0, 0)), Vec3(0.01, 2, 0.5)));
-	r.renderMesh(resourceManager, "centeredCube");
+	r.renderMesh("centeredCube");
 
 	r.uniforms().setMMatrix(scale(translate(Matrix(1), Vec3(-1, 0, 0)), Vec3(0.01, 2, 0.5)));
-	r.renderMesh(resourceManager, "centeredCube");
+	r.renderMesh("centeredCube");
 
 	const Float height = r.getWindowHeight();
 	const Float width  = r.getWindowWidth();
@@ -280,10 +272,10 @@ void PongRenderer::render(ResourceManager& resourceManager, Window& window, Tile
 	r.textRenderSystem.setLetterSpacing(0.6f);
 	r.textRenderSystem.alignText(Alignment::left, Alignment::top);
 
-	r.textRenderSystem.render(resourceManager, r, toString(players[0].score), Vec2(10, height - 100));
-	r.textRenderSystem.render(resourceManager, r, toString(players[1].difficulty), Vec2(10, height - 200));
+	r.textRenderSystem.render(r, toString(players[0].score), Vec2(10, height - 100));
+	r.textRenderSystem.render(r, toString(players[1].difficulty), Vec2(10, height - 200));
 	r.textRenderSystem.alignText(Alignment::right, Alignment::top);
-	r.textRenderSystem.render(resourceManager, r, toString(players[1].score), Vec2(width - 100, height - 100));
+	r.textRenderSystem.render(r, toString(players[1].score), Vec2(width - 100, height - 100));
 }
 
-void PongRenderer::renderInteractive(ResourceManager& resourceManager, Window& window, TiledRectangle area) {}
+void PongRenderer::renderInteractive(Window& window, TiledRectangle area) {}

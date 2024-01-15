@@ -17,7 +17,7 @@ struct ResourceManager
 	void create();
 	void reloadAllResources();
 	void addResource(const Path& path);
-	void loadResourcesFromFbxFiles();
+	void loadResourcesFromFbxFiles() const;
 
 	[[nodiscard]] Path getOrkaDataLocation() const;
 	[[nodiscard]] Path getOrkaCacheLocation() const;
@@ -33,6 +33,7 @@ struct ResourceManager
 	Path getTextureResourcePath(const Name& name);
 	Path getVertexShaderResourcePath(const Name& name);
 	Path getFragmentShaderResourcePath(const Name& name);
+
 private:
 	Bool initialized = false;
 	// paths
@@ -48,3 +49,5 @@ private:
 	Map<Name, Path> vertexShaderResources;
 	Map<Name, Path> fragmentShaderResources;
 };
+
+extern ResourceManager resourceManager;

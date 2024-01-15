@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Heightmap.hpp"
-#include "ResourceManager.hpp"
+
 
 // #define SEALEVEL 1677721600000
 #define TERRAIN_GENERATION_SEED 645123587412588622
@@ -33,5 +33,5 @@ struct NormalTexture
 struct TerrainSystem
 {
 	HeightTexture heightTextures[MAX_CHUNK_LEVEL];
-	void          create(ResourceManager& resourceManager);
+	void          create();
 };

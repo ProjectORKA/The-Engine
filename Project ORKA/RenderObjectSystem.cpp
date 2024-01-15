@@ -52,13 +52,13 @@ void RenderObjectSystem::addRenderObject(const RenderObjectNames& renderobject)
 	addRenderObject(renderobject.renderObjectName, renderobject.meshName, renderobject.textureName, renderobject.shaderName);
 }
 
-void RenderObjectSystem::render(ResourceManager& resourceManager, const Name& name)
+void RenderObjectSystem::render(const Name& name)
 {
-	select(resourceManager, name);
+	select(name);
 	renderCurrent();
 }
 
-void RenderObjectSystem::select(ResourceManager& resourceManager, const Name& name)
+void RenderObjectSystem::select(const Name& name)
 {
 	const auto it = nameToIndex.find(name);
 	if(it != nameToIndex.end())
@@ -73,9 +73,9 @@ void RenderObjectSystem::select(ResourceManager& resourceManager, const Name& na
 		{
 			if(renderObjectNamesQueue[i].renderObjectName == name)
 			{
-				shaderSystemPtr->use(resourceManager, renderObjectNamesQueue[i].shaderName);
-				textureSystemPtr->use(resourceManager, renderObjectNamesQueue[i].textureName);
-				meshSystemPtr->use(resourceManager, renderObjectNamesQueue[i].meshName);
+				shaderSystemPtr->use(renderObjectNamesQueue[i].shaderName);
+				textureSystemPtr->use(renderObjectNamesQueue[i].textureName);
+				meshSystemPtr->use(renderObjectNamesQueue[i].meshName);
 
 				if(shaderSystemPtr->currentShaderProgram().isLoaded() && textureSystemPtr->currentTexture().isLoaded() && meshSystemPtr->currentMesh().isLoaded())
 				{

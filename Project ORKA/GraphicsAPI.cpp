@@ -531,6 +531,11 @@ void OpenGLTexture2D::useTextureInSlot(const UInt textureUnitSlot) const
 	OpenGL::Textures::apiBindTextureUnit(textureUnitSlot, textureID);
 }
 
+void OpenGLTexture2D::emptyTextureFromSlot(const UInt textureUnitSlot) const
+{
+	OpenGL::Textures::apiBindTextureUnit(textureUnitSlot, 0);
+}
+
 void OpenGLFramebuffer::drawBuffers(const Vector<UInt>& attachments) const
 {
 	OpenGL::Framebuffer::apiNamedFramebufferDrawBuffers(framebufferID, attachments);

@@ -93,10 +93,10 @@ LeveledGraphConnection::LeveledGraphConnection(const Index a, const Index b)
 	this->b = b;
 }
 
-void LeveledGraph::render(ResourceManager& resourceManager, Renderer& renderer) const
+void LeveledGraph::render(Renderer& renderer) const
 {
 	renderer.setDepthTest(false);
-	renderer.useShader(resourceManager, "color");
+	renderer.useShader("color");
 
 	// render connections
 	renderer.fill(Color(0.5, 0.5, 0.5, 1));
@@ -107,7 +107,7 @@ void LeveledGraph::render(ResourceManager& resourceManager, Renderer& renderer) 
 	for(auto position : positions)
 	{
 		renderer.uniforms().setMMatrix(matrixFromPosition(Vec3(position, 0.0f)));
-		renderer.renderMesh(resourceManager, "1x1planeCentered");
+		renderer.renderMesh("1x1planeCentered");
 	}
 
 	renderer.setDepthTest(true);

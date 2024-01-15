@@ -2,6 +2,7 @@
 #include "File.hpp"
 #include "GPUMesh.hpp"
 #include "Renderer.hpp"
+#include "ResourceManager.hpp"
 
 CPUMesh::CPUMesh() = default;
 
@@ -74,9 +75,9 @@ CPUMesh::CPUMesh(const Graph& graph)
 	{
 		auto pointPos = Vec2(static_cast<Float>(index) / static_cast<Float>(graph.points.size()), graph.points[index]);
 
-		positions.push_back(Vec3(pointPos, 0));
+		positions.emplace_back(pointPos, 0);
 		textureCoordinates.push_back(pointPos);
-		normals.push_back(Vec3(0, 0, 1));
+		normals.emplace_back(0, 0, 1);
 
 		indices.push_back(index);
 	}
@@ -206,7 +207,7 @@ void CPUMesh::calculateSmoothNormalsForTriangleStrip()
 	for(Vec3& normal : normals) normal = normalize(normal);
 }
 
-void CPUMesh::load(ResourceManager& resourceManager, Name name)
+void CPUMesh::load(Name name)
 {
 	if(resourceManager.hasMeshResource(name))
 	{
@@ -261,7 +262,7 @@ void CPUMesh::load(ResourceManager& resourceManager, Name name)
 	else logWarning("Mesh (" + toString(name) + ") not found as resource!");
 }
 
-void CPUMesh::saveMeshFile(const ResourceManager& resourceManager)
+void CPUMesh::saveMeshFile()
 {
 	MeshHeader2 header;
 	header.version       = 2;
@@ -301,8 +302,8 @@ void CPUMesh::meshFromHeightMap(Array2D<Float>& heightMap, const UInt size)
 			Vec3 position = Vec3(x, y, 0) / Vec3(static_cast<Float>(size));
 			position.z    = heightMap.get(x, y);
 			positions.push_back(position);
-			normals.push_back(Vec3(0, 0, 1));
-			textureCoordinates.push_back(Vec2(position.x, position.y));
+			normals.emplace_back(0, 0, 1);
+			textureCoordinates.emplace_back(position.x, position.y);
 		}
 	}
 

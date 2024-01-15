@@ -15,9 +15,9 @@ struct ShaderSystem
 	void           loadDefaultShader();
 	Index          use(Index shaderId);
 	ShaderProgram& currentShaderProgram();
-	void           create(const ResourceManager& resourceManager);
-	void           add(ResourceManager& resourceManager, const Name& name);
-	Index          use(ResourceManager& resourceManager, const Name& name);
-	Index          getShaderId(ResourceManager& resourceManager, const Name& name);
+	void           create();
+	void           add(const Name& name);
+	Index          use(const Name& name);
+	Index          getShaderId(const Name& name);
 	void           add(const Name& name, const String& vertexShaderCode, const String& fragmentShaderCode);
 };

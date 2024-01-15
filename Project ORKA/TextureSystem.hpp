@@ -14,6 +14,6 @@ struct TextureSystem
 	void        resize(Area size);
 	void        use(Index textureId);
 	void        add(const CPUTexture& cpuTexture);
-	Index       use(ResourceManager& resourceManager, const Name& name);
-	void        use(ResourceManager& resourceManager, const Name& name, Index slot);
+	Index       use(const Name& name);
+	void        use(const Name& name, Index slot);
 };

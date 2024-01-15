@@ -1,15 +1,18 @@
 #include "RectangleRenderer.hpp"
 #include "Renderer.hpp"
 
-void RectangleRenderer::create(ResourceManager& resourceManager, Renderer& renderer)
+void RectangleRenderer::create(Renderer& renderer)
 {
-	renderer.useMesh(resourceManager, "centeredPlane");
+	renderer.useMesh("centeredPlane");
 	rectangleMeshId = renderer.meshSystem.currentMeshId;
 }
 
-void RectangleRenderer::render(ResourceManager& resourceManager, Renderer& renderer, const Vec2 pos, const Vec2 size) const
+void RectangleRenderer::render(Renderer& renderer, const Vec2 pos, const Vec2 size, const Bool overrideColor, const Bool centered) const
 {
-	renderer.useShader(resourceManager, "color");
-	renderer.uniforms().setMMatrix(matrixFromPositionAndSize(pos, size));
+	if(overrideColor) renderer.useShader("color");
+
+	if(centered) renderer.uniforms().setMMatrix(matrixFromPositionAndSize(pos, size));
+	else renderer.uniforms().setMMatrix(matrixFromPositionAndSize(pos+size/Vec2(2), size));
+
 	renderer.renderMesh(rectangleMeshId);
 }

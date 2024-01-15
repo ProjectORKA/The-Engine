@@ -1,54 +1,93 @@
 #include "JobSystem.hpp"
-#include "Debug.hpp"
+
+JobSystem jobSystem;
+
+Job JobSystem::next(const Int threadID)
+{
+	// this function pulls the next job from the stack
+	return jobQueue.dequeue(threadID);
+}
 
 void JobSystem::start()
 {
+	// this function just starts the job system with the most optimal number of threads
+
 	const UInt numberOfThreads = Thread::hardware_concurrency();
-	start(numberOfThreads);
+	startWithThreads(numberOfThreads);
 }
 
-void JobSystem::waitStop()
+void JobSystem::letStop()
 {
+	// waits for all jobs to be finished
+	// WARNING: locks, if infinite jobs exist
+
+	if(debugJobSystemIsEnabled) logDebug("Let Jobs finish.");
 	while(!jobQueue.empty()) {}
-	forceStop();
-}
-
-void JobSystem::forceStop()
-{
-	// LockGuard lock(mutex);
 	running = false;
 	jobQueue.clear();
 	for(Thread& worker : workers) worker.join();
 }
 
-void JobSystem::wait() const
+void JobSystem::waitStop()
 {
+	// prevents new jobs and waits for all subsequent jobs to be finished
+
+	if(debugJobSystemIsEnabled) logDebug("Finish current jobs!");
+	canEnqueueNew = false;
 	while(!jobQueue.empty()) {}
+	running = false;
+	jobQueue.clear();
+	for(Thread& worker : workers) worker.join();
 }
 
-Bool JobSystem::isRunning() const
+void JobSystem::forceStop()
 {
-	return running;
+	// makes the system halt as soon as possible
+	// still waits for all current work to be done
+	// if this takes too long, you might have to split your work into smaller tasks
+
+	if(debugJobSystemIsEnabled) logDebug("Force jobs to quit!");
+	canEnqueueNew  = false;
+	canEnqueueNext = false;
+	running        = false;
+	jobQueue.clear();
+	for(Thread& worker : workers) worker.join();
 }
 
-Function<void()> JobSystem::next()
+void JobSystem::workerThread(const Int threadID)
 {
-	LockGuard lock(mutex);
-	if(jobQueue.empty()) return {};
-	auto result = std::move(jobQueue.front());
-	jobQueue.pop_front();
-	return result;
+	// this function is the logic for each worker
+	// basically they just always check for new stuff to do
+
+	logDebug("Worker thread running with id (" + toString(threadID) + ")");
+
+	while(jobSystem.running) {
+		Job job = jobSystem.next(threadID);
+		job();
+	}
+
+	logDebug("Worker thread (" + toString(threadID) + ") exited.");
 }
 
-void workerThread(JobSystem& jobSystem)
+ULL JobSystem::workCount() const
 {
-	while(jobSystem.isRunning()) if(auto job = jobSystem.next()) job();
+	return jobQueue.size();
 }
 
-void JobSystem::start(const UInt numThreads)
+ULL JobSystem::numThreads() const
 {
-	running = true;
-	logDebug("Job system running with " + toString(numThreads) + " threads");
+	return workers.size();
+}
 
-	for(UInt i = 0; i < numThreads; ++i) workers.emplace_back(workerThread, std::ref(*this));
+void JobSystem::startWithThreads(const UInt numThreads)
+{
+	// starts the job system with a specified number of workers and enables adding work to it 
+
+	running        = true;
+	canEnqueueNew  = true;
+	canEnqueueNext = true;
+
+	if(debugJobSystemIsEnabled) logDebug("Job system running with " + toString(numThreads) + " threads");
+
+	for(UInt i = 0; i < numThreads; ++i) workers.emplace_back(workerThread, threadID++);
 }

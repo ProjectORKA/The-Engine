@@ -1,6 +1,7 @@
 #include "Uniforms.hpp"
 #include "FileSystem.hpp"
 #include "GraphicsAPI.hpp"
+#include "ResourceManager.hpp"
 
 void Uniforms::reset()
 {
@@ -298,7 +299,7 @@ void Uniforms::setFramebufferHeight(const Int value)
 	}
 }
 
-void Uniforms::create(const ResourceManager& resourceManager)
+void Uniforms::create()
 {
 	reset();
 	const Path uniformShaderCodePath = resourceManager.getOrkaDataLocation().append("shaders").append("uniforms.glsl");

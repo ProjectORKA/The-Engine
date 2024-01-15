@@ -4,7 +4,6 @@
 #include "Random.hpp"
 #include "Player.hpp"
 #include "SimpleRTSTerrain.hpp"
-#include "ResourceManager.hpp"
 
 #define SIMPLERTS_MAPSIZE 100
 
@@ -72,8 +71,8 @@ struct SimpleRTSSimulation final : GameSimulation
 
 	void destroy() override;
 	void update(Float delta) override;
-	void create(ResourceManager& resourceManager) override;
-	void render(ResourceManager& resourceManager, Renderer& renderer) const;
+	void create() override;
+	void render(Renderer& renderer) const;
 };
 
 struct SimpleRTSRenderer final : GameRenderer
@@ -93,17 +92,25 @@ struct SimpleRTSRenderer final : GameRenderer
 	void destroy(Window& window) override;
 	void connect(GameSimulation& simulation) override;
 	void inputEvent(Window& window, InputEvent input) override;
-	void create(ResourceManager& resourceManager, Window& window) override;
-	void render(ResourceManager& resourceManager, Window& window, TiledRectangle area) override;
-	void renderInteractive(ResourceManager& resourceManager, Window& window, TiledRectangle area) override;
+	void create(Window& window) override;
+	void render(Window& window, TiledRectangle area) override;
+	void renderInteractive(Window& window, TiledRectangle area) override;
 };
 
 struct SimpleRTS
 {
 	UserInterface       ui;
 	SimpleRTSSimulation sim;
+	Window              window;
 	SimpleRTSRenderer   renderer;
-	ResourceManager     resourceManager;
 
-	void run();
+	void run()
+	{
+		ui.create();
+		sim.start();
+		renderer.connect(sim);
+		ui.window("Simple RTS", Area(1920, 1080), true, true, WindowState::Windowed, renderer);
+		ui.run();
+		sim.stop();
+	}
 };

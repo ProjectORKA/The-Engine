@@ -10,6 +10,7 @@ void Window::destroy()
 	checkLifetime();
 	keepRunning = false;
 	thread.join();
+	content.destroy(*this);
 	destroyApiWindow();
 	LifetimeGuard::destroy();
 }
@@ -179,12 +180,9 @@ Area Window::getContentSize() const
 	return apiWindowGetFramebufferSize(apiWindow);
 }
 
-Window& Window::insert(UIElement& element)
+void Window::insert(UIElement& element)
 {
-	checkLifetime();
-
-	content = &element;
-	return *this;
+	content.insert(element);
 }
 
 void Window::initializeGraphicsApi() const
@@ -304,14 +302,19 @@ void Window::createApiWindow(const String& title, const Area size)
 	else logError("Window already exists!");
 }
 
-void windowThread(ResourceManager& resourceManager, Window& window)
+Bool Window::hasContent() const
+{
+	return !content.contents.empty();
+}
+
+void windowThread(Window& window)
 {
 	Renderer& renderer = window.renderer;
 	window.initializeGraphicsApi(); // needs to be in this thread
-	renderer.create(resourceManager); // also needs to be in this thread
+	renderer.create(); // also needs to be in this thread
 	window.updateWindowState();
 
-	if(window.content) window.content->create(resourceManager, window);
+	window.content.create(window);
 
 	if(window.windowState == WindowState::Windowed) window.centerWindow();
 	if(window.windowState == WindowState::Windowed || window.windowState == WindowState::Maximized) window.updateDecorations();
@@ -339,27 +342,24 @@ void windowThread(ResourceManager& resourceManager, Window& window)
 
 			OPTICK_POP();
 
-			if(window.content)
-			{
-				OPTICK_PUSH("Interactive Draw");
-				window.content->update(window);
-				OPTICK_POP();
+			OPTICK_PUSH("Interactive Draw");
+			window.content.update(window);
+			OPTICK_POP();
 
-				OPTICK_PUSH("Interactive Draw");
-				window.content->renderInteractive(resourceManager, window, windowArea);
-				OPTICK_POP();
+			OPTICK_PUSH("Interactive Draw");
+			window.content.renderInteractive(window, windowArea);
+			OPTICK_POP();
 
-				OPTICK_PUSH("Draw");
-				window.content->render(resourceManager, window, windowArea);
-				OPTICK_POP();
-			}
+			OPTICK_PUSH("Draw");
+			window.content.render(window, windowArea);
+			OPTICK_POP();
 
 			if constexpr(USE_OPTICK)
 			{
 				renderer.aspectCorrectNormalizedSpace();
 				renderer.textRenderSystem.setSize(0.02f);
 				renderer.textRenderSystem.setLetterSpacing(0.6f);
-				if(window.profiling) renderer.textRenderSystem.render(resourceManager, renderer, "[R]", Vec2(0.9f));
+				if(window.profiling) renderer.textRenderSystem.render(renderer, "[R]", Vec2(0.9f));
 			}
 
 			OPTICK_PUSH("Finalize");
@@ -374,7 +374,7 @@ void windowThread(ResourceManager& resourceManager, Window& window)
 
 	renderer.destroy();
 
-	if(window.content) window.content->destroy(window);
+	window.content.destroy(window);
 }
 
 void whenFramebufferIsResized(const APIWindow apiWindow, const Int width, const Int height)
@@ -402,11 +402,8 @@ void whenMouseIsScrolling(const APIWindow apiWindow, const Double xAxis, const D
 	const Int countX = abs(static_cast<Int>(xAxis));
 	const Int countY = abs(static_cast<Int>(yAxis));
 
-	if(window.content)
-	{
-		for(Int i = 0; i < countX; i++) window.content->inputEvent(window, InputEvent(InputType::Scroll, 0, xAxis > 0));
-		for(Int i = 0; i < countY; i++) window.content->inputEvent(window, InputEvent(InputType::Scroll, 1, yAxis > 0));
-	}
+	for(Int i = 0; i < countX; i++) window.content.inputEvent(window, InputEvent(InputType::Scroll, 0, xAxis > 0));
+	for(Int i = 0; i < countY; i++) window.content.inputEvent(window, InputEvent(InputType::Scroll, 1, yAxis > 0));
 }
 
 void whenFilesDroppedOnWindow(const APIWindow apiWindow, const Int count, const Char** paths)
@@ -417,7 +414,7 @@ void whenFilesDroppedOnWindow(const APIWindow apiWindow, const Int count, const 
 	for(Int i = 0; i < count; i++)
 	{
 		pathVector.push_back(paths[i]);
-		logDebug("File dropped: " + pathVector.back().string());
+		if(debugWindowIsEnabled) logDebug("File dropped: " + pathVector.back().string());
 	}
 
 	window.droppedFilePaths = pathVector;
@@ -427,7 +424,7 @@ void whenMouseIsPressed(const APIWindow apiWindow, const Int mouseButton, const 
 {
 	Window& window                 = *static_cast<Window*>(glfwGetWindowUserPointer(apiWindow));
 	window.mouseState[mouseButton] = action > 0;
-	if(window.content) window.content->inputEvent(window, InputEvent(InputType::Mouse, mouseButton, action));
+	window.content.inputEvent(window, InputEvent(InputType::Mouse, mouseButton, action));
 }
 
 void whenButtonIsPressed(const APIWindow apiWindow, const Int key, Int scanCode, const Int action, Int modifiers)
@@ -461,10 +458,10 @@ void whenButtonIsPressed(const APIWindow apiWindow, const Int key, Int scanCode,
 	}
 	if(input == window.reloadShaders) window.renderer.shaderSystem.rebuild();
 
-	if(window.content) window.content->inputEvent(window, input);
+	window.content.inputEvent(window, input);
 }
 
-void Window::create(const String& title, const Area size, const Bool decorated, const Bool visible, const WindowState state, ResourceManager& resourceManager)
+void Window::create(const String& title, const Area size, const Bool decorated, const Bool visible, const WindowState state)
 {
 	LifetimeGuard::create();
 	this->isVisible        = visible;
@@ -475,6 +472,6 @@ void Window::create(const String& title, const Area size, const Bool decorated, 
 	createApiWindow(title, size);	// needs to be in this thread
 	setVisible(visible);			// glfw does weird stuff, so we need to force it
 	setCallbacks();
-	thread = Thread(windowThread, std::ref(resourceManager), std::ref(*this));
+	thread = Thread(windowThread, std::ref(*this));
 	logDebug("Created Window in Main Thread!");
 }

@@ -383,7 +383,7 @@ void NeighborOctreeNode::create(NeighborOctreeNode& parent, const Bool x, const 
 	updateIsSurface();
 }
 
-void renderNeighborOctreeNode(ResourceManager& resourceManager, const NeighborOctreeNode& node, Renderer& renderer)
+void renderNeighborOctreeNode(const NeighborOctreeNode& node, Renderer& renderer)
 {
 	if(!node.inRenderDistance || !node.subdivided)
 	{
@@ -393,18 +393,18 @@ void renderNeighborOctreeNode(ResourceManager& resourceManager, const NeighborOc
 			t.setLocation(node.position);
 			t.setSize(Vec3(pow(2, -node.level + 2)));
 			t.render(renderer);
-			renderer.renderMesh(resourceManager, "centeredCube");
+			renderer.renderMesh("centeredCube");
 		}
 	}
 	else
 	{
-		renderNeighborOctreeNode(resourceManager, *node.c000, renderer);
-		renderNeighborOctreeNode(resourceManager, *node.c001, renderer);
-		renderNeighborOctreeNode(resourceManager, *node.c010, renderer);
-		renderNeighborOctreeNode(resourceManager, *node.c011, renderer);
-		renderNeighborOctreeNode(resourceManager, *node.c100, renderer);
-		renderNeighborOctreeNode(resourceManager, *node.c101, renderer);
-		renderNeighborOctreeNode(resourceManager, *node.c110, renderer);
-		renderNeighborOctreeNode(resourceManager, *node.c111, renderer);
+		renderNeighborOctreeNode(*node.c000, renderer);
+		renderNeighborOctreeNode(*node.c001, renderer);
+		renderNeighborOctreeNode(*node.c010, renderer);
+		renderNeighborOctreeNode(*node.c011, renderer);
+		renderNeighborOctreeNode(*node.c100, renderer);
+		renderNeighborOctreeNode(*node.c101, renderer);
+		renderNeighborOctreeNode(*node.c110, renderer);
+		renderNeighborOctreeNode(*node.c111, renderer);
 	}
 }

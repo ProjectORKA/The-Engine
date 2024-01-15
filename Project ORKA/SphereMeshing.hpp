@@ -41,7 +41,7 @@ struct SphereMeshing
 		// renderer.renderMeshInstanced("sphereLowPoly", spheres);
 	}
 
-	void rebuildMesh(ResourceManager& resourceManager)
+	void rebuildMesh()
 	{
 		spheres.clear();
 		for(auto t : terrain.points)
@@ -51,14 +51,14 @@ struct SphereMeshing
 		}
 
 		CPUMesh icoSphere;
-		icoSphere.load(resourceManager, "lowPolyIcoSphere");
+		icoSphere.load("lowPolyIcoSphere");
 
 		Mesh m;
 		m.positions = icoSphere.positions;
 		m.faces     = icoSphere.indices;
 	}
 
-	void update(ResourceManager& resourceManager)
+	void update()
 	{
 		if(!loaded)
 		{
@@ -78,7 +78,7 @@ struct SphereMeshing
 				}
 			}
 
-			if(!terrain.points.empty() && !air.empty()) rebuildMesh(resourceManager);
+			if(!terrain.points.empty() && !air.empty()) rebuildMesh();
 			loaded = true;
 		}
 

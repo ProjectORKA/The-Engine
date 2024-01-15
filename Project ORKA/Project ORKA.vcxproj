@@ -161,9 +161,11 @@
     <ClInclude Include="Camera.hpp" />
     <ClInclude Include="Client.hpp" />
     <ClInclude Include="Collision.hpp" />
+    <ClInclude Include="Engine.hpp" />
     <ClInclude Include="FileTypes.hpp" />
     <ClInclude Include="FramebufferTexture.hpp" />
     <ClInclude Include="Hello Triangle.hpp" />
+    <ClInclude Include="InputSystem.hpp" />
     <ClInclude Include="LifeTimeGuard.hpp" />
     <ClInclude Include="CPUMesh.hpp" />
     <ClInclude Include="CPUTexture.hpp" />
@@ -297,6 +299,7 @@
     <ClInclude Include="resource.h" />
     <ClInclude Include="Time.hpp" />
     <ClInclude Include="UIButton.hpp" />
+    <ClInclude Include="UIContainer.hpp" />
     <ClInclude Include="UIElement.hpp" />
     <ClInclude Include="UISandbox.hpp" />
     <ClInclude Include="ULLUtil.hpp" />
@@ -305,6 +308,7 @@
     <ClInclude Include="Vectors.hpp" />
     <ClInclude Include="Platform.hpp" />
     <ClInclude Include="VoxelRenderer.hpp" />
+    <ClInclude Include="JobQueue.hpp" />
     <ClInclude Include="Window.hpp" />
     <ClInclude Include="WindowAPI.hpp" />
   </ItemGroup>
@@ -614,7 +618,7 @@
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <IgnoreSpecificDefaultLibraries>
       </IgnoreSpecificDefaultLibraries>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <StackReserveSize>4194304</StackReserveSize>
       <GenerateDebugInformation>false</GenerateDebugInformation>
     </Link>

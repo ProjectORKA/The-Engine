@@ -1,4 +1,5 @@
 #include "WindowAPI.hpp"
+#include "Debug.hpp"
 #include "Profiler.hpp"
 
 void apiWindowRestore(const APIWindow apiWindow)

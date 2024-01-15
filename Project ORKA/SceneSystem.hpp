@@ -17,5 +17,5 @@ struct Scene2
 	Vector<SceneNode> nodes;
 	Vector<CPUMesh>   meshes;
 
-	void importFBX(Path path, ResourceManager& resourceManager);
+	void importFBX(Path path);
 };

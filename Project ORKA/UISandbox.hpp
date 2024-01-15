@@ -15,29 +15,47 @@ struct Toggle final : UIButton
 	void doThis() override;
 	void update(Window& window) override;
 	void destroy(Window& window) override;
-	void create(ResourceManager& resourceManager, Window& window) override;
+	void create(Window& window) override;
+};
+
+struct UIBucketGraph : UIElement
+{
+	void update(Window& window) override {}
+
+	void destroy(Window& window) override {}
+
+	void inputEvent(Window& window, InputEvent input) override {}
+
+	void create(Window& window) override {}
+
+	void render(Window& window, TiledRectangle area) override {}
+
+	void renderInteractive(Window& window, TiledRectangle area) override {}
 };
 
 struct UISandboxRenderer final : GameRenderer
 {
-	UIButton saveButton;
-	Toggle   pauseButton;
-	Bool     paused = false;
+	Vector<Int> values;
 
 	void update(Window& window) override;
 	void destroy(Window& window) override;
 	void connect(GameSimulation& simulation) override;
 	void inputEvent(Window& window, InputEvent input) override;
-	void create(ResourceManager& resourceManager, Window& window) override;
-	void render(ResourceManager& resourceManager, Window& window, TiledRectangle area) override;
-	void renderInteractive(ResourceManager& resourceManager, Window& window, TiledRectangle area) override;
+	void create(Window& window) override;
+	void render(Window& window, TiledRectangle area) override;
+	void renderInteractive(Window& window, TiledRectangle area) override;
 };
 
 struct UISandbox
 {
 	UserInterface     ui;
+	Window            window;
 	UISandboxRenderer renderer;
-	ResourceManager   resourceManager;
 
-	void run();
+	void run()
+	{
+		ui.create();
+		ui.window("ORKA UI Sandbox", Area(settings.defaultWindowWidth, settings.defaultWindowHeight), true, true, WindowState::Windowed, renderer);
+		ui.run();
+	}
 };

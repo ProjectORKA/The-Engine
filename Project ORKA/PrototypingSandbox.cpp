@@ -2,14 +2,6 @@
 #include "PerlinNoise.hpp"
 #include "UserInterface.hpp"
 
-void PrototypingSandbox::run()
-{
-	resourceManager.create();
-	ui.create();
-	ui.window("Prototyping Sandbox", Area(settings.defaultWindowWidth, settings.defaultWindowHeight), true, true, WindowState::Windowed, renderer, resourceManager);
-	ui.run();
-}
-
 void PrototypingRenderer::update(Window& window)
 {
 	player.update(window);
@@ -32,7 +24,7 @@ void PrototypingRenderer::inputEvent(Window& window, const InputEvent input)
 	player.inputEvent(window, input);
 }
 
-void PrototypingRenderer::create(ResourceManager& resourceManager, Window& window)
+void PrototypingRenderer::create(Window& window)
 {
 	player.camera.setLocation(Vec3(0.0f, -5.0f, 0.0f));
 
@@ -44,12 +36,11 @@ void PrototypingRenderer::create(ResourceManager& resourceManager, Window& windo
 	prototype.create();
 }
 
-void PrototypingRenderer::renderInteractive(ResourceManager& resourceManager, Window& window, TiledRectangle area) {}
+void PrototypingRenderer::renderInteractive(Window& window, TiledRectangle area) {}
 
-void PrototypingRenderer::render(ResourceManager& resourceManager, Window& window, const TiledRectangle area)
+void PrototypingRenderer::render(Window& window, const TiledRectangle area)
 {
-	Renderer&        r  = window.renderer;
-	ResourceManager& rm = resourceManager;
+	Renderer& r = window.renderer;
 
 	r.setWireframeMode();
 	r.setCulling(false);
@@ -60,9 +51,9 @@ void PrototypingRenderer::render(ResourceManager& resourceManager, Window& windo
 	framebuffer.bindDraw();
 
 	// render scene
-	player.render(rm, window); // sets the location, rotation and projection
+	player.render(window); // sets the location, rotation and projection
 
-	prototype.render(r, rm, player);
+	prototype.render(r, player);
 
 	// text rendering
 	r.setDepthTest(false); // disables depth to always draw on top
@@ -71,16 +62,16 @@ void PrototypingRenderer::render(ResourceManager& resourceManager, Window& windo
 	r.textRenderSystem.setSize(16.0f);
 	r.textRenderSystem.setLetterSpacing(0.6f);
 	r.textRenderSystem.alignText(Alignment::left, Alignment::bottom);
-	r.textRenderSystem.render(rm, r, "W A S D Q E to move", Vec2(50, 250));
-	r.textRenderSystem.render(rm, r, "F for wireframe mode", Vec2(50, 200));
-	r.textRenderSystem.render(rm, r, "Scroll to change speed", Vec2(50, 150));
-	r.textRenderSystem.render(rm, r, "FPS: " + toString(static_cast<Int>(1.0f / r.time.delta)), Vec2(50));
+	r.textRenderSystem.render(r, "W A S D Q E to move", Vec2(50, 250));
+	r.textRenderSystem.render(r, "F for wireframe mode", Vec2(50, 200));
+	r.textRenderSystem.render(r, "Scroll to change speed", Vec2(50, 150));
+	r.textRenderSystem.render(r, "FPS: " + toString(static_cast<Int>(1.0f / r.time.delta)), Vec2(50));
 
 	// render to window
 	r.setDepthTest(false);
 	framebuffer.setAsTexture(0);
 	r.drawToWindow();
-	r.fullScreenShader(resourceManager, "final");
+	r.fullScreenShader("final");
 }
 
 // PROTOTYPES
@@ -89,12 +80,12 @@ void PlaneIntersectionPrototype::create() {}
 
 void PlaneIntersectionPrototype::action() {}
 
-void PlaneIntersectionPrototype::render(Renderer& r, ResourceManager& rm, const Player& player)
+void PlaneIntersectionPrototype::render(Renderer& r, const Player& player)
 {
 	const Vec3 dir = normalize(Vec3(noise.noise0_1(r.time.total) * 2 - 1, noise.noise0_1(r.time.total + 123.456) * 2 - 1, noise.noise0_1(r.time.total - 654.321) * 2 - 1));
-	r.arrow(rm, Vec3(0, 0, 0), dir);
-	r.useShader(rm, "normals"); // sets the color / material for the rendered objects
-	r.renderMesh(rm, "centeredPlane");
+	r.arrow(Vec3(0, 0, 0), dir);
+	r.useShader("normals"); // sets the color / material for the rendered objects
+	r.renderMesh("centeredPlane");
 
 	const Vec3 rayLocation  = player.camera.getLocation();
 	const Vec3 rayDirection = player.camera.getForwardVector();

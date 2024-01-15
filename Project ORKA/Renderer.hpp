@@ -42,7 +42,7 @@ struct Renderer
 	PlanetRenderSystem planetRenderSystem;
 
 	//general usage
-	void create(ResourceManager& resourceManager);
+	void create();
 	void begin(Area windowSize);
 	void sync();
 	void end();
@@ -71,17 +71,17 @@ struct Renderer
 	void normalizedSpaceWithAspectRatio(Float aspectRatio);
 
 	//textures
-	void useTexture(ResourceManager& resourceManager, const Name& name);
-	void useTexture(ResourceManager& resourceManager, const Name& name, Index location);
+	void useTexture(const Name& name);
+	void useTexture(const Name& name, Index location);
 
 	//meshes
 	void rerenderMesh();
 	void renderMesh(Index meshId);
-	void useMesh(ResourceManager& resourceManager, const Name& name);
-	void renderMesh(ResourceManager& resourceManager, const Name& name);
-	void renderMeshInstanced(ResourceManager& resourceManager, const Name& name, const Vector<Vec3>& positions);
-	void renderMeshInstanced(ResourceManager& resourceManager, const Name& name, const Vector<Matrix>& transforms);
-	void renderMeshInstanced(ResourceManager& resourceManager, const Name& name, const Vector<Vec3>& positions, Float size);
+	void useMesh(const Name& name);
+	void renderMesh(const Name& name);
+	void renderMeshInstanced(const Name& name, const Vector<Vec3>& positions);
+	void renderMeshInstanced(const Name& name, const Vector<Matrix>& transforms);
+	void renderMeshInstanced(const Name& name, const Vector<Vec3>& positions, Float size);
 
 	//shaders
 	void  fill(Vec3 color);
@@ -89,9 +89,9 @@ struct Renderer
 	void  setColor(Color color);
 	void  fill(Float r, Float g, Float b);
 	void  clearBackground(Color color) const;
-	Index useShader(ResourceManager& resourceManager, const Name& name);
-	void  fullScreenShader(ResourceManager& resourceManager, const Name& name);
-	void  postProcess(ResourceManager& resourceManager, const Name& name, const Framebuffer& source, const Framebuffer& destination);
+	Index useShader(const Name& name);
+	void  fullScreenShader(const Name& name);
+	void  postProcess(const Name& name, const Framebuffer& source, const Framebuffer& destination);
 
 	//primitives
 	void line(Vec2 start, Vec2 end);
@@ -99,12 +99,12 @@ struct Renderer
 	void lines(const Vector<Vec2>& lines);
 	void lines(const Vector<Vec3>& lines);
 	void lines(const Vector<Line3D>& lines);
-	void arrow(ResourceManager& resourceManager, Vec2 start, Vec2 end);
-	void arrow(ResourceManager& resourceManager, Vec3 start, Vec3 end);
-	void rectangle(ResourceManager& resourceManager, Vec2 pos, Vec2 size);
-	void circle(ResourceManager& resourceManager, Vec2 pos, Float radius);
-	void renderSky(ResourceManager& resourceManager, const Camera& camera);
-	void renderAtmosphere(ResourceManager& resourceManager, const Player& player, Vec3 sunDirection);
+	void arrow(Vec2 start, Vec2 end);
+	void arrow(Vec3 start, Vec3 end);
+	void circle(Vec2 pos, Float radius);
+	void renderSky(const Camera& camera);
+	void renderAtmosphere(const Player& player, Vec3 sunDirection);
+	void rectangle(Vec2 pos, Vec2 size, Bool overrideColor = true, Bool centered = true);
 
 	[[nodiscard]] Area   getArea() const;
 	[[nodiscard]] Float  deltaTime() const;

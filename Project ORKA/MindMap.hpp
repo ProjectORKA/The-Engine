@@ -1,7 +1,7 @@
 #pragma once
 #include "Window.hpp"
 #include "JobSystem.hpp"
-#include "ResourceManager.hpp"
+
 
 struct Renderer;
 
@@ -24,6 +24,6 @@ struct MindMap
 
 	void update();
 	void addNode();
-	void render(ResourceManager& resourceManager, Renderer& renderer) const;
-	void renderInteractive(ResourceManager& resourceManager, Window& window) const;
+	void render(Renderer& renderer) const;
+	void renderInteractive(Window& window) const;
 };

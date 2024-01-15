@@ -1,7 +1,6 @@
 #pragma once
 
 #include "UIElement.hpp"
-#include "UIButton.hpp"
 #include "Window.hpp"
 
 struct Renderer;
@@ -13,11 +12,11 @@ struct UIImage final : UIElement
 
 	UIImage(const Name& name);
 	void update(Window& window) override;
+	void create(Window& window) override;
 	void destroy(Window& window) override;
 	void inputEvent(Window& window, InputEvent input) override;
-	void create(ResourceManager& resourceManager, Window& window) override;
-	void render(ResourceManager& resourceManager, Window& window, TiledRectangle renderArea) override;
-	void renderInteractive(ResourceManager& resourceManager, Window& window, TiledRectangle area) override;
+	void render(Window& window, TiledRectangle renderArea) override;
+	void renderInteractive(Window& window, TiledRectangle area) override;
 };
 
 struct UITextBox final : UIElement
@@ -26,14 +25,14 @@ struct UITextBox final : UIElement
 
 	UITextBox(String& data);
 	void update(Window& window) override;
+	void create(Window& window) override;
 	void destroy(Window& window) override;
 	void inputEvent(Window& window, InputEvent input) override;
-	void create(ResourceManager& resourceManager, Window& window) override;
-	void render(ResourceManager& resourceManager, Window& window, TiledRectangle renderArea) override;
-	void renderInteractive(ResourceManager& resourceManager, Window& window, TiledRectangle area) override;
+	void render(Window& window, TiledRectangle renderArea) override;
+	void renderInteractive(Window& window, TiledRectangle area) override;
 };
 
-struct UICheckBox final : UIElement
+struct UICheckBox : UIElement
 {
 	Bool* data;
 
@@ -41,46 +40,18 @@ struct UICheckBox final : UIElement
 	void update(Window& window) override;
 	void destroy(Window& window) override;
 	void inputEvent(Window& window, InputEvent input) override;
-	void create(ResourceManager& resourceManager, Window& window) override;
-	void render(ResourceManager& resourceManager, Window& window, TiledRectangle renderArea) override;
-	void renderInteractive(ResourceManager& resourceManager, Window& window, TiledRectangle area) override;
-};
-
-struct UIContainer final : UIElement
-{
-	Vector<UIElement*> contents;
-	Bool               renderVertical = false;
-
-	UIContainer& vertical();
-	UIContainer& horizontal();
-	UIContainer& insert(UIElement& element);
-	void         update(Window& window) override;
-	void         destroy(Window& window) override;
-	void         inputEvent(Window& window, InputEvent input) override;
-	void         create(ResourceManager& resourceManager, Window& window) override;
-	void         render(ResourceManager& resourceManager, Window& window, TiledRectangle renderArea) override;
-	void         renderInteractive(ResourceManager& resourceManager, Window& window, TiledRectangle renderArea) override;
+	void create(Window& window) override;
+	void render(Window& window, TiledRectangle renderArea) override;
+	void renderInteractive(Window& window, TiledRectangle area) override;
 };
 
 struct UserInterface
 {
-	List<UIImage>     images;
-	List<Window>      windows;
-	List<UIButton>    buttons;
-	List<UITextBox>   textBoxes;
-	List<UICheckBox>  checkBoxes;
-	List<UIContainer> containers;
-	Bool              initialized     = false;
-	UIElement*        currentlyActive = nullptr;
+	void    run();
+	Window& window(const String& title, Area size, Bool decorated, Bool visible, WindowState state);
+	Window& window(const String& title, Area size, Bool decorated, Bool visible, WindowState state, UIElement& content);
 
-	void run();
-	void create();
-
-	UIButton&    button();
-	UIContainer& container();
-	UIImage&     image(Name name);
-	UICheckBox&  checkBox(Bool& data);
-	UITextBox&   textBox(String& data);
-	Window&      window(const String& title, Area size, Bool decorated, Bool visible, WindowState state, ResourceManager& resourceManager);
-	Window&      window(const String& title, Area size, Bool decorated, Bool visible, WindowState state, UIElement& element, ResourceManager& resourceManager);
+	List<Window> windows;
+	void         create() const;
+	Bool         running = false;
 };

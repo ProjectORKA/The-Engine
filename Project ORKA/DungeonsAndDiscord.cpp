@@ -19,17 +19,6 @@ void DNDSimulation::destroy()
 	save.write(reinterpret_cast<Char*>(entities.data()), sizeof(DNDEntity) * entities.size());
 }
 
-void DungeonsAndDiscord::run()
-{
-	resourceManager.create();
-	sim.start(resourceManager);
-	ui.create();
-	renderer.world = &sim;
-	ui.window("Simple RTS", Area(1920, 1080), true, true, WindowState::Windowed, renderer, resourceManager);
-	ui.run();
-	sim.stop();
-}
-
 void DNDSimulation::update(Float delta) {}
 
 Int diceRoll(const Int diceCount)
@@ -58,9 +47,12 @@ void DNDRenderer::destroy(Window& window)
 	framebuffer.destroy();
 }
 
-void DNDRenderer::connect(GameSimulation& simulation) {}
+void DNDRenderer::connect(GameSimulation& simulation)
+{
+	this->world = static_cast<DNDSimulation*>(&simulation);
+}
 
-void DNDSimulation::create(ResourceManager& resourceManager)
+void DNDSimulation::create()
 {
 	InFile save("Saves/dnd.save");
 
@@ -110,7 +102,7 @@ void DNDRenderer::inputEvent(Window& window, const InputEvent input)
 	player.inputEvent(window, input);
 }
 
-void DNDRenderer::create(ResourceManager& resourceManager, Window& window)
+void DNDRenderer::create(Window& window)
 {
 	player.speedExponent = world->speedExponent;
 	player.camera.setFarClipValue(world->farClipValue);
@@ -125,13 +117,13 @@ void DNDRenderer::create(ResourceManager& resourceManager, Window& window)
 	framebuffer.checkComplete();
 }
 
-void DNDEntity::render(ResourceManager& resourceManager, Renderer& renderer) const
+void DNDEntity::render(Renderer& renderer) const
 {
 	transform.render(renderer);
-	renderer.renderMesh(resourceManager, meshName);
+	renderer.renderMesh(meshName);
 }
 
-void DNDRenderer::render(ResourceManager& resourceManager, Window& window, const TiledRectangle area)
+void DNDRenderer::render(Window& window, const TiledRectangle area)
 {
 	Renderer& r = window.renderer;
 
@@ -146,26 +138,26 @@ void DNDRenderer::render(ResourceManager& resourceManager, Window& window, const
 	r.setDepthTest(false);
 	r.fill(Color(1));
 
-	// r.renderSky(resourceManager, player.camera);
-	// r.renderAtmosphere(resourceManager, player, normalize(Vec3(1)));
+	// r.renderSky(player.camera);
+	// r.renderAtmosphere(player, normalize(Vec3(1)));
 
 	// r.blendModeAdditive();
 	player.camera.renderOnlyRot(r);
-	r.useTexture(resourceManager, "dndSky");
-	r.useShader(resourceManager, "dndSky");
-	r.renderMesh(resourceManager, "centeredCube");
-	// r.postProcess(resourceManager, "tonemapping");
+	r.useTexture("dndSky");
+	r.useShader("dndSky");
+	r.renderMesh("centeredCube");
+	// r.postProcess("tonemapping");
 
 	r.setWireframeMode();
 
-	player.render(resourceManager, window);
+	player.render(window);
 
 	// background scene
-	r.useShader(resourceManager, "dndUberShader");
+	r.useShader("dndUberShader");
 	r.uniforms().setMMatrix(matrixFromPositionAndSize(Vec4(0, 0, 0, 100)));
-	r.renderMesh(resourceManager, "dndGroundPlane");
+	r.renderMesh("dndGroundPlane");
 	r.uniforms().setMMatrix(matrixFromPositionAndSize(Vec4(0, 0, 0, 10000)));
-	r.renderMesh(resourceManager, "centeredDetailedGrid");
+	r.renderMesh("centeredDetailedGrid");
 
 	// objects
 	framebuffer.clearDepth();
@@ -181,13 +173,13 @@ void DNDRenderer::render(ResourceManager& resourceManager, Window& window, const
 		// render last object with brighter highlight
 		if(lastSelectedObject == i) r.setColor(Color(0.5, 0.4, 0.15, 0));
 
-		world->entities[i].render(resourceManager, r);
+		world->entities[i].render(r);
 	}
 
 	r.setDepthTest(false);
 	framebuffer.setAsTexture(0);
 	r.drawToWindow();
-	r.fullScreenShader(resourceManager, "tonemapping");
+	r.fullScreenShader("tonemapping");
 
 	world->speedExponent = player.speedExponent;
 	world->fieldOfView   = player.camera.getFieldOfView();
@@ -197,14 +189,14 @@ void DNDRenderer::render(ResourceManager& resourceManager, Window& window, const
 	world->rotation      = player.camera.getRotation();
 }
 
-void DNDRenderer::renderInteractive(ResourceManager& resourceManager, Window& window, TiledRectangle area)
+void DNDRenderer::renderInteractive(Window& window, TiledRectangle area)
 {
-	// player.render(resourceManager, window);
+	// player.render(window);
 
 	// if(world->loaded)
 	//	for(Int i = 0; i < static_cast<Int>(world->entities.size()); i++)
 	//	{
 	//		window.renderer.uniforms().objectId() = i;
-	//		world->entities[i].render(resourceManager, window.renderer);
+	//		world->entities[i].render(window.renderer);
 	//	}
 }

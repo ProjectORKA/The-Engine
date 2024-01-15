@@ -29,7 +29,9 @@ struct Transform
 	void setRotation(Float x, Float y, Float z);
 
 	Transform();
+	Transform(Vec3 position);
 	Transform(Vec3 position, Vec3 rotation, Vec3 size);
+
 private:
 	Vec3       position = Vec3(0);
 	Vec3       size     = Vec3(1);

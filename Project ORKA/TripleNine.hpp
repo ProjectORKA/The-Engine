@@ -22,10 +22,10 @@ struct TripleNineEnemy final : UIElement
 	void update(Window& window) override;
 	void destroy(Window& window) override;
 	void inputEvent(Window& window, InputEvent input) override;
-	void create(ResourceManager& resourceManager, Window& window) override;
-	void render(ResourceManager& resourceManager, Renderer& renderer) const;
-	void render(ResourceManager& resourceManager, Window& window, TiledRectangle area) override;
-	void renderInteractive(ResourceManager& resourceManager, Window& window, TiledRectangle area) override;
+	void create(Window& window) override;
+	void render(Renderer& renderer) const;
+	void render(Window& window, TiledRectangle area) override;
+	void renderInteractive(Window& window, TiledRectangle area) override;
 };
 
 struct TripleNinePlayer final : Player
@@ -184,7 +184,7 @@ struct TripleNineSimulation final : GameSimulation
 	void createEnemy();
 	void destroy() override;
 	void update(Float delta) override;
-	void create(ResourceManager& resourceManager) override;
+	void create() override;
 };
 
 struct TripleNineRenderer final : GameRenderer
@@ -205,19 +205,29 @@ struct TripleNineRenderer final : GameRenderer
 	void destroy(Window& window) override;
 	void connect(GameSimulation& simulation) override;
 	void inputEvent(Window& window, InputEvent input) override;
-	void renderBloom(ResourceManager& resourceManager, Renderer& r) const;
-	void create(ResourceManager& resourceManager, Window& window) override;
-	void render(ResourceManager& resourceManager, Window& window, TiledRectangle area) override;
-	void renderInteractive(ResourceManager& resourceManager, Window& window, TiledRectangle area) override;
+	void renderBloom(Renderer& r) const;
+	void create(Window& window) override;
+	void render(Window& window, TiledRectangle area) override;
+	void renderInteractive(Window& window, TiledRectangle area) override;
 };
 
 struct TripleNine
 {
 	UserInterface        ui;
 	ORKAIntroSequence    intro;
+	Window               window;
 	TripleNineRenderer   renderer;
 	TripleNineSimulation simulation;
-	ResourceManager      resourceManager;
 
-	void run();
+	void run()
+	{
+		ui.create();
+		intro.init(renderer);
+		simulation.start();
+		renderer.connect(simulation);
+		window.insert(intro);
+		ui.window("Triple Nine", Area(1920, 1080), true, false, WindowState::Windowed, intro);
+		ui.run();
+		simulation.stop();
+	}
 };

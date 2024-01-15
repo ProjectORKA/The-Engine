@@ -47,14 +47,14 @@ void Molecules2D::update(const Vec3 location)
 	molecules.front().pos = location;
 }
 
-void Molecule2D::render(ResourceManager& resourceManager, Renderer& renderer) const
+void Molecule2D::render(Renderer& renderer) const
 {
-	renderer.circle(resourceManager, pos, 1);
+	renderer.circle(pos, 1);
 }
 
-void Molecules2D::render(ResourceManager& resourceManager, Renderer& renderer) const
+void Molecules2D::render(Renderer& renderer) const
 {
-	renderer.useShader(resourceManager, "color");
+	renderer.useShader("color");
 	renderer.fill(Color(1));
-	for(Molecule2D m : molecules) m.render(resourceManager, renderer);
+	for(Molecule2D m : molecules) m.render(renderer);
 }

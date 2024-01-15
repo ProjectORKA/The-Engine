@@ -48,7 +48,7 @@ struct OOUnit
 	void updatePosition();
 	OOUnit(Index team, Vec2 location, Vec2 direction);
 	OOPlanet& getClosestPlanet(Vector<OOPlanet>& planets) const;
-	void      render(ResourceManager& resourceManager, Renderer& renderer) const;
+	void      render(Renderer& renderer) const;
 	void      updateDirection(Vector<OOUnit>& neighbors, Vector<OOPlanet>& planets);
 };
 
@@ -59,10 +59,11 @@ struct OrbitalOblivionSimulation final : GameSimulation
 	Vector<OOPlanet> planets;
 	UInt             planetCount    = 5;
 	Float            planetDistance = 200;
+	UInt             shipCount      = 100;
 
 	void destroy() override;
 	void update(Float delta) override;
-	void create(ResourceManager& resourceManager) override;
+	void create() override;
 };
 
 struct OrbitalOblivionRenderer final : GameRenderer
@@ -81,18 +82,26 @@ struct OrbitalOblivionRenderer final : GameRenderer
 	void destroy(Window& window) override;
 	void connect(GameSimulation& simulation) override;
 	void inputEvent(Window& window, InputEvent input) override;
-	//void renderBloom(ResourceManager& resourceManager, Renderer& r);
-	void create(ResourceManager& resourceManager, Window& window) override;
-	void render(ResourceManager& resourceManager, Window& window, TiledRectangle area) override;
-	void renderInteractive(ResourceManager& resourceManager, Window& window, TiledRectangle area) override;
+	//void renderBloom(Renderer& r);
+	void create(Window& window) override;
+	void render(Window& window, TiledRectangle area) override;
+	void renderInteractive(Window& window, TiledRectangle area) override;
 };
 
 struct OrbitalOblivion
 {
 	UserInterface             ui;
+	Window                    window;
 	OrbitalOblivionRenderer   renderer;
 	OrbitalOblivionSimulation simulation;
-	ResourceManager           resourceManager;
 
-	void run();
+	void run()
+	{
+		ui.create();
+		simulation.start();
+		renderer.connect(simulation);
+		ui.window("Orbital Oblivion", Area(settings.defaultWindowWidth, settings.defaultWindowHeight), true, true, WindowState::Windowed, renderer);
+		ui.run();
+		simulation.stop();
+	}
 };

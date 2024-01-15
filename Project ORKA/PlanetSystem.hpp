@@ -13,5 +13,5 @@ struct PlanetSystem
 	void update();
 	void destroy();
 	void count() const;
-	void create(ResourceManager& resourceManager);
+	void create();
 };

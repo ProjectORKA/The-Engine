@@ -1,5 +1,5 @@
 #include "SimpleRTS.hpp"
-#include "ResourceManager.hpp"
+
 #include "UserInterface.hpp"
 
 //void SimpleRTSSimulation::spawnTreeStump() {
@@ -171,17 +171,6 @@
 //	return resItem;
 //}
 
-void SimpleRTS::run()
-{
-	resourceManager.create();
-	ui.create();
-	sim.start(resourceManager);
-	renderer.sim = &sim;
-	ui.window("Simple RTS", Area(1920, 1080), true, true, WindowState::Windowed, renderer, resourceManager);
-	ui.run();
-	sim.stop();
-}
-
 Vec2 randomSpawnPosition()
 {
 	return randomVec2Fast(SIMPLERTS_MAPSIZE);
@@ -191,7 +180,10 @@ void SimpleRTSSimulation::destroy() {}
 
 void SimpleRTSRenderer::destroy(Window& window) {}
 
-void SimpleRTSRenderer::connect(GameSimulation& simulation) {}
+void SimpleRTSRenderer::connect(GameSimulation& simulation)
+{
+	this->sim = static_cast<SimpleRTSSimulation*>(&simulation);
+}
 
 void SimpleRTSSimulation::update(Float delta)
 {
@@ -209,7 +201,7 @@ void SimpleRTSRenderer::update(Window& window)
 	player.update(window);
 }
 
-void SimpleRTSSimulation::create(ResourceManager& resourceManager)
+void SimpleRTSSimulation::create()
 {
 	//trees.create(*this);
 
@@ -244,17 +236,17 @@ void SimpleRTSRenderer::inputEvent(Window& window, const InputEvent input)
 	player.inputEvent(window, input);
 }
 
-void SimpleRTSRenderer::create(ResourceManager& resourceManager, Window& window)
+void SimpleRTSRenderer::create(Window& window)
 {
-	terrainRenderingSystem.create(resourceManager);
+	terrainRenderingSystem.create();
 }
 
-void SimpleRTSSimulation::render(ResourceManager& resourceManager, Renderer& renderer) const
+void SimpleRTSSimulation::render(Renderer& renderer) const
 {
-	//trees.render(resourceManager, renderer);
+	//trees.render(renderer);
 }
 
-void SimpleRTSRenderer::render(ResourceManager& resourceManager, Window& window, TiledRectangle area)
+void SimpleRTSRenderer::render(Window& window, TiledRectangle area)
 {
 	Renderer& renderer = window.renderer;
 
@@ -266,10 +258,10 @@ void SimpleRTSRenderer::render(ResourceManager& resourceManager, Window& window,
 
 	//sky
 	renderer.setDepthTest(false);
-	renderer.useShader(resourceManager, "color");
+	renderer.useShader("color");
 	renderer.fill(Color(0.207143, 0.722031, 1.0f, 1));
 	renderer.uniforms().setSunDir(Vec4(normalize(Vec3(1)), 1));
-	renderer.renderMesh(resourceManager, "fullScreenQuad");
+	renderer.renderMesh("fullScreenQuad");
 	renderer.setDepthTest(true);
 
 	renderer.fill(Color(1.0f));
@@ -278,8 +270,8 @@ void SimpleRTSRenderer::render(ResourceManager& resourceManager, Window& window,
 
 	//prepare rendering scene
 	renderer.uniforms().setMMatrix(Matrix(1));
-	renderer.useShader(resourceManager, "simpleRTS");
-	player.render(resourceManager, window);
+	renderer.useShader("simpleRTS");
+	player.render(window);
 
 	renderer.fill(Color(0.1, 0.4, 0.0f, 1));
 	terrainRenderingSystem.render(renderer);
@@ -295,7 +287,7 @@ void SimpleRTSRenderer::render(ResourceManager& resourceManager, Window& window,
 	//prepare for instancing
 	renderer.uniforms().setMMatrix(Matrix(1));
 
-	sim->render(resourceManager, renderer);
+	sim->render(renderer);
 
 	////berry bushes
 	//renderer.matrixSystem.matrixArray(sim->bushPosition, sim->bushDirection);
@@ -327,10 +319,10 @@ void SimpleRTSRenderer::render(ResourceManager& resourceManager, Window& window,
 	renderer.fill(Color(1));
 	renderer.textRenderSystem.setSize(16.0f);
 	renderer.textRenderSystem.setLetterSpacing(0.6f);
-	renderer.textRenderSystem.render(resourceManager, renderer, toString(1.0f / renderer.time.delta), Vec2(50));
+	renderer.textRenderSystem.render(renderer, toString(1.0f / renderer.time.delta), Vec2(50));
 	////////////////////////
 
 	mutex.unlock();
 }
 
-void SimpleRTSRenderer::renderInteractive(ResourceManager& resourceManager, Window& window, TiledRectangle area) {}
+void SimpleRTSRenderer::renderInteractive(Window& window, TiledRectangle area) {}

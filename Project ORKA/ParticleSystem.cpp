@@ -98,10 +98,10 @@ void ParticleSystem::update(const Vec3 location, const Renderer& renderer)
 	}
 }
 
-void ParticleSystem::render(ResourceManager& resourceManager, Renderer& renderer) const
+void ParticleSystem::render(Renderer& renderer) const
 {
 	static Vector<Matrix> pos;
 	pos.clear();
 	for(Int i = 0; i < particleCount; i++) if(alive[i]) pos.push_back(matrixFromPositionAndSize(transformation[i]));
-	renderer.renderMeshInstanced(resourceManager, "melonSmokeParticle", pos);
+	renderer.renderMeshInstanced("melonSmokeParticle", pos);
 }

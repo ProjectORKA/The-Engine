@@ -14,7 +14,7 @@ struct MindMapperSim final : GameSimulation
 
 	void destroy() override;
 	void update(Float delta) override;
-	void create(ResourceManager& resourceManager) override;
+	void create() override;
 };
 
 struct MindMapperRenderer final : GameRenderer
@@ -27,19 +27,28 @@ struct MindMapperRenderer final : GameRenderer
 	InputEvent     growToggle = InputEvent(InputType::KeyBoard, SPACE, false);
 
 	void update(Window& window) override;
+	void create(Window& window) override;
 	void destroy(Window& window) override;
 	void connect(GameSimulation& simulation) override;
+	void render(Window& window, TiledRectangle area) override;
 	void inputEvent(Window& window, InputEvent input) override;
-	void create(ResourceManager& resourceManager, Window& window) override;
-	void render(ResourceManager& resourceManager, Window& window, TiledRectangle area) override;
-	void renderInteractive(ResourceManager& resourceManager, Window& window, TiledRectangle area) override;
+	void renderInteractive(Window& window, TiledRectangle area) override;
 };
 
 struct MindMapper
 {
 	UserInterface      ui;
 	MindMapperSim      sim;
+	Window             window;
 	MindMapperRenderer renderer;
-	ResourceManager    resourceManager;
-	void               run();
+
+	void run()
+	{
+		ui.create();
+		sim.start();
+		renderer.connect(sim);
+		ui.window("ORKA MindMapper", Area(1920, 1080), true, true, WindowState::Windowed, renderer);
+		ui.run();
+		sim.stop();
+	}
 };

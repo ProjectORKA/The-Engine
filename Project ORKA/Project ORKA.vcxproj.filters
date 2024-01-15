@@ -848,6 +848,16 @@
     <ClInclude Include="AxisNeighborPrototype.hpp">
       <Filter>Apps\3D Apps\Prototyping\Prototypes</Filter>
     </ClInclude>
+    <ClInclude Include="UIContainer.hpp">
+      <Filter>Systems\UserInterface\UIContainer</Filter>
+    </ClInclude>
+    <ClInclude Include="InputSystem.hpp" />
+    <ClInclude Include="JobQueue.hpp">
+      <Filter>Common\Datastructures\JobQueue</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine.hpp">
+      <Filter>Systems\Engine</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Files\Data\Shaders\water.vert">
@@ -1595,6 +1605,18 @@
     </Filter>
     <Filter Include="Apps\3D Apps\Prototyping\Prototypes">
       <UniqueIdentifier>{38bedf0a-6557-44cd-bfb3-cf948b1aae12}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Systems\UserInterface\UIContainer">
+      <UniqueIdentifier>{d2d0a9d3-c1ba-4caf-a65f-360f1aca33d9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Systems\UserInterface\InputSystem">
+      <UniqueIdentifier>{281a5e97-820b-4db0-90c2-80b6bc83173f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Common\Datastructures\JobQueue">
+      <UniqueIdentifier>{2cca24f8-9588-40d8-8a4e-3bb755c8dc8c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Systems\Engine">
+      <UniqueIdentifier>{7b41519f-b775-41ee-abf8-e19107bbb02f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

@@ -5,7 +5,7 @@
 #include <assimp/postprocess.h>
 #include <assimp/scene.h>
 
-void Scene::loadFBX(Path path, ResourceManager& resourceManager)
+void Scene::loadFBX(Path path)
 {
 	// check if file is valid
 	String errorMessage = "";
@@ -107,7 +107,7 @@ void Scene::loadFBX(Path path, ResourceManager& resourceManager)
 
 						if(!errorMessage.empty()) logError("The model (" + path.stem().string() + ") could not be loaded! (" + path.string() + ") Error: " + errorMessage);
 						mesh.checkIntegrity();
-						mesh.saveMeshFile(resourceManager);
+						mesh.saveMeshFile();
 						meshes.push_back(mesh);
 					}
 				}

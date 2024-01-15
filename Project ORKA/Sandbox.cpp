@@ -1,14 +1,6 @@
 #include "Sandbox.hpp"
 #include "UserInterface.hpp"
 
-void Sandbox::run()
-{
-	resourceManager.create();
-	ui.create();
-	ui.window("ORKA Sandbox", Area(settings.defaultWindowWidth, settings.defaultWindowHeight), true, true, WindowState::Windowed, renderer, resourceManager);
-	ui.run();
-}
-
 void SandboxRenderer::update(Window& window)
 {
 	player.update(window);
@@ -30,7 +22,7 @@ void SandboxRenderer::inputEvent(Window& window, const InputEvent input)
 	player.inputEvent(window, input);
 }
 
-void SandboxRenderer::create(ResourceManager& resourceManager, Window& window)
+void SandboxRenderer::create(Window& window)
 {
 	player.camera.setLocation(Vec3(0.0f, -5.0f, 0.0f));
 
@@ -40,10 +32,9 @@ void SandboxRenderer::create(ResourceManager& resourceManager, Window& window)
 	framebuffer.checkComplete();
 }
 
-void SandboxRenderer::render(ResourceManager& resourceManager, Window& window, const TiledRectangle area)
+void SandboxRenderer::render(Window& window, const TiledRectangle area)
 {
-	Renderer&        r  = window.renderer;
-	ResourceManager& rm = resourceManager;
+	Renderer& r = window.renderer;
 
 	r.setWireframeMode();
 	r.setCulling(true);
@@ -54,10 +45,10 @@ void SandboxRenderer::render(ResourceManager& resourceManager, Window& window, c
 	framebuffer.bindDraw();
 
 	// render scene
-	player.render(rm, window); // sets the location, rotation and projection
-	r.useShader(rm, "normals"); // sets the color / material for the rendered objects
+	player.render(window); // sets the location, rotation and projection
+	r.useShader("normals"); // sets the color / material for the rendered objects
 	r.uniforms().setMMatrix(matrixFromRotation(0, 0, r.time.total)); // sets the objects transformation within the world
-	r.renderMesh(rm, "suzanne"); // renders the objects 3D data to the screen
+	r.renderMesh("suzanne"); // renders the objects 3D data to the screen
 
 	// text rendering
 	r.setDepthTest(false); // disables depth to always draw on top
@@ -66,16 +57,16 @@ void SandboxRenderer::render(ResourceManager& resourceManager, Window& window, c
 	r.textRenderSystem.setSize(16.0f);
 	r.textRenderSystem.setLetterSpacing(0.6f);
 	r.textRenderSystem.alignText(Alignment::left, Alignment::bottom);
-	r.textRenderSystem.render(rm, r, "W A S D Q E to move", Vec2(50, 250));
-	r.textRenderSystem.render(rm, r, "F for wireframe mode", Vec2(50, 200));
-	r.textRenderSystem.render(rm, r, "Scroll to change speed", Vec2(50, 150));
-	r.textRenderSystem.render(rm, r, "FPS: " + toString(static_cast<Int>(1.0f / r.time.delta)), Vec2(50));
+	r.textRenderSystem.render(r, "W A S D Q E to move", Vec2(50, 250));
+	r.textRenderSystem.render(r, "F for wireframe mode", Vec2(50, 200));
+	r.textRenderSystem.render(r, "Scroll to change speed", Vec2(50, 150));
+	r.textRenderSystem.render(r, "FPS: " + toString(static_cast<Int>(1.0f / r.time.delta)), Vec2(50));
 
 	// render to window
 	r.setDepthTest(false);
 	framebuffer.setAsTexture(0);
 	r.drawToWindow();
-	r.fullScreenShader(resourceManager, "final");
+	r.fullScreenShader("final");
 }
 
-void SandboxRenderer::renderInteractive(ResourceManager& resourceManager, Window& window, TiledRectangle area) {}
+void SandboxRenderer::renderInteractive(Window& window, TiledRectangle area) {}

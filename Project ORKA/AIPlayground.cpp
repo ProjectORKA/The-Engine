@@ -1,27 +1,10 @@
 #include "AIPlayground.hpp"
 #include "PerlinNoise.hpp"
-#include "Random.hpp"
 #include "Window.hpp"
-
-void AIPlayground::run()
-{
-	resourceManager.create();
-	ui.create();
-	ui.window("ORKA AI Playground", Area(settings.defaultWindowWidth, settings.defaultWindowHeight), true, true, WindowState::Windowed, renderer, resourceManager);
-	ui.run();
-}
 
 void AIPlaygroundRenderer::update(Window& window)
 {
-	Vector<Float> inputVector;
-	//Vector<Float> targetVector;
-
-	for(UInt i = 0; i < network.structure[0]; i++) inputVector.push_back(static_cast<Float>(noise.octaveNoise0_1(window.renderer.time.total, i, 16) * 2.0));
-
-	network.input(inputVector);
-	network.propagateForward();
-
-	//network.propagateBackward(targetVector);
+	player.update(window);
 }
 
 void AIPlaygroundRenderer::destroy(Window& window)
@@ -31,9 +14,7 @@ void AIPlaygroundRenderer::destroy(Window& window)
 
 void AIPlaygroundRenderer::connect(GameSimulation& simulation) {}
 
-void AIPlaygroundRenderer::inputEvent(Window& window, InputEvent input) {}
-
-void AIPlaygroundRenderer::create(ResourceManager& resourceManager, Window& window)
+void AIPlaygroundRenderer::create(Window& window)
 {
 	framebuffer.create("MainFramebuffer", Area(1920, 1080));
 	framebuffer.add(WritePixelsFormat::RGBA, DataType::Float, FramebufferAttachment::Color0, true, Wrapping::Clamped);
@@ -41,32 +22,49 @@ void AIPlaygroundRenderer::create(ResourceManager& resourceManager, Window& wind
 	framebuffer.checkComplete();
 }
 
-void AIPlaygroundRenderer::renderInteractive(ResourceManager& resourceManager, Window& window, TiledRectangle area) { }
+void AIPlaygroundRenderer::renderInteractive(Window& window, TiledRectangle area) { }
 
-void AIPlaygroundRenderer::render(ResourceManager& resourceManager, Window& window, const TiledRectangle area)
+void AIPlaygroundRenderer::render(Window& window, const TiledRectangle area)
 {
 	Renderer& r = window.renderer;
 
-	r.setWireframeMode();
 	r.setCulling(true);
 	r.setDepthTest(true);
 
 	framebuffer.resize(area.size);
 	framebuffer.clear();
 	framebuffer.bindDraw();
+	r.setWireframeMode();
+	r.useShader("color");
 
+	player.render(window);
+
+	//render scene
+	network.render(r);
+
+	//render text
+	r.setWireframeMode(false);
 	r.screenSpace();
-	r.useShader(resourceManager, "color");
-	r.setAlphaBlending(true);
-
-	network.render(resourceManager, r, area.size);
-
-	r.screenSpace();
+	r.fill(Color(1));
 	r.uniforms().setMMatrix(Matrix(1));
 	r.textRenderSystem.alignText(Alignment::left, Alignment::center);
-	r.textRenderSystem.render(resourceManager, r, String(toString(1.0f / r.time.delta)), Vec2(50));
+	r.textRenderSystem.render(r, String(toString(1.0f / r.time.delta)), Vec2(50));
 
 	framebuffer.setAsTexture(0);
 	r.drawToWindow();
-	r.fullScreenShader(resourceManager, "final");
+	r.fullScreenShader("final");
+
+	TiledRectangle topBarArea = area;
+	topBarArea.size.y         = 100;
+
+	topBar.render(window, topBarArea);
+}
+
+void AIPlaygroundRenderer::inputEvent(Window& window, const InputEvent input)
+{
+	if(input == enter) window.captureCursor();
+	if(input == exit) window.releaseCursor();
+	if(input == wireframeToggle) window.renderer.wireframeMode = !window.renderer.wireframeMode;
+
+	player.inputEvent(window, input);
 }

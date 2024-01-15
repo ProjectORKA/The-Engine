@@ -55,20 +55,27 @@ struct OrganizerRenderer : GameRenderer
 	void destroy(Window& window) override;
 	void connect(GameSimulation& simulation) override;
 	void inputEvent(Window& window, InputEvent input) override;
-	void create(ResourceManager& resourceManager, Window& window) override;
-	void renderConnections(ResourceManager& resourceManager, Renderer& r) const;
+	void create(Window& window) override;
+	void renderConnections(Renderer& r) const;
 	void addCompany(Index guid, const String& companyName, const String& domain);
-	void render(ResourceManager& resourceManager, Window& window, TiledRectangle area) override;
+	void render(Window& window, TiledRectangle area) override;
 	void addUser(Index userGuid, Index companyGuid, const String& firstName, const String& lastName);
-	void renderInteractive(ResourceManager& resourceManager, Window& window, TiledRectangle area) override;
+	void renderInteractive(Window& window, TiledRectangle area) override;
 };
 
 struct Organizer
 {
 	UserInterface     ui;
 	ORKAIntroSequence intro;
+	Window            window;
 	OrganizerRenderer renderer;
-	ResourceManager   resourceManager;
 
-	void run();
+	void run()
+	{
+		ui.create();
+		intro.init(renderer);
+		window.insert(intro);
+		ui.window("Organizer", Area(1920, 1080), true, true, WindowState::Windowed, renderer);
+		ui.run();
+	}
 };

@@ -28,12 +28,10 @@ struct LifetimeGuard
 	LifetimeGuard()
 	{
 		if(initialized) logError("Already initialized");
-		else logDebug("Ready for creation");
 	}
 
 	~LifetimeGuard()
 	{
 		if(initialized) logError("Object never destroyed");
-		else logDebug("No errors on termination");
 	}
 };

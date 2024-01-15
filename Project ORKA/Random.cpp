@@ -49,6 +49,11 @@ Float randomFloatFast()
 	return randomFloatFast(0.0f, 1.0f);
 }
 
+Double randomDoubleFast()
+{
+	return randomDoubleFast(0.0, 1.0);
+}
+
 Vec3 randomUnitVec3Fast()
 {
 	return normalize(randomPointInSphereFast(1));
@@ -71,7 +76,16 @@ Int randomIntFast(const UInt max)
 	return static_cast<Int>(randomULLFast() % static_cast<ULL>(max));
 }
 
-Int randomIntFast(const SizeT max)
+Int randomIntFast(const Int min, const Int max)
+{
+	//return (randomULLFast() % static_cast<ULL>(max - min));
+
+	const ULL range       = static_cast<ULL>(max) - min + 1;
+	const ULL randomValue = randomULLFast() % range;
+    return static_cast<Int>(randomValue) + min;
+}
+
+Int randomIntFast(const ULL max)
 {
 	if(max < 1) return 0;
 	return static_cast<Int>(randomULLFast() % static_cast<ULL>(max));
@@ -154,6 +168,11 @@ Float randomFloatFast(const Double min, const Double max)
 	return static_cast<Float>(static_cast<Double>(min) + static_cast<Double>(randomULLFast()) / static_cast<Double>(ULLONG_MAX) * (max - min));
 }
 
+Double randomDoubleFast(const Double min, const Double max)
+{
+	return static_cast<Float>(min + static_cast<Double>(randomULLFast()) / static_cast<Double>(ULLONG_MAX) * (max - min));
+}
+
 Vec3 randomPointOnSphereAtLocationFast(const Vec4 sphere)
 {
 	return randomPointOnSphereFast(sphere.w) + Vec3(sphere);
@@ -187,6 +206,11 @@ Int randomIntSlow()
 void randomizeSeed()
 {
 	srand(static_cast<UInt>(now().time_since_epoch().count()));
+}
+
+UInt randomUIntFast()
+{
+	return randomULLFast();
 }
 
 Vec3 randomVec3Slow()
@@ -239,4 +263,9 @@ Float randomFloatSlow(const Float min, const Float max)
 Float randomFloatSlow(const Double min, const Double max)
 {
 	return static_cast<Float>(static_cast<Double>(min) + static_cast<Double>(randomULLSlow()) / static_cast<Double>(ULLONG_MAX) * (max - min));
+}
+
+Double randomDoubleSlow(const Double min, const Double max)
+{
+	return static_cast<Double>(min) + static_cast<Double>(randomULLSlow()) / static_cast<Double>(ULLONG_MAX) * (max - min);
 }

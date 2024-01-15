@@ -1,7 +1,8 @@
-#include "ResourceManager.hpp"
+
 #include "File.hpp"
-#include "FileSystem.hpp"
 #include "Scene.hpp"
+#include "FileSystem.hpp"
+#include "ResourceManager.hpp"
 
 void ResourceManager::create()
 {
@@ -10,6 +11,7 @@ void ResourceManager::create()
 	else
 	{
 		// the "ORKA" location is the folder that contains the executable
+		if(executablePath == "") logError("Executable path not set!");
 		orkaLocation = makeAbsolute(executablePath);
 
 		// in in we will always have a "Data" and "Cache" folder
@@ -54,7 +56,7 @@ void ResourceManager::reloadAllResources()
 	for(auto p : paths) addResource(p);
 }
 
-void ResourceManager::loadResourcesFromFbxFiles()
+void ResourceManager::loadResourcesFromFbxFiles() const
 {
 	// get all paths to fbx files
 	Vector<Path> paths;
@@ -80,7 +82,7 @@ void ResourceManager::loadResourcesFromFbxFiles()
 	for(auto& path : paths)
 	{
 		Scene scene;
-		scene.loadFBX(path, *this);
+		scene.loadFBX(path);
 	}
 
 	OutFile resourceManagerConfigFile(resourceManagerConfigPath);
@@ -184,3 +186,5 @@ Bool ResourceManager::hasFragmentShaderResource(const Name& name) const
 	if(!initialized) logError("Resource manager not initialized!");
 	return fragmentShaderResources.contains(name);
 }
+
+ResourceManager resourceManager;

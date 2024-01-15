@@ -3,7 +3,7 @@
 #include "Basics.hpp"
 #include "Random.hpp"
 #include "Transform.hpp"
-#include "ResourceManager.hpp"
+
 
 struct Renderer;
 
@@ -36,7 +36,7 @@ struct NeighborQuadtreeNode
 	void update(Vec3 location);
 	void removeSelfFromNeighbors() const;
 	void create(NeighborQuadtreeNode& parent, Bool x, Bool y);
-	void render(ResourceManager& resourceManager, Renderer& renderer) const;
+	void render(Renderer& renderer) const;
 };
 
 struct NeighborQuadtree
@@ -45,5 +45,5 @@ struct NeighborQuadtree
 	void                 create();
 	void                 destroy();
 	void                 update(Vec3 location);
-	void                 render(ResourceManager& resourceManager, Renderer& renderer) const;
+	void                 render(Renderer& renderer) const;
 };

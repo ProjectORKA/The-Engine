@@ -1,6 +1,5 @@
 #pragma once
 #include "Image.hpp"
-#include "ResourceManager.hpp"
 #include "GraphicsAPI.hpp"
 
 struct CPUTexture
@@ -24,26 +23,27 @@ struct CPUTexture
 	[[nodiscard]] Filter            getNearFilter() const;
 	[[nodiscard]] Int               getNumberOfChannels() const;
 
-	[[nodiscard]] Float             getRed(UInt x, UInt y) const;
+	[[nodiscard]] Float getRed(UInt x, UInt y) const;
 	// [[nodiscard]] Float             getBlue(UInt x, UInt y) const;
 	// [[nodiscard]] Float             getGreen(UInt x, UInt y) const;
 	// [[nodiscard]] Float             getAlpha(UInt x, UInt y) const;
 
-	[[nodiscard]] Float             getRed(Float x, Float y) const;
+	[[nodiscard]] Float getRed(Float x, Float y) const;
 	// [[nodiscard]] Float             getBlue(Float x, Float y) const;
 	// [[nodiscard]] Float             getGreen(Float x, Float y) const;
 	// [[nodiscard]] Float             getAlpha(Float x, Float y) const;
 
-	[[nodiscard]] Index             xyToIndex(Int x, Int y, Int channel, Int numBytes) const;
+	[[nodiscard]] Index xyToIndex(Int x, Int y, Int channel, Int numBytes) const;
 
 	void unload();
 	void checkIntegrity();
 	void load(const Path& path, Filter nearFilter, Filter farFilter, Wrapping wrapping);
+	void load(const Name& name, Filter nearFilter, Filter farFilter, Wrapping wrapping);
 	void load(const Path& path, const Name& name, Filter nearFilter, Filter farFilter, Wrapping wrapping);
 	void load(const Image& image, Filter nearFilter, Filter farFilter, Wrapping wrapping, const Name& name);
-	void load(ResourceManager& resourceManager, const Name& name, Filter nearFilter, Filter farFilter, Wrapping wrapping);
+
 private:
-	Memory      pixelMemory;
+	Memory            pixelMemory;
 	Int               width      = 0; // needs to be int for OpenGL and error correction
 	Int               height     = 0; // needs to be int for OpenGL and error correction
 	Name              name       = "NULL";
@@ -53,5 +53,4 @@ private:
 	DataType          dataType   = DataType::Byte;
 	Wrapping          wrapping   = Wrapping::Repeat;
 	WritePixelsFormat format     = WritePixelsFormat::RGBA;
-	/*Byte*             pixels     = nullptr;*/
 };

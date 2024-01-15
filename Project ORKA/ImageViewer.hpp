@@ -1,7 +1,9 @@
 #pragma once
-#include "Game.hpp"
-#include "JobSystem.hpp"
+#include "FileSystem.hpp"
 #include "ResourceManager.hpp"
+#include "FileTypes.hpp"
+#include "Game.hpp"
+
 // [TODO]
 // multithreaded file loading
 // usable with only mouse controls
@@ -11,51 +13,56 @@
 
 struct ImageViewerResource
 {
-	void  destroy();
-	Path& getPath();
-	void  loadOntoGpu();
-	void  loadIntoRam();
-	void  unloadFromGpu();
-	void  unloadFromRam();
+	String getName();
+	void   destroy();
+	Path&  getPath();
+	void   loadOntoGpu();
+	void   loadIntoRam();
+	void   unloadFromGpu();
+	void   unloadFromRam();
 	ImageViewerResource() = delete;
-	void                use(Int textureSlot) const;
 	[[nodiscard]] Bool  inRam() const;
 	[[nodiscard]] Bool  onGpu() const;
 	[[nodiscard]] Int   getWidth() const;
 	[[nodiscard]] Int   getHeight() const;
 	[[nodiscard]] Float getPriority() const;
+	void                use(Int textureSlot) const;
 	[[nodiscard]] Bool  hasLoadAttemptFailed() const;
+	Bool                isBeingLoadedIntoRam = false;
 	ImageViewerResource(const Path& path, Index index);
 	void calculateRating(Index currentImageIndex, UInt resourceCount);
+
 private:
-	Bool       loadAttemptFailed = false;
-	Path       path              = Path("");
-	Float      priority          = 0;
-	Index      index             = 0;
 	CPUTexture cpuTexture;
 	GPUTexture gpuTexture;
+	Float      priority          = 0;
+	Index      index             = 0;
+	Bool       loadAttemptFailed = false;
+	Path       path              = Path("");
 };
 
 struct ImageViewerRenderer final : GameRenderer
 {
-	// JobSystem resourceLoaderThreads;
 	Vector<ImageViewerResource> images;
+	SharedMutex                 imagesMutex;
 	TimePoint                   lastButtonInput;
 	TimePoint                   lastImageRefresh;
-	Float                       holdDelay          = 1;
-	UInt                        cpuLoadedCount     = 0;
-	UInt                        gpuLoadedCount     = 0;
-	UInt                        cpuMaxPreLoadCount = 2;
-	UInt                        gpuMaxPreLoadCount = 1;
-	Int                         currentImageId     = 0;
-	Int                         zoomLevel          = 0;
-	Float                       zoom               = 1.0f;
-	Float                       holdingDelay       = 0.5f;
-	Float                       zoomFactor         = 1.2f;
-	Float                       smoothness         = 0.1f;
-	Float                       frameRate          = 15.0f;
-	Vec2                        offset             = Vec2(0);
-	Matrix                      actualMatrix       = Matrix(1);
+	Float                       holdDelay              = 1;
+	UInt                        cpuLoadedCount         = 0;
+	UInt                        gpuLoadedCount         = 0;
+	UInt                        currentMemory          = 0;
+	Int                         currentImageId         = 0;
+	Int                         zoomLevel              = 0;
+	Float                       zoom                   = 1.0f;
+	Float                       holdingDelay           = 0.5f;
+	Float                       zoomFactor             = 1.2f;
+	Float                       smoothness             = 0.1f;
+	Bool                        smoothCameraTransition = false;
+	Float                       frameRate              = 60.0f;
+	Float                       smoothCameraSpeed      = 30.0f;
+	Vec2                        offset                 = Vec2(0);
+	Matrix                      actualMatrix           = Matrix(1);
+	UInt                        memoryBudget           = 1024 * 1024 * 1024 * 4;
 	// input
 	InputId    mouseDown                 = InputId(InputType::Mouse, LMB);
 	InputId    previousImageHolding      = InputId(InputType::KeyBoard, LEFT);
@@ -72,36 +79,53 @@ struct ImageViewerRenderer final : GameRenderer
 	InputEvent previousImageMouse        = InputEvent(InputType::Mouse, MOUSE_BUTTON_5, false);
 
 	[[nodiscard]] Vector<Index> indicesOfImagesSortedByPriority() const;
-	[[nodiscard]] Index         indexOfCpuImageWithLowestPriority() const;
-	[[nodiscard]] Index         indexOfGpuImageWithLowestPriority() const;
-	[[nodiscard]] Index         indexOfCpuImageWithHighestPriority() const;
-	[[nodiscard]] Index         indexOfGpuImageWithHighestPriority() const;
 
 	void updateZoom();
-	void removeImage();
-	void preLoadImages();
+	//void removeImage();
+	//void preLoadImages();
 	void showNextImage();
 	void showPrevImage();
-	void loadGpuResource();
-	void loadCpuResource();
 	void calculatePriorities();
 	void update(Window& window) override;
+	void create(Window& window) override;
 	void destroy(Window& window) override;
-	void loadCpuImageWithHighestPriority();
-	void loadGpuImageWithHighestPriority();
-	void unloadGpuImageWithLowestPriority();
-	void unloadCpuImageWithLowestPriority();
+	void renderDebugInfo(Window& window, TiledRectangle area) const;
 	void connect(GameSimulation& simulation) override;
+	void render(Window& window, TiledRectangle area) override;
 	void inputEvent(Window& window, InputEvent input) override;
-	void create(ResourceManager& resourceManager, Window& window) override;
-	void render(ResourceManager& resourceManager, Window& window, TiledRectangle area) override;
-	void renderInteractive(ResourceManager& resourceManager, Window& window, TiledRectangle area) override;
+	void renderInteractive(Window& window, TiledRectangle area) override;
 };
 
 struct ImageViewer
 {
 	UserInterface       ui;
 	ImageViewerRenderer renderer;
-	ResourceManager     resourceManager;
-	void                run(Int argc, Char* argv[]);
+	Vector<Path>        filePaths;
+	Path                currentPath = getCurrentPath();
+
+	void run(const Int argc, Char* argv[])
+	{
+		ui.create();
+
+		// scan launch parameters for input
+		for(Int i = 0; i < argc; i++)
+		{
+			Path path = argv[i];
+
+			if(isExecutableFile(path)) continue;
+
+			if(isImageFile(path)) filePaths.push_back(path);
+			else logWarning("Can't process input: " + path.string());
+		}
+
+		Window & window = ui.window("ORKA Image Viewer", Area(1920, 1080), true, true, WindowState::Windowed, renderer);
+
+		for(auto& path : filePaths) window.droppedFilePaths.push_back(path);
+
+		ui.run();
+	}
 };
+
+void loadNextImage(ImageViewerRenderer& viewer);
+
+void loadImage(ImageViewerRenderer& viewer, Index imageID);

@@ -3,7 +3,6 @@
 #include "Game.hpp"
 #include "Player.hpp"
 #include "KeyMap.hpp"
-#include "ResourceManager.hpp"
 
 struct SandboxRenderer final : GameRenderer
 {
@@ -19,16 +18,21 @@ struct SandboxRenderer final : GameRenderer
 	void destroy(Window& window) override;
 	void connect(GameSimulation& simulation) override;
 	void inputEvent(Window& window, InputEvent input) override;
-	void create(ResourceManager& resourceManager, Window& window) override;
-	void render(ResourceManager& resourceManager, Window& window, TiledRectangle area) override;
-	void renderInteractive(ResourceManager& resourceManager, Window& window, TiledRectangle area) override;
+	void create(Window& window) override;
+	void render(Window& window, TiledRectangle area) override;
+	void renderInteractive(Window& window, TiledRectangle area) override;
 };
 
 struct Sandbox
 {
 	UserInterface   ui;
+	Window          window;
 	SandboxRenderer renderer;
-	ResourceManager resourceManager;
 
-	void run();
+	void run()
+	{
+		ui.create();
+		ui.window("ORKA Sandbox", Area(settings.defaultWindowWidth, settings.defaultWindowHeight), true, true, WindowState::Windowed, renderer);
+		ui.run();
+	}
 };

@@ -73,10 +73,10 @@ MindMapConnection::MindMapConnection(const Index a, const Index b)
 	this->b = b;
 }
 
-void MindMap::render(ResourceManager& resourceManager, Renderer& renderer) const
+void MindMap::render(Renderer& renderer) const
 {
 	renderer.setDepthTest(false);
-	renderer.useShader(resourceManager, "color");
+	renderer.useShader("color");
 
 	// render connections
 	renderer.fill(Color(0.5, 0.5, 0.5, 1));
@@ -95,16 +95,16 @@ void MindMap::render(ResourceManager& resourceManager, Renderer& renderer) const
 	Vector<Vec3> posArray;
 	for(auto position : positions) posArray.push_back(Vec3(position, 0.0f));
 
-	renderer.renderMeshInstanced(resourceManager, "centeredPlane", posArray);
+	renderer.renderMeshInstanced("centeredPlane", posArray);
 	renderer.setDepthTest(true);
 }
 
-void MindMap::renderInteractive(ResourceManager& resourceManager, Window& window) const
+void MindMap::renderInteractive(Window& window) const
 {
 	// Renderer& renderer = window.renderer;
 
 	// renderer.setDepthTest(false);
-	// renderer.useShader(resourceManager, "idShader");
+	// renderer.useShader("idShader");
 
 	// render connections
 	// renderer.fill(Color(0.5, 0.5, 0.5, 1));
@@ -120,7 +120,7 @@ void MindMap::renderInteractive(ResourceManager& resourceManager, Window& window
 	// {
 	//	renderer.uniforms().setObjectId(static_cast<UInt>(connections.size()) - static_cast<UInt>(1) + i);
 	//	renderer.uniforms().setMMatrix(matrixFromPosition(Vec3(positions[i], 0.0f)));
-	//	renderer.renderMesh(resourceManager, "1x1planeCentered");
+	//	renderer.renderMesh("1x1planeCentered");
 	// }
 
 	//renderer.idFramebuffer.updateIdsUnderCursor(window);

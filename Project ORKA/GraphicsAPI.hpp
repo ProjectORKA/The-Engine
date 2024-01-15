@@ -834,7 +834,7 @@ inline void __stdcall debugOutputCallback(const UInt source, const UInt type, UI
 
 struct OpenGlStateCopy
 {
-	const Bool openglStateTracking  = true;
+	const Bool openglStateTracking  = false;
 	const Bool errorCheckingEnabled = true;
 	Bool       loggingEnabled       = false;
 #ifdef TRACE_OPENGL
@@ -994,6 +994,7 @@ struct OpenGLTexture2D
 	void setBorderColor(Color color) const;
 	void setWrapping(Wrapping wrapping) const;
 	void useTextureInSlot(UInt textureUnitSlot) const;
+	void emptyTextureFromSlot(UInt textureUnitSlot) const;
 	void setFilters(Filter nearFilter, Filter farFilter) const;
 	void setDataToDepth(Int width, Int height, const void* data) const;
 	void setData(SizedInternalFormat internalFormat, Int width, Int height, WritePixelsFormat colorFormat, DataType dataType, const void* data) const;

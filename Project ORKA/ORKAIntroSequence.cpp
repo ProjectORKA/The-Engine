@@ -15,13 +15,13 @@ void ORKAIntroSequence::init(GameRenderer& game)
 
 void ORKAIntroSequence::inputEvent(Window& window, InputEvent input) {}
 
-void ORKAIntroSequence::create(ResourceManager& resourceManager, Window& window)
+void ORKAIntroSequence::create(Window& window)
 {
 	window.unDecorateWindow();
 	window.setVisible(true);
 }
 
-void ORKAIntroSequence::render(ResourceManager& resourceManager, Window& window, TiledRectangle area)
+void ORKAIntroSequence::render(Window& window, TiledRectangle area)
 {
 	Renderer& renderer = window.renderer;
 
@@ -37,17 +37,17 @@ void ORKAIntroSequence::render(ResourceManager& resourceManager, Window& window,
 	c.render(renderer);
 
 	// logo stuff
-	Float animationLength = 1.1f;
-	Float size            = min(pow(1.0f + 1.0f / pow(animationLength, 5.0f), pow(renderer.time.total - 2.0f * animationLength, 5.0f)), 100.0f);
-	Float tint            = max(2.0f - size, 0.0f);
+	constexpr Float animationLength = 1.1f;
+	const Float size            = min(pow(1.0f + 1.0f / pow(animationLength, 5.0f), pow(renderer.time.total - 2.0f * animationLength, 5.0f)), 100.0f);
+	const Float tint            = max(2.0f - size, 0.0f);
 	renderer.uniforms().setCustomColor(Color(tint, tint, tint, 1.0f));
 	Matrix modelMatrix = scale(Matrix(1.0f), Vec3(size, 1.0f, size));
 	modelMatrix        = rotate(modelMatrix, 20.0f / (pow(renderer.time.total, 4.0f) + 1.0f), Vec3(0.0f, 0.0f, 1.0f));
 	renderer.uniforms().setMMatrix(modelMatrix);
 
-	renderer.useShader(resourceManager, "orkaIntroSequence");
-	renderer.useTexture(resourceManager, "ProjectORKABakedLogo");
-	renderer.renderMesh(resourceManager, "projectORKALogo");
+	renderer.useShader("orkaIntroSequence");
+	renderer.useTexture("ProjectORKABakedLogo");
+	renderer.renderMesh("projectORKALogo");
 
 	// start the time when we actually start rendering
 	static Bool f = true;
@@ -61,10 +61,13 @@ void ORKAIntroSequence::render(ResourceManager& resourceManager, Window& window,
 	if(renderer.time.total > 5)
 	{
 		window.decorateWindow();
-		// window.setFullscreen();
-		window.content = gameStartingAfterIntro;
-		gameStartingAfterIntro->create(resourceManager, window);
+		
+		window.content.insert(*gameStartingAfterIntro);
+
+		window.content.drop(this);
+
+		gameStartingAfterIntro->create(window);
 	}
 }
 
-void ORKAIntroSequence::renderInteractive(ResourceManager& resourceManager, Window& window, TiledRectangle area) {}
+void ORKAIntroSequence::renderInteractive(Window& window, TiledRectangle area) {}

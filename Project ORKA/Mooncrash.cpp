@@ -1,16 +1,7 @@
 #include "MoonCrash.hpp"
 #include "Window.hpp"
 
-void MoonCrash::run()
-{
-	resourceManager.create();
-	ui.create();
-	renderer.simulation = &sim;
-	sim.start(resourceManager);
-	ui.window("MoonCrash", Area(1920, 1080), true, true, WindowState::Windowed, renderer, resourceManager);
-	ui.run();
-	sim.stop();
-}
+
 
 MoonCrashPlayer::MoonCrashPlayer()
 {
@@ -27,7 +18,10 @@ void MoonCrashRenderer::destroy(Window& window)
 	mainFramebuffer.destroy();
 }
 
-void MoonCrashRenderer::connect(GameSimulation& simulation) {}
+void MoonCrashRenderer::connect(GameSimulation& simulation)
+{
+	this->simulation = static_cast<MoonCrashSimulation*>(&simulation);
+}
 
 void MoonCrashPlayer::update(Window& window)
 {
@@ -144,9 +138,9 @@ void MoonCrashRenderer::update(Window& window)
 	window.renderer.planetRenderSystem.update(simulation->planetSystem, player);
 }
 
-void MoonCrashSimulation::create(ResourceManager& resourceManager)
+void MoonCrashSimulation::create()
 {
-	planetSystem.create(resourceManager);
+	planetSystem.create();
 }
 
 void MoonCrashRenderer::inputEvent(Window& window, const InputEvent input)
@@ -167,14 +161,14 @@ void MoonCrashRenderer::inputEvent(Window& window, const InputEvent input)
 	player.inputEvent(window, input);
 }
 
-void MoonCrashPlayer::render(ResourceManager& resourceManager, Window& window)
+void MoonCrashPlayer::render(Window& window)
 {
 	Renderer& renderer = window.renderer;
 
 	camera.render(renderer);
 }
 
-void MoonCrashRenderer::create(ResourceManager& resourceManager, Window& window)
+void MoonCrashRenderer::create(Window& window)
 {
 	player.speedExponent   = 200;
 	player.chunkLocation.z = 16000000000000000000;
@@ -185,7 +179,7 @@ void MoonCrashRenderer::create(ResourceManager& resourceManager, Window& window)
 	mainFramebuffer.checkComplete();
 }
 
-void MoonCrashRenderer::render(ResourceManager& rm, Window& window, TiledRectangle area)
+void MoonCrashRenderer::render(Window& window, TiledRectangle area)
 {
 	Renderer& r = window.renderer;
 
@@ -193,18 +187,18 @@ void MoonCrashRenderer::render(ResourceManager& rm, Window& window, TiledRectang
 	mainFramebuffer.bindDraw();
 	mainFramebuffer.clear();
 
-	player.render(rm, window);
+	player.render(window);
 
 	r.uniforms().setSunDir(player.skyRotation * Vec4(0, 0, 1, 0));
 
 	r.setWireframeMode(r.wireframeMode);
 
 	r.uniforms().setMMatrix(player.skyRotation);
-	r.renderSky(rm, player.camera);
+	r.renderSky(player.camera);
 
 	// renderMoonCrashAtmosphere(rm, r, player, mainFramebuffer);
 
-	renderPlanet(rm, r, simulation->planetSystem, player, mainFramebuffer);
+	renderPlanet(r, simulation->planetSystem, player, mainFramebuffer);
 
 	// render UI
 	r.setWireframeMode(false);
@@ -215,39 +209,39 @@ void MoonCrashRenderer::render(ResourceManager& rm, Window& window, TiledRectang
 	constexpr Float textSpacing = 20;
 	r.textRenderSystem.alignText(Alignment::left, Alignment::bottom);
 
-	r.textRenderSystem.render(rm, r, "Speed: " + toString(player.speedExponent), Vec2(textSpacing, 6 * textSpacing));
-	r.textRenderSystem.render(rm, r, "FPS: " + toString(1.0f / r.time.delta), Vec2(textSpacing, 5 * textSpacing));
-	r.textRenderSystem.render(rm, r, "FrameTime: " + toString(r.time.delta), Vec2(textSpacing, 4 * textSpacing));
-	r.textRenderSystem.render(rm, r, "Camera height float: " + toString(player.camera.getLocation().z), Vec2(textSpacing, 3 * textSpacing));
-	r.textRenderSystem.render(rm, r, "Camera height ULL: " + toString(player.chunkLocation.z), Vec2(textSpacing, 2 * textSpacing));
-	r.textRenderSystem.render(rm, r, "SunDir: " + toString(r.uniforms().getSunDir()), Vec2(textSpacing, 1 * textSpacing));
+	r.textRenderSystem.render(r, "Speed: " + toString(player.speedExponent), Vec2(textSpacing, 6 * textSpacing));
+	r.textRenderSystem.render(r, "FPS: " + toString(1.0f / r.time.delta), Vec2(textSpacing, 5 * textSpacing));
+	r.textRenderSystem.render(r, "FrameTime: " + toString(r.time.delta), Vec2(textSpacing, 4 * textSpacing));
+	r.textRenderSystem.render(r, "Camera height float: " + toString(player.camera.getLocation().z), Vec2(textSpacing, 3 * textSpacing));
+	r.textRenderSystem.render(r, "Camera height ULL: " + toString(player.chunkLocation.z), Vec2(textSpacing, 2 * textSpacing));
+	r.textRenderSystem.render(r, "SunDir: " + toString(r.uniforms().getSunDir()), Vec2(textSpacing, 1 * textSpacing));
 
 	mainFramebuffer.setAsTexture(0);
 	r.drawToWindow();
-	r.fullScreenShader(rm, "final");
+	r.fullScreenShader("final");
 }
 
-void renderMoonCrashAtmosphere(ResourceManager& resourceManager, Renderer& renderer, const MoonCrashPlayer& player, const Framebuffer& framebuffer)
+void renderMoonCrashAtmosphere(Renderer& renderer, const MoonCrashPlayer& player, const Framebuffer& framebuffer)
 {
 	const Bool culling = renderer.getCulling();
 	player.camera.renderOnlyRot(renderer);
 	renderer.uniforms().setCameraPos(Vec4(Vec3(0, 0, (static_cast<Float>(player.chunkLocation.z) + player.camera.getLocation().z) / static_cast<Float>(ULLONG_MAX)), 1));
 	renderer.setCulling(false);
-	renderer.useShader(resourceManager, "atmosphere");
+	renderer.useShader("atmosphere");
 	framebuffer.setAsTexture(0); // [TODO]might not work if draw doesn't bind; check
 
 	// renderer.setAlphaBlending(true);
 	// glBlendFunc(GL_ONE, GL_ONE);
 	renderer.setDepthTest(false);
 
-	renderer.renderMesh(resourceManager, "centeredCube");
+	renderer.renderMesh("centeredCube");
 	renderer.setCulling(culling);
 
 	// renderer.setAlphaBlending(false);
 	renderer.setDepthTest(true);
 }
 
-void renderPlanet(ResourceManager& resourceManager, Renderer& r, PlanetSystem& planetSystem, const PlanetSystemPlayer& player, const Framebuffer& framebuffer)
+void renderPlanet(Renderer& r, PlanetSystem& planetSystem, const PlanetSystemPlayer& player, const Framebuffer& framebuffer)
 {
 	// set modes
 	r.setAlphaBlending(false);
@@ -259,5 +253,5 @@ void renderPlanet(ResourceManager& resourceManager, Renderer& r, PlanetSystem& p
 	player.camera.renderOnlyRot(r);
 
 	// render meshes
-	for(UShort level = 0; level < MAX_CHUNK_LEVEL; level++) r.planetRenderSystem.renderLevel(resourceManager, planetSystem, r, player, level, framebuffer);
+	for(UShort level = 0; level < MAX_CHUNK_LEVEL; level++) r.planetRenderSystem.renderLevel(planetSystem, r, player, level, framebuffer);
 }

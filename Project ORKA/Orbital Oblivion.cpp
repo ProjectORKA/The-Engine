@@ -1,7 +1,7 @@
 #include "Orbital Oblivion.hpp"
 #include "UserInterface.hpp"
 
-//void OrbitalOblivionRenderer::renderBloom(ResourceManager& resourceManager, Renderer& r)
+//void OrbitalOblivionRenderer::renderBloom(Renderer& r)
 //{
 //	//get common variables
 //	FramebufferSystem& fs = r.framebufferSystem;
@@ -123,17 +123,6 @@
 //	//r.textRenderSystem.render(e, r, toString(mod(r.time.total / 10, 0.2) + 0.8), Vec2(50), fonts.heading);
 //};
 
-void OrbitalOblivion::run()
-{
-	resourceManager.create();
-	simulation.start(resourceManager);
-	ui.create();
-	ui.window("Orbital Oblivion", Area(settings.defaultWindowWidth, settings.defaultWindowHeight), true, true, WindowState::Windowed, renderer, resourceManager);
-	renderer.connect(simulation);
-	ui.run();
-	simulation.stop();
-}
-
 void OOUnit::updatePosition()
 {
 	location = location + direction * speed;
@@ -223,7 +212,7 @@ OOPlanet& OOUnit::getClosestPlanet(Vector<OOPlanet>& planets) const
 	return *current;
 }
 
-void OrbitalOblivionSimulation::create(ResourceManager& resourceManager)
+void OrbitalOblivionSimulation::create()
 {
 	//create teams
 	teams.emplace_back(0, Color(0, 0.33333333333, 1, 1));
@@ -242,7 +231,7 @@ void OrbitalOblivionSimulation::create(ResourceManager& resourceManager)
 	}
 
 	//create units
-	for(UInt i = 0; i < 1000; i++)
+	for(UInt i = 0; i < shipCount; i++)
 	{
 		units.emplace_back(0);
 		units.emplace_back(1);
@@ -262,10 +251,10 @@ void OrbitalOblivionPlayer::inputEvent(Window& window, const InputEvent input)
 	if(input == slower) speedExponent--;
 }
 
-void OOUnit::render(ResourceManager& resourceManager, Renderer& renderer) const
+void OOUnit::render(Renderer& renderer) const
 {
 	renderer.uniforms().setMMatrix(matrixFromPositionAndDirection(location, direction));
-	renderer.renderMesh(resourceManager, "unit");
+	renderer.renderMesh("unit");
 }
 
 void OrbitalOblivionRenderer::inputEvent(Window& window, const InputEvent input)
@@ -276,7 +265,7 @@ void OrbitalOblivionRenderer::inputEvent(Window& window, const InputEvent input)
 	if(input == toggleBloom) bloom = !bloom;
 	if(input == pause)
 	{
-		if(window.renderer.time.paused) window.renderer.time.unpause();
+		if(window.renderer.time.paused) window.renderer.time.unPause();
 		else window.renderer.time.pause();
 	}
 	player.inputEvent(window, input);
@@ -315,7 +304,7 @@ void OOUnit::updateDirection(Vector<OOUnit>& neighbors, Vector<OOPlanet>& planet
 	direction = normalize(direction + Vec2(turnRate) * normalize(influence));
 }
 
-void OrbitalOblivionRenderer::create(ResourceManager& resourceManager, Window& window)
+void OrbitalOblivionRenderer::create(Window& window)
 {
 	//FramebufferSystem& fs = window.renderer.framebufferSystem;
 	//fs.addFrameBuffer("bloom1", pow(0.5, 1));
@@ -327,11 +316,11 @@ void OrbitalOblivionRenderer::create(ResourceManager& resourceManager, Window& w
 	//fs.addFrameBuffer("bloom7", pow(0.5, 7));
 	//fs.addFrameBuffer("bloom8", pow(0.5, 8));
 	//fs.addFrameBuffer("bloom9", pow(0.5, 9));
-	window.renderer.meshSystem.use(resourceManager, "unit");
+	window.renderer.meshSystem.use("unit");
 	unitMesh = &window.renderer.meshSystem.currentMesh();
 }
 
-void OrbitalOblivionRenderer::render(ResourceManager& resourceManager, Window& window, TiledRectangle area)
+void OrbitalOblivionRenderer::render(Window& window, TiledRectangle area)
 {
 	Renderer& r = window.renderer;
 
@@ -344,27 +333,27 @@ void OrbitalOblivionRenderer::render(ResourceManager& resourceManager, Window& w
 	r.setCulling(true);
 
 	player.update(window);
-	player.render(resourceManager, window);
+	player.render(window);
 
-	r.useTexture(resourceManager, "orbitalOblivionReflection");
-	r.useShader(resourceManager, "orbitalOblivion");
+	r.useTexture("orbitalOblivionReflection");
+	r.useShader("orbitalOblivion");
 
 	Vector<Matrix> positions = Vector<Matrix>(sim->units.size());
 	for(SizeT i = 0; i < sim->units.size(); i++) positions[i] = matrixFromPositionAndDirection(sim->units[i].location, sim->units[i].direction);
-	r.renderMeshInstanced(resourceManager, "unit", positions);
+	r.renderMeshInstanced("unit", positions);
 
-	r.useMesh(resourceManager, "sphere");
+	r.useMesh("sphere");
 	for(OOPlanet& p : sim->planets) p.render(r);
 
-	//if(bloom) renderBloom(resourceManager, r);
+	//if(bloom) renderBloom(r);
 
 	r.setWireframeMode(false);
 	r.screenSpace();
 	r.uniforms().setMMatrix(Matrix(1));
 	r.textRenderSystem.setSize(16);
 	r.textRenderSystem.setLetterSpacing(0.6f);
-	r.textRenderSystem.render(resourceManager, r, "Framerate: " + toString(1 / r.time.delta), Vec2(50, 50));
-	r.textRenderSystem.render(resourceManager, r, "Ship Count: " + toString(static_cast<Int>(sim->units.size())), Vec2(50, 100));
+	r.textRenderSystem.render(r, "Framerate: " + toString(1 / r.time.delta), Vec2(50, 50));
+	r.textRenderSystem.render(r, "Ship Count: " + toString(static_cast<Int>(sim->units.size())), Vec2(50, 100));
 }
 
-void OrbitalOblivionRenderer::renderInteractive(ResourceManager& resourceManager, Window& window, TiledRectangle area) {}
+void OrbitalOblivionRenderer::renderInteractive(Window& window, TiledRectangle area) {}

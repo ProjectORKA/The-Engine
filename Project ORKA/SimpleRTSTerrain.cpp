@@ -7,9 +7,9 @@ void SimpleRTSTerrainRenderingSystem::render(Renderer& renderer) const
 	gpuTerrain.render(renderer.uniforms());
 }
 
-void SimpleRTSTerrainRenderingSystem::create(ResourceManager& resourceManager)
+void SimpleRTSTerrainRenderingSystem::create()
 {
-	cpuTerrain.load(resourceManager, "simplertsTerrain");
+	cpuTerrain.load("simplertsTerrain");
 	gpuTerrain.upload(cpuTerrain);
 }
 

@@ -41,3 +41,8 @@ template <typename T> void logError(T value)
 		pause();
 	}
 }
+
+inline void logDebugLaunchParameters(const Int count, Char** params)
+{
+	for(int i = 0; i < count; i++) logDebug(params[i]);
+}

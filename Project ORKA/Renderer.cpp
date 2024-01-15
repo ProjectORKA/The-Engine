@@ -237,7 +237,7 @@ void Renderer::clearBackground(const Color color) const
 	OpenGL::apiClearDepth();
 }
 
-void Renderer::create(ResourceManager& resourceManager)
+void Renderer::create()
 {
 	OpenGL::apiInit();
 
@@ -248,13 +248,13 @@ void Renderer::create(ResourceManager& resourceManager)
 	time.reset();
 	textureSystem.create();
 	meshSystem.create();
-	shaderSystem.create(resourceManager);
+	shaderSystem.create();
 
 	// advanced systems
 	lineRenderer.create();
-	textRenderSystem.create(resourceManager, *this);
+	textRenderSystem.create(*this);
 	renderObjectSystem.create(*this);
-	rectangleRenderer.create(resourceManager, *this);
+	rectangleRenderer.create(*this);
 
 	idFramebuffer.create("IDFramebuffer", Area(1920, 1080));
 	idFramebuffer.add(WritePixelsFormat::RGBAInteger, DataType::UInt, FramebufferAttachment::Color0, true, Wrapping::Clamped);
@@ -340,10 +340,10 @@ void Renderer::normalizedSpaceWithAspectRatio(const Float aspectRatio)
 	uniforms().setPMatrix(scale(pMatrix, Vec3(Vec2(1.0f) / view, 1.0f)));
 }
 
-void Renderer::useMesh(ResourceManager& resourceManager, const Name& name)
+void Renderer::useMesh(const Name& name)
 {
 	// selects a mesh to be rendered but doesn't render it
-	meshSystem.use(resourceManager, name);
+	meshSystem.use(name);
 }
 
 void Renderer::addRenderObject(const RenderObjectNames& renderObjectNames)
@@ -358,72 +358,72 @@ DepthTestOverride::DepthTestOverride(const Bool value, Renderer& renderer)
 	this->renderer->setDepthTest(value);
 }
 
-void Renderer::renderMesh(ResourceManager& resourceManager, const Name& name)
+void Renderer::renderMesh(const Name& name)
 {
-	meshSystem.render(resourceManager, uniforms(), name);
+	meshSystem.render(uniforms(), name);
 }
 
-void Renderer::useTexture(ResourceManager& resourceManager, const Name& name)
+void Renderer::useTexture(const Name& name)
 {
-	textureSystem.use(resourceManager, name);
+	textureSystem.use(name);
 }
 
-Index Renderer::useShader(ResourceManager& resourceManager, const Name& name)
+Index Renderer::useShader(const Name& name)
 {
-	return shaderSystem.use(resourceManager, name);
+	return shaderSystem.use(name);
 }
 
-void Renderer::renderSky(ResourceManager& resourceManager, const Camera& camera)
+void Renderer::renderSky(const Camera& camera)
 {
 	setCulling(false);
 	setDepthTest(false);
 	camera.renderOnlyRot(*this);
-	useShader(resourceManager, "sky");
-	useTexture(resourceManager, "sky");
-	renderMesh(resourceManager, "sky");
+	useShader("sky");
+	useTexture("sky");
+	renderMesh("sky");
 	setCulling(true);
 	setDepthTest(true);
 }
 
-void Renderer::fullScreenShader(ResourceManager& resourceManager, const Name& name)
+void Renderer::fullScreenShader(const Name& name)
 {
 	setWireframeMode(false);
-	useShader(resourceManager, name);
+	useShader(name);
 	meshSystem.renderFullscreen(uniforms());
 	setWireframeMode(wireframeMode);
 }
 
-void Renderer::arrow(ResourceManager& resourceManager, const Vec2 start, const Vec2 end)
+void Renderer::arrow(const Vec2 start, const Vec2 end)
 {
-	arrow(resourceManager, Vec3(start, 0), Vec3(end, 0));
+	arrow(Vec3(start, 0), Vec3(end, 0));
 }
 
-void Renderer::arrow(ResourceManager& resourceManager, const Vec3 start, const Vec3 end)
+void Renderer::arrow(const Vec3 start, const Vec3 end)
 {
-	useShader(resourceManager, "color");
+	useShader("color");
 	fill(Vec4(1, 0, 0, 1));
 	const Vec3 direction = end - start;
 	uniforms().setMMatrix(matrixFromDirectionAndLocation(direction, start));
-	renderMesh(resourceManager, "arrow");
+	renderMesh("arrow");
 }
 
-void Renderer::circle(ResourceManager& resourceManager, const Vec2 pos, const Float radius)
+void Renderer::circle(const Vec2 pos, const Float radius)
 {
 	uniforms().setMMatrix(matrixFromPositionAndSize(pos, radius));
-	renderMesh(resourceManager, "circle");
+	renderMesh("circle");
 }
 
-void Renderer::rectangle(ResourceManager& resourceManager, const Vec2 pos, const Vec2 size)
+void Renderer::rectangle(const Vec2 pos, const Vec2 size, const Bool overrideColor, const Bool centered)
 {
-	rectangleRenderer.render(resourceManager, *this, pos, size);
+	rectangleRenderer.render(*this, pos, size, overrideColor, centered);
 }
 
-void Renderer::useTexture(ResourceManager& resourceManager, const Name& name, const Index location)
+void Renderer::useTexture(const Name& name, const Index location)
 {
-	textureSystem.use(resourceManager, name, location);
+	textureSystem.use(name, location);
 }
 
-void Renderer::renderAtmosphere(ResourceManager& resourceManager, const Player& player, const Vec3 sunDirection)
+void Renderer::renderAtmosphere(const Player& player, const Vec3 sunDirection)
 {
 	const Bool culling = getCulling();
 	setDepthTest(false);
@@ -431,21 +431,21 @@ void Renderer::renderAtmosphere(ResourceManager& resourceManager, const Player& 
 	uniforms().setCameraPos(Vec4(Vec3(0), 1));
 	setCulling(false);
 	uniforms().setSunDir(Vec4(sunDirection, 1));
-	useShader(resourceManager, "atmosphere");
+	useShader("atmosphere");
 	/*framebufferSystem.current().colorTexture.use(0);*/
-	renderMesh(resourceManager, "centeredCube");
+	renderMesh("centeredCube");
 	setCulling(culling);
 	setDepthTest(true);
 }
 
-void Renderer::renderMeshInstanced(ResourceManager& resourceManager, const Name& name, const Vector<Vec3>& positions)
+void Renderer::renderMeshInstanced(const Name& name, const Vector<Vec3>& positions)
 {
-	renderMeshInstanced(resourceManager, name, matrixArrayFromPositions(positions));
+	renderMeshInstanced(name, matrixArrayFromPositions(positions));
 }
 
-void Renderer::renderMeshInstanced(ResourceManager& resourceManager, const Name& name, const Vector<Matrix>& transforms)
+void Renderer::renderMeshInstanced(const Name& name, const Vector<Matrix>& transforms)
 {
-	meshSystem.renderInstanced(resourceManager, uniforms(), name, transforms);
+	meshSystem.renderInstanced(uniforms(), name, transforms);
 }
 
 void Renderer::setAlphaBlending(const Bool enable, const BlendFunction src, const BlendFunction dst, const BlendEquation eq) const
@@ -455,12 +455,12 @@ void Renderer::setAlphaBlending(const Bool enable, const BlendFunction src, cons
 	OpenGL::apiBlendEquation(eq);
 }
 
-void Renderer::renderMeshInstanced(ResourceManager& resourceManager, const Name& name, const Vector<Vec3>& positions, const Float size)
+void Renderer::renderMeshInstanced(const Name& name, const Vector<Vec3>& positions, const Float size)
 {
-	renderMeshInstanced(resourceManager, name, matrixArrayFromPositionsAndSize(positions, size));
+	renderMeshInstanced(name, matrixArrayFromPositionsAndSize(positions, size));
 }
 
-void Renderer::postProcess(ResourceManager& resourceManager, const Name& name, const Framebuffer& source, const Framebuffer& destination)
+void Renderer::postProcess(const Name& name, const Framebuffer& source, const Framebuffer& destination)
 {
 	// draw to second buffer
 	DepthTestOverride depthOverride(false, *this);
@@ -475,6 +475,6 @@ void Renderer::postProcess(ResourceManager& resourceManager, const Name& name, c
 	destination.bindDraw();
 	destination.clear();
 
-	useShader(resourceManager, name);
-	renderMesh(resourceManager, "fullScreenQuad");
+	useShader(name);
+	renderMesh("fullScreenQuad");
 }

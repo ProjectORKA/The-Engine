@@ -111,8 +111,10 @@ using Thread = std::thread;
 using Quaternion = glm::quat;
 using Path = std::filesystem::path;
 using SharedMutex = std::shared_mutex;
+template <typename T> using Atomic = std::atomic<T>;
 template <typename T> using Function = std::function<T>;
 template <typename T> using LockGuard = std::lock_guard<T>;
+template <typename T> using SharedLockGuard = std::shared_lock<T>;
 
 inline String threadId()
 {
@@ -292,6 +294,11 @@ inline String toString(const ULLVec4& v)
 inline String toString(const Matrix& v)
 {
 	return "\n" + toString(v[0]) + "\n" + toString(v[1]) + "\n" + toString(v[2]) + "\n" + toString(v[3]) + "\n";
+}
+
+inline String toString(Char* v)
+{
+	return v;
 }
 
 template <typename T> String toString(T v)

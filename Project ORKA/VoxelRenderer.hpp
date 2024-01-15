@@ -14,7 +14,7 @@ struct Chunk
 	Bool voxels[voxelChunkSize][voxelChunkSize][voxelChunkHeight];
 
 	Chunk();
-	CPUMesh generateMesh(ResourceManager& resourceManager) const;
+	CPUMesh generateMesh() const;
 };
 
 struct VoxelWorld
@@ -27,5 +27,5 @@ struct VoxelRenderer
 	VoxelWorld world;
 	GPUMesh    terrainMesh;
 
-	void render(ResourceManager& resourceManager, Renderer& renderer);
+	void render(Renderer& renderer);
 };
