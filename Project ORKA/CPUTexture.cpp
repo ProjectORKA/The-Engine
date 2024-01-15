@@ -2,6 +2,7 @@
 #include "Debug.hpp"
 #include "FileSystem.hpp"
 #include "Math.hpp"
+#include "ResourceManager.hpp"
 
 CPUTexture::~CPUTexture()
 {
@@ -429,7 +430,7 @@ void CPUTexture::load(const Image& image, const Filter nearFilter, const Filter 
 	else logWarning("Image could not be loaded into texture!");
 }
 
-void CPUTexture::load(ResourceManager& resourceManager, const Name& name, const Filter nearFilter, const Filter farFilter, const Wrapping wrapping)
+void CPUTexture::load(const Name& name, const Filter nearFilter, const Filter farFilter, const Wrapping wrapping)
 {
 	if(!loaded) load(resourceManager.getTextureResourcePath(name), name, nearFilter, farFilter, wrapping);
 	else logWarning("Texture already loaded, you are trying to load it again, something must be wrong!");

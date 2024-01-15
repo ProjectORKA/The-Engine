@@ -3,7 +3,6 @@
 #include "Basics.hpp"
 #include "Math.hpp"
 #include "Array2D.hpp"
-#include "ResourceManager.hpp"
 #include "GraphicsAPI.hpp"
 
 struct Renderer;
@@ -59,8 +58,8 @@ struct CPUMesh
 	void calculateSmoothNormals();
 	void merge(const CPUMesh& source);
 	void render(Renderer& renderer) const;
-	void load(ResourceManager& resourceManager, Name name);
-	void saveMeshFile(const ResourceManager& resourceManager);
+	void load(Name name);
+	void saveMeshFile();
 	void meshFromHeightMap(Array2D<Float>& heightMap, UInt size);
 
 private:

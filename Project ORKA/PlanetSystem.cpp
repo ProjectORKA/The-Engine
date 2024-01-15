@@ -18,9 +18,9 @@ void PlanetSystem::count() const
 	quadtreeSystem.count();
 }
 
-void PlanetSystem::create(ResourceManager& resourceManager)
+void PlanetSystem::create()
 {
-	terrainSystem.create(resourceManager);
+	terrainSystem.create();
 
 	quadtreeSystem.create(terrainSystem);
 	octreeSystem.create(quadtreeSystem);

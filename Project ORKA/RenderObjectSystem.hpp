@@ -43,7 +43,7 @@ struct RenderObjectSystem
 	void          create(Renderer& renderer);
 	Index         addRenderObject(const RenderObject& renderObject);
 	void          addRenderObject(const RenderObjectNames& renderobject);
-	void          render(ResourceManager& resourceManager, const Name& name);
-	void          select(ResourceManager& resourceManager, const Name& name);
+	void          render(const Name& name);
+	void          select(const Name& name);
 	void          addRenderObject(const Name& name, const Name& meshName, const Name& textureName, const Name& shaderName);
 };

@@ -3,7 +3,7 @@
 
 void sleep()
 {
-	std::this_thread::sleep_for(std::chrono::nanoseconds(1));
+	std::this_thread::sleep_for(std::chrono::milliseconds(1));
 }
 
 TimePoint now()
@@ -30,7 +30,7 @@ void Timer::stop()
 {
 	stopTP        = now();
 	deltaDuration = stopTP - startTP;
-	delta         = deltaDuration.count();
+	delta         = static_cast<Float>(deltaDuration.count());
 	logDebug("Process took (" + toString(delta) + ") seconds.");
 }
 
@@ -43,8 +43,8 @@ void Time::update()
 	{
 		deltaDuration = currentTime - lastTime;
 		totalDuration += deltaDuration;
-		delta = deltaDuration.count();
-		total = totalDuration.count();
+		delta = static_cast<Float>(deltaDuration.count());
+		total = static_cast<Float>(totalDuration.count());
 	}
 	else deltaDuration = std::chrono::seconds::zero();
 }
@@ -54,7 +54,7 @@ void Timer::start()
 	startTP = now();
 }
 
-void Time::unpause()
+void Time::unPause()
 {
 	paused = false;
 }

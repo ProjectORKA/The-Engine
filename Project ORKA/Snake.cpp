@@ -1,17 +1,9 @@
 #include "Snake.hpp"
 #include "Random.hpp"
 
-void Snake::run()
-{
-	resourceManager.create();
-	ui.create();
-	ui.window("ORKA Sandbox", Area(settings.defaultWindowWidth, settings.defaultWindowHeight), true, true, WindowState::Windowed, renderer, resourceManager);
-	ui.run();
-}
-
 void SnakeSnake::addSegment()
 {
-	bodySegments.push_back(Vec2(0, 0));
+	bodySegments.emplace_back(0, 0);
 }
 
 void SnakeFood::update()
@@ -67,43 +59,43 @@ void SnakeSnake::update(SnakeFood& snakeFood, const Float deltaTime)
 	}
 }
 
-void SnakeSnake::render(ResourceManager& resourceManager, Window& window)
+void SnakeSnake::render(Window& window)
 {
 	window.renderer.fill(Color(snakeColor));
-	window.renderer.useShader(resourceManager, "color");
+	window.renderer.useShader("color");
 	window.renderer.uniforms().setMMatrix(matrixFromPositionAndSize(headPosition, segmentRadius));
-	window.renderer.renderMesh(resourceManager, "circle");
+	window.renderer.renderMesh("circle");
 	for(const auto& bodySegment : bodySegments)
 	{
 		window.renderer.uniforms().setMMatrix(matrixFromPositionAndSize(bodySegment, segmentRadius));
-		window.renderer.renderMesh(resourceManager, "circle");
+		window.renderer.renderMesh("circle");
 	}
 }
 
-void SnakeRenderer::create(ResourceManager& resourceManager, Window& window) {}
+void SnakeRenderer::create(Window& window) {}
 
 void SnakeRenderer::inputEvent(Window& window, const InputEvent input)
 {
 	snake.inputEvent(window, input);
 }
 
-void SnakeFood::render(ResourceManager& resourceManager, Window& window)
+void SnakeFood::render(Window& window)
 {
 	window.renderer.fill(Color(foodColor));
-	window.renderer.useShader(resourceManager, "color");
+	window.renderer.useShader("color");
 	window.renderer.uniforms().setMMatrix(matrixFromPositionAndSize(foodPosition, 0.03f));
-	window.renderer.renderMesh(resourceManager, "circle");
+	window.renderer.renderMesh("circle");
 }
 
-void SnakeRenderer::render(ResourceManager& resourceManager, Window& window, TiledRectangle area)
+void SnakeRenderer::render(Window& window, TiledRectangle area)
 {
 	Renderer& renderer = window.renderer;
 
 	renderer.clearBackground(Color(0.0f, 0.2f, 0.2f, 1.0f));
 	renderer.normalizedSpaceWithAspectRatio(16.0f / 9.0f);
 
-	snake.render(resourceManager, window);
-	snakefood.render(resourceManager, window);
+	snake.render(window);
+	snakefood.render(window);
 }
 
-void SnakeRenderer::renderInteractive(ResourceManager& resourceManager, Window& window, TiledRectangle area) {}
+void SnakeRenderer::renderInteractive(Window& window, TiledRectangle area) {}

@@ -3,7 +3,10 @@
 #include "Renderer.hpp"
 #include "WindowAPI.hpp" // needs to be below the rendering stuff, e.g. "Renderer.hpp"
 #include "UIElement.hpp"
+#include "UIContainer.hpp"
 #include "LifeTimeGuard.hpp"
+
+using WindowHandle = ULL;
 
 enum class WindowState : Byte
 {
@@ -19,19 +22,19 @@ enum class WindowDecoration : Byte
 	Undecorated = 0,
 };
 
-struct Window : LifetimeGuard
+struct Window final : LifetimeGuard
 {
 	Thread       thread;
 	Renderer     renderer;
 	MouseState   mouseState;
 	Vector<Path> droppedFilePaths;
-	UShort       id               = 0;
-	Bool         isVisible        = true;
-	Bool         decorated        = true;
-	Bool         keepRunning      = true;
-	Bool         capturing        = false;
-	Bool         profiling        = false;
-	UIElement*   content          = nullptr;
+	UShort       id          = 0;
+	Bool         isVisible   = true;
+	Bool         decorated   = true;
+	Bool         keepRunning = true;
+	Bool         capturing   = false;
+	Bool         profiling   = false;
+	UIContainer  content;
 	APIWindow    apiWindow        = nullptr;
 	Area         windowedModeSize = Area(1);
 	IVec2        windowPosition   = IVec2(0);
@@ -64,13 +67,15 @@ struct Window : LifetimeGuard
 	void setCallbacks() const;
 	void updatePosition() const;
 	void setVisible(Bool visible);
+	void insert(UIElement& element);
 	void setPosition(IVec2 position);
 	void initializeGraphicsApi() const;
 	void setIcon(const Path& path) const;
 	void resize(Int width, Int height) const;
 	void createApiWindow(const String& title, Area size);
-	void create(const String& title, Area size, Bool decorated, Bool visible, WindowState state, ResourceManager& resourceManager);
+	void create(const String& title, Area size, Bool decorated, Bool visible, WindowState state);
 
+	[[nodiscard]] Bool hasContent() const;
 	[[nodiscard]] Bool shouldClose() const;
 	[[nodiscard]] Bool isCapturing() const;
 	[[nodiscard]] Bool isFullScreen() const;
@@ -78,11 +83,9 @@ struct Window : LifetimeGuard
 	[[nodiscard]] Area getContentSize() const;
 	[[nodiscard]] Bool isKeyPressed(Int key) const;
 	[[nodiscard]] Bool pressed(InputId input) const;
-
-	Window& insert(UIElement& element);
 };
 
-void windowThread(ResourceManager& resourceManager, Window& window);
+void windowThread(Window& window);
 
 // window callbacks
 void whenWindowCloseRequest(APIWindow apiWindow);

@@ -1,19 +1,6 @@
 #include "Organizer.hpp"
 #include "Random.hpp"
 
-void Organizer::run()
-{
-	resourceManager.create();
-
-	ui.create();
-
-	intro.init(renderer);
-
-	ui.window("Organizer", Area(1920, 1080), true, true, WindowState::Windowed, intro, resourceManager);
-
-	ui.run();
-}
-
 void OrganizerRenderer::destroy(Window& window) {}
 
 void OrganizerRenderer::connect(GameSimulation& simulation) {}
@@ -37,7 +24,7 @@ void OrganizerRenderer::inputEvent(Window& window, const InputEvent input)
 	player.inputEvent(window, input);
 }
 
-void OrganizerRenderer::create(ResourceManager& resourceManager, Window& window)
+void OrganizerRenderer::create(Window& window)
 {
 	// setup renderer
 	player.camera.setLocation(Vec3(0, 0, 10));
@@ -86,14 +73,14 @@ void OrganizerRenderer::create(ResourceManager& resourceManager, Window& window)
 	}
 }
 
-void OrganizerRenderer::renderConnections(ResourceManager& resourceManager, Renderer& r) const
+void OrganizerRenderer::renderConnections(Renderer& r) const
 {
-	r.useShader(resourceManager, "color");
+	r.useShader("color");
 	r.fill(Color(0.5, 0.5, 0.5, 1));
 	r.lines(connections);
 }
 
-void OrganizerRenderer::render(ResourceManager& resourceManager, Window& window, TiledRectangle area)
+void OrganizerRenderer::render(Window& window, TiledRectangle area)
 {
 	Renderer& r = window.renderer;
 
@@ -103,17 +90,17 @@ void OrganizerRenderer::render(ResourceManager& resourceManager, Window& window,
 	r.setDepthTest(true);
 
 	// render scene
-	player.render(resourceManager, window); // sets the location, rotation and projection
+	player.render(window); // sets the location, rotation and projection
 
 	for(const User& user : users)
 	{
-		r.useShader(resourceManager, "normals"); // sets the color / material for the rendered objects
+		r.useShader("normals"); // sets the color / material for the rendered objects
 		r.uniforms().setMMatrix(matrixFromPosition(user.position));
-		r.renderMesh(resourceManager, "organizer user");
+		r.renderMesh("organizer user");
 	}
 
 	// render connections
-	renderConnections(resourceManager, r);
+	renderConnections(r);
 
 	// render labels
 	const Matrix vMatrix = r.uniforms().getVMatrix();
@@ -133,7 +120,7 @@ void OrganizerRenderer::render(ResourceManager& resourceManager, Window& window,
 		pos /= pos.z;
 		pos.y -= 10;
 		r.uniforms().setMMatrix(matrixFromPosition(Vec3(pos)));
-		r.textRenderSystem.render(resourceManager, r, user.firstName + " " + user.lastName);
+		r.textRenderSystem.render(r, user.firstName + " " + user.lastName);
 	}
 
 	// text rendering
@@ -143,10 +130,10 @@ void OrganizerRenderer::render(ResourceManager& resourceManager, Window& window,
 	r.textRenderSystem.alignText(Alignment::left, Alignment::top);
 	r.textRenderSystem.setSize(16.0f);
 	r.textRenderSystem.setLetterSpacing(0.6f);
-	r.textRenderSystem.render(resourceManager, r, "W A S D Q E to move"), Vec2(50, 250);
-	r.textRenderSystem.render(resourceManager, r, "F for wire frame mode"), Vec2(50, 200);
-	r.textRenderSystem.render(resourceManager, r, "Scroll to change speed"), Vec2(50, 150);
-	r.textRenderSystem.render(resourceManager, r, "FPS: " + toString(static_cast<Int>(1.0f / r.time.delta))), Vec2(50);
+	r.textRenderSystem.render(r, "W A S D Q E to move"), Vec2(50, 250);
+	r.textRenderSystem.render(r, "F for wire frame mode"), Vec2(50, 200);
+	r.textRenderSystem.render(r, "Scroll to change speed"), Vec2(50, 150);
+	r.textRenderSystem.render(r, "FPS: " + toString(static_cast<Int>(1.0f / r.time.delta))), Vec2(50);
 	// renders current frame rate to the screen
 }
 
@@ -159,7 +146,7 @@ void OrganizerRenderer::addCompany(const Index guid, const String& companyName, 
 	companies.push_back(company);
 }
 
-void OrganizerRenderer::renderInteractive(ResourceManager& resourceManager, Window& window, TiledRectangle area) {}
+void OrganizerRenderer::renderInteractive(Window& window, TiledRectangle area) {}
 
 void OrganizerRenderer::addUser(const Index userGuid, const Index companyGuid, const String& firstName, const String& lastName)
 {

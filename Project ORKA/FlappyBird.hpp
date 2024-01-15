@@ -22,12 +22,12 @@ struct FlappyBirdPipes
 	void     randomize();
 	void     update(Float delta);
 	explicit FlappyBirdPipes(Int id);
-	void     render(ResourceManager& rm, Renderer& r) const;
+	void     render(Renderer& r) const;
 };
 
 struct FlappyBirdBird
 {
-	Transform transform;
+	Transform transform   = Vec3(0.0, 0.5f, 0.0);
 	Bool      isColliding = false;
 	Float     size        = 0.05f;
 	Bool      alive       = true;
@@ -39,7 +39,7 @@ struct FlappyBirdBird
 	void jump();
 	void reset();
 	void inputEvent(InputEvent input);
-	void render(ResourceManager& rm, Renderer& r) const;
+	void render(Renderer& r) const;
 	void update(const Vector<FlappyBirdPipes>& pipeColumns, Float delta);
 	void updateAI(const Vector<FlappyBirdPipes>& pipeColumns, Float delta);
 
@@ -61,19 +61,24 @@ struct FlappyBirdRenderer final : GameRenderer
 	InputEvent toggleWireFrame = InputEvent(InputType::KeyBoard, F, true);
 
 	void update(Window& window) override;
+	void create(Window& window) override;
 	void destroy(Window& window) override;
 	void connect(GameSimulation& simulation) override;
+	void render(Window& window, TiledRectangle area) override;
 	void inputEvent(Window& window, InputEvent input) override;
-	void create(ResourceManager& resourceManager, Window& window) override;
-	void render(ResourceManager& rm, Window& window, TiledRectangle area) override;
-	void renderInteractive(ResourceManager& resourceManager, Window& window, TiledRectangle area) override;
+	void renderInteractive(Window& window, TiledRectangle area) override;
 };
 
 struct FlappyBird
 {
 	UserInterface      ui;
-	ResourceManager    resourceManager;
-	FlappyBirdRenderer flappyBirdRenderer;
+	Window             window;
+	FlappyBirdRenderer renderer;
 
-	void run();
+	void run()
+	{
+		ui.create();
+		ui.window("ORKA Flappy Bird", Area(settings.defaultWindowWidth, settings.defaultWindowHeight), true, true, WindowState::Windowed).insert(renderer);
+		ui.run();
+	}
 };

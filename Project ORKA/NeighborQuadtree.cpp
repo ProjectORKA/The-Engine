@@ -132,19 +132,19 @@ void NeighborQuadtreeNode::removeSelfFromNeighbors() const
 	if(nl) nl->nr = nullptr;
 }
 
-void NeighborQuadtree::render(ResourceManager& resourceManager, Renderer& renderer) const
+void NeighborQuadtree::render(Renderer& renderer) const
 {
-	root.render(resourceManager, renderer);
+	root.render(renderer);
 }
 
-void NeighborQuadtreeNode::render(ResourceManager& resourceManager, Renderer& renderer) const
+void NeighborQuadtreeNode::render(Renderer& renderer) const
 {
 	if(subdivided)
 	{
-		c00->render(resourceManager, renderer);
-		c01->render(resourceManager, renderer);
-		c10->render(resourceManager, renderer);
-		c11->render(resourceManager, renderer);
+		c00->render(renderer);
+		c01->render(renderer);
+		c10->render(renderer);
+		c11->render(renderer);
 	}
 	else
 	{
@@ -153,16 +153,16 @@ void NeighborQuadtreeNode::render(ResourceManager& resourceManager, Renderer& re
 		t.setSize(Vec3(pow(2.0f, -toFloat(level) + 1.0f)));
 		t.render(renderer);
 		renderer.fill(color);
-		renderer.useShader(resourceManager, "color");
-		renderer.renderMesh(resourceManager, "plane");
+		renderer.useShader("color");
+		renderer.renderMesh("plane");
 
 		// render connections
 		if(level > 0)
 		{
-			renderer.arrow(resourceManager, position + Vec3(0), nrr().position + Vec3(0));
-			renderer.arrow(resourceManager, position + Vec3(0), nlr().position + Vec3(0));
-			renderer.arrow(resourceManager, position + Vec3(0), nfr().position + Vec3(0));
-			renderer.arrow(resourceManager, position + Vec3(0), nbr().position + Vec3(0));
+			renderer.arrow(position + Vec3(0), nrr().position + Vec3(0));
+			renderer.arrow(position + Vec3(0), nlr().position + Vec3(0));
+			renderer.arrow(position + Vec3(0), nfr().position + Vec3(0));
+			renderer.arrow(position + Vec3(0), nbr().position + Vec3(0));
 		}
 	}
 }

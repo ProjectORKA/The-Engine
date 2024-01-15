@@ -1,9 +1,7 @@
 #pragma once
 
-#include "Debug.hpp"
 #include "TiledMath.hpp"
 #include "KeyMap.hpp"
-#include "GLFW/glfw3.h"
 
 using APIWindow = GLFWwindow*;
 using APIMonitor = GLFWmonitor*;

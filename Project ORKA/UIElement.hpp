@@ -12,10 +12,10 @@ struct Window;
 
 struct Constraints
 {
-	U16 paddingX = -1;
-	U16 paddingY = -1;
-	U16 width    = -1;
-	U16 height   = -1;
+	Int paddingX = 0;
+	Int paddingY = 0;
+	Int width    = 0;
+	Int height   = 0;
 
 	void update(TiledRectangle& area) const;
 };
@@ -26,11 +26,11 @@ struct UIElement
 	Index       id = nextInteractiveElementId++;
 
 	virtual      ~UIElement();
-	UIElement&   padding(U16 width);
+	UIElement&   padding(Int width);
 	virtual void update(Window& window) = 0;
+	virtual void create(Window& window) = 0;
 	virtual void destroy(Window& window) = 0;
+	virtual void render(Window& window, TiledRectangle area) = 0;
 	virtual void inputEvent(Window& window, InputEvent input) = 0;
-	virtual void create(ResourceManager& resourceManager, Window& window) = 0;
-	virtual void render(ResourceManager& resourceManager, Window& window, TiledRectangle area) = 0;
-	virtual void renderInteractive(ResourceManager& resourceManager, Window& window, TiledRectangle area) = 0;
+	virtual void renderInteractive(Window& window, TiledRectangle area) = 0;
 };

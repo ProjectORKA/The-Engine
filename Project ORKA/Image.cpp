@@ -71,7 +71,7 @@ void Image::load(const Path& path)
 		return;
 	}
 
-	if(fileType == ".jpg" || fileType == ".jpeg")
+	if(fileType == ".jpg" || fileType == ".jpeg" || fileType == ".jfif")
 	{
 		loadOther(path, true);
 		return;
@@ -161,7 +161,7 @@ void Image::loadWebP(const Path& path)
 	WebPDecoderConfig config;
 	if(WebPInitDecoderConfig(&config) != 1)
 	{
-		logError("Could not initialize WebP Decoder Config!");
+		logWarning("Could not initialize WebP Decoder Config!\n File: (" + path.string() + ")");
 		loaded = false;
 		delete[] fileData;
 		return;
@@ -174,7 +174,7 @@ void Image::loadWebP(const Path& path)
 	// get the WebP info
 	if(WebPGetFeatures(fileData, fileSize, &config.input) != VP8_STATUS_OK)
 	{
-		logError("Could not get WebP Information!");
+		logWarning("Could not get WebP Information!\n File: (" + path.string() + ")");
 		loaded = false;
 		return;
 	}

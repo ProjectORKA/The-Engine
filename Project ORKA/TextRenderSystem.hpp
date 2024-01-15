@@ -24,12 +24,12 @@ struct TextRenderSystem
 	void setSize(Float fontSize);
 	void alignText(Alignment x, Alignment y);
 	void setLetterSpacing(Float letterSpacing);
-	void create(ResourceManager& resourceManager, Renderer& renderer);
+	void create(Renderer& renderer);
 
-	void render(ResourceManager& resourceManager, Renderer& renderer, const String& text);
-	void render(ResourceManager& resourceManager, Renderer& renderer, const String& text, Vec2 position);
-	void render(ResourceManager& resourceManager, Renderer& renderer, const String& text, Float fontSize, Float letterSpacing);
-	void render(ResourceManager& resourceManager, Renderer& renderer, const String& text, Vec2 position, Float fontSize, Float letterSpacing);
+	void render(Renderer& renderer, const String& text);
+	void render(Renderer& renderer, const String& text, Vec2 position);
+	void render(Renderer& renderer, const String& text, Float fontSize, Float letterSpacing);
+	void render(Renderer& renderer, const String& text, Vec2 position, Float fontSize, Float letterSpacing);
 private:
-	void renderAdvanced(ResourceManager& resourceManager, Renderer& renderer, const String& text, Vec2 position, Alignment x, Alignment y, Float fontSize, Float letterSpacing);
+	void renderAdvanced(Renderer& renderer, const String& text, Vec2 position, Alignment x, Alignment y, Float fontSize, Float letterSpacing);
 };

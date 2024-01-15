@@ -12,7 +12,7 @@ void Player::update(Window& window)
 	constexpr Float desiredSpeed   = 1.0f;
 
 	// process input
-	if(window.capturing) camera.rotate(window.mouseDelta * MouseMovement(mouseSensitivity));
+	camera.rotate(window.mouseDelta * MouseMovement(mouseSensitivity));
 	if(window.pressed(forward)) movementVector += camera.getForwardVector();
 	if(window.pressed(backward)) movementVector -= camera.getForwardVector();
 	if(window.pressed(right)) movementVector += camera.getRightVector();
@@ -67,7 +67,7 @@ void DebugPlayer::inputEvent(Window& window, const InputEvent input)
 	if(input == slower) speedExponent--;
 }
 
-void Player::render(ResourceManager& resourceManager, Window& window)
+void Player::render(Window& window)
 {
 	camera.render(window.renderer); // set up matrices to view the world from cameras perspective
 }

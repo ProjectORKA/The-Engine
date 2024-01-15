@@ -1,38 +1,73 @@
 #pragma once
 
 #include "Basics.hpp"
+#include "Debug.hpp"
+#include "JobQueue.hpp"
 
-class JobSystem;
+// CPUs can not only do things one after the other (in serial), but also multiple things at the same time (parallel)
+// the thing that allows us to run things in parallel are threads
+// one way to manage work across those threads is a "job system"
+// a jobsystem manages "work" done by "workers" such that every worker is always busy
+// this means there is a list of work that every worker checks continuously
 
-void workerThread(JobSystem& jobSystem);
+// [TODO] try lock free / wait free solutions
 
-class JobSystem
+struct JobSystem;
+
+extern JobSystem jobSystem;
+
+struct JobSystem
 {
+private:
+	//List<Job>      jobQueue;
+	JobSystemQueue jobQueue;
+
+	//Mutex          mutex;
+	Vector<Thread> workers;
+	Int threadID = 1;
+	Bool           running        = false;	// if disabled prevents workers from pulling new work
+	Bool           canEnqueueNext = false;	// if disabled prevents work from creating subsequent work
+	Bool           canEnqueueNew  = false;	// if disabled prevents new work being added
+
+	Job  next(Int threadID);
+	void startWithThreads(UInt numThreads);
+
 public:
-	// start job system
-	void start();
-	void start(UInt numThreads);
-	// stop job system
-	void waitStop();
-	void forceStop();
+	void              start();
+	void              letStop();
+	void              waitStop();
+	void              forceStop();
+	[[nodiscard]] ULL workCount() const;
+	[[nodiscard]] ULL numThreads() const;
 
-	void wait() const;
+	static void workerThread(Int threadID);
 
-	// add work
 	template <typename Func, typename... Args> void enqueue(Func&& function, Args&&... args)
 	{
-		LockGuard                   lock(mutex);
-		const std::function<void()> job = std::bind(std::forward<Func>(function), std::forward<Args>(args)...);
-		jobQueue.push_back(job);
+		// adds a new job to be done
+
+		if(debugJobSystemIsEnabled) logDebug("Add new job to queue!");
+		if(canEnqueueNew)
+		{
+			//LockGuard lock(mutex);
+			//const Job job = ;
+			jobQueue.enqueue(std::bind(std::forward<Func>(function), std::forward<Args>(args)...));
+		}
+		else if(debugJobSystemIsEnabled) logWarning("Could not enqueue new job!");
 	}
 
-	// extra stuff
-	Function<void()>   next();
-	[[nodiscard]] Bool isRunning() const;
+	template <typename Func, typename... Args> void enqueueNext(Func&& function, Args&&... args)
+	{
+		// only used by active jobs that need other jobs to finish aswell
+		// WARNING: do not create infinite loops using this!!!
 
-private:
-	Mutex                  mutex;
-	Bool                   running = true;
-	Vector<Thread>         workers;
-	List<Function<void()>> jobQueue;
+		if(debugJobSystemIsEnabled) logDebug("Add subsequent job!");
+		if(canEnqueueNext)
+		{
+			//LockGuard lock(mutex);
+			//const Job job = std::bind(std::forward<Func>(function), std::forward<Args>(args)...);
+			jobQueue.enqueue(std::bind(std::forward<Func>(function), std::forward<Args>(args)...));
+		}
+		else if(debugJobSystemIsEnabled) logWarning("Could not enqueue next job!");
+	}
 };

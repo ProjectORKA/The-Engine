@@ -32,6 +32,6 @@ struct TiledRectangle
 	void operator=(const Area& other);
 
 	[[nodiscard]] IVec2          center() const;
-	[[nodiscard]] Bool           positionInsideArea(IVec2 position) const;
 	[[nodiscard]] TiledRectangle operator*(Float value) const;
+	[[nodiscard]] Bool           positionInsideArea(IVec2 position) const;
 };

@@ -59,4 +59,4 @@ struct NeighborOctree
 	void               update(Vec3 location);
 };
 
-void renderNeighborOctreeNode(ResourceManager& resourceManager, const NeighborOctreeNode& node, Renderer& renderer);
+void renderNeighborOctreeNode(const NeighborOctreeNode& node, Renderer& renderer);

@@ -1,14 +1,6 @@
 #include "FlappyBird.hpp"
 #include "Random.hpp"
 
-void FlappyBird::run()
-{
-	resourceManager.create();
-	ui.create();
-	ui.window("ORKA Flappy Bird", Area(settings.defaultWindowWidth, settings.defaultWindowHeight), true, true, WindowState::Windowed, flappyBirdRenderer, resourceManager);
-	ui.run();
-}
-
 void FlappyBirdBird::jump()
 {
 	if(heldInPlace) heldInPlace = false;
@@ -81,22 +73,22 @@ void FlappyBirdBird::inputEvent(const InputEvent input)
 	if(input == jumpButton) jump();
 }
 
-void FlappyBirdBird::render(ResourceManager& rm, Renderer& r) const
+void FlappyBirdBird::render(Renderer& r) const
 {
 	if(alive) r.fill(Color(1));
 	else r.fill(Color(1, 0, 0, 1));
 
 	transform.render(r);
-	r.renderMesh(rm, "flappyBirdBird");
+	r.renderMesh("flappyBirdBird");
 }
 
-void FlappyBirdPipes::render(ResourceManager& rm, Renderer& r) const
+void FlappyBirdPipes::render(Renderer& r) const
 {
 	transform1.render(r);
-	r.renderMesh(rm, "flappyBirdPipe");
+	r.renderMesh("flappyBirdPipe");
 
 	transform2.render(r);
-	r.renderMesh(rm, "flappyBirdPipe");
+	r.renderMesh("flappyBirdPipe");
 }
 
 void FlappyBirdRenderer::inputEvent(Window& window, const InputEvent input)
@@ -107,7 +99,7 @@ void FlappyBirdRenderer::inputEvent(Window& window, const InputEvent input)
 	for(auto& bird : birds) bird.inputEvent(input);
 }
 
-void FlappyBirdRenderer::create(ResourceManager& resourceManager, Window& window)
+void FlappyBirdRenderer::create(Window& window)
 {
 	camera.setLocation(Vec3(0, 0, 5));
 	camera.setRotation(DVec3(PI, 0, 0));
@@ -118,7 +110,7 @@ void FlappyBirdRenderer::create(ResourceManager& resourceManager, Window& window
 	for(Int i = 0; i < flappyBirdCount; i++)
 	{
 		birds.emplace_back();
-		birds.back().transform.setY(-1.0f + static_cast<Float>(i) / static_cast<Float>(flappyBirdCount) * 2.0f);
+		birds.back().transform.setY(0);
 		birds.back().transform.setX(-1.0f + static_cast<Float>(i) / static_cast<Float>(flappyBirdCount) * 2.0f);
 	}
 
@@ -129,7 +121,7 @@ void FlappyBirdRenderer::create(ResourceManager& resourceManager, Window& window
 	for(Int i = 0; static_cast<Float>(i) < 10.0f / p.spacing; i++) pipeColumns.push_back(FlappyBirdPipes(3 + i));
 }
 
-void FlappyBirdRenderer::render(ResourceManager& rm, Window& window, TiledRectangle area)
+void FlappyBirdRenderer::render(Window& window, TiledRectangle area)
 {
 	Renderer& r = window.renderer;
 
@@ -142,12 +134,12 @@ void FlappyBirdRenderer::render(ResourceManager& rm, Window& window, TiledRectan
 	r.setCulling(true);
 	r.setWireframeMode();
 
-	r.useShader(rm, "flappyBird");
+	r.useShader("flappyBird");
 
-	for(auto& bird : birds) bird.render(rm, r);
+	for(auto& bird : birds) bird.render(r);
 	r.fill(Color(1));
 
-	for(auto& pipe : pipeColumns) pipe.render(rm, r);
+	for(auto& pipe : pipeColumns) pipe.render(r);
 
 	Transform t;
 	t.setSize(Vec3(0.1f, 1, 0.1f));
@@ -155,7 +147,7 @@ void FlappyBirdRenderer::render(ResourceManager& rm, Window& window, TiledRectan
 	t.setRotation(-90, 90, 0);
 	t.setLocation(Vec3(0, -1, 0));
 	t.render(r);
-	r.renderMesh(rm, "flappyBirdGround");
+	r.renderMesh("flappyBirdGround");
 }
 
 void FlappyBirdBird::update(const Vector<FlappyBirdPipes>& pipeColumns, const Float delta)
@@ -230,4 +222,4 @@ FlappyBirdPipes FlappyBirdBird::getClosestPipeColumn(const Vector<FlappyBirdPipe
 	return closest;
 }
 
-void FlappyBirdRenderer::renderInteractive(ResourceManager& resourceManager, Window& window, TiledRectangle area) {}
+void FlappyBirdRenderer::renderInteractive(Window& window, TiledRectangle area) {}

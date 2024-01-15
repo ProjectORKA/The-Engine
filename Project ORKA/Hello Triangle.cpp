@@ -1,13 +1,5 @@
 #include "Hello Triangle.hpp"
 
-void HelloTriangle::run()
-{
-	resourceManager.create();
-	ui.create();
-	ui.window("Hello Triangle", Area(1920, 1080), true, true, WindowState::Windowed, renderer, resourceManager);
-	ui.run();
-}
-
 void HelloTriangleRenderer::update(Window& window) {}
 
 void HelloTriangleRenderer::destroy(Window& window)
@@ -22,7 +14,7 @@ void HelloTriangleRenderer::connect(GameSimulation& simulation) {}
 
 void HelloTriangleRenderer::inputEvent(Window& window, InputEvent input) {}
 
-void HelloTriangleRenderer::create(ResourceManager& rm, Window& window)
+void HelloTriangleRenderer::create(Window& window)
 {
 	const String vertexShaderSource   = window.renderer.uniforms().getUniformShaderCode() + R"(
 out vec3 vertColor;
@@ -38,7 +30,7 @@ out vec4 color; void main()
 	color = vec4(vertColor, 1.0f);
 }
 )";
-	glfwMakeContextCurrent(window.apiWindow);
+	glfwMakeContextCurrent(window.apiWindow); //[TODO] remove this
 
 	window.renderer.shaderSystem.add("HelloTriangle", vertexShaderSource, fragmentShaderSource);
 
@@ -63,7 +55,7 @@ out vec4 color; void main()
 	mainFramebuffer.checkComplete();
 }
 
-void HelloTriangleRenderer::render(ResourceManager& rm, Window& window, const TiledRectangle area)
+void HelloTriangleRenderer::render(Window& window, const TiledRectangle area)
 {
 	Renderer& r = window.renderer;
 
@@ -73,10 +65,10 @@ void HelloTriangleRenderer::render(ResourceManager& rm, Window& window, const Ti
 
 	r.clearBackground(Color(0, 0, 0, 1));
 
-	r.useShader(rm, "HelloTriangle");
+	r.useShader("HelloTriangle");
 
 	vao.bind();
 	vao.render(PrimitiveMode::Triangles, 3, nullptr);
 }
 
-void HelloTriangleRenderer::renderInteractive(ResourceManager& resourceManager, Window& window, TiledRectangle area) {}
+void HelloTriangleRenderer::renderInteractive(Window& window, TiledRectangle area) {}

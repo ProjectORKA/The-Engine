@@ -9,14 +9,14 @@ void terrainDistributionFunction(LDouble& height)
 	height = 4 * pow(height - 0.5, 3) + 0.5;
 }
 
-void TerrainSystem::create(ResourceManager& resourceManager)
+void TerrainSystem::create()
 {
 	for(Int i = 0; i < MAX_CHUNK_LEVEL; i++)
 	{
 		CPUTexture h;
 
-		if(i == 0) h.load(resourceManager, "blah", Filter::Linear, Filter::Linear, Wrapping::Repeat);
-		else h.load(resourceManager, "terrainNoise", Filter::Linear, Filter::Linear, Wrapping::Repeat);
+		if(i == 0) h.load(Name("blah"), Filter::Linear, Filter::Linear, Wrapping::Repeat);
+		else h.load(Name("terrainNoise"), Filter::Linear, Filter::Linear, Wrapping::Repeat);
 
 		for(UInt x = 0; x < TERRAIN_TEXTURE_SIZE; x++)
 		{

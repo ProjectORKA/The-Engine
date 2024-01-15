@@ -93,28 +93,28 @@ void MeshSystem::render(Uniforms& uniforms, const Index meshId)
 	currentMesh().render(uniforms);
 }
 
-void MeshSystem::use(ResourceManager& resourceManager, const Name& name)
+void MeshSystem::use(const Name& name)
 {
 	Index id;
 	if(meshNames.find(name, id)) currentMeshId = id;
 	else
 	{
 		CPUMesh mesh;
-		mesh.load(resourceManager, name);
+		mesh.load(name);
 		addMesh(mesh);
 		if(meshNames.find(name, id)) currentMeshId = id;
 		else logError("Mesh could not be loaded!");
 	}
 }
 
-void MeshSystem::render(ResourceManager& resourceManager, Uniforms& uniforms, const Name& meshName)
+void MeshSystem::render(Uniforms& uniforms, const Name& meshName)
 {
-	use(resourceManager, meshName);
+	use(meshName);
 	currentMesh().render(uniforms);
 }
 
-void MeshSystem::renderInstanced(ResourceManager& resourceManager, Uniforms& uniforms, const Name& meshName, const Vector<Matrix>& transforms)
+void MeshSystem::renderInstanced(Uniforms& uniforms, const Name& meshName, const Vector<Matrix>& transforms)
 {
-	use(resourceManager, meshName);
+	use(meshName);
 	currentMesh().renderInstances(uniforms, transforms);
 }

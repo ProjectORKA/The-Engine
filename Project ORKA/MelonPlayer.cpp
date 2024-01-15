@@ -64,7 +64,7 @@ void MelonPlayer::inputEvent(Window& window, const InputEvent input)
 	zoomFactor = clamp(zoomFactor, -3, 30);
 }
 
-void MelonPlayer::render(ResourceManager& resourceManager, Window& window)
+void MelonPlayer::render(Window& window)
 {
 	Renderer& renderer = window.renderer;
 
@@ -73,14 +73,14 @@ void MelonPlayer::render(ResourceManager& resourceManager, Window& window)
 	camera.render(renderer);
 
 	// render player
-	renderer.useShader(resourceManager, "MelonUberShader");
+	renderer.useShader("MelonUberShader");
 	renderer.uniforms().setMMatrix(matrixFromOrientation(orientation, location, 0.5) * rotate(Matrix(1), -2 * distanceInRadians, Vec3(1, 0, 0)));
 	renderer.uniforms().setCustomColor(Vec4(1));
-	renderer.renderMesh(resourceManager, "melonPlayerRolling");
+	renderer.renderMesh("melonPlayerRolling");
 
 	Vector<Line3D> lines;
 	for(Int i = 0; i < static_cast<Int>(trail.size()) - 1; i++) lines.push_back(Line3D(trail[i], trail[i + 1]));
 	renderer.lines(lines);
 
-	smoke.render(resourceManager, renderer);
+	smoke.render(renderer);
 }

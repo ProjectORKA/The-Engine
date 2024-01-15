@@ -33,5 +33,5 @@ struct MelonPlayer : Player
 	MelonPlayer();
 	void update(Window& window) override;
 	void inputEvent(Window& window, InputEvent input) override;
-	void render(ResourceManager& resourceManager, Window& window) override;
+	void render(Window& window) override;
 };

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Basics.hpp"
-#include "ResourceManager.hpp"
+
 
 struct MelonPlayer;
 struct Renderer;
@@ -17,7 +17,7 @@ struct MelonWorld
 	Vec4       rocks[ROCKGRIDSIZE][ROCKGRIDSIZE];
 
 	void update(const MelonPlayer& player);
-	void render(ResourceManager& resourceManager, Renderer& renderer);
+	void render(Renderer& renderer);
 	void generateScenery(Float& sceneryPersistencySize, const MelonPlayer& player, const Float& pathWidth);
 	void generatePaths(const Float& generationSize, const MelonPlayer& player, const Float& pathWidth, const Float& pathPersistencySize);
 };

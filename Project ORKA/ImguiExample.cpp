@@ -3,15 +3,17 @@
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
 
-void ImguiExample::run()
-{
-	resourceManager.create();
-	ui.create();
-	ui.window("Imgui Wrapper", Area(1920, 1080), true, true, WindowState::Windowed, renderer, resourceManager);
-	ui.run();
-}
-
 void ImguiWrapperRenderer::update(Window& window) {}
+
+void ImguiWrapperRenderer::create(Window& window)
+{
+	IMGUI_CHECKVERSION();
+	ImGui::CreateContext();
+	ImGuiIO& io = ImGui::GetIO();
+	ImGui::StyleColorsDark();
+	ImGui_ImplGlfw_InitForOpenGL(window.apiWindow, true);
+	ImGui_ImplOpenGL3_Init("#version 450");
+}
 
 void ImguiWrapperRenderer::destroy(Window& window)
 {
@@ -24,17 +26,7 @@ void ImguiWrapperRenderer::connect(GameSimulation& simulation) {}
 
 void ImguiWrapperRenderer::inputEvent(Window& window, InputEvent input) {}
 
-void ImguiWrapperRenderer::create(ResourceManager& resourceManager, Window& window)
-{
-	IMGUI_CHECKVERSION();
-	ImGui::CreateContext();
-	ImGuiIO& io = ImGui::GetIO();
-	ImGui::StyleColorsDark();
-	ImGui_ImplGlfw_InitForOpenGL(window.apiWindow, true);
-	ImGui_ImplOpenGL3_Init("#version 450");
-}
-
-void ImguiWrapperRenderer::render(ResourceManager& resourceManager, Window& window, TiledRectangle area)
+void ImguiWrapperRenderer::render(Window& window, TiledRectangle area)
 {
 	window.renderer.clearBackground(Color(0, 0, 0, 1));
 
@@ -48,4 +40,4 @@ void ImguiWrapperRenderer::render(ResourceManager& resourceManager, Window& wind
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }
 
-void ImguiWrapperRenderer::renderInteractive(ResourceManager& resourceManager, Window& window, TiledRectangle area) {}
+void ImguiWrapperRenderer::renderInteractive(Window& window, TiledRectangle area) {}

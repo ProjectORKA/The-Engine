@@ -5,7 +5,7 @@ Index nextInteractiveElementId = 0;
 
 UIElement::~UIElement() = default;
 
-UIElement& UIElement::padding(const U16 width)
+UIElement& UIElement::padding(const Int width)
 {
 	constraints.paddingX = width;
 	constraints.paddingY = width;

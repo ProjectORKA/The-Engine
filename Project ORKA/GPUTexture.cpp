@@ -73,13 +73,13 @@ void GPUTexture::load(const CPUTexture& cpuTexture)
 void GPUTexture::useTextureInSlot(const UInt textureSlot) const
 {
 	if(loaded) openglTexture.useTextureInSlot(textureSlot);
-	else logWarning("GPU texture not loaded!");
+	else openglTexture.emptyTextureFromSlot(textureSlot);
 }
 
-void GPUTexture::load(ResourceManager& resourceManager, const Name& name)
+void GPUTexture::load(const Name& name)
 {
 	CPUTexture t;
-	t.load(resourceManager, name, Filter::Linear, Filter::LinearMm, Wrapping::Repeat);
+	t.load(name, Filter::Linear, Filter::LinearMm, Wrapping::Repeat);
 	load(t);
 }
 

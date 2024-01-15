@@ -1,6 +1,5 @@
 #include "BitmapTextRenderSystem.hpp"
 #include "Renderer.hpp"
-#include "ResourceManager.hpp"
 
 void BitmapTextRenderSystem::destroy()
 {
@@ -8,15 +7,15 @@ void BitmapTextRenderSystem::destroy()
 	textTexture.unload();
 }
 
-void BitmapTextRenderSystem::create(ResourceManager& resourceManager, Renderer& renderer)
+void BitmapTextRenderSystem::create(Renderer& renderer)
 {
 	CPUTexture cpuTextTexture;
-	cpuTextTexture.load(resourceManager, "font", Filter::Nearest, Filter::Linear, Wrapping::Repeat);
+	cpuTextTexture.load(Name("font"), Filter::Nearest, Filter::Linear, Wrapping::Repeat);
 	textTexture.load(cpuTextTexture);
-	renderer.shaderSystem.add(resourceManager, "text");
+	renderer.shaderSystem.add("text");
 }
 
-void BitmapTextRenderSystem::render(ResourceManager& resourceManager, Renderer& renderer, const String& text, const Vec2 position, const Alignment x, const Alignment y, const Float absoluteSize, const Float letterSpacing)
+void BitmapTextRenderSystem::render(Renderer& renderer, const String& text, const Vec2 position, const Alignment x, const Alignment y, const Float absoluteSize, const Float letterSpacing)
 {
 	renderer.setDepthTest(false);
 	const UInt  length = static_cast<UInt>(text.size());
@@ -63,22 +62,22 @@ void BitmapTextRenderSystem::render(ResourceManager& resourceManager, Renderer& 
 		const Float uvRight = uvLeft + 1.0f / 16.0f;
 		const Float uvDown  = uvUp - 1.0f / 16.0f;
 
-		cpuText.positions.push_back(Vec3(position.x + size * left, position.y + size * up, 0));
-		cpuText.positions.push_back(Vec3(position.x + size * left, position.y + size * down, 0));
-		cpuText.positions.push_back(Vec3(position.x + size * right, position.y + size * up, 0));
-		cpuText.positions.push_back(Vec3(position.x + size * right, position.y + size * down, 0));
+		cpuText.positions.emplace_back(position.x + size * left, position.y + size * up, 0);
+		cpuText.positions.emplace_back(position.x + size * left, position.y + size * down, 0);
+		cpuText.positions.emplace_back(position.x + size * right, position.y + size * up, 0);
+		cpuText.positions.emplace_back(position.x + size * right, position.y + size * down, 0);
 
-		cpuText.textureCoordinates.push_back(Vec2(uvLeft, uvUp));
-		cpuText.textureCoordinates.push_back(Vec2(uvLeft, uvDown));
-		cpuText.textureCoordinates.push_back(Vec2(uvRight, uvUp));
-		cpuText.textureCoordinates.push_back(Vec2(uvRight, uvDown));
+		cpuText.textureCoordinates.emplace_back(uvLeft, uvUp);
+		cpuText.textureCoordinates.emplace_back(uvLeft, uvDown);
+		cpuText.textureCoordinates.emplace_back(uvRight, uvUp);
+		cpuText.textureCoordinates.emplace_back(uvRight, uvDown);
 
-		cpuText.indices.push_back(i * 4);
-		cpuText.indices.push_back(i * 4 + 1);
-		cpuText.indices.push_back(i * 4 + 2);
-		cpuText.indices.push_back(i * 4 + 1);
-		cpuText.indices.push_back(i * 4 + 3);
-		cpuText.indices.push_back(i * 4 + 2);
+		cpuText.indices.emplace_back(i * 4);
+		cpuText.indices.emplace_back(i * 4 + 1);
+		cpuText.indices.emplace_back(i * 4 + 2);
+		cpuText.indices.emplace_back(i * 4 + 1);
+		cpuText.indices.emplace_back(i * 4 + 3);
+		cpuText.indices.emplace_back(i * 4 + 2);
 	}
 
 	cpuText.checkIntegrity();
@@ -86,7 +85,7 @@ void BitmapTextRenderSystem::render(ResourceManager& resourceManager, Renderer& 
 	gpuText.unload();
 	gpuText.upload(cpuText);
 
-	renderer.useShader(resourceManager, "text");
+	renderer.useShader("text");
 	textTexture.useTextureInSlot(0);
 
 	renderer.setAlphaBlending(true);

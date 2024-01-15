@@ -44,11 +44,11 @@ void gameSimulationThread(GameSimulation& sim)
 	else logError("Simulation not initialized!");
 }
 
-void GameSimulation::start(ResourceManager& resourceManager)
+void GameSimulation::start()
 {
 	if(!loaded)
 	{
-		create(resourceManager);
+		create();
 		loaded = true;
 		logDebug("Starting game simulation thread!");
 		keepRunning = true;

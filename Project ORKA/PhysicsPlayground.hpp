@@ -17,7 +17,7 @@ struct PhysicsParticle
 	Vec2          position    = randomVec2Fast(-1, 1);
 	Vec2          velocity    = randomVec2Fast(-startingVelocity, startingVelocity);
 
-	void render(ResourceManager& resourceManager, Window& window, Vector<PhysicsParticle>& particles) const;
+	void render(Window& window, Vector<PhysicsParticle>& particles) const;
 };
 
 struct PhysicsPlaygroundConnection
@@ -49,7 +49,7 @@ struct PhysicsPlaygroundSimulation : GameSimulation
 	void connectNeighborOfNeighborToSelf();
 	void removeConnection(Index a, Index b);
 	void addOneWayConnection(Index aid, Index bid);
-	void create(ResourceManager& resourceManager) override;
+	void create() override;
 
 	[[nodiscard]] Float lengthOfEntireRun() const;
 	[[nodiscard]] Vec2  getPointOnSmoothCurve(Float value) const;
@@ -68,17 +68,25 @@ struct PhysicsPlayGroundRenderer : GameRenderer
 	void destroy(Window& window) override;
 	void connect(GameSimulation& simulation) override;
 	void inputEvent(Window& window, InputEvent input) override;
-	void create(ResourceManager& resourceManager, Window& window) override;
-	void render(ResourceManager& resourceManager, Window& window, TiledRectangle area) override;
-	void renderInteractive(ResourceManager& resourceManager, Window& window, TiledRectangle area) override;
+	void create(Window& window) override;
+	void render(Window& window, TiledRectangle area) override;
+	void renderInteractive(Window& window, TiledRectangle area) override;
 };
 
 struct PhysicsPlayground
 {
 	UserInterface               ui;
 	PhysicsPlaygroundSimulation sim;
+	Window                      window;
 	PhysicsPlayGroundRenderer   renderer;
-	ResourceManager             resourceManager;
 
-	void run();
+	void run()
+	{
+		ui.create();
+		sim.start();
+		renderer.connect(sim);
+		ui.window("Physics Playground", Area(1024, 1024), true, true, WindowState::Windowed, renderer);
+		ui.run();
+		sim.stop();
+	}
 };

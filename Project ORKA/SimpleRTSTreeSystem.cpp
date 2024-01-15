@@ -50,7 +50,7 @@
 //	treePosition[id] = newTreePosition;
 //}
 //
-//void SimpleRTSTreeSystemRenderer::render(ResourceManager& resourceManager, SimpleRTSTreeSystem& treeSystem, Renderer& renderer) {
+//void SimpleRTSTreeSystemRenderer::render(SimpleRTSTreeSystem& treeSystem, Renderer& renderer) {
 //	renderer.matrixSystem.matrixArray(treeSystem.treePosition, treeSystem.treeDirection, treeSystem.treeSize);
-//	renderer.renderMeshInstanced(resourceManager, "Tree");
+//	renderer.renderMeshInstanced("Tree");
 //}

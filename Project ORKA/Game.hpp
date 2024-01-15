@@ -10,8 +10,8 @@ struct GameSimulation
 	[[nodiscard]] Float getTickRate() const;
 	[[nodiscard]] Bool  getKeepRunning() const;
 	virtual void        update(Float delta) = 0;
-	virtual void        create(ResourceManager& resourceManager) = 0;
-	virtual void        start(ResourceManager& resourceManager) final;
+	virtual void        create() = 0;
+	virtual void        start() final;
 private:
 	Thread thread;
 	Float  tickRate    = 60;
@@ -21,7 +21,7 @@ private:
 
 void gameSimulationThread(GameSimulation& sim);
 
-struct GameRenderer : UIElement
+struct GameRenderer : UIContainer
 {
 	virtual void connect(GameSimulation& simulation) = 0;
 };

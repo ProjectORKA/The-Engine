@@ -27,7 +27,7 @@ struct Time
 	void reset();
 	void pause();
 	void update();
-	void unpause();
+	void unPause();
 };
 
 // a simple timer that can measure the time between execution of start and stop
@@ -46,3 +46,10 @@ struct Timer
 void sleep();
 void sleep(UInt milliseconds);
 void sleepUntil(const TimePoint& t);
+
+inline void limitFramerate(const Int frameRate)
+{
+	static TimePoint   nextTime = Clock::now();
+	sleepUntil(nextTime);
+	nextTime += Milliseconds(1000/frameRate);
+}

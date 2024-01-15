@@ -11,10 +11,8 @@ enum class Alignment
 {
 	left   = 0,
 	right  = 2,
-
 	top    = 0,
 	bottom = 2,
-
 	middle = 1,
 	center = 1,
 };
@@ -26,6 +24,6 @@ struct BitmapTextRenderSystem
 	GPUTexture textTexture;
 
 	void destroy();
-	void create(ResourceManager& resourceManager, Renderer& renderer);
-	void render(ResourceManager& resourceManager, Renderer& renderer, const String& text, Vec2 position, Alignment x, Alignment y, Float absoluteSize, Float letterSpacing);
+	void create(Renderer& renderer);
+	void render(Renderer& renderer, const String& text, Vec2 position, Alignment x, Alignment y, Float absoluteSize, Float letterSpacing);
 };

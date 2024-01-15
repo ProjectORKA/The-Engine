@@ -38,7 +38,7 @@ struct MeshSystem
 	void     addMesh(const CPUMesh& cpuMesh);
 	void     render(Uniforms& uniforms, Index meshId);
 	void     renderFullscreen(Uniforms& uniforms) const;
-	void     use(ResourceManager& resourceManager, const Name& name);
-	void     render(ResourceManager& resourceManager, Uniforms& uniforms, const Name& meshName);
-	void     renderInstanced(ResourceManager& resourceManager, Uniforms& uniforms, const Name& meshName, const Vector<Matrix>& transforms);
+	void     use(const Name& name);
+	void     render(Uniforms& uniforms, const Name& meshName);
+	void     renderInstanced(Uniforms& uniforms, const Name& meshName, const Vector<Matrix>& transforms);
 };

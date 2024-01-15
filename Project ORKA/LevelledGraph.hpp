@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Basics.hpp"
-#include "ResourceManager.hpp"
+
 
 struct Renderer;
 
@@ -26,5 +26,5 @@ struct LeveledGraph
 	Vec3 getPos(Index x, Index y);
 	void addForce(Index a, Vec2 force);
 	Vec3 getPos(Index x, Index y, Float z);
-	void render(ResourceManager& resourceManager, Renderer& renderer) const;
+	void render(Renderer& renderer) const;
 };

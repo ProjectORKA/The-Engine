@@ -17,7 +17,7 @@ void PlanetRenderSystem::update(const PlanetSystem& planetSystem, PlanetSystemPl
 	quadtreeRenderSystem.update(player);
 }
 
-void PlanetRenderSystem::renderAllLevels(ResourceManager& resourceManager, PlanetSystem& planetSystem, Renderer& renderer, const PlanetSystemPlayer& player, const Framebuffer& framebuffer)
+void PlanetRenderSystem::renderAllLevels(PlanetSystem& planetSystem, Renderer& renderer, const PlanetSystemPlayer& player, const Framebuffer& framebuffer)
 {
 	// renderer.uniforms().customInt1() = Int(renderer.planetRenderSystem.worldDistortion);
 	renderer.uniforms().setMMatrix(Matrix(1));
@@ -27,14 +27,14 @@ void PlanetRenderSystem::renderAllLevels(ResourceManager& resourceManager, Plane
 	for(UShort level = 0; level < MAX_CHUNK_LEVEL; level++)
 	{
 		framebuffer.clearDepth();
-		if(vertexColors) renderer.shaderSystem.use(resourceManager, "mooncrashVertexColor");
-		else renderer.shaderSystem.use(resourceManager, "terrain");
-		renderer.textureSystem.use(resourceManager, "terrainColor");
+		if(vertexColors) renderer.shaderSystem.use("mooncrashVertexColor");
+		else renderer.shaderSystem.use("terrain");
+		renderer.textureSystem.use("terrainColor");
 		quadtreeRenderSystem.renderLevel(level, renderer);
 	}
 }
 
-void PlanetRenderSystem::renderLevel(ResourceManager& resourceManager, PlanetSystem& planetSystem, Renderer& renderer, const PlanetSystemPlayer& player, const UShort level, const Framebuffer& framebuffer)
+void PlanetRenderSystem::renderLevel(PlanetSystem& planetSystem, Renderer& renderer, const PlanetSystemPlayer& player, const UShort level, const Framebuffer& framebuffer)
 {
 	// renderer.uniforms().customInt1() = Int(renderer.planetRenderSystem.worldDistortion);
 	renderer.uniforms().setMMatrix(Matrix(1));
@@ -42,8 +42,8 @@ void PlanetRenderSystem::renderLevel(ResourceManager& resourceManager, PlanetSys
 	renderer.setDepthTest(true);
 
 	framebuffer.clearDepth();
-	if(vertexColors) renderer.shaderSystem.use(resourceManager, "mooncrashVertexColor");
-	else renderer.shaderSystem.use(resourceManager, "terrain");
-	renderer.textureSystem.use(resourceManager, "terrainColor");
+	if(vertexColors) renderer.shaderSystem.use("mooncrashVertexColor");
+	else renderer.shaderSystem.use("terrain");
+	renderer.textureSystem.use("terrainColor");
 	quadtreeRenderSystem.renderLevel(level, renderer);
 }

@@ -1,17 +1,6 @@
 #include "PhysicsPlayground.hpp"
 #include "PhysicsSystem.hpp"
 
-void PhysicsPlayground::run()
-{
-	resourceManager.create();
-	sim.start(resourceManager);
-	renderer.connect(sim);
-	ui.create();
-	ui.window("Physics Playground", Area(1024, 1024), true, true, WindowState::Windowed, renderer, resourceManager);
-	ui.run();
-	sim.stop();
-}
-
 void PhysicsPlaygroundSimulation::destroy() {}
 
 void PhysicsPlayGroundRenderer::update(Window& window) {}
@@ -315,7 +304,7 @@ void PhysicsPlaygroundSimulation::connectNeighbors(const Index node)
 	for(Int a = 0; a < nodes[node].connected.size(); a++) for(int b = a; b < nodes[node].connected.size(); b++) makeConnection(a, b);
 }
 
-void PhysicsPlaygroundSimulation::create(ResourceManager& resourceManager)
+void PhysicsPlaygroundSimulation::create()
 {
 	while(nodes.size() < nodeCount) nodes.emplace_back();
 	connectAllNodesInALine();
@@ -369,7 +358,7 @@ void PhysicsPlaygroundSimulation::removeConnection(const Index a, const Index b)
 	}
 }
 
-void PhysicsPlayGroundRenderer::create(ResourceManager& resourceManager, Window& window) {}
+void PhysicsPlayGroundRenderer::create(Window& window) {}
 
 void PhysicsPlayGroundRenderer::inputEvent(Window& window, const InputEvent input)
 {
@@ -426,7 +415,7 @@ Bool PhysicsPlaygroundSimulation::doIntersect(const Vec2 a, const Vec2 b, const 
 	return ua;
 }
 
-void PhysicsPlayGroundRenderer::render(ResourceManager& resourceManager, Window& window, TiledRectangle area)
+void PhysicsPlayGroundRenderer::render(Window& window, TiledRectangle area)
 {
 	Renderer& renderer = window.renderer;
 
@@ -435,9 +424,9 @@ void PhysicsPlayGroundRenderer::render(ResourceManager& resourceManager, Window&
 	renderer.aspectCorrectNormalizedSpace();
 
 	renderer.fill(Color(1));
-	renderer.useShader(resourceManager, "color");
+	renderer.useShader("color");
 
-	for(PhysicsParticle& p : sim->nodes) p.render(resourceManager, window, sim->nodes);
+	for(PhysicsParticle& p : sim->nodes) p.render(window, sim->nodes);
 
 	Vector<Line3D> lines;
 	if(smoothCurve)
@@ -451,7 +440,7 @@ void PhysicsPlayGroundRenderer::render(ResourceManager& resourceManager, Window&
 	else for(const PhysicsPlaygroundConnection& c : sim->connections) lines.push_back(Line3D(sim->nodes[c.a].position, sim->nodes[c.b].position));
 
 	renderer.fill(Color(1));
-	renderer.useShader(resourceManager, "color");
+	renderer.useShader("color");
 	renderer.lines(lines);
 }
 
@@ -460,10 +449,10 @@ Bool PhysicsPlaygroundSimulation::doIntersect(const Index a, const Index b, cons
 	return doIntersect(nodes[a].position, nodes[b].position, nodes[c].position, nodes[d].position);
 }
 
-void PhysicsPlayGroundRenderer::renderInteractive(ResourceManager& resourceManager, Window& window, TiledRectangle area) {}
+void PhysicsPlayGroundRenderer::renderInteractive(Window& window, TiledRectangle area) {}
 
-void PhysicsParticle::render(ResourceManager& resourceManager, Window& window, Vector<PhysicsParticle>& particles) const
+void PhysicsParticle::render(Window& window, Vector<PhysicsParticle>& particles) const
 {
 	Renderer& renderer = window.renderer;
-	renderer.rectangle(resourceManager, position, Vec2(particleSize));
+	renderer.rectangle(position, Vec2(particleSize));
 }

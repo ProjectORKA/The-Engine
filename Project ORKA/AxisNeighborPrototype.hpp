@@ -123,9 +123,9 @@ struct AxisNeighborPrototype : Prototype
 		for(Int i = 0; i < numPoints; i++) addPoint();
 	}
 
-	void render(Renderer& r, ResourceManager& rm, const Player& player) override
+	void render(Renderer& r, const Player& player) override
 	{
-		r.useShader(rm, "debug");
+		r.useShader("debug");
 
 		Vector<Matrix> matrices;
 		Vector<Vec3>   connections;
@@ -134,10 +134,10 @@ struct AxisNeighborPrototype : Prototype
 			matrices.push_back(matrixFromPositionAndSize(p.position, 0.01f));
 			if(renderArrows)
 			{
-				if(p.east != -1) r.arrow(rm, p.position, points[p.east].position);
-				if(p.west != -1) r.arrow(rm, p.position, points[p.west].position);
-				if(p.north != -1) r.arrow(rm, p.position, points[p.north].position);
-				if(p.south != -1) r.arrow(rm, p.position, points[p.south].position);
+				if(p.east != -1) r.arrow(p.position, points[p.east].position);
+				if(p.west != -1) r.arrow(p.position, points[p.west].position);
+				if(p.north != -1) r.arrow(p.position, points[p.north].position);
+				if(p.south != -1) r.arrow(p.position, points[p.south].position);
 			}
 
 			if(renderLines)
@@ -157,7 +157,7 @@ struct AxisNeighborPrototype : Prototype
 
 		if(renderLines) r.lines(connections);
 
-		r.renderMeshInstanced(rm, "sphere", matrices);
+		r.renderMeshInstanced("sphere", matrices);
 	}
 
 	void action() override

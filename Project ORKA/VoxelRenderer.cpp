@@ -13,7 +13,7 @@ Chunk::Chunk()
 	}
 }
 
-CPUMesh Chunk::generateMesh(ResourceManager& resourceManager) const
+CPUMesh Chunk::generateMesh() const
 {
 	CPUMesh terrain;
 	terrain.name          = "terrain";
@@ -21,17 +21,17 @@ CPUMesh Chunk::generateMesh(ResourceManager& resourceManager) const
 	terrain.primitiveMode = PrimitiveMode::Triangles;
 
 	CPUMesh topFace;
-	topFace.load(resourceManager, "voxelTop");
+	topFace.load("voxelTop");
 	CPUMesh bottomFace;
-	bottomFace.load(resourceManager, "voxelBot");
+	bottomFace.load("voxelBot");
 	CPUMesh rightFace;
-	rightFace.load(resourceManager, "voxelRight");
+	rightFace.load("voxelRight");
 	CPUMesh leftFace;
-	leftFace.load(resourceManager, "voxelLeft");
+	leftFace.load("voxelLeft");
 	CPUMesh frontFace;
-	frontFace.load(resourceManager, "voxelFront");
+	frontFace.load("voxelFront");
 	CPUMesh backFace;
-	backFace.load(resourceManager, "voxelBack");
+	backFace.load("voxelBack");
 
 	for(Int x = 0; x < voxelChunkSize; x++)
 	{
@@ -94,8 +94,8 @@ CPUMesh Chunk::generateMesh(ResourceManager& resourceManager) const
 	return terrain;
 }
 
-void VoxelRenderer::render(ResourceManager& resourceManager, Renderer& renderer)
+void VoxelRenderer::render(Renderer& renderer)
 {
-	if(!terrainMesh.isLoaded()) terrainMesh.upload(world.chunk.generateMesh(resourceManager));
+	if(!terrainMesh.isLoaded()) terrainMesh.upload(world.chunk.generateMesh());
 	else terrainMesh.render(renderer.uniforms());
 }

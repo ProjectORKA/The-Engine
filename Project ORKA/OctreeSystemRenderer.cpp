@@ -158,60 +158,60 @@ void OctreeNodeRenderData::updateWithoutSubdivision(PlanetSystemPlayer& player)
 	}
 }
 
-void OctreeNodeRenderData::render(ResourceManager& resourceManager, Renderer& renderer) const
+void OctreeNodeRenderData::render(Renderer& renderer) const
 {
 	renderer.uniforms().setCameraPos(Vec4(cameraPosition, 1));
 	renderer.uniforms().setWorldOffset(Vec4(equivalentOctreeNode->id.location.x, equivalentOctreeNode->id.location.y, equivalentOctreeNode->id.location.z, equivalentOctreeNode->id.level));
 
-	if(renderer.planetRenderSystem.chunkBorders) renderer.renderMesh(resourceManager, "gizmo");
+	if(renderer.planetRenderSystem.chunkBorders) renderer.renderMesh("gizmo");
 }
 
-void OctreeNodeRenderData::renderWater(ResourceManager& resourceManager, Renderer& renderer) const
+void OctreeNodeRenderData::renderWater(Renderer& renderer) const
 {
 	renderer.uniforms().setCameraPos(Vec4(cameraPosition, 1));
 	renderer.uniforms().setWorldOffset(Vec4(equivalentOctreeNode->id.location.x, equivalentOctreeNode->id.location.y, equivalentOctreeNode->id.location.z, equivalentOctreeNode->id.level));
-	renderer.renderMesh(resourceManager, "waterPlane");
+	renderer.renderMesh("waterPlane");
 }
 
-void OctreeRenderSystem::renderLevel(ResourceManager& resourceManager, const UShort level, Renderer& renderer) const
+void OctreeRenderSystem::renderLevel(const UShort level, Renderer& renderer) const
 {
-	root.renderLevel(resourceManager, level, renderer);
+	root.renderLevel(level, renderer);
 }
 
-void OctreeNodeRenderData::renderLevel(ResourceManager& resourceManager, const UShort level, Renderer& renderer) const
-{
-	if(subdivided)
-	{
-		c000->renderLevel(resourceManager, level, renderer);
-		c001->renderLevel(resourceManager, level, renderer);
-		c010->renderLevel(resourceManager, level, renderer);
-		c011->renderLevel(resourceManager, level, renderer);
-		c100->renderLevel(resourceManager, level, renderer);
-		c101->renderLevel(resourceManager, level, renderer);
-		c110->renderLevel(resourceManager, level, renderer);
-		c111->renderLevel(resourceManager, level, renderer);
-	}
-	else
-	{
-		if(equivalentOctreeNode->id.level == level) render(resourceManager, renderer);
-	}
-}
-
-void OctreeNodeRenderData::renderWaterLevel(ResourceManager& resourceManager, const UShort level, Renderer& renderer) const
+void OctreeNodeRenderData::renderLevel(const UShort level, Renderer& renderer) const
 {
 	if(subdivided)
 	{
-		c000->renderWaterLevel(resourceManager, level, renderer);
-		c001->renderWaterLevel(resourceManager, level, renderer);
-		c010->renderWaterLevel(resourceManager, level, renderer);
-		c011->renderWaterLevel(resourceManager, level, renderer);
-		c100->renderWaterLevel(resourceManager, level, renderer);
-		c101->renderWaterLevel(resourceManager, level, renderer);
-		c110->renderWaterLevel(resourceManager, level, renderer);
-		c111->renderWaterLevel(resourceManager, level, renderer);
+		c000->renderLevel(level, renderer);
+		c001->renderLevel(level, renderer);
+		c010->renderLevel(level, renderer);
+		c011->renderLevel(level, renderer);
+		c100->renderLevel(level, renderer);
+		c101->renderLevel(level, renderer);
+		c110->renderLevel(level, renderer);
+		c111->renderLevel(level, renderer);
 	}
 	else
 	{
-		if(equivalentOctreeNode->id.level == level) renderWater(resourceManager, renderer);
+		if(equivalentOctreeNode->id.level == level) render(renderer);
+	}
+}
+
+void OctreeNodeRenderData::renderWaterLevel(const UShort level, Renderer& renderer) const
+{
+	if(subdivided)
+	{
+		c000->renderWaterLevel(level, renderer);
+		c001->renderWaterLevel(level, renderer);
+		c010->renderWaterLevel(level, renderer);
+		c011->renderWaterLevel(level, renderer);
+		c100->renderWaterLevel(level, renderer);
+		c101->renderWaterLevel(level, renderer);
+		c110->renderWaterLevel(level, renderer);
+		c111->renderWaterLevel(level, renderer);
+	}
+	else
+	{
+		if(equivalentOctreeNode->id.level == level) renderWater(renderer);
 	}
 }

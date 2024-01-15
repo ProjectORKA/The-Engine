@@ -1,7 +1,7 @@
 #pragma once
 #include "Basics.hpp"
 #include "CPUMesh.hpp"
-#include "ResourceManager.hpp"
+
 
 struct Scene
 {
@@ -10,5 +10,5 @@ struct Scene
 	// textures
 	// animations
 	// etc
-	void loadFBX(Path path, ResourceManager& resourceManager);
+	void loadFBX(Path path);
 };

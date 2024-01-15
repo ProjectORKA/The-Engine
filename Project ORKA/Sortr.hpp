@@ -1,7 +1,8 @@
 #pragma once
 
+#include "FileSystem.hpp"
+#include "FileTypes.hpp"
 #include "Game.hpp"
-#include "ResourceManager.hpp"
 
 struct SortrResource
 {
@@ -32,7 +33,7 @@ struct SortrFolderRing
 	void add();
 	void create();
 	void updatePosition();
-	void render(Renderer& renderer, ResourceManager& resourceManager) const;
+	void render(Renderer& renderer) const;
 };
 
 struct SortrRenderer final : GameRenderer
@@ -84,9 +85,9 @@ struct SortrRenderer final : GameRenderer
 	void connect(GameSimulation& simulation) override;
 	void inputEvent(Window& window, InputEvent input) override;
 	void preloadImage(const Path& path, GPUTexture& texture) const;
-	void create(ResourceManager& resourceManager, Window& window) override;
-	void render(ResourceManager& resourceManager, Window& window, TiledRectangle area) override;
-	void renderInteractive(ResourceManager& resourceManager, Window& window, TiledRectangle area) override;
+	void create(Window& window) override;
+	void render(Window& window, TiledRectangle area) override;
+	void renderInteractive(Window& window, TiledRectangle area) override;
 
 	[[nodiscard]] Vector<Index> indicesOfImagesSortedByPriority() const;
 	[[nodiscard]] Index         indexOfCPUImageWithLowestPriority() const;
@@ -97,9 +98,37 @@ struct SortrRenderer final : GameRenderer
 
 struct Sortr
 {
-	UserInterface   ui;
-	SortrRenderer   renderer;
-	ResourceManager resourceManager;
+	UserInterface ui;
+	Window        window;
+	SortrRenderer renderer;
+	Path          currentPath = getCurrentPath();
+	Vector<Path>  filePaths;
 
-	void run(Int argc, Char* argv[]);
+	void run(const Int argc, Char* argv[])
+	{
+		ui.create();
+		//file management
+		// process parameters
+		for(Int i = 0; i < argc; i++)
+		{
+			Path path = argv[i];
+			if(isExecutableFile(path))
+			{
+				executablePath = getDirectory(path);
+				setCurrentPath(executablePath);
+			}
+			else
+			{
+				if(isImageFile(path)) filePaths.push_back(path);
+				else logWarning(String("Can't process input: ").append(path.string()));
+			}
+		}
+
+		ui.window("Sortr", Area(1920, 1080), true, true, WindowState::Windowed, renderer);
+
+		Vector<Path>& windowFilePaths = window.droppedFilePaths;
+		for(auto& path : filePaths) if(isImageFile(path)) windowFilePaths.push_back(path);
+
+		ui.run();
+	}
 };

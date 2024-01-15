@@ -42,13 +42,21 @@ Matrix Transform::getMatrix() const
 	return matrix;
 }
 
-void Transform::setSize(const Float size) {
+void Transform::setSize(const Float size)
+{
 	this->size = Vec3(size);
 }
 
 void Transform::setSize(const Vec3& size)
 {
 	this->size = size;
+}
+
+Transform::Transform(const Vec3 position)
+{
+	this->position = position;
+	this->rotation = Quaternion();
+	this->size     = Vec3(1);
 }
 
 void Transform::move(const Vec3 translation)
@@ -81,7 +89,6 @@ void Transform::rotate(const Vec3& axis, const Float angle)
 	const Quaternion rotationChange = angleAxis(glm::radians(angle), normalize(axis));
 	rotation                        = rotationChange * rotation;
 }
-
 
 void Transform::setSize(const Float x, const Float y, const Float z)
 {

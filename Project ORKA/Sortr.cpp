@@ -1,5 +1,6 @@
 #include "Sortr.hpp"
 #include "Device.hpp"
+#include "FileSystem.hpp"
 #include "FileTypes.hpp"
 
 void SortrFolderRing::add()
@@ -251,35 +252,6 @@ void SortrRenderer::addSortrFolderElement()
 	ring.add();
 }
 
-void Sortr::run(const Int argc, Char* argv[])
-{
-	//file management
-	Path         currentPath = getCurrentPath();
-	Vector<Path> filePaths;
-
-	// process parameters
-	for(Int i = 0; i < argc; i++)
-	{
-		Path path = argv[i];
-		if(isExecutableFile(path))
-		{
-			executablePath = getDirectory(path);
-			setCurrentPath(executablePath);
-		}
-		else
-		{
-			if(isImageFile(path)) filePaths.push_back(path);
-			else logWarning(String("Can't process input: ").append(path.string()));
-		}
-	}
-
-	resourceManager.create();
-	ui.create();
-	Vector<Path>& windowFilePaths = ui.window("Sortr", Area(1920, 1080), true, true, WindowState::Fullscreen, renderer, resourceManager).droppedFilePaths;
-	for(auto& path : filePaths) if(isImageFile(path)) windowFilePaths.push_back(path);
-	ui.run();
-}
-
 void SortrRenderer::loadGPUImageWithHighestPriority()
 {
 	if(!images.empty())
@@ -485,7 +457,7 @@ void SortrRenderer::inputEvent(Window& window, const InputEvent input)
 	}
 }
 
-void SortrRenderer::create(ResourceManager& resourceManager, Window& window)
+void SortrRenderer::create(Window& window)
 {
 	ring.create();
 }
@@ -499,20 +471,20 @@ void SortrRenderer::preloadImage(const Path& path, GPUTexture& texture) const
 	texture.load(cpuTexture);
 }
 
-void SortrFolderRing::render(Renderer& renderer, ResourceManager& resourceManager) const
+void SortrFolderRing::render(Renderer& renderer) const
 {
 	for(const auto& element : elements)
 	{
 		renderer.uniforms().setMMatrix(matrixFromPositionAndSize(element.position, element.size));
 		renderer.fill(Color(0.2f, 0.2f, 0.65f, 1.0f));
 		renderer.aspectCorrectNormalizedSpace();
-		renderer.useShader(resourceManager, "color");
-		renderer.renderMesh(resourceManager, "centeredPlane");
+		renderer.useShader("color");
+		renderer.renderMesh("centeredPlane");
 		renderer.fill(Color(0, 0.5, 0.5, 1));
 		renderer.textRenderSystem.alignText(Alignment::middle, Alignment::top);
 		renderer.textRenderSystem.setSize(0.3f);
 		renderer.textRenderSystem.setLetterSpacing(0.6f);
-		renderer.textRenderSystem.render(resourceManager, renderer, String("image"), Vec2(0, 0));
+		renderer.textRenderSystem.render(renderer, String("image"), Vec2(0, 0));
 	};
 }
 
@@ -525,7 +497,7 @@ void SortrResource::calculateRating(const Index currentImageIndex, const UInt re
 	priority             = b / 2.0f - min(abs(a - x - b), min(diff_a_x, abs(a - x + b)));
 }
 
-void SortrRenderer::render(ResourceManager& resourceManager, Window& window, TiledRectangle area)
+void SortrRenderer::render(Window& window, TiledRectangle area)
 {
 	Renderer& renderer = window.renderer;
 	renderer.uniforms().reset();
@@ -559,9 +531,9 @@ void SortrRenderer::render(ResourceManager& resourceManager, Window& window, Til
 
 	renderer.uniforms().setMMatrix(actualMatrix);
 
-	renderer.useShader(resourceManager, "sortr");
-	renderer.renderMesh(resourceManager, "centeredPlane");
-	ring.render(renderer, resourceManager);
+	renderer.useShader("sortr");
+	renderer.renderMesh("centeredPlane");
+	ring.render(renderer);
 
 	// on screen controls
 	renderer.uniforms().setMMatrix(Matrix(1));
@@ -570,9 +542,9 @@ void SortrRenderer::render(ResourceManager& resourceManager, Window& window, Til
 	renderer.textRenderSystem.setSize(16.0f);
 	renderer.textRenderSystem.setLetterSpacing(0.6f);
 	renderer.textRenderSystem.alignText(Alignment::left, Alignment::bottom);
-	renderer.textRenderSystem.render(resourceManager, renderer, "Left click to add nodes", Vec2(50));
+	renderer.textRenderSystem.render(renderer, "Left click to add nodes", Vec2(50));
 
 	preloadImages();
 }
 
-void SortrRenderer::renderInteractive(ResourceManager& resourceManager, Window& window, TiledRectangle area) {}
+void SortrRenderer::renderInteractive(Window& window, TiledRectangle area) {}

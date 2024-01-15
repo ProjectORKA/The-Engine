@@ -8,16 +8,21 @@ struct ImguiWrapperRenderer : GameRenderer
 	void destroy(Window& window) override;
 	void connect(GameSimulation& simulation) override;
 	void inputEvent(Window& window, InputEvent input) override;
-	void create(ResourceManager& resourceManager, Window& window) override;
-	void render(ResourceManager& resourceManager, Window& window, TiledRectangle area) override;
-	void renderInteractive(ResourceManager& resourceManager, Window& window, TiledRectangle area) override;
+	void create(Window& window) override;
+	void render(Window& window, TiledRectangle area) override;
+	void renderInteractive(Window& window, TiledRectangle area) override;
 };
 
 struct ImguiExample
 {
 	UserInterface        ui;
 	ImguiWrapperRenderer renderer;
-	ResourceManager      resourceManager;
+	Window               window;
 
-	void run();
+	void run()
+	{
+		ui.create();
+		ui.window("Imgui Wrapper", Area(1920, 1080), true, true, WindowState::Windowed, renderer);
+		ui.run();
+	}
 };
