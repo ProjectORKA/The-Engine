@@ -68,7 +68,7 @@ Int ImageViewerResource::getWidth() const
 	return cpuTexture.getWidth();
 }
 
-void ImageViewerRenderer::showNextImage()
+void ImageViewerRenderer::showNextImage(const Window & window)
 {
 	const auto currentTime = now();
 	if(lastImageRefresh + Milliseconds(static_cast<Int>(1000 / frameRate)) < currentTime)
@@ -76,10 +76,11 @@ void ImageViewerRenderer::showNextImage()
 		lastImageRefresh = currentTime;
 		currentImageId++;
 		if(currentImageId >= static_cast<Int>(images.size())) currentImageId = 0;
+		window.setTitle(windowTitleSubstring + images[currentImageId].getName());
 	}
 }
 
-void ImageViewerRenderer::showPrevImage()
+void ImageViewerRenderer::showPrevImage(const Window & window)
 {
 	const auto currentTime = now();
 	if(lastImageRefresh + Milliseconds(static_cast<Int>(1000 / frameRate)) < currentTime)
@@ -87,6 +88,7 @@ void ImageViewerRenderer::showPrevImage()
 		lastImageRefresh = currentTime;
 		currentImageId--;
 		if(currentImageId < 0) currentImageId = images.size() - 1;
+		window.setTitle(windowTitleSubstring + images[currentImageId].getName());
 	}
 }
 
@@ -176,6 +178,9 @@ void ImageViewerRenderer::update(Window& window)
 				images.push_back(image);
 			}
 
+			// set title to current image
+			window.setTitle(windowTitleSubstring + images[currentImageId].getName());
+
 			// determine the importance of images such that we load the ones we need first
 			calculatePriorities();
 
@@ -192,9 +197,9 @@ void ImageViewerRenderer::update(Window& window)
 	// input
 	if(window.pressed(mouseDown)) offset += window.mouseDelta;
 
-	if(window.pressed(nextImageHolding) || window.pressed(nextImageHoldingMouse)) if(now() > lastButtonInput + Milliseconds(static_cast<Int>(1000 * holdingDelay))) showNextImage();
+	if(window.pressed(nextImageHolding) || window.pressed(nextImageHoldingMouse)) if(now() > lastButtonInput + Milliseconds(static_cast<Int>(1000 * holdingDelay))) showNextImage(window);
 
-	if(window.pressed(previousImageHolding) || window.pressed(previousImageHoldingMouse)) if(now() > lastButtonInput + Milliseconds(static_cast<Int>(1000 * holdingDelay))) showPrevImage();
+	if(window.pressed(previousImageHolding) || window.pressed(previousImageHoldingMouse)) if(now() > lastButtonInput + Milliseconds(static_cast<Int>(1000 * holdingDelay))) showPrevImage(window);
 }
 
 void ImageViewer::run(const Int argc, Char* argv[])
@@ -317,9 +322,9 @@ void ImageViewerRenderer::inputEvent(Window& window, const InputEvent input)
 		updateZoom();
 	}
 
-	if(input == nextImage || input == nextImageMouse) showNextImage();
+	if(input == nextImage || input == nextImageMouse) showNextImage(window);
 
-	if(input == previousImage || input == previousImageMouse) showPrevImage();
+	if(input == previousImage || input == previousImageMouse) showPrevImage(window);
 
 	//if(input == deleteImage)
 	//{
