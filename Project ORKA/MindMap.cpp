@@ -63,7 +63,7 @@ void MindMap::addNode()
 	Index a = randomIntFast(nodeCount);
 	connections.emplace_back(a, nodeCount);
 	if(nodeCount) positions.push_back(randomVec2Fast(-1.0f, 1.0f) + positions[connections.back().a]);
-	else positions.push_back(Vec2(0));
+	else positions.emplace_back(0);
 	nodeCount++;
 }
 
@@ -93,7 +93,7 @@ void MindMap::render(Renderer& renderer) const
 	// render nodes
 	renderer.fill(Color(1));
 	Vector<Vec3> posArray;
-	for(auto position : positions) posArray.push_back(Vec3(position, 0.0f));
+	for(auto position : positions) posArray.emplace_back(position, 0.0f);
 
 	renderer.renderMeshInstanced("centeredPlane", posArray);
 	renderer.setDepthTest(true);

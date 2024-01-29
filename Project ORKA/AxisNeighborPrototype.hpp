@@ -12,7 +12,7 @@ struct AxisNeighborNode
 	Int  west  = -1;
 	Int  east  = -1;
 
-	AxisNeighborNode(const Vec3 position)
+	explicit AxisNeighborNode(const Vec3 position)
 	{
 		this->position = position;
 	}
@@ -123,6 +123,11 @@ struct AxisNeighborPrototype : Prototype
 		for(Int i = 0; i < numPoints; i++) addPoint();
 	}
 
+	void action() override
+	{
+		addPoint();
+	}
+
 	void render(Renderer& r, const Player& player) override
 	{
 		r.useShader("debug");
@@ -158,10 +163,5 @@ struct AxisNeighborPrototype : Prototype
 		if(renderLines) r.lines(connections);
 
 		r.renderMeshInstanced("sphere", matrices);
-	}
-
-	void action() override
-	{
-		addPoint();
 	}
 };

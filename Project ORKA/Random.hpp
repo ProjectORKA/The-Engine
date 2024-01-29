@@ -8,6 +8,33 @@
 void randomizeSeed();
 
 // fast variants
+ULL   randomULLFast();
+Vec3  randomVec3Fast();
+Vec2  randomVec2Fast();
+Float randomFloatFast();
+Vec3  randomUnitVec3Fast();
+Vec2  randomUnitVec2Fast();
+Int   randomIntFast(Int max);
+ULL   randomULLFast(ULL max);
+Int   randomIntFast(UInt max);
+Int   randomIntFast(SizeT max);
+UInt  randomUIntFast(UInt max);
+Vec3  randomVec3Fast(Vec3 max);
+Vec2  randomVec2Fast(Float max);
+Vec3  randomVec3Fast(Float max);
+Float randomFloatFast(Float max);
+Vec3  randomVec3Fast(Vec3 min, Vec3 max);
+Vec2  randomVec2Fast(Float min, Float max);
+Vec4  randomVec4Fast(Float min, Float max);
+Vec3  randomVec3Fast(Float min, Float max);
+Vec2  randomPointInCircleFast(Float radius);
+Vec3  randomPointInSphereFast(Float radius);
+Vec3  randomPointOnSphereFast(Float radius);
+Float randomFloatFast(Float min, Float max);
+Float randomFloatFast(Double min, Double max);
+Vec3  randomPointOnSphereAtLocationFast(Vec4 sphere);
+Vec3  randomPointOnSphereAtLocationFast(Float radius, Vec3 location);
+Vec3  randomVec3Fast(Float xMin, Float xMax, Float yMin, Float yMax, Float zMin, Float zMax);
 
 UInt   randomUIntFast();
 UInt   randomUIntFast(UInt max);

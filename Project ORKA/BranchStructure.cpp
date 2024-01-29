@@ -16,7 +16,7 @@ void BranchStructure::render(Renderer& renderer, const Vector<Vec3>& points) con
 		mesh.indices.push_back(connections[i]);
 	}
 
-	for(auto& point : points) mesh.textureCoordinates.push_back(Vec2(point.x, point.y));
+	for(auto& point : points) mesh.textureCoordinates.emplace_back(point.x, point.y);
 
 	mesh.checkIntegrity();
 

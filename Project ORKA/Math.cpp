@@ -37,13 +37,13 @@ void Graph::add(const Float value)
 	points.push_back(value);
 }
 
-UInt countBitsInFlags(Short flags)
+UInt countBitsInFlags(UInt flags)
 {
 	UInt count = 0;
 	while(flags)
 	{
 		count++;
-		flags = flags >> 1;
+		flags = flags << 1;
 	}
 	return count;
 }
@@ -149,7 +149,7 @@ UInt fibonacciSequence(const UInt iterations)
 
 Matrix clerp(Matrix a, Matrix b, Float alpha)
 {
-	alpha = clamp(alpha, 0, 1);
+	alpha = clamp(alpha, 0.0f, 1.0f);
 
 	const auto m = Matrix(lerp(a[0].x, b[0].x, alpha), lerp(a[0].y, b[0].y, alpha), lerp(a[0].z, b[0].z, alpha), lerp(a[0].w, b[0].w, alpha), lerp(a[1].x, b[1].x, alpha), lerp(a[1].y, b[1].y, alpha), lerp(a[1].z, b[1].z, alpha), lerp(a[1].w, b[1].w, alpha), lerp(a[2].x, b[2].x, alpha), lerp(a[2].y, b[2].y, alpha), lerp(a[2].z, b[2].z, alpha), lerp(a[2].w, b[2].w, alpha), lerp(a[3].x, b[3].x, alpha), lerp(a[3].y, b[3].y, alpha), lerp(a[3].z, b[3].z, alpha), lerp(a[3].w, b[3].w, alpha));
 
@@ -237,6 +237,16 @@ Bool withinDiamondArea(const Vec3 a, const Float b)
 	return abs(a.x) + abs(a.y) + abs(a.z) < 2 * b;
 }
 
+Float angleBetweenAAndB(const Vec3& a, const Vec3& b)
+{
+	const Float dotProduct = dot(a, b);
+	const Float magnitudeA = length(a);
+	const Float magnitudeB = length(b);
+	const Float cosTheta   = dotProduct / (magnitudeA * magnitudeB);
+	const Float radians    = std::acos(cosTheta);
+	return radians;
+}
+
 Float lerp(const Float a, Float b, const Float alpha)
 {
 	if(std::isnan(b)) b = 0;
@@ -245,7 +255,7 @@ Float lerp(const Float a, Float b, const Float alpha)
 
 Float clerp(const Float a, const Float b, Float alpha)
 {
-	alpha = clamp(alpha, 0, 1);
+	alpha = clamp(alpha, 0.0f, 1.0f);
 	return lerp(a, b, alpha);
 }
 
@@ -340,7 +350,7 @@ Bool isNear(const Float a, const Float b, const Float error)
 
 Bool pointInsideSphere(const Vec3 point, const Sphere sphere)
 {
-	return pointInsideSphereAtlocationWithRadius(point, Vec3(sphere), sphere.w);
+	return pointInsideSphereAtPositionWithRadius(point, Vec3(sphere), sphere.w);
 }
 
 Orientation::Orientation(const Vec3 direction, const Vec3 up)
@@ -352,7 +362,7 @@ Orientation::Orientation(const Vec3 direction, const Vec3 up)
 
 LDouble clerp(const LDouble a, const LDouble b, LDouble alpha)
 {
-	alpha = clamp(alpha, 0, 1);
+	alpha = clamp(alpha, 0.0L, 1.0L);
 	return lerp(a, b, alpha);
 }
 
@@ -566,6 +576,13 @@ Matrix matrixFromOrientation(const Orientation& o, const Vec3 position, const Fl
 	return matrixFromAxis(o.x, o.y, o.z, position, size);
 }
 
+Vector<Vec3> vec2VectorToVec3Vector(const Vector<Vec2>& vec2Vector)
+{
+	Vector<Vec3> vec3Vector(vec2Vector.size());
+	for(ULL i = 0; i < vec2Vector.size(); i++) vec3Vector[i] = Vec3(vec2Vector[i], 0);
+	return vec3Vector;
+}
+
 Matrix matrixFromPositionAndSize(const Float x, const Float y, const Float w, const Float h)
 {
 	Matrix m(1);
@@ -603,7 +620,44 @@ Vec3 quadraticInterpolation(const Vec3 start, const Vec3 control, const Vec3 end
 	return lerp(lerp(start, control, time), lerp(control, end, time), time);
 }
 
-Bool pointInsideSphereAtlocationWithRadius(const Vec3 point, const Vec3 position, const Float radius)
+ULLVec4 getBoundingBoxIds(const Vector<Vec2>& points)
+{
+	if(points.empty()) return {0.0, 0.0, 0.0, 0.0};
+	Float west    = points[0].x;
+	Float south   = points[0].y;
+	Float east    = points[0].x;
+	Float north   = points[0].y;
+	ULL   westId  = 0;
+	ULL   southId = 0;
+	ULL   eastId  = 0;
+	ULL   northId = 0;
+	for(ULL i = 0; i < points.size(); i++)
+	{
+		if(points[i].x < west)
+		{
+			west   = points[i].x;
+			westId = i;
+		}
+		if(points[i].y < south)
+		{
+			south   = points[i].y;
+			southId = i;
+		}
+		if(points[i].x > east)
+		{
+			east   = points[i].x;
+			eastId = i;
+		}
+		if(points[i].y > north)
+		{
+			north   = points[i].y;
+			northId = i;
+		}
+	}
+	return {eastId, westId, northId, southId};
+}
+
+Bool pointInsideSphereAtPositionWithRadius(const Vec3 point, const Vec3 position, const Float radius)
 {
 	return distance(point, position) < radius;
 }
@@ -672,7 +726,7 @@ Vector<Matrix> matrixArrayFromPositionsDirectionsAndSizes(const Vector<Vec2>& po
 void spaceColonization(Vector<Vec3>& points, Vector<Vec3>& branches, Vector<Index>& connections, const Float segmentSize, const Float killRadius)
 {
 	if(points.empty()) return;
-	if(branches.empty()) branches.push_back(Vec3(0));
+	if(branches.empty()) branches.emplace_back(0);
 	if(connections.empty()) connections.push_back(0);
 
 	Vector<Vec3> pull(branches.size(), Vec3(0));
@@ -690,7 +744,7 @@ void spaceColonization(Vector<Vec3>& points, Vector<Vec3>& branches, Vector<Inde
 	Vector<Vec3> newBranches;
 
 	// calculate branches
-	for(Int i = 0; i < pull.size(); i++)
+	for(ULL i = 0; i < pull.size(); i++)
 	{
 		if(pull[i] != Vec3(0))
 		{
@@ -699,7 +753,7 @@ void spaceColonization(Vector<Vec3>& points, Vector<Vec3>& branches, Vector<Inde
 			// add branch
 			Vec3 newBranchSegment = branches[i] + segmentSize * pull[i];
 			newBranches.push_back(newBranchSegment);
-			connections.push_back(i);
+			connections.push_back(static_cast<Index>(i));
 		}
 	}
 

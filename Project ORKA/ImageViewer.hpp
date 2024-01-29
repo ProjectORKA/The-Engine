@@ -82,7 +82,6 @@ struct ImageViewerRenderer final : GameRenderer
 
 	void updateZoom();
 	//void removeImage();
-	//void preLoadImages();
 	void showNextImage();
 	void showPrevImage();
 	void calculatePriorities();
@@ -103,27 +102,7 @@ struct ImageViewer
 	Vector<Path>        filePaths;
 	Path                currentPath = getCurrentPath();
 
-	void run(const Int argc, Char* argv[])
-	{
-		ui.create();
-
-		// scan launch parameters for input
-		for(Int i = 0; i < argc; i++)
-		{
-			Path path = argv[i];
-
-			if(isExecutableFile(path)) continue;
-
-			if(isImageFile(path)) filePaths.push_back(path);
-			else logWarning("Can't process input: " + path.string());
-		}
-
-		Window & window = ui.window("ORKA Image Viewer", Area(1920, 1080), true, true, WindowState::Windowed, renderer);
-
-		for(auto& path : filePaths) window.droppedFilePaths.push_back(path);
-
-		ui.run();
-	}
+	void run(Int argc, Char* argv[]);
 };
 
 void loadNextImage(ImageViewerRenderer& viewer);

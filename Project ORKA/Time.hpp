@@ -16,6 +16,26 @@ TimePoint now();
 // a timer that can keep track of certain things, like delta from one update to the other or total execution time
 struct Time
 {
+	void reset();
+	void pause();
+	void update();
+	void unpause();
+	[[nodiscard]] Float getDelta() const
+	{
+		return delta;
+	}
+
+	[[nodiscard]] Bool isPaused() const
+	{
+		return paused;
+	}
+
+	[[nodiscard]] Float getTotal() const
+	{
+		return total;
+	}
+
+private:
 	TimePoint lastTime;
 	TimePoint currentTime;
 	Bool      paused        = false;
@@ -23,11 +43,6 @@ struct Time
 	Float     total         = 0.0f;
 	Duration  deltaDuration = Duration(0);
 	Duration  totalDuration = Duration(0);
-
-	void reset();
-	void pause();
-	void update();
-	void unPause();
 };
 
 // a simple timer that can measure the time between execution of start and stop

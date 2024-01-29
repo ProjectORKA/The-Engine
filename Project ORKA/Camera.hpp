@@ -13,6 +13,7 @@ struct Camera
 	void setNearClipValue(Float nearClipValue);
 	void setLocation(Float x, Float y, Float z);
 	void renderOnlyRot(Renderer& renderer) const;
+	void setRotation(Double x, Double y, Double z);
 
 	[[nodiscard]] Matrix viewMatrix() const;
 	[[nodiscard]] Vec3   getLocation() const;
@@ -27,6 +28,7 @@ struct Camera
 	[[nodiscard]] Float  getNearClipValue() const;
 	[[nodiscard]] Matrix viewMatrixOnlyRot() const;
 	[[nodiscard]] Matrix projectionMatrix(Float aspectRatio) const;
+
 private:
 	Float fieldOfView = 80.0;
 	Vec3  location    = Vec3(0);

@@ -47,7 +47,7 @@ void SandboxRenderer::render(Window& window, const TiledRectangle area)
 	// render scene
 	player.render(window); // sets the location, rotation and projection
 	r.useShader("normals"); // sets the color / material for the rendered objects
-	r.uniforms().setMMatrix(matrixFromRotation(0, 0, r.time.total)); // sets the objects transformation within the world
+	r.uniforms().setMMatrix(matrixFromRotation(0, 0, r.time.getTotal())); // sets the objects transformation within the world
 	r.renderMesh("suzanne"); // renders the objects 3D data to the screen
 
 	// text rendering
@@ -60,7 +60,7 @@ void SandboxRenderer::render(Window& window, const TiledRectangle area)
 	r.textRenderSystem.render(r, "W A S D Q E to move", Vec2(50, 250));
 	r.textRenderSystem.render(r, "F for wireframe mode", Vec2(50, 200));
 	r.textRenderSystem.render(r, "Scroll to change speed", Vec2(50, 150));
-	r.textRenderSystem.render(r, "FPS: " + toString(static_cast<Int>(1.0f / r.time.delta)), Vec2(50));
+	r.textRenderSystem.render(r, "FPS: " + toString(static_cast<Int>(1.0f / r.time.getDelta())), Vec2(50));
 
 	// render to window
 	r.setDepthTest(false);

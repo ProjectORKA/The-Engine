@@ -26,6 +26,7 @@ void Renderer::sync()
 void Renderer::destroy()
 {
 	lineRenderer.destroy();
+	pointRenderer.destroy();
 	idFramebuffer.destroy();
 	postProcessFramebuffer.destroy();
 
@@ -72,7 +73,7 @@ Bool Renderer::getCulling() const
 
 Float Renderer::deltaTime() const
 {
-	return time.delta;
+	return time.getDelta();
 }
 
 void Renderer::drawToWindow() const
@@ -163,7 +164,7 @@ void Renderer::begin(const Area windowSize)
 
 	uniforms().setWindowWidth(windowSize.x);
 	uniforms().setWindowHeight(windowSize.y);
-	uniforms().setTime(time.total); // makes time available to shaders
+	uniforms().setTime(time.getDelta()); // makes time available to shaders
 	drawToWindow();
 }
 
@@ -193,6 +194,16 @@ Matrix Renderer::getScreenSpaceMatrix() const
 	return screenSpaceMatrix(width, height);
 }
 
+void Renderer::line(const Vector<Vec2>& line)
+{
+	lineRenderer.renderLine(*this, line);
+}
+
+void Renderer::line(const Vector<Vec3>& line)
+{
+	lineRenderer.renderLine(*this, line);
+}
+
 void Renderer::lines(const Vector<Vec2>& lines)
 {
 	lineRenderer.renderLines(*this, lines);
@@ -201,6 +212,16 @@ void Renderer::lines(const Vector<Vec2>& lines)
 void Renderer::lines(const Vector<Vec3>& lines)
 {
 	lineRenderer.renderLines(*this, lines);
+}
+
+void Renderer::points(const Vector<Vec2>& points)
+{
+	pointRenderer.render(*this, points);
+}
+
+void Renderer::points(const Vector<Vec3>& points)
+{
+	pointRenderer.render(*this, points);
 }
 
 void Renderer::lines(const Vector<Line3D>& lines)
@@ -243,6 +264,8 @@ void Renderer::create()
 
 	OpenGL::apiSetDebugging(true);
 
+	if(printDeviceInfo) openGlState.printOpenGLInfo();
+
 	randomizeSeed();
 	// basic systems
 	time.reset();
@@ -252,6 +275,7 @@ void Renderer::create()
 
 	// advanced systems
 	lineRenderer.create();
+	pointRenderer.create();
 	textRenderSystem.create(*this);
 	renderObjectSystem.create(*this);
 	rectangleRenderer.create(*this);
@@ -436,6 +460,11 @@ void Renderer::renderAtmosphere(const Player& player, const Vec3 sunDirection)
 	renderMesh("centeredCube");
 	setCulling(culling);
 	setDepthTest(true);
+}
+
+void Renderer::renderMeshInstanced(const Name& name, const Vector<Vec2>& positions)
+{
+	renderMeshInstanced(name, matrixArrayFromPositions(positions));
 }
 
 void Renderer::renderMeshInstanced(const Name& name, const Vector<Vec3>& positions)

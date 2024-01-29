@@ -189,6 +189,110 @@ void OpenGL::apiSetCulling(const Bool value)
 	openGlState.culling = value;
 }
 
+void OpenGlStateCopy::printOpenGLInfo() const
+{
+	const Byte* vendor = glGetString(GL_VENDOR);
+	logDebug("Vendor: " + toString(vendor));
+
+	const Byte* renderer = glGetString(GL_RENDERER);
+	logDebug("Renderer: " + toString(renderer));
+
+	const Byte* version = glGetString(GL_VERSION);
+	logDebug("OpenGL Version: " + toString(version));
+
+	Int maxTextureSize;
+	glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTextureSize);
+	logDebug("Max Texture Size: " + toString(maxTextureSize));
+
+	Int max3DTextureSize;
+	glGetIntegerv(GL_MAX_3D_TEXTURE_SIZE, &max3DTextureSize);
+	logDebug("Max 3D Texture Size: " + toString(max3DTextureSize));
+
+	Int maxTextureUnits;
+	glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &maxTextureUnits);
+	logDebug("Max Texture Units: " + toString(maxTextureUnits));
+
+	Int maxVertexAttributes;
+	glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &maxVertexAttributes);
+	logDebug("Max Vertex Attributes: " + toString(maxVertexAttributes));
+
+	Int maxUniformBufferBindings;
+	glGetIntegerv(GL_MAX_UNIFORM_BUFFER_BINDINGS, &maxUniformBufferBindings);
+	logDebug("Max Uniform Buffer Binding Points: " + toString(maxUniformBufferBindings));
+
+	Int maxTextureAnisotropy;
+	glGetIntegerv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &maxTextureAnisotropy);
+	logDebug("Max Texture Anisotropy Level: " + toString(maxTextureAnisotropy));
+
+	Int maxSamples;
+	glGetIntegerv(GL_MAX_SAMPLES, &maxSamples);
+	logDebug("Max Samples (MSAA): " + toString(maxSamples));
+
+	Int maxViewports;
+	glGetIntegerv(GL_MAX_VIEWPORTS, &maxViewports);
+	logDebug("Max Viewports: " + toString(maxViewports));
+
+	Int maxVertexUniformComponents;
+	glGetIntegerv(GL_MAX_VERTEX_UNIFORM_COMPONENTS, &maxVertexUniformComponents);
+	logDebug("Max Vertex Uniform Components: " + toString(maxVertexUniformComponents));
+
+	Int maxFragmentUniformComponents;
+	glGetIntegerv(GL_MAX_FRAGMENT_UNIFORM_COMPONENTS, &maxFragmentUniformComponents);
+	logDebug("Max Fragment Uniform Components: " + toString(maxFragmentUniformComponents));
+
+	Int maxGeometryUniformComponents;
+	glGetIntegerv(GL_MAX_GEOMETRY_UNIFORM_COMPONENTS, &maxGeometryUniformComponents);
+	logDebug("Max Geometry Uniform Components: " + toString(maxGeometryUniformComponents));
+
+	Int maxVertexTextureImageUnits;
+	glGetIntegerv(GL_MAX_VERTEX_TEXTURE_IMAGE_UNITS, &maxVertexTextureImageUnits);
+	logDebug("Max Vertex Texture Image Units: " + toString(maxVertexTextureImageUnits));
+
+	Int maxGeometryTextureImageUnits;
+	glGetIntegerv(GL_MAX_GEOMETRY_TEXTURE_IMAGE_UNITS, &maxGeometryTextureImageUnits);
+	logDebug("Max Geometry Texture Image Units: " + toString(maxGeometryTextureImageUnits));
+
+	Int maxComputeTextureImageUnits;
+	glGetIntegerv(GL_MAX_COMPUTE_TEXTURE_IMAGE_UNITS, &maxComputeTextureImageUnits);
+	logDebug("Max Compute Texture Image Units: " + toString(maxComputeTextureImageUnits));
+
+	Int maxComputeUniformComponents;
+	glGetIntegerv(GL_MAX_COMPUTE_UNIFORM_COMPONENTS, &maxComputeUniformComponents);
+	logDebug("Max Compute Uniform Components: " + toString(maxComputeUniformComponents));
+
+	Int maxComputeWorkGroupCount[3];
+	glGetIntegeri_v(GL_MAX_COMPUTE_WORK_GROUP_COUNT, 0, &maxComputeWorkGroupCount[0]);
+	glGetIntegeri_v(GL_MAX_COMPUTE_WORK_GROUP_COUNT, 1, &maxComputeWorkGroupCount[1]);
+	glGetIntegeri_v(GL_MAX_COMPUTE_WORK_GROUP_COUNT, 2, &maxComputeWorkGroupCount[2]);
+	logDebug("Max Compute Work Group Count: (" + toString(maxComputeWorkGroupCount[0]) + ", " + toString(maxComputeWorkGroupCount[1]) + ", " + toString(maxComputeWorkGroupCount[2]) + ")");
+
+	Int maxComputeWorkGroupSize[3];
+	glGetIntegeri_v(GL_MAX_COMPUTE_WORK_GROUP_SIZE, 0, &maxComputeWorkGroupSize[0]);
+	glGetIntegeri_v(GL_MAX_COMPUTE_WORK_GROUP_SIZE, 1, &maxComputeWorkGroupSize[1]);
+	glGetIntegeri_v(GL_MAX_COMPUTE_WORK_GROUP_SIZE, 2, &maxComputeWorkGroupSize[2]);
+	logDebug("Max Compute Work Group Size: (" + toString(maxComputeWorkGroupSize[0]) + ", " + toString(maxComputeWorkGroupSize[1]) + ", " + toString(maxComputeWorkGroupSize[2]) + ")");
+
+	Int maxComputeSharedMemorySize;
+	glGetIntegerv(GL_MAX_COMPUTE_SHARED_MEMORY_SIZE, &maxComputeSharedMemorySize);
+	logDebug("Max Compute Shared Memory Size: " + toString(maxComputeSharedMemorySize) + " bytes");
+
+	Int maxComputeImageUniforms;
+	glGetIntegerv(GL_MAX_COMPUTE_IMAGE_UNIFORMS, &maxComputeImageUniforms);
+	logDebug("Max Compute Image Uniforms: " + toString(maxComputeImageUniforms));
+
+	Int maxComputeAtomicCounters;
+	glGetIntegerv(GL_MAX_COMPUTE_ATOMIC_COUNTERS, &maxComputeAtomicCounters);
+	logDebug("Max Compute Atomic Counters: " + toString(maxComputeAtomicCounters));
+
+	Int maxComputeAtomicCounterBuffers;
+	glGetIntegerv(GL_MAX_COMPUTE_ATOMIC_COUNTER_BUFFERS, &maxComputeAtomicCounterBuffers);
+	logDebug("Max Compute Atomic Counter Buffers: " + toString(maxComputeAtomicCounterBuffers));
+
+	Int maxCombinedComputeUniformComponents;
+	glGetIntegerv(GL_MAX_COMBINED_COMPUTE_UNIFORM_COMPONENTS, &maxCombinedComputeUniformComponents);
+	logDebug("Max Combined Compute Uniform Components: " + toString(maxCombinedComputeUniformComponents));
+}
+
 ProgramID OpenGL::Shaders::apiCreateProgram()
 {
 #ifdef TRACE_OPENGL

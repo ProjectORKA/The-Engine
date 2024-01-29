@@ -79,7 +79,7 @@ void MelonPlayer::render(Window& window)
 	renderer.renderMesh("melonPlayerRolling");
 
 	Vector<Line3D> lines;
-	for(Int i = 0; i < static_cast<Int>(trail.size()) - 1; i++) lines.push_back(Line3D(trail[i], trail[i + 1]));
+	for(Int i = 0; i < static_cast<Int>(trail.size()) - 1; i++) lines.emplace_back(trail[i], trail[i + 1]);
 	renderer.lines(lines);
 
 	smoke.render(renderer);

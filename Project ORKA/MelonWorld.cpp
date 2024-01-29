@@ -52,7 +52,7 @@ void MelonWorld::generateScenery(Float& sceneryPersistencySize, const MelonPlaye
 	//	}
 	//	it++;
 	// }
-	const Float gridSize = 8.0f;
+	constexpr Float gridSize = 8.0f;
 	for(Int x = 0; x < ROCKGRIDSIZE; x++)
 	{
 		for(Int y = 0; y < ROCKGRIDSIZE; y++)
@@ -61,10 +61,10 @@ void MelonWorld::generateScenery(Float& sceneryPersistencySize, const MelonPlaye
 			Vec3  closest = getClosestPoint(pos, nodes);
 			Float size    = distance(pos, closest) - pathWidth;
 			// size = max(size,0);
-			const Float border = 10;
-			size               = border - abs(size - border);
-			size               = clamp(size, 0, 10);
-			rocks[x][y]        = Vec4(pos, size);
+			constexpr Float border = 10.0f;
+			size                   = border - abs(size - border);
+			size                   = clamp(size, 0.0f, 10.0f);
+			rocks[x][y]            = Vec4(pos, size);
 		}
 	}
 }

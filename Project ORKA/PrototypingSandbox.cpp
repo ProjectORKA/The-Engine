@@ -5,6 +5,8 @@
 void PrototypingRenderer::update(Window& window)
 {
 	player.update(window);
+
+	if(window.isKeyPressed(SPACE)) prototype.action();
 }
 
 void PrototypingRenderer::destroy(Window& window)
@@ -65,7 +67,7 @@ void PrototypingRenderer::render(Window& window, const TiledRectangle area)
 	r.textRenderSystem.render(r, "W A S D Q E to move", Vec2(50, 250));
 	r.textRenderSystem.render(r, "F for wireframe mode", Vec2(50, 200));
 	r.textRenderSystem.render(r, "Scroll to change speed", Vec2(50, 150));
-	r.textRenderSystem.render(r, "FPS: " + toString(static_cast<Int>(1.0f / r.time.delta)), Vec2(50));
+	r.textRenderSystem.render(r, "FPS: " + toString(static_cast<Int>(1.0f / r.time.getDelta())), Vec2(50));
 
 	// render to window
 	r.setDepthTest(false);
@@ -76,13 +78,13 @@ void PrototypingRenderer::render(Window& window, const TiledRectangle area)
 
 // PROTOTYPES
 
-void PlaneIntersectionPrototype::create() {}
-
 void PlaneIntersectionPrototype::action() {}
+
+void PlaneIntersectionPrototype::create() {}
 
 void PlaneIntersectionPrototype::render(Renderer& r, const Player& player)
 {
-	const Vec3 dir = normalize(Vec3(noise.noise0_1(r.time.total) * 2 - 1, noise.noise0_1(r.time.total + 123.456) * 2 - 1, noise.noise0_1(r.time.total - 654.321) * 2 - 1));
+	const Vec3 dir = normalize(Vec3(noise.noise0_1(r.time.getTotal()) * 2 - 1, noise.noise0_1(r.time.getTotal() + 123.456) * 2 - 1, noise.noise0_1(r.time.getTotal() - 654.321) * 2 - 1));
 	r.arrow(Vec3(0, 0, 0), dir);
 	r.useShader("normals"); // sets the color / material for the rendered objects
 	r.renderMesh("centeredPlane");

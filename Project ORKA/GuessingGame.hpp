@@ -35,7 +35,6 @@ struct GuessingGame
 		}
 
 		if(target == guess) std::cout << "Congratulations " << name << "!\nYou guessed correctly!\nYour score: " << guessCount << "\n";
-		String t;
-		std::cin >> t;
+		pause();
 	}
 };

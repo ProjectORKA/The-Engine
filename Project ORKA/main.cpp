@@ -18,7 +18,6 @@
 //	If you've got something that you would like to share, you can upload your work to Project ORKA
 //  (Theres no simple process yet, so if you dont know how to make pull requests, just get in touch with us.)
 
-
 //	Disclaimer:
 //	This engine uses a left-handed coordinate system like Blender: +X = right +Y = forward +Z = up
 //  This engine has clear conventions for objects, functions, variables, files, etc.. please try to respect them
@@ -60,11 +59,11 @@
 
 void testAll(const Int argc, Char* argv[])
 {
-	//FlappyBird		   game1;  game1.run();
+	//FlappyBird		 game1;  game1.run();
 	//MoonCrash          game2;  game2.run();
 	//OrbitalOblivion    game3;  game3.run();
-	//ProjectMelon       game4;  game4.run();
-	//Pong               game5;  game5.run();
+	//ProjectMelon       game4;  game4.run();	// transparency issue
+	//Pong               game5;  game5.run();	// transparency issue
 	//TripleNine         game6;  game6.run();
 	//AIPlayground       game7;  game7.run();
 	//DungeonsAndDiscord game8;  game8.run();
@@ -86,7 +85,7 @@ void testAll(const Int argc, Char* argv[])
 	//UISandbox          game25; game25.run();
 }
 
-Int main(Int argc, Char* argv[])
+Int main(const Int argc, Char* argv[])
 {
 	Engine engine;
 	engine.create(argc, argv);

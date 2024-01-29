@@ -32,11 +32,17 @@
     <ClCompile Include="Hello Triangle.cpp" />
     <ClCompile Include="ImguiExample.cpp" />
     <ClCompile Include="Input.cpp" />
+    <ClCompile Include="KDTreePrototype.cpp" />
+    <ClInclude Include="AxisNeighborPrototype2.hpp" />
+    <ClInclude Include="KDTree.hpp" />
+    <ClInclude Include="KDTreePrototype.hpp" />
     <ClCompile Include="Logger.cpp" />
     <ClCompile Include="MSDFText.cpp" />
     <ClCompile Include="NameGenerator.cpp" />
     <ClCompile Include="OctreeID.cpp" />
     <ClCompile Include="Orbital Oblivion.cpp" />
+    <ClCompile Include="ParallelizedConvexHullPrototype.cpp" />
+    <ClCompile Include="PointRenderer.cpp" />
     <ClCompile Include="PrototypingSandbox.cpp" />
     <ClCompile Include="SDFRenderer.cpp" />
     <ClCompile Include="Camera.cpp" />
@@ -97,7 +103,6 @@
     <ClCompile Include="PlanetSystem.cpp" />
     <ClCompile Include="PlanetSystemPlayer.cpp" />
     <ClCompile Include="Player.cpp" />
-    <ClCompile Include="PointCloud.cpp" />
     <ClCompile Include="Pong.cpp" />
     <ClCompile Include="ProceduralMeshes.cpp" />
     <ClCompile Include="ProjectMelon.cpp" />
@@ -157,6 +162,9 @@
     <ClInclude Include="ASIONetworking.hpp" />
     <ClInclude Include="AudioSystem.hpp" />
     <ClInclude Include="AxisNeighborPrototype.hpp" />
+    <ClInclude Include="ParallelizedConvexHullPrototype.hpp" />
+    <ClInclude Include="PointRenderer.hpp" />
+    <ClInclude Include="WeirdSphereAlgorithm.hpp" />
     <ClInclude Include="BitmapTextRenderSystem.hpp" />
     <ClInclude Include="Camera.hpp" />
     <ClInclude Include="Client.hpp" />
@@ -166,6 +174,7 @@
     <ClInclude Include="FramebufferTexture.hpp" />
     <ClInclude Include="Hello Triangle.hpp" />
     <ClInclude Include="InputSystem.hpp" />
+    <ClInclude Include="KDTreeImplementation.hpp" />
     <ClInclude Include="LifeTimeGuard.hpp" />
     <ClInclude Include="CPUMesh.hpp" />
     <ClInclude Include="CPUTexture.hpp" />
@@ -233,7 +242,6 @@
     <ClInclude Include="PlanetSystem.hpp" />
     <ClInclude Include="PlanetSystemPlayer.hpp" />
     <ClInclude Include="Player.hpp" />
-    <ClInclude Include="PointCloud.hpp" />
     <ClInclude Include="Pong.hpp" />
     <ClInclude Include="ProceduralMeshes.hpp" />
     <ClInclude Include="Profiler.hpp" />
@@ -262,6 +270,7 @@
     <ClInclude Include="SimpleRTSTreeSystem.hpp" />
     <ClInclude Include="Device.hpp" />
     <ClInclude Include="Sortr.hpp" />
+    <ClInclude Include="SquareNeighborPrototype.hpp" />
     <ClInclude Include="TextRenderSystem.hpp" />
     <ClInclude Include="TextureSystem.hpp" />
     <ClInclude Include="TransformationStack.hpp" />

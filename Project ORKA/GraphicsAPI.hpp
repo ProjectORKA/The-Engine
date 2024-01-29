@@ -868,6 +868,7 @@ struct OpenGlStateCopy
 	~OpenGlStateCopy();
 	void enableLogging();
 	void disableLogging();
+	void printOpenGLInfo() const;
 	void addTexture(TextureID textureID);
 	void write(const String& message) const;
 	void removeTexture(TextureID textureID);

@@ -9,6 +9,7 @@
 #include "MatrixSystem.hpp"
 #include "LineRenderer.hpp"
 #include "TextureSystem.hpp"
+#include "PointRenderer.hpp"
 #include "TextRenderSystem.hpp"
 #include "RectangleRenderer.hpp"
 #include "RenderObjectSystem.hpp"
@@ -35,6 +36,7 @@ struct Renderer
 	ShaderSystem       shaderSystem;
 	MatrixSystem       matrixSystem;
 	LineRenderer       lineRenderer;
+	PointRenderer      pointRenderer;
 	TextureSystem      textureSystem;
 	TextRenderSystem   textRenderSystem;
 	RectangleRenderer  rectangleRenderer;
@@ -79,6 +81,7 @@ struct Renderer
 	void renderMesh(Index meshId);
 	void useMesh(const Name& name);
 	void renderMesh(const Name& name);
+	void renderMeshInstanced(const Name& name, const Vector<Vec2>& positions);
 	void renderMeshInstanced(const Name& name, const Vector<Vec3>& positions);
 	void renderMeshInstanced(const Name& name, const Vector<Matrix>& transforms);
 	void renderMeshInstanced(const Name& name, const Vector<Vec3>& positions, Float size);
@@ -96,9 +99,19 @@ struct Renderer
 	//primitives
 	void line(Vec2 start, Vec2 end);
 	void line(Vec3 start, Vec3 end);
+	void line(const Vector<Vec2>& line);
+	void line(const Vector<Vec3>& line);
 	void lines(const Vector<Vec2>& lines);
 	void lines(const Vector<Vec3>& lines);
 	void lines(const Vector<Line3D>& lines);
+	void points(const Vector<Vec2>& points);
+	void points(const Vector<Vec3>& points);
+	void arrow(ResourceManager& resourceManager, Vec2 start, Vec2 end);
+	void arrow(ResourceManager& resourceManager, Vec3 start, Vec3 end);
+	void rectangle(ResourceManager& resourceManager, Vec2 pos, Vec2 size);
+	void circle(ResourceManager& resourceManager, Vec2 pos, Float radius);
+	void renderSky(ResourceManager& resourceManager, const Camera& camera);
+	void renderAtmosphere(ResourceManager& resourceManager, const Player& player, Vec3 sunDirection);
 	void arrow(Vec2 start, Vec2 end);
 	void arrow(Vec3 start, Vec3 end);
 	void circle(Vec2 pos, Float radius);

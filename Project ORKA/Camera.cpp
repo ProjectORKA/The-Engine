@@ -139,7 +139,13 @@ void Camera::setLocation(const Float x, const Float y, const Float z)
 	this->location = Vec3(x, y, z);
 }
 
-glm::mat4 perspective2(Float fov, Float aspectRatio, Float near, Float far)
+void Camera::setRotation(const Double x, const Double y, const Double z)
+{
+	this->rotation = DVec3(x, y, z);
+	update();
+}
+
+glm::mat4 perspective2(const Float fov, const Float aspectRatio, const Float near, const Float far)
 {
 	// Calculate the half vertical field of view in radians
 	const Float halfFOV = glm::radians(fov) / 2.0f;

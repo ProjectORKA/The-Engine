@@ -5,8 +5,6 @@
 #include <assimp/postprocess.h>
 #include <assimp/scene.h>
 
-void loadAssimpScene(Scene2& destinationScene, const aiScene& sourceScene);
-
 void checkMesh(const aiMesh& mesh)
 {
 	String errorMessage;
@@ -16,6 +14,8 @@ void checkMesh(const aiMesh& mesh)
 
 	if(!errorMessage.empty()) logError(errorMessage);
 }
+
+void loadAssimpScene(Scene2& destinationScene, const aiScene& sourceScene);
 
 void processNode(SceneNode& sceneNode, const aiNode* fileNode)
 {
@@ -100,7 +100,7 @@ void loadAssimpMesh(CPUMesh& destinationMesh, aiMesh& sourceMesh)
 			vertexColor.y = sourceMesh.mColors[0][vertexIndex].g;
 			vertexColor.z = sourceMesh.mColors[0][vertexIndex].b;
 			vertexColor.w = sourceMesh.mColors[0][vertexIndex].a;
-			destinationMesh.vertexColors.push_back(vertexColor);
+			destinationMesh.vertexColors.emplace_back(vertexColor);
 		}
 	}
 

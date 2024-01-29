@@ -4,13 +4,13 @@
 void TreeGenerator::run()
 {
 	// tree generation algorithm
-	if(branches.points.empty())
+	if(branches.empty())
 	{
 		const Float treeHeight          = 2;
 		Float       currentBranchHeight = -1;
 		for(int i = 0; i < 100; i++)
 		{
-			branches.points.push_back(Vec3(0, 0, currentBranchHeight));
+			branches.emplace_back(0, 0, currentBranchHeight);
 			tree.connections.push_back(max(0, i - 1));
 			currentBranchHeight += 0.01f * treeHeight;
 			currentBranchHeight /= 1.01f;
@@ -18,30 +18,29 @@ void TreeGenerator::run()
 	}
 
 	// generate points
-	if(leaves.points.empty() && branches.points.size() < 100000 && treeGen)
+	if(leaves.empty() && branches.size() < 100000 && treeGen)
 	{
 		for(int i = 0; i < 10000; i++)
 		{
 			const Float height = sqrt(randomFloatFast());
 			const Vec3  p      = randomPointInSphereFast(height) * Vec3(sqrt(randomFloatFast())) - Vec3(0, 0, 2 * height - 2);
-			leaves.add(p);
+			leaves.push_back(p);
 		}
 	}
 
-	treeGeneration(leaves.points, branches.points, tree.connections, 0.01f, 0.04f, 0.2f);
+	treeGeneration(leaves, branches, tree.connections, 0.01f, 0.04f, 0.2f);
 }
 
-void TreeGenerator::render(Renderer& renderer)
+void TreeGenerator::render(Renderer& renderer) const
 {
-	PointCloudRenderer p;
-	p.render(leaves, renderer);
-	tree.render(renderer, branches.points);
+	renderer.points(leaves);
+	tree.render(renderer, branches);
 }
 
 void treeGeneration(Vector<Vec3>& leaves, Vector<Vec3>& branches, Vector<Index>& connections, const Float segmentSize, const Float killRadius, const Float leafPull)
 {
 	if(leaves.empty()) return;
-	if(branches.empty()) branches.push_back(Vec3(0));
+	if(branches.empty()) branches.emplace_back(0);
 	if(connections.empty()) connections.push_back(0);
 
 	Vector<Vec3> pullBranches(branches.size(), Vec3(0));

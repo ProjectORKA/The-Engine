@@ -265,7 +265,7 @@ void OrbitalOblivionRenderer::inputEvent(Window& window, const InputEvent input)
 	if(input == toggleBloom) bloom = !bloom;
 	if(input == pause)
 	{
-		if(window.renderer.time.paused) window.renderer.time.unPause();
+		if(window.renderer.time.isPaused()) window.renderer.time.unpause();
 		else window.renderer.time.pause();
 	}
 	player.inputEvent(window, input);
@@ -352,7 +352,7 @@ void OrbitalOblivionRenderer::render(Window& window, TiledRectangle area)
 	r.uniforms().setMMatrix(Matrix(1));
 	r.textRenderSystem.setSize(16);
 	r.textRenderSystem.setLetterSpacing(0.6f);
-	r.textRenderSystem.render(r, "Framerate: " + toString(1 / r.time.delta), Vec2(50, 50));
+	r.textRenderSystem.render(r, "Framerate: " + toString(1 / r.time.getDelta()), Vec2(50, 50));
 	r.textRenderSystem.render(r, "Ship Count: " + toString(static_cast<Int>(sim->units.size())), Vec2(50, 100));
 }
 

@@ -59,7 +59,7 @@ struct OrbitalOblivionSimulation final : GameSimulation
 	Vector<OOPlanet> planets;
 	UInt             planetCount    = 5;
 	Float            planetDistance = 200;
-	UInt             shipCount      = 100;
+	UInt             shipCount      = 1000;
 
 	void destroy() override;
 	void update(Float delta) override;

@@ -133,7 +133,7 @@ void OrganizerRenderer::render(Window& window, TiledRectangle area)
 	r.textRenderSystem.render(r, "W A S D Q E to move"), Vec2(50, 250);
 	r.textRenderSystem.render(r, "F for wire frame mode"), Vec2(50, 200);
 	r.textRenderSystem.render(r, "Scroll to change speed"), Vec2(50, 150);
-	r.textRenderSystem.render(r, "FPS: " + toString(static_cast<Int>(1.0f / r.time.delta))), Vec2(50);
+	r.textRenderSystem.render(r, "FPS: " + toString(static_cast<Int>(1.0f / r.time.getDelta()))), Vec2(50);
 	// renders current frame rate to the screen
 }
 

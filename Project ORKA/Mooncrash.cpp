@@ -210,8 +210,8 @@ void MoonCrashRenderer::render(Window& window, TiledRectangle area)
 	r.textRenderSystem.alignText(Alignment::left, Alignment::bottom);
 
 	r.textRenderSystem.render(r, "Speed: " + toString(player.speedExponent), Vec2(textSpacing, 6 * textSpacing));
-	r.textRenderSystem.render(r, "FPS: " + toString(1.0f / r.time.delta), Vec2(textSpacing, 5 * textSpacing));
-	r.textRenderSystem.render(r, "FrameTime: " + toString(r.time.delta), Vec2(textSpacing, 4 * textSpacing));
+	r.textRenderSystem.render(r, "FPS: " + toString(1.0f / r.time.getDelta()), Vec2(textSpacing, 5 * textSpacing));
+	r.textRenderSystem.render(r, "FrameTime: " + toString(r.time.getDelta()), Vec2(textSpacing, 4 * textSpacing));
 	r.textRenderSystem.render(r, "Camera height float: " + toString(player.camera.getLocation().z), Vec2(textSpacing, 3 * textSpacing));
 	r.textRenderSystem.render(r, "Camera height ULL: " + toString(player.chunkLocation.z), Vec2(textSpacing, 2 * textSpacing));
 	r.textRenderSystem.render(r, "SunDir: " + toString(r.uniforms().getSunDir()), Vec2(textSpacing, 1 * textSpacing));

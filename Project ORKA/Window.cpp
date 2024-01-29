@@ -413,6 +413,8 @@ void whenFilesDroppedOnWindow(const APIWindow apiWindow, const Int count, const 
 
 	for(Int i = 0; i < count; i++)
 	{
+		pathVector.emplace_back(paths[i]);
+		logDebug("File dropped: " + pathVector.back().string());
 		pathVector.push_back(paths[i]);
 		if(debugWindowIsEnabled) logDebug("File dropped: " + pathVector.back().string());
 	}

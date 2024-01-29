@@ -34,6 +34,12 @@ ULL randomULLFast()
 	return z;
 }
 
+ULL randomULLFast(const ULL max)
+{
+	if(max < 1) return 0;
+	return randomULLFast() % max;
+}
+
 Vec3 randomVec3Fast()
 {
 	return {randomFloatFast(), randomFloatFast(), randomFloatFast()};
