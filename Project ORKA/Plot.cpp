@@ -18,9 +18,9 @@ CPUMesh Plot::createMesh() const
 	{
 		Vec2 pointPos = points[index];
 
-		mesh.positions.push_back(Vec3(pointPos, 0));
+		mesh.positions.emplace_back(pointPos, 0);
 		mesh.textureCoordinates.push_back(pointPos);
-		mesh.normals.push_back(Vec3(0, 0, 1));
+		mesh.normals.emplace_back(0, 0, 1);
 
 		mesh.indices.push_back(index);
 	}

@@ -6,6 +6,12 @@
 
 //prototypes
 #include "AxisNeighborPrototype.hpp"
+#include "AxisNeighborPrototype2.hpp"
+#include "SquareNeighborPrototype.hpp"
+#include "KDTreePrototype.hpp"
+#include "WeirdSphereAlgorithm.hpp"
+#include "KDTreeImplementation.hpp"
+#include "ParallelizedConvexHullPrototype.hpp"
 
 struct PlaneIntersectionPrototype : Prototype
 {
@@ -20,14 +26,21 @@ struct PrototypingRenderer final : GameRenderer
 	DebugPlayer player;
 	Framebuffer framebuffer;
 	Float       mouseSensitivity = 0.0015f;
+	InputId     repeatAction     = InputId(InputType::KeyBoard, SPACE);
 	InputEvent  enter            = InputEvent(InputType::Mouse, LMB, true);
 	InputEvent  exit             = InputEvent(InputType::Mouse, RMB, false);
 	InputEvent  wireframeToggle  = InputEvent(InputType::KeyBoard, F, true);
-	InputEvent  action           = InputEvent(InputType::KeyBoard, SPACE, true);
+	InputEvent  action           = InputEvent(InputType::KeyBoard, G, true);
 
 	// prototypes
 	//PlaneIntersectionPrototype prototype;
-	AxisNeighborPrototype prototype;
+	//AxisNeighborPrototype prototype;
+	AxisNeighborPrototype2 prototype;
+	//SquareNeighborPrototype prototype;
+	//WeirdSphereAlgorithmPrototype prototype;
+	//KDTreePrototype prototype;
+	//KDTreePrototype2 prototype;
+	//ParallelizedConvexHullPrototype prototype;
 
 	void update(Window& window) override;
 	void destroy(Window& window) override;

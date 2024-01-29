@@ -435,9 +435,9 @@ void PhysicsPlayGroundRenderer::render(Window& window, TiledRectangle area)
 
 		for(Index i = 0; i < 1000; i++) smoothCurve.push_back(sim->getPointOnSmoothCurve(static_cast<Float>(i) / 1000.0f));
 
-		for(Index i = 0; i < smoothCurve.size() - 1; i++) lines.push_back(Line3D(smoothCurve[i], smoothCurve[i + 1]));
+		for(Index i = 0; i < smoothCurve.size() - 1; i++) lines.emplace_back(smoothCurve[i], smoothCurve[i + 1]);
 	}
-	else for(const PhysicsPlaygroundConnection& c : sim->connections) lines.push_back(Line3D(sim->nodes[c.a].position, sim->nodes[c.b].position));
+	else for(const PhysicsPlaygroundConnection& c : sim->connections) lines.emplace_back(sim->nodes[c.a].position, sim->nodes[c.b].position);
 
 	renderer.fill(Color(1));
 	renderer.useShader("color");

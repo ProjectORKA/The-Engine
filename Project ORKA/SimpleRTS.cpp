@@ -319,7 +319,7 @@ void SimpleRTSRenderer::render(Window& window, TiledRectangle area)
 	renderer.fill(Color(1));
 	renderer.textRenderSystem.setSize(16.0f);
 	renderer.textRenderSystem.setLetterSpacing(0.6f);
-	renderer.textRenderSystem.render(renderer, toString(1.0f / renderer.time.delta), Vec2(50));
+	renderer.textRenderSystem.render(renderer, toString(1.0f / renderer.time.getDelta()), Vec2(50));
 	////////////////////////
 
 	mutex.unlock();

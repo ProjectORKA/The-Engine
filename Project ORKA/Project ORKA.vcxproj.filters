@@ -224,9 +224,6 @@
     <ClCompile Include="Player.cpp">
       <Filter>Systems\Game\Player</Filter>
     </ClCompile>
-    <ClCompile Include="PointCloud.cpp">
-      <Filter>Common\Math\Graphs\PointCloud</Filter>
-    </ClCompile>
     <ClCompile Include="RectangleRenderer.cpp">
       <Filter>Systems\UserInterface\Window\Renderer\RectangleRenderer</Filter>
     </ClCompile>
@@ -382,6 +379,15 @@
     </ClCompile>
     <ClCompile Include="PrototypingSandbox.cpp">
       <Filter>Apps\3D Apps\Prototyping</Filter>
+    </ClCompile>
+    <ClCompile Include="KDTreePrototype.cpp">
+      <Filter>Apps\3D Apps\Prototyping\Prototypes\KDTreePrototype</Filter>
+    </ClCompile>
+    <ClCompile Include="PointRenderer.cpp">
+      <Filter>Systems\UserInterface\Window\Renderer\PointRenderer</Filter>
+    </ClCompile>
+    <ClCompile Include="ParallelizedConvexHullPrototype.cpp">
+      <Filter>Apps\3D Apps\Prototyping\Prototypes\ParalellizedConvexHullPrototype</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -664,9 +670,6 @@
     <ClInclude Include="Player.hpp">
       <Filter>Systems\Game\Player</Filter>
     </ClInclude>
-    <ClInclude Include="PointCloud.hpp">
-      <Filter>Common\Math\Graphs\PointCloud</Filter>
-    </ClInclude>
     <ClInclude Include="RectangleRenderer.hpp">
       <Filter>Systems\UserInterface\Window\Renderer\RectangleRenderer</Filter>
     </ClInclude>
@@ -848,6 +851,27 @@
     <ClInclude Include="AxisNeighborPrototype.hpp">
       <Filter>Apps\3D Apps\Prototyping\Prototypes</Filter>
     </ClInclude>
+    <ClInclude Include="SquareNeighborPrototype.hpp">
+      <Filter>Apps\3D Apps\Prototyping\Prototypes</Filter>
+    </ClInclude>
+    <ClInclude Include="WeirdSphereAlgorithm.hpp">
+      <Filter>Apps\3D Apps\Prototyping\Prototypes</Filter>
+    </ClInclude>
+    <ClInclude Include="KDTreeImplementation.hpp">
+      <Filter>Apps\3D Apps\Prototyping\Prototypes\KDTreePrototype</Filter>
+    </ClInclude>
+    <ClInclude Include="KDTreePrototype.hpp">
+      <Filter>Apps\3D Apps\Prototyping\Prototypes\KDTreePrototype</Filter>
+    </ClInclude>
+    <ClInclude Include="KDTree.hpp">
+      <Filter>Common\Datastructures\KDTree</Filter>
+    </ClInclude>
+    <ClInclude Include="ParallelizedConvexHullPrototype.hpp">
+      <Filter>Apps\3D Apps\Prototyping\Prototypes\ParalellizedConvexHullPrototype</Filter>
+    </ClInclude>
+    <ClInclude Include="PointRenderer.hpp">
+      <Filter>Systems\UserInterface\Window\Renderer\PointRenderer</Filter>
+    </ClInclude>
     <ClInclude Include="UIContainer.hpp">
       <Filter>Systems\UserInterface\UIContainer</Filter>
     </ClInclude>
@@ -857,6 +881,9 @@
     </ClInclude>
     <ClInclude Include="Engine.hpp">
       <Filter>Systems\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="AxisNeighborPrototype2.hpp">
+      <Filter>Apps\3D Apps\Prototyping\Prototypes</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1570,9 +1597,6 @@
     <Filter Include="Common\Memory">
       <UniqueIdentifier>{10696ce8-f30f-48a1-b6ba-39e9b05a2dd8}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Common\Math\Graphs\PointCloud">
-      <UniqueIdentifier>{6da55ed9-d36c-45b1-87ee-393fcbfc3506}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Systems\Meshing\VoxelMeshing">
       <UniqueIdentifier>{4a4430ca-41be-4c64-a6f1-a7404bb332de}</UniqueIdentifier>
     </Filter>
@@ -1605,6 +1629,18 @@
     </Filter>
     <Filter Include="Apps\3D Apps\Prototyping\Prototypes">
       <UniqueIdentifier>{38bedf0a-6557-44cd-bfb3-cf948b1aae12}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Apps\3D Apps\Prototyping\Prototypes\KDTreePrototype">
+      <UniqueIdentifier>{b2f81e2c-5624-48bf-81d7-51cd8370fc33}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Common\Datastructures\KDTree">
+      <UniqueIdentifier>{4a4533fe-dcee-4abe-80f9-5443760182c3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Apps\3D Apps\Prototyping\Prototypes\ParalellizedConvexHullPrototype">
+      <UniqueIdentifier>{472fc267-66a8-4273-ba05-efd9dcdfe63d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Systems\UserInterface\Window\Renderer\PointRenderer">
+      <UniqueIdentifier>{629b9eb2-045b-44a0-8900-74c5f2e0994f}</UniqueIdentifier>
     </Filter>
     <Filter Include="Systems\UserInterface\UIContainer">
       <UniqueIdentifier>{d2d0a9d3-c1ba-4caf-a65f-360f1aca33d9}</UniqueIdentifier>

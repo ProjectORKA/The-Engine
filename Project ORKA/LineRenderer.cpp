@@ -9,19 +9,19 @@ void LineRenderer::create()
 	cpuMesh.indices.push_back(2);
 	cpuMesh.indices.push_back(3);
 	cpuMesh.name = "line";
-	cpuMesh.normals.push_back(Vec3(0, 0, 1));
-	cpuMesh.normals.push_back(Vec3(0, 0, 1));
-	cpuMesh.normals.push_back(Vec3(0, 0, 1));
-	cpuMesh.normals.push_back(Vec3(0, 0, 1));
+	cpuMesh.normals.emplace_back(0, 0, 1);
+	cpuMesh.normals.emplace_back(0, 0, 1);
+	cpuMesh.normals.emplace_back(0, 0, 1);
+	cpuMesh.normals.emplace_back(0, 0, 1);
 	cpuMesh.primitiveMode = PrimitiveMode::TriangleStrip;
-	cpuMesh.textureCoordinates.push_back(Vec2(0, 1));
-	cpuMesh.textureCoordinates.push_back(Vec2(0, 0));
-	cpuMesh.textureCoordinates.push_back(Vec2(1, 0));
-	cpuMesh.textureCoordinates.push_back(Vec2(1, 1));
-	cpuMesh.vertexColors.push_back(Vec3(1));
-	cpuMesh.vertexColors.push_back(Vec3(1));
-	cpuMesh.vertexColors.push_back(Vec3(1));
-	cpuMesh.vertexColors.push_back(Vec3(1));
+	cpuMesh.textureCoordinates.emplace_back(0, 1);
+	cpuMesh.textureCoordinates.emplace_back(0, 0);
+	cpuMesh.textureCoordinates.emplace_back(1, 0);
+	cpuMesh.textureCoordinates.emplace_back(1, 1);
+	cpuMesh.vertexColors.emplace_back(1);
+	cpuMesh.vertexColors.emplace_back(1);
+	cpuMesh.vertexColors.emplace_back(1);
+	cpuMesh.vertexColors.emplace_back(1);
 	cpuMesh.positions.resize(4);
 }
 
@@ -54,9 +54,9 @@ CPUMesh convertLineToMesh(const Vector<Vec2>& line)
 	{
 		mesh.indices.push_back(i);
 		mesh.indices.push_back(i + 1);
-		mesh.positions.push_back(Vec3(line[i], 0));
+		mesh.positions.emplace_back(line[i], 0);
 	}
-	mesh.positions.push_back(Vec3(line.back(), 0));
+	mesh.positions.emplace_back(line.back(), 0);
 	mesh.checkIntegrity();
 	return mesh;
 }
@@ -102,7 +102,7 @@ CPUMesh convertLinesToMesh(const Vector<Vec2>& lines)
 	for(Index i = 0; i < lines.size(); i++)
 	{
 		mesh.indices.push_back(i);
-		mesh.positions.push_back(Vec3(lines[i], 0));
+		mesh.positions.emplace_back(lines[i], 0);
 	}
 	mesh.checkIntegrity();
 	return mesh;

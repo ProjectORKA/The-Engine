@@ -38,11 +38,11 @@ void ORKAIntroSequence::render(Window& window, TiledRectangle area)
 
 	// logo stuff
 	constexpr Float animationLength = 1.1f;
-	const Float size            = min(pow(1.0f + 1.0f / pow(animationLength, 5.0f), pow(renderer.time.total - 2.0f * animationLength, 5.0f)), 100.0f);
+	const Float size            = min(pow(1.0f + 1.0f / pow(animationLength, 5.0f), pow(renderer.time.getTotal() - 2.0f * animationLength, 5.0f)), 100.0f);
 	const Float tint            = max(2.0f - size, 0.0f);
 	renderer.uniforms().setCustomColor(Color(tint, tint, tint, 1.0f));
 	Matrix modelMatrix = scale(Matrix(1.0f), Vec3(size, 1.0f, size));
-	modelMatrix        = rotate(modelMatrix, 20.0f / (pow(renderer.time.total, 4.0f) + 1.0f), Vec3(0.0f, 0.0f, 1.0f));
+	modelMatrix        = rotate(modelMatrix, 20.0f / (pow(renderer.time.getTotal(), 4.0f) + 1.0f), Vec3(0.0f, 0.0f, 1.0f));
 	renderer.uniforms().setMMatrix(modelMatrix);
 
 	renderer.useShader("orkaIntroSequence");
@@ -58,7 +58,7 @@ void ORKAIntroSequence::render(Window& window, TiledRectangle area)
 	}
 
 	// swap the intro scene with the followup
-	if(renderer.time.total > 5)
+	if(renderer.time.getTotal() > 5)
 	{
 		window.decorateWindow();
 		

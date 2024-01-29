@@ -23,10 +23,10 @@ CPUMesh createTerrainMesh(const AdvancedHeightMap& heightmap)
 				mesh.positions.push_back(position);
 
 				// create normals
-				mesh.normals.push_back(Vec3(0, 0, 1));
+				mesh.normals.emplace_back(0, 0, 1);
 
 				// create uvs	
-				mesh.textureCoordinates.push_back(Vec2(position.x, position.y));
+				mesh.textureCoordinates.emplace_back(position.x, position.y);
 
 				// create vertex colors
 				mesh.vertexColors.push_back(randomVec3Fast());

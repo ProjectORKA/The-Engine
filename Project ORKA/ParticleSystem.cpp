@@ -63,7 +63,7 @@ Float particleSizeFunction(const Float particleRelativeLifeTime)
 
 void ParticleSystem::update(const Vec3 location, const Renderer& renderer)
 {
-	delta += renderer.time.delta;
+	delta += renderer.time.getDelta();
 	if(location != this->location)
 	{
 		previous2      = previous1;
@@ -91,7 +91,7 @@ void ParticleSystem::update(const Vec3 location, const Renderer& renderer)
 		if(alive[i])
 		{
 			transformation[i] += Vec4(velocity[i] + Vec3(0, 0, 0.001), 0);
-			lifetime[i] += renderer.time.delta;
+			lifetime[i] += renderer.time.getDelta();
 			transformation[i].w = particleSizeFunction(lifetime[i] / maxLifetime[i]) * maxSize[i];
 			alive[i]            = lifetime[i] < maxLifetime[i];
 		}

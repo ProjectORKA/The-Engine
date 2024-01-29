@@ -118,7 +118,7 @@ void FlappyBirdRenderer::create(Window& window)
 
 	const FlappyBirdPipes p(0);
 
-	for(Int i = 0; static_cast<Float>(i) < 10.0f / p.spacing; i++) pipeColumns.push_back(FlappyBirdPipes(3 + i));
+	for(Int i = 0; static_cast<Float>(i) < 10.0f / p.spacing; i++) pipeColumns.emplace_back(3 + i);
 }
 
 void FlappyBirdRenderer::render(Window& window, TiledRectangle area)

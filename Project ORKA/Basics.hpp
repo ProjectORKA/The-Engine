@@ -1,16 +1,13 @@
 // ReSharper disable CppUnusedIncludeDirective
-
 #pragma once
-
 #pragma warning(disable : 4996) // disables unsecure warning
 
-//#define _CSTD std::
+#include "Settings.hpp"
 
 #include <set>
 #include <map>
 #include <list>
-#include "math.h"
-//#include <cmath>
+#include <math.h>
 #include <deque>
 #include <ctime>
 #include <string>
@@ -26,7 +23,6 @@
 #include <functional>
 #include <shared_mutex>
 
-//#include <sstream>
 #ifdef MEMORY_LEAK_DETECTION
 	#include <crtdbg.h>
 #endif // MEMORY_LEAK_DETECTION
@@ -63,6 +59,10 @@ using I16 = std::int16_t;
 using I8 = std::int8_t;
 using I32 = std::int32_t;
 using I64 = std::int64_t;
+
+//max values
+constexpr UInt maxUInt = 4294967295U;
+constexpr ULL maxULL = 18446744073709551615Ui64;
 
 // pointers
 template <typename T> using WeakPointer = std::weak_ptr<T>;
@@ -165,7 +165,8 @@ inline String toString(const Int v)
 
 inline String toString(const ULL v)
 {
-	return "(" + BitSet<sizeof(ULL) * 8>(v).to_string() + ") = " + std::to_string(v);
+	if(printULLWithBits) return "(" + BitSet<sizeof(ULL) * 8>(v).to_string() + ") = " + std::to_string(v);
+	else return std::to_string(v);
 }
 
 inline String toString(const Bool v)
@@ -296,6 +297,16 @@ inline String toString(const Matrix& v)
 	return "\n" + toString(v[0]) + "\n" + toString(v[1]) + "\n" + toString(v[2]) + "\n" + toString(v[3]) + "\n";
 }
 
+inline String toString(Byte * v)
+{
+	return {reinterpret_cast<const char*>(v)};
+}
+
+inline String toString(const Byte * v)
+{
+	return {reinterpret_cast<const char*>(v)};
+}
+
 inline String toString(Char* v)
 {
 	return v;
@@ -304,7 +315,7 @@ inline String toString(Char* v)
 template <typename T> String toString(T v)
 {
 	__debugbreak(); // implement conversion
-	return "ERROR";
+	return "(ERROR: String conversion not implemented)";
 }
 
 // threading

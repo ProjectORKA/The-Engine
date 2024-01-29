@@ -197,6 +197,28 @@ void ImageViewerRenderer::update(Window& window)
 	if(window.pressed(previousImageHolding) || window.pressed(previousImageHoldingMouse)) if(now() > lastButtonInput + Milliseconds(static_cast<Int>(1000 * holdingDelay))) showPrevImage();
 }
 
+void ImageViewer::run(const Int argc, Char* argv[])
+{
+	ui.create();
+
+	// scan launch parameters for input
+	for(Int i = 0; i < argc; i++)
+	{
+		Path path = argv[i];
+
+		if(isExecutableFile(path)) continue;
+
+		if(isImageFile(path)) filePaths.push_back(path);
+		else logWarning("Can't process input: " + path.string());
+	}
+
+	Window& window = ui.window("ORKA Image Viewer", Area(1920, 1080), true, true, WindowState::Windowed, renderer);
+
+	for(auto& path : filePaths) window.droppedFilePaths.push_back(path);
+
+	ui.run();
+}
+
 Bool ImageViewerResource::hasLoadAttemptFailed() const
 {
 	return loadAttemptFailed;
@@ -232,7 +254,10 @@ void ImageViewerRenderer::render(Window& window, const TiledRectangle area)
 	Renderer& renderer = window.renderer;
 
 	// images need to be loaded onto gpu in this thread, so lets just do it before we render
-	for(ImageViewerResource& i : images) if(i.inRam() && !i.onGpu()) i.loadOntoGpu();
+	for(Int i = 0; i < images.size(); i++)
+	{
+		if(images[i].inRam() && !images[i].onGpu()) images[i].loadOntoGpu();
+	}
 
 	renderer.uniforms().reset();
 

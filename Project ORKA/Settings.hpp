@@ -1,17 +1,17 @@
 #pragma once
 
-#include "Basics.hpp"
-
 // debugging
-constexpr Bool debugLoggingIsEnabled      = true;
-constexpr Bool errorLoggingIsEnabled      = true;
-constexpr Bool warningLoggingIsEnabled    = true;
-constexpr Bool debugLaunchParameters      = true;
+constexpr bool debugLoggingIsEnabled   = true;
+constexpr bool errorLoggingIsEnabled   = true;
+constexpr bool warningLoggingIsEnabled = true;
+constexpr bool debugLaunchParameters   = true;
 
-constexpr Bool debugWindowIsEnabled       = false;
-constexpr Bool debugJobSystemIsEnabled    = false;
-constexpr Bool debugImageLoadingIsEnabled = false;
-constexpr Bool debugFramebuffersIsEnabled = false;
+constexpr bool printDeviceInfo            = false;
+constexpr bool printULLWithBits           = false;
+constexpr bool debugWindowIsEnabled       = false;
+constexpr bool debugJobSystemIsEnabled    = false;
+constexpr bool debugImageLoadingIsEnabled = true;
+constexpr bool debugFramebuffersIsEnabled = false;
 
 // planet renderer
 #define MAX_CHUNK_LEVEL 63			// 52 is millimeter precision
@@ -19,17 +19,17 @@ constexpr Bool debugFramebuffersIsEnabled = false;
 #define TERRAIN_MAP_SIZE (TERRAIN_TEXTURE_SIZE + 1)
 #define ONE_METER_CHUNK_LEVEL 39	// at this level 1 unit = 1 meter
 #define CHUNK_USAGE_TICK_COUNT 180	// amount of ticks that a chunk will stay active before it will be deleted (needs to be updated regularly)
-constexpr Float drawDistance = 4.0f;
+constexpr float drawDistance = 4.0f;
 
 // networking
 // constexpr UInt port = 12297;
-constexpr UInt port = 65084;
+constexpr unsigned int port = 65084;
 
 struct Settings
 {
-	Int   defaultWindowWidth  = 1920;
-	Int   defaultWindowHeight = 1080;
-	Float targetFrameRate     = 144.0f;
+	int   defaultWindowWidth  = 1920;
+	int   defaultWindowHeight = 1080;
+	float targetFrameRate     = 144.0f;
 };
 
 inline Settings settings;

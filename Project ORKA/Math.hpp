@@ -2,7 +2,7 @@
 
 #include "Basics.hpp"
 
-#define PI 3.14159265359f
+#define PI 3.14159265358979323846f
 
 struct TiledRectangle;
 
@@ -47,12 +47,12 @@ Bool isNear(Float a, Float b, Float error);
 Bool pointInsideSphere(Vec3 point, Sphere sphere);
 Bool pointInsideSpheres(Vec3 point, List<Sphere> spheres);
 Bool pointInsideSpheres(Vec3 point, const Vector<Sphere>& spheres);
-Bool pointInsideSphereAtlocationWithRadius(Vec3 point, Vec3 position, Float radius);
+Bool pointInsideSphereAtPositionWithRadius(Vec3 point, Vec3 position, Float radius);
 Bool isWithinDistanceOfOtherPoints(Vec2 point, const Vector<Vec2>& points, Float dist);
 
 UInt max(UInt a, UInt b);
 UInt nextPowerOfTwo(UInt value);
-UInt countBitsInFlags(Short flags);
+UInt countBitsInFlags(UInt flags);
 UInt fibonacciSequence(UInt iterations);
 
 Index idOfClosestPoint(Vec2 origin, const Vector<Vec2>& positions);
@@ -71,6 +71,7 @@ Float distance(Float a, Float b);
 Float lerp(Float a, Float b, Float alpha);
 Float clerp(Float a, Float b, Float alpha);
 Float approach(Float input, Float maxValue);
+Float angleBetweenAAndB(const Vec3& a, const Vec3& b);
 Float deltaInLoopingSpace(Float a, Float b, Float extend);
 Float distanceToPointInLoopingSpace(Vec2 a, Vec2 b, Float extend);
 Float getDistanceToClosestPoint(Vec3 point, const Vector<Vec3>& points);
@@ -90,6 +91,8 @@ Vec3 lerp(Vec3 a, Vec3 b, Float alpha);
 Vec3 clerp(Vec3 a, Vec3 b, Float alpha);
 Vec3 getClosestPoint(Vec3 point, const List<Vec3>& points);
 Vec3 quadraticInterpolation(Vec3 start, Vec3 control, Vec3 end, Float time);
+
+ULLVec4 getBoundingBoxIds(const Vector<Vec2>& points);
 
 Rotation getRotationBetweenVectors(Vec3 start, Vec3 dest);
 
@@ -115,6 +118,8 @@ Matrix matrixFromAxis(Vec3 x, Vec3 y, Vec3 z, Vec3 position, Float size);
 Matrix matrixFromPositionDirectionAndSize(Vec2 pos, Vec2 dir, Float size);
 Matrix matrixFromOrientation(const Orientation& o, Vec3 position, Float size);
 
+Vector<Vec3> vec2VectorToVec3Vector(const Vector<Vec2>& vec2Vector);
+
 [[nodiscard]] Vector<Matrix> matrixArrayFromPositions(const Vector<Vec3>& positions);
 [[nodiscard]] Vector<Matrix> matrixArrayFromPositions(const Vector<Vec2>& positions);
 [[nodiscard]] Vector<Matrix> matrixArrayFromCompactVec4(const Vector<Vec4>& compactTransform);
@@ -128,17 +133,17 @@ void removePointsInRadius(Vec3 point, Vector<Vec3>& points, Float radius);
 void getClosestPoint(Vec3 point, const Vector<Vec3>& points, Index& closestId, Vec3& closestPoint);
 void spaceColonization(Vector<Vec3>& points, Vector<Vec3>& branches, Vector<Index>& connections, Float segmentSize, Float killRadius);
 
-template <typename T, typename R> T max(T a, R b)
+template <typename T> T max(T a, T b)
 {
 	return a < b ? b : a;
 }
 
-template <typename T, typename R> T min(T a, R b)
+template <typename T> T min(T a, T b)
 {
 	return !(b < a) ? a : b;
 }
 
-template <typename T, typename R, typename E> T clamp(T a, R min, E max)
+template <typename T> T clamp(T a, T min, T max)
 {
 	if(a > max) return max;
 	if(a < min) return min;

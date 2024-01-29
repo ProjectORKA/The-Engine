@@ -200,6 +200,7 @@ void Ball::render(Renderer& renderer) const
 void PongRenderer::render(Window& window, TiledRectangle area)
 {
 	Renderer& r = window.renderer;
+	r.drawToWindow();
 
 	// //input
 	// players[0].shoot = window.input.holding("player1shoot");
@@ -221,7 +222,7 @@ void PongRenderer::render(Window& window, TiledRectangle area)
 
 	// players[1].ballLocationInput(ball);
 
-	for(Ball& ball : balls) ball.update(r.time.delta, players);
+	for(Ball& ball : balls) ball.update(r.time.getDelta(), players);
 
 	// players[0].keyboardInput(renderer.renderTime.delta);
 	players[0].mouseInput(cursorWorldPos);
@@ -229,7 +230,7 @@ void PongRenderer::render(Window& window, TiledRectangle area)
 	// players[0].ballLocationInput(balls);
 
 	// players[1].ballLocationInput(balls);
-	players[1].aiInput(balls, r.time.delta);
+	players[1].aiInput(balls, r.time.getDelta());
 
 	///////////////////////////////////////////////////////////////////////
 

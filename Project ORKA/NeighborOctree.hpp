@@ -1,8 +1,8 @@
 #pragma once
 
 #include "Basics.hpp"
+#include "ResourceManager.hpp"
 #include "Transform.hpp"
-#include "PointCloud.hpp"
 
 struct Renderer;
 struct NeighborOctreeNode;

@@ -4,7 +4,7 @@
 #include "Prototype.hpp"
 #include "Random.hpp"
 
-struct AxisNeighborNode
+struct AxisNeighborNode2
 {
 	Vec3 position;
 	Int  north = -1;
@@ -12,22 +12,58 @@ struct AxisNeighborNode
 	Int  west  = -1;
 	Int  east  = -1;
 
-	explicit AxisNeighborNode(const Vec3 position)
+	void update(Vector<AxisNeighborNode2>& points, Float delta)
+	{
+		Float avgDist = distance(points[0].position, points[points[0].north].position);
+
+		Vec3 pos   = Vec3(0);
+		Int  count = 0;
+		if(north != -1)
+		{
+			pos += points[north].position;
+			count++;
+		}
+		if(south != -1)
+		{
+			pos += points[south].position;
+			count++;
+		}
+		if(west != -1)
+		{
+			pos += points[west].position;
+			count++;
+		}
+		if(east != -1)
+		{
+			pos += points[east].position;
+			count++;
+		}
+		if(count) pos /= count;
+
+		position = lerp(position, pos, 0.1f * delta) * avgDist;
+		//position = 
+	}
+
+	AxisNeighborNode2(const Vec3 position)
 	{
 		this->position = position;
 	}
 };
 
-struct AxisNeighborPrototype : Prototype
+struct AxisNeighborPrototype2 : Prototype
 {
-	const Bool               renderLines  = true;
-	const Bool               renderArrows = false;
-	const Int                numPoints    = 1000;
-	Vector<AxisNeighborNode> points;
+	const Bool                renderLines  = true;
+	const Bool                renderArrows = false;
+	const Int                 numPoints    = 1000;
+	Vector<AxisNeighborNode2> points;
+	//Vector<ULL> north;
+	//Vector<ULL> south;
+	//Vector<ULL> west;
+	//Vector<ULL> east;
 
 	void addPoint()
 	{
-		AxisNeighborNode point(randomVec3Fast(-1, 1, -1, 1, 0, 0));
+		AxisNeighborNode2 point(randomVec3Fast(-1, 1, -1, 1, 0, 0));
 		if(points.empty())
 		{
 			points.push_back(point);
@@ -163,5 +199,7 @@ struct AxisNeighborPrototype : Prototype
 		if(renderLines) r.lines(connections);
 
 		r.renderMeshInstanced("sphere", matrices);
+
+		for(AxisNeighborNode2& p : points) p.update(points, r.deltaTime());
 	}
 };

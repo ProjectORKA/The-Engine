@@ -54,7 +54,7 @@ void Timer::start()
 	startTP = now();
 }
 
-void Time::unPause()
+void Time::unpause()
 {
 	paused = false;
 }

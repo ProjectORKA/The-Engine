@@ -97,7 +97,7 @@ void TripleNinePlayer::update(Window& window)
 	// running
 	if(state == State::sprinting) speedControl += delta * speedControlAcceleration;
 	else speedControl -= delta * speedControlDeceleration;
-	speedControl = clamp(speedControl, 0, 1);
+	speedControl = clamp(speedControl, 0.0f, 1.0f);
 	camera.rotate(targetCameraRotation);
 	calculatePhysics(window);
 	if(isCollidingWithGround())
@@ -463,7 +463,7 @@ void TripleNineRenderer::render(Window& window, const TiledRectangle area)
 	// sphere
 	r.useShader("color");
 	r.uniforms().setCustomColor(Vec4(1000000));
-	r.uniforms().setMMatrix(matrixFromPosition(Vec3(160, 50, 15 * pow(abs(sin(r.time.total * 2)), 0.5) + 1)));
+	r.uniforms().setMMatrix(matrixFromPosition(Vec3(160, 50, 15 * pow(abs(sin(r.time.getTotal() * 2)), 0.5) + 1)));
 	r.renderMesh("sphere");
 
 	r.setDepthTest(false);
@@ -501,7 +501,7 @@ void TripleNineRenderer::render(Window& window, const TiledRectangle area)
 		r.textRenderSystem.render(r, "double jump: " + toString(player.doubleJumpCharge), Vec2(spacing, static_cast<Float>(i++) * spacing));
 		r.textRenderSystem.render(r, "max jump height: " + toString(player.debugCurrentMaxJumpHeight), Vec2(spacing, static_cast<Float>(i++) * spacing));
 		r.textRenderSystem.render(r, "cameraForwardVector: " + toString(player.camera.getForwardVector()), Vec2(spacing, static_cast<Float>(i++) * spacing));
-		r.textRenderSystem.render(r, "fps: " + toString(1.0f / r.time.delta), Vec2(spacing, static_cast<Float>(i) * spacing));
+		r.textRenderSystem.render(r, "fps: " + toString(1.0f / r.time.getDelta()), Vec2(spacing, static_cast<Float>(i) * spacing));
 	}
 
 	// render to window

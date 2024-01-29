@@ -48,7 +48,7 @@ void AIPlaygroundRenderer::render(Window& window, const TiledRectangle area)
 	r.fill(Color(1));
 	r.uniforms().setMMatrix(Matrix(1));
 	r.textRenderSystem.alignText(Alignment::left, Alignment::center);
-	r.textRenderSystem.render(r, String(toString(1.0f / r.time.delta)), Vec2(50));
+	r.textRenderSystem.render(r, String(toString(1.0f / r.time.getDelta())), Vec2(50));
 
 	framebuffer.setAsTexture(0);
 	r.drawToWindow();

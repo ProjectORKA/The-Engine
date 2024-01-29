@@ -25,6 +25,7 @@ void MelonRenderer::inputEvent(Window& window, const InputEvent input)
 void MelonRenderer::render(Window& window, TiledRectangle area)
 {
 	Renderer& r = window.renderer;
+	r.drawToWindow();
 
 	r.clearBackground(Color(0, 0, 0, 1));
 
@@ -37,7 +38,7 @@ void MelonRenderer::render(Window& window, TiledRectangle area)
 	// setup
 	// background
 	//r.clearBackground(Color(0.25, 0.321, 0.0001, 1));
-	r.clearBackground(Color(0, 0, 0, 1));
+	//r.clearBackground(Color(0, 0, 0, 1));
 
 	r.fill(Color(1, 0, 0, 1));
 	r.uniforms().setSunDir(Vec4(normalize(Vec3(-0.666, 0.333, 1)), 1));
@@ -67,7 +68,7 @@ void MelonRenderer::render(Window& window, TiledRectangle area)
 	r.textRenderSystem.setSize(20.0f);
 	r.textRenderSystem.setLetterSpacing(0.6f);
 	r.textRenderSystem.alignText(Alignment::left, Alignment::bottom);
-	r.textRenderSystem.render(r, "FPS: " + toString(1 / r.time.delta), Vec2(30, 30));
+	r.textRenderSystem.render(r, "FPS: " + toString(1 / r.time.getDelta()), Vec2(30, 30));
 	r.textRenderSystem.render(r, "player Location: " + toString(player.location), Vec2(30, 60));
 	r.textRenderSystem.render(r, "Camera Location: " + toString(player.camera.getLocation()), Vec2(30, 90));
 }

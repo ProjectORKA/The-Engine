@@ -2,7 +2,6 @@
 
 #include "Basics.hpp"
 #include "Random.hpp"
-#include "PointCloud.hpp"
 #include "BranchStructure.hpp"
 
 struct Renderer;
@@ -12,12 +11,12 @@ void treeGeneration(Vector<Vec3>& leaves, Vector<Vec3>& branches, Vector<Index>&
 struct TreeGenerator
 {
 	BranchStructure tree;
-	PointCloud      leaves;
-	PointCloud      branches;
+	Vector<Vec3>    leaves;
+	Vector<Vec3>    branches;
 	Bool            treeGen = false;
 
 	void run();
-	void render(Renderer& renderer);
+	void render(Renderer& renderer) const;
 };
 
 struct Tree
