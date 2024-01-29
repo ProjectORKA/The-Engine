@@ -145,6 +145,81 @@ Bool Window::isCapturing() const
 	return apiWindowIsCapturing(apiWindow);
 }
 
+Bool Window::hasContent() const
+{
+	return !content.contents.empty();
+}
+
+void windowThread(Window& window)
+{
+	Renderer& renderer = window.renderer;
+	window.initializeGraphicsApi(); // needs to be in this thread
+	renderer.create(); // also needs to be in this thread
+	window.updateWindowState();
+
+	window.content.create(window);
+
+	if(window.windowState == WindowState::Windowed) window.centerWindow();
+	if(window.windowState == WindowState::Windowed || window.windowState == WindowState::Maximized) window.updateDecorations();
+
+	auto prevPos = MouseMovement(0);
+
+	OPTICK_THREAD("Window Thread");
+
+	// main render loop for the window
+	while(window.keepRunning)
+	{
+		OPTICK_FRAME("Window Frame");
+		if(window.isVisible)
+		{
+			OPTICK_PUSH("Setup");
+
+			window.mouseDelta = window.mousePosBotLeft - prevPos;
+			prevPos           = window.mousePosBotLeft;
+
+			const Area windowSize = window.getContentSize();
+
+			const TiledRectangle windowArea(windowSize);
+
+			renderer.begin(windowSize);
+
+			OPTICK_POP();
+
+			OPTICK_PUSH("Interactive Draw");
+			window.content.update(window);
+			OPTICK_POP();
+
+			OPTICK_PUSH("Interactive Draw");
+			window.content.renderInteractive(window, windowArea);
+			OPTICK_POP();
+
+			OPTICK_PUSH("Draw");
+			window.content.render(window, windowArea);
+			OPTICK_POP();
+
+			if constexpr(USE_OPTICK)
+			{
+				renderer.aspectCorrectNormalizedSpace();
+				renderer.textRenderSystem.setSize(0.02f);
+				renderer.textRenderSystem.setLetterSpacing(0.6f);
+				if(window.profiling) renderer.textRenderSystem.render(renderer, "[R]", Vec2(0.9f));
+			}
+
+			OPTICK_PUSH("Finalize");
+
+			renderer.end(); // checks errors and unlocks renderer
+
+			apiWindowSwapBuffers(window.apiWindow);
+			OPTICK_POP();
+		}
+		window.mouseDelta = MouseMovement(0);
+	}
+
+	renderer.destroy();
+
+	window.content.destroy(window);
+}
+
 void Window::setCallbacks() const
 {
 	checkLifetime();
@@ -246,6 +321,11 @@ Bool Window::pressed(const InputId input) const
 	return false;
 }
 
+void Window::setTitle(const String& string) const
+{
+	glfwSetWindowTitle(apiWindow, string.c_str());
+}
+
 void whenWindowCloseRequest(const APIWindow apiWindow)
 {
 	glfwSetWindowShouldClose(apiWindow, true);
@@ -300,81 +380,6 @@ void Window::createApiWindow(const String& title, const Area size)
 		if(glfwRawMouseMotionSupported()) glfwSetInputMode(apiWindow, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
 	}
 	else logError("Window already exists!");
-}
-
-Bool Window::hasContent() const
-{
-	return !content.contents.empty();
-}
-
-void windowThread(Window& window)
-{
-	Renderer& renderer = window.renderer;
-	window.initializeGraphicsApi(); // needs to be in this thread
-	renderer.create(); // also needs to be in this thread
-	window.updateWindowState();
-
-	window.content.create(window);
-
-	if(window.windowState == WindowState::Windowed) window.centerWindow();
-	if(window.windowState == WindowState::Windowed || window.windowState == WindowState::Maximized) window.updateDecorations();
-
-	auto prevPos = MouseMovement(0);
-
-	OPTICK_THREAD("Window Thread");
-
-	// main render loop for the window
-	while(window.keepRunning)
-	{
-		OPTICK_FRAME("Window Frame");
-		if(window.isVisible)
-		{
-			OPTICK_PUSH("Setup");
-
-			window.mouseDelta = window.mousePosBotLeft - prevPos;
-			prevPos           = window.mousePosBotLeft;
-
-			const Area windowSize = window.getContentSize();
-
-			const TiledRectangle windowArea(windowSize);
-
-			renderer.begin(windowSize);
-
-			OPTICK_POP();
-
-			OPTICK_PUSH("Interactive Draw");
-			window.content.update(window);
-			OPTICK_POP();
-
-			OPTICK_PUSH("Interactive Draw");
-			window.content.renderInteractive(window, windowArea);
-			OPTICK_POP();
-
-			OPTICK_PUSH("Draw");
-			window.content.render(window, windowArea);
-			OPTICK_POP();
-
-			if constexpr(USE_OPTICK)
-			{
-				renderer.aspectCorrectNormalizedSpace();
-				renderer.textRenderSystem.setSize(0.02f);
-				renderer.textRenderSystem.setLetterSpacing(0.6f);
-				if(window.profiling) renderer.textRenderSystem.render(renderer, "[R]", Vec2(0.9f));
-			}
-
-			OPTICK_PUSH("Finalize");
-
-			renderer.end(); // checks errors and unlocks renderer
-
-			apiWindowSwapBuffers(window.apiWindow);
-			OPTICK_POP();
-		}
-		window.mouseDelta = MouseMovement(0);
-	}
-
-	renderer.destroy();
-
-	window.content.destroy(window);
 }
 
 void whenFramebufferIsResized(const APIWindow apiWindow, const Int width, const Int height)

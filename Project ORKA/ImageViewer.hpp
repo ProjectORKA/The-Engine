@@ -43,6 +43,8 @@ private:
 
 struct ImageViewerRenderer final : GameRenderer
 {
+	String appName = "ORKA Image Viewer";
+	String windowTitleSubstring = appName + " - ";
 	Vector<ImageViewerResource> images;
 	SharedMutex                 imagesMutex;
 	TimePoint                   lastButtonInput;
@@ -81,17 +83,16 @@ struct ImageViewerRenderer final : GameRenderer
 	[[nodiscard]] Vector<Index> indicesOfImagesSortedByPriority() const;
 
 	void updateZoom();
-	//void removeImage();
-	void showNextImage();
-	void showPrevImage();
 	void calculatePriorities();
+	void showNextImage(const Window & window);
+	void showPrevImage(const Window & window);
 	void update(Window& window) override;
 	void create(Window& window) override;
 	void destroy(Window& window) override;
-	void renderDebugInfo(Window& window, TiledRectangle area) const;
 	void connect(GameSimulation& simulation) override;
 	void render(Window& window, TiledRectangle area) override;
 	void inputEvent(Window& window, InputEvent input) override;
+	void renderDebugInfo(Window& window, TiledRectangle area) const;
 	void renderInteractive(Window& window, TiledRectangle area) override;
 };
 

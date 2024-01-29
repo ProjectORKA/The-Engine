@@ -72,6 +72,7 @@ struct Window final : LifetimeGuard
 	void initializeGraphicsApi() const;
 	void setIcon(const Path& path) const;
 	void resize(Int width, Int height) const;
+	void setTitle(const String& string) const;
 	void createApiWindow(const String& title, Area size);
 	void create(const String& title, Area size, Bool decorated, Bool visible, WindowState state);
 
