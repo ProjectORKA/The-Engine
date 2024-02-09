@@ -2,6 +2,7 @@
 #include "FileSystem.hpp"
 #include "FileTypes.hpp"
 #include "JobSystem.hpp"
+#include "Platform.hpp"
 
 void ImageViewerResource::destroy()
 {
@@ -68,7 +69,7 @@ Int ImageViewerResource::getWidth() const
 	return cpuTexture.getWidth();
 }
 
-void ImageViewerRenderer::showNextImage(const Window & window)
+void ImageViewerRenderer::showNextImage(const Window& window)
 {
 	const auto currentTime = now();
 	if(lastImageRefresh + Milliseconds(static_cast<Int>(1000 / frameRate)) < currentTime)
@@ -80,7 +81,7 @@ void ImageViewerRenderer::showNextImage(const Window & window)
 	}
 }
 
-void ImageViewerRenderer::showPrevImage(const Window & window)
+void ImageViewerRenderer::showPrevImage(const Window& window)
 {
 	const auto currentTime = now();
 	if(lastImageRefresh + Milliseconds(static_cast<Int>(1000 / frameRate)) < currentTime)
@@ -92,7 +93,10 @@ void ImageViewerRenderer::showPrevImage(const Window & window)
 	}
 }
 
-void ImageViewerRenderer::create(Window& window) {}
+void ImageViewerRenderer::create(Window& window)
+{
+	availableMemoryUponStartup = availablePhysicalMemoryInBytes();
+}
 
 Int ImageViewerResource::getHeight() const
 {
@@ -187,10 +191,7 @@ void ImageViewerRenderer::update(Window& window)
 			// create the load order
 			Vector<Index> sortedIndices = indicesOfImagesSortedByPriority();
 
-			for(auto n : sortedIndices)
-			{
-				jobSystem.enqueue(loadImage, std::ref(*this), n);
-			}
+			for(auto n : sortedIndices) jobSystem.enqueue(loadImage, std::ref(*this), n);
 		}
 	}
 
@@ -238,7 +239,8 @@ void ImageViewerResource::use(const Int textureSlot) const
 
 void loadImage(ImageViewerRenderer& viewer, const Index imageID)
 {
-	viewer.images[imageID].loadIntoRam();
+	if(availablePhysicalMemoryInBytes() > viewer.availableMemoryUponStartup/2) viewer.images[imageID].loadIntoRam();
+	else logWarning("Image could not be loaded! RAM is full!");
 }
 
 Vector<Index> ImageViewerRenderer::indicesOfImagesSortedByPriority() const
@@ -259,10 +261,7 @@ void ImageViewerRenderer::render(Window& window, const TiledRectangle area)
 	Renderer& renderer = window.renderer;
 
 	// images need to be loaded onto gpu in this thread, so lets just do it before we render
-	for(Int i = 0; i < images.size(); i++)
-	{
-		if(images[i].inRam() && !images[i].onGpu()) images[i].loadOntoGpu();
-	}
+	for(Int i = 0; i < images.size(); i++) if(images[i].inRam() && !images[i].onGpu()) images[i].loadOntoGpu();
 
 	renderer.uniforms().reset();
 

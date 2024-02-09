@@ -95,7 +95,7 @@ Int main(const Int argc, Char* argv[])
 }
 
 // windows entry point (ignore)
-#include "Platform.hpp"
+#include "Windows.hpp"
 
 Int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, Int nShowCmd)
 {

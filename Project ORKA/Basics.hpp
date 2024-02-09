@@ -15,6 +15,7 @@
 #include <thread>
 #include <memory>
 #include <chrono>
+#include <codecvt>
 #include <fstream>
 #include <iomanip>
 #include <stdint.h>
@@ -70,6 +71,7 @@ template <typename T> using UniquePointer = std::unique_ptr<T>;
 template <typename T> using SharedPointer = std::shared_ptr<T>;
 
 using String = std::string;
+using WString = std::wstring;
 
 #include "Name.hpp"
 #include "Vectors.hpp"
@@ -217,7 +219,10 @@ inline String toString(const Float v)
 
 inline String toString(const Path& v)
 {
-	return v.string();
+	// there seems to be an issue with, for example japanese characters, that make this conversion necessary
+	WString                                     wideString = v.wstring();
+	std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
+	return converter.to_bytes(wideString);
 }
 
 inline String toString(const Double v)
@@ -316,6 +321,14 @@ template <typename T> String toString(T v)
 {
 	__debugbreak(); // implement conversion
 	return "(ERROR: String conversion not implemented)";
+}
+
+inline String toLowerCase(const String& str) {
+    String result;
+    for (Char c : str) {
+        result += std::tolower(c);
+    }
+    return result;
 }
 
 // threading

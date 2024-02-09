@@ -1,7 +1,7 @@
 #include "Sortr.hpp"
-#include "Device.hpp"
 #include "FileSystem.hpp"
 #include "FileTypes.hpp"
+#include "Platform.hpp"
 
 void SortrFolderRing::add()
 {
@@ -132,7 +132,7 @@ void SortrRenderer::preloadImages()
 	{
 		if(cpuMaxPreloadCount < images.size())
 		{
-			if(availablePhysicalMemory() > static_cast<ULL>(512 * 1024 * 1024))
+			if(availablePhysicalMemoryInBytes() > static_cast<ULL>(512 * 1024 * 1024))
 			{
 				cpuMaxPreloadCount++;
 				gpuMaxPreloadCount = cpuMaxPreloadCount;

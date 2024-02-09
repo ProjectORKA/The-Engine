@@ -57,36 +57,6 @@ void GPUTexture::load(const CPUTexture& cpuTexture)
 		// create texture
 		openglTexture.create(toString(cpuTexture.getName()));
 
-		if(debugImageLoadingIsEnabled){
-			switch(cpuTexture.getDataType())
-			{
-			case DataType::Byte:
-				logDebug("Byte");
-				break;
-			case DataType::SByte:
-				logDebug("SByte");
-				break;
-			case DataType::UShort:
-				logDebug("UShort");
-				break;
-			case DataType::Short:
-				logDebug("Short");
-				break;
-			case DataType::UInt:
-				logDebug("UInt");
-				break;
-			case DataType::Int:
-				logDebug("Int");
-				break;
-			case DataType::HalfFloat:
-				logDebug("HalfFloat");
-				break;
-			case DataType::Float:
-				logDebug("Float");
-				break;
-			}
-		}
-
 		setData(cpuTexture.getDataType(), cpuTexture.getFormat(), cpuTexture.getWidth(), cpuTexture.getHeight(), cpuTexture.getPixels());
 
 		openglTexture.setWrapping(wrapping);

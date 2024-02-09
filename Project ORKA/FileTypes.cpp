@@ -11,42 +11,42 @@ Vector<String> imageExtensions      = {".png", ".jpg", ".jpeg", ".bmp", ".tga", 
 Bool isMeshFile(const Path& path)
 {
 	const String extension = getFileExtension(path);
-	for(String ext : meshExtensions) if(extension == ext) return true;
+	for(const String& ext : meshExtensions) if(extension == ext) return true;
 	return false;
 }
 
 Bool isFontFile(const Path& path)
 {
 	const String extension = getFileExtension(path);
-	for(String ext : fontExtensions) if(extension == ext) return true;
+	for(const String& ext : fontExtensions) if(extension == ext) return true;
 	return false;
 }
 
 Bool isImageFile(const Path& path)
 {
 	const String extension = getFileExtension(path);
-	for(String ext : imageExtensions) if(extension == ext) return true;
+	for(const String& ext : imageExtensions) if(extension == ext) return true;
 	return false;
 }
 
 Bool isAudioFile(const Path& path)
 {
 	const String extension = getFileExtension(path);
-	for(String ext : audioExtensions) if(extension == ext) return true;
+	for(const String& ext : audioExtensions) if(extension == ext) return true;
 	return false;
 }
 
 Bool isShaderFile(const Path& path)
 {
 	const String extension = getFileExtension(path);
-	for(String ext : shaderExtensions) if(extension == ext) return true;
+	for(const String& ext : shaderExtensions) if(extension == ext) return true;
 	return false;
 }
 
 Bool isBinaryFile(const Path& path)
 {
 	const String extension = getFileExtension(path);
-	for(String ext : binaryExtensions) if(extension == ext) return true;
+	for(const String& ext : binaryExtensions) if(extension == ext) return true;
 	return false;
 }
 
@@ -65,11 +65,11 @@ FileType getFileType(const Path& path)
 Bool isExecutableFile(const Path& path)
 {
 	const String extension = getFileExtension(path);
-	for(String ext : executableExtensions) if(extension == ext) return true;
+	for(const String& ext : executableExtensions) if(extension == ext) return true;
 	return false;
 }
 
 String getFileExtension(const Path& path)
 {
-	return path.extension().string();
+	return toLowerCase(path.extension().string());
 }

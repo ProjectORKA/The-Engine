@@ -10,7 +10,7 @@ constexpr bool printDeviceInfo            = false;
 constexpr bool printULLWithBits           = false;
 constexpr bool debugWindowIsEnabled       = false;
 constexpr bool debugJobSystemIsEnabled    = false;
-constexpr bool debugImageLoadingIsEnabled = true;
+constexpr bool debugImageLoadingIsEnabled = false;
 constexpr bool debugFramebuffersIsEnabled = false;
 
 // planet renderer

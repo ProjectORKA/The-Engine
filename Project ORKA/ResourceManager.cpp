@@ -3,6 +3,7 @@
 #include "Scene.hpp"
 #include "FileSystem.hpp"
 #include "ResourceManager.hpp"
+#include "FileTypes.hpp"
 
 void ResourceManager::create()
 {
@@ -104,7 +105,7 @@ Path ResourceManager::getOrkaCacheLocation() const
 
 void ResourceManager::addResource(const Path& path)
 {
-	const String extension = path.extension().string();
+	const String extension = getFileExtension(path);
 	if(extension == ".mesh")
 	{
 		meshResources[Name(path.stem().string())] = path;

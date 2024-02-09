@@ -43,28 +43,29 @@ private:
 
 struct ImageViewerRenderer final : GameRenderer
 {
-	String appName = "ORKA Image Viewer";
-	String windowTitleSubstring = appName + " - ";
 	Vector<ImageViewerResource> images;
 	SharedMutex                 imagesMutex;
 	TimePoint                   lastButtonInput;
 	TimePoint                   lastImageRefresh;
-	Float                       holdDelay              = 1;
-	UInt                        cpuLoadedCount         = 0;
-	UInt                        gpuLoadedCount         = 0;
-	UInt                        currentMemory          = 0;
-	Int                         currentImageId         = 0;
-	Int                         zoomLevel              = 0;
-	Float                       zoom                   = 1.0f;
-	Float                       holdingDelay           = 0.5f;
-	Float                       zoomFactor             = 1.2f;
-	Float                       smoothness             = 0.1f;
-	Bool                        smoothCameraTransition = false;
-	Float                       frameRate              = 60.0f;
-	Float                       smoothCameraSpeed      = 30.0f;
-	Vec2                        offset                 = Vec2(0);
-	Matrix                      actualMatrix           = Matrix(1);
-	UInt                        memoryBudget           = 1024 * 1024 * 1024 * 4;
+	Int                         zoomLevel                  = 0;
+	Float                       holdDelay                  = 1;
+	UInt                        currentMemory              = 0;
+	UInt                        gpuLoadedCount             = 0;
+	UInt                        cpuLoadedCount             = 0;
+	Int                         currentImageId             = 0;
+	ULong                       availableMemoryUponStartup = 0;
+	Float                       zoom                       = 1.0f;
+	Float                       zoomFactor                 = 1.2f;
+	Float                       smoothness                 = 0.1f;
+	Float                       holdingDelay               = 0.5f;
+	Float                       frameRate                  = 60.0f;
+	Float                       smoothCameraSpeed          = 30.0f;
+	Bool                        smoothCameraTransition     = false;
+	Vec2                        offset                     = Vec2(0);
+	Matrix                      actualMatrix               = Matrix(1);
+	String                      appName                    = "ORKA Image Viewer";
+	String                      windowTitleSubstring       = "ORKA Image Viewer - ";
+	UInt                        memoryBudget               = 1024 * 1024 * 1024 * 4;
 	// input
 	InputId    mouseDown                 = InputId(InputType::Mouse, LMB);
 	InputId    previousImageHolding      = InputId(InputType::KeyBoard, LEFT);
@@ -84,11 +85,11 @@ struct ImageViewerRenderer final : GameRenderer
 
 	void updateZoom();
 	void calculatePriorities();
-	void showNextImage(const Window & window);
-	void showPrevImage(const Window & window);
 	void update(Window& window) override;
 	void create(Window& window) override;
 	void destroy(Window& window) override;
+	void showNextImage(const Window& window);
+	void showPrevImage(const Window& window);
 	void connect(GameSimulation& simulation) override;
 	void render(Window& window, TiledRectangle area) override;
 	void inputEvent(Window& window, InputEvent input) override;
