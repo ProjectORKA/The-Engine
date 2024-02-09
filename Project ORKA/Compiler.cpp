@@ -1,21 +1,21 @@
 #include "Compiler.hpp"
-#include "Platform.hpp"
+#include "Windows.hpp"
 
 ULong compileFromSource(const char* args)
 {
 	STARTUPINFO         startupInfo;
-	PROCESS_INFORMATION proccessInfo;
+	PROCESS_INFORMATION processInfo;
 	memset(&startupInfo, 0, sizeof startupInfo);
-	memset(&proccessInfo, 0, sizeof proccessInfo);
+	memset(&processInfo, 0, sizeof processInfo);
 
-	String cmdLine("C:\\Program Files\\LLVM\\bin\\clang++.exe");
+	String cmdLine(R"(C:\Program Files\LLVM\bin\clang++.exe)");
 	cmdLine += args;
 
-	if(!CreateProcessA(nullptr, const_cast<char*>(cmdLine.c_str()), nullptr, nullptr, FALSE, 0, nullptr, nullptr, &startupInfo, &proccessInfo)) return false;
-	WaitForSingleObject(proccessInfo.hProcess, INFINITE);
+	if(!CreateProcessA(nullptr, const_cast<char*>(cmdLine.c_str()), nullptr, nullptr, FALSE, 0, nullptr, nullptr, &startupInfo, &processInfo)) return false;
+	WaitForSingleObject(processInfo.hProcess, INFINITE);
 	DWORD exitCode;
-	GetExitCodeProcess(proccessInfo.hProcess, &exitCode);
-	CloseHandle(proccessInfo.hProcess);
-	CloseHandle(proccessInfo.hThread);
+	GetExitCodeProcess(processInfo.hProcess, &exitCode);
+	CloseHandle(processInfo.hProcess);
+	CloseHandle(processInfo.hThread);
 	return exitCode;
 }

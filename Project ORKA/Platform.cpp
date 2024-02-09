@@ -1,8 +1,8 @@
-#include "Device.hpp"
-#include "Debug.hpp"
-#include "Platform.hpp"
 
-ULL totalPhysicalMemory()
+#include "Platform.hpp"
+#include "Windows.hpp"
+
+ULong totalPhysicalMemoryInBytes()
 {
 	MEMORYSTATUSEX status;
 	status.dwLength = sizeof status;
@@ -10,7 +10,7 @@ ULL totalPhysicalMemory()
 	return status.ullTotalPhys;
 }
 
-ULL availablePhysicalMemory()
+ULong availablePhysicalMemoryInBytes()
 {
 	MEMORYSTATUSEX status;
 	status.dwLength = sizeof status;

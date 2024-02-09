@@ -1,7 +1,8 @@
 #include "FileSystem.hpp"
 #include "Debug.hpp"
 #include "File.hpp"
-#include "Platform.hpp"
+#include "FileTypes.hpp"
+#include "Windows.hpp"
 
 Path executablePath = "";
 
@@ -17,9 +18,14 @@ Path getDirectory(Path path)
 	return path;
 }
 
+Bool hasExtension(const Path& path)
+{
+	return path.has_extension();
+}
+
 Path removeFileName(Path path)
 {
-	if(path.has_extension()) return path.remove_filename();
+	if(hasExtension(path)) return path.remove_filename();
 	return path;
 }
 
@@ -87,8 +93,15 @@ Bool doesFileExist(const Path& path)
 
 String getFileName(const Path& path)
 {
-	if(path.has_filename()) return path.filename().string();
+	if(path.has_filename())
+	{
+		// there seems to be an issue with, for example japanese characters, that make this conversion necessary
+		WString                                          wideString = path.filename().wstring();
+		std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
+		return converter.to_bytes(wideString);
+	}
 	logError("Could not resolve filename!");
+	return "error";
 }
 
 void setCurrentPath(const Path& path)
@@ -96,7 +109,7 @@ void setCurrentPath(const Path& path)
 	std::filesystem::current_path(path);
 }
 
-FileTime lastWrittenTime(const Path& path)
+FileTime getLastWrittenTime(const Path& path)
 {
 	return last_write_time(path);
 }
@@ -145,9 +158,9 @@ void copyFile(const Path& source, const Path& destination)
 {
 	logDebug("Copying file (" + source.string() + ") to (" + destination.string() + ")");
 
-	const Path sourceFile   = source;
-	const Path targetParent = destination;
-	const auto target       = targetParent / sourceFile.filename();
+	const Path& sourceFile   = source;
+	const Path& targetParent = destination;
+	const auto  target       = targetParent / sourceFile.filename();
 
 	try
 	{
@@ -181,36 +194,28 @@ void moveFile(const Path& source, const Path& destination)
 FileTime getLastWrittenTimeOfFiles(const Vector<Path>& paths)
 {
 	FileTime t1;
-
 	for(auto p : paths)
 	{
-		FileTime t2 = lastWrittenTime(p);
+		FileTime t2 = getLastWrittenTime(p);
 		if(t2 > t1) t1 = t2;
 	}
-
 	return t1;
 }
 
 Vector<Path> getFilesInDirectory(const Path& path, const Vector<String>& filter)
 {
-	Vector<Path> paths1;
-	Vector<Path> paths2;
-
-	paths1 = getFilesInDirectory(path);
-
-	for(auto p : paths1) for(auto f : filter) if(p.extension() == f) paths2.push_back(p);
-
-	return paths2;
+	Vector<Path> filesInDirectory;
+	Vector<Path> outputFiles;
+	filesInDirectory = getFilesInDirectory(path);
+	for(const Path& filePath : filesInDirectory) for(const String& extension : filter) if(getFileExtension(filePath) == extension) outputFiles.push_back(filePath);
+	return outputFiles;
 }
 
 Vector<Path> getAllFilesInDirectory(const Path& path, const Vector<String>& filter)
 {
-	Vector<Path> paths1;
-	Vector<Path> paths2;
-
-	paths1 = getAllFilesInDirectory(path);
-
-	for(auto p : paths1) for(auto f : filter) if(p.extension() == f) paths2.push_back(p);
-
-	return paths2;
+	Vector<Path> filesInDirectory;
+	Vector<Path> outputFiles;
+	filesInDirectory = getAllFilesInDirectory(path);
+	for(const Path& filePath : filesInDirectory) for(const String& extension : filter) if(getFileExtension(filePath) == extension) outputFiles.push_back(filePath);
+	return outputFiles;
 }

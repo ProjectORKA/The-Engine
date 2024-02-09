@@ -26,7 +26,6 @@
     <ClCompile Include="BitmapTextRenderSystem.cpp" />
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="Debug.cpp" />
-    <ClCompile Include="Device.cpp" />
     <ClCompile Include="FileTypes.cpp" />
     <ClCompile Include="FlappyBird.cpp" />
     <ClCompile Include="Hello Triangle.cpp" />
@@ -42,6 +41,7 @@
     <ClCompile Include="OctreeID.cpp" />
     <ClCompile Include="Orbital Oblivion.cpp" />
     <ClCompile Include="ParallelizedConvexHullPrototype.cpp" />
+    <ClCompile Include="Platform.cpp" />
     <ClCompile Include="PointRenderer.cpp" />
     <ClCompile Include="PrototypingSandbox.cpp" />
     <ClCompile Include="SDFRenderer.cpp" />
@@ -155,6 +155,7 @@
     <ClCompile Include="VoxelRenderer.cpp" />
     <ClCompile Include="Window.cpp" />
     <ClCompile Include="WindowAPI.cpp" />
+    <ClInclude Include="Windows.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AIPlayground.hpp" />
@@ -268,7 +269,6 @@
     <ClInclude Include="SimpleRTSHuman.hpp" />
     <ClInclude Include="SimpleRTSTerrain.hpp" />
     <ClInclude Include="SimpleRTSTreeSystem.hpp" />
-    <ClInclude Include="Device.hpp" />
     <ClInclude Include="Sortr.hpp" />
     <ClInclude Include="SquareNeighborPrototype.hpp" />
     <ClInclude Include="TextRenderSystem.hpp" />

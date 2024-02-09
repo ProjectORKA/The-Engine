@@ -253,7 +253,7 @@ void CPUMesh::load(Name name)
 
 		if(error)
 		{
-			logDebug("The model (" + path.filename().replace_extension().string() + ") could not be loaded! (" + path.string() + ")");
+			logDebug("The model (" + getFileName(path) + ") could not be loaded! (" + toString(path) + ")");
 			loaded = false;
 			return;
 		}

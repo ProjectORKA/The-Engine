@@ -1,10 +1,12 @@
 #include "Image.hpp"
 #include "Debug.hpp"
 #include "FileSystem.hpp"
+#include "FileTypes.hpp"
 #include "lodepng.h"
 
 namespace stbi
 {
+#define STBI_WINDOWS_UTF8
 #define STBI_FAILURE_USERMSG
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
@@ -44,34 +46,34 @@ void Image::load(const Path& path)
 	// make sure file exists
 	if(!doesPathExist(path)) logError("File not found! (" + path.string() + ")");
 
-	const String fileType = path.extension().string();
+	const String fileType = getFileExtension(path);
 
 	if(fileType == ".webp")
 	{
 		loadWebP(path);
-		return;
+		if(pixelMemory.isValid()) return;
 	}
 
 	if(fileType == ".hdr" || fileType == ".exr")
 	{
 		dataType = ImageDataType::Float;
 		loadOther(path, true);
-		return;
+		if(pixelMemory.isValid()) return;
 	}
 
 	if(fileType == ".bmp")
 	{
 		loadOther(path, true);
-		return;
+		if(pixelMemory.isValid()) return;
 	}
 
 	if(fileType == ".png")
 	{
 		loadPNG(path);
-		return;
+		if(pixelMemory.isValid()) return;
 	}
 
-	if(fileType == ".jpg" || fileType == ".jpeg" || fileType == ".jfif")
+	if(fileType == ".jpg" || fileType == ".jpeg" || fileType == ".jfif" || fileType == ".png")
 	{
 		loadOther(path, true);
 		return;
@@ -100,7 +102,7 @@ void Image::loadPNG(const Path& path)
 
 	if(errorCode != 0)
 	{
-		logError("Error decoding PNG file: " + toString(lodepng_error_text(errorCode)) + "\n");
+		logWarning("Library lodepng failed to load file: " + toString(lodepng_error_text(errorCode)) + "\n");
 		return;
 	}
 
@@ -247,14 +249,16 @@ void Image::loadOther(const Path& path, const Bool inverted)
 	Byte* address     = nullptr;
 	SizeT byteSize    = 0;
 
+	const String filePath = toString(path);
+
 	switch(dataType)
 	{
 		case ImageDataType::Byte:
-			address = stbi::stbi_load(path.string().c_str(), &width, &height, &channelsInt, stbi::STBI_rgb_alpha);
+			address = stbi::stbi_load(filePath.c_str(), &width, &height, &channelsInt, stbi::STBI_rgb_alpha);
 			byteSize = static_cast<SizeT>(width) * static_cast<SizeT>(height) * 4 * sizeof(Byte); // Force RGBA, 4 channels
 			break;
 		case ImageDataType::Float:
-			address = reinterpret_cast<Byte*>(stbi::stbi_loadf(path.string().c_str(), &width, &height, &channelsInt, stbi::STBI_rgb_alpha));
+			address = reinterpret_cast<Byte*>(stbi::stbi_loadf(filePath.c_str(), &width, &height, &channelsInt, stbi::STBI_rgb_alpha));
 			byteSize = static_cast<SizeT>(width) * static_cast<SizeT>(height) * 4 * sizeof(Float); // Force RGBA, 4 channels
 			break;
 		default:
@@ -271,7 +275,7 @@ void Image::loadOther(const Path& path, const Bool inverted)
 
 	if(!pixelMemory.isValid())
 	{
-		logError("Failed to load image! (" + path.string() + ")");
+		logError("Failed to load image! (" + toString(path) + ")");
 		loaded = false;
 		return;
 	}

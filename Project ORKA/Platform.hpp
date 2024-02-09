@@ -2,10 +2,7 @@
 
 // written by Blendurian
 
-#pragma comment(lib,"user32.lib")
-#pragma comment(lib, "Shell32.lib")
+#include "Debug.hpp"
 
-// #define NOMINMAX
-#include <windows.h>
-#undef max
-#undef min
+ULong totalPhysicalMemoryInBytes();
+ULong availablePhysicalMemoryInBytes();
