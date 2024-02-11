@@ -1,10 +1,17 @@
 #pragma once
 
 // debugging
+#ifdef _DEBUG
 constexpr bool debugLoggingIsEnabled   = true;
 constexpr bool errorLoggingIsEnabled   = true;
 constexpr bool warningLoggingIsEnabled = true;
 constexpr bool debugLaunchParameters   = true;
+#else
+constexpr bool debugLoggingIsEnabled   = false;
+constexpr bool errorLoggingIsEnabled   = false;
+constexpr bool warningLoggingIsEnabled = false;
+constexpr bool debugLaunchParameters   = false;
+#endif
 
 constexpr bool printDeviceInfo            = false;
 constexpr bool printULLWithBits           = false;

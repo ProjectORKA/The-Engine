@@ -1,4 +1,3 @@
-
 #include "Platform.hpp"
 #include "Windows.hpp"
 

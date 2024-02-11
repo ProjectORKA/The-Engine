@@ -1,4 +1,5 @@
 #include "Debug.hpp"
+#include "Windows.hpp"
 
 void beep()
 {
@@ -17,4 +18,8 @@ void pause()
 	std::cin >> a;
 #endif
 	}
+}
+
+void messageBox(String message, String title) {
+	MessageBox(NULL, message.c_str(), title.c_str(), MB_ICONERROR | MB_OK);
 }

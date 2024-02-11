@@ -58,14 +58,13 @@ struct ImageViewerRenderer final : GameRenderer
 	Float                       zoomFactor                 = 1.2f;
 	Float                       smoothness                 = 0.1f;
 	Float                       holdingDelay               = 0.5f;
-	Float                       frameRate                  = 60.0f;
+	Float                       frameRate                  = 30.0f;
 	Float                       smoothCameraSpeed          = 30.0f;
 	Bool                        smoothCameraTransition     = false;
 	Vec2                        offset                     = Vec2(0);
 	Matrix                      actualMatrix               = Matrix(1);
 	String                      appName                    = "ORKA Image Viewer";
 	String                      windowTitleSubstring       = "ORKA Image Viewer - ";
-	UInt                        memoryBudget               = 1024 * 1024 * 1024 * 4;
 	// input
 	InputId    mouseDown                 = InputId(InputType::Mouse, LMB);
 	InputId    previousImageHolding      = InputId(InputType::KeyBoard, LEFT);
@@ -73,17 +72,18 @@ struct ImageViewerRenderer final : GameRenderer
 	InputEvent zoomIn                    = InputEvent(InputType::Scroll, 1, true);
 	InputEvent zoomOut                   = InputEvent(InputType::Scroll, 1, false);
 	InputEvent resetView                 = InputEvent(InputType::Mouse, MMB, false);
-	InputId    nextImageHoldingMouse     = InputId(InputType::Mouse, MOUSE_BUTTON_4);
-	InputId    previousImageHoldingMouse = InputId(InputType::Mouse, MOUSE_BUTTON_5);
+	InputId    nextImageHoldingMouse     = InputId(InputType::Mouse, MOUSE_BUTTON_5);
+	InputId    previousImageHoldingMouse = InputId(InputType::Mouse, MOUSE_BUTTON_4);
 	InputEvent deleteImage               = InputEvent(InputType::KeyBoard, DEL, false);
 	InputEvent previousImage             = InputEvent(InputType::KeyBoard, LEFT, false);
 	InputEvent nextImage                 = InputEvent(InputType::KeyBoard, RIGHT, false);
-	InputEvent nextImageMouse            = InputEvent(InputType::Mouse, MOUSE_BUTTON_4, false);
-	InputEvent previousImageMouse        = InputEvent(InputType::Mouse, MOUSE_BUTTON_5, false);
+	InputEvent nextImageMouse            = InputEvent(InputType::Mouse, MOUSE_BUTTON_5, false);
+	InputEvent previousImageMouse        = InputEvent(InputType::Mouse, MOUSE_BUTTON_4, false);
 
 	[[nodiscard]] Vector<Index> indicesOfImagesSortedByPriority() const;
 
 	void updateZoom();
+	void updateLoadedImages();
 	void calculatePriorities();
 	void update(Window& window) override;
 	void create(Window& window) override;

@@ -78,6 +78,25 @@ void ImageViewerRenderer::showNextImage(const Window& window)
 		currentImageId++;
 		if(currentImageId >= static_cast<Int>(images.size())) currentImageId = 0;
 		window.setTitle(windowTitleSubstring + images[currentImageId].getName());
+
+		updateLoadedImages();
+	}
+}
+
+void ImageViewerRenderer::updateLoadedImages()
+{
+	calculatePriorities();
+	const Vector<Index> sortedImageIds         = indicesOfImagesSortedByPriority();
+	Int                 firstUnloadedFromFront = 0;
+	Int                 firstLoadedFromBack    = sortedImageIds.size() - 1;
+	while(images[sortedImageIds[firstUnloadedFromFront]].inRam() && firstUnloadedFromFront < sortedImageIds.size() - 1) firstUnloadedFromFront++;
+	while(!images[sortedImageIds[firstLoadedFromBack]].inRam() && firstLoadedFromBack >= 0) firstLoadedFromBack--;
+
+	if(firstUnloadedFromFront != firstLoadedFromBack)
+	{
+		images[sortedImageIds[firstUnloadedFromFront]].loadIntoRam();
+		images[sortedImageIds[firstLoadedFromBack]].unloadFromRam();
+		logDebug("Swapped" + toString(firstUnloadedFromFront) + " with " + toString(firstLoadedFromBack));
 	}
 }
 
@@ -90,6 +109,8 @@ void ImageViewerRenderer::showPrevImage(const Window& window)
 		currentImageId--;
 		if(currentImageId < 0) currentImageId = images.size() - 1;
 		window.setTitle(windowTitleSubstring + images[currentImageId].getName());
+
+		updateLoadedImages();
 	}
 }
 
@@ -239,7 +260,7 @@ void ImageViewerResource::use(const Int textureSlot) const
 
 void loadImage(ImageViewerRenderer& viewer, const Index imageID)
 {
-	if(availablePhysicalMemoryInBytes() > viewer.availableMemoryUponStartup/2) viewer.images[imageID].loadIntoRam();
+	if(availablePhysicalMemoryInBytes() > viewer.availableMemoryUponStartup / 2) viewer.images[imageID].loadIntoRam();
 	else logWarning("Image could not be loaded! RAM is full!");
 }
 
@@ -355,6 +376,7 @@ void ImageViewerRenderer::renderDebugInfo(Window& window, const TiledRectangle a
 	Renderer& renderer = window.renderer;
 
 	renderer.screenSpace();
+	Float       yOffset    = 0.0;
 	const Float width      = area.size.x;
 	const Float height     = area.size.y;
 	const Int   imageCount = images.size();
@@ -363,7 +385,9 @@ void ImageViewerRenderer::renderDebugInfo(Window& window, const TiledRectangle a
 	for(Int i = 0; i < imageCount; i++)
 	{
 		images[i].use(0);
-		if(images[i].onGpu()) renderer.rectangle(Vec2(size * (static_cast<Float>(i) + 1.0f), size), Vec2(size), false, true);
+		if(i == currentImageId) yOffset = size / 2;
+		else yOffset                    = 0;
+		if(images[i].onGpu()) renderer.rectangle(Vec2(size * (static_cast<Float>(i) + 1.0f), size + yOffset), Vec2(size), false, true);
 	}
 }
 
