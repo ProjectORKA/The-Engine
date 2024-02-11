@@ -4,8 +4,7 @@
 #include "FileTypes.hpp"
 #include "lodepng.h"
 
-namespace stbi
-{
+namespace stbi{
 #define STBI_WINDOWS_UTF8
 #define STBI_FAILURE_USERMSG
 #define STB_IMAGE_IMPLEMENTATION

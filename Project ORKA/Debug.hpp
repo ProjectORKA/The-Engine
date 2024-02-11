@@ -8,6 +8,8 @@
 void beep();
 void pause();
 
+void messageBox(String message, String title);
+
 inline void printToConsole(const String& message)
 {
 	fmt::print("{}\n",message);
@@ -39,6 +41,9 @@ template <typename T> void logError(T value)
 		beep();
 		__debugbreak();
 		pause();
+	} else
+	{
+		messageBox(toString(value), "Error");
 	}
 }
 
