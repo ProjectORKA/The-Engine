@@ -17,6 +17,7 @@ void CPUTexture::unload()
 
 Int CPUTexture::getWidth() const
 {
+	if(width <= 0) logError("Width is 0");
 	return width;
 }
 
@@ -32,6 +33,7 @@ Bool CPUTexture::isLoaded() const
 
 Int CPUTexture::getHeight() const
 {
+	if(width <= 0) logError("Height is 0");
 	return height;
 }
 
@@ -427,7 +429,7 @@ void CPUTexture::load(const Image& image, const Filter nearFilter, const Filter 
 				break;
 		}
 	}
-	else logWarning("Image could not be loaded into texture!");
+	else logError("Image could not be loaded into texture!");
 }
 
 void CPUTexture::load(const Name& name, const Filter nearFilter, const Filter farFilter, const Wrapping wrapping)

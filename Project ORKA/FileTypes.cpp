@@ -6,7 +6,7 @@ Vector<String> binaryExtensions     = {".bin"};
 Vector<String> audioExtensions      = {".ogg", ".wav", ".mp3"};
 Vector<String> meshExtensions       = {".mesh", ".obj", ".fbx", ".blend"};
 Vector<String> shaderExtensions     = {".vert", ".frag", ".geom", ".comp", ".tess", ".glsl"};
-Vector<String> imageExtensions      = {".png", ".jpg", ".jpeg", ".bmp", ".tga", ".webp", ".jfif"};
+Vector<String> imageExtensions      = {".png", ".jpg", ".jpeg", ".bmp", ".webp", ".tga" , ".gif", ".jfif"};
 
 Bool isMeshFile(const Path& path)
 {

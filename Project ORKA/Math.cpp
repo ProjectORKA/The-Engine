@@ -396,6 +396,22 @@ Matrix screenSpaceMatrix(const Float width, const Float height)
 	return matrix;
 }
 
+Index getClosestPointId(const Vec2 point, const Vector<Index>& pointIDs, const Vector<Vec2>& points)
+{
+	Float dist = distance(point, points[pointIDs[0]]);
+	Index index = pointIDs[0];
+	for(Int i = 1; i < pointIDs.size(); i++)
+	{
+		const Float dist2 = distance(point, points[pointIDs[i]]);
+		if(dist2 < dist)
+		{
+			dist = dist2;
+			index = pointIDs[i];
+		}
+	}
+	return index;
+}
+
 Vec3 getClosestPoint(const Vec3 point, const List<Vec3>& points)
 {
 	if(points.empty()) return point;
@@ -614,6 +630,55 @@ Bool isWithinDistanceOfOtherPoints(const Vec2 point, const Vector<Vec2>& points,
 	for(const Vec2& p : points) if(distance(point, p) < dist) return true;
 	return false;
 }
+
+Bool doLinesIntersect(const Vec2 a, const Vec2 b, const Vec2 c, const Vec2 d) {
+	if(a == b || a == c || a == d || b == c || b == d || c == d) return false;
+
+	const Float px1 = a.x;
+	const Float px2 = b.x;
+	const Float px3 = c.x;
+	const Float px4 = d.x;
+
+	const Float py1 = a.y;
+	const Float py2 = b.y;
+	const Float py3 = c.y;
+	const Float py4 = d.y;
+
+	Float       ua = 0.0;
+	Float       ub = 0.0;
+	const Float ud = (py4 - py3) * (px2 - px1) - (px4 - px3) * (py2 - py1);
+
+	if(ud != 0.0)
+	{
+		ua = ((px4 - px3) * (py1 - py3) - (py4 - py3) * (px1 - px3)) / ud;
+		ub = ((px2 - px1) * (py1 - py3) - (py2 - py1) * (px1 - px3)) / ud;
+
+		if(ua < 0.0 || ua > 1.0 || ub < 0.0 || ub > 1.0) ua = 0.0;
+	}
+
+	return ua;
+}
+
+//Bool doLinesIntersect(const Vec2 a, const Vec2 b, const Vec2 c, const Vec2 d) {
+//    const Double px1 = a.x;
+//    const Double px2 = b.x;
+//    const Double px3 = c.x;
+//    const Double px4 = d.x;
+//
+//    const Double py1 = a.y;
+//    const Double py2 = b.y;
+//    const Double py3 = c.y;
+//    const Double py4 = d.y;
+//
+//    const Double ud = (py4 - py3) * (px2 - px1) - (px4 - px3) * (py2 - py1);
+//
+//    if (ud == 0.0) return false;
+//
+//    const Double ua = ((px4 - px3) * (py1 - py3) - (py4 - py3) * (px1 - px3)) / ud;
+//    const Double ub = ((px2 - px1) * (py1 - py3) - (py2 - py1) * (px1 - px3)) / ud;
+//
+//    return ua >= 0.0 && ua <= 1.0 && ub >= 0.0 && ub <= 1.0;
+//}
 
 Vec3 quadraticInterpolation(const Vec3 start, const Vec3 control, const Vec3 end, const Float time)
 {

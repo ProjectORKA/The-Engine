@@ -13,12 +13,15 @@ constexpr bool warningLoggingIsEnabled = false;
 constexpr bool debugLaunchParameters   = false;
 #endif
 
+
+constexpr bool debugAudioSystem           = true;
 constexpr bool printDeviceInfo            = false;
 constexpr bool printULLWithBits           = false;
 constexpr bool debugWindowIsEnabled       = false;
 constexpr bool debugJobSystemIsEnabled    = false;
 constexpr bool debugImageLoadingIsEnabled = false;
 constexpr bool debugFramebuffersIsEnabled = false;
+
 
 // planet renderer
 #define MAX_CHUNK_LEVEL 63			// 52 is millimeter precision

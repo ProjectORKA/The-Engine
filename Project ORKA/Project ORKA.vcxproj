@@ -34,6 +34,7 @@
     <ClCompile Include="KDTreePrototype.cpp" />
     <ClInclude Include="AxisNeighborPrototype2.hpp" />
     <ClInclude Include="KDTree.hpp" />
+    <ClInclude Include="KDTree2.hpp" />
     <ClInclude Include="KDTreePrototype.hpp" />
     <ClCompile Include="Logger.cpp" />
     <ClCompile Include="MSDFText.cpp" />

@@ -28,7 +28,7 @@ void PrototypingRenderer::inputEvent(Window& window, const InputEvent input)
 
 void PrototypingRenderer::create(Window& window)
 {
-	player.camera.setLocation(Vec3(0.0f, -5.0f, 0.0f));
+	player.camera.setLocation(Vec3(0.0f, 0.0f, 10.0f));
 
 	framebuffer.create("MainFramebuffer", Area(1920, 1080));
 	framebuffer.add(WritePixelsFormat::RGBA, DataType::Float, FramebufferAttachment::Color0, true, Wrapping::Clamped);
@@ -54,6 +54,9 @@ void PrototypingRenderer::render(Window& window, const TiledRectangle area)
 
 	// render scene
 	player.render(window); // sets the location, rotation and projection
+
+	r.useShader("debug");
+	r.centeredCube(10);
 
 	prototype.render(r, player);
 

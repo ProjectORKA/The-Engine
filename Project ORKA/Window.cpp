@@ -7,7 +7,6 @@ UShort nextWindowId = 0;
 
 void Window::destroy()
 {
-	checkLifetime();
 	keepRunning = false;
 	thread.join();
 	content.destroy(*this);
@@ -17,8 +16,6 @@ void Window::destroy()
 
 void Window::setWindowed()
 {
-	checkLifetime();
-
 	apiWindowSetWindowedMode(apiWindow, TiledRectangle(windowedModeSize));
 	if(isVisible) apiWindowRestore(apiWindow);
 	centerWindow();
@@ -27,31 +24,24 @@ void Window::setWindowed()
 
 void Window::setMaximized()
 {
-	checkLifetime();
-
 	apiMaximizeWindow(apiWindow);
 	windowState = WindowState::Maximized;
 }
 
 void Window::centerWindow()
 {
-	checkLifetime();
-
 	const TiledRectangle workableArea = apiWindowGetWorkableArea(apiWindow);
 	setPosition(workableArea.center() - getFrameSize().center());
 }
 
 void Window::setMinimized()
 {
-	checkLifetime();
-
 	apiMinimizeWindow(apiWindow);
 	windowState = WindowState::Minimized;
 }
 
 void Window::captureCursor()
 {
-	checkLifetime();
 	if(!capturing)
 	{
 		mousePos = apiWindowGetCursorPosition(apiWindow);
@@ -62,16 +52,12 @@ void Window::captureCursor()
 
 void Window::setFullscreen()
 {
-	checkLifetime();
-
 	glfwSetWindowMonitor(apiWindow, glfwGetPrimaryMonitor(), 0, 0, glfwGetVideoMode(glfwGetPrimaryMonitor())->width, glfwGetVideoMode(glfwGetPrimaryMonitor())->height, GLFW_DONT_CARE);
 	windowState = WindowState::Fullscreen;
 }
 
 void Window::decorateWindow()
 {
-	checkLifetime();
-
 	apiWindowDecorate(apiWindow);
 	decorated = true;
 }
@@ -88,15 +74,12 @@ void Window::releaseCursor()
 
 void Window::unDecorateWindow()
 {
-	checkLifetime();
 	apiWindowUndecorate(apiWindow);
 	decorated = false;
 }
 
 void Window::destroyApiWindow()
 {
-	checkLifetime();
-
 	releaseCursor();
 	if(apiWindow)
 	{
@@ -108,8 +91,6 @@ void Window::destroyApiWindow()
 
 void Window::updateWindowState()
 {
-	checkLifetime();
-
 	switch(windowState)
 	{
 		case WindowState::Fullscreen:
@@ -129,8 +110,6 @@ void Window::updateWindowState()
 
 void Window::updateDecorations()
 {
-	checkLifetime();
-
 	if(decorated) decorateWindow();
 	else unDecorateWindow();
 }
@@ -222,8 +201,6 @@ void windowThread(Window& window)
 
 void Window::setCallbacks() const
 {
-	checkLifetime();
-
 	glfwSetKeyCallback(apiWindow, whenButtonIsPressed);
 	glfwSetCursorPosCallback(apiWindow, whenMouseIsMoving);
 	glfwSetScrollCallback(apiWindow, whenMouseIsScrolling);
@@ -245,8 +222,6 @@ Area Window::getFrameSize() const
 
 void Window::updatePosition() const
 {
-	checkLifetime();
-
 	glfwSetWindowPos(apiWindow, windowPosition.x, windowPosition.y);
 }
 
@@ -262,8 +237,6 @@ void Window::insert(UIElement& element)
 
 void Window::initializeGraphicsApi() const
 {
-	checkLifetime();
-
 	glfwMakeContextCurrent(apiWindow);
 
 	glfwSwapInterval(0);
@@ -271,18 +244,15 @@ void Window::initializeGraphicsApi() const
 
 void Window::setVisible(const Bool visible)
 {
-	checkLifetime();
 	isVisible = visible;
 	apiWindowSetVisibility(apiWindow, isVisible);
 }
 
 void Window::setIcon(const Path& path) const
 {
-	checkLifetime();
-
 	Image logo;
-	logo.loadOther(makeAbsolute(path), false); // [TODO] replace by "load()" if PNGs are loaded correctly
-
+	logo.load(path);
+	logo.flipVertically();
 	if(logo.getDataType() == ImageDataType::Byte)
 	{
 		GLFWimage icon;
@@ -296,8 +266,6 @@ void Window::setIcon(const Path& path) const
 
 void Window::setPosition(const IVec2 position)
 {
-	checkLifetime();
-
 	windowPosition = position;
 	updatePosition();
 }
@@ -333,15 +301,11 @@ void whenWindowCloseRequest(const APIWindow apiWindow)
 
 void Window::resize(const Int width, const Int height) const
 {
-	checkLifetime();
-
 	apiWindowResize(apiWindow, width, height);
 }
 
 void Window::createApiWindow(const String& title, const Area size)
 {
-	checkLifetime();
-
 	if(!apiWindow)
 	{
 		// video mode

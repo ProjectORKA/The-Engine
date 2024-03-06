@@ -30,6 +30,7 @@ SizeT Memory::getSize() const
 Memory::Memory(const SizeT size): size(size)
 {
 	data = new Byte[size];
+	memset(data, 0, size);
 }
 
 Memory::Memory(): data(nullptr), size(0) {}
