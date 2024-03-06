@@ -53,7 +53,6 @@ struct PhysicsPlaygroundSimulation : GameSimulation
 
 	[[nodiscard]] Float lengthOfEntireRun() const;
 	[[nodiscard]] Vec2  getPointOnSmoothCurve(Float value) const;
-	[[nodiscard]] Bool  doIntersect(Vec2 a, Vec2 b, Vec2 c, Vec2 d) const;
 	[[nodiscard]] Float distanceBetweenTwoNodes(Index a, Index b) const;
 	[[nodiscard]] Bool  doIntersect(Index a, Index b, Index c, Index d) const;
 };

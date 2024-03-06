@@ -320,10 +320,7 @@ void ImageViewerRenderer::render(Window& window, const TiledRectangle area)
 	renderer.useShader("imageViewer");
 	renderer.renderMesh("centeredPlane");
 
-	// render debug Info
-	renderDebugInfo(window, area);
-
-	// for(Index i = 0; i < images.size(); i++) if(images[i].hasLoadAttemptFailed()) images.erase(images.begin() + i);
+	if(images.size() > 10) renderAllImages(window, area);
 }
 
 void ImageViewerRenderer::inputEvent(Window& window, const InputEvent input)
@@ -371,24 +368,30 @@ ImageViewerResource::ImageViewerResource(const Path& path, const Index index)
 	this->index = index;
 }
 
-void ImageViewerRenderer::renderDebugInfo(Window& window, const TiledRectangle area) const
+void ImageViewerRenderer::renderAllImages(Window& window, const TiledRectangle area)
 {
-	Renderer& renderer = window.renderer;
+	window.renderer.screenSpace();
 
-	renderer.screenSpace();
-	Float       yOffset    = 0.0;
-	const Float width      = area.size.x;
-	const Float height     = area.size.y;
-	const Int   imageCount = images.size();
-	const Float size       = min(width / static_cast<Float>(images.size()) + 1.0f, height / 10.0f);
+	Float xOffset = 0;
+	Float yOffset = 0;
 
-	for(Int i = 0; i < imageCount; i++)
+	for(Int i = 0; i < images.size(); i++)
 	{
-		images[i].use(0);
-		if(i == currentImageId) yOffset = size / 2;
-		else yOffset                    = 0;
-		if(images[i].onGpu()) renderer.rectangle(Vec2(size * (static_cast<Float>(i) + 1.0f), size + yOffset), Vec2(size), false, true);
+		ImageViewerResource& image = images[i];
+
+		if(image.onGpu()){
+			if(currentImageId == i) yOffset = desiredHeight / 2;
+			else yOffset = 0;
+			Float       width  = static_cast<Float>(image.getWidth());
+			const Float height = static_cast<Float>(image.getHeight());
+			width              = width / height * desiredHeight;
+			image.use(0);
+			window.renderer.rectangle(Vec2(xOffset, yOffset), Vec2(width, desiredHeight), false, false);
+			xOffset += width;
+		}
 	}
+	if(xOffset > 0.0) desiredHeight *= static_cast<Float>(area.size.x) / xOffset;
+	desiredHeight = min(desiredHeight, static_cast<Float>(area.size.y) * 0.05f);
 }
 
 void ImageViewerResource::calculateRating(const Index currentImageIndex, const UInt resourceCount)

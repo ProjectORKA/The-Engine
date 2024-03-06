@@ -37,6 +37,7 @@
 #include "TripleNine.hpp"
 
 #include "AIPlayground.hpp"
+#include "AudioSystem.hpp"
 #include "DungeonsAndDiscord.hpp"
 #include "MindMapper.hpp"
 #include "GPUSim.hpp"
@@ -90,8 +91,17 @@ Int main(const Int argc, Char* argv[])
 	Engine engine;
 	engine.create(argc, argv);
 
-	ImageViewer game;
-	game.run(argc, argv);
+	//PhysicsPlayground game;
+	//game.run();
+
+	//PrototypingSandbox game;
+	//game.run();
+
+	ImageViewer imageViewer;
+	imageViewer.run(argc, argv);
+
+	//AudioSystem audioSystem;
+	//audioSystem.audioTest();
 }
 
 // windows entry point (ignore)

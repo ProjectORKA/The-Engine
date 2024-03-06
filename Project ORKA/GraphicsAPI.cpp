@@ -1241,7 +1241,7 @@ void OpenGL::Textures::apiTextureSubImage2D(const TextureID texture, const Int m
 		openGlState.write("glTextureSubImage2D(...);");
 #endif // TRACE_OPENGL
 	glPixelStorei(GL_PACK_ALIGNMENT, 1);
-
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 	glTextureSubImage2D(texture, mipmapLevel, xOffset, yOffset, width, height, static_cast<UInt>(format), static_cast<UInt>(type), pixels);
 }
 

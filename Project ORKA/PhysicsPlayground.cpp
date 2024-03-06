@@ -54,7 +54,7 @@ void PhysicsPlaygroundSimulation::removeIntersecting()
 			const Vec2 p3 = nodes[connections[b].a].position;
 			const Vec2 p4 = nodes[connections[b].b].position;
 
-			if(doIntersect(p1, p2, p3, p4))
+			if(doLinesIntersect(p1, p2, p3, p4))
 			{
 				const Float d1 = distance(p1, p2);
 				const Float d2 = distance(p3, p4);
@@ -241,7 +241,7 @@ void PhysicsPlaygroundSimulation::intersectionBasedConnections()
 		const Vec2 cAPos = nodes[connections[c].a].position;
 		const Vec2 cBPos = nodes[connections[c].b].position;
 
-		if(doIntersect(aPos, bPos, cAPos, cBPos))
+		if(doLinesIntersect(aPos, bPos, cAPos, cBPos))
 		{
 			const Float d1 = distance(aPos, bPos);
 			const Float d2 = distance(cAPos, cBPos);
@@ -387,34 +387,6 @@ Float PhysicsPlaygroundSimulation::distanceBetweenTwoNodes(const Index a, const 
 	return distance(nodes[a].position, nodes[b].position);
 }
 
-Bool PhysicsPlaygroundSimulation::doIntersect(const Vec2 a, const Vec2 b, const Vec2 c, const Vec2 d) const
-{
-	if(a == b || a == c || a == d || b == c || b == d || c == d) return false;
-
-	const Double px1 = a.x;
-	const Double px2 = b.x;
-	const Double px3 = c.x;
-	const Double px4 = d.x;
-
-	const Double py1 = a.y;
-	const Double py2 = b.y;
-	const Double py3 = c.y;
-	const Double py4 = d.y;
-
-	Double       ua = 0.0;
-	Double       ub = 0.0;
-	const Double ud = (py4 - py3) * (px2 - px1) - (px4 - px3) * (py2 - py1);
-
-	if(ud != 0)
-	{
-		ua = ((px4 - px3) * (py1 - py3) - (py4 - py3) * (px1 - px3)) / ud;
-		ub = ((px2 - px1) * (py1 - py3) - (py2 - py1) * (px1 - px3)) / ud;
-		if(ua < 0.0 || ua > 1.0 || ub < 0.0 || ub > 1.0) ua = 0.0;
-	}
-
-	return ua;
-}
-
 void PhysicsPlayGroundRenderer::render(Window& window, TiledRectangle area)
 {
 	Renderer& renderer = window.renderer;
@@ -446,7 +418,7 @@ void PhysicsPlayGroundRenderer::render(Window& window, TiledRectangle area)
 
 Bool PhysicsPlaygroundSimulation::doIntersect(const Index a, const Index b, const Index c, const Index d) const
 {
-	return doIntersect(nodes[a].position, nodes[b].position, nodes[c].position, nodes[d].position);
+	return doLinesIntersect(nodes[a].position, nodes[b].position, nodes[c].position, nodes[d].position);
 }
 
 void PhysicsPlayGroundRenderer::renderInteractive(Window& window, TiledRectangle area) {}

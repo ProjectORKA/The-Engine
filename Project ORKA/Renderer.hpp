@@ -97,25 +97,30 @@ struct Renderer
 	void  postProcess(const Name& name, const Framebuffer& source, const Framebuffer& destination);
 
 	//primitives
+	void centeredCube(Float size)
+	{
+		Bool tmp = wireframeMode;
+		setWireframeMode(true);
+		useShader("color");
+		fill(Vec4(1, 0, 0, 1));
+		uniforms().setMMatrix(matrixFromSize(size * 2));
+		renderMesh("centeredCube");
+		setWireframeMode(false);
+		wireframeMode = tmp;
+	}
 	void line(Vec2 start, Vec2 end);
 	void line(Vec3 start, Vec3 end);
+	void arrow(Vec2 start, Vec2 end);
+	void arrow(Vec3 start, Vec3 end);
 	void line(const Vector<Vec2>& line);
 	void line(const Vector<Vec3>& line);
+	void circle(Vec2 pos, Float radius);
+	void renderSky(const Camera& camera);
 	void lines(const Vector<Vec2>& lines);
 	void lines(const Vector<Vec3>& lines);
 	void lines(const Vector<Line3D>& lines);
 	void points(const Vector<Vec2>& points);
 	void points(const Vector<Vec3>& points);
-	void arrow(ResourceManager& resourceManager, Vec2 start, Vec2 end);
-	void arrow(ResourceManager& resourceManager, Vec3 start, Vec3 end);
-	void rectangle(ResourceManager& resourceManager, Vec2 pos, Vec2 size);
-	void circle(ResourceManager& resourceManager, Vec2 pos, Float radius);
-	void renderSky(ResourceManager& resourceManager, const Camera& camera);
-	void renderAtmosphere(ResourceManager& resourceManager, const Player& player, Vec3 sunDirection);
-	void arrow(Vec2 start, Vec2 end);
-	void arrow(Vec3 start, Vec3 end);
-	void circle(Vec2 pos, Float radius);
-	void renderSky(const Camera& camera);
 	void renderAtmosphere(const Player& player, Vec3 sunDirection);
 	void rectangle(Vec2 pos, Vec2 size, Bool overrideColor = true, Bool centered = true);
 

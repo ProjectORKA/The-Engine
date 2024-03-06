@@ -54,11 +54,12 @@ struct ImageViewerRenderer final : GameRenderer
 	UInt                        cpuLoadedCount             = 0;
 	Int                         currentImageId             = 0;
 	ULong                       availableMemoryUponStartup = 0;
+	Float                       desiredHeight              = 100;
 	Float                       zoom                       = 1.0f;
 	Float                       zoomFactor                 = 1.2f;
 	Float                       smoothness                 = 0.1f;
 	Float                       holdingDelay               = 0.5f;
-	Float                       frameRate                  = 30.0f;
+	Float                       frameRate                  = 15.0f;
 	Float                       smoothCameraSpeed          = 30.0f;
 	Bool                        smoothCameraTransition     = false;
 	Vec2                        offset                     = Vec2(0);
@@ -91,9 +92,9 @@ struct ImageViewerRenderer final : GameRenderer
 	void showNextImage(const Window& window);
 	void showPrevImage(const Window& window);
 	void connect(GameSimulation& simulation) override;
+	void renderAllImages(Window& window, TiledRectangle area);
 	void render(Window& window, TiledRectangle area) override;
 	void inputEvent(Window& window, InputEvent input) override;
-	void renderDebugInfo(Window& window, TiledRectangle area) const;
 	void renderInteractive(Window& window, TiledRectangle area) override;
 };
 

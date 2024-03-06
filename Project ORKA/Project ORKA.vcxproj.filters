@@ -203,9 +203,6 @@
     <ClCompile Include="MSDFText.cpp">
       <Filter>Apps\2D Apps\MSDFText</Filter>
     </ClCompile>
-    <ClCompile Include="Device.cpp">
-      <Filter>Common\Platform\Device</Filter>
-    </ClCompile>
     <ClCompile Include="IndexBufferObject.cpp">
       <Filter>Systems\UserInterface\Window\Renderer\MeshSystem\GPUMesh\IndexBufferObject</Filter>
     </ClCompile>
@@ -389,6 +386,7 @@
     <ClCompile Include="ParallelizedConvexHullPrototype.cpp">
       <Filter>Apps\3D Apps\Prototyping\Prototypes\ParalellizedConvexHullPrototype</Filter>
     </ClCompile>
+    <ClCompile Include="Platform.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Basics.hpp">
@@ -646,9 +644,6 @@
     <ClInclude Include="SimpleRTSTerrain.hpp">
       <Filter>Apps\3D Apps\Simple RTS\SimpleRTSTerrain</Filter>
     </ClInclude>
-    <ClInclude Include="Device.hpp">
-      <Filter>Common\Platform\Device</Filter>
-    </ClInclude>
     <ClInclude Include="IndexBufferObject.hpp">
       <Filter>Systems\UserInterface\Window\Renderer\MeshSystem\GPUMesh\IndexBufferObject</Filter>
     </ClInclude>
@@ -884,6 +879,10 @@
     </ClInclude>
     <ClInclude Include="AxisNeighborPrototype2.hpp">
       <Filter>Apps\3D Apps\Prototyping\Prototypes</Filter>
+    </ClInclude>
+    <ClInclude Include="Windows.hpp" />
+    <ClInclude Include="KDTree2.hpp">
+      <Filter>Common\Datastructures\KDTree</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1653,6 +1652,9 @@
     </Filter>
     <Filter Include="Systems\Engine">
       <UniqueIdentifier>{7b41519f-b775-41ee-abf8-e19107bbb02f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Apps\3D Apps\Prototyping\Prototypes\KDTree">
+      <UniqueIdentifier>{f7b24238-8111-4ea7-a14e-ce86f4bc9cd9}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

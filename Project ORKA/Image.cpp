@@ -1,7 +1,7 @@
 #include "Image.hpp"
 #include "Debug.hpp"
 #include "FileSystem.hpp"
-#include "FileTypes.hpp"
+
 #include "lodepng.h"
 
 namespace stbi{
@@ -13,84 +13,123 @@ namespace stbi{
 
 #include "webp/decode.h"
 
-Image::Image() = default;
+#include <jpeglib.h>
 
-Bool Image::isLoaded() const
+#include <gif_lib.h>
+
+using ImageHeader = Vector<Byte>;
+Int imageHeaderReadSize = 8;
+
+void jpegErrorCallback(const j_common_ptr info)
 {
-	return loaded;
+	Char buffer[JMSG_LENGTH_MAX];
+	(*info->err->format_message)(info, buffer);
+	logError(buffer);
+	longjmp(*static_cast<jmp_buf*>(info->client_data), 1);
 }
 
-UInt Image::getWidth() const
+Bool isPNG(const ImageHeader& header)
 {
-	if(!loaded) logError("Cant read property from unloaded image!");
-	return width;
+	return header.size() >= 8 && header[0] == 0x89 && header[1] == 0x50 && header[2] == 0x4E && header[3] == 0x47 && header[4] == 0x0D && header[5] == 0x0A && header[6] == 0x1A && header[7] == 0x0A;
 }
 
-UInt Image::getHeight() const
+Bool isBMP(const ImageHeader& header)
 {
-	if(!loaded) logError("Cant read property from unloaded image!");
-	return height;
+	return header.size() >= 2 && header[0] == 0x42 && header[1] == 0x4D; // BM
 }
 
-SizeT Image::getByteSize() const
+Bool isHDR(const ImageHeader& header)
 {
-	if(!loaded) logError("Cant read property from unloaded image!");
-	return pixelMemory.getSize();
+	return header.size() >= 10 && header[0] == '#' && header[1] == '?' && header[2] == 'R' && header[3] == 'A' && header[4] == 'D' && header[5] == 'I' && header[6] == 'A' && header[7] == 'N' && header[8] == 'C' && header[9] == 'E';
+}
+
+Bool isEXR(const ImageHeader& header)
+{
+	return header.size() >= 4 && header[0] == 0x76 && header[1] == 0x2F && header[2] == 0x31 && header[3] == 0x01;
+}
+
+Bool isGIF(const ImageHeader& header)
+{
+	return header.size() >= 6 && header[0] == 0x47 && header[1] == 0x49 && header[2] == 0x46 && header[3] == 0x38 && (header[4] == 0x37 || header[4] == 0x39) && header[5] == 0x61;
+}
+
+Bool isJPEG(const ImageHeader& header)
+{
+	return header.size() >= 2 && header[0] == 0xFF && header[1] == 0xD8;
+}
+
+Bool isWebP(const ImageHeader& header)
+{
+	return header.size() >= 4 && header[0] == 0x52 && header[1] == 0x49 && header[2] == 0x46 && header[3] == 0x46;
+}
+
+Bool isJFIF(const ImageHeader& header)
+{
+	return header.size() >= 2 && header[0] == 0xFF && header[1] == 0xD8; // JPEG magic numbers
+}
+
+Bool isTIFF(const ImageHeader& header)
+{
+	return (header.size() >= 4 && (header[0] == 0x49 && header[1] == 0x49 && header[2] == 0x2A && header[3] == 0x00)) || // Little-endian TIFF
+		(header.size() >= 4 && (header[0] == 0x4D && header[1] == 0x4D && header[2] == 0x00 && header[3] == 0x2A));   // Big-endian TIFF
 }
 
 void Image::load(const Path& path)
 {
 	if(debugImageLoadingIsEnabled) logDebug("Loading (" + path.string() + ")");
-
-	// make sure file exists
 	if(!doesPathExist(path)) logError("File not found! (" + path.string() + ")");
 
-	const String fileType = getFileExtension(path);
+	std::ifstream file(path, std::ios::binary);
+	ImageHeader   header(imageHeaderReadSize);
+	file.read(reinterpret_cast<char*>(header.data()), imageHeaderReadSize);
 
-	if(fileType == ".webp")
+	if(isJPEG(header))
+	{
+		loadJPEG(path);
+		if(pixelMemory.isValid()) return;
+	}
+	if(isWebP(header))
 	{
 		loadWebP(path);
 		if(pixelMemory.isValid()) return;
 	}
-
-	if(fileType == ".hdr" || fileType == ".exr")
-	{
-		dataType = ImageDataType::Float;
-		loadOther(path, true);
-		if(pixelMemory.isValid()) return;
-	}
-
-	if(fileType == ".bmp")
-	{
-		loadOther(path, true);
-		if(pixelMemory.isValid()) return;
-	}
-
-	if(fileType == ".png")
+	if(isPNG(header))
 	{
 		loadPNG(path);
 		if(pixelMemory.isValid()) return;
 	}
-
-	if(fileType == ".jpg" || fileType == ".jpeg" || fileType == ".jfif" || fileType == ".png")
+	if(isBMP(header))
 	{
-		loadOther(path, true);
-		return;
+		loadBMP(path);
+		if(pixelMemory.isValid()) return;
+	}
+	if(isEXR(header))
+	{
+		loadEXR(path);
+		if(pixelMemory.isValid()) return;
+	}
+	if(isGIF(header))
+	{
+		loadGIF(path, 0);
+		if(pixelMemory.isValid()) return;
+	}
+	if(isHDR(header))
+	{
+		loadHDR(path);
+		if(pixelMemory.isValid()) return;
+	}
+	if(isJFIF(header))
+	{
+		loadJFIF(path);
+		if(pixelMemory.isValid()) return;
+	}
+	if(isTIFF(header))
+	{
+		loadTIFF(path);
+		if(pixelMemory.isValid()) return;
 	}
 
 	logError("File type not supported!");
-}
-
-Channels Image::getChannels() const
-{
-	if(!loaded) logError("Cant read property from unloaded image!");
-	return channels;
-}
-
-Byte* Image::getDataPointer() const
-{
-	if(!loaded) logError("Cant read property from unloaded image!");
-	return static_cast<Byte*>(pixelMemory.getData());
 }
 
 void Image::loadPNG(const Path& path)
@@ -105,23 +144,12 @@ void Image::loadPNG(const Path& path)
 		return;
 	}
 
-	// Flip the image vertically
-	const UInt  bytesPerPixel = 4; // Assuming RGBA channels
-	const SizeT rowSize       = imageWidth * bytesPerPixel;
-	const SizeT imageSize     = rowSize * imageHeight;
-
-	Vector<Byte> flippedData(imageSize);
-	for(UInt y = 0; y < imageHeight; ++y)
-	{
-		const SizeT srcOffset = y * rowSize;
-		const SizeT dstOffset = (imageHeight - y - 1) * rowSize;
-		std::memcpy(flippedData.data() + dstOffset, pngData.data() + srcOffset, rowSize);
-	}
-
-	pixelMemory = Memory(flippedData.data(), flippedData.size());
+	pixelMemory = Memory(pngData.data(), pngData.size());
 	width       = static_cast<Int>(imageWidth);
 	height      = static_cast<Int>(imageHeight);
 	loaded      = true;
+
+	flipVertically();
 }
 
 void Image::loadWebP(const Path& path)
@@ -234,6 +262,270 @@ void Image::loadWebP(const Path& path)
 	delete[] fileData;
 }
 
+void Image::flipVertically() const
+{
+	if(!loaded)
+	{
+		logError("Image is not loaded.");
+		return;
+	}
+
+	Vector<Byte> tempRow(width * getChannelCount());
+	const Int    rowSize = width * getChannelCount();
+
+	for(Int i = 0; i < height / 2; ++i)
+	{
+		std::copy(pixelMemory.getData() + i * rowSize, pixelMemory.getData() + (i + 1) * rowSize, tempRow.begin());
+		std::copy(pixelMemory.getData() + (height - 1 - i) * rowSize, pixelMemory.getData() + (height - i) * rowSize, pixelMemory.getData() + i * rowSize);
+		std::copy(tempRow.begin(), tempRow.end(), pixelMemory.getData() + (height - 1 - i) * rowSize);
+	}
+}
+
+Image::Image(const Int width, const Int height, const Channels channels, const ImageDataType dataType, const Memory& pixels)
+{
+	create(width, height, channels, 1, dataType, pixels);
+}
+
+void Image::loadBMP(const Path& path)
+{
+	loadOther(path, true);
+}
+
+void Image::loadEXR(const Path& path)
+{
+	dataType = ImageDataType::Float;
+	loadOther(path, true);
+}
+
+void Image::loadGIF(const Path& path, const Int frameId)
+{
+	const String stringPath = toString(path);
+	const char*  charPath   = stringPath.c_str();
+	GifFileType* gif        = DGifOpenFileName(charPath, nullptr);
+	if(gif == nullptr)
+	{
+		logError("Could not load gif!");
+		return;
+	}
+
+	if(DGifSlurp(gif) != GIF_OK)
+	{
+		logError("Error slurping Gif File!");
+		DGifCloseFile(gif, nullptr);
+		return;
+	}
+
+	printf("Number of frames: %d\n", gif->ImageCount);
+
+	width               = gif->SWidth;
+	height              = gif->SHeight;
+	channels            = Channels::RGB;
+	dataType            = ImageDataType::Byte;
+	const Int numPixels = width * height * 3;
+	pixelMemory         = Memory(numPixels);
+
+	unsigned char* pixelPtr = pixelMemory.getData();
+
+	const SavedImage*   frame     = &gif->SavedImages[frameId];
+	const GifImageDesc* frameDesc = &frame->ImageDesc;
+	const GifByteType*  raster    = frame->RasterBits;
+
+	const GifColorType* colorMap = nullptr;
+	if(gif->SColorMap) colorMap = gif->SColorMap->Colors;
+	if(gif->SavedImages[frameId].ImageDesc.ColorMap) colorMap = gif->SavedImages[frameId].ImageDesc.ColorMap->Colors;
+
+	if(!colorMap)
+	{
+		logError("Color Map for gif not found!");
+		pixelMemory.destroy();
+		return;
+	}
+
+	for(Int y = height-1; y >= 0; y--)
+	{
+		for(Int x = 0; x < width; x++)
+		{
+			const Int          index      = y * width + x;
+			const Int          colorIndex = raster[index];
+			const GifColorType color      = colorMap[colorIndex];
+
+			*pixelPtr++ = color.Red;
+			*pixelPtr++ = color.Green;
+			*pixelPtr++ = color.Blue;
+		}
+	}
+
+	loaded = true;
+
+	DGifCloseFile(gif, nullptr);
+}
+
+void Image::loadHDR(const Path& path)
+{
+	dataType = ImageDataType::Float;
+	loadOther(path, true);
+}
+
+void Image::loadJPEG(const Path& path)
+{
+	FILE* inFile = stbi::stbi__fopen(toString(path).c_str(), "rb");
+
+	if(!inFile)
+	{
+		logError("Error opening input file.");
+		return;
+	}
+
+	jpeg_decompress_struct info;
+	jpeg_error_mgr         error;
+	info.err         = jpeg_std_error(&error);
+	error.error_exit = jpegErrorCallback;
+
+	//if (setjmp(jerr.setjmp_buffer)) {
+	//    jpeg_destroy_decompress(&cinfo);
+	//    fclose(infile);
+	//    return 1;
+	//}
+
+	jpeg_create_decompress(&info);
+	jpeg_stdio_src(&info, inFile);
+	jpeg_read_header(&info, TRUE);
+	jpeg_start_decompress(&info);
+
+	width           = info.output_width;
+	height          = info.output_height;
+	Int numChannels = info.output_components;
+
+	switch(info.output_components)
+	{
+		case 1:
+			channels = Channels::Red;
+			break;
+		case 2:
+			channels = Channels::RG;
+			break;
+		case 3:
+			channels = Channels::RGB;
+			break;
+		case 4:
+			channels = Channels::RGBA;
+			break;
+		default:
+			logError("Image (" + getFileName(path) + ") did not load with correct channels!");
+	}
+
+	unsigned long  image_size = width * height * numChannels;
+	unsigned char* buffer     = new unsigned char[image_size];
+
+	while(info.output_scanline < height)
+	{
+		Byte* rowPointer = &buffer[info.output_scanline * width * numChannels];
+		jpeg_read_scanlines(&info, &rowPointer, 1);
+	}
+
+	pixelMemory = Memory(buffer, static_cast<ULL>(width * height * numChannels));
+
+	jpeg_finish_decompress(&info);
+	jpeg_destroy_decompress(&info);
+
+	if(Int error = fclose(inFile) != 0)
+	{
+		logWarning("Error closing JPEG!");
+	};
+
+	delete[] buffer;
+
+	if(!pixelMemory.isValid())
+	{
+		logError("Failed to load image! (" + toString(path) + ")");
+		loaded = false;
+		delete[] buffer;
+		return;
+	}
+
+	loaded = true;
+
+	flipVertically();
+}
+
+void Image::loadJFIF(const Path& path)
+{
+	loadOther(path, true);
+}
+
+void Image::loadTIFF(const Path& path)
+{
+	loadOther(path, true);
+}
+
+Image::Image() = default;
+
+Bool Image::isLoaded() const
+{
+	return loaded;
+}
+
+UInt Image::getWidth() const
+{
+	if(!loaded) logError("Cant read property from unloaded image!");
+	return width;
+}
+
+UInt Image::getHeight() const
+{
+	if(!loaded) logError("Cant read property from unloaded image!");
+	return height;
+}
+
+SizeT Image::getByteSize() const
+{
+	if(!loaded) logError("Cant read property from unloaded image!");
+
+	switch(getDataType())
+	{
+		case ImageDataType::Byte:
+			return width * height * getChannelCount();
+			break;
+		case ImageDataType::Float:
+		case ImageDataType::UInt:
+		case ImageDataType::Int:
+			return width * height * getChannelCount() * 4;
+			break;
+		default: ;
+			return 0;
+	}
+}
+
+Channels Image::getChannels() const
+{
+	if(!loaded) logError("Cant read property from unloaded image!");
+	return channels;
+}
+
+Byte* Image::getDataPointer() const
+{
+	if(!loaded) logError("Cant read property from unloaded image!");
+	return static_cast<Byte*>(pixelMemory.getData());
+}
+
+Int Image::getChannelCount() const
+{
+	switch(channels)
+	{
+		case Channels::Red:
+			return 1;
+		case Channels::RG:
+			return 2;
+		case Channels::RGB:
+			return 3;
+		case Channels::RGBA:
+			return 4;
+		default:
+			logError("Invalid channel count!");
+			return 0;
+	}
+}
+
 ImageDataType Image::getDataType() const
 {
 	if(!loaded) logError("Cant read property from unloaded image!");
@@ -282,7 +574,7 @@ void Image::loadOther(const Path& path, const Bool inverted)
 	loaded = true;
 }
 
-Image::Image(const Int width, const Int height, const Channels channels, const ImageDataType dataType, const Memory& pixels)
+void Image::create(const Int width, const Int height, const Channels channels, const Int frames, const ImageDataType dataType, const Memory& pixels)
 {
 	// float int and uint all have 4 bytes, so this is a small optimization
 	SizeT byteCount = 4;
