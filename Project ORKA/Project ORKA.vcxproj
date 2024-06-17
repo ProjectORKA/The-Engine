@@ -36,6 +36,7 @@
     <ClInclude Include="KDTree.hpp" />
     <ClInclude Include="KDTree2.hpp" />
     <ClInclude Include="KDTreePrototype.hpp" />
+    <ClCompile Include="Keva.cpp" />
     <ClCompile Include="Logger.cpp" />
     <ClCompile Include="MSDFText.cpp" />
     <ClCompile Include="NameGenerator.cpp" />
@@ -156,6 +157,7 @@
     <ClCompile Include="VoxelRenderer.cpp" />
     <ClCompile Include="Window.cpp" />
     <ClCompile Include="WindowAPI.cpp" />
+    <ClInclude Include="Keva.hpp" />
     <ClInclude Include="Windows.hpp" />
   </ItemGroup>
   <ItemGroup>
