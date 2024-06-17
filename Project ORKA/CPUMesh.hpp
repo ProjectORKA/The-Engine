@@ -8,13 +8,13 @@
 struct Renderer;
 struct ResourceManager;
 
-enum class VertexDataLocation
-{
-	Position           = 0,
-	Normals            = 1,
-	TextureCoordinates = 2,
-	Indices            = 16,
-};
+//enum class VertexDataLocation
+//{
+//	Position           = 0,
+//	Normals            = 1,
+//	TextureCoordinates = 2,
+//	Indices            = 16,
+//};
 
 enum class MeshDataFlags : UShort
 {

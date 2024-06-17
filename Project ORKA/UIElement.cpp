@@ -5,10 +5,21 @@ Index nextInteractiveElementId = 0;
 
 UIElement::~UIElement() = default;
 
+UIElement& UIElement::fill(const Color color) {
+	hasBackground   = true;
+	backgroundColor = color;
+	return *this;
+}
+
 UIElement& UIElement::padding(const Int width)
 {
 	constraints.paddingX = width;
 	constraints.paddingY = width;
+	return *this;
+}
+
+UIElement& UIElement::name(const String& debugName) {
+	this->debugName = debugName;
 	return *this;
 }
 

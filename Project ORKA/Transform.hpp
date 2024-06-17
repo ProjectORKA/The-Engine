@@ -13,7 +13,7 @@ struct Transform
 	[[nodiscard]] Vec3   getSize() const;
 	[[nodiscard]] Matrix getMatrix() const;
 	[[nodiscard]] Vec3   getRotation() const;
-	[[nodiscard]] Vec3   getLocation() const;
+	[[nodiscard]] Vec3   getPosition() const;
 
 	void move(Vec3 translation);
 	void scaleBy(const Vec3& scaleFactor);
@@ -22,10 +22,10 @@ struct Transform
 
 	void setSize(Float size);
 	void setSize(const Vec3& size);
-	void setLocation(const Vec3& pos);
+	void setPosition(const Vec3& pos);
 	void setSize(Float x, Float y, Float z);
 	void setRotation(const Vec3& eulerAngles);
-	void setLocation(Float x, Float y, Float z);
+	void setPosition(Float x, Float y, Float z);
 	void setRotation(Float x, Float y, Float z);
 
 	Transform();

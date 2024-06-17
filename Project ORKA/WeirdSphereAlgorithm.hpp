@@ -203,7 +203,7 @@ struct WeirdSphereAlgorithmPrototype : Prototype
 
 	void create() override
 	{
-		player.camera.setLocation(0,0,150);
+		player.camera.setPosition(0,0,150);
 		player.camera.setRotation(Vec3(PI,0,0));
 		for(ULL i = 0; i < numPoints; i++) addPoint();
 	}

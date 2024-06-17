@@ -28,7 +28,7 @@ Int mod(const Int a, const Int b)
 
 Int max(const Int a, const Int b)
 {
-	if(a > b) return a;
+	if (a > b) return a;
 	return b;
 }
 
@@ -40,7 +40,7 @@ void Graph::add(const Float value)
 UInt countBitsInFlags(UInt flags)
 {
 	UInt count = 0;
-	while(flags)
+	while (flags)
 	{
 		count++;
 		flags = flags << 1;
@@ -51,8 +51,8 @@ UInt countBitsInFlags(UInt flags)
 Vec3 projectToCube(const Vec3 vec)
 {
 	Float max = abs(vec.x);
-	if(abs(vec.y) > max) max = abs(vec.y);
-	if(abs(vec.z) > max) max = abs(vec.z);
+	if (abs(vec.y) > max) max = abs(vec.y);
+	if (abs(vec.z) > max) max = abs(vec.z);
 	return vec / Vec3(max);
 }
 
@@ -78,7 +78,7 @@ Matrix matrixFromSize(const Vec3 s)
 
 UInt max(const UInt a, const UInt b)
 {
-	if(a > b) return a;
+	if (a > b) return a;
 	return b;
 }
 
@@ -90,17 +90,22 @@ Vec3 max(const Vec3 a, const Vec3 b)
 UInt nextPowerOfTwo(const UInt value)
 {
 	UInt powerOfTwo = 1;
-	while(powerOfTwo < value) powerOfTwo <<= 1;
+	while (powerOfTwo < value) powerOfTwo <<= 1;
 	return powerOfTwo;
 }
 
 Float min(const Float a, const Float b)
 {
-	if(a < b) return a;
+	if (a < b) return a;
 	return b;
 }
 
 Float mod(const Float a, const Float b)
+{
+	return std::fmod(a, b);
+}
+
+Double mod(const Double a, const Double b)
 {
 	return std::fmod(a, b);
 }
@@ -136,14 +141,14 @@ UInt fibonacciSequence(const UInt iterations)
 	UInt x   = 1;
 	UInt y   = 1;
 
-	for(UInt i = 0; i < iterations - 3; i++)
+	for (UInt i = 0; i < iterations - 3; i++)
 	{
-		if(isX) x += y;
+		if (isX) x += y;
 		else y += x;
 		isX = !isX;
 	}
 
-	if(isX) return x;
+	if (isX) return x;
 	return y;
 }
 
@@ -174,9 +179,9 @@ Orientation::Orientation(const Vec3 direction)
 	Vec3 dirNormalized = normalize(direction);
 
 	// handle edge cases
-	if(dirNormalized != Vec3(0, 0, 1))
+	if (dirNormalized != Vec3(0, 0, 1))
 	{
-		if(dirNormalized != Vec3(0, 0, -1))
+		if (dirNormalized != Vec3(0, 0, -1))
 		{
 			z = dirNormalized;
 			x = normalize(cross(dirNormalized, Vec3(0, 0, 1)));
@@ -190,18 +195,18 @@ Orientation::Orientation(const Vec3 direction)
 	}
 }
 
-Matrix matrixFromPosition(const Vec2 location)
+Matrix matrixFromPosition(const Vec2 position)
 {
 	Matrix m(1);
-	m[3].x = location.x;
-	m[3].y = location.y;
+	m[3].x = position.x;
+	m[3].y = position.y;
 	return m;
 }
 
-Matrix matrixFromPosition(const Vec3 location)
+Matrix matrixFromPosition(const Vec3 position)
 {
 	Matrix m(1);
-	m[3] = Vec4(location, 1);
+	m[3] = Vec4(position, 1);
 	return m;
 }
 
@@ -249,7 +254,7 @@ Float angleBetweenAAndB(const Vec3& a, const Vec3& b)
 
 Float lerp(const Float a, Float b, const Float alpha)
 {
-	if(std::isnan(b)) b = 0;
+	if (std::isnan(b)) b = 0;
 	return a * (1 - alpha) + b * alpha;
 }
 
@@ -266,10 +271,10 @@ Float approach(const Float input, const Float maxValue)
 
 void loopWithinCentered(Vec2& point, const Float extend)
 {
-	while(point.x < -extend) point.x += extend * 2;
-	while(point.x >= extend) point.x -= extend * 2;
-	while(point.y < -extend) point.y += extend * 2;
-	while(point.y >= extend) point.y -= extend * 2;
+	while (point.x < -extend) point.x += extend * 2;
+	while (point.x >= extend) point.x -= extend * 2;
+	while (point.y < -extend) point.y += extend * 2;
+	while (point.y >= extend) point.y -= extend * 2;
 }
 
 Vec3 lerp(const Vec3 a, const Vec3 b, const Float alpha)
@@ -307,13 +312,13 @@ Rotation getRotationBetweenVectors(Vec3 start, Vec3 dest)
 	const float cosTheta = dot(start, dest);
 	Vec3        rotationAxis;
 
-	if(cosTheta < -1 + 0.001f)
+	if (cosTheta < -1 + 0.001f)
 	{
 		// special case when vectors in opposite directions:
 		// there is no "ideal" rotation axis
 		// So guess one; any will do as long as it's perpendicular to start
 		rotationAxis = cross(Vec3(0.0f, 0.0f, 1.0f), start);
-		if(length2(rotationAxis) < 0.01f) // bad luck, they were parallel, try again!
+		if (length2(rotationAxis) < 0.01f) // bad luck, they were parallel, try again!
 			rotationAxis = cross(Vec3(1.0f, 0.0f, 0.0f), start);
 
 		rotationAxis = normalize(rotationAxis);
@@ -370,9 +375,9 @@ Bool pointInsideSpheres(const Vec3 point, List<Sphere> spheres)
 {
 	auto it = spheres.begin();
 
-	while(it != spheres.end())
+	while (it != spheres.end())
 	{
-		if(pointInsideSphere(point, *it)) return true;
+		if (pointInsideSphere(point, *it)) return true;
 		++it;
 	}
 	return false;
@@ -398,14 +403,14 @@ Matrix screenSpaceMatrix(const Float width, const Float height)
 
 Index getClosestPointId(const Vec2 point, const Vector<Index>& pointIDs, const Vector<Vec2>& points)
 {
-	Float dist = distance(point, points[pointIDs[0]]);
+	Float dist  = distance(point, points[pointIDs[0]]);
 	Index index = pointIDs[0];
-	for(Int i = 1; i < pointIDs.size(); i++)
+	for (Int i = 1; i < pointIDs.size(); i++)
 	{
 		const Float dist2 = distance(point, points[pointIDs[i]]);
-		if(dist2 < dist)
+		if (dist2 < dist)
 		{
-			dist = dist2;
+			dist  = dist2;
 			index = pointIDs[i];
 		}
 	}
@@ -414,22 +419,40 @@ Index getClosestPointId(const Vec2 point, const Vector<Index>& pointIDs, const V
 
 Vec3 getClosestPoint(const Vec3 point, const List<Vec3>& points)
 {
-	if(points.empty()) return point;
+	if (points.empty()) return point;
 
 	Float minimalDistance = distance(point, points.front());
-	Vec3  closestPointTMP = points.front();
+	Vec3  closestPointTmp = points.front();
 
-	for(auto p : points)
+	for (auto p : points)
 	{
-		const Float currentDistance = distance(point, p);
-		if(currentDistance < minimalDistance)
+		if (const Float currentDistance = distance(point, p); currentDistance < minimalDistance)
 		{
 			minimalDistance = currentDistance;
-			closestPointTMP = p;
+			closestPointTmp = p;
 		}
 	}
 
-	return closestPointTMP;
+	return closestPointTmp;
+}
+
+Vec2 getClosestPoint(const Vec2 point, const Vector<Vec2>& points)
+{
+	if (points.empty()) return point;
+
+	float minimalDistance = distance(point, points.front());
+	Vec2  closestPointTmp = points.front();
+
+	for (auto p : points)
+	{
+		if (const Float currentDistance = distance(point, p); currentDistance < minimalDistance)
+		{
+			minimalDistance = currentDistance;
+			closestPointTmp = p;
+		}
+	}
+
+	return closestPointTmp;
 }
 
 Matrix matrixFromPositionAndSize(const Vec4 compressedTransform)
@@ -469,7 +492,7 @@ Vector<Matrix> matrixArrayFromPositions(const Vector<Vec3>& positions)
 {
 	Vector<Matrix> matrixArray;
 	matrixArray.resize(positions.size());
-	for(UInt i = 0; i < positions.size(); i++) matrixArray[i] = matrixFromPosition(positions[i]);
+	for (UInt i = 0; i < positions.size(); i++) matrixArray[i] = matrixFromPosition(positions[i]);
 	return matrixArray;
 }
 
@@ -477,7 +500,7 @@ Vector<Matrix> matrixArrayFromPositions(const Vector<Vec2>& positions)
 {
 	Vector<Matrix> matrixArray;
 	matrixArray.resize(positions.size());
-	for(UInt i = 0; i < positions.size(); i++) matrixArray[i] = matrixFromPosition(positions[i]);
+	for (UInt i = 0; i < positions.size(); i++) matrixArray[i] = matrixFromPosition(positions[i]);
 	return matrixArray;
 }
 
@@ -486,23 +509,23 @@ Matrix matrixFromRotation(const Float x, const Float y, const Float z)
 	return glm::eulerAngleYXZ(z, x, y);
 }
 
-Matrix matrixFromPositionAndSize(const Vec3 location, const Float size)
+Matrix matrixFromPositionAndSize(const Vec3 position, const Float size)
 {
 	Matrix m(size);
-	m[3] = Vec4(location, 1);
+	m[3] = Vec4(position, 1);
 	return m;
 }
 
-Matrix matrixFromPositionAndSize(const Vec2 location, const Float size)
+Matrix matrixFromPositionAndSize(const Vec2 position, const Float size)
 {
 	Matrix m(size);
-	m[3] = Vec4(location, 0, 1);
+	m[3] = Vec4(position, 0, 1);
 	return m;
 }
 
 Bool pointInsideSpheres(const Vec3 point, const Vector<Sphere>& spheres)
 {
-	for(const auto s : spheres) if(pointInsideSphere(point, s)) return true;
+	for (const auto s : spheres) if (pointInsideSphere(point, s)) return true;
 	return false;
 }
 
@@ -515,10 +538,10 @@ Index idOfClosestPoint(const Vec2 origin, const Vector<Vec2>& positions)
 {
 	Index index           = 0;
 	Float closestDistance = distance(origin, positions.front());
-	for(Index i = 1; i < positions.size(); i++)
+	for (Index i = 1; i < positions.size(); i++)
 	{
 		const Float currentDistance = distance(origin, positions[i]);
-		if(currentDistance < closestDistance)
+		if (currentDistance < closestDistance)
 		{
 			closestDistance = currentDistance;
 			index           = i;
@@ -527,14 +550,29 @@ Index idOfClosestPoint(const Vec2 origin, const Vector<Vec2>& positions)
 	return index;
 }
 
+Index idOfClosestPoint(const Vec2 origin, const Vector<Index>& indices, const Vector<Vec2>& positions)
+{
+	Index closestIndex    = 0;
+	Float closestDistance = distance(origin, positions.front());
+	for (const auto sampleIndex : indices)
+	{
+		if (const Float currentDistance = distance(origin, positions[sampleIndex]); currentDistance < closestDistance)
+		{
+			closestDistance = currentDistance;
+			closestIndex    = sampleIndex;
+		}
+	}
+	return closestIndex;
+}
+
 Float deltaInLoopingSpace(const Float a, const Float b, const Float extend)
 {
 	const Float delta1 = b - a;
 	Float       delta2;
-	if(a < 0) delta2 = b - extend * 2 - a;
-	else delta2      = b + extend * 2 - a;
+	if (a < 0) delta2 = b - extend * 2 - a;
+	else delta2       = b + extend * 2 - a;
 
-	if(abs(delta1) < abs(delta2)) return delta1;
+	if (abs(delta1) < abs(delta2)) return delta1;
 	return delta2;
 }
 
@@ -542,7 +580,7 @@ Float getDistanceToClosestPoint(const Vec3 point, const Vector<Vec3>& points)
 {
 	Float minimalDistance = distance(point, points[0]);
 
-	for(auto p : points) minimalDistance = min(minimalDistance, distance(point, p));
+	for (auto p : points) minimalDistance = min(minimalDistance, distance(point, p));
 
 	return minimalDistance;
 }
@@ -551,15 +589,15 @@ Vector<Matrix> matrixArrayFromCompactVec4(const Vector<Vec4>& compactTransform)
 {
 	Vector<Matrix> matrixArray;
 	matrixArray.resize(compactTransform.size());
-	for(UInt i = 0; i < compactTransform.size(); i++) matrixArray[i] = matrixFromPositionAndSize(compactTransform[i]);
+	for (UInt i = 0; i < compactTransform.size(); i++) matrixArray[i] = matrixFromPositionAndSize(compactTransform[i]);
 	return matrixArray;
 }
 
-Matrix matrixFromDirectionAndLocation(const Vec3 direction, const Vec3 location)
+Matrix matrixFromDirectionAndPosition(const Vec3 direction, const Vec3 position)
 {
 	const Float       size = length(direction);
 	const Orientation orientation(direction);
-	return matrixFromOrientation(orientation, location, size);
+	return matrixFromOrientation(orientation, position, size);
 }
 
 Float distanceToPointInLoopingSpace(const Vec2 a, const Vec2 b, const Float extend)
@@ -571,7 +609,7 @@ void removePointsInRadius(const Vec3 point, Vector<Vec3>& points, const Float ra
 {
 	Vector<Vec3> available;
 
-	for(Vec3 current : points) if(distance(point, current) > radius) available.push_back(current);
+	for (Vec3 current : points) if (distance(point, current) > radius) available.push_back(current);
 
 	points = available;
 }
@@ -595,7 +633,7 @@ Matrix matrixFromOrientation(const Orientation& o, const Vec3 position, const Fl
 Vector<Vec3> vec2VectorToVec3Vector(const Vector<Vec2>& vec2Vector)
 {
 	Vector<Vec3> vec3Vector(vec2Vector.size());
-	for(ULL i = 0; i < vec2Vector.size(); i++) vec3Vector[i] = Vec3(vec2Vector[i], 0);
+	for (ULL i = 0; i < vec2Vector.size(); i++) vec3Vector[i] = Vec3(vec2Vector[i], 0);
 	return vec3Vector;
 }
 
@@ -613,7 +651,7 @@ Vector<Matrix> matrixArrayFromPositionsAndSize(const Vector<Vec2>& positions, co
 {
 	Vector<Matrix> matrixArray;
 	matrixArray.resize(positions.size());
-	for(UInt i = 0; i < positions.size(); i++) matrixArray[i] = matrixFromPositionAndSize(positions[i], size);
+	for (UInt i = 0; i < positions.size(); i++) matrixArray[i] = matrixFromPositionAndSize(positions[i], size);
 	return matrixArray;
 }
 
@@ -621,18 +659,32 @@ Vector<Matrix> matrixArrayFromPositionsAndSize(const Vector<Vec3>& positions, co
 {
 	Vector<Matrix> matrixArray;
 	matrixArray.resize(positions.size());
-	for(UInt i = 0; i < positions.size(); i++) matrixArray[i] = matrixFromPositionAndSize(positions[i], size);
+	for (UInt i = 0; i < positions.size(); i++) matrixArray[i] = matrixFromPositionAndSize(positions[i], size);
 	return matrixArray;
 }
 
-Bool isWithinDistanceOfOtherPoints(const Vec2 point, const Vector<Vec2>& points, const Float dist)
+Bool pointWithinDistanceOfOtherPoints(const Vec2 point, const Vector<Vec2>& points, const Float dist)
 {
-	for(const Vec2& p : points) if(distance(point, p) < dist) return true;
+	for (const Vec2& p : points)
+	{
+		if (distance(point, p) < dist) return true;
+	}
 	return false;
 }
 
-Bool doLinesIntersect(const Vec2 a, const Vec2 b, const Vec2 c, const Vec2 d) {
-	if(a == b || a == c || a == d || b == c || b == d || c == d) return false;
+Bool circleCollidingWithCircles(Vec2 pos, Float radius, const Vector<Vec2>& circles, Float pointsRadius)
+{
+	const Float dist = radius + pointsRadius;
+	for (const Vec2& p : circles)
+	{
+		if (distance(pos, p) < dist) return true;
+	}
+	return false;
+}
+
+Bool linesIntersecting(const Vec2 a, const Vec2 b, const Vec2 c, const Vec2 d)
+{
+	if (a == b || a == c || a == d || b == c || b == d || c == d) return false;
 
 	const Float px1 = a.x;
 	const Float px2 = b.x;
@@ -648,12 +700,12 @@ Bool doLinesIntersect(const Vec2 a, const Vec2 b, const Vec2 c, const Vec2 d) {
 	Float       ub = 0.0;
 	const Float ud = (py4 - py3) * (px2 - px1) - (px4 - px3) * (py2 - py1);
 
-	if(ud != 0.0)
+	if (ud != 0.0)
 	{
 		ua = ((px4 - px3) * (py1 - py3) - (py4 - py3) * (px1 - px3)) / ud;
 		ub = ((px2 - px1) * (py1 - py3) - (py2 - py1) * (px1 - px3)) / ud;
 
-		if(ua < 0.0 || ua > 1.0 || ub < 0.0 || ub > 1.0) ua = 0.0;
+		if (ua < 0.0 || ua > 1.0 || ub < 0.0 || ub > 1.0) ua = 0.0;
 	}
 
 	return ua;
@@ -685,9 +737,9 @@ Vec3 quadraticInterpolation(const Vec3 start, const Vec3 control, const Vec3 end
 	return lerp(lerp(start, control, time), lerp(control, end, time), time);
 }
 
-ULLVec4 getBoundingBoxIds(const Vector<Vec2>& points)
+UllVec4 getBoundingBoxIds(const Vector<Vec2>& points)
 {
-	if(points.empty()) return {0.0, 0.0, 0.0, 0.0};
+	if (points.empty()) return {0.0, 0.0, 0.0, 0.0};
 	Float west    = points[0].x;
 	Float south   = points[0].y;
 	Float east    = points[0].x;
@@ -696,24 +748,24 @@ ULLVec4 getBoundingBoxIds(const Vector<Vec2>& points)
 	ULL   southId = 0;
 	ULL   eastId  = 0;
 	ULL   northId = 0;
-	for(ULL i = 0; i < points.size(); i++)
+	for (ULL i = 0; i < points.size(); i++)
 	{
-		if(points[i].x < west)
+		if (points[i].x < west)
 		{
 			west   = points[i].x;
 			westId = i;
 		}
-		if(points[i].y < south)
+		if (points[i].y < south)
 		{
 			south   = points[i].y;
 			southId = i;
 		}
-		if(points[i].x > east)
+		if (points[i].x > east)
 		{
 			east   = points[i].x;
 			eastId = i;
 		}
-		if(points[i].y > north)
+		if (points[i].y > north)
 		{
 			north   = points[i].y;
 			northId = i;
@@ -731,7 +783,7 @@ Vector<Matrix> matrixArrayFromPositionsAndDirections(const Vector<Vec2>& pos, co
 {
 	Vector<Matrix> matrixArray;
 	matrixArray.resize(pos.size());
-	for(UInt i = 0; i < pos.size(); i++) matrixArray[i] = matrixFromPositionAndDirection(pos[i], dir[i]);
+	for (UInt i = 0; i < pos.size(); i++) matrixArray[i] = matrixFromPositionAndDirection(pos[i], dir[i]);
 	return matrixArray;
 }
 
@@ -750,10 +802,10 @@ void getClosestPoint(const Vec3 point, const Vector<Vec3>& points, Index& closes
 	Float minimalDistance = distance(point, points[0]);
 	Index closestPointId  = 0;
 
-	for(Int i = 0; i < points.size(); i++)
+	for (Int i = 0; i < points.size(); i++)
 	{
 		const Float currentDistance = distance(point, points[i]);
-		if(currentDistance < minimalDistance)
+		if (currentDistance < minimalDistance)
 		{
 			minimalDistance = currentDistance;
 			closestPointId  = i;
@@ -768,10 +820,10 @@ Index idOfClosestPointInLoopingSpace(const Vec2 origin, const Vector<Vec2>& posi
 {
 	Index index           = 0;
 	Float closestDistance = distanceToPointInLoopingSpace(origin, positions.front(), extend);
-	for(Index i = 1; i < positions.size(); i++)
+	for (Index i = 1; i < positions.size(); i++)
 	{
 		const Float currentDistance = distanceToPointInLoopingSpace(origin, positions[i], extend);
-		if(currentDistance < closestDistance)
+		if (currentDistance < closestDistance)
 		{
 			closestDistance = currentDistance;
 			index           = i;
@@ -784,20 +836,20 @@ Vector<Matrix> matrixArrayFromPositionsDirectionsAndSizes(const Vector<Vec2>& po
 {
 	Vector<Matrix> matrixArray;
 	matrixArray.resize(position.size());
-	for(UInt i = 0; i < position.size(); i++) matrixArray[i] = matrixFromPositionDirectionAndSize(position[i], direction[i], size[i]);
+	for (UInt i = 0; i < position.size(); i++) matrixArray[i] = matrixFromPositionDirectionAndSize(position[i], direction[i], size[i]);
 	return matrixArray;
 }
 
 void spaceColonization(Vector<Vec3>& points, Vector<Vec3>& branches, Vector<Index>& connections, const Float segmentSize, const Float killRadius)
 {
-	if(points.empty()) return;
-	if(branches.empty()) branches.emplace_back(0);
-	if(connections.empty()) connections.push_back(0);
+	if (points.empty()) return;
+	if (branches.empty()) branches.emplace_back(0);
+	if (connections.empty()) connections.push_back(0);
 
 	Vector<Vec3> pull(branches.size(), Vec3(0));
 
 	// check every space
-	for(const Vec3& point : points)
+	for (const Vec3& point : points)
 	{
 		Index closestId;
 		Vec3  closestPoint;
@@ -809,9 +861,9 @@ void spaceColonization(Vector<Vec3>& points, Vector<Vec3>& branches, Vector<Inde
 	Vector<Vec3> newBranches;
 
 	// calculate branches
-	for(ULL i = 0; i < pull.size(); i++)
+	for (ULL i = 0; i < pull.size(); i++)
 	{
-		if(pull[i] != Vec3(0))
+		if (pull[i] != Vec3(0))
 		{
 			// calculate direction
 			pull[i] = normalize(pull[i]);
@@ -823,8 +875,8 @@ void spaceColonization(Vector<Vec3>& points, Vector<Vec3>& branches, Vector<Inde
 	}
 
 	// kill points
-	for(const Vec3 node : newBranches) removePointsInRadius(node, points, killRadius);
+	for (const Vec3 node : newBranches) removePointsInRadius(node, points, killRadius);
 
 	// add branches
-	for(Vec3 node : newBranches) branches.push_back(node);
+	for (Vec3 node : newBranches) branches.push_back(node);
 }

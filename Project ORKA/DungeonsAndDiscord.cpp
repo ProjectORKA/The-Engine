@@ -11,7 +11,7 @@ void DNDSimulation::destroy()
 	save.write(reinterpret_cast<Char*>(&fieldOfView), sizeof(Float));
 	save.write(reinterpret_cast<Char*>(&nearClipValue), sizeof(Float));
 	save.write(reinterpret_cast<Char*>(&farClipValue), sizeof(Float));
-	save.write(reinterpret_cast<Char*>(&location), sizeof(Vec3));
+	save.write(reinterpret_cast<Char*>(&position), sizeof(Vec3));
 	save.write(reinterpret_cast<Char*>(&rotation), sizeof(DVec3));
 	save.write(reinterpret_cast<Char*>(&speedExponent), sizeof(Int));
 
@@ -61,7 +61,7 @@ void DNDSimulation::create()
 		save.read(reinterpret_cast<Char*>(&fieldOfView), sizeof(Float));
 		save.read(reinterpret_cast<Char*>(&nearClipValue), sizeof(Float));
 		save.read(reinterpret_cast<Char*>(&farClipValue), sizeof(Float));
-		save.read(reinterpret_cast<Char*>(&location), sizeof(Vec3));
+		save.read(reinterpret_cast<Char*>(&position), sizeof(Vec3));
 		save.read(reinterpret_cast<Char*>(&rotation), sizeof(DVec3));
 		save.read(reinterpret_cast<Char*>(&speedExponent), sizeof(Int));
 
@@ -109,7 +109,7 @@ void DNDRenderer::create(Window& window)
 	player.camera.setNearClipValue(world->nearClipValue);
 	player.camera.setFieldOfView(world->fieldOfView);
 	player.camera.setRotation(world->rotation);
-	player.camera.setLocation(world->location);
+	player.camera.setPosition(world->position);
 
 	framebuffer.create("MainFramebuffer", Area(1920, 1080));
 	framebuffer.add(WritePixelsFormat::RGBA, DataType::Float, FramebufferAttachment::Color0, true, Wrapping::Clamped);
@@ -185,7 +185,7 @@ void DNDRenderer::render(Window& window, const TiledRectangle area)
 	world->fieldOfView   = player.camera.getFieldOfView();
 	world->nearClipValue = player.camera.getNearClipValue();
 	world->farClipValue  = player.camera.getFarClipValue();
-	world->location      = player.camera.getLocation();
+	world->position      = player.camera.getPosition();
 	world->rotation      = player.camera.getRotation();
 }
 

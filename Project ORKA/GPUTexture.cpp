@@ -20,6 +20,12 @@ UInt GPUTexture::getOpenGLID() const
 	return openglTexture.getID();
 }
 
+Float GPUTexture::getAspectRatio() const
+{
+	if (width > 0.0f && height > 0.0f) return static_cast<Float>(width) / static_cast<Float>(height);
+	return 1.0f;
+}
+
 void GPUTexture::resize(const Area size)
 {
 	openglTexture.destroy();

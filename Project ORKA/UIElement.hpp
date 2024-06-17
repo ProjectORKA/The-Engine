@@ -2,7 +2,7 @@
 
 #include "Basics.hpp"
 #include "TiledMath.hpp"
-#include "Renderer.hpp"
+#include "Renderer.hpp" //do not remove
 #include "Input.hpp"
 
 extern Index nextInteractiveElementId;
@@ -23,14 +23,20 @@ struct Constraints
 struct UIElement
 {
 	Constraints constraints;
-	Index       id = nextInteractiveElementId++;
+	Bool        hasBackground   = false;
+	String      debugName            = "Unknown";
+	Color       backgroundColor = Color(0, 0, 0, 0);
+	Index       id              = nextInteractiveElementId++;
 
 	virtual      ~UIElement();
-	UIElement&   padding(Int width);
 	virtual void update(Window& window) = 0;
 	virtual void create(Window& window) = 0;
 	virtual void destroy(Window& window) = 0;
 	virtual void render(Window& window, TiledRectangle area) = 0;
 	virtual void inputEvent(Window& window, InputEvent input) = 0;
 	virtual void renderInteractive(Window& window, TiledRectangle area) = 0;
+
+	UIElement& fill(Color color);
+	UIElement& padding(Int width);
+	UIElement& name(const String& debugName);
 };

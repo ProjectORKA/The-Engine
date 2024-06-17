@@ -608,7 +608,7 @@ class PooledAllocator
 
 	Size  remaining_ = 0;  //!< Number of bytes left in current block of storage
 	void* base_      = nullptr;  //!< Pointer to base of current block of storage
-	void* loc_       = nullptr;  //!< Current location in block to next allocate
+	void* loc_       = nullptr;  //!< Current position in block to next allocate
 
 	void internal_init()
 	{

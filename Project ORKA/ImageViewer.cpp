@@ -4,22 +4,6 @@
 #include "JobSystem.hpp"
 #include "Platform.hpp"
 
-void ImageViewerResource::destroy()
-{
-	cpuTexture.unload();
-	gpuTexture.unload();
-}
-
-Path& ImageViewerResource::getPath()
-{
-	return path;
-}
-
-String ImageViewerResource::getName()
-{
-	return getFileName(getPath());
-}
-
 void ImageViewerRenderer::updateZoom()
 {
 	const Float oldZoom = zoom;
@@ -27,121 +11,50 @@ void ImageViewerRenderer::updateZoom()
 	offset *= zoom / oldZoom;
 }
 
-void ImageViewerResource::loadOntoGpu()
+void ImageViewerRenderer::removeImage()
 {
-	gpuTexture.load(cpuTexture);
-}
-
-void ImageViewerResource::loadIntoRam()
-{
-	if(!isBeingLoadedIntoRam)
-	{
-		isBeingLoadedIntoRam = true;
-		if(debugImageLoadingIsEnabled) logDebug("Loading image (" + getName() + ") into RAM!");
-		cpuTexture.load(path, getFileName(path), Filter::Nearest, Filter::Linear, Wrapping::Clamped);
-		if(!cpuTexture.isLoaded()) loadAttemptFailed = true;
-		isBeingLoadedIntoRam = false;
-	}
-}
-
-Bool ImageViewerResource::inRam() const
-{
-	return cpuTexture.isLoaded();
-}
-
-Bool ImageViewerResource::onGpu() const
-{
-	return gpuTexture.isLoaded();
-}
-
-void ImageViewerResource::unloadFromGpu()
-{
-	gpuTexture.unload();
-}
-
-void ImageViewerResource::unloadFromRam()
-{
-	cpuTexture.unload();
-}
-
-Int ImageViewerResource::getWidth() const
-{
-	return cpuTexture.getWidth();
-}
-
-void ImageViewerRenderer::showNextImage(const Window& window)
-{
-	const auto currentTime = now();
-	if(lastImageRefresh + Milliseconds(static_cast<Int>(1000 / frameRate)) < currentTime)
-	{
-		lastImageRefresh = currentTime;
-		currentImageId++;
-		if(currentImageId >= static_cast<Int>(images.size())) currentImageId = 0;
-		window.setTitle(windowTitleSubstring + images[currentImageId].getName());
-
-		updateLoadedImages();
-	}
-}
-
-void ImageViewerRenderer::updateLoadedImages()
-{
-	calculatePriorities();
-	const Vector<Index> sortedImageIds         = indicesOfImagesSortedByPriority();
-	Int                 firstUnloadedFromFront = 0;
-	Int                 firstLoadedFromBack    = sortedImageIds.size() - 1;
-	while(images[sortedImageIds[firstUnloadedFromFront]].inRam() && firstUnloadedFromFront < sortedImageIds.size() - 1) firstUnloadedFromFront++;
-	while(!images[sortedImageIds[firstLoadedFromBack]].inRam() && firstLoadedFromBack >= 0) firstLoadedFromBack--;
-
-	if(firstUnloadedFromFront != firstLoadedFromBack)
-	{
-		images[sortedImageIds[firstUnloadedFromFront]].loadIntoRam();
-		images[sortedImageIds[firstLoadedFromBack]].unloadFromRam();
-		logDebug("Swapped" + toString(firstUnloadedFromFront) + " with " + toString(firstLoadedFromBack));
-	}
-}
-
-void ImageViewerRenderer::showPrevImage(const Window& window)
-{
-	const auto currentTime = now();
-	if(lastImageRefresh + Milliseconds(static_cast<Int>(1000 / frameRate)) < currentTime)
-	{
-		lastImageRefresh = currentTime;
-		currentImageId--;
-		if(currentImageId < 0) currentImageId = images.size() - 1;
-		window.setTitle(windowTitleSubstring + images[currentImageId].getName());
-
-		updateLoadedImages();
-	}
-}
-
-void ImageViewerRenderer::create(Window& window)
-{
-	availableMemoryUponStartup = availablePhysicalMemoryInBytes();
-}
-
-Int ImageViewerResource::getHeight() const
-{
-	return cpuTexture.getHeight();
+	imagesMutex.lock();
+	images[currentImageId].destroy();
+	images.erase(images.begin() + currentImageId);
+	if (currentImageId >= static_cast<Int>(images.size())) currentImageId--;
+	imagesMutex.unlock();
 }
 
 void ImageViewerRenderer::destroy(Window& window) {}
 
-Float ImageViewerResource::getPriority() const
+void ImageViewerRenderer::updateLoadedImages()
 {
-	return priority;
+	if (!images.empty())
+	{
+		imagesMutex.lock();
+		calculatePriorities();
+		const Vector<Index> sortedImageIds         = indicesOfImagesSortedByPriority();
+		Int                 firstUnloadedFromFront = 0;
+		Int                 firstLoadedFromBack    = static_cast<Int>(sortedImageIds.size()) - 1;
+
+		while (firstUnloadedFromFront < static_cast<Int>(sortedImageIds.size()) - 1 && images[sortedImageIds[firstUnloadedFromFront]].inRam()) firstUnloadedFromFront++;
+
+		while (firstLoadedFromBack > 0 && !images[sortedImageIds[firstLoadedFromBack]].inRam()) firstLoadedFromBack--;
+
+		if (firstUnloadedFromFront != firstLoadedFromBack)
+		{
+			loadImage(*this, sortedImageIds[firstUnloadedFromFront]);
+			images[sortedImageIds[firstLoadedFromBack]].unloadFromRam();
+		}
+		imagesMutex.unlock();
+	}
 }
 
 void loadNextImage(ImageViewerRenderer& viewer)
 {
-	if(!viewer.images.empty())
+	if (!viewer.images.empty())
 	{
 		SharedLockGuard sharedLockGuard(viewer.imagesMutex);
-		for(ImageViewerResource& i : viewer.images)
+		for (ImageViewerResource& i : viewer.images)
 		{
-			if(!i.inRam())
+			if (!i.inRam())
 			{
 				i.loadIntoRam();
-
 				return;
 			}
 		}
@@ -150,34 +63,44 @@ void loadNextImage(ImageViewerRenderer& viewer)
 
 void ImageViewerRenderer::calculatePriorities()
 {
-	for(auto& image : images) image.calculateRating(currentImageId, images.size());
+	for (auto& image : images) image.calculateRating(currentImageId, static_cast<UInt>(images.size()));
+}
+
+void ImageViewerRenderer::create(Window& window)
+{
+	availableMemoryUponStartup = availablePhysicalMemoryInBytes();
+
+	for (const auto& tag : imageTags)
+	{
+		database.addTag(tag);
+	}
 }
 
 void ImageViewerRenderer::update(Window& window)
 {
 	// load new images if dropped
-	if(!window.droppedFilePaths.empty())
+	if (!window.droppedFilePaths.empty())
 	{
 		// image path to load folder from
 		Path imagePath = "";
 
 		// check for new paths
-		for(auto p : window.droppedFilePaths)
+		for (auto p : window.droppedFilePaths)
 		{
 			// get last path that is actually an image
-			if(isImageFile(p)) imagePath = p;
+			if (isImageFile(p)) imagePath = p;
 		}
 
 		// clear queue
 		window.droppedFilePaths.clear();
 
 		// only if there is a valid image should we reload resources
-		if(imagePath != "")
+		if (imagePath != "")
 		{
 			LockGuard lockGuard(imagesMutex);
 
 			// delete currently loaded resource
-			for(auto i : images) i.destroy();
+			for (auto i : images) i.destroy();
 			images.clear();
 
 			// get folder
@@ -187,9 +110,11 @@ void ImageViewerRenderer::update(Window& window)
 			Vector<Path> paths = getFilesInDirectory(folderPath, imageExtensions);
 
 			// set current index to the originally loaded image
-			for(Index i = 0; i < paths.size(); i++)
+			for (Int i = 0; i < static_cast<Int>(paths.size()); i++)
 			{
-				if(paths[i] == imagePath)
+				//database.add(paths[i]);
+
+				if (paths[i] == imagePath)
 				{
 					currentImageId = i;
 					break;
@@ -197,7 +122,7 @@ void ImageViewerRenderer::update(Window& window)
 			}
 
 			// set images to new paths
-			for(Index i = 0; i < paths.size(); i++)
+			for (Index i = 0; i < paths.size(); i++)
 			{
 				ImageViewerResource image(paths[i], i);
 				images.push_back(image);
@@ -212,16 +137,16 @@ void ImageViewerRenderer::update(Window& window)
 			// create the load order
 			Vector<Index> sortedIndices = indicesOfImagesSortedByPriority();
 
-			for(auto n : sortedIndices) jobSystem.enqueue(loadImage, std::ref(*this), n);
+			for (auto n : sortedIndices) jobSystem.enqueue(loadImage, std::ref(*this), n);
 		}
 	}
 
 	// input
-	if(window.pressed(mouseDown)) offset += window.mouseDelta;
+	if (window.pressed(mouseDown)) offset += window.mouseDelta;
 
-	if(window.pressed(nextImageHolding) || window.pressed(nextImageHoldingMouse)) if(now() > lastButtonInput + Milliseconds(static_cast<Int>(1000 * holdingDelay))) showNextImage(window);
+	if (window.pressed(nextImageHolding) || window.pressed(nextImageHoldingMouse)) if (now() > lastButtonInput + Milliseconds(static_cast<Int>(1000 * holdingDelay))) showNextImage(window);
 
-	if(window.pressed(previousImageHolding) || window.pressed(previousImageHoldingMouse)) if(now() > lastButtonInput + Milliseconds(static_cast<Int>(1000 * holdingDelay))) showPrevImage(window);
+	if (window.pressed(previousImageHolding) || window.pressed(previousImageHoldingMouse)) if (now() > lastButtonInput + Milliseconds(static_cast<Int>(1000 * holdingDelay))) showPrevImage(window);
 }
 
 void ImageViewer::run(const Int argc, Char* argv[])
@@ -229,45 +154,97 @@ void ImageViewer::run(const Int argc, Char* argv[])
 	ui.create();
 
 	// scan launch parameters for input
-	for(Int i = 0; i < argc; i++)
+	for (Int i = 0; i < argc; i++)
 	{
 		Path path = argv[i];
 
-		if(isExecutableFile(path)) continue;
+		if (isExecutableFile(path)) continue;
 
-		if(isImageFile(path)) filePaths.push_back(path);
+		if (isImageFile(path)) filePaths.push_back(path);
 		else logWarning("Can't process input: " + path.string());
 	}
 
 	Window& window = ui.window("ORKA Image Viewer", Area(1920, 1080), true, true, WindowState::Windowed, renderer);
 
-	for(auto& path : filePaths) window.droppedFilePaths.push_back(path);
+	for (auto& path : filePaths) window.droppedFilePaths.push_back(path);
 
 	ui.run();
 }
 
-Bool ImageViewerResource::hasLoadAttemptFailed() const
-{
-	return loadAttemptFailed;
-}
-
 void ImageViewerRenderer::connect(GameSimulation& simulation) {}
 
-void ImageViewerResource::use(const Int textureSlot) const
+void ImageViewerRenderer::removeImage(const Int imageId)
 {
-	gpuTexture.useTextureInSlot(textureSlot);
+	if (currentImageId >= imageId) currentImageId--;
+	imagesMutex.lock();
+	images[imageId].destroy();
+	images.erase(images.begin() + imageId);
+	imagesMutex.unlock();
 }
 
-void loadImage(ImageViewerRenderer& viewer, const Index imageID)
+void ImageViewerRenderer::showNextImage(const Window& window)
 {
-	if(availablePhysicalMemoryInBytes() > viewer.availableMemoryUponStartup / 2) viewer.images[imageID].loadIntoRam();
+	const auto currentTime = now();
+	if (lastImageRefresh + Milliseconds(static_cast<Int>(1000 / frameRate)) < currentTime && !images.empty())
+	{
+		lastImageRefresh = currentTime;
+		currentImageId++;
+		if (currentImageId >= static_cast<Int>(images.size())) currentImageId = 0;
+		window.setTitle(windowTitleSubstring + images[currentImageId].getName());
+
+		updateLoadedImages();
+	}
+}
+
+void ImageViewerRenderer::showPrevImage(const Window& window)
+{
+	if (const auto currentTime = now(); lastImageRefresh + Milliseconds(static_cast<Int>(1000 / frameRate)) < currentTime && !images.empty())
+	{
+		lastImageRefresh = currentTime;
+		currentImageId--;
+		if (currentImageId < 0) currentImageId = static_cast<Int>(images.size()) - 1;
+		window.setTitle(windowTitleSubstring + images[currentImageId].getName());
+
+		updateLoadedImages();
+	}
+}
+
+void loadImage(ImageViewerRenderer& viewer, const Index imageId)
+{
+	if (availablePhysicalMemoryInBytes() > viewer.availableMemoryUponStartup / 3)
+	{
+		try
+		{
+			viewer.images[imageId].loadIntoRam();
+			jobSystem.enqueue(addImageToDatabase, std::ref(viewer), imageId);
+		}
+		catch (std::exception e)
+		{
+			logError(e.what());
+			viewer.removeImage(imageId);
+		}
+	}
 	else logWarning("Image could not be loaded! RAM is full!");
 }
+
+void addImageToDatabase(ImageViewerRenderer& viewer, const Index imageId)
+{
+	viewer.imagesMutex.lock_shared();
+	const Path   imagePath   = viewer.images[imageId].getPath();
+	const String hash        = viewer.images[imageId].getHash();
+	const Float  aspectRatio = viewer.images[imageId].getAspectRatio();
+	viewer.imagesMutex.unlock_shared();
+
+	viewer.database.add(hash, imagePath);
+	viewer.database.setValue(hash, "aspect", aspectRatio);
+};
+
+void ImageViewerRenderer::renderInteractive(Window& window, TiledRectangle area) {}
 
 Vector<Index> ImageViewerRenderer::indicesOfImagesSortedByPriority() const
 {
 	Vector<Index> indices;
-	for(Index i = 0; i < images.size(); i++) indices.push_back(i);
+	for (Index i = 0; i < images.size(); i++) indices.push_back(i);
 	std::ranges::sort(indices, [&](const Index a, const Index b)
 	{
 		return images[a].getPriority() > images[b].getPriority();
@@ -275,14 +252,12 @@ Vector<Index> ImageViewerRenderer::indicesOfImagesSortedByPriority() const
 	return indices;
 }
 
-void ImageViewerRenderer::renderInteractive(Window& window, TiledRectangle area) {}
-
 void ImageViewerRenderer::render(Window& window, const TiledRectangle area)
 {
 	Renderer& renderer = window.renderer;
 
 	// images need to be loaded onto gpu in this thread, so lets just do it before we render
-	for(Int i = 0; i < images.size(); i++) if(images[i].inRam() && !images[i].onGpu()) images[i].loadOntoGpu();
+	for (Int i = 0; i < static_cast<Int>(images.size()); i++) if (images[i].inRam() && !images[i].onGpu()) images[i].loadOntoGpu();
 
 	renderer.uniforms().reset();
 
@@ -295,11 +270,11 @@ void ImageViewerRenderer::render(Window& window, const TiledRectangle area)
 	Float imgX = 0;
 	Float imgY = 0;
 
-	if(!images.empty() && images[currentImageId].onGpu())
+	if (!images.empty() && images[currentImageId].onGpu())
 	{
 		images[currentImageId].use(0);
-		imgX = images[currentImageId].getWidth();
-		imgY = images[currentImageId].getHeight();
+		imgX = static_cast<Float>(images[currentImageId].getWidth());
+		imgY = static_cast<Float>(images[currentImageId].getHeight());
 	}
 
 	const auto winX = static_cast<Float>(renderer.getWindowWidth());
@@ -312,7 +287,7 @@ void ImageViewerRenderer::render(Window& window, const TiledRectangle area)
 	finalMatrix      = scale(finalMatrix, Vec3(size * imgX, size * imgY, 0));
 	finalMatrix      = scale(finalMatrix, Vec3(zoom));
 
-	if(smoothCameraTransition) approach(actualMatrix, finalMatrix, renderer.deltaTime() * smoothCameraSpeed);
+	if (smoothCameraTransition) approach(actualMatrix, finalMatrix, renderer.deltaTime() * smoothCameraSpeed);
 	else actualMatrix = finalMatrix;
 
 	renderer.uniforms().setMMatrix(actualMatrix);
@@ -320,41 +295,42 @@ void ImageViewerRenderer::render(Window& window, const TiledRectangle area)
 	renderer.useShader("imageViewer");
 	renderer.renderMesh("centeredPlane");
 
-	if(images.size() > 10) renderAllImages(window, area);
+	if (images.size() > 10) renderAllImages(window, area);
 }
 
 void ImageViewerRenderer::inputEvent(Window& window, const InputEvent input)
 {
 	lastButtonInput = now();
 
-	if(input == zoomIn)
+	if (input == zoomIn)
 	{
 		zoomLevel++;
 		updateZoom();
 	}
 
-	if(input == zoomOut)
+	if (input == zoomOut)
 	{
 		zoomLevel--;
 		updateZoom();
 	}
 
-	if(input == nextImage || input == nextImageMouse) showNextImage(window);
+	if (input == nextImage || input == nextImageMouse) showNextImage(window);
 
-	if(input == previousImage || input == previousImageMouse) showPrevImage(window);
+	if (input == previousImage || input == previousImageMouse) showPrevImage(window);
 
-	//if(input == deleteImage)
-	//{
-	//	if(!images.empty())
-	//	{
-	//		deleteFile(images[currentImageId].getPath());
-	//		images[currentImageId].destroy();
-	//		//images.erase(images.begin() + currentImageId);
-	//		if(currentImageId >= images.size()) currentImageId--;
-	//	}
-	//}
+	if (input == deleteImage)
+	{
+		if (!images.empty())
+		{
+			//deleteFile(images[currentImageId].getPath());
+			//images[currentImageId].destroy();
+			//images.erase(images.begin() + currentImageId);
 
-	if(input == resetView)
+			removeImage();
+		}
+	}
+
+	if (input == resetView)
 	{
 		offset    = Vec2(0);
 		zoomLevel = 0;
@@ -362,26 +338,19 @@ void ImageViewerRenderer::inputEvent(Window& window, const InputEvent input)
 	}
 }
 
-ImageViewerResource::ImageViewerResource(const Path& path, const Index index)
-{
-	this->path  = path;
-	this->index = index;
-}
-
 void ImageViewerRenderer::renderAllImages(Window& window, const TiledRectangle area)
 {
 	window.renderer.screenSpace();
 
 	Float xOffset = 0;
-	Float yOffset = 0;
+	Float yOffset;
 
-	for(Int i = 0; i < images.size(); i++)
+	for (Int i = 0; i < static_cast<Int>(images.size()); i++)
 	{
-		ImageViewerResource& image = images[i];
-
-		if(image.onGpu()){
-			if(currentImageId == i) yOffset = desiredHeight / 2;
-			else yOffset = 0;
+		if (ImageViewerResource& image = images[i]; image.onGpu())
+		{
+			if (currentImageId == i) yOffset = desiredHeight / 2;
+			else yOffset                     = 0;
 			Float       width  = static_cast<Float>(image.getWidth());
 			const Float height = static_cast<Float>(image.getHeight());
 			width              = width / height * desiredHeight;
@@ -390,22 +359,6 @@ void ImageViewerRenderer::renderAllImages(Window& window, const TiledRectangle a
 			xOffset += width;
 		}
 	}
-	if(xOffset > 0.0) desiredHeight *= static_cast<Float>(area.size.x) / xOffset;
+	if (xOffset > 0.0) desiredHeight *= static_cast<Float>(area.size.x) / xOffset;
 	desiredHeight = min(desiredHeight, static_cast<Float>(area.size.y) * 0.05f);
 }
-
-void ImageViewerResource::calculateRating(const Index currentImageIndex, const UInt resourceCount)
-{
-	const auto  b      = static_cast<Float>(resourceCount);
-	const auto  a      = static_cast<Float>(currentImageIndex);
-	const auto  x      = static_cast<Float>(index);
-	const Float diffAx = abs(a - x);
-	priority           = b / 2.0f - min(abs(a - x - b), min(diffAx, abs(a - x + b)));
-}
-
-//void ImageViewerRenderer::removeImage()
-//{
-//	//images.erase(images.begin() + currentImageId);
-//	images.erase(images.begin() + currentImageId);
-//	if(currentImageId >= images.size()) currentImageId--;
-//}

@@ -11,7 +11,7 @@
 
 struct GuessingGame
 {
-	void run()
+	void run() const
 	{
 		randomizeSeed();
 		Int           guess      = 0;

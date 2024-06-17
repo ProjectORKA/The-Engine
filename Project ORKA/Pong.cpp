@@ -28,7 +28,7 @@ void PongRenderer::update(Window& window)
 
 void PongRenderer::connect(GameSimulation& simulation) {}
 
-void PongPlayer::ballLocationInput(Vector<Ball>& balls)
+void PongPlayer::ballPositionInput(Vector<Ball>& balls)
 {
 	const Ball* ball = getClosestBall(*this, balls);
 	if(ball)
@@ -220,16 +220,16 @@ void PongRenderer::render(Window& window, TiledRectangle area)
 	const Vec2 normalizedCursorPosition = Vec2(2) * (Vec2(window.mousePosBotLeft) / Vec2(r.getWindowSize()) - Vec2(0.5));
 	const Vec3 cursorWorldPos           = inverse(r.uniforms().getPMatrix()) * Vec4(normalizedCursorPosition, 0, 1);
 
-	// players[1].ballLocationInput(ball);
+	// players[1].ballPositionInput(ball);
 
 	for(Ball& ball : balls) ball.update(r.time.getDelta(), players);
 
 	// players[0].keyboardInput(renderer.renderTime.delta);
 	players[0].mouseInput(cursorWorldPos);
 	// players[0].aiInput(balls, renderer.renderTime.delta);
-	// players[0].ballLocationInput(balls);
+	// players[0].ballPositionInput(balls);
 
-	// players[1].ballLocationInput(balls);
+	// players[1].ballPositionInput(balls);
 	players[1].aiInput(balls, r.time.getDelta());
 
 	///////////////////////////////////////////////////////////////////////

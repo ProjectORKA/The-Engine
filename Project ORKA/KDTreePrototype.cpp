@@ -15,7 +15,7 @@ void KDTreePrototype::action()
 void KDTreePrototype::create()
 {
 	auto* playerPtr = dynamic_cast<DebugPlayer*>(&player);
-	playerPtr->camera.setLocation(0, -250, 0);
+	playerPtr->camera.setPosition(0, -250, 0);
 	playerPtr->speedExponent = 35;
 
 	pointCloud.points.resize(pointCount);
@@ -48,7 +48,7 @@ Vec3 KDTreeBase::getPoint(const SizeT id) const
 void KDTreePrototype2::create(Renderer& r, Player& player)
 {
 	auto* playerPtr = dynamic_cast<DebugPlayer*>(&player);
-	playerPtr->camera.setLocation(0, -250, 0);
+	playerPtr->camera.setPosition(0, -250, 0);
 	playerPtr->speedExponent = 35;
 
 	for(SizeT i = 0; i < pointCount; i++) addPoint();

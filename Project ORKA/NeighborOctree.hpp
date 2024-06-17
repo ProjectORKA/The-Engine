@@ -45,7 +45,7 @@ struct NeighborOctreeNode
 	void subdivide();
 	void unSubdivide();
 	void updateIsSurface();
-	void update(Vec3 location);
+	void update(Vec3 pos);
 	void updateHasAllNeighbors();
 	void removeSelfFromNeighbors() const;
 	void create(NeighborOctreeNode& parent, Bool x, Bool y, Bool z);
@@ -56,7 +56,7 @@ struct NeighborOctree
 	NeighborOctreeNode root;
 	void               create();
 	void               destroy();
-	void               update(Vec3 location);
+	void               update(Vec3 position);
 };
 
 void renderNeighborOctreeNode(const NeighborOctreeNode& node, Renderer& renderer);

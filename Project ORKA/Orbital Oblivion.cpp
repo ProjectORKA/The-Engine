@@ -125,7 +125,7 @@
 
 void OOUnit::updatePosition()
 {
-	location = location + direction * speed;
+	position = position + direction * speed;
 }
 
 OOUnit::OOUnit(const Index team)
@@ -137,7 +137,7 @@ void OrbitalOblivionSimulation::destroy() {}
 
 void OOPlanet::render(Renderer& r) const
 {
-	r.uniforms().setMMatrix(matrixFromPositionAndSize(location, 10));
+	r.uniforms().setMMatrix(matrixFromPositionAndSize(position, 10));
 	r.rerenderMesh();
 }
 
@@ -161,7 +161,7 @@ void OrbitalOblivionPlayer::update(Window& window)
 	Float desiredSpeed   = 0;
 
 	//process input
-	if(window.capturing) camera.rotate(window.mouseDelta * MouseMovement(mouseSensitivity));
+	if(window.capturing) camera.rotate(window.mouseDelta * DVec2(mouseSensitivity));
 	if(window.pressed(forward)) movementVector += camera.getForwardVector();
 	if(window.pressed(backward)) movementVector -= camera.getForwardVector();
 	if(window.pressed(right)) movementVector += camera.getRightVector();
@@ -175,7 +175,7 @@ void OrbitalOblivionPlayer::update(Window& window)
 		desiredSpeed   = powf(baseNumber, static_cast<Float>(speedExponent));	//calculate speed
 		movementVector = normalize(movementVector);		//get direction of movement (just direction)
 		movementVector *= desiredSpeed * delta;			//add speed to direction
-		camera.setLocation(camera.getLocation() + movementVector);				//add it to cameras location
+		camera.setPosition(camera.getPosition() + movementVector);				//add it to cameras position
 	}
 }
 
@@ -184,7 +184,6 @@ void OrbitalOblivionSimulation::update(const Float delta)
 	if(delta != 0.0f)
 	{
 		for(OOUnit& u : units) u.updatePosition();
-
 		for(OOUnit& u : units) u.updateDirection(units, planets);
 	}
 }
@@ -201,8 +200,7 @@ OOPlanet& OOUnit::getClosestPlanet(Vector<OOPlanet>& planets) const
 
 	for(OOPlanet& p : planets)
 	{
-		const Float dist = distance(location, p.location);
-		if(dist < shortestDistance)
+		if(const Float dist = distance(position, p.position); dist < shortestDistance)
 		{
 			current          = &p;
 			shortestDistance = dist;
@@ -221,11 +219,11 @@ void OrbitalOblivionSimulation::create()
 	//create planets
 	while(planets.size() < planetCount)
 	{
-		Vec2 testLocation = randomVec2Fast(orbitalOblivionPlayfieldSize);
+		Vec2 testPosition = randomVec2Fast(orbitalOblivionPlayfieldSize);
 
-		for(const OOPlanet& p : planets) if(distance(p.location, testLocation) < planetDistance) goto skip;
+		for(const OOPlanet& p : planets) if(distance(p.position, testPosition) < planetDistance) goto skip;
 
-		planets.emplace_back(testLocation);
+		planets.emplace_back(testPosition);
 
 	skip:;
 	}
@@ -238,10 +236,10 @@ void OrbitalOblivionSimulation::create()
 	}
 }
 
-OOUnit::OOUnit(const Index team, const Vec2 location, const Vec2 direction)
+OOUnit::OOUnit(const Index team, const Vec2 position, const Vec2 direction)
 {
 	this->team      = team;
-	this->location  = location;
+	this->position  = position;
 	this->direction = direction;
 }
 
@@ -253,7 +251,7 @@ void OrbitalOblivionPlayer::inputEvent(Window& window, const InputEvent input)
 
 void OOUnit::render(Renderer& renderer) const
 {
-	renderer.uniforms().setMMatrix(matrixFromPositionAndDirection(location, direction));
+	renderer.uniforms().setMMatrix(matrixFromPositionAndDirection(position, direction));
 	renderer.renderMesh("unit");
 }
 
@@ -273,15 +271,15 @@ void OrbitalOblivionRenderer::inputEvent(Window& window, const InputEvent input)
 
 void OOUnit::updateDirection(Vector<OOUnit>& neighbors, Vector<OOPlanet>& planets)
 {
-	target = getClosestPlanet(planets).location;
+	target = getClosestPlanet(planets).position;
 
-	const Vec2 targetDelta = vectorFromAToB(location, target);
+	const Vec2 targetDelta = vectorFromAToB(position, target);
 
 	Vec2 influence = direction + targetDelta;
 
 	for(const OOPlanet& p : planets)
 	{
-		Vec2        delta    = vectorFromAToB(p.location, location);
+		Vec2        delta    = vectorFromAToB(p.position, position);
 		const Float distance = length(delta);
 		const Float factor   = viewDistance * 800 / (distance * distance);
 
@@ -290,7 +288,7 @@ void OOUnit::updateDirection(Vector<OOUnit>& neighbors, Vector<OOPlanet>& planet
 
 	for(OOUnit& n : neighbors)
 	{
-		Vec2        delta    = vectorFromAToB(n.location, location);
+		Vec2        delta    = vectorFromAToB(n.position, position);
 		const Float distance = length(delta);
 		//if (distance > viewDistance)
 		if(distance == 0.0f) continue;
@@ -339,7 +337,7 @@ void OrbitalOblivionRenderer::render(Window& window, TiledRectangle area)
 	r.useShader("orbitalOblivion");
 
 	Vector<Matrix> positions = Vector<Matrix>(sim->units.size());
-	for(SizeT i = 0; i < sim->units.size(); i++) positions[i] = matrixFromPositionAndDirection(sim->units[i].location, sim->units[i].direction);
+	for(SizeT i = 0; i < sim->units.size(); i++) positions[i] = matrixFromPositionAndDirection(sim->units[i].position, sim->units[i].direction);
 	r.renderMeshInstanced("unit", positions);
 
 	r.useMesh("sphere");

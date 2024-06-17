@@ -27,24 +27,24 @@ Bool InFile::readLine(String& line)
 	return false;
 }
 
-InFile::InFile(const Path& location)
+InFile::InFile(const Path& path)
 {
-	fileLocation = makeAbsolute(location);
+	filePath = makeAbsolute(path);
 
-	file = std::ifstream(location, std::ios::binary);
+	file = std::ifstream(path, std::ios::binary);
 	if(file.is_open()) isOpen = true;
 	else
 	{
 		isOpen = false;
-		logWarning("Could not open file at location (" + fileLocation.string() + ")!");
+		logWarning("Could not open file at path (" + filePath.string() + ")!");
 	}
 }
 
-OutFile::OutFile(const Path& location)
+OutFile::OutFile(const Path& path)
 {
-	fileLocation = makeAbsolute(location);
+	filePath = makeAbsolute(path);
 
-	const Path parentPath = fileLocation.parent_path();
+	const Path parentPath = filePath.parent_path();
 
 	while(!doesPathExist(parentPath))
 	{
@@ -52,23 +52,23 @@ OutFile::OutFile(const Path& location)
 		createDirectory(parentPath);
 	}
 
-	file = std::ofstream(fileLocation, std::ios::trunc | std::ios::binary | std::ios::out);
+	file = std::ofstream(filePath, std::ios::trunc | std::ios::binary | std::ios::out);
 	if(file.is_open()) isOpen = true;
 	else
 	{
 		isOpen = false;
-		logError("Could not create file at location (" + fileLocation.string() + ")!");
+		logError("Could not create file at path (" + filePath.string() + ")!");
 	}
 }
 
 void InFile::read(char* data, const SizeT size)
 {
 	if(isOpen) file.read(data, size);
-	else logError("The binary file" + fileLocation.string() + "could not be opened! Dont try to read it!");
+	else logError("The binary file" + filePath.string() + "could not be opened! Dont try to read it!");
 }
 
 void OutFile::write(const char* data, const SizeT size)
 {
 	if(isOpen) file.write(data, size);
-	else logError("The binary file" + fileLocation.string() + "could not be opened!");
+	else logError("The binary file" + filePath.string() + "could not be opened!");
 }

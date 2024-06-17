@@ -27,7 +27,7 @@ void OrganizerRenderer::inputEvent(Window& window, const InputEvent input)
 void OrganizerRenderer::create(Window& window)
 {
 	// setup renderer
-	player.camera.setLocation(Vec3(0, 0, 10));
+	player.camera.setPosition(Vec3(0, 0, 10));
 
 	Index userGUId = 0;
 
@@ -90,7 +90,7 @@ void OrganizerRenderer::render(Window& window, TiledRectangle area)
 	r.setDepthTest(true);
 
 	// render scene
-	player.render(window); // sets the location, rotation and projection
+	player.render(window); // sets the position, rotation and projection
 
 	for(const User& user : users)
 	{

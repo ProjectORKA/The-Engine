@@ -78,7 +78,7 @@ struct FlappyBird
 	void run()
 	{
 		ui.create();
-		ui.window("ORKA Flappy Bird", Area(settings.defaultWindowWidth, settings.defaultWindowHeight), true, true, WindowState::Windowed).insert(renderer);
+		ui.window("ORKA Flappy Bird", Area(settings.defaultWindowWidth, settings.defaultWindowHeight), true, true, WindowState::Windowed, renderer);
 		ui.run();
 	}
 };

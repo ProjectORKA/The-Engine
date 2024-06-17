@@ -36,7 +36,7 @@ void MindMapperRenderer::inputEvent(Window& window, const InputEvent input)
 
 void MindMapperRenderer::create(Window& window)
 {
-	player.camera.setLocation(0.0f, 0.0f, 150.0f);
+	player.camera.setPosition(0.0f, 0.0f, 150.0f);
 	player.camera.setRotation(DVec3(PI, 0, 0));
 }
 

@@ -2,7 +2,6 @@
 #include "Window.hpp"
 #include "JobSystem.hpp"
 
-
 struct Renderer;
 
 struct MindMapConnection
@@ -16,8 +15,6 @@ struct MindMapConnection
 struct MindMap
 {
 	Mutex                     mutex;
-	Vector<Vec2>              forces;
-	Vector<UInt>              numForces;
 	Vector<Vec2>              positions;
 	Vector<MindMapConnection> connections;
 	UInt                      nodeCount = 0;
@@ -26,4 +23,8 @@ struct MindMap
 	void addNode();
 	void render(Renderer& renderer) const;
 	void renderInteractive(Window& window) const;
+
+private:
+	Vector<Vec2> forces;
+	Vector<UInt> numForces;
 };

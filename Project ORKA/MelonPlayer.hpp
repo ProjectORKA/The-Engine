@@ -12,14 +12,14 @@ struct MelonPlayer : Player
 	Float          distanceInRadians       = 0;
 	Int            zoomFactor              = 30;
 	Float          mouseSensitivity        = 0.0015f;
-	Vec3           location                = Vec3(0);
-	Vec3           targetLocation          = Vec3(0);
+	Vec3           position                = Vec3(0);
+	Vec3           targetPosition          = Vec3(0);
 	Vec3           velocity                = Vec3(0);
-	Vec3           lastLocation            = Vec3(0);
-	Vec3           deltaLocation           = Vec3(0);
+	Vec3           lastPosition            = Vec3(0);
+	Vec3           deltaPosition           = Vec3(0);
 	Vec3           direction               = Vec3(0, 1, 0);
 	Vec3           currentVisibleDirection = Vec3(0, 1, 0);
-	Vec3           lastLocationAtDistance  = Vec3(0, -1, 0);
+	Vec3           lastPositionAtDistance  = Vec3(0, -1, 0);
 	ParticleSystem smoke                   = ParticleSystem(1024 * 32);
 	Orientation    orientation             = Orientation(Vec3(0, 1, 0));
 

@@ -19,9 +19,9 @@ struct ResourceManager
 	void addResource(const Path& path);
 	void loadResourcesFromFbxFiles() const;
 
-	[[nodiscard]] Path getOrkaDataLocation() const;
-	[[nodiscard]] Path getOrkaCacheLocation() const;
-	[[nodiscard]] Path getOrkaCachedMeshLocation() const;
+	[[nodiscard]] Path getOrkaDataPath() const;
+	[[nodiscard]] Path getOrkaCachePath() const;
+	[[nodiscard]] Path getOrkaCachedMeshPath() const;
 	[[nodiscard]] Path getResourceManagerConfigPath() const;
 
 	[[nodiscard]] Bool hasMeshResource(const Name& name) const;
@@ -37,10 +37,10 @@ struct ResourceManager
 private:
 	Bool initialized = false;
 	// paths
-	Path orkaLocation;
-	Path orkaDataLocation;
-	Path orkaCacheLocation;
-	Path orkaCachedMeshLocation;
+	Path orkaPath;
+	Path orkaDataPath;
+	Path orkaCachePath;
+	Path orkaCachedMeshPath;
 	Path resourceManagerConfigPath;
 
 	// resources

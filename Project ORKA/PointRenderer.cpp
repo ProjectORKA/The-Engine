@@ -16,6 +16,7 @@ void PointRenderer::destroy()
 void PointRenderer::update(const Vector<Vec3>& points)
 {
 	if(gpuMesh.isLoaded()) gpuMesh.unload();
+	cpuMesh.indices.clear();
 	for(Index i = 0; i < points.size(); i++) cpuMesh.indices.push_back(i);
 	cpuMesh.positions = points;
 	cpuMesh.checkIntegrity();

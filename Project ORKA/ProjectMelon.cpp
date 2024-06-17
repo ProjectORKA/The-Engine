@@ -69,8 +69,8 @@ void MelonRenderer::render(Window& window, TiledRectangle area)
 	r.textRenderSystem.setLetterSpacing(0.6f);
 	r.textRenderSystem.alignText(Alignment::left, Alignment::bottom);
 	r.textRenderSystem.render(r, "FPS: " + toString(1 / r.time.getDelta()), Vec2(30, 30));
-	r.textRenderSystem.render(r, "player Location: " + toString(player.location), Vec2(30, 60));
-	r.textRenderSystem.render(r, "Camera Location: " + toString(player.camera.getLocation()), Vec2(30, 90));
+	r.textRenderSystem.render(r, "player Position: " + toString(player.position), Vec2(30, 60));
+	r.textRenderSystem.render(r, "Camera Position: " + toString(player.camera.getPosition()), Vec2(30, 90));
 }
 
 void MelonRenderer::renderInteractive(Window& window, TiledRectangle area) {}

@@ -23,6 +23,6 @@ struct Molecules2D
 {
 	Vector<Molecule2D> molecules;
 
-	void update(Vec3 location);
+	void update(Vec3 position);
 	void render(Renderer& renderer) const;
 };

@@ -1,49 +1,20 @@
 #pragma once
 #include "FileSystem.hpp"
 #include "ResourceManager.hpp"
-#include "FileTypes.hpp"
 #include "Game.hpp"
+#include "ImageViewerDatabase.hpp"
+#include "ImageViewerResource.hpp"
 
 // [TODO]
-// multithreaded file loading
-// usable with only mouse controls
 // add fpng support
-// add webp support
+// add animated webp support
 // converter button
 
-struct ImageViewerResource
-{
-	String getName();
-	void   destroy();
-	Path&  getPath();
-	void   loadOntoGpu();
-	void   loadIntoRam();
-	void   unloadFromGpu();
-	void   unloadFromRam();
-	ImageViewerResource() = delete;
-	[[nodiscard]] Bool  inRam() const;
-	[[nodiscard]] Bool  onGpu() const;
-	[[nodiscard]] Int   getWidth() const;
-	[[nodiscard]] Int   getHeight() const;
-	[[nodiscard]] Float getPriority() const;
-	void                use(Int textureSlot) const;
-	[[nodiscard]] Bool  hasLoadAttemptFailed() const;
-	Bool                isBeingLoadedIntoRam = false;
-	ImageViewerResource(const Path& path, Index index);
-	void calculateRating(Index currentImageIndex, UInt resourceCount);
-
-private:
-	CPUTexture cpuTexture;
-	GPUTexture gpuTexture;
-	Float      priority          = 0;
-	Index      index             = 0;
-	Bool       loadAttemptFailed = false;
-	Path       path              = Path("");
-};
 
 struct ImageViewerRenderer final : GameRenderer
 {
 	Vector<ImageViewerResource> images;
+	ImageViewerDatabase         database;
 	SharedMutex                 imagesMutex;
 	TimePoint                   lastButtonInput;
 	TimePoint                   lastImageRefresh;
@@ -84,8 +55,10 @@ struct ImageViewerRenderer final : GameRenderer
 	[[nodiscard]] Vector<Index> indicesOfImagesSortedByPriority() const;
 
 	void updateZoom();
+	void removeImage();
 	void updateLoadedImages();
 	void calculatePriorities();
+	void removeImage(Int imageId);
 	void update(Window& window) override;
 	void create(Window& window) override;
 	void destroy(Window& window) override;
@@ -110,4 +83,6 @@ struct ImageViewer
 
 void loadNextImage(ImageViewerRenderer& viewer);
 
-void loadImage(ImageViewerRenderer& viewer, Index imageID);
+void loadImage(ImageViewerRenderer& viewer, Index imageId);
+
+void addImageToDatabase(ImageViewerRenderer& viewer, Index imageId);

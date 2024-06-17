@@ -61,22 +61,22 @@ void NeighborQuadtreeNode::unSubdivide()
 	}
 }
 
-void NeighborQuadtree::update(const Vec3 location)
+void NeighborQuadtree::update(const Vec3 position)
 {
-	root.update(location);
+	root.update(position);
 }
 
-void NeighborQuadtreeNode::update(const Vec3 location)
+void NeighborQuadtreeNode::update(const Vec3 pos)
 {
-	if(distance(position, location) < pow(2.0f, 5.0f - toFloat(level))) subdivide();
+	if(distance(position, pos) < pow(2.0f, 5.0f - toFloat(level))) subdivide();
 	else unSubdivide();
 
 	if(subdivided)
 	{
-		c00->update(location);
-		c01->update(location);
-		c10->update(location);
-		c11->update(location);
+		c00->update(pos);
+		c01->update(pos);
+		c10->update(pos);
+		c11->update(pos);
 	}
 }
 
@@ -149,7 +149,7 @@ void NeighborQuadtreeNode::render(Renderer& renderer) const
 	else
 	{
 		Transform t;
-		t.setLocation(position);
+		t.setPosition(position);
 		t.setSize(Vec3(pow(2.0f, -toFloat(level) + 1.0f)));
 		t.render(renderer);
 		renderer.fill(color);

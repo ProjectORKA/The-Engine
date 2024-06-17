@@ -138,8 +138,8 @@ void OctreeNodeRenderData::update(PlanetSystemPlayer& player)
 
 void OctreeNodeRenderData::updateWithoutSubdivision(PlanetSystemPlayer& player)
 {
-	// get camera relative location
-	cameraPosition = relativeCameraPosition(equivalentOctreeNode->id, player.chunkLocation, player.camera.getLocation());
+	// get camera relative position
+	cameraPosition = relativeCameraPosition(equivalentOctreeNode->id, player.chunkPosition, player.camera.getPosition());
 
 	inDrawDistance = length(cameraPosition - Vec3(0.5, 0.5, 0)) < drawDistance;
 
@@ -161,7 +161,7 @@ void OctreeNodeRenderData::updateWithoutSubdivision(PlanetSystemPlayer& player)
 void OctreeNodeRenderData::render(Renderer& renderer) const
 {
 	renderer.uniforms().setCameraPos(Vec4(cameraPosition, 1));
-	renderer.uniforms().setWorldOffset(Vec4(equivalentOctreeNode->id.location.x, equivalentOctreeNode->id.location.y, equivalentOctreeNode->id.location.z, equivalentOctreeNode->id.level));
+	renderer.uniforms().setWorldOffset(Vec4(equivalentOctreeNode->id.position.x, equivalentOctreeNode->id.position.y, equivalentOctreeNode->id.position.z, equivalentOctreeNode->id.level));
 
 	if(renderer.planetRenderSystem.chunkBorders) renderer.renderMesh("gizmo");
 }
@@ -169,7 +169,7 @@ void OctreeNodeRenderData::render(Renderer& renderer) const
 void OctreeNodeRenderData::renderWater(Renderer& renderer) const
 {
 	renderer.uniforms().setCameraPos(Vec4(cameraPosition, 1));
-	renderer.uniforms().setWorldOffset(Vec4(equivalentOctreeNode->id.location.x, equivalentOctreeNode->id.location.y, equivalentOctreeNode->id.location.z, equivalentOctreeNode->id.level));
+	renderer.uniforms().setWorldOffset(Vec4(equivalentOctreeNode->id.position.x, equivalentOctreeNode->id.position.y, equivalentOctreeNode->id.position.z, equivalentOctreeNode->id.level));
 	renderer.renderMesh("waterPlane");
 }
 

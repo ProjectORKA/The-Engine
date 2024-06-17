@@ -33,7 +33,7 @@ struct NeighborQuadtreeNode
 
 	void subdivide();
 	void unSubdivide();
-	void update(Vec3 location);
+	void update(Vec3 pos);
 	void removeSelfFromNeighbors() const;
 	void create(NeighborQuadtreeNode& parent, Bool x, Bool y);
 	void render(Renderer& renderer) const;
@@ -44,6 +44,6 @@ struct NeighborQuadtree
 	NeighborQuadtreeNode root;
 	void                 create();
 	void                 destroy();
-	void                 update(Vec3 location);
+	void                 update(Vec3 position);
 	void                 render(Renderer& renderer) const;
 };

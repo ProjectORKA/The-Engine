@@ -74,7 +74,7 @@ struct Organizer
 	{
 		ui.create();
 		intro.init(renderer);
-		window.insert(intro);
+		window.add(intro);
 		ui.window("Organizer", Area(1920, 1080), true, true, WindowState::Windowed, renderer);
 		ui.run();
 	}

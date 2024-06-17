@@ -6,13 +6,14 @@ layout (location = 1) out vec3 gBufferNormal;
 layout (location = 2) out vec3 gBufferPosition;
 layout (location = 3) out uint gBufferMaterialID;
 
+in vec3 normal;
+in float slope;
+in float cameraZ;
 in vec4 vertexColor;
 in vec3 vertexPosition;
-in vec2 textureCoordinate;
-in vec3 normal;
-in float depth;
 in vec3 worldCoordinate;
-in float slope;
+in vec2 textureCoordinate;
+in vec3 relativeCoordinate;
 
 ////////////////////////////////////////////
 const vec2 zOffset = vec2(37.0,17.0);
@@ -57,6 +58,7 @@ void main(){
 	vec3 beachWater = vec3(0.0f, 157.0f, 255.0f) / 100.0f;
 	vec3 belowWaterline = mix(beachWater,deepWater,clamp(pow(4*(0.5 - worldCoordinate.z),0.01),0,1));
 	if(worldCoordinate.z < 0.5) color = mix(color,belowWaterline,0.75);
+
 
 	gBufferColor = vec4(pow(color,vec3(2)) * vec3(coloredLight * 10),1);
 };

@@ -3,8 +3,8 @@
 
 Vector<ULL> getConvexHullPointIDs(Vector<Vec2>& points)
 {
-	ULLVec4 bounds = getBoundingBoxIds(points);
-	ULLVec4 currentIdOfBounds = bounds;
+	UllVec4 bounds = getBoundingBoxIds(points);
+	UllVec4 currentIdOfBounds = bounds;
 	Vector<ULL> nextID(points.size());
 	nextID[bounds.x] = bounds.z;
 	nextID[bounds.z] = bounds.y;
@@ -14,7 +14,7 @@ Vector<ULL> getConvexHullPointIDs(Vector<Vec2>& points)
 	do
 	{
 		notFinished = false;
-		ULLVec4 nextIdForBounds(maxULL);
+		UllVec4 nextIdForBounds(maxULL);
 		Vec4    highestValue = Vec4(0);
 		for(ULL i = 0; i < points.size(); i++)
 		{
@@ -100,7 +100,7 @@ void ParallelizedConvexHullPrototype::action()
 void ParallelizedConvexHullPrototype::create()
 {
 	for(ULL i = 0; i < pointCount; i++) points.push_back(randomPointInCircleFast(extend));
-	player.camera.setLocation(0, 0, 150);
+	player.camera.setPosition(0, 0, 150);
 	player.camera.setRotation(PI, 0, 0);
 }
 
@@ -120,7 +120,7 @@ void ParallelizedConvexHullPrototype::render(Renderer& r, const Player& player)
 			boundaryLine.push_back(points[convexHullIds[0]]);
 			r.fill(1, 0, 0);
 			r.useShader("color");
-			r.line(boundaryLine);
+			r.line(boundaryLine, Matrix(1));
 		}
 	}
 }

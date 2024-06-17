@@ -24,7 +24,7 @@ void SandboxRenderer::inputEvent(Window& window, const InputEvent input)
 
 void SandboxRenderer::create(Window& window)
 {
-	player.camera.setLocation(Vec3(0.0f, -5.0f, 0.0f));
+	player.camera.setPosition(Vec3(0.0f, -5.0f, 0.0f));
 
 	framebuffer.create("MainFramebuffer", Area(1920, 1080));
 	framebuffer.add(WritePixelsFormat::RGBA, DataType::Float, FramebufferAttachment::Color0, true, Wrapping::Clamped);
@@ -45,7 +45,7 @@ void SandboxRenderer::render(Window& window, const TiledRectangle area)
 	framebuffer.bindDraw();
 
 	// render scene
-	player.render(window); // sets the location, rotation and projection
+	player.render(window); // sets the position, rotation and projection
 	r.useShader("normals"); // sets the color / material for the rendered objects
 	r.uniforms().setMMatrix(matrixFromRotation(0, 0, r.time.getTotal())); // sets the objects transformation within the world
 	r.renderMesh("suzanne"); // renders the objects 3D data to the screen

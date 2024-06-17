@@ -11,7 +11,7 @@ void RectangleRenderer::render(Renderer& renderer, const Vec2 pos, const Vec2 si
 {
 	if(overrideColor) renderer.useShader("color");
 
-	if(centered) renderer.uniforms().setMMatrix(matrixFromPositionAndSize(pos, size));
+	if(centered) renderer.uniforms().setMMatrix(matrixFromPositionAndSize(pos, Vec2(size.x, -size.y)));
 	else renderer.uniforms().setMMatrix(matrixFromPositionAndSize(pos+size/Vec2(2), size));
 
 	renderer.renderMesh(rectangleMeshId);

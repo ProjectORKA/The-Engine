@@ -35,5 +35,5 @@ struct OctreeNode
 	void                  count() const;
 	void                  incrementUser();
 	void                  decrementUser();
-	[[nodiscard]] ULLVec3 getLocation() const;
+	[[nodiscard]] UllVec3 getPosition() const;
 };

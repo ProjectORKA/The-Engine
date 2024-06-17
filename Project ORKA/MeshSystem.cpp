@@ -59,7 +59,7 @@ void MeshSystem::addMesh(const CPUMesh& cpuMesh)
 		use(toUIntSafe(gpuMeshes.size() - 1));
 		meshNames.add(cpuMesh.name, currentMeshId);
 	}
-	else logWarning("Mesh could not be loaded!");
+	else logWarning("Mesh could not be loaded! (" + toString(cpuMesh.name) + ")");
 }
 
 void NameTable::add(const Name& name, const Index id)
@@ -103,7 +103,7 @@ void MeshSystem::use(const Name& name)
 		mesh.load(name);
 		addMesh(mesh);
 		if(meshNames.find(name, id)) currentMeshId = id;
-		else logError("Mesh could not be loaded!");
+		else logError("Mesh could not be loaded! (" + toString(name) + ")");
 	}
 }
 

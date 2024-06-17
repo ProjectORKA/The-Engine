@@ -5,7 +5,7 @@
 struct OctreeId
 {
 	Short   level    = 0;
-	ULLVec3 location = ULLVec3(0);
+	UllVec3 position = UllVec3(0);
 
 	Double size() const;
 };

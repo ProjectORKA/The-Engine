@@ -193,6 +193,6 @@ Window& UserInterface::window(const String& title, const Area size, const Bool d
 {
 	windows.emplace_back();
 	windows.back().create(title, size, decorated, visible, state);
-	windows.back().insert(content);
+	windows.back().add(content);
 	return windows.back();
 }

@@ -10,12 +10,12 @@
 
 struct Engine
 {
-	void create(const Int argc, Char* argv[])
+	void create(const Int argc, Char* argv[]) const
 	{
 		//print debug launch parameters if required
 		if(debugLaunchParameters) logDebugLaunchParameters(argc, argv);
 
-		// scan launch parameters for current executable location
+		// scan launch parameters for current executable position
 		// this is important for things like file viewers which are executed on a file somewhere else
 		for(Int i = 0; i < argc; i++)
 		{
@@ -34,6 +34,6 @@ struct Engine
 
 	~Engine()
 	{
-		jobSystem.waitStop();
+		jobSystem.waitStopAndJoin();
 	}
 };

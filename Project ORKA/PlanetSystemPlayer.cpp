@@ -3,7 +3,7 @@
 
 void PlanetSystemPlayer::render(Window& window)
 {
-	const Float cameraHeight = chunkLocation.z + camera.getLocation().z;
+	const Float cameraHeight = chunkPosition.z + camera.getPosition().z;
 	window.renderer.uniforms().setCustom1(cameraHeight);
 	window.renderer.uniforms().setCameraVec(Vec4(camera.getForwardVector(), 1));
 	window.renderer.uniforms().setCameraPos(Vec4(0));

@@ -8,14 +8,14 @@ using OutputFileStream = std::ofstream;
 struct InFile
 {
 	InputFileStream file;
-	Path            fileLocation;
+	Path            filePath;
 	Bool            isOpen = false;
 
 	~InFile();
 	ULL fileSize();
 	InFile() = delete;
 	Bool readLine(String& line);
-	InFile(const Path& location);
+	InFile(const Path& path);
 	void read(char* data, SizeT size);
 	template <typename T> void read(T& data);
 };
@@ -23,12 +23,12 @@ struct InFile
 struct OutFile
 {
 	OutputFileStream file;
-	Path             fileLocation;
+	Path             filePath;
 	Bool             isOpen = false;
 
 	~OutFile();
 	OutFile() = delete;
-	OutFile(const Path& location);
+	OutFile(const Path& path);
 	void write(const char* data, SizeT size);
 	template <typename T> void write(T& data);
 };

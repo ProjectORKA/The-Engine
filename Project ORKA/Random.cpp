@@ -20,23 +20,21 @@ ULL randomULLFast()
 	static ULL y = 60441451194812;
 	static ULL z = 34516354845907;
 
-	ULL t;
-
 	x ^= x << 16;
 	x ^= x >> 5;
 	x ^= x << 1;
 
-	t = x;
-	x = y;
-	y = z;
-	z = t ^ x ^ y;
+	const ULL t = x;
+	x           = y;
+	y           = z;
+	z           = t ^ x ^ y;
 
 	return z;
 }
 
 ULL randomULLFast(const ULL max)
 {
-	if(max < 1) return 0;
+	if (max < 1) return 0;
 	return randomULLFast() % max;
 }
 
@@ -72,13 +70,13 @@ Vec2 randomUnitVec2Fast()
 
 Int randomIntFast(const Int max)
 {
-	if(max < 1) return 0;
+	if (max < 1) return 0;
 	return mod(static_cast<Int>(randomULLFast()), max);
 }
 
 Int randomIntFast(const UInt max)
 {
-	if(max < 1) return 0;
+	if (max < 1) return 0;
 	return static_cast<Int>(randomULLFast() % static_cast<ULL>(max));
 }
 
@@ -88,18 +86,18 @@ Int randomIntFast(const Int min, const Int max)
 
 	const ULL range       = static_cast<ULL>(max) - min + 1;
 	const ULL randomValue = randomULLFast() % range;
-    return static_cast<Int>(randomValue) + min;
+	return static_cast<Int>(randomValue) + min;
 }
 
 Int randomIntFast(const ULL max)
 {
-	if(max < 1) return 0;
+	if (max < 1) return 0;
 	return static_cast<Int>(randomULLFast() % static_cast<ULL>(max));
 }
 
 UInt randomUIntFast(const UInt max)
 {
-	if(max < 1) return 0;
+	if (max < 1) return 0;
 	return randomULLFast() % max;
 }
 
@@ -126,16 +124,14 @@ Float randomFloatFast(const Float max)
 Vec2 randomPointInCircleFast(const Float radius)
 {
 	Vec2 v;
-	do v = randomVec2Fast(-radius, radius);
-	while(length(v) > radius);
+	do v = randomVec2Fast(-radius, radius); while (length(v) > radius);
 	return v;
 }
 
 Vec3 randomPointInSphereFast(const Float radius)
 {
 	Vec3 v;
-	do v = randomVec3Fast(-radius, radius);
-	while(length(v) > radius);
+	do v = randomVec3Fast(-radius, radius); while (length(v) > radius);
 	return v;
 }
 
@@ -164,29 +160,24 @@ Vec3 randomVec3Fast(const Float min, const Float max)
 	return {randomFloatFast(min, max), randomFloatFast(min, max), randomFloatFast(min, max)};
 }
 
-Float randomFloatFast(const Float min, const Float max)
-{
-	return randomFloatFast(static_cast<Double>(min), static_cast<Double>(max));
-}
-
 Float randomFloatFast(const Double min, const Double max)
 {
-	return static_cast<Float>(static_cast<Double>(min) + static_cast<Double>(randomULLFast()) / static_cast<Double>(ULLONG_MAX) * (max - min));
+	return static_cast<Float>(toDouble(min) + toDouble(randomULLFast()) / toDouble(ULLONG_MAX) * (max - min));
 }
 
 Double randomDoubleFast(const Double min, const Double max)
 {
-	return static_cast<Float>(min + static_cast<Double>(randomULLFast()) / static_cast<Double>(ULLONG_MAX) * (max - min));
+	return static_cast<Float>(min + toDouble(randomULLFast()) / toDouble(ULLONG_MAX) * (max - min));
 }
 
-Vec3 randomPointOnSphereAtLocationFast(const Vec4 sphere)
+Vec3 randomPointOnSphereAtPositionFast(const Vec4 sphere)
 {
 	return randomPointOnSphereFast(sphere.w) + Vec3(sphere);
 }
 
-Vec3 randomPointOnSphereAtLocationFast(const Float radius, const Vec3 location)
+Vec3 randomPointOnSphereAtPositionFast(const Float radius, const Vec3 position)
 {
-	return randomPointOnSphereFast(radius) + location;
+	return randomPointOnSphereFast(radius) + position;
 }
 
 Vec3 randomVec3Fast(const Float xMin, const Float xMax, const Float yMin, const Float yMax, const Float zMin, const Float zMax)
@@ -194,8 +185,18 @@ Vec3 randomVec3Fast(const Float xMin, const Float xMax, const Float yMin, const 
 	return {randomFloatFast(xMin, xMax), randomFloatFast(yMin, yMax), randomFloatFast(zMin, zMax)};
 }
 
+Color randomColorFast()
+{
+	return Color(randomVec3Fast(0, 1), 1);
+}
+
 // SLOW:
 RandomDevice seed;
+
+Color randomColorSlow()
+{
+	return Color(randomVec3Slow(0, 1), 1);
+}
 
 ULL randomULLSlow()
 {
@@ -224,6 +225,11 @@ Vec3 randomVec3Slow()
 	return {randomFloatSlow(), randomFloatSlow(), randomFloatSlow()};
 }
 
+Vec3 randomVec3Slow(const Float min, const Float max)
+{
+	return {randomFloatSlow(min, max), randomFloatSlow(min, max), randomFloatSlow(min, max)};
+}
+
 Float randomFloatSlow()
 {
 	return randomFloatSlow(0.0f, 1.0f);
@@ -231,20 +237,20 @@ Float randomFloatSlow()
 
 Int randomIntSlow(const Int max)
 {
-	if(max < 1) return 0;
+	if (max < 1) return 0;
 	return mod(static_cast<Int>(randomULLSlow()), max);
 }
 
 ULL randomULLSlow(const ULL max)
 {
-	if(max == 0) return 0;
+	if (max == 0) return 0;
 
 	return randomULLSlow() / (ULLONG_MAX / max);
 }
 
 Int randomIntSlow(const SizeT max)
 {
-	if(max < 1) return 0;
+	if (max < 1) return 0;
 	return mod(static_cast<Int>(randomULLSlow()), static_cast<Int>(max));
 }
 
@@ -252,7 +258,7 @@ ULL randomULLSlow(const ULL min, const ULL max)
 {
 	const ULL range = max - min;
 
-	if(range == 0) return 0;
+	if (range == 0) return 0;
 
 	std::random_device                 seed;
 	std::mt19937_64                    randomizer(seed());
@@ -261,17 +267,17 @@ ULL randomULLSlow(const ULL min, const ULL max)
 	return distribution(randomizer) / (ULLONG_MAX / range) + min;
 }
 
-Float randomFloatSlow(const Float min, const Float max)
+Vec2 randomVec2Slow(const Float min, const Float max)
 {
-	return randomFloatSlow(static_cast<Double>(min), static_cast<Double>(max));
+	return {randomFloatSlow(min, max), randomFloatSlow(min, max)};
 }
 
 Float randomFloatSlow(const Double min, const Double max)
 {
-	return static_cast<Float>(static_cast<Double>(min) + static_cast<Double>(randomULLSlow()) / static_cast<Double>(ULLONG_MAX) * (max - min));
+	return static_cast<Float>(randomDoubleSlow(min, max));
 }
 
 Double randomDoubleSlow(const Double min, const Double max)
 {
-	return static_cast<Double>(min) + static_cast<Double>(randomULLSlow()) / static_cast<Double>(ULLONG_MAX) * (max - min);
+	return toDouble(min) + toDouble(randomULLSlow()) / toDouble(ULLONG_MAX) * (max - min);
 }

@@ -32,7 +32,7 @@ void Molecule2D::addForce(const Vec2 force)
 	numforces++;
 }
 
-void Molecules2D::update(const Vec3 location)
+void Molecules2D::update(const Vec3 position)
 {
 	while(molecules.size() < 2000)
 	{
@@ -44,7 +44,7 @@ void Molecules2D::update(const Vec3 location)
 
 	for(Molecule2D& m : molecules) m.move();
 
-	molecules.front().pos = location;
+	molecules.front().pos = position;
 }
 
 void Molecule2D::render(Renderer& renderer) const

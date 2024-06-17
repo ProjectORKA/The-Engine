@@ -28,11 +28,21 @@
     <ClCompile Include="Debug.cpp" />
     <ClCompile Include="FileTypes.cpp" />
     <ClCompile Include="FlappyBird.cpp" />
+    <ClCompile Include="FunctionFinder.cpp" />
+    <ClCompile Include="Hash.cpp" />
     <ClCompile Include="Hello Triangle.cpp" />
+    <ClCompile Include="ImageViewerDatabase.cpp" />
+    <ClCompile Include="ImageViewerResource.cpp" />
     <ClCompile Include="ImguiExample.cpp" />
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="KDTreePrototype.cpp" />
     <ClInclude Include="AxisNeighborPrototype2.hpp" />
+    <ClInclude Include="DelaunayTriangulation.hpp" />
+    <ClInclude Include="DNDBase.hpp" />
+    <ClInclude Include="FunctionFinder.hpp" />
+    <ClInclude Include="Hash.hpp" />
+    <ClInclude Include="ImageViewerDatabase.hpp" />
+    <ClInclude Include="ImageViewerResource.hpp" />
     <ClInclude Include="KDTree.hpp" />
     <ClInclude Include="KDTree2.hpp" />
     <ClInclude Include="KDTreePrototype.hpp" />
@@ -79,7 +89,7 @@
     <ClCompile Include="MindMapper.cpp" />
     <ClCompile Include="Molecules2D.cpp" />
     <ClCompile Include="MoonCrash.cpp" />
-    <ClCompile Include="Name.cpp" />
+    <ClCompile Include="Basics.cpp" />
     <ClCompile Include="NeighborOctree.cpp" />
     <ClCompile Include="NeighborQuadtree.cpp" />
     <ClCompile Include="Networking.cpp" />
@@ -120,9 +130,13 @@
     <ClCompile Include="SceneSystem.cpp" />
     <ClCompile Include="ShaderProgram.cpp" />
     <ClCompile Include="ShaderSystem.cpp" />
-    <ClCompile Include="SimpleRTSHuman.cpp" />
-    <ClCompile Include="SimpleRTSTerrain.cpp" />
-    <ClCompile Include="SimpleRTSTreeSystem.cpp" />
+    <ClCompile Include="SimpleRtsBushSystem.cpp" />
+    <ClCompile Include="SimpleRtsHumanSystem.cpp" />
+    <ClCompile Include="SimpleRtsRabbitSystem.cpp" />
+    <ClCompile Include="SimpleRtsSystem.cpp" />
+    <ClCompile Include="SimpleRtsTerrainSystem.cpp" />
+    <ClCompile Include="SimpleRtsTreeStumpSystem.cpp" />
+    <ClCompile Include="SimpleRtsTreeSystem.cpp" />
     <ClCompile Include="Sortr.cpp" />
     <ClCompile Include="TextRenderSystem.cpp" />
     <ClCompile Include="TextureSystem.cpp" />
@@ -136,7 +150,7 @@
     <ClCompile Include="NeuralNetwork.cpp" />
     <ClCompile Include="PerlinNoise.cpp" />
     <ClCompile Include="Plot.cpp" />
-    <ClCompile Include="SimpleRTS.cpp" />
+    <ClCompile Include="SimpleRts.cpp" />
     <ClCompile Include="Snake.cpp" />
     <ClCompile Include="TerrainRendering.cpp" />
     <ClCompile Include="TerrainSystem.cpp" />
@@ -148,6 +162,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Time.cpp" />
     <ClCompile Include="UIButton.cpp" />
+    <ClCompile Include="UIContainer.cpp" />
     <ClCompile Include="UIElement.cpp" />
     <ClCompile Include="UISandbox.cpp" />
     <ClCompile Include="ULLUtil.cpp" />
@@ -156,6 +171,13 @@
     <ClCompile Include="VoxelRenderer.cpp" />
     <ClCompile Include="Window.cpp" />
     <ClCompile Include="WindowAPI.cpp" />
+    <ClInclude Include="Music Visualizer.hpp" />
+    <ClInclude Include="SimpleRtsBushSystem.hpp" />
+    <ClInclude Include="SimpleRtsRabbitSystem.hpp" />
+    <ClInclude Include="SimpleRtsSystem.hpp" />
+    <ClInclude Include="SimpleRtsTreeStumpSystem.hpp" />
+    <ClInclude Include="SoundBars.hpp" />
+    <ClInclude Include="SoundGenerators.hpp" />
     <ClInclude Include="Windows.hpp" />
   </ItemGroup>
   <ItemGroup>
@@ -267,9 +289,9 @@
     <ClInclude Include="Settings.hpp" />
     <ClInclude Include="ShaderProgram.hpp" />
     <ClInclude Include="ShaderSystem.hpp" />
-    <ClInclude Include="SimpleRTSHuman.hpp" />
-    <ClInclude Include="SimpleRTSTerrain.hpp" />
-    <ClInclude Include="SimpleRTSTreeSystem.hpp" />
+    <ClInclude Include="SimpleRtsHumanSystem.hpp" />
+    <ClInclude Include="SimpleRtsTerrainSystem.hpp" />
+    <ClInclude Include="SimpleRtsTreeSystem.hpp" />
     <ClInclude Include="Sortr.hpp" />
     <ClInclude Include="SquareNeighborPrototype.hpp" />
     <ClInclude Include="TextRenderSystem.hpp" />
@@ -280,7 +302,6 @@
     <ClInclude Include="LevelledGraph.hpp" />
     <ClInclude Include="NameGenerator.hpp" />
     <ClInclude Include="File.hpp" />
-    <ClInclude Include="Name.hpp" />
     <ClInclude Include="ORKAIntroSequence.hpp" />
     <ClInclude Include="RelativeChunkOffset.hpp" />
     <ClInclude Include="Sandbox.hpp" />
@@ -290,7 +311,7 @@
     <ClInclude Include="PerlinNoise.hpp" />
     <ClInclude Include="Plot.hpp" />
     <ClInclude Include="SDFRenderer.hpp" />
-    <ClInclude Include="SimpleRTS.hpp" />
+    <ClInclude Include="SimpleRts.hpp" />
     <ClInclude Include="Snake.hpp" />
     <ClInclude Include="SphereMeshing.hpp" />
     <ClInclude Include="TerrainRendering.hpp" />
@@ -315,7 +336,6 @@
     <ClInclude Include="ULLUtil.hpp" />
     <ClInclude Include="Uniforms.hpp" />
     <ClInclude Include="UserInterface.hpp" />
-    <ClInclude Include="Vectors.hpp" />
     <ClInclude Include="Platform.hpp" />
     <ClInclude Include="VoxelRenderer.hpp" />
     <ClInclude Include="JobQueue.hpp" />
@@ -382,6 +402,8 @@
     <None Include="Data\Shaders\sdfTerrain.vert" />
     <None Include="Data\Shaders\simpleRTS.frag" />
     <None Include="Data\Shaders\simpleRTS.vert" />
+    <None Include="Data\Shaders\simpleRTSSky.frag" />
+    <None Include="Data\Shaders\simpleRTSSky.vert" />
     <None Include="Data\Shaders\sky.frag" />
     <None Include="Data\Shaders\sky.vert" />
     <None Include="Data\Shaders\sortr.frag" />
@@ -418,6 +440,7 @@
     <None Include="Data\shaders\MelonUberShader.vert" />
     <None Include="Data\shaders\mooncrashVertexColor.frag" />
     <None Include="Data\shaders\mooncrashVertexColor.vert" />
+    <None Include="test.ui" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="icon.ico" />
@@ -532,8 +555,9 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)External Libraries\STBIMAGE;$(SolutionDir)External Libraries\FREETYPE\include;$(SolutionDir)External Libraries\ASIO\asio-1.18.1\include;$(SolutionDir)External Libraries\STB IMAGE;$(SolutionDir)External Libraries\ASSIMP\include;$(SolutionDir)External Libraries\GLM;$(SolutionDir)External Libraries\GLEW\include;$(SolutionDir)External Libraries\GLFW 64 bit\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <ConformanceMode>false</ConformanceMode>
+      <AdditionalIncludeDirectories>
+      </AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <SupportJustMyCode>true</SupportJustMyCode>
@@ -545,11 +569,9 @@
       <CompileAs>CompileAsCpp</CompileAs>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>
-      </AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
-      <AdditionalDependencies>
-      </AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>
       </IgnoreSpecificDefaultLibraries>
       <SubSystem>Console</SubSystem>
@@ -621,8 +643,7 @@
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>
-      </AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>
       </AdditionalLibraryDirectories>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>

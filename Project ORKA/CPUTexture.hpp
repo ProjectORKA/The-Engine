@@ -21,6 +21,7 @@ struct CPUTexture
 	[[nodiscard]] Wrapping          getWrapping() const;
 	[[nodiscard]] Filter            getFarFilter() const;
 	[[nodiscard]] Filter            getNearFilter() const;
+	[[nodiscard]] Float             getAspectRatio() const;
 	[[nodiscard]] Int               getNumberOfChannels() const;
 
 	[[nodiscard]] Float getRed(UInt x, UInt y) const;
@@ -41,7 +42,6 @@ struct CPUTexture
 	void load(const Name& name, Filter nearFilter, Filter farFilter, Wrapping wrapping);
 	void load(const Path& path, const Name& name, Filter nearFilter, Filter farFilter, Wrapping wrapping);
 	void load(const Image& image, Filter nearFilter, Filter farFilter, Wrapping wrapping, const Name& name);
-
 private:
 	Memory            pixelMemory;
 	Int               width      = 0; // needs to be int for OpenGL and error correction

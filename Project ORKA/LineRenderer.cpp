@@ -78,7 +78,7 @@ CPUMesh convertLineToMesh(const Vector<Vec3>& line)
 	return mesh;
 }
 
-CPUMesh convertLinesToMesh(const Vector<Vec3>& lines)
+CPUMesh createMeshFromLines(const Vector<Vec3>& lines)
 {
 	CPUMesh mesh;
 	mesh.name          = "Lines";
@@ -93,7 +93,7 @@ CPUMesh convertLinesToMesh(const Vector<Vec3>& lines)
 	return mesh;
 }
 
-CPUMesh convertLinesToMesh(const Vector<Vec2>& lines)
+CPUMesh createMeshFromLines(const Vector<Vec2>& lines)
 {
 	CPUMesh mesh;
 	mesh.name          = "Lines";
@@ -108,7 +108,7 @@ CPUMesh convertLinesToMesh(const Vector<Vec2>& lines)
 	return mesh;
 }
 
-CPUMesh convertLinesToMesh(const Vector<Line3D>& lines)
+CPUMesh createMeshFromLines(const Vector<Line3D>& lines)
 {
 	CPUMesh mesh;
 	mesh.name          = "Lines";
@@ -125,11 +125,11 @@ CPUMesh convertLinesToMesh(const Vector<Line3D>& lines)
 	return mesh;
 }
 
-void LineRenderer::renderLine(Renderer& renderer, const Vector<Vec2>& line)
+void LineRenderer::renderLine(Renderer& renderer, const Vector<Vec2>& line, const Matrix& matrix)
 {
 	if(line.size() >= 2)
 	{
-		renderer.uniforms().setMMatrix(Matrix(1));
+		renderer.uniforms().setMMatrix(matrix);
 		cpuMesh = convertLineToMesh(line);
 		gpuMesh.upload(cpuMesh);
 		gpuMesh.render(renderer.uniforms());
@@ -153,8 +153,19 @@ void LineRenderer::renderLines(Renderer& renderer, const Vector<Vec2>& lines)
 {
 	if(lines.size() >= 2)
 	{
-		renderer.uniforms().setMMatrix(Matrix(1));
-		cpuMesh = convertLinesToMesh(lines);
+		//cpuMesh = ;
+		gpuMesh.upload(createMeshFromLines(lines));
+		gpuMesh.render(renderer.uniforms());
+		gpuMesh.unload();
+	}
+}
+
+void LineRenderer::renderLines(Renderer& renderer, const Vector<Vec2>& lines, const Matrix& matrix)
+{
+	if(lines.size() >= 2)
+	{
+		renderer.uniforms().setMMatrix(matrix);
+		cpuMesh = createMeshFromLines(lines);
 		gpuMesh.upload(cpuMesh);
 		gpuMesh.render(renderer.uniforms());
 		gpuMesh.unload();
@@ -166,7 +177,7 @@ void LineRenderer::renderLines(Renderer& renderer, const Vector<Vec3>& lines)
 	if(lines.size() >= 2)
 	{
 		renderer.uniforms().setMMatrix(Matrix(1));
-		cpuMesh = convertLinesToMesh(lines);
+		cpuMesh = createMeshFromLines(lines);
 		gpuMesh.upload(cpuMesh);
 		gpuMesh.render(renderer.uniforms());
 		gpuMesh.unload();
@@ -178,7 +189,7 @@ void LineRenderer::renderLines(Renderer& renderer, const Vector<Line3D>& lines)
 	if(!lines.empty())
 	{
 		renderer.uniforms().setMMatrix(Matrix(1));
-		cpuMesh = convertLinesToMesh(lines);
+		cpuMesh = createMeshFromLines(lines);
 		gpuMesh.upload(cpuMesh);
 		gpuMesh.render(renderer.uniforms());
 		gpuMesh.unload();

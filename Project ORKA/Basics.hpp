@@ -2,6 +2,8 @@
 #pragma once
 #pragma warning(disable : 4996) // disables unsecure warning
 
+#define GLM_ENABLE_EXPERIMENTAL
+
 #include "Settings.hpp"
 
 #include <set>
@@ -23,6 +25,11 @@
 #include <filesystem>
 #include <functional>
 #include <shared_mutex>
+#include <glm/glm.hpp>
+#include <glm/gtc/type_ptr.hpp>
+#include <glm/gtc/quaternion.hpp>
+#include <glm/gtx/quaternion.hpp>
+#include <glm/gtx/rotate_vector.hpp>
 
 #ifdef MEMORY_LEAK_DETECTION
 	#include <crtdbg.h>
@@ -63,7 +70,7 @@ using I64 = std::int64_t;
 
 //max values
 constexpr UInt maxUInt = 4294967295U;
-constexpr ULL maxULL = 18446744073709551615Ui64;
+constexpr ULL  maxULL  = 18446744073709551615Ui64;
 
 // pointers
 template <typename T> using WeakPointer = std::weak_ptr<T>;
@@ -73,8 +80,44 @@ template <typename T> using SharedPointer = std::shared_ptr<T>;
 using String = std::string;
 using WString = std::wstring;
 
-#include "Name.hpp"
-#include "Vectors.hpp"
+using Exception = std::exception;
+
+constexpr unsigned short nameSize = 64;
+
+struct Name
+{
+	Name();
+	Name(const char* name);
+	Name(const String& name);
+	Name& operator=(const char* other);
+	Name& operator=(const String& other);
+	[[nodiscard]] String toString() const;
+	[[nodiscard]] bool  operator<(const Name& other) const;
+	[[nodiscard]] bool  operator==(const Name& other) const;
+	[[nodiscard]] bool  operator!=(const Name& other) const;
+private:
+	char data[nameSize] = {};
+};
+
+inline String toString(const Name& name)
+{
+	return name.toString();
+}
+
+using IVec2 = glm::ivec2;
+using IVec3 = glm::ivec3;
+using IVec4 = glm::ivec4;
+
+using Vec2 = glm::vec2;
+using Vec3 = glm::vec3;
+using Vec4 = glm::vec4;
+
+using DVec2 = glm::dvec2;
+using DVec3 = glm::dvec3;
+
+using UllVec2 = glm::u64vec2;
+using UllVec3 = glm::u64vec3;
+using UllVec4 = glm::u64vec4;
 
 using Color = glm::vec4;
 
@@ -99,13 +142,10 @@ constexpr UInt colorToRGBAHex(const Color color)
 
 using Sphere = Vec4;
 
-#include "glm/glm.hpp"
 using Matrix = glm::mat4;
-
-#include "glm/gtc/quaternion.hpp"
-#include "glm/gtx/quaternion.hpp"
-#include "glm/gtx/euler_angles.hpp"
-#include "glm/gtx/projection.hpp"
+#include <glm/gtc/quaternion.hpp>
+#include <glm/gtx/euler_angles.hpp>
+#include <glm/gtx/projection.hpp>
 
 using Mutex = std::mutex;
 using Rotation = glm::quat;
@@ -220,7 +260,7 @@ inline String toString(const Float v)
 inline String toString(const Path& v)
 {
 	// there seems to be an issue with, for example japanese characters, that make this conversion necessary
-	WString                                     wideString = v.wstring();
+	const WString wideString = v.wstring();
 	std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
 	return converter.to_bytes(wideString);
 }
@@ -240,7 +280,7 @@ inline String toString(const String& v) // lol
 	return v;
 }
 
-// vectors
+// vectors to string
 
 inline String toString(const Vec2 v)
 {
@@ -282,17 +322,17 @@ inline String toString(const LDouble v)
 	return std::to_string(v);
 }
 
-inline String toString(const ULLVec2 v)
+inline String toString(const UllVec2 v)
 {
 	return "(" + toString(v.x) + "|" + toString(v.y) + ")";
 }
 
-inline String toString(const ULLVec3& v)
+inline String toString(const UllVec3& v)
 {
 	return "(" + toString(v.x) + "|" + toString(v.y) + "|" + toString(v.z) + ")";
 }
 
-inline String toString(const ULLVec4& v)
+inline String toString(const UllVec4& v)
 {
 	return "(" + toString(v.x) + "|" + toString(v.y) + "|" + toString(v.z) + "|" + toString(v.w) + ")";
 }
@@ -302,12 +342,12 @@ inline String toString(const Matrix& v)
 	return "\n" + toString(v[0]) + "\n" + toString(v[1]) + "\n" + toString(v[2]) + "\n" + toString(v[3]) + "\n";
 }
 
-inline String toString(Byte * v)
+inline String toString(Byte* v)
 {
 	return {reinterpret_cast<const char*>(v)};
 }
 
-inline String toString(const Byte * v)
+inline String toString(const Byte* v)
 {
 	return {reinterpret_cast<const char*>(v)};
 }
@@ -323,12 +363,42 @@ template <typename T> String toString(T v)
 	return "(ERROR: String conversion not implemented)";
 }
 
-inline String toLowerCase(const String& str) {
-    String result;
-    for (Char c : str) {
-        result += std::tolower(c);
-    }
-    return result;
+inline String toLowerCase(const String& str)
+{
+	String result;
+	for(Char c : str)
+	{
+		result += std::tolower(c);
+	}
+	return result;
+}
+
+// to Double functions
+
+inline Double toDouble(const Float a)
+{
+	return a;
+}
+
+inline Double toDouble(const Int a)
+{
+	return a;
+}
+
+inline Double toDouble(const ULL a)
+{
+	return a;
+}
+
+inline Double toDouble(const Double a)
+{
+	return a;
+}
+
+template <typename T> Double toDouble(T v)
+{
+	__debugbreak(); // implement conversion
+	return 0.0;
 }
 
 // threading

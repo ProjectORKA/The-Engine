@@ -39,6 +39,7 @@
 #include "AIPlayground.hpp"
 #include "AudioSystem.hpp"
 #include "DungeonsAndDiscord.hpp"
+#include "FunctionFinder.hpp"
 #include "MindMapper.hpp"
 #include "GPUSim.hpp"
 #include "GuessingGame.hpp"
@@ -57,54 +58,52 @@
 #include "Snake.hpp"
 #include "Sortr.hpp"
 #include "UISandbox.hpp"
+#include "Music Visualizer.hpp"
+#include "SoundBars.hpp"
 
-void testAll(const Int argc, Char* argv[])
-{
-	//FlappyBird		 game1;  game1.run();
-	//MoonCrash          game2;  game2.run();
-	//OrbitalOblivion    game3;  game3.run();
-	//ProjectMelon       game4;  game4.run();	// transparency issue
-	//Pong               game5;  game5.run();	// transparency issue
-	//TripleNine         game6;  game6.run();
-	//AIPlayground       game7;  game7.run();
-	//DungeonsAndDiscord game8;  game8.run();
-	//MindMapper         game9;  game9.run();
-	//GPUSim             game10; game10.run();
-	//GuessingGame       game11; game11.run();
-	//HelloTriangle      game12; game12.run();
-	//ImageViewer        game13; game13.run(argc,argv);
-	//ImguiExample       game14; game14.run(); //shutdown issues
-	//MSDFText           game15; game15.run();
-	//Organizer          game17; game17.run();
-	//PhysicsPlayground  game18; game18.run();
-	//PrototypingSandbox game19; game19.run();
-	//Sandbox            game20; game20.run();
-	//SDFRenderer        game21; game21.run();
-	//SimpleRTS          game22; game22.run();
-	//Snake              game23; game23.run();
-	//Sortr              game24; game24.run(argc, argv);
-	//UISandbox          game25; game25.run();
-}
+//void testAll(const Int argc, Char* argv[])
+//{
+//	//FlappyBird		 game1;  game1.run();
+//	//MoonCrash          game2;  game2.run();
+//	//OrbitalOblivion    game3;  game3.run();
+//	//ProjectMelon       game4;  game4.run();	// transparency issue
+//	//Pong               game5;  game5.run();	// transparency issue
+//	//TripleNine         game6;  game6.run();
+//	//AIPlayground       game7;  game7.run();
+//	//DungeonsAndDiscord game8;  game8.run();
+//	//MindMapper         game9;  game9.run();
+//	//GPUSim             game10; game10.run();
+//	//GuessingGame       game11; game11.run();
+//	//HelloTriangle      game12; game12.run();
+//	//ImageViewer        game13; game13.run(argc,argv);
+//	//ImguiExample       game14; game14.run(); //shutdown issues
+//	//MSDFText           game15; game15.run();
+//	//Organizer          game17; game17.run();
+//	//PhysicsPlayground  game18; game18.run();
+//	//PrototypingSandbox game19; game19.run();
+//	//Sandbox            game20; game20.run();
+//	//SDFRenderer        game21; game21.run();
+//	//SimpleRTS          game22; game22.run();
+//	//Snake              game23; game23.run();
+//	//Sortr              game24; game24.run(argc, argv);
+//	//UISandbox          game25; game25.run();
+//}
 
 Int main(const Int argc, Char* argv[])
 {
 	Engine engine;
 	engine.create(argc, argv);
 
-	//PhysicsPlayground game;
+	PrototypingSandbox game;
+	game.run();
+
+	//FunctionFinder game;
 	//game.run();
 
-	//PrototypingSandbox game;
-	//game.run();
-
-	ImageViewer imageViewer;
-	imageViewer.run(argc, argv);
-
-	//AudioSystem audioSystem;
-	//audioSystem.audioTest();
+	//musicVisualizer();
+	//RayLib::soundBars();
 }
 
-// windows entry point (ignore)
 #include "Windows.hpp"
 
 Int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, Int nShowCmd)

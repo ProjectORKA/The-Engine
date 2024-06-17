@@ -24,50 +24,54 @@ private:
 
 	//Mutex          mutex;
 	Vector<Thread> workers;
-	Int threadID = 1;
-	Bool           running        = false;	// if disabled prevents workers from pulling new work
-	Bool           canEnqueueNext = false;	// if disabled prevents work from creating subsequent work
-	Bool           canEnqueueNew  = false;	// if disabled prevents new work being added
+	Int            threadID       = 1;
+	Bool           running        = false; // if disabled prevents workers from pulling new work
+	Bool           canEnqueueNext = false; // if disabled prevents work from creating subsequent work
+	Bool           canEnqueueNew  = false; // if disabled prevents new work being added
 
 	Job  next(Int threadID);
 	void startWithThreads(UInt numThreads);
 
 public:
-	void              start();
-	void              letStop();
-	void              waitStop();
-	void              forceStop();
+	void stop();
+	void start();
+	void letStopAndJoin();
+	void waitStopAndJoin();
+	void forceStopAndJoin();
+
 	[[nodiscard]] ULL workCount() const;
 	[[nodiscard]] ULL numThreads() const;
 
 	static void workerThread(Int threadID);
 
-	template <typename Func, typename... Args> void enqueue(Func&& function, Args&&... args)
+	template <typename Func, typename... Args>
+	void enqueue(Func&& function, Args&&... args)
 	{
 		// adds a new job to be done
 
-		if(debugJobSystemIsEnabled) logDebug("Add new job to queue!");
-		if(canEnqueueNew)
+		if (debugJobSystemIsEnabled) logDebug("Add new job to queue!");
+		if (canEnqueueNew)
 		{
 			//LockGuard lock(mutex);
 			//const Job job = ;
 			jobQueue.enqueue(std::bind(std::forward<Func>(function), std::forward<Args>(args)...));
 		}
-		else if(debugJobSystemIsEnabled) logWarning("Could not enqueue new job!");
+		else if (debugJobSystemIsEnabled) logWarning("Could not enqueue new job!");
 	}
 
-	template <typename Func, typename... Args> void enqueueNext(Func&& function, Args&&... args)
+	template <typename Func, typename... Args>
+	void enqueueNext(Func&& function, Args&&... args)
 	{
 		// only used by active jobs that need other jobs to finish aswell
 		// WARNING: do not create infinite loops using this!!!
 
-		if(debugJobSystemIsEnabled) logDebug("Add subsequent job!");
-		if(canEnqueueNext)
+		if (debugJobSystemIsEnabled) logDebug("Add subsequent job!");
+		if (canEnqueueNext)
 		{
 			//LockGuard lock(mutex);
 			//const Job job = std::bind(std::forward<Func>(function), std::forward<Args>(args)...);
 			jobQueue.enqueue(std::bind(std::forward<Func>(function), std::forward<Args>(args)...));
 		}
-		else if(debugJobSystemIsEnabled) logWarning("Could not enqueue next job!");
+		else if (debugJobSystemIsEnabled) logWarning("Could not enqueue next job!");
 	}
 };

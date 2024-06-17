@@ -69,8 +69,9 @@ void main(){
     // calculate fog
     float fog = clamp(fogFunction(distance(worldPosition.xyz,cameraPosition.xyz)/10000),0,1);
 
+    vec3 color = texture2D(texture0, textureCoordinate).xyz;
 
-	gBufferColor = vec4(mix(vertexColor * customColor.xyz * light + refl, skyColor, fog), 1);
+	gBufferColor = vec4(mix(color * customColor.xyz * light + refl, skyColor, fog), 1);
     gBufferPosition  = worldPosition.xyz;
 	gBufferNormal = normal;
 };
