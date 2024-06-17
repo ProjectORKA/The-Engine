@@ -18,6 +18,6 @@ struct MelonWorld
 
 	void update(const MelonPlayer& player);
 	void render(Renderer& renderer);
-	void generateScenery(Float& sceneryPersistencySize, const MelonPlayer& player, const Float& pathWidth);
-	void generatePaths(const Float& generationSize, const MelonPlayer& player, const Float& pathWidth, const Float& pathPersistencySize);
+	void generateScenery(Float& sceneryPersistenceSize, const MelonPlayer& player, const Float& pathWidth);
+	void generatePaths(const Float& generationSize, const MelonPlayer& player, const Float& pathWidth, const Float& pathPersistenceSize);
 };

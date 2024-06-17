@@ -113,7 +113,7 @@ void QuadtreeNodeRenderData::renderTerrain(Renderer& renderer)
 	}
 	const Matrix m = matrixFromSize(Vec3(1, 1, heightScale));
 	renderer.uniforms().setMMatrix(m);
-	renderer.uniforms().setWorldOffset(Vec4(node.id.location.x, node.id.location.y, node.data.terrain->heightmap.lowerLimit / static_cast<LDouble>(ULLONG_MAX), node.id.level));
+	renderer.uniforms().setWorldOffset(Vec4(node.id.position.x, node.id.position.y, node.data.terrain->heightmap.lowerLimit / static_cast<LDouble>(ULLONG_MAX), node.id.level));
 
 	if(node.id.level < 4)
 	{
@@ -159,18 +159,18 @@ void QuadtreeNodeRenderData::updateWithoutSubdivision(PlanetSystemPlayer& player
 	const QuadtreeNode& eq = *equivalentQuadtreeNode;
 
 	tmp.level      = eq.id.level;
-	tmp.location.x = eq.id.location.x;
-	tmp.location.y = eq.id.location.y;
+	tmp.position.x = eq.id.position.x;
+	tmp.position.y = eq.id.position.y;
 
-	if(eq.data.terrain) tmp.location.z = static_cast<ULL>(eq.data.terrain->heightmap.lowerLimit);
-	else tmp.location.z                = 0;
+	if(eq.data.terrain) tmp.position.z = static_cast<ULL>(eq.data.terrain->heightmap.lowerLimit);
+	else tmp.position.z                = 0;
 
-	// tmp.location.z = 0;
+	// tmp.position.z = 0;
 
-	// logDebug(LDouble(tmp.location.z) / pow(2, 64));
+	// logDebug(LDouble(tmp.position.z) / pow(2, 64));
 
-	// get camera relative location
-	cameraPosition = relativeCameraPosition(tmp, player.chunkLocation, player.camera.getLocation());
+	// get camera relative position
+	cameraPosition = relativeCameraPosition(tmp, player.chunkPosition, player.camera.getPosition());
 
 	nodeDrawDistance          = length(cameraPosition - Vec3(0.5, 0.5, 0));
 	const Bool inDrawDistance = nodeDrawDistance < drawDistance;

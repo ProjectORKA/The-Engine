@@ -40,9 +40,9 @@ struct Window final : LifetimeGuard
 	IVec2        windowPosition   = IVec2(0);
 	WindowState  windowState      = WindowState::Windowed;
 	//mouse
-	MouseMovement mousePos        = MouseMovement(0);
-	MouseMovement mouseDelta      = MouseMovement(0);
-	MouseMovement mousePosBotLeft = MouseMovement(0);
+	DVec2 mousePos        = DVec2(0);
+	DVec2 mouseDelta      = DVec2(0);
+	DVec2 mousePosBotLeft = DVec2(0);
 	//input
 	InputId    altKey         = InputId(InputType::KeyBoard, ALT);
 	InputEvent reloadShaders  = InputEvent(InputType::KeyBoard, F7, true);
@@ -66,8 +66,8 @@ struct Window final : LifetimeGuard
 	void updateDecorations();
 	void setCallbacks() const;
 	void updatePosition() const;
+	void add(UIElement& element);
 	void setVisible(Bool visible);
-	void insert(UIElement& element);
 	void setPosition(IVec2 position);
 	void initializeGraphicsApi() const;
 	void setIcon(const Path& path) const;

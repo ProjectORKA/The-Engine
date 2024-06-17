@@ -54,7 +54,7 @@ void PhysicsPlaygroundSimulation::removeIntersecting()
 			const Vec2 p3 = nodes[connections[b].a].position;
 			const Vec2 p4 = nodes[connections[b].b].position;
 
-			if(doLinesIntersect(p1, p2, p3, p4))
+			if(linesIntersecting(p1, p2, p3, p4))
 			{
 				const Float d1 = distance(p1, p2);
 				const Float d2 = distance(p3, p4);
@@ -241,7 +241,7 @@ void PhysicsPlaygroundSimulation::intersectionBasedConnections()
 		const Vec2 cAPos = nodes[connections[c].a].position;
 		const Vec2 cBPos = nodes[connections[c].b].position;
 
-		if(doLinesIntersect(aPos, bPos, cAPos, cBPos))
+		if(linesIntersecting(aPos, bPos, cAPos, cBPos))
 		{
 			const Float d1 = distance(aPos, bPos);
 			const Float d2 = distance(cAPos, cBPos);
@@ -418,7 +418,7 @@ void PhysicsPlayGroundRenderer::render(Window& window, TiledRectangle area)
 
 Bool PhysicsPlaygroundSimulation::doIntersect(const Index a, const Index b, const Index c, const Index d) const
 {
-	return doLinesIntersect(nodes[a].position, nodes[b].position, nodes[c].position, nodes[d].position);
+	return linesIntersecting(nodes[a].position, nodes[b].position, nodes[c].position, nodes[d].position);
 }
 
 void PhysicsPlayGroundRenderer::renderInteractive(Window& window, TiledRectangle area) {}

@@ -38,9 +38,6 @@
     <ClCompile Include="Time.cpp">
       <Filter>Common\Platform\Time</Filter>
     </ClCompile>
-    <ClCompile Include="Name.cpp">
-      <Filter>Common\Datastructures\Name</Filter>
-    </ClCompile>
     <ClCompile Include="DungeonsAndDiscord.cpp">
       <Filter>Apps\3D Apps\DungeonsAndDiscord</Filter>
     </ClCompile>
@@ -83,8 +80,8 @@
     <ClCompile Include="TripleNine.cpp">
       <Filter>Apps\3D Apps\TripleNine</Filter>
     </ClCompile>
-    <ClCompile Include="SimpleRTS.cpp">
-      <Filter>Apps\3D Apps\Simple RTS</Filter>
+    <ClCompile Include="SimpleRts.cpp">
+      <Filter>Apps\3D Apps\SimpleRts</Filter>
     </ClCompile>
     <ClCompile Include="Snake.cpp">
       <Filter>Apps\3D Apps\Snake</Filter>
@@ -122,14 +119,14 @@
     <ClCompile Include="RedDotHack.cpp">
       <Filter>Apps\Console Apps\Red Dot Hack</Filter>
     </ClCompile>
-    <ClCompile Include="SimpleRTSHuman.cpp">
-      <Filter>Apps\3D Apps\Simple RTS\SimpleRTSHuman</Filter>
+    <ClCompile Include="SimpleRtsHumanSystem.cpp">
+      <Filter>Apps\3D Apps\SimpleRts\SimpleRtsHumanSystem</Filter>
     </ClCompile>
-    <ClCompile Include="SimpleRTSTerrain.cpp">
-      <Filter>Apps\3D Apps\Simple RTS\SimpleRTSTerrain</Filter>
+    <ClCompile Include="SimpleRtsTerrainSystem.cpp">
+      <Filter>Apps\3D Apps\SimpleRts\SimpleRtsTerrainSystem</Filter>
     </ClCompile>
-    <ClCompile Include="SimpleRTSTreeSystem.cpp">
-      <Filter>Apps\3D Apps\Simple RTS\SimpleRTSTreeSystem</Filter>
+    <ClCompile Include="SimpleRtsTreeSystem.cpp">
+      <Filter>Apps\3D Apps\SimpleRts\SimpleRtsTreeSystem</Filter>
     </ClCompile>
     <ClCompile Include="ResourceManager.cpp">
       <Filter>Systems\ResourceManager</Filter>
@@ -387,6 +384,36 @@
       <Filter>Apps\3D Apps\Prototyping\Prototypes\ParalellizedConvexHullPrototype</Filter>
     </ClCompile>
     <ClCompile Include="Platform.cpp" />
+    <ClCompile Include="UIContainer.cpp">
+      <Filter>Systems\UserInterface\UIContainer</Filter>
+    </ClCompile>
+    <ClCompile Include="Hash.cpp">
+      <Filter>Common\Math\Hash</Filter>
+    </ClCompile>
+    <ClCompile Include="ImageViewerDatabase.cpp">
+      <Filter>Apps\2D Apps\Image Viewer</Filter>
+    </ClCompile>
+    <ClCompile Include="ImageViewerResource.cpp">
+      <Filter>Apps\2D Apps\Image Viewer</Filter>
+    </ClCompile>
+    <ClCompile Include="Basics.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="FunctionFinder.cpp">
+      <Filter>Apps\2D Apps\FunctionFinder</Filter>
+    </ClCompile>
+    <ClCompile Include="SimpleRtsTreeStumpSystem.cpp">
+      <Filter>Apps\3D Apps\SimpleRts\SimpleRtsTreeStumpSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="SimpleRtsRabbitSystem.cpp">
+      <Filter>Apps\3D Apps\SimpleRts\SimpleRtsRabbitSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="SimpleRtsBushSystem.cpp">
+      <Filter>Apps\3D Apps\SimpleRts\SimpleRtsBushSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="SimpleRtsSystem.cpp">
+      <Filter>Apps\3D Apps\SimpleRts</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Basics.hpp">
@@ -443,9 +470,6 @@
     <ClInclude Include="Time.hpp">
       <Filter>Common\Platform\Time</Filter>
     </ClInclude>
-    <ClInclude Include="Name.hpp">
-      <Filter>Common\Datastructures\Name</Filter>
-    </ClInclude>
     <ClInclude Include="DungeonsAndDiscord.hpp">
       <Filter>Apps\3D Apps\DungeonsAndDiscord</Filter>
     </ClInclude>
@@ -497,8 +521,8 @@
     <ClInclude Include="TripleNine.hpp">
       <Filter>Apps\3D Apps\TripleNine</Filter>
     </ClInclude>
-    <ClInclude Include="SimpleRTS.hpp">
-      <Filter>Apps\3D Apps\Simple RTS</Filter>
+    <ClInclude Include="SimpleRts.hpp">
+      <Filter>Apps\3D Apps\SimpleRts</Filter>
     </ClInclude>
     <ClInclude Include="Snake.hpp">
       <Filter>Apps\3D Apps\Snake</Filter>
@@ -560,8 +584,8 @@
     <ClInclude Include="SDFRenderer.hpp">
       <Filter>Apps\3D Apps\SDFRenderer</Filter>
     </ClInclude>
-    <ClInclude Include="SimpleRTSTreeSystem.hpp">
-      <Filter>Apps\3D Apps\Simple RTS\SimpleRTSTreeSystem</Filter>
+    <ClInclude Include="SimpleRtsTreeSystem.hpp">
+      <Filter>Apps\3D Apps\SimpleRts\SimpleRtsTreeSystem</Filter>
     </ClInclude>
     <ClInclude Include="LifeTimeGuard.hpp">
       <Filter>Common\Prototypes</Filter>
@@ -638,11 +662,11 @@
     <ClInclude Include="MSDFText.hpp">
       <Filter>Apps\2D Apps\MSDFText</Filter>
     </ClInclude>
-    <ClInclude Include="SimpleRTSHuman.hpp">
-      <Filter>Apps\3D Apps\Simple RTS\SimpleRTSHuman</Filter>
+    <ClInclude Include="SimpleRtsHumanSystem.hpp">
+      <Filter>Apps\3D Apps\SimpleRts\SimpleRtsHumanSystem</Filter>
     </ClInclude>
-    <ClInclude Include="SimpleRTSTerrain.hpp">
-      <Filter>Apps\3D Apps\Simple RTS\SimpleRTSTerrain</Filter>
+    <ClInclude Include="SimpleRtsTerrainSystem.hpp">
+      <Filter>Apps\3D Apps\SimpleRts\SimpleRtsTerrainSystem</Filter>
     </ClInclude>
     <ClInclude Include="IndexBufferObject.hpp">
       <Filter>Systems\UserInterface\Window\Renderer\MeshSystem\GPUMesh\IndexBufferObject</Filter>
@@ -792,9 +816,6 @@
     <ClInclude Include="NameGenerator.hpp">
       <Filter>Apps\Console Apps\NameGenerator</Filter>
     </ClInclude>
-    <ClInclude Include="Vectors.hpp">
-      <Filter>Common\Datastructures</Filter>
-    </ClInclude>
     <ClInclude Include="Image.hpp">
       <Filter>Common\Data\Image</Filter>
     </ClInclude>
@@ -883,6 +904,45 @@
     <ClInclude Include="Windows.hpp" />
     <ClInclude Include="KDTree2.hpp">
       <Filter>Common\Datastructures\KDTree</Filter>
+    </ClInclude>
+    <ClInclude Include="SoundGenerators.hpp">
+      <Filter>Systems\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="DNDBase.hpp">
+      <Filter>Apps\Console Apps\DNDBase</Filter>
+    </ClInclude>
+    <ClInclude Include="Hash.hpp">
+      <Filter>Common\Math\Hash</Filter>
+    </ClInclude>
+    <ClInclude Include="ImageViewerDatabase.hpp">
+      <Filter>Apps\2D Apps\Image Viewer</Filter>
+    </ClInclude>
+    <ClInclude Include="ImageViewerResource.hpp">
+      <Filter>Apps\2D Apps\Image Viewer</Filter>
+    </ClInclude>
+    <ClInclude Include="Music Visualizer.hpp">
+      <Filter>Apps\2D Apps\Music Visualizer</Filter>
+    </ClInclude>
+    <ClInclude Include="SoundBars.hpp">
+      <Filter>Apps\2D Apps\SoundBars</Filter>
+    </ClInclude>
+    <ClInclude Include="FunctionFinder.hpp">
+      <Filter>Apps\2D Apps\FunctionFinder</Filter>
+    </ClInclude>
+    <ClInclude Include="SimpleRtsTreeStumpSystem.hpp">
+      <Filter>Apps\3D Apps\SimpleRts\SimpleRtsTreeStumpSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="SimpleRtsRabbitSystem.hpp">
+      <Filter>Apps\3D Apps\SimpleRts\SimpleRtsRabbitSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="SimpleRtsBushSystem.hpp">
+      <Filter>Apps\3D Apps\SimpleRts\SimpleRtsBushSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="SimpleRtsSystem.hpp">
+      <Filter>Apps\3D Apps\SimpleRts</Filter>
+    </ClInclude>
+    <ClInclude Include="DelaunayTriangulation.hpp">
+      <Filter>Common\Math\DelaunayTriangulation</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1171,6 +1231,13 @@
     <None Include="Data\Shaders\sortr.vert">
       <Filter>Apps\2D Apps\Sortr\Shaders</Filter>
     </None>
+    <None Include="test.ui" />
+    <None Include="Data\Shaders\simpleRTSSky.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Data\Shaders\simpleRTSSky.vert">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Common">
@@ -1281,9 +1348,6 @@
     <Filter Include="Apps\3D Apps\ORKA Intro Sequence">
       <UniqueIdentifier>{45238f7d-2d78-4f15-873e-4800033c59c3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Apps\3D Apps\Simple RTS">
-      <UniqueIdentifier>{c518507f-af21-4f12-943d-7fc3faf54b9c}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Apps\3D Apps\Snake">
       <UniqueIdentifier>{278e34ba-bb32-495a-b4dd-d94d2f665ce4}</UniqueIdentifier>
     </Filter>
@@ -1301,15 +1365,6 @@
     </Filter>
     <Filter Include="Apps\3D Apps\DungeonsAndDiscord\Shaders">
       <UniqueIdentifier>{2cb5a542-3920-4978-b38c-8959729444f1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Apps\3D Apps\Simple RTS\SimpleRTSHuman">
-      <UniqueIdentifier>{2f38b484-4d3e-4372-9d00-0f1a75077827}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Apps\3D Apps\Simple RTS\SimpleRTSTerrain">
-      <UniqueIdentifier>{4d0ea18b-31c7-422b-8b19-72a21fd6c151}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Apps\3D Apps\Simple RTS\SimpleRTSTreeSystem">
-      <UniqueIdentifier>{38a74497-f9d1-4f46-9d9d-6893ad0f1c34}</UniqueIdentifier>
     </Filter>
     <Filter Include="Apps\2D Apps\Organizer">
       <UniqueIdentifier>{7f7cd27c-845d-4ac8-917a-86a258a5917f}</UniqueIdentifier>
@@ -1518,9 +1573,6 @@
     <Filter Include="Apps\Console Apps\NameGenerator">
       <UniqueIdentifier>{aaa8ab4c-ad59-420a-b6c3-b15a41c1de1a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Common\Datastructures\Name">
-      <UniqueIdentifier>{56c8d332-a29d-4b99-9b1b-51e3f9923fb4}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Common\Data">
       <UniqueIdentifier>{bd0d843c-856c-44ef-a037-feca3f15b7c2}</UniqueIdentifier>
     </Filter>
@@ -1655,6 +1707,48 @@
     </Filter>
     <Filter Include="Apps\3D Apps\Prototyping\Prototypes\KDTree">
       <UniqueIdentifier>{f7b24238-8111-4ea7-a14e-ce86f4bc9cd9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI">
+      <UniqueIdentifier>{cbb8e8b9-d954-4eb1-901d-96aa4be38696}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Apps\Console Apps\DNDBase">
+      <UniqueIdentifier>{beaaf7d9-61a4-4ca3-b7f1-d4ba092ed089}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Common\Math\Hash">
+      <UniqueIdentifier>{86bc6233-5a62-48b2-ae10-c75b2223a2b3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Apps\2D Apps\Music Visualizer">
+      <UniqueIdentifier>{6755c65f-e2c7-4e35-bff4-d009780a3690}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Apps\2D Apps\SoundBars">
+      <UniqueIdentifier>{7c205d97-42f3-426d-9984-6afa8002cd7d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Apps\2D Apps\FunctionFinder">
+      <UniqueIdentifier>{dcab998a-ffc9-4968-8b71-fdaa034404f9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Apps\3D Apps\SimpleRts">
+      <UniqueIdentifier>{c518507f-af21-4f12-943d-7fc3faf54b9c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Apps\3D Apps\SimpleRts\SimpleRtsTreeStumpSystem">
+      <UniqueIdentifier>{ea686ad2-3524-4fa8-a59c-cff959c678cf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Apps\3D Apps\SimpleRts\SimpleRtsTreeSystem">
+      <UniqueIdentifier>{38a74497-f9d1-4f46-9d9d-6893ad0f1c34}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Apps\3D Apps\SimpleRts\SimpleRtsRabbitSystem">
+      <UniqueIdentifier>{125cf30e-5079-4837-93be-89f23a775511}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Apps\3D Apps\SimpleRts\SimpleRtsHumanSystem">
+      <UniqueIdentifier>{2f38b484-4d3e-4372-9d00-0f1a75077827}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Apps\3D Apps\SimpleRts\SimpleRtsTerrainSystem">
+      <UniqueIdentifier>{4d0ea18b-31c7-422b-8b19-72a21fd6c151}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Apps\3D Apps\SimpleRts\SimpleRtsBushSystem">
+      <UniqueIdentifier>{467a4b18-e6f1-439e-a4b0-6200b867175d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Common\Math\DelaunayTriangulation">
+      <UniqueIdentifier>{d69bd4b2-8083-4443-9a1f-820d8cd1d7b9}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

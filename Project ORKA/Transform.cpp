@@ -23,7 +23,7 @@ void Transform::setZ(const Float z)
 	position.z = z;
 }
 
-Vec3 Transform::getLocation() const
+Vec3 Transform::getPosition() const
 {
 	return position;
 }
@@ -64,7 +64,7 @@ void Transform::move(const Vec3 translation)
 	position += translation;
 }
 
-void Transform::setLocation(const Vec3& pos)
+void Transform::setPosition(const Vec3& pos)
 {
 	position = pos;
 }
@@ -95,9 +95,9 @@ void Transform::setSize(const Float x, const Float y, const Float z)
 	setSize(Vec3(x, y, z));
 }
 
-void Transform::setLocation(const Float x, const Float y, const Float z)
+void Transform::setPosition(const Float x, const Float y, const Float z)
 {
-	setLocation(Vec3(x, y, z));
+	setPosition(Vec3(x, y, z));
 }
 
 void Transform::setRotation(const Float x, const Float y, const Float z)

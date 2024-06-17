@@ -28,10 +28,9 @@ void Time::pause()
 
 void Timer::stop()
 {
-	stopTP        = now();
-	deltaDuration = stopTP - startTP;
+	stopTp        = now();
+	deltaDuration = stopTp - startTp;
 	delta         = static_cast<Float>(deltaDuration.count());
-	logDebug("Process took (" + toString(delta) + ") seconds.");
 }
 
 void Time::update()
@@ -39,24 +38,42 @@ void Time::update()
 	lastTime    = currentTime;
 	currentTime = now();
 
-	if(!paused)
+	if (!paused)
 	{
 		deltaDuration = currentTime - lastTime;
 		totalDuration += deltaDuration;
 		delta = static_cast<Float>(deltaDuration.count());
 		total = static_cast<Float>(totalDuration.count());
 	}
-	else deltaDuration = std::chrono::seconds::zero();
+	else
+	{
+		deltaDuration = std::chrono::seconds::zero();
+	}
 }
 
 void Timer::start()
 {
-	startTP = now();
+	startTp = now();
 }
 
 void Time::unpause()
 {
 	paused = false;
+}
+
+Bool Time::isPaused() const
+{
+	return paused;
+}
+
+Float Time::getDelta() const
+{
+	return delta;
+}
+
+Float Time::getTotal() const
+{
+	return total;
 }
 
 void sleep(const UInt milliseconds)

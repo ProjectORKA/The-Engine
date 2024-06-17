@@ -44,23 +44,23 @@ struct Renderer
 	PlanetRenderSystem planetRenderSystem;
 
 	//general usage
-	void create();
-	void begin(Area windowSize);
-	void sync();
 	void end();
+	void sync();
+	void create();
 	void destroy();
+	void begin(Area size);
 
 	//render state
 	void drawToWindow() const;
-	void setWireframeMode() const;
 	void blendModeAdditive() const;
-	void pollGraphicsAPIError() const;
-	void setFramebufferSize(Area area);
+	void pollGraphicsApiError() const;
+	void setWireframeMode() const;
 	void setCulling(Bool culling) const;
+	void setFramebufferSize(Area area);
 	void setAlphaBlending(Bool blending) const;
 	void setDepthTest(Bool isUsingDepth) const;
+	void setWireframeMode(Bool mode) const;
 	void setRenderRegion(TiledRectangle region);
-	void setWireframeMode(Bool wireframeMode) const;
 	void addRenderObject(const RenderObjectNames& renderObjectNames); // [TODO] remove?
 	void setAlphaBlending(Bool enable, BlendFunction src, BlendFunction dst, BlendEquation eq) const;
 
@@ -74,7 +74,7 @@ struct Renderer
 
 	//textures
 	void useTexture(const Name& name);
-	void useTexture(const Name& name, Index location);
+	void useTexture(const Name& name, Index position);
 
 	//meshes
 	void rerenderMesh();
@@ -85,48 +85,41 @@ struct Renderer
 	void renderMeshInstanced(const Name& name, const Vector<Vec3>& positions);
 	void renderMeshInstanced(const Name& name, const Vector<Matrix>& transforms);
 	void renderMeshInstanced(const Name& name, const Vector<Vec3>& positions, Float size);
+	void renderMeshInstanced(const Name& name, const Vector<Vec2>& positions, const Vector<Vec2>& directions, const Vector<Float>& scales);
 
 	//shaders
+	void  fill(Int color);
 	void  fill(Vec3 color);
 	void  fill(Vec4 color);
 	void  setColor(Color color);
-	void  fill(Float r, Float g, Float b);
-	void  clearBackground(Color color) const;
 	Index useShader(const Name& name);
+	void  clearBackground(Color color) const;
+	void  fill(Float r, Float g, Float b);
 	void  fullScreenShader(const Name& name);
 	void  postProcess(const Name& name, const Framebuffer& source, const Framebuffer& destination);
 
 	//primitives
-	void centeredCube(Float size)
-	{
-		Bool tmp = wireframeMode;
-		setWireframeMode(true);
-		useShader("color");
-		fill(Vec4(1, 0, 0, 1));
-		uniforms().setMMatrix(matrixFromSize(size * 2));
-		renderMesh("centeredCube");
-		setWireframeMode(false);
-		wireframeMode = tmp;
-	}
+	void centeredCube(Float size);
 	void line(Vec2 start, Vec2 end);
 	void line(Vec3 start, Vec3 end);
 	void arrow(Vec2 start, Vec2 end);
 	void arrow(Vec3 start, Vec3 end);
-	void line(const Vector<Vec2>& line);
 	void line(const Vector<Vec3>& line);
 	void circle(Vec2 pos, Float radius);
 	void renderSky(const Camera& camera);
-	void lines(const Vector<Vec2>& lines);
 	void lines(const Vector<Vec3>& lines);
+	void lines(const Vector<Vec2>& lines);
 	void lines(const Vector<Line3D>& lines);
 	void points(const Vector<Vec2>& points);
 	void points(const Vector<Vec3>& points);
+	void line(const Vector<Vec2>& line, const Matrix& matrix);
+	void lines(const Vector<Vec2>& lines, const Matrix& matrix);
 	void renderAtmosphere(const Player& player, Vec3 sunDirection);
 	void rectangle(Vec2 pos, Vec2 size, Bool overrideColor = true, Bool centered = true);
 
+	[[nodiscard]] Bool   getCulling() const;
 	[[nodiscard]] Area   getArea() const;
 	[[nodiscard]] Float  deltaTime() const;
-	[[nodiscard]] Bool   getCulling() const;
 	[[nodiscard]] Area   getWindowSize() const;
 	[[nodiscard]] Float  getAspectRatio() const;
 	[[nodiscard]] Int    getWindowWidth() const;
@@ -140,12 +133,14 @@ private:
 	Area         windowSize = Area(0);
 };
 
-struct DepthTestOverride
+class DepthTestOverride
 {
-	Bool      stored;
-	Renderer* renderer;
-
+public:
 	~DepthTestOverride();
 	DepthTestOverride() = delete;
 	DepthTestOverride(Bool value, Renderer& renderer);
+
+private:
+	Bool      stored;
+	Renderer* renderer;
 };

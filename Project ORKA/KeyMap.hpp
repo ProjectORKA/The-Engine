@@ -168,5 +168,4 @@ enum
 	MIdDLE_MOUSE_BUTTON = GLFW_MOUSE_BUTTON_3,
 };
 
-using MouseMovement = DVec2;
 using MouseState = Bool[GLFW_MOUSE_BUTTON_LAST + 1];

@@ -12,36 +12,42 @@ void messageBox(String message, String title);
 
 inline void printToConsole(const String& message)
 {
-	fmt::print("{}\n",message);
+	fmt::print("{}\n", message);
 }
 
-inline void printHighlighted(const String& highlighted, const Vec4 color, const String& message) {
-    fmt::println("{}{}", fmt::format(fg(static_cast<fmt::color>(colorToRGBHex(color))) | fmt::emphasis::bold, "{}", highlighted), message);
-}
-
-template <typename T> void logDebug(T value)
+inline void printHighlighted(const String& highlighted, const Vec4 color, const String& message)
 {
-	if(debugLoggingIsEnabled) printHighlighted("Debug: ", Color(0,1,0,0), toString(value));
+	fmt::println("{}{}", fmt::format(fg(static_cast<fmt::color>(colorToRGBHex(color))) | fmt::emphasis::bold, "{}", highlighted), message);
 }
 
-template <typename T> void logWarning(T value)
+template <typename T>
+void logDebug(T value)
 {
-	if(warningLoggingIsEnabled)
+	if (debugLoggingIsEnabled) printHighlighted("Debug: ", Color(0, 1, 0, 0), toString(value));
+}
+
+template <typename T>
+void logWarning(T value)
+{
+	if (warningLoggingIsEnabled)
 	{
-		printHighlighted("Warning: ",Color(1,1,0,0), toString(value));
+		printHighlighted("Warning: ", Color(1, 1, 0, 0), toString(value));
+		if(debugBreakOnWarning) __debugbreak();
 		beep();
 	}
 }
 
-template <typename T> void logError(T value)
+template <typename T>
+void logError(T value)
 {
-	if(errorLoggingIsEnabled)
+	if (errorLoggingIsEnabled)
 	{
-		printHighlighted("ERROR: ",Color(1,0,0,0),toString(value));
+		printHighlighted("ERROR: ", Color(1, 0, 0, 0), toString(value));
 		beep();
 		__debugbreak();
 		pause();
-	} else
+	}
+	else
 	{
 		messageBox(toString(value), "Error");
 	}
@@ -49,5 +55,5 @@ template <typename T> void logError(T value)
 
 inline void logDebugLaunchParameters(const Int count, Char** params)
 {
-	for(int i = 0; i < count; i++) logDebug(params[i]);
+	for (int i = 0; i < count; i++) logDebug(params[i]);
 }

@@ -20,7 +20,7 @@ struct ParticleSystem
 	U16  currentId     = 0;
 	U16  particleCount = 0;
 	Bool loaded        = false;
-	Vec3 location      = Vec3(0);
+	Vec3 position      = Vec3(0);
 
 	// advanced data for smooth interpolation
 	Float delta     = 0;
@@ -30,8 +30,8 @@ struct ParticleSystem
 	~ParticleSystem();
 	ParticleSystem() = delete;
 	explicit ParticleSystem(U16 particleCount);
-	void     spawn(Vec3 location, Vec3 velocity);
-	void     update(Vec3 location, const Renderer& renderer);
+	void     spawn(Vec3 position, Vec3 velocity);
+	void     update(Vec3 position, const Renderer& renderer);
 	void     render(Renderer& renderer) const;
 };
 

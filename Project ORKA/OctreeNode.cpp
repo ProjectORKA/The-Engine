@@ -114,19 +114,19 @@ void OctreeNode::decrementUser()
 	else logError("User mismatch found!");
 }
 
-ULLVec3 OctreeNode::getLocation() const
+UllVec3 OctreeNode::getPosition() const
 {
-	return id.location;
+	return id.position;
 }
 
 OctreeNode::OctreeNode(QuadtreeNode& quadTreeRoot)
 {
 	id.level    = 0;
-	id.location = ULLVec3(0);
+	id.position = UllVec3(0);
 
 	quadTreeEquivalent = &quadTreeRoot;
 
-	// ULL chunkHeight = getLocation().z;
+	// ULL chunkHeight = getPosition().z;
 
 	// data.hasContent = 1;
 
@@ -140,11 +140,11 @@ OctreeNode::OctreeNode(OctreeNode& parent, const Bool x, const Bool y, const Boo
 {
 	this->parent   = &parent;
 	this->id.level = parent.id.level + 1;
-	ULLVec3 tmp    = parent.id.location;
+	UllVec3 tmp    = parent.id.position;
 
-	this->id.location.x = tmp.x += static_cast<ULL>(x) << 64 - id.level;
-	this->id.location.y = tmp.y += static_cast<ULL>(y) << 64 - id.level;
-	this->id.location.z = tmp.z += static_cast<ULL>(z) << 64 - id.level;
+	this->id.position.x = tmp.x += static_cast<ULL>(x) << 64 - id.level;
+	this->id.position.y = tmp.y += static_cast<ULL>(y) << 64 - id.level;
+	this->id.position.z = tmp.z += static_cast<ULL>(z) << 64 - id.level;
 
 	if(x)
 	{
@@ -157,7 +157,7 @@ OctreeNode::OctreeNode(OctreeNode& parent, const Bool x, const Bool y, const Boo
 		else quadTreeEquivalent  = parent.quadTreeEquivalent->c00;
 	}
 
-	ULL chunkHeight = getLocation().z;
+	ULL chunkHeight = getPosition().z;
 
 	// data.hasContent = (chunkHeight <= quadTreeEquivalent->data.terrain->upperLimit) && (chunkHeight >= quadTreeEquivalent->data.terrain->lowerLimit);
 	// data.isTerrain = (chunkHeight >= quadTreeEquivalent->data.terrain->lowerLimit) && (chunkHeight <= quadTreeEquivalent->data.terrain->upperLimit);
@@ -165,7 +165,7 @@ OctreeNode::OctreeNode(OctreeNode& parent, const Bool x, const Bool y, const Boo
 	// if (data.isTerrain) {
 	// 	for (Int i = 0; i < 1000; i++) {
 	// 		Vec3 sample = Vec3(randomFloat(),randomFloat(),randomFloat());
-	// 		ULLVec3 wpSample = DVec3(sample) * DVec3(id.size()) + DVec3(id.location);
+	// 		ULLVec3 wpSample = DVec3(sample) * DVec3(id.size()) + DVec3(id.position);
 	// 		if(terrainGenerationFunction(wpSample.x, wpSample.y) > wpSample.z ) data.TerrainPoints.push_back(sample);
 	// 	}
 	   

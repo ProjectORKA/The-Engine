@@ -34,7 +34,7 @@ struct DNDSimulation final : GameSimulation
 	Float             nearClipValue = 0.1f;
 	Float             fieldOfView   = 80.0f;
 	Float             farClipValue  = 100000.0f;
-	Vec3              location      = Vec3(0.0f);
+	Vec3              position      = Vec3(0.0f);
 	DVec3             rotation      = Vec3(0.0f);
 
 	void destroy() override;

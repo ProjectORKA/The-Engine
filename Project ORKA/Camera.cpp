@@ -1,3 +1,4 @@
+
 #include "Camera.hpp"
 
 void Camera::update()
@@ -19,9 +20,9 @@ void Camera::update()
 	upVector = normalize(cross(rightVector, forwardVector));
 }
 
-Vec3 Camera::getLocation() const
+Vec3 Camera::getPosition() const
 {
-	return location;
+	return position;
 }
 
 Vec3 Camera::getUpVector() const
@@ -36,7 +37,7 @@ DVec3 Camera::getRotation() const
 
 Matrix Camera::viewMatrix() const
 {
-	return lookAt(location, location + forwardVector, upVector);
+	return lookAt(position, position + forwardVector, upVector);
 }
 
 Double Camera::getRotationZ() const
@@ -90,14 +91,14 @@ void Camera::rotate(const DVec2 rotation)
 void Camera::render(Renderer& renderer) const
 {
 	renderer.uniforms().setCameraVec(Vec4(forwardVector, 1));
-	renderer.uniforms().setCameraPos(Vec4(location, 1));
+	renderer.uniforms().setCameraPos(Vec4(position, 1));
 	renderer.uniforms().setVMatrix(viewMatrix());
 	renderer.uniforms().setPMatrix(projectionMatrix(renderer.getAspectRatio()));
 }
 
-void Camera::setLocation(const Vec3 location)
+void Camera::setPosition(const Vec3 position)
 {
-	this->location = location;
+	this->position = position;
 }
 
 void Camera::setRotation(const DVec3& rotation)
@@ -109,7 +110,7 @@ void Camera::setRotation(const DVec3& rotation)
 void Camera::renderOnlyRot(Renderer& renderer) const
 {
 	renderer.uniforms().setCameraVec(Vec4(forwardVector, 1));
-	renderer.uniforms().setCameraPos(Vec4(location, 1));
+	renderer.uniforms().setCameraPos(Vec4(position, 1));
 	renderer.uniforms().setVMatrix(viewMatrixOnlyRot());
 	renderer.uniforms().setPMatrix(projectionMatrix(renderer.getAspectRatio()));
 }
@@ -134,9 +135,9 @@ Matrix Camera::projectionMatrix(const Float aspectRatio) const
 	return glm::perspective(glm::radians(fieldOfView), aspectRatio, nearClipValue, farClipValue);
 }
 
-void Camera::setLocation(const Float x, const Float y, const Float z)
+void Camera::setPosition(const Float x, const Float y, const Float z)
 {
-	this->location = Vec3(x, y, z);
+	this->position = Vec3(x, y, z);
 }
 
 void Camera::setRotation(const Double x, const Double y, const Double z)

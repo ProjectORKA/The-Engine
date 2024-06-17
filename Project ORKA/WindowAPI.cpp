@@ -145,7 +145,7 @@ APIWindow apiCreateWindow(const Area size, const Char* title, const APIWindow sh
 	return glfwCreateWindow(size.x, size.y, title, nullptr, shared);
 }
 
-void apiWindowSetCursorPosition(const APIWindow apiWindow, const MouseMovement position)
+void apiWindowSetCursorPosition(const APIWindow apiWindow, const DVec2 position)
 {
 	glfwSetCursorPos(apiWindow, position.x, position.y);
 }

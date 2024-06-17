@@ -120,9 +120,9 @@ void NeighborOctreeNode::updateIsSurface()
 	}
 }
 
-void NeighborOctree::update(const Vec3 location)
+void NeighborOctree::update(const Vec3 position)
 {
-	root.update(location);
+	root.update(position);
 }
 
 void NeighborOctreeNode::updateHasAllNeighbors()
@@ -196,22 +196,22 @@ NeighborOctreeNode& NeighborOctreeNode::ndr() const
 	return *cur->nd;
 }
 
-void NeighborOctreeNode::update(const Vec3 location)
+void NeighborOctreeNode::update(const Vec3 pos)
 {
-	inRenderDistance = withinDiamondArea(position - location, powf(2, 5 - level + 1));
+	inRenderDistance = withinDiamondArea(position - pos, powf(2, 5 - level + 1));
 
 	// if (!inRenderDistance) unSubdivide();
 
 	if(subdivided && inRenderDistance)
 	{
-		c000->update(location);
-		c001->update(location);
-		c010->update(location);
-		c011->update(location);
-		c100->update(location);
-		c101->update(location);
-		c110->update(location);
-		c111->update(location);
+		c000->update(pos);
+		c001->update(pos);
+		c010->update(pos);
+		c011->update(pos);
+		c100->update(pos);
+		c101->update(pos);
+		c110->update(pos);
+		c111->update(pos);
 	}
 
 	if(inRenderDistance && isSurface) subdivide();
@@ -390,7 +390,7 @@ void renderNeighborOctreeNode(const NeighborOctreeNode& node, Renderer& renderer
 		if(node.isTerrain)
 		{
 			Transform t;
-			t.setLocation(node.position);
+			t.setPosition(node.position);
 			t.setSize(Vec3(pow(2, -node.level + 2)));
 			t.render(renderer);
 			renderer.renderMesh("centeredCube");

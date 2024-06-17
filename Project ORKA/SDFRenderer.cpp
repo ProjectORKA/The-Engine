@@ -12,7 +12,7 @@ void SignedDistanceFieldRenderer::create(Window& window)
 	framebuffer.add(WritePixelsFormat::Depth, DataType::Float, FramebufferAttachment::Depth, false, Wrapping::Clamped);
 	framebuffer.checkComplete();
 
-	player.camera.setLocation(Vec3(1.0f, -5.0f, 2.0f));
+	player.camera.setPosition(Vec3(1.0f, -5.0f, 2.0f));
 }
 
 void SignedDistanceFieldRenderer::destroy(Window& window)
@@ -41,7 +41,7 @@ void SignedDistanceFieldRenderer::render(Window& window, const TiledRectangle ar
 	player.camera.renderOnlyRot(r);
 	r.uniforms().setSunDir(Vec4(normalize(Vec3(0.445776, 0.77546453, 1)), 0));
 	// we simply pass the camera position to the shader
-	r.uniforms().setCameraPos(Vec4(player.camera.getLocation(), 0));
+	r.uniforms().setCameraPos(Vec4(player.camera.getPosition(), 0));
 	r.useTexture("noise", 1);
 	r.useShader("sdfScene");
 	// always render a cube, so we can abuse the normalized vertex position as direction

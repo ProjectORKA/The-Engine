@@ -44,12 +44,19 @@ struct Orientation
 [[nodiscard]] Bool withinDiamondArea(Vec3 a, Float b);
 [[nodiscard]] Bool isNear(Vec3 a, Vec3 b, Float error);
 [[nodiscard]] Bool isNear(Float a, Float b, Float error);
+
+//lines
+[[nodiscard]] Bool linesIntersecting(Vec2 a, Vec2 b, Vec2 c, Vec2 d);
+
+//points
 [[nodiscard]] Bool pointInsideSphere(Vec3 point, Sphere sphere);
-[[nodiscard]] Bool doLinesIntersect(Vec2 a, Vec2 b, Vec2 c, Vec2 d);
 [[nodiscard]] Bool pointInsideSpheres(Vec3 point, List<Sphere> spheres);
 [[nodiscard]] Bool pointInsideSpheres(Vec3 point, const Vector<Sphere>& spheres);
 [[nodiscard]] Bool pointInsideSphereAtPositionWithRadius(Vec3 point, Vec3 position, Float radius);
-[[nodiscard]] Bool isWithinDistanceOfOtherPoints(Vec2 point, const Vector<Vec2>& points, Float dist);
+[[nodiscard]] Bool pointWithinDistanceOfOtherPoints(Vec2 point, const Vector<Vec2>& points, Float dist);
+
+//circles
+[[nodiscard]] Bool circleCollidingWithCircles(Vec2 pos, Float radius, const Vector<Vec2>& circles, Float pointsRadius);
 
 [[nodiscard]]  UInt max(UInt a, UInt b);
 [[nodiscard]]  UInt nextPowerOfTwo(UInt value);
@@ -58,6 +65,7 @@ struct Orientation
 
 [[nodiscard]] Index idOfClosestPoint(Vec2 origin, const Vector<Vec2>& positions);
 [[nodiscard]] Index idOfClosestPointInLoopingSpace(Vec2 origin, const Vector<Vec2>& positions, Float extend);
+[[nodiscard]] Index idOfClosestPoint(Vec2 origin, const Vector<Index>& indices, const Vector<Vec2>& positions);
 
 [[nodiscard]] Int max(Int a, Int b);
 [[nodiscard]] Int mod(Int a, Int b);
@@ -76,6 +84,8 @@ struct Orientation
 [[nodiscard]] Float distanceToPointInLoopingSpace(Vec2 a, Vec2 b, Float extend);
 [[nodiscard]] Float getDistanceToClosestPoint(Vec3 point, const Vector<Vec3>& points);
 
+[[nodiscard]] Double mod(Double a, Double b);
+
 [[nodiscard]] LDouble dmod(LDouble x, LDouble y);
 [[nodiscard]] LDouble lerp(LDouble a, LDouble b, LDouble alpha);
 [[nodiscard]] LDouble clerp(LDouble a, LDouble b, LDouble alpha);
@@ -91,17 +101,18 @@ struct Orientation
 [[nodiscard]] Vec3 lerp(Vec3 a, Vec3 b, Float alpha);
 [[nodiscard]] Vec3 clerp(Vec3 a, Vec3 b, Float alpha);
 [[nodiscard]] Vec3 getClosestPoint(Vec3 point, const List<Vec3>& points);
+[[nodiscard]] Vec2 getClosestPoint(Vec2 point, const Vector<Vec2>& points);
 [[nodiscard]] Vec3 quadraticInterpolation(Vec3 start, Vec3 control, Vec3 end, Float time);
 
-[[nodiscard]] ULLVec4 getBoundingBoxIds(const Vector<Vec2>& points);
+[[nodiscard]] UllVec4 getBoundingBoxIds(const Vector<Vec2>& points);
 
 [[nodiscard]] Rotation getRotationBetweenVectors(Vec3 start, Vec3 dest);
 
 [[nodiscard]] Matrix matrixFromSize(Vec2 s);
 [[nodiscard]] Matrix matrixFromSize(Vec3 s);
 [[nodiscard]] Matrix matrixFromSize(Float size);
-[[nodiscard]] Matrix matrixFromPosition(Vec2 location);
-[[nodiscard]] Matrix matrixFromPosition(Vec3 location);
+[[nodiscard]] Matrix matrixFromPosition(Vec2 position);
+[[nodiscard]] Matrix matrixFromPosition(Vec3 position);
 [[nodiscard]] Matrix matrixFromAxis(Vec3 x, Vec3 y, Vec3 z);
 [[nodiscard]] Matrix clerp(Matrix a, Matrix b, Float alpha);
 [[nodiscard]] Matrix matrixFromOrientation(const Orientation& o);
@@ -111,9 +122,9 @@ struct Orientation
 [[nodiscard]] Matrix matrixFromPositionAndSize(Vec2 pos, Vec2 size);
 [[nodiscard]] Matrix matrixFromPositionAndDirection(Vec2 pos, Vec2 dir);
 [[nodiscard]] Matrix matrixFromPositionAndSize(Vec4 compressedTransform);
-[[nodiscard]] Matrix matrixFromPositionAndSize(Vec3 location, Float size);
-[[nodiscard]] Matrix matrixFromPositionAndSize(Vec2 location, Float size);
-[[nodiscard]] Matrix matrixFromDirectionAndLocation(Vec3 direction, Vec3 location);
+[[nodiscard]] Matrix matrixFromPositionAndSize(Vec3 position, Float size);
+[[nodiscard]] Matrix matrixFromPositionAndSize(Vec2 position, Float size);
+[[nodiscard]] Matrix matrixFromDirectionAndPosition(Vec3 direction, Vec3 position);
 [[nodiscard]] Matrix matrixFromPositionAndSize(Float x, Float y, Float w, Float h);
 [[nodiscard]] Matrix matrixFromAxis(Vec3 x, Vec3 y, Vec3 z, Vec3 position, Float size);
 [[nodiscard]] Matrix matrixFromPositionDirectionAndSize(Vec2 pos, Vec2 dir, Float size);

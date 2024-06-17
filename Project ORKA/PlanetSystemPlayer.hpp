@@ -6,6 +6,6 @@ struct Renderer;
 
 struct PlanetSystemPlayer : DebugPlayer
 {
-	ULLVec3 chunkLocation = ULLVec3(0);
+	UllVec3 chunkPosition = UllVec3(0);
 	void    render(Window& window) override;
 };

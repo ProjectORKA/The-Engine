@@ -153,7 +153,7 @@ struct TripleNinePlayer final : Player
 	// physics
 	Float       mass           = 80.0f; // kg
 	Vec3        velocity       = Vec3(0.0f);
-	Vec3        location       = Vec3(0.0f);
+	Vec3        position       = Vec3(0.0f);
 	Vec3        acceleration   = Vec3(0.0f);
 	const Float gravity        = 30.0f; // gravity of player is more than 10 because it makes it feel snappier
 	const Float airTimeGravity = 16.0f; // makes gravity less impactful when holding space in the air
@@ -225,7 +225,7 @@ struct TripleNine
 		intro.init(renderer);
 		simulation.start();
 		renderer.connect(simulation);
-		window.insert(intro);
+		window.add(intro);
 		ui.window("Triple Nine", Area(1920, 1080), true, false, WindowState::Windowed, intro);
 		ui.run();
 		simulation.stop();

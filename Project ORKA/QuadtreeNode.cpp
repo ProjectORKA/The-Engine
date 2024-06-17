@@ -135,7 +135,7 @@ void QuadtreeNode::createRootNode(const TerrainSystem& terrainSystem)
 {
 	parent      = nullptr;
 	id.level    = 0;
-	id.location = ULLVec2(0);
+	id.position = UllVec2(0);
 
 	data.terrain = new Terrain(terrainSystem, id, nullptr, false, false);
 }
@@ -143,8 +143,8 @@ void QuadtreeNode::createRootNode(const TerrainSystem& terrainSystem)
 QuadtreeNode& QuadtreeNode::get(TerrainSystem& terrainSystem, const QuadtreeId& id)
 {
 	if(this->id.level == id.level) return *this;
-	const Bool x = BitSet<64>(id.location.x)[this->id.level];
-	const Bool y = BitSet<64>(id.location.y)[this->id.level];
+	const Bool x = BitSet<64>(id.position.x)[this->id.level];
+	const Bool y = BitSet<64>(id.position.y)[this->id.level];
 
 	if(!subdivided) subdivide(terrainSystem);
 
@@ -179,9 +179,9 @@ void QuadtreeNode::create(const TerrainSystem& terrainSystem, QuadtreeNode* pare
 	this->parent = parent;
 	// set level
 	id.level = parent->id.level + 1;
-	// set location
-	id.location.x = parent->id.location.x | static_cast<ULL>(x) << static_cast<UShort>(64) - id.level;
-	id.location.y = parent->id.location.y | static_cast<ULL>(y) << static_cast<UShort>(64) - id.level;
+	// set position
+	id.position.x = parent->id.position.x | static_cast<ULL>(x) << static_cast<UShort>(64) - id.level;
+	id.position.y = parent->id.position.y | static_cast<ULL>(y) << static_cast<UShort>(64) - id.level;
 	// calculate neighbours
 	if(x && y)
 	{

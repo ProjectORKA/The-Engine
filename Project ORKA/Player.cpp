@@ -12,7 +12,7 @@ void Player::update(Window& window)
 	constexpr Float desiredSpeed   = 1.0f;
 
 	// process input
-	camera.rotate(window.mouseDelta * MouseMovement(mouseSensitivity));
+	camera.rotate(window.mouseDelta * DVec2(mouseSensitivity));
 	if(window.pressed(forward)) movementVector += camera.getForwardVector();
 	if(window.pressed(backward)) movementVector -= camera.getForwardVector();
 	if(window.pressed(right)) movementVector += camera.getRightVector();
@@ -26,7 +26,7 @@ void Player::update(Window& window)
 		// if there is movement input
 		movementVector = normalize(movementVector);					// get direction of movement (just direction)
 		movementVector *= desiredSpeed * delta;						// add speed to direction
-		camera.setLocation(camera.getLocation() + movementVector);	// add it to cameras location
+		camera.setPosition(camera.getPosition() + movementVector);	// add it to cameras position
 	}
 }
 
@@ -39,7 +39,7 @@ void DebugPlayer::update(Window& window)
 	auto movementVector = Vec3(0);
 
 	// process input
-	if(window.capturing) camera.rotate(window.mouseDelta * MouseMovement(mouseSensitivity));
+	if(window.capturing) camera.rotate(window.mouseDelta * DVec2(mouseSensitivity));
 	if(window.pressed(forward)) movementVector += camera.getForwardVector();
 	if(window.pressed(backward)) movementVector -= camera.getForwardVector();
 	if(window.pressed(right)) movementVector += camera.getRightVector();
@@ -55,7 +55,7 @@ void DebugPlayer::update(Window& window)
 		desiredSpeed   = powf(baseNumber, static_cast<Float>(speedExponent));	// calculate speed
 		movementVector = normalize(movementVector);								// get direction of movement (just direction)
 		movementVector *= desiredSpeed * delta;									// add speed to direction
-		camera.setLocation(camera.getLocation() + movementVector);				// add it to cameras location
+		camera.setPosition(camera.getPosition() + movementVector);				// add it to cameras position
 	}
 }
 

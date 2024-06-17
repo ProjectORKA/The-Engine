@@ -1,4 +1,4 @@
-#include "Name.hpp"
+#include "Basics.hpp"
 
 Name::Name()
 {
@@ -8,9 +8,9 @@ Name::Name()
 Name::Name(const Char* name)
 {
 	memset(&data[0], 0, nameSize);
-	for(Int i = 0; i < nameSize; i++)
+	for (Int i = 0; i < nameSize; i++)
 	{
-		if(name[i] != 0) data[i] = name[i];
+		if (name[i] != 0) data[i] = name[i];
 		else return;
 	}
 }
@@ -28,9 +28,9 @@ Name::Name(const String& name)
 Name& Name::operator=(const Char* other)
 {
 	memset(&data[0], 0, nameSize);
-	for(Int i = 0; i < nameSize; i++)
+	for (Int i = 0; i < nameSize; i++)
 	{
-		if(other[i] != 0) data[i] = other[i];
+		if (other[i] != 0) data[i] = other[i];
 		else return *this;
 	}
 	return *this;
@@ -39,9 +39,9 @@ Name& Name::operator=(const Char* other)
 Name& Name::operator=(const String& other)
 {
 	memset(&data[0], 0, nameSize);
-	for(Int i = 0; i < nameSize; i++)
+	for (Int i = 0; i < nameSize; i++)
 	{
-		if(other[i] != 0) data[i] = other[i];
+		if (other[i] != 0) data[i] = other[i];
 		else return *this;
 	}
 	return *this;

@@ -126,7 +126,7 @@ Bool Window::isCapturing() const
 
 Bool Window::hasContent() const
 {
-	return !content.contents.empty();
+	return !content.isEmpty();
 }
 
 void windowThread(Window& window)
@@ -141,7 +141,7 @@ void windowThread(Window& window)
 	if(window.windowState == WindowState::Windowed) window.centerWindow();
 	if(window.windowState == WindowState::Windowed || window.windowState == WindowState::Maximized) window.updateDecorations();
 
-	auto prevPos = MouseMovement(0);
+	auto prevPos = DVec2(0);
 
 	OPTICK_THREAD("Window Thread");
 
@@ -191,7 +191,7 @@ void windowThread(Window& window)
 			apiWindowSwapBuffers(window.apiWindow);
 			OPTICK_POP();
 		}
-		window.mouseDelta = MouseMovement(0);
+		window.mouseDelta = DVec2(0);
 	}
 
 	renderer.destroy();
@@ -230,9 +230,9 @@ Area Window::getContentSize() const
 	return apiWindowGetFramebufferSize(apiWindow);
 }
 
-void Window::insert(UIElement& element)
+void Window::add(UIElement& element)
 {
-	content.insert(element);
+	content.add(element);
 }
 
 void Window::initializeGraphicsApi() const
@@ -360,8 +360,8 @@ void whenFramebufferIsResized(const APIWindow apiWindow, const Int width, const 
 void whenMouseIsMoving(const APIWindow apiWindow, const Double mouseX, const Double mouseY)
 {
 	Window& window         = *static_cast<Window*>(glfwGetWindowUserPointer(apiWindow));
-	window.mousePos        = MouseMovement(mouseX, mouseY);
-	window.mousePosBotLeft = MouseMovement(mouseX, window.getContentSize().y - mouseY);
+	window.mousePos        = DVec2(mouseX, mouseY);
+	window.mousePosBotLeft = DVec2(mouseX, window.getContentSize().y - mouseY);
 }
 
 void whenMouseIsScrolling(const APIWindow apiWindow, const Double xAxis, const Double yAxis)

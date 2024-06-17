@@ -3,60 +3,77 @@
 #include <AL/al.h>
 #include <AL/alc.h>
 #include "Math.hpp"
-
-constexpr int    SAMPLE_RATE = 44100;
-constexpr double FREQUENCY   = 1000.0; // Frequency of the sine wave in Hz
-constexpr double AMPLITUDE   = 1.0;   // Amplitude of the sine wave
+#include "SoundGenerators.hpp"
 
 struct Sound
 {
-	Int      numSamples = 0;
-	ALshort* samples    = nullptr;
-
-	explicit Sound(const Int numSamples)
-	{
-		this->numSamples = numSamples;
-		samples          = new ALshort[numSamples];
-	}
 
 	~Sound()
 	{
 		delete[] samples;
 	}
 
-	void generate() const
+	Int getSampleRate() const
+	{
+		return sampleRate;
+	}
+
+	void generate(Double frequency) const
 	{
 		for(int i = 0; i < numSamples; ++i)
 		{
-			Double t   = static_cast<Double>(i) / SAMPLE_RATE;
-			samples[i] = static_cast<ALshort>(AMPLITUDE * std::sin(2.0 * PI * FREQUENCY * t) * 32767.0);
+			Double t   = toDouble(i) / sampleRate;
+			samples[i] = static_cast<ALshort>(std::sin(2.0 * PI * frequency * t) * 32767.0);
 		}
 	}
 
-	const ALvoid* data() const
+	void generate2(Double frequency) const
+	{
+		for(int i = 0; i < numSamples; ++i)
+		{
+			Double t   = toDouble(i) / sampleRate;
+			samples[i] = static_cast<ALshort>(std::sin(2.0 * PI * frequency * mod(t, 0.5) * 2 - 1) * 32767.0);
+		}
+	}
+
+	[[nodiscard]] ALsizei byteSize() const
+	{
+		return numSamples * sizeof(ALshort);
+	}
+
+	[[nodiscard]] const ALvoid* data() const
 	{
 		return samples;
 	}
 
-	ALsizei byteSize() const
+	explicit Sound(const Double duration, const Int sampleRate = 48000)
 	{
-		return numSamples * sizeof(ALshort);
+		this->numSamples = duration * sampleRate;
+		samples          = new ALshort[numSamples];
 	}
+
+private:
+	Int      numSamples = 0;
+	Double   duration   = 0.0;
+	Int      sampleRate = 48000;
+	ALshort* samples    = nullptr;
 };
+
 
 struct AudioBuffer
 {
-	Bool initialized = false;
+	Bool   initialized = false;
 	ALuint bufferID = 0;
 
 	void setData(const Sound& sound) const
 	{
-		alBufferData(bufferID, AL_FORMAT_MONO16, sound.data(), sound.byteSize(), SAMPLE_RATE);
+		alBufferData(bufferID, AL_FORMAT_MONO16, sound.data(), sound.byteSize(), sound.getSampleRate());
 	}
 
 	void destroy()
 	{
-		if(!initialized){
+		if (!initialized)
+		{
 			logError("Buffer destroyed without being created!");
 			return;
 		}
@@ -66,12 +83,12 @@ struct AudioBuffer
 
 	~AudioBuffer()
 	{
-		if(initialized) logError("Buffer not destroyed properly!");
+		if (initialized) destroy();
 	}
 
 	void create()
 	{
-		if(initialized)
+		if (initialized)
 		{
 			logError("Buffer already initialized!");
 			return;
@@ -83,30 +100,48 @@ struct AudioBuffer
 
 struct AudioSource
 {
-	Bool initialized = false;
+	Bool   initialized = false;
 	ALuint sourceID = 0;
 
-
-	void setBuffer(AudioBuffer& buffer)
+	void setBuffer(const AudioBuffer& buffer) const
 	{
-		if(initialized) alSourcei(sourceID, AL_BUFFER, buffer.bufferID);
+		if (initialized) alSourcei(sourceID, AL_BUFFER, buffer.bufferID);
 		else logError("Audio Source not initialized!");
 	}
 
-	void play()
+	void play() const
 	{
-		if(initialized) alSourcePlay(sourceID);
+		if (initialized) alSourcePlay(sourceID);
 		else logError("Audio Source not initialized!");
+	}
+
+	void pause() const
+	{
+		if (initialized) alSourcePause(sourceID);
+		else logError("Audio Source not initialized!");
+	}
+
+	void stop() const
+	{
+		if (initialized) alSourceStop(sourceID);
+		else logError("Audio Source not initialized!");
+	}
+
+	Bool isPlaying() const
+	{
+		ALint state;
+		alGetSourcei(sourceID, AL_SOURCE_STATE, &state);
+		return state == AL_PLAYING;
 	}
 
 	~AudioSource()
 	{
-		if(initialized) logError("Audio Source was not properly destroyed!");
+		if (initialized) logError("Audio Source was not properly destroyed!");
 	}
 
-	void create(Bool looping)
+	void create(const Bool looping)
 	{
-		if(initialized)
+		if (initialized)
 		{
 			logError("Audio Source already created!");
 			return;
@@ -118,7 +153,7 @@ struct AudioSource
 
 	void destroy()
 	{
-		if(!initialized)
+		if (!initialized)
 		{
 			logError("Audio Source was not initialized!");
 			return;
@@ -131,31 +166,31 @@ struct AudioSource
 struct AudioSystem
 {
 	Bool        initialized = false;
-	ALCdevice*  device      = nullptr;
-	ALCcontext* context     = nullptr;
+	ALCdevice* device = nullptr;
+	ALCcontext* context = nullptr;
 	Int         sampleCount = 44100;
 
 	AudioSystem()
 	{
-		if(debugAudioSystem) logDebug("Creating Audio System!");
+		if (debugAudioSystem) logDebug("Creating Audio System!");
 
-		if(initialized)
+		if (initialized)
 		{
 			logError("Audio System already initialized!");
 			return;
 		}
 
 		device = alcOpenDevice(nullptr); //get default sound device
-		if(!device) logError("Failed to get sound device!");
+		if (!device) logError("Failed to get sound device!");
 		context = alcCreateContext(device, nullptr);
-		if(!context) logError("Failed to create audio context!");
-		if(!alcMakeContextCurrent(context)) logError("Failed to make context current!");
+		if (!context) logError("Failed to create audio context!");
+		if (!alcMakeContextCurrent(context)) logError("Failed to make context current!");
 	}
 
 	void destroy()
 	{
-		if(debugAudioSystem) logDebug("Destroying Audio System!");
-		if(initialized)
+		if (debugAudioSystem) logDebug("Destroying Audio System!");
+		if (initialized)
 		{
 			alcMakeContextCurrent(nullptr);
 			alcDestroyContext(context);
@@ -171,22 +206,36 @@ struct AudioSystem
 
 	void audioTest() const
 	{
-		Sound beep(10000);
-		beep.generate();
+		const Sound sound1(1);
+		sound1.generate(100);
 
-		AudioBuffer buffer;
-		buffer.create();
-		buffer.setData(beep);
+		const Sound sound2(1);
+		sound2.generate2(100);
+
+		AudioBuffer buffer1;
+		buffer1.create();
+		buffer1.setData(sound1);
+
+		AudioBuffer buffer2;
+		buffer2.create();
+		buffer2.setData(sound1);
 
 		AudioSource source;
-		source.create(true);
-		source.setBuffer(buffer);
+		source.create(false);
+		source.setBuffer(buffer1);
 
 		source.play();
 
 		sleep(3000);
 
+		source.stop();
+		source.setBuffer(buffer2);
+		source.play();
+
+		sleep(3000);
+
 		source.destroy();
-		buffer.destroy();
+		buffer1.destroy();
+		buffer2.destroy();
 	}
 };

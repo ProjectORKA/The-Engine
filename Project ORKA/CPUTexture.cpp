@@ -9,6 +9,12 @@ CPUTexture::~CPUTexture()
 	unload();
 }
 
+Float CPUTexture::getAspectRatio() const
+{
+	if(width > 0.0f && height > 0.0f) return static_cast<Float>(width) / static_cast<Float>(height);
+	return 1.0f;
+}
+
 void CPUTexture::unload()
 {
 	loaded = false;

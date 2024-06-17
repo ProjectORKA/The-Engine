@@ -42,8 +42,8 @@ void FlappyBirdPipes::update(const Float delta)
 
 	transform1.setRotation(Vec3(-90, 90, 0));
 	transform2.setRotation(Vec3(-90, 90, 180));
-	transform1.setLocation(Vec3(posX, posY - gap / 2.0f, 0.0f));
-	transform2.setLocation(Vec3(posX, posY + gap / 2.0f, 0.0f));
+	transform1.setPosition(Vec3(posX, posY - gap / 2.0f, 0.0f));
+	transform2.setPosition(Vec3(posX, posY + gap / 2.0f, 0.0f));
 }
 
 void FlappyBirdRenderer::update(Window& window)
@@ -101,7 +101,7 @@ void FlappyBirdRenderer::inputEvent(Window& window, const InputEvent input)
 
 void FlappyBirdRenderer::create(Window& window)
 {
-	camera.setLocation(Vec3(0, 0, 5));
+	camera.setPosition(Vec3(0, 0, 5));
 	camera.setRotation(DVec3(PI, 0, 0));
 	camera.setFieldOfView(30);
 
@@ -145,7 +145,7 @@ void FlappyBirdRenderer::render(Window& window, TiledRectangle area)
 	t.setSize(Vec3(0.1f, 1, 0.1f));
 	// t.setSize(Vec3(0.1f));
 	t.setRotation(-90, 90, 0);
-	t.setLocation(Vec3(0, -1, 0));
+	t.setPosition(Vec3(0, -1, 0));
 	t.render(r);
 	r.renderMesh("flappyBirdGround");
 }
@@ -164,19 +164,19 @@ void FlappyBirdBird::update(const Vector<FlappyBirdPipes>& pipeColumns, const Fl
 		// check pipe collisions
 		for(const FlappyBirdPipes pipes : pipeColumns)
 		{
-			const Vec3 location = transform.getLocation();
+			const Vec3 position = transform.getPosition();
 
-			if(location.x < pipes.posX + pipes.width / 2.0f)
+			if(position.x < pipes.posX + pipes.width / 2.0f)
 			{
-				if(location.x > pipes.posX - pipes.width / 2.0f)
+				if(position.x > pipes.posX - pipes.width / 2.0f)
 				{
-					if(location.y > pipes.posY + pipes.gap / 2.0f) isColliding = true;
-					if(location.y < pipes.posY - pipes.gap / 2.0f) isColliding = true;
+					if(position.y > pipes.posY + pipes.gap / 2.0f) isColliding = true;
+					if(position.y < pipes.posY - pipes.gap / 2.0f) isColliding = true;
 				}
 			}
 		}
 		// check ground collisions
-		if(transform.getLocation().y < -1.0f) reset();
+		if(transform.getPosition().y < -1.0f) reset();
 
 		if(isColliding) alive = false;
 
@@ -197,7 +197,7 @@ void FlappyBirdBird::updateAI(const Vector<FlappyBirdPipes>& pipeColumns, const 
 
 	if(lowestJumpPoint > highestJumpPoint) logError("Cant calculate jump point!");
 
-	if(transform.getLocation().y + velocity.y * delta <= randomFloatFast(lowestJumpPoint, highestJumpPoint)) jump();
+	if(transform.getPosition().y + velocity.y * delta <= randomFloatFast(lowestJumpPoint, highestJumpPoint)) jump();
 }
 
 FlappyBirdPipes FlappyBirdBird::getClosestPipeColumn(const Vector<FlappyBirdPipes>& pipeColumns) const
@@ -206,13 +206,13 @@ FlappyBirdPipes FlappyBirdBird::getClosestPipeColumn(const Vector<FlappyBirdPipe
 
 	for(auto& pipes : pipeColumns)
 	{
-		if(pipes.posX >= transform.getLocation().x - pipes.width / 2.0f)
+		if(pipes.posX >= transform.getPosition().x - pipes.width / 2.0f)
 		{
 			closest = pipes;
 
 			for(auto& pipes2 : pipeColumns)
 			{
-				Float posX = transform.getLocation().x;
+				Float posX = transform.getPosition().x;
 				if(pipes2.posX >= posX - pipes.width / 2.0f && distance(closest.posX, posX) > distance(pipes2.posX, posX)) closest = pipes2;
 			}
 

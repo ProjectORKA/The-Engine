@@ -30,6 +30,6 @@ void           apiWindowSetVisibility(APIWindow apiWindow, Bool visible);
 void           apiWindowResize(APIWindow apiWindow, Int width, Int height);
 void           whenWindowAPIThrowsError(Int error, const Char* description);
 void           apiSetWindowShouldClose(APIWindow apiWindow, Bool shouldClose);
+void           apiWindowSetCursorPosition(APIWindow apiWindow, DVec2 position);
 APIWindow      apiCreateWindow(Area size, const Char* title, APIWindow shared);
-void           apiWindowSetCursorPosition(APIWindow apiWindow, MouseMovement position);
 void           apiWindowSetWindowedMode(APIWindow apiWindow, TiledRectangle monitorArea);

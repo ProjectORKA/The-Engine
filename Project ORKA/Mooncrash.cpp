@@ -5,7 +5,7 @@
 
 MoonCrashPlayer::MoonCrashPlayer()
 {
-	chunkLocation.z = ULLONG_MAX / 2;
+	chunkPosition.z = ULLONG_MAX / 2;
 }
 
 void MoonCrashSimulation::destroy()
@@ -33,7 +33,7 @@ void MoonCrashPlayer::update(Window& window)
 	Float desiredSpeed   = 0;
 
 	// process input
-	if(window.capturing) camera.rotate(window.mouseDelta * MouseMovement(mouseSensitivity));
+	if(window.capturing) camera.rotate(window.mouseDelta * DVec2(mouseSensitivity));
 	if(window.pressed(forward)) movementVector += camera.getForwardVector();
 	if(window.pressed(backward)) movementVector -= camera.getForwardVector();
 	if(window.pressed(right)) movementVector += camera.getRightVector();
@@ -48,7 +48,7 @@ void MoonCrashPlayer::update(Window& window)
 		desiredSpeed   = powf(baseNumber, speedExponent);			// calculate speed
 		movementVector = normalize(movementVector);					// get direction of movement (just direction)
 		movementVector *= desiredSpeed * delta;						// add speed to direction
-		camera.setLocation(camera.getLocation() + movementVector);	// add it to cameras location
+		camera.setPosition(camera.getPosition() + movementVector);	// add it to cameras position
 	}
 
 	Float planetRadius = 4;
@@ -61,67 +61,67 @@ void MoonCrashPlayer::update(Window& window)
 	skyRotation[2]     = Vec4(normalize(cross(Vec3(skyRotation[0]), Vec3(skyRotation[1]))), 0);
 	skyRotation[3]     = Vec4(0, 0, 0, 1);
 
-	// apply sub chunk location
-	if(floor(camera.getLocation().x) != 0.0f)
+	// apply sub chunk position
+	if(floor(camera.getPosition().x) != 0.0f)
 	{
-		if(floor(camera.getLocation().x) > 0.0f)
+		if(floor(camera.getPosition().x) > 0.0f)
 		{
-			ULL chunkDelta = floor(camera.getLocation().x);
-			camera.setLocation(camera.getLocation() - Vec3(chunkDelta, 0, 0));
-			chunkLocation.x += chunkDelta;
+			ULL chunkDelta = floor(camera.getPosition().x);
+			camera.setPosition(camera.getPosition() - Vec3(chunkDelta, 0, 0));
+			chunkPosition.x += chunkDelta;
 		}
 		else
 		{
-			ULL chunkDelta = -floor(camera.getLocation().x);
-			camera.setLocation(camera.getLocation() + Vec3(chunkDelta, 0, 0));
-			chunkLocation.x -= chunkDelta;
+			ULL chunkDelta = -floor(camera.getPosition().x);
+			camera.setPosition(camera.getPosition() + Vec3(chunkDelta, 0, 0));
+			chunkPosition.x -= chunkDelta;
 		}
 	}
-	if(floor(camera.getLocation().y) != 0)
+	if(floor(camera.getPosition().y) != 0)
 	{
-		if(floor(camera.getLocation().y) > 0)
+		if(floor(camera.getPosition().y) > 0)
 		{
-			ULL chunkDelta = floor(camera.getLocation().y);
-			camera.setLocation(camera.getLocation() - Vec3(0, chunkDelta, 0));
-			chunkLocation.y += chunkDelta;
+			ULL chunkDelta = floor(camera.getPosition().y);
+			camera.setPosition(camera.getPosition() - Vec3(0, chunkDelta, 0));
+			chunkPosition.y += chunkDelta;
 		}
 		else
 		{
-			ULL chunkDelta = -floor(camera.getLocation().y);
-			camera.setLocation(camera.getLocation() + Vec3(0, chunkDelta, 0));
-			chunkLocation.y -= chunkDelta;
+			ULL chunkDelta = -floor(camera.getPosition().y);
+			camera.setPosition(camera.getPosition() + Vec3(0, chunkDelta, 0));
+			chunkPosition.y -= chunkDelta;
 		}
 	}
-	if(floor(camera.getLocation().z) != 0)
+	if(floor(camera.getPosition().z) != 0)
 	{
-		if(floor(camera.getLocation().z) > 0)
+		if(floor(camera.getPosition().z) > 0)
 		{
-			ULL chunkDelta = floor(camera.getLocation().z);
-			if(chunkLocation.z + chunkDelta > chunkLocation.z)
+			ULL chunkDelta = floor(camera.getPosition().z);
+			if(chunkPosition.z + chunkDelta > chunkPosition.z)
 			{
-				camera.setLocation(camera.getLocation() - Vec3(0, 0, chunkDelta));
-				chunkLocation.z += chunkDelta;
+				camera.setPosition(camera.getPosition() - Vec3(0, 0, chunkDelta));
+				chunkPosition.z += chunkDelta;
 			}
 			else
 			{
 				// camera is outside world bounds, but we will render anyway
-				chunkDelta      = ULLONG_MAX - chunkLocation.z;
-				chunkLocation.z = ULLONG_MAX;
-				camera.setLocation(camera.getLocation() + Vec3(0, 0, chunkDelta));
+				chunkDelta      = ULLONG_MAX - chunkPosition.z;
+				chunkPosition.z = ULLONG_MAX;
+				camera.setPosition(camera.getPosition() + Vec3(0, 0, chunkDelta));
 			}
 		}
 		else
 		{
-			ULL chunkDelta = -floor(camera.getLocation().z);
-			if(chunkDelta > chunkLocation.z)
+			ULL chunkDelta = -floor(camera.getPosition().z);
+			if(chunkDelta > chunkPosition.z)
 			{
-				chunkLocation.z = 0;
-				camera.setLocation(camera.getLocation() * Vec3(1, 1, 0));
+				chunkPosition.z = 0;
+				camera.setPosition(camera.getPosition() * Vec3(1, 1, 0));
 			}
 			else
 			{
-				camera.setLocation(camera.getLocation() + Vec3(0, 0, chunkDelta));
-				chunkLocation.z -= chunkDelta;
+				camera.setPosition(camera.getPosition() + Vec3(0, 0, chunkDelta));
+				chunkPosition.z -= chunkDelta;
 			}
 		}
 	}
@@ -171,7 +171,7 @@ void MoonCrashPlayer::render(Window& window)
 void MoonCrashRenderer::create(Window& window)
 {
 	player.speedExponent   = 200;
-	player.chunkLocation.z = 16000000000000000000;
+	player.chunkPosition.z = 16000000000000000000;
 
 	mainFramebuffer.create("MainFramebuffer", Area(1920, 1080));
 	mainFramebuffer.add(WritePixelsFormat::RGBA, DataType::Float, FramebufferAttachment::Color0, true, Wrapping::Clamped);
@@ -212,8 +212,8 @@ void MoonCrashRenderer::render(Window& window, TiledRectangle area)
 	r.textRenderSystem.render(r, "Speed: " + toString(player.speedExponent), Vec2(textSpacing, 6 * textSpacing));
 	r.textRenderSystem.render(r, "FPS: " + toString(1.0f / r.time.getDelta()), Vec2(textSpacing, 5 * textSpacing));
 	r.textRenderSystem.render(r, "FrameTime: " + toString(r.time.getDelta()), Vec2(textSpacing, 4 * textSpacing));
-	r.textRenderSystem.render(r, "Camera height float: " + toString(player.camera.getLocation().z), Vec2(textSpacing, 3 * textSpacing));
-	r.textRenderSystem.render(r, "Camera height ULL: " + toString(player.chunkLocation.z), Vec2(textSpacing, 2 * textSpacing));
+	r.textRenderSystem.render(r, "Camera height float: " + toString(player.camera.getPosition().z), Vec2(textSpacing, 3 * textSpacing));
+	r.textRenderSystem.render(r, "Camera height ULL: " + toString(player.chunkPosition.z), Vec2(textSpacing, 2 * textSpacing));
 	r.textRenderSystem.render(r, "SunDir: " + toString(r.uniforms().getSunDir()), Vec2(textSpacing, 1 * textSpacing));
 
 	mainFramebuffer.setAsTexture(0);
@@ -225,7 +225,7 @@ void renderMoonCrashAtmosphere(Renderer& renderer, const MoonCrashPlayer& player
 {
 	const Bool culling = renderer.getCulling();
 	player.camera.renderOnlyRot(renderer);
-	renderer.uniforms().setCameraPos(Vec4(Vec3(0, 0, (static_cast<Float>(player.chunkLocation.z) + player.camera.getLocation().z) / static_cast<Float>(ULLONG_MAX)), 1));
+	renderer.uniforms().setCameraPos(Vec4(Vec3(0, 0, (static_cast<Float>(player.chunkPosition.z) + player.camera.getPosition().z) / static_cast<Float>(ULLONG_MAX)), 1));
 	renderer.setCulling(false);
 	renderer.useShader("atmosphere");
 	framebuffer.setAsTexture(0); // [TODO]might not work if draw doesn't bind; check

@@ -4,7 +4,8 @@
 
 #include "lodepng.h"
 
-namespace stbi{
+namespace stbi
+{
 #define STBI_WINDOWS_UTF8
 #define STBI_FAILURE_USERMSG
 #define STB_IMAGE_IMPLEMENTATION
@@ -18,7 +19,7 @@ namespace stbi{
 #include <gif_lib.h>
 
 using ImageHeader = Vector<Byte>;
-Int imageHeaderReadSize = 8;
+Int imageHeaderReadSize = 10;
 
 void jpegErrorCallback(const j_common_ptr info)
 {
@@ -71,65 +72,65 @@ Bool isJFIF(const ImageHeader& header)
 Bool isTIFF(const ImageHeader& header)
 {
 	return (header.size() >= 4 && (header[0] == 0x49 && header[1] == 0x49 && header[2] == 0x2A && header[3] == 0x00)) || // Little-endian TIFF
-		(header.size() >= 4 && (header[0] == 0x4D && header[1] == 0x4D && header[2] == 0x00 && header[3] == 0x2A));   // Big-endian TIFF
+		(header.size() >= 4 && (header[0] == 0x4D && header[1] == 0x4D && header[2] == 0x00 && header[3] == 0x2A));      // Big-endian TIFF
 }
 
 void Image::load(const Path& path)
 {
-	if(debugImageLoadingIsEnabled) logDebug("Loading (" + path.string() + ")");
-	if(!doesPathExist(path)) logError("File not found! (" + path.string() + ")");
+	if (debugImageLoadingIsEnabled) logDebug("Loading (" + path.string() + ")");
+	if (!doesPathExist(path)) logError("File not found! (" + path.string() + ")");
 
 	std::ifstream file(path, std::ios::binary);
 	ImageHeader   header(imageHeaderReadSize);
 	file.read(reinterpret_cast<char*>(header.data()), imageHeaderReadSize);
 
-	if(isJPEG(header))
+	if (isJPEG(header))
 	{
 		loadJPEG(path);
-		if(pixelMemory.isValid()) return;
+		if (pixelMemory.isValid()) return;
 	}
-	if(isWebP(header))
+	if (isWebP(header))
 	{
 		loadWebP(path);
-		if(pixelMemory.isValid()) return;
+		if (pixelMemory.isValid()) return;
 	}
-	if(isPNG(header))
+	if (isPNG(header))
 	{
 		loadPNG(path);
-		if(pixelMemory.isValid()) return;
+		if (pixelMemory.isValid()) return;
 	}
-	if(isBMP(header))
+	if (isBMP(header))
 	{
 		loadBMP(path);
-		if(pixelMemory.isValid()) return;
+		if (pixelMemory.isValid()) return;
 	}
-	if(isEXR(header))
+	if (isEXR(header))
 	{
 		loadEXR(path);
-		if(pixelMemory.isValid()) return;
+		if (pixelMemory.isValid()) return;
 	}
-	if(isGIF(header))
+	if (isGIF(header))
 	{
 		loadGIF(path, 0);
-		if(pixelMemory.isValid()) return;
+		if (pixelMemory.isValid()) return;
 	}
-	if(isHDR(header))
+	if (isHDR(header))
 	{
 		loadHDR(path);
-		if(pixelMemory.isValid()) return;
+		if (pixelMemory.isValid()) return;
 	}
-	if(isJFIF(header))
+	if (isJFIF(header))
 	{
 		loadJFIF(path);
-		if(pixelMemory.isValid()) return;
+		if (pixelMemory.isValid()) return;
 	}
-	if(isTIFF(header))
+	if (isTIFF(header))
 	{
 		loadTIFF(path);
-		if(pixelMemory.isValid()) return;
+		if (pixelMemory.isValid()) return;
 	}
 
-	logError("File type not supported!");
+	throw std::runtime_error("File type not supported!\n(" + toString(path) + ")");
 }
 
 void Image::loadPNG(const Path& path)
@@ -138,7 +139,7 @@ void Image::loadPNG(const Path& path)
 	UInt         imageWidth, imageHeight;
 	const UInt   errorCode = lodepng::decode(pngData, imageWidth, imageHeight, path.string());
 
-	if(errorCode != 0)
+	if (errorCode != 0)
 	{
 		logWarning("Library lodepng failed to load file: " + toString(lodepng_error_text(errorCode)) + "\n");
 		return;
@@ -158,7 +159,7 @@ void Image::loadWebP(const Path& path)
 
 	// open the webp file
 	FILE* file = fopen(path.string().c_str(), "rb");
-	if(!file)
+	if (!file)
 	{
 		logError("Could not open file: " + path.string());
 		loaded = false;
@@ -175,7 +176,7 @@ void Image::loadWebP(const Path& path)
 
 	// Read the file data into memory
 	const size_t bytesRead = fread(fileData, 1, fileSize, file);
-	if(bytesRead != fileSize)
+	if (bytesRead != fileSize)
 	{
 		logError("Could not open file: " + path.string());
 		delete[] fileData;
@@ -188,7 +189,7 @@ void Image::loadWebP(const Path& path)
 
 	// create a WebPDecoderConfig object
 	WebPDecoderConfig config;
-	if(WebPInitDecoderConfig(&config) != 1)
+	if (WebPInitDecoderConfig(&config) != 1)
 	{
 		logWarning("Could not initialize WebP Decoder Config!\n File: (" + path.string() + ")");
 		loaded = false;
@@ -201,7 +202,7 @@ void Image::loadWebP(const Path& path)
 	config.options.use_threads = 1;
 
 	// get the WebP info
-	if(WebPGetFeatures(fileData, fileSize, &config.input) != VP8_STATUS_OK)
+	if (WebPGetFeatures(fileData, fileSize, &config.input) != VP8_STATUS_OK)
 	{
 		logWarning("Could not get WebP Information!\n File: (" + path.string() + ")");
 		loaded = false;
@@ -209,7 +210,7 @@ void Image::loadWebP(const Path& path)
 	}
 
 	// handle animation
-	if(config.input.has_animation)
+	if (config.input.has_animation)
 	{
 		loaded = false;
 		delete[] fileData;
@@ -218,17 +219,17 @@ void Image::loadWebP(const Path& path)
 	}
 
 	// handle alpha
-	if(config.input.has_alpha) config.output.colorspace = MODE_RGBA;
-	else config.output.colorspace                       = MODE_RGB;
+	if (config.input.has_alpha) config.output.colorspace = MODE_RGBA;
+	else config.output.colorspace                        = MODE_RGB;
 
 	// decode
-	if(const auto result = WebPDecode(fileData, fileSize, &config); result == VP8_STATUS_OK)
+	if (const auto result = WebPDecode(fileData, fileSize, &config); result == VP8_STATUS_OK)
 	{
 		// set channels
 		channels = Channels::Red;
-		if(config.output.colorspace == MODE_RGB) channels = Channels::RGB;
-		if(config.output.colorspace == MODE_RGBA) channels = Channels::RGBA;
-		if(channels == Channels::Red)
+		if (config.output.colorspace == MODE_RGB) channels = Channels::RGB;
+		if (config.output.colorspace == MODE_RGBA) channels = Channels::RGBA;
+		if (channels == Channels::Red)
 		{
 			WebPFreeDecBuffer(&config.output);
 			loaded = false;
@@ -264,7 +265,7 @@ void Image::loadWebP(const Path& path)
 
 void Image::flipVertically() const
 {
-	if(!loaded)
+	if (!loaded)
 	{
 		logError("Image is not loaded.");
 		return;
@@ -273,7 +274,7 @@ void Image::flipVertically() const
 	Vector<Byte> tempRow(width * getChannelCount());
 	const Int    rowSize = width * getChannelCount();
 
-	for(Int i = 0; i < height / 2; ++i)
+	for (Int i = 0; i < height / 2; ++i)
 	{
 		std::copy(pixelMemory.getData() + i * rowSize, pixelMemory.getData() + (i + 1) * rowSize, tempRow.begin());
 		std::copy(pixelMemory.getData() + (height - 1 - i) * rowSize, pixelMemory.getData() + (height - i) * rowSize, pixelMemory.getData() + i * rowSize);
@@ -302,13 +303,13 @@ void Image::loadGIF(const Path& path, const Int frameId)
 	const String stringPath = toString(path);
 	const char*  charPath   = stringPath.c_str();
 	GifFileType* gif        = DGifOpenFileName(charPath, nullptr);
-	if(gif == nullptr)
+	if (gif == nullptr)
 	{
 		logError("Could not load gif!");
 		return;
 	}
 
-	if(DGifSlurp(gif) != GIF_OK)
+	if (DGifSlurp(gif) != GIF_OK)
 	{
 		logError("Error slurping Gif File!");
 		DGifCloseFile(gif, nullptr);
@@ -331,19 +332,19 @@ void Image::loadGIF(const Path& path, const Int frameId)
 	const GifByteType*  raster    = frame->RasterBits;
 
 	const GifColorType* colorMap = nullptr;
-	if(gif->SColorMap) colorMap = gif->SColorMap->Colors;
-	if(gif->SavedImages[frameId].ImageDesc.ColorMap) colorMap = gif->SavedImages[frameId].ImageDesc.ColorMap->Colors;
+	if (gif->SColorMap) colorMap = gif->SColorMap->Colors;
+	if (gif->SavedImages[frameId].ImageDesc.ColorMap) colorMap = gif->SavedImages[frameId].ImageDesc.ColorMap->Colors;
 
-	if(!colorMap)
+	if (!colorMap)
 	{
 		logError("Color Map for gif not found!");
 		pixelMemory.destroy();
 		return;
 	}
 
-	for(Int y = height-1; y >= 0; y--)
+	for (Int y = height - 1; y >= 0; y--)
 	{
-		for(Int x = 0; x < width; x++)
+		for (Int x = 0; x < width; x++)
 		{
 			const Int          index      = y * width + x;
 			const Int          colorIndex = raster[index];
@@ -370,7 +371,7 @@ void Image::loadJPEG(const Path& path)
 {
 	FILE* inFile = stbi::stbi__fopen(toString(path).c_str(), "rb");
 
-	if(!inFile)
+	if (!inFile)
 	{
 		logError("Error opening input file.");
 		return;
@@ -396,28 +397,23 @@ void Image::loadJPEG(const Path& path)
 	height          = info.output_height;
 	Int numChannels = info.output_components;
 
-	switch(info.output_components)
+	switch (info.output_components)
 	{
-		case 1:
-			channels = Channels::Red;
-			break;
-		case 2:
-			channels = Channels::RG;
-			break;
-		case 3:
-			channels = Channels::RGB;
-			break;
-		case 4:
-			channels = Channels::RGBA;
-			break;
-		default:
-			logError("Image (" + getFileName(path) + ") did not load with correct channels!");
+	case 1: channels = Channels::Red;
+		break;
+	case 2: channels = Channels::RG;
+		break;
+	case 3: channels = Channels::RGB;
+		break;
+	case 4: channels = Channels::RGBA;
+		break;
+	default: logError("Image (" + getFileName(path) + ") did not load with correct channels!");
 	}
 
 	unsigned long  image_size = width * height * numChannels;
 	unsigned char* buffer     = new unsigned char[image_size];
 
-	while(info.output_scanline < height)
+	while (info.output_scanline < height)
 	{
 		Byte* rowPointer = &buffer[info.output_scanline * width * numChannels];
 		jpeg_read_scanlines(&info, &rowPointer, 1);
@@ -428,14 +424,14 @@ void Image::loadJPEG(const Path& path)
 	jpeg_finish_decompress(&info);
 	jpeg_destroy_decompress(&info);
 
-	if(Int error = fclose(inFile) != 0)
+	if (Int error = fclose(inFile) != 0)
 	{
 		logWarning("Error closing JPEG!");
 	};
 
 	delete[] buffer;
 
-	if(!pixelMemory.isValid())
+	if (!pixelMemory.isValid())
 	{
 		logError("Failed to load image! (" + toString(path) + ")");
 		loaded = false;
@@ -467,68 +463,61 @@ Bool Image::isLoaded() const
 
 UInt Image::getWidth() const
 {
-	if(!loaded) logError("Cant read property from unloaded image!");
+	if (!loaded) logError("Cant read property from unloaded image!");
 	return width;
 }
 
 UInt Image::getHeight() const
 {
-	if(!loaded) logError("Cant read property from unloaded image!");
+	if (!loaded) logError("Cant read property from unloaded image!");
 	return height;
 }
 
 SizeT Image::getByteSize() const
 {
-	if(!loaded) logError("Cant read property from unloaded image!");
+	if (!loaded) logError("Cant read property from unloaded image!");
 
-	switch(getDataType())
+	switch (getDataType())
 	{
-		case ImageDataType::Byte:
-			return width * height * getChannelCount();
-			break;
-		case ImageDataType::Float:
-		case ImageDataType::UInt:
-		case ImageDataType::Int:
-			return width * height * getChannelCount() * 4;
-			break;
-		default: ;
-			return 0;
+	case ImageDataType::Byte: return width * height * getChannelCount();
+		break;
+	case ImageDataType::Float:
+	case ImageDataType::UInt:
+	case ImageDataType::Int: return width * height * getChannelCount() * 4;
+		break;
+	default: ;
+		return 0;
 	}
 }
 
 Channels Image::getChannels() const
 {
-	if(!loaded) logError("Cant read property from unloaded image!");
+	if (!loaded) logError("Cant read property from unloaded image!");
 	return channels;
 }
 
 Byte* Image::getDataPointer() const
 {
-	if(!loaded) logError("Cant read property from unloaded image!");
+	if (!loaded) logError("Cant read property from unloaded image!");
 	return static_cast<Byte*>(pixelMemory.getData());
 }
 
 Int Image::getChannelCount() const
 {
-	switch(channels)
+	switch (channels)
 	{
-		case Channels::Red:
-			return 1;
-		case Channels::RG:
-			return 2;
-		case Channels::RGB:
-			return 3;
-		case Channels::RGBA:
-			return 4;
-		default:
-			logError("Invalid channel count!");
-			return 0;
+	case Channels::Red: return 1;
+	case Channels::RG: return 2;
+	case Channels::RGB: return 3;
+	case Channels::RGBA: return 4;
+	default: logError("Invalid channel count!");
+		return 0;
 	}
 }
 
 ImageDataType Image::getDataType() const
 {
-	if(!loaded) logError("Cant read property from unloaded image!");
+	if (!loaded) logError("Cant read property from unloaded image!");
 	return dataType;
 }
 
@@ -542,20 +531,17 @@ void Image::loadOther(const Path& path, const Bool inverted)
 
 	const String filePath = toString(path);
 
-	switch(dataType)
+	switch (dataType)
 	{
-		case ImageDataType::Byte:
-			address = stbi::stbi_load(filePath.c_str(), &width, &height, &channelsInt, stbi::STBI_rgb_alpha);
-			byteSize = static_cast<SizeT>(width) * static_cast<SizeT>(height) * 4 * sizeof(Byte); // Force RGBA, 4 channels
-			break;
-		case ImageDataType::Float:
-			address = reinterpret_cast<Byte*>(stbi::stbi_loadf(filePath.c_str(), &width, &height, &channelsInt, stbi::STBI_rgb_alpha));
-			byteSize = static_cast<SizeT>(width) * static_cast<SizeT>(height) * 4 * sizeof(Float); // Force RGBA, 4 channels
-			break;
-		default:
-			logError("Data type not supported!");
-			loaded = false;
-			return;
+	case ImageDataType::Byte: address = stbi::stbi_load(filePath.c_str(), &width, &height, &channelsInt, stbi::STBI_rgb_alpha);
+		byteSize = static_cast<SizeT>(width) * static_cast<SizeT>(height) * 4 * sizeof(Byte); // Force RGBA, 4 channels
+		break;
+	case ImageDataType::Float: address = reinterpret_cast<Byte*>(stbi::stbi_loadf(filePath.c_str(), &width, &height, &channelsInt, stbi::STBI_rgb_alpha));
+		byteSize = static_cast<SizeT>(width) * static_cast<SizeT>(height) * 4 * sizeof(Float); // Force RGBA, 4 channels
+		break;
+	default: logError("Data type not supported!");
+		loaded = false;
+		return;
 	}
 
 	pixelMemory = Memory(address, byteSize);
@@ -564,7 +550,7 @@ void Image::loadOther(const Path& path, const Bool inverted)
 
 	channels = Channels::RGBA; // Force RGBA
 
-	if(!pixelMemory.isValid())
+	if (!pixelMemory.isValid())
 	{
 		logError("Failed to load image! (" + toString(path) + ")");
 		loaded = false;
@@ -578,9 +564,9 @@ void Image::create(const Int width, const Int height, const Channels channels, c
 {
 	// float int and uint all have 4 bytes, so this is a small optimization
 	SizeT byteCount = 4;
-	if(dataType == ImageDataType::Byte) byteCount = 1;
+	if (dataType == ImageDataType::Byte) byteCount = 1;
 
-	if(pixels.getSize() == static_cast<SizeT>(width * height * static_cast<Int>(channels)) * byteCount)
+	if (pixels.getSize() == static_cast<SizeT>(width * height * static_cast<Int>(channels)) * byteCount)
 	{
 		this->width       = width;
 		this->height      = height;

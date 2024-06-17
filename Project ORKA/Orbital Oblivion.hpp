@@ -9,7 +9,7 @@ constexpr auto orbitalOblivionPlayfieldSize = 500;
 
 struct OOPlanet
 {
-	Vec2 location;
+	Vec2 position;
 
 	void render(Renderer& r) const;
 };
@@ -41,12 +41,12 @@ struct OOUnit
 	Float viewDistance = 10;
 	Float turnRate     = 0.1f;
 	Vec2  direction    = randomUnitVec2Fast();
-	Vec2  location     = randomVec2Fast(orbitalOblivionPlayfieldSize);
+	Vec2  position     = randomVec2Fast(orbitalOblivionPlayfieldSize);
 	Vec2  target       = randomVec2Fast(orbitalOblivionPlayfieldSize);
 
 	OOUnit(Index team);
 	void updatePosition();
-	OOUnit(Index team, Vec2 location, Vec2 direction);
+	OOUnit(Index team, Vec2 position, Vec2 direction);
 	OOPlanet& getClosestPlanet(Vector<OOPlanet>& planets) const;
 	void      render(Renderer& renderer) const;
 	void      updateDirection(Vector<OOUnit>& neighbors, Vector<OOPlanet>& planets);

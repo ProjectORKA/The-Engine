@@ -37,7 +37,7 @@ void main(){
 	// draw lighting only
 	// fragmentColor = vec4(vec3(coloredLight) + vec3(externalLight),1);
 
-	// draw worldLocation
+	// draw worldPosition
 	// fragmentColor = vec4(worldCoordinate,1.0);
 
 	// draw normals

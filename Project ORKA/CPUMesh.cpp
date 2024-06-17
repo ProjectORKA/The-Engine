@@ -276,7 +276,7 @@ void CPUMesh::saveMeshFile()
 
 	const String meshName = toString(name) + ".mesh";
 
-	Path meshPath = resourceManager.getOrkaCachedMeshLocation();
+	Path meshPath = resourceManager.getOrkaCachedMeshPath();
 	meshPath.append(meshName);
 
 	OutFile mesh(meshPath);

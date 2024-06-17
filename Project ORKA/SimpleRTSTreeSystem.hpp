@@ -1,31 +1,41 @@
 #pragma once
 
 #include "Basics.hpp"
+#include "SimpleRtsSystem.hpp"
+#include "Time.hpp"
 
-//struct SimpleRTSSimulation;
-//
-//struct SimpleRTSTreeSystem {
-//	UInt maxTreeCount = 0;
-//	UInt minTreeCount = 0;
-//	Float maxTreeLifeExpectancyInSeconds = 1 * 3;
-//	Float minTreeLifeExpectancyInSeconds = 0 * 60;
-//	Float fullyGrownMaxTreeSize = 5;
-//	Float fullyGrownMinTreeSize = 2;
-//	UInt treeCount = 0;
-//	Vector<Float> treeAge;
-//	Vector<Float> treeSize;
-//	Vector<Vec2> treePosition;
-//	Vector<Vec2> treeDirection;
-//	Vector<Float> lifeExpectancy;
-//	Vector<Float> fullyGrownSize;
-//
-//	Float calculateTreeSize(UInt id);
-//	void update(SimpleRTSSimulation& simulation);
-//	void create(SimpleRTSSimulation& simulation);
-//	void spawnTree(SimpleRTSSimulation& simulation);
-//	void cutTree(SimpleRTSSimulation& simulation, UInt id);
-//};
-//
-//struct SimpleRTSTreeSystemRenderer {
-//	void render(SimpleRTSTreeSystem & treeSystem, Renderer& renderer);
-//};
+struct SimpleRtsSimulation;
+struct Renderer;
+
+struct SimpleRtsTreeSystem : SimpleRtsSystem
+{
+	// constants
+	const UInt  count                 = 2000;
+	const Float treeRadius            = 3.0f;
+	const Float minGrownTreeHeight    = 1.0f;
+	const Float maxGrownTreeHeight    = 3.0f;
+	const Float minTreeLifeExpectancy = 90.0f;
+	const Float maxTreeLifeExpectancy = 3600.0f;
+	const Float treeSpread            = treeRadius * 3.0f;
+
+	Timer timer;
+	UInt  treeCount = 0;
+
+	//tree data
+	Vector<Float> ages;
+	Vector<Float> scales;
+	Vector<Float> maxHeights;
+	Vector<Vec2>  positions;
+	Vector<Vec2>  directions;
+	Vector<Float> lifeExpectancies;
+
+	Float calculateTreeSize(UInt id) const;
+	void  render(Renderer& renderer) const override;
+	void  reset(const SimpleRtsSimulation& sim);
+	bool  doesCollide(Vec2 position, Float radius) const;
+	void  spawnTree(const SimpleRtsSimulation& sim);
+	void  destroy(const SimpleRtsSimulation& sim) override;
+	void  update(const SimpleRtsSimulation& sim) override;
+	void  create(const SimpleRtsSimulation& sim) override;
+	void  cutTree(const SimpleRtsSimulation& sim, UInt id);
+};

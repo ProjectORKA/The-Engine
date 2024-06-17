@@ -4,7 +4,7 @@
 
 struct QuadtreeId
 {
-	ULLVec2 location = ULLVec2(0);
+	UllVec2 position = UllVec2(0);
 	UShort  level    = 0;
 
 	void       clean();

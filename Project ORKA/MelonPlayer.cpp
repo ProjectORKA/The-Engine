@@ -16,43 +16,43 @@ void MelonPlayer::update(Window& window)
 	if(window.capturing)
 	{
 		auto delta = Vec3(Vec2(window.mouseDelta) * Vec2(mouseSensitivity), 0);
-		delta *= camera.getLocation().z;
+		delta *= camera.getPosition().z;
 		velocity = Vec3(0);
-		targetLocation += delta;
+		targetPosition += delta;
 	}
-	else targetLocation = Vec3(window.mousePosBotLeft, 0);
+	else targetPosition = Vec3(window.mousePosBotLeft, 0);
 
 	// get frequently used info
 	const Float delta = window.renderer.deltaTime();
 
-	// update target location
-	targetLocation += velocity * delta;
+	// update target position
+	targetPosition += velocity * delta;
 
-	approach(location, targetLocation, delta * 300);
+	approach(position, targetPosition, delta * 300);
 
-	// player location (smoothed)
-	deltaLocation                            = location - lastLocation;
-	lastLocationAtDistance                   = location + 0.01f * normalize(lastLocationAtDistance - location);
-	const Vec3 deltaToLastLocationAtDistance = location - lastLocationAtDistance;
-	distanceTraveled                         = length(deltaLocation);
+	// player position (smoothed)
+	deltaPosition                            = position - lastPosition;
+	lastPositionAtDistance                   = position + 0.01f * normalize(lastPositionAtDistance - position);
+	const Vec3 deltaToLastPositionAtDistance = position - lastPositionAtDistance;
+	distanceTraveled                         = length(deltaPosition);
 	distanceInRadians += distanceTraveled;
 	distanceInRadians = mod(distanceInRadians, PI);
-	if(distanceTraveled != 0.0f) direction = normalize(deltaToLastLocationAtDistance);
+	if(distanceTraveled != 0.0f) direction = normalize(deltaToLastPositionAtDistance);
 
 	// update smoke
-	smoke.update(location, window.renderer);
+	smoke.update(position, window.renderer);
 
 	// player rotation
 	approach(currentVisibleDirection, direction, delta * 8);
 	orientation  = Orientation(currentVisibleDirection);
-	lastLocation = location;
+	lastPosition = position;
 
 	// update camera
-	const Vec3 cameraTargetLocation = location + Vec3(0.0f, 0.0f, 1.0f + powf(1.2f, static_cast<Float>(zoomFactor)));
-	const Vec3 cameraDesiredDelta   = cameraTargetLocation - camera.getLocation();
-	camera.setLocation(camera.getLocation() + cameraDesiredDelta * delta * 10.0f);
+	const Vec3 cameraTargetPosition = position + Vec3(0.0f, 0.0f, 1.0f + powf(1.2f, static_cast<Float>(zoomFactor)));
+	const Vec3 cameraDesiredDelta   = cameraTargetPosition - camera.getPosition();
+	camera.setPosition(camera.getPosition() + cameraDesiredDelta * delta * 10.0f);
 
-	trail[0] = location;
+	trail[0] = position;
 
 	for(Int i = static_cast<Int>(trail.size() - 1); i > 1; i--) trail[i] = trail[i - 1];
 }
@@ -74,7 +74,7 @@ void MelonPlayer::render(Window& window)
 
 	// render player
 	renderer.useShader("MelonUberShader");
-	renderer.uniforms().setMMatrix(matrixFromOrientation(orientation, location, 0.5) * rotate(Matrix(1), -2 * distanceInRadians, Vec3(1, 0, 0)));
+	renderer.uniforms().setMMatrix(matrixFromOrientation(orientation, position, 0.5) * rotate(Matrix(1), -2 * distanceInRadians, Vec3(1, 0, 0)));
 	renderer.uniforms().setCustomColor(Vec4(1));
 	renderer.renderMesh("melonPlayerRolling");
 

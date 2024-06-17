@@ -5,18 +5,18 @@
 struct Camera
 {
 	void rotate(DVec2 rotation);
-	void setLocation(Vec3 location);
+	void setPosition(Vec3 position);
 	void render(Renderer& renderer) const;
 	void setFieldOfView(Float fieldOfView);
 	void setRotation(const DVec3& rotation);
 	void setFarClipValue(Float farClipValue);
 	void setNearClipValue(Float nearClipValue);
-	void setLocation(Float x, Float y, Float z);
+	void setPosition(Float x, Float y, Float z);
 	void renderOnlyRot(Renderer& renderer) const;
 	void setRotation(Double x, Double y, Double z);
 
 	[[nodiscard]] Matrix viewMatrix() const;
-	[[nodiscard]] Vec3   getLocation() const;
+	[[nodiscard]] Vec3   getPosition() const;
 	[[nodiscard]] Vec3   getUpVector() const;
 	[[nodiscard]] DVec3  getRotation() const;
 	[[nodiscard]] Double getRotationZ() const;
@@ -31,7 +31,7 @@ struct Camera
 
 private:
 	Float fieldOfView = 80.0;
-	Vec3  location    = Vec3(0);
+	Vec3  position    = Vec3(0);
 	DVec3 rotation    = DVec3(0, 0, 0);
 
 	Float nearClipValue = 0.1f;

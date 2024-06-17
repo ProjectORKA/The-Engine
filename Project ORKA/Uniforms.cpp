@@ -302,7 +302,7 @@ void Uniforms::setFramebufferHeight(const Int value)
 void Uniforms::create()
 {
 	reset();
-	const Path uniformShaderCodePath = resourceManager.getOrkaDataLocation().append("shaders").append("uniforms.glsl");
+	const Path uniformShaderCodePath = resourceManager.getOrkaDataPath().append("shaders").append("uniforms.glsl");
 	uniformBlockShaderCode           = loadString(uniformShaderCodePath);
 	openGlUniformBuffer.create(data, 0);
 	needsUpdate = true;

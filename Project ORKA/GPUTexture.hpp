@@ -7,13 +7,14 @@ struct GPUTexture
 	[[nodiscard]] Bool              isLoaded() const;
 	[[nodiscard]] WritePixelsFormat getFormat() const;
 	[[nodiscard]] UInt              getOpenGLID() const;
+	[[nodiscard]] Float             getAspectRatio() const;
 
 	void unload();
 	void resize(Area size);
+	void load(const Name& name);
 	void generateMipMaps() const;
 	void load(const CPUTexture& cpuTexture);
 	void useTextureInSlot(UInt textureSlot) const;
-	void load(const Name& name);
 	void setFilters(Filter nearFilterValue, Filter farFilterValue);
 	void generateMipMaps(Filter nearFilterValue, Filter farFilterValue);
 	void load(IVec2 size, WritePixelsFormat format, DataType type, Wrapping wrapping);

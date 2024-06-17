@@ -18,7 +18,7 @@ struct PongPlayer
 
 	void update(Window& window);
 	void mouseInput(Vec3 cursorWorldPosition);
-	void ballLocationInput(Vector<Ball>& balls);
+	void ballPositionInput(Vector<Ball>& balls);
 	void aiInput(Vector<Ball>& balls, Float deltaTime);
 };
 

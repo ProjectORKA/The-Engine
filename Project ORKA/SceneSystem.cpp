@@ -23,11 +23,11 @@ void processNode(SceneNode& sceneNode, const aiNode* fileNode)
 
 	const aiVector3D rotation;
 	// get transform
-	aiVector3D location, scale;
-	fileNode->mTransformation.Decompose(scale, location, location);
+	aiVector3D position, scale;
+	fileNode->mTransformation.Decompose(scale, position, position);
 
 	sceneNode.transform.setSize(scale.x, scale.y, scale.z);
-	sceneNode.transform.setLocation(location.x, location.y, location.z);
+	sceneNode.transform.setPosition(position.x, position.y, position.z);
 	sceneNode.transform.setRotation(rotation.x, rotation.y, rotation.z);
 
 	// get meshes

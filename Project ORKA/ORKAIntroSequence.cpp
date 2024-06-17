@@ -33,7 +33,7 @@ void ORKAIntroSequence::render(Window& window, TiledRectangle area)
 
 	// camera stuff
 	Camera c;
-	c.setLocation(Vec3(0.0f, -15.0f, 0.0f));
+	c.setPosition(Vec3(0.0f, -15.0f, 0.0f));
 	c.render(renderer);
 
 	// logo stuff
@@ -62,7 +62,7 @@ void ORKAIntroSequence::render(Window& window, TiledRectangle area)
 	{
 		window.decorateWindow();
 		
-		window.content.insert(*gameStartingAfterIntro);
+		window.content.add(*gameStartingAfterIntro);
 
 		window.content.drop(this);
 

@@ -61,17 +61,17 @@ Float particleSizeFunction(const Float particleRelativeLifeTime)
 	return particleRelativeLifeTime - powf(particleRelativeLifeTime, 5);
 }
 
-void ParticleSystem::update(const Vec3 location, const Renderer& renderer)
+void ParticleSystem::update(const Vec3 position, const Renderer& renderer)
 {
 	delta += renderer.time.getDelta();
-	if(location != this->location)
+	if(position != this->position)
 	{
 		previous2      = previous1;
-		previous1      = this->location;
-		this->location = location;
+		previous1      = this->position;
+		this->position = position;
 
 		const Vec3 endLast   = (previous2 + previous1) / 2.0f;
-		const Vec3 startNext = (previous1 + location) / 2.0f;
+		const Vec3 startNext = (previous1 + position) / 2.0f;
 
 		const Float distanceTravelled = length(endLast - previous1) + length(startNext - previous1);
 
@@ -79,10 +79,10 @@ void ParticleSystem::update(const Vec3 location, const Renderer& renderer)
 		while(i < distanceTravelled)
 		{
 			i += 1.0f / particlesPerUnit;
-			Vec3       currentParticleLocation  = quadraticInterpolation(endLast, previous1, startNext, i / distanceTravelled);
-			Vec3       previousParticleLocation = quadraticInterpolation(endLast, previous1, startNext, -1 / distanceTravelled);
-			const Vec3 currentParticleVelocity  = currentParticleLocation - previousParticleLocation;
-			spawn(currentParticleLocation, currentParticleVelocity);
+			Vec3       currentParticlePosition  = quadraticInterpolation(endLast, previous1, startNext, i / distanceTravelled);
+			Vec3       previousParticlePosition = quadraticInterpolation(endLast, previous1, startNext, -1 / distanceTravelled);
+			const Vec3 currentParticleVelocity  = currentParticlePosition - previousParticlePosition;
+			spawn(currentParticlePosition, currentParticleVelocity);
 		}
 	}
 

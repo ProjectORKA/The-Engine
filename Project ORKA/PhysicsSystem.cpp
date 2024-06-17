@@ -1,12 +1,12 @@
 #include "Basics.hpp"
 
-void verletPhysics(Vec3& location, Vec3& velocity, const Vec3& acceleration, const Float delta)
+void verletPhysics(Vec3& position, Vec3& velocity, const Vec3& acceleration, const Float delta)
 {
 	// step 1
 	const Vec3 velocity1 = velocity + acceleration * delta / Vec3(2);
 
 	// step 2
-	location += velocity1 * delta;
+	position += velocity1 * delta;
 
 	// step 3 calculate forces
 
@@ -16,13 +16,13 @@ void verletPhysics(Vec3& location, Vec3& velocity, const Vec3& acceleration, con
 	velocity = velocity2;
 }
 
-void verletPhysics(Vec2& location, Vec2& velocity, const Vec2& acceleration, const Float delta)
+void verletPhysics(Vec2& position, Vec2& velocity, const Vec2& acceleration, const Float delta)
 {
 	// step 1
 	const Vec2 velocity1 = velocity + acceleration * delta / Vec2(2);
 
 	// step 2
-	location += velocity1 * delta;
+	position += velocity1 * delta;
 
 	// step 3 calculate forces
 

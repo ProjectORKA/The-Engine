@@ -14,21 +14,21 @@ void main(){
 
 //	vec3 rayOrigin = chunkOffsetVector.xyz;
 //	vec3 rayDirection = normalize(position);
-//	vec3 sampleLocation = rayOrigin;
+//	vec3 samplePosition = rayOrigin;
 //
 //
 //	int  sampleCount = 0;
 //
 //	while(sampleCount < 100){
-//		float dist = sdfPlane(sampleLocation)/2;
-//		sampleLocation += rayDirection * dist;
+//		float dist = sdfPlane(samplePosition)/2;
+//		samplePosition += rayDirection * dist;
 //
 //		if(dist < 0.001) break;
 //
 //		sampleCount++;
 //	}
 
-	// if(distance(rayOrigin, sampleLocation) > 10) discard;
+	// if(distance(rayOrigin, samplePosition) > 10) discard;
 
 	fragmentColor = vec4(vec3(texelFetch(texture0,ivec2(gl_FragCoord.xy),0).xyz * 100000000),1);
 };

@@ -4,13 +4,10 @@
 
 void MindMap::update()
 {
-	LockGuard  lock(mutex);
-	static int t = 0;
-	if(nodeCount < 1) addNode();
-	t++;
+	if (nodeCount < 1) addNode();
 
 	// keep distance to nodes
-	for(const auto& c : connections)
+	for (const auto& c : connections)
 	{
 		const Vec2 delta = positions[c.b] - positions[c.a];
 		forces[c.a] += delta / 1.0f;
@@ -20,39 +17,38 @@ void MindMap::update()
 	}
 
 	// calculate collisions for every node
-	for(UInt a = 0; a < nodeCount; a++)
+	for (UInt a = 0; a < nodeCount; a++)
 	{
 		// get every other node
-		for(UInt b = a + 1; b < nodeCount; b++)
+		for (UInt b = a + 1; b < nodeCount; b++)
 		{
-			Vec2 delta = positions[b] - positions[a];
-			if(delta != Vec2(0))
-			{
-				const Float impact = 1.0f / length(delta);
+			Vec2        delta  = positions[b] - positions[a];
+			const Float impact = 1.0f / length(delta);
 
-				if(impact > 0.0f)
-				{
-					const Vec2 force = normalize(delta) * impact;
-					forces[b] += force;
-					numForces[b]++;
-					forces[a] -= force;
-					numForces[a]++;
-				}
+			if (delta != Vec2(0) && impact > 0.0f)
+			{
+				const Vec2 force = normalize(delta) * impact;
+				forces[b] += force;
+				numForces[b]++;
+				forces[a] -= force;
+				numForces[a]++;
 			}
 		}
 	}
 
-	for(UInt i = 0; i < nodeCount; i++)
+	mutex.lock();
+	for (UInt i = 0; i < nodeCount; i++)
 	{
-		if(numForces[i])
-		{
-			positions[i] += forces[i] / Vec2(static_cast<Float>(numForces[i]));
-			forces[i]    = Vec2(0);
-			numForces[i] = 0;
-		}
+		positions[i] += forces[i] / Vec2(static_cast<Float>(numForces[i]));
 	}
-
 	positions[0] = Vec2(0, 0);
+	mutex.unlock();
+
+	for (UInt i = 0; i < nodeCount; i++)
+	{
+		forces[i]    = Vec2(0);
+		numForces[i] = 0;
+	}
 }
 
 void MindMap::addNode()
@@ -62,7 +58,7 @@ void MindMap::addNode()
 	numForces.emplace_back();
 	Index a = randomIntFast(nodeCount);
 	connections.emplace_back(a, nodeCount);
-	if(nodeCount) positions.push_back(randomVec2Fast(-1.0f, 1.0f) + positions[connections.back().a]);
+	if (nodeCount) positions.push_back(randomVec2Fast(-1.0f, 1.0f) + positions[connections.back().a]);
 	else positions.emplace_back(0);
 	nodeCount++;
 }
@@ -83,17 +79,17 @@ void MindMap::render(Renderer& renderer) const
 
 	Vector<Vec2> lines;
 
-	for(const auto connection : connections)
+	for (const auto connection : connections)
 	{
 		lines.push_back(positions[connection.a]);
 		lines.push_back(positions[connection.b]);
 	}
-	renderer.lines(lines);
+	renderer.lines(lines, Matrix(1));
 
 	// render nodes
 	renderer.fill(Color(1));
 	Vector<Vec3> posArray;
-	for(auto position : positions) posArray.emplace_back(position, 0.0f);
+	for (auto position : positions) posArray.emplace_back(position, 0.0f);
 
 	renderer.renderMeshInstanced("centeredPlane", posArray);
 	renderer.setDepthTest(true);

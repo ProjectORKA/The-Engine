@@ -5,12 +5,14 @@
 constexpr bool debugLoggingIsEnabled   = true;
 constexpr bool errorLoggingIsEnabled   = true;
 constexpr bool warningLoggingIsEnabled = true;
+constexpr bool debugBreakOnWarning     = true;
 constexpr bool debugLaunchParameters   = true;
 #else
 constexpr bool debugLoggingIsEnabled   = false;
 constexpr bool errorLoggingIsEnabled   = false;
 constexpr bool warningLoggingIsEnabled = false;
 constexpr bool debugLaunchParameters   = false;
+constexpr bool debugBreakOnWarning     = false;
 #endif
 
 

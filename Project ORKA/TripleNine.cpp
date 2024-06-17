@@ -41,7 +41,7 @@ void TripleNineSimulation::createEnemy()
 void TripleNinePlayer::collisionResponse()
 {
 	if(velocity.z < 0) velocity.z = 0;
-	if(location.z < 0) location.z = 0;
+	if(position.z < 0) position.z = 0;
 }
 
 void TripleNinePlayer::update(Window& window)
@@ -53,7 +53,7 @@ void TripleNinePlayer::update(Window& window)
 	forwardVector = normalize(Vec3(sin(camera.getRotationZ()), cos(camera.getRotationZ()), 0));
 	rightVector   = Vec3(forwardVector.y, -forwardVector.x, 0);
 	// process input
-	if(window.capturing) targetCameraRotation += window.mouseDelta * MouseMovement(mouseSensitivity);
+	if(window.capturing) targetCameraRotation += window.mouseDelta * DVec2(mouseSensitivity);
 	movementControl = Vec3(0);
 	if(window.pressed(forward)) movementControl += forwardVector;
 	if(window.pressed(backward)) movementControl -= forwardVector;
@@ -114,8 +114,11 @@ void TripleNinePlayer::update(Window& window)
 		actualFriction *= normalFrictionFactor;
 		velocity /= 1 + delta * actualFriction;
 	}
-	else onGround = false;
-	if(state == State::jumping) debugCurrentMaxJumpHeight = location.z;
+	else
+	{
+		onGround = false;
+	}
+	if(state == State::jumping) debugCurrentMaxJumpHeight = position.z;
 	isMoving = movementControl != Vec3(0);
 	// air strafing
 	if(movementInput && !onGround)
@@ -157,7 +160,7 @@ void TripleNineRenderer::destroy(Window& window)
 
 Bool TripleNinePlayer::isCollidingWithGround() const
 {
-	return location.z <= 0;
+	return position.z <= 0;
 }
 
 void TripleNineRenderer::connect(GameSimulation& simulation)
@@ -172,7 +175,7 @@ void TripleNinePlayer::calculatePhysics(const Window& window)
 	// step 1
 	const Vec3 velocity1 = velocity + acceleration * window.renderer.deltaTime() / Vec3(2);
 	// step 2
-	location += velocity1 * window.renderer.deltaTime();
+	position += velocity1 * window.renderer.deltaTime();
 	// step 3 calculate forces
 	// player keeps jumping higher when holding space but falls faster when releasing it
 	if(!onGround && window.pressed(holdJump)) acceleration = Vec3(0, 0, -airTimeGravity);
@@ -292,7 +295,7 @@ void TripleNinePlayer::calculateHeadPosition(Window& window, const Float delta)
 	const Vec3 sway3D       = -sway * normalize(camera.getRightVector() * Vec3(1, 1, 0));
 	const Vec3 lean3D       = leanOffset.x * camera.getRightVector() + Vec3(0, 0, leanOffset.y);
 	const auto headHeight3D = Vec3(0, 0, eyeHeight + bobTarget);
-	camera.setLocation(location + sway3D + headHeight3D + lean3D);
+	camera.setPosition(position + sway3D + headHeight3D + lean3D);
 }
 
 void TripleNineRenderer::create(Window& window)

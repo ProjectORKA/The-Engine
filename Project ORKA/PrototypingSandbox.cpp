@@ -28,7 +28,7 @@ void PrototypingRenderer::inputEvent(Window& window, const InputEvent input)
 
 void PrototypingRenderer::create(Window& window)
 {
-	player.camera.setLocation(Vec3(0.0f, 0.0f, 10.0f));
+	player.camera.setPosition(Vec3(0.0f, 0.0f, 10.0f));
 
 	framebuffer.create("MainFramebuffer", Area(1920, 1080));
 	framebuffer.add(WritePixelsFormat::RGBA, DataType::Float, FramebufferAttachment::Color0, true, Wrapping::Clamped);
@@ -53,7 +53,7 @@ void PrototypingRenderer::render(Window& window, const TiledRectangle area)
 	framebuffer.bindDraw();
 
 	// render scene
-	player.render(window); // sets the location, rotation and projection
+	player.render(window); // sets the position, rotation and projection
 
 	r.useShader("debug");
 	r.centeredCube(10);
@@ -92,6 +92,6 @@ void PlaneIntersectionPrototype::render(Renderer& r, const Player& player)
 	r.useShader("normals"); // sets the color / material for the rendered objects
 	r.renderMesh("centeredPlane");
 
-	const Vec3 rayLocation  = player.camera.getLocation();
+	const Vec3 rayPosition  = player.camera.getPosition();
 	const Vec3 rayDirection = player.camera.getForwardVector();
 }
