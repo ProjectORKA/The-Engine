@@ -46,6 +46,7 @@
     <ClInclude Include="KDTree.hpp" />
     <ClInclude Include="KDTree2.hpp" />
     <ClInclude Include="KDTreePrototype.hpp" />
+    <ClCompile Include="Keva.cpp" />
     <ClCompile Include="Logger.cpp" />
     <ClCompile Include="MSDFText.cpp" />
     <ClCompile Include="NameGenerator.cpp" />
@@ -178,6 +179,7 @@
     <ClInclude Include="SimpleRtsTreeStumpSystem.hpp" />
     <ClInclude Include="SoundBars.hpp" />
     <ClInclude Include="SoundGenerators.hpp" />
+    <ClInclude Include="Keva.hpp" />
     <ClInclude Include="Windows.hpp" />
   </ItemGroup>
   <ItemGroup>
