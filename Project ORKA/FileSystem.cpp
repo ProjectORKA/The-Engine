@@ -117,12 +117,12 @@ FileTime getLastWrittenTime(const Path& path)
 Vector<String> loadStringVector(const Path& path)
 {
 	Vector<String> lines;
-
 	InFile file(path);
-
 	String line;
-	while(std::getline(file.file, line)) lines.push_back(line);
-
+	while(std::getline(file.file, line)){
+		std::erase(line, '\r');
+		lines.push_back(line);
+	}
 	return lines;
 }
 

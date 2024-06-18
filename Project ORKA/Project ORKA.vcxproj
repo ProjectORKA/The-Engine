@@ -131,6 +131,7 @@
     <ClCompile Include="SceneSystem.cpp" />
     <ClCompile Include="ShaderProgram.cpp" />
     <ClCompile Include="ShaderSystem.cpp" />
+    <ClCompile Include="SimpleRtsBerryBushSystem.cpp" />
     <ClCompile Include="SimpleRtsBushSystem.cpp" />
     <ClCompile Include="SimpleRtsHumanSystem.cpp" />
     <ClCompile Include="SimpleRtsRabbitSystem.cpp" />
@@ -173,6 +174,7 @@
     <ClCompile Include="Window.cpp" />
     <ClCompile Include="WindowAPI.cpp" />
     <ClInclude Include="Music Visualizer.hpp" />
+    <ClInclude Include="SimpleRtsBerryBushSystem.hpp" />
     <ClInclude Include="SimpleRtsBushSystem.hpp" />
     <ClInclude Include="SimpleRtsRabbitSystem.hpp" />
     <ClInclude Include="SimpleRtsSystem.hpp" />

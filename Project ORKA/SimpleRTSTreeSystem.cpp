@@ -36,12 +36,12 @@ void SimpleRtsTreeSystem::create(const SimpleRtsSimulation& sim)
 	while (positions.size() < count) spawnTree(sim);
 }
 
-void SimpleRtsTreeSystem::update(const SimpleRtsSimulation& sim)
+void SimpleRtsTreeSystem::update(SimpleRtsSimulation& sim)
 {
 	timer.start();
 	for (UInt i = 0; i < treeCount; i++)
 	{
-		ages[i] += sim.timeStep;
+		ages[i] += sim.timeStep();
 		scales[i] = calculateTreeSize(i);
 		if (ages[i] >= lifeExpectancies[i]) cutTree(sim, i);
 	}

@@ -5,10 +5,43 @@
 #include "fmt/core.h"
 #include "fmt/color.h"
 
-void beep();
-void pause();
+inline void print(const String& text) {
+	std::cout << text;
+}
 
-void messageBox(String message, String title);
+inline void println(const String& text) {
+	std::cout << text + "\n";
+}
+
+inline void beep()
+{
+	std::cout << '\a';
+}
+
+inline void pause()
+{
+	if (debugLoggingIsEnabled)
+	{
+#ifdef _WIN32
+		system("pause");
+#else
+	std::cout << "Thread was paused..." << "\n";
+	char a;
+	std::cin >> a;
+#endif
+	}
+}
+
+inline void clearConsole()
+{
+#ifdef _WIN32
+	system("cls");
+#else
+    system("clear");
+#endif
+}
+
+void messageBox(const String& message, const String& title);
 
 inline void printToConsole(const String& message)
 {
@@ -32,7 +65,7 @@ void logWarning(T value)
 	if (warningLoggingIsEnabled)
 	{
 		printHighlighted("Warning: ", Color(1, 1, 0, 0), toString(value));
-		if(debugBreakOnWarning) __debugbreak();
+		if (debugBreakOnWarning) __debugbreak();
 		beep();
 	}
 }

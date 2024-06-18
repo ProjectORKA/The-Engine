@@ -20,7 +20,7 @@ struct SimpleRtsRabbitSystem : SimpleRtsSystem
 	void render(Renderer& renderer) const override;
 	void spawnRabbit(const SimpleRtsSimulation& sim);
 	void create(const SimpleRtsSimulation& sim) override {}
-	void update(const SimpleRtsSimulation& sim) override {}
+	void update(SimpleRtsSimulation& sim) override {}
 	void destroy(const SimpleRtsSimulation& sim) override {}
 	bool doesCollide(Vec2 position, Float radius) const;
 };

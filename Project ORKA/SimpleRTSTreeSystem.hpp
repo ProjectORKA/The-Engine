@@ -10,7 +10,7 @@ struct Renderer;
 struct SimpleRtsTreeSystem : SimpleRtsSystem
 {
 	// constants
-	const UInt  count                 = 2000;
+	const UInt  count                 = 8000;
 	const Float treeRadius            = 3.0f;
 	const Float minGrownTreeHeight    = 1.0f;
 	const Float maxGrownTreeHeight    = 3.0f;
@@ -30,12 +30,12 @@ struct SimpleRtsTreeSystem : SimpleRtsSystem
 	Vector<Float> lifeExpectancies;
 
 	Float calculateTreeSize(UInt id) const;
-	void  render(Renderer& renderer) const override;
 	void  reset(const SimpleRtsSimulation& sim);
-	bool  doesCollide(Vec2 position, Float radius) const;
+	void  render(Renderer& renderer) const override;
+	void  update(SimpleRtsSimulation& sim) override;
 	void  spawnTree(const SimpleRtsSimulation& sim);
+	bool  doesCollide(Vec2 position, Float radius) const;
 	void  destroy(const SimpleRtsSimulation& sim) override;
-	void  update(const SimpleRtsSimulation& sim) override;
 	void  create(const SimpleRtsSimulation& sim) override;
 	void  cutTree(const SimpleRtsSimulation& sim, UInt id);
 };
