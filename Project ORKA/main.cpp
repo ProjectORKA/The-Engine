@@ -60,6 +60,7 @@
 #include "UISandbox.hpp"
 #include "Music Visualizer.hpp"
 #include "SoundBars.hpp"
+#include "Keva.hpp"
 
 //void testAll(const Int argc, Char* argv[])
 //{
@@ -94,7 +95,7 @@ Int main(const Int argc, Char* argv[])
 	Engine engine;
 	engine.create(argc, argv);
 
-	PrototypingSandbox game;
+	SimpleRts game;
 	game.run();
 
 	//FunctionFinder game;

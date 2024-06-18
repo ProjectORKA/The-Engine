@@ -35,54 +35,88 @@
 // shoes
 // firestone (enchants weapon)
 
-struct Player {
-	Vector<Index> inventory;     // infinite item storage
+struct KevaCharacter
+{
+	// slots for fight
+	Index headSlot        = 0;
+	Index armorSlot       = 0;
+	Index backSlot        = 0;
+	Index glovesSlot      = 0;
+	Index leftWeaponSlot  = 0;
+	Index rightWeaponSlot = 0;
+	Index beltSlot        = 0;
+	Index pantsSlot       = 0;
+	Index shoesSlot       = 0;
+};
+
+struct KevaPlayer
+{
+	Vector<Index> inventory; // infinite item storage
 	KevaCharacter mainCharacter;
 };
 
-struct KevaCharacter {
-	// slots for fight
-	Index headSlot = 0;
-	Index armorSlot = 0;
-	Index backSlot = 0;
-	Index glovesSlot = 0;
-	Index leftWeaponSlot = 0;
-	Index rightWeaponSlot = 0;
-	Index beltSlot = 0;
-	Index pantsSlot = 0;
-	Index shoesSlot = 0;
-};
-
-enum class KevaSlot {
-	Item = 0,
-	Head = 1,
-	Armor = 2,
-	Back = 4,
-	Gloves = 8,
+enum class KevaSlot
+{
+	Item      = 0,
+	Head      = 1,
+	Armor     = 2,
+	Back      = 4,
+	Gloves    = 8,
 	OneHanded = 16,
 	TwoHanded = 32,
-	Belt = 64,
-	Pants = 128,
-	Shoes = 256
+	Belt      = 64,
+	Pants     = 128,
+	Shoes     = 256
 };
 
-struct KevaItem {
-	String name = "Error";
-	Float weight = 0.0;
-	Float volume = 0.0;
-	KevaSlot slot = KevaSlot::Item;
+struct KevaItem
+{
 	Vector<Index> storedItems;
+	ULL           itemFlags = 0;
+	Float         weight    = 0.0;
+	Float         volume    = 0.0;
+	String        name      = "Error";
+
+	explicit KevaItem(const String& name)
+	{
+		this->name = name;
+	}
+
+	explicit KevaItem(const String& name, const ULL itemFlags)
+	{
+		this->name      = name;
+		this->itemFlags = itemFlags;
+	}
 };
 
-struct KevaSimulation : GameSimulation {
-	Vector<KevaItem> items;
+struct KevaSimulation : GameSimulation
+{
+	Bool keeprunning = true;
+
+	Bool                  inBattle = false;
+	Vector<KevaItem>      items;
 	Vector<KevaCharacter> people;
+	KevaPlayer            player;
 
 	void create() override;
 	void destroy() override;
+
+	void printOptions() const;
+
 	void update(Float delta) override;
 };
 
-struct KevaRenderer : GameRenderer {
-	void connect(GameSimulation& simulation) override;
+struct Keva
+{
+	KevaSimulation sim;
+
+	void run()
+	{
+		sim.create();
+		while (sim.keeprunning)
+		{
+			sim.update(1.0);
+		}
+		sim.destroy();
+	};
 };

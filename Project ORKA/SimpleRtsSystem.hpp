@@ -7,9 +7,9 @@ struct SimpleRtsSimulation;
 
 struct SimpleRtsSystem
 {
+	virtual void update(SimpleRtsSimulation& sim) = 0;
 	virtual void render(Renderer& renderer) const = 0;
 	virtual void create(const SimpleRtsSimulation& sim) = 0;
-	virtual void update(const SimpleRtsSimulation& sim) = 0;
 	virtual void destroy(const SimpleRtsSimulation& sim) = 0;
 };
 

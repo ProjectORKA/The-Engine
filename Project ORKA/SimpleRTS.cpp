@@ -20,12 +20,15 @@ void SimpleRtsSimulation::create()
 	treeSystem.create(*this);
 	humanSystem.create(*this);
 	bushSystem.create(*this);
+	berryBushSystem.create(*this);
 }
 
 void SimpleRtsRenderer::destroy(Window& window) {}
 
 void SimpleRtsSimulation::update(Float delta)
 {
+	time += timeStep();
+
 	Vector<Thread> threads;
 	threads.emplace_back([this]()
 	{
@@ -39,8 +42,18 @@ void SimpleRtsSimulation::update(Float delta)
 	{
 		bushSystem.update(*this);
 	});
+	threads.emplace_back([this]()
+	{
+		berryBushSystem.update(*this);
+	});
 	for (auto& thread : threads) if (thread.joinable()) thread.join();
 	limitFramerate(frameRate);
+}
+
+Float SimpleRtsSimulation::timeStep() const
+{
+	if(paused) return 0.0;
+	return timeScale / frameRate;
 }
 
 void SimpleRtsRenderer::update(Window& window)
@@ -62,6 +75,7 @@ void SimpleRtsSimulation::render(Renderer& renderer) const
 	treeSystem.render(renderer);
 	humanSystem.render(renderer);
 	rabbitSystem.render(renderer);
+	berryBushSystem.render(renderer);
 }
 
 void SimpleRtsRenderer::connect(GameSimulation& simulation)
@@ -138,6 +152,7 @@ void SimpleRtsRenderer::renderInteractive(Window& window, TiledRectangle area) {
 void SimpleRtsRenderer::inputEvent(Window& window, const InputEvent input)
 {
 	if (input == enter) window.captureCursor();
+	if (input == pause) sim->paused = !sim->paused;
 	if (input == exit) window.releaseCursor();
 	if (input == toggleWireframe) wireframeMode = !wireframeMode;
 	player.inputEvent(window, input);

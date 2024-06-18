@@ -7,30 +7,33 @@
 #include "SimpleRtsHumanSystem.hpp"
 #include "SimpleRtsRabbitSystem.hpp"
 #include "SimpleRtsTerrainSystem.hpp"
+#include "SimpleRtsBerryBushSystem.hpp"
 
 struct SimpleRtsSimulation final : GameSimulation
 {
-	const Int   frameRate  = 60;
-	const Float timeScale  = 100.0f;
-	const Float mapSize    = 1000.0f;
 	const Float dimensions = mapSize * 2.0f;
-	const Float timeStep   = timeScale / frameRate;
+	const Float mapSize    = 1000.0f;
 
-	Float time = 0.0f;
+	Float time      = 0.0f;
+	Float frameRate = 60.0f;
+	Bool  paused    = false;
+	Float timeScale = 1.0f;
 
-	SimpleRtsBushSystem    bushSystem;
-	SimpleRtsTreeSystem    treeSystem;
-	SimpleRtsHumanSystem   humanSystem;
-	SimpleRtsRabbitSystem  rabbitSystem;
-	SimpleRtsTerrainSystem terrainSystem;
+	SimpleRtsBushSystem      bushSystem;
+	SimpleRtsTreeSystem      treeSystem;
+	SimpleRtsHumanSystem     humanSystem;
+	SimpleRtsRabbitSystem    rabbitSystem;
+	SimpleRtsTerrainSystem   terrainSystem;
+	SimpleRtsBerryBushSystem berryBushSystem;
 
-	[[nodiscard]] Vec2 getRandomSpawnPos(Float radius) const;
-	[[nodiscard]] Bool doesCollide(Vec2 pos, Float radius) const;
+	[[nodiscard]] Float timeStep() const;
+	[[nodiscard]] Vec2  getRandomSpawnPos(Float radius) const;
+	[[nodiscard]] Bool  doesCollide(Vec2 pos, Float radius) const;
 
 	void create() override;
 	void destroy() override;
-	void render(Renderer& renderer) const;
 	void update(Float delta) override;
+	void render(Renderer& renderer) const;
 };
 
 struct SimpleRtsRenderer final : GameRenderer
@@ -41,8 +44,9 @@ struct SimpleRtsRenderer final : GameRenderer
 	SimpleRtsSimulation* sim           = nullptr;
 
 	//input
-	InputEvent exit            = InputEvent(InputType::Mouse, RMB, false);
 	InputEvent enter           = InputEvent(InputType::Mouse, LMB, true);
+	InputEvent exit            = InputEvent(InputType::Mouse, RMB, false);
+	InputEvent pause           = InputEvent(InputType::KeyBoard, P, true);
 	InputEvent toggleWireframe = InputEvent(InputType::KeyBoard, F, false);
 
 	void update(Window& window) override;

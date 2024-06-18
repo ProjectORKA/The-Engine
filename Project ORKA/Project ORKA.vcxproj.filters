@@ -414,6 +414,10 @@
     <ClCompile Include="SimpleRtsSystem.cpp">
       <Filter>Apps\3D Apps\SimpleRts</Filter>
     </ClCompile>
+    <ClCompile Include="Keva.cpp" />
+    <ClCompile Include="SimpleRtsBerryBushSystem.cpp">
+      <Filter>Apps\3D Apps\SimpleRts\SimpleRtsBerryBushSystem</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Basics.hpp">
@@ -943,6 +947,10 @@
     </ClInclude>
     <ClInclude Include="DelaunayTriangulation.hpp">
       <Filter>Common\Math\DelaunayTriangulation</Filter>
+    </ClInclude>
+    <ClInclude Include="Keva.hpp" />
+    <ClInclude Include="SimpleRtsBerryBushSystem.hpp">
+      <Filter>Apps\3D Apps\SimpleRts\SimpleRtsBerryBushSystem</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1749,6 +1757,9 @@
     </Filter>
     <Filter Include="Common\Math\DelaunayTriangulation">
       <UniqueIdentifier>{d69bd4b2-8083-4443-9a1f-820d8cd1d7b9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Apps\3D Apps\SimpleRts\SimpleRtsBerryBushSystem">
+      <UniqueIdentifier>{fdf9496c-054c-4c6d-8bf8-50fbe488d660}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

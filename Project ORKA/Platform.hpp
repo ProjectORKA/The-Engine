@@ -6,4 +6,4 @@
 
 ULong totalPhysicalMemoryInBytes();
 ULong availablePhysicalMemoryInBytes();
-void  messageBox(String message, String title);
+void  messageBox(const String& message, const String& title);
