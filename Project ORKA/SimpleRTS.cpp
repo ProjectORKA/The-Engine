@@ -17,10 +17,14 @@ void SimpleRtsSimulation::destroy() {}
 
 void SimpleRtsSimulation::create()
 {
-	treeSystem.create(*this);
-	humanSystem.create(*this);
-	bushSystem.create(*this);
-	berryBushSystem.create(*this);
+	systems.push_back(&bodySystem);
+	systems.push_back(&bushSystem);
+	systems.push_back(&treeSystem);
+	systems.push_back(&humanSystem);
+	systems.push_back(&rabbitSystem);
+	systems.push_back(&terrainSystem);
+	systems.push_back(&berryBushSystem);
+	for(auto s : systems) s->create(*this);
 }
 
 void SimpleRtsRenderer::destroy(Window& window) {}
@@ -30,22 +34,30 @@ void SimpleRtsSimulation::update(Float delta)
 	time += timeStep();
 
 	Vector<Thread> threads;
-	threads.emplace_back([this]()
+	for (auto s : systems)
 	{
-		treeSystem.update(*this);
-	});
-	threads.emplace_back([this]()
-	{
-		humanSystem.update(*this);
-	});
-	threads.emplace_back([this]()
-	{
-		bushSystem.update(*this);
-	});
-	threads.emplace_back([this]()
-	{
-		berryBushSystem.update(*this);
-	});
+		threads.emplace_back([this,s]()
+		{
+			s->update(*this);
+		});
+	}
+
+	//threads.emplace_back([this]()
+	//{
+	//	treeSystem.update(*this);
+	//});
+	//threads.emplace_back([this]()
+	//{
+	//	humanSystem.update(*this);
+	//});
+	//threads.emplace_back([this]()
+	//{
+	//	bushSystem.update(*this);
+	//});
+	//threads.emplace_back([this]()
+	//{
+	//	berryBushSystem.update(*this);
+	//});
 	for (auto& thread : threads) if (thread.joinable()) thread.join();
 	limitFramerate(frameRate);
 }
@@ -71,11 +83,12 @@ void SimpleRtsRenderer::create(Window& window)
 
 void SimpleRtsSimulation::render(Renderer& renderer) const
 {
-	bushSystem.render(renderer);
-	treeSystem.render(renderer);
-	humanSystem.render(renderer);
-	rabbitSystem.render(renderer);
-	berryBushSystem.render(renderer);
+	for (auto s : systems) s->render(renderer);
+	renderer.useShader("color");
+	renderer.fill(255,0,0);
+	renderer.uniforms().setMMatrix(2000);
+	renderer.plane();
+	renderer.wireframeCube();
 }
 
 void SimpleRtsRenderer::connect(GameSimulation& simulation)

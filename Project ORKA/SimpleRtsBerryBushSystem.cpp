@@ -4,27 +4,25 @@
 
 void SimpleRtsBerryBushSystem::spawnEntity(const SimpleRtsSimulation& sim)
 {
-	positions.push_back(sim.getRandomSpawnPos(getEntityRadius()));
+	positions.push_back(sim.getRandomSpawnPos(radius));
 }
 
-Name SimpleRtsBerryBushSystem::getEntityName() const
+void SimpleRtsBerryBushSystem::render(Renderer& renderer) const
 {
-	return "BerryBush";
+	renderer.renderMeshInstanced("BerryBush", positions);
 }
 
-Int SimpleRtsBerryBushSystem::getEntityCount() const
+void SimpleRtsBerryBushSystem::create(const SimpleRtsSimulation& sim)
 {
-	return 3000;
+	for (int i = 0; i < count; i++) spawnEntity(sim);
 }
 
-Float SimpleRtsBerryBushSystem::getEntityRadius() const
+void SimpleRtsBerryBushSystem::eat(const Index berryBushId, SimpleRtsSimulation& sim)
 {
-	return 1.0f;
-}
-
-void SimpleRtsBerryBushSystem::eat(const Index berryBushId, SimpleRtsSimulation& sim) {
-	const Index bushId               = randomIntFast(sim.bushSystem.getEntityCount());
+	const Index bushId               = randomIntFast(sim.bushSystem.count);
 	const Vec2  position             = positions[berryBushId];
 	positions[berryBushId]           = sim.bushSystem.positions[bushId];
 	sim.bushSystem.positions[bushId] = position;
 }
+
+void SimpleRtsBerryBushSystem::destroy(const SimpleRtsSimulation& sim) {}

@@ -293,7 +293,9 @@ void ImageViewerRenderer::render(Window& window, const TiledRectangle area)
 	renderer.uniforms().setMMatrix(actualMatrix);
 
 	renderer.useShader("imageViewer");
-	renderer.renderMesh("centeredPlane");
+	renderer.plane();
+
+	//renderer.renderMesh("centeredPlane");
 
 	if (images.size() > 10) renderAllImages(window, area);
 }
@@ -355,7 +357,8 @@ void ImageViewerRenderer::renderAllImages(Window& window, const TiledRectangle a
 			const Float height = static_cast<Float>(image.getHeight());
 			width              = width / height * desiredHeight;
 			image.use(0);
-			window.renderer.rectangle(Vec2(xOffset, yOffset), Vec2(width, desiredHeight), false, false);
+			window.renderer.uniforms().setMMatrix(matrixFromPositionAndSize(Vec2(xOffset + width/2, yOffset + desiredHeight/2), Vec2(width, desiredHeight)));
+			window.renderer.plane();
 			xOffset += width;
 		}
 	}

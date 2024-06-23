@@ -7,11 +7,21 @@ struct Uniforms;
 
 struct GPUMesh
 {
-	void               unload();
 	[[nodiscard]] Bool isLoaded() const;
-	void               upload(const CPUMesh& cpuMesh);
-	void               render(Uniforms& uniforms) const;
-	void               renderInstances(Uniforms& uniforms, const Vector<Matrix>& transforms) const;
+
+	void unload();
+	void upload(const CPUMesh& cpuMesh);
+	void render(Uniforms& uniforms) const;
+	void renderInstances(Uniforms& uniforms, const Vector<Matrix>& transforms) const;
+
+	// update buffers manually
+	void updateIndexBuffer(const Vector<UInt>& indices);
+	void updateNormalBuffer(const Vector<Vec3>& normals) const;
+	void updateTangentBuffer(const Vector<Vec3>& tangents) const;
+	void updatePositionBuffer(const Vector<Vec3>& positions) const;
+	void updateBiTangentBuffer(const Vector<Vec3>& biTangents) const;
+	void updateVertexColorBuffer(const Vector<Vec3>& vertexColors) const;
+	void updateTextureCoordinateBuffer(const Vector<Vec2>& textureCoordinates) const;
 
 private:
 	OpenGLVertexArrayObject vao;

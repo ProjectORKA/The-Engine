@@ -5,7 +5,7 @@
 constexpr bool debugLoggingIsEnabled   = true;
 constexpr bool errorLoggingIsEnabled   = true;
 constexpr bool warningLoggingIsEnabled = true;
-constexpr bool debugBreakOnWarning     = true;
+constexpr bool debugBreakOnWarning     = false;
 constexpr bool debugLaunchParameters   = true;
 #else
 constexpr bool debugLoggingIsEnabled   = false;

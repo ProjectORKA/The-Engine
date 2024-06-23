@@ -20,6 +20,8 @@ void AIPlaygroundRenderer::create(Window& window)
 	framebuffer.add(WritePixelsFormat::RGBA, DataType::Float, FramebufferAttachment::Color0, true, Wrapping::Clamped);
 	framebuffer.add(WritePixelsFormat::Depth, DataType::Float, FramebufferAttachment::Depth, false, Wrapping::Clamped);
 	framebuffer.checkComplete();
+
+	network.create();
 }
 
 void AIPlaygroundRenderer::renderInteractive(Window& window, TiledRectangle area) { }

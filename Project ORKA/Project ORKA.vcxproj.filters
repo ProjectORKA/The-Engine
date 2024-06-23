@@ -418,6 +418,12 @@
     <ClCompile Include="SimpleRtsBerryBushSystem.cpp">
       <Filter>Apps\3D Apps\SimpleRts\SimpleRtsBerryBushSystem</Filter>
     </ClCompile>
+    <ClCompile Include="SimpleRtsBodySystem.cpp">
+      <Filter>Apps\3D Apps\SimpleRts\SimpleRtsBodySystem</Filter>
+    </ClCompile>
+    <ClCompile Include="SimpleRtsQuadtree.cpp">
+      <Filter>Apps\3D Apps\SimpleRts\SimpleRtsQuadtree</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Basics.hpp">
@@ -951,6 +957,12 @@
     <ClInclude Include="Keva.hpp" />
     <ClInclude Include="SimpleRtsBerryBushSystem.hpp">
       <Filter>Apps\3D Apps\SimpleRts\SimpleRtsBerryBushSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="SimpleRtsBodySystem.hpp">
+      <Filter>Apps\3D Apps\SimpleRts\SimpleRtsBodySystem</Filter>
+    </ClInclude>
+    <ClInclude Include="SimpleRtsQuadtree.hpp">
+      <Filter>Apps\3D Apps\SimpleRts\SimpleRtsQuadtree</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1760,6 +1772,12 @@
     </Filter>
     <Filter Include="Apps\3D Apps\SimpleRts\SimpleRtsBerryBushSystem">
       <UniqueIdentifier>{fdf9496c-054c-4c6d-8bf8-50fbe488d660}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Apps\3D Apps\SimpleRts\SimpleRtsBodySystem">
+      <UniqueIdentifier>{99e6eaa5-40ce-491b-be07-3b193b5a5d05}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Apps\3D Apps\SimpleRts\SimpleRtsQuadtree">
+      <UniqueIdentifier>{9f1ea9f2-801b-4a90-b027-127b7aa4ba9a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

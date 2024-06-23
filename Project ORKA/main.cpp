@@ -62,33 +62,35 @@
 #include "SoundBars.hpp"
 #include "Keva.hpp"
 
-//void testAll(const Int argc, Char* argv[])
-//{
-//	//FlappyBird		 game1;  game1.run();
-//	//MoonCrash          game2;  game2.run();
-//	//OrbitalOblivion    game3;  game3.run();
-//	//ProjectMelon       game4;  game4.run();	// transparency issue
-//	//Pong               game5;  game5.run();	// transparency issue
-//	//TripleNine         game6;  game6.run();
-//	//AIPlayground       game7;  game7.run();
-//	//DungeonsAndDiscord game8;  game8.run();
-//	//MindMapper         game9;  game9.run();
-//	//GPUSim             game10; game10.run();
-//	//GuessingGame       game11; game11.run();
-//	//HelloTriangle      game12; game12.run();
-//	//ImageViewer        game13; game13.run(argc,argv);
-//	//ImguiExample       game14; game14.run(); //shutdown issues
-//	//MSDFText           game15; game15.run();
-//	//Organizer          game17; game17.run();
-//	//PhysicsPlayground  game18; game18.run();
-//	//PrototypingSandbox game19; game19.run();
-//	//Sandbox            game20; game20.run();
-//	//SDFRenderer        game21; game21.run();
-//	//SimpleRTS          game22; game22.run();
-//	//Snake              game23; game23.run();
-//	//Sortr              game24; game24.run(argc, argv);
-//	//UISandbox          game25; game25.run();
-//}
+void testAll(const Int argc, Char* argv[])
+{
+	//FlappyBird		 game1;  game1.run();
+	//MoonCrash          game2;  game2.run();
+	//OrbitalOblivion    game3;  game3.run();
+	//ProjectMelon       game4;  game4.run();
+	//Pong               game5;  game5.run();
+	//TripleNine         game6;  game6.run();
+	//AIPlayground       game7;  game7.run();
+	//DungeonsAndDiscord game8;  game8.run();
+	//MindMapper         game9;  game9.run();
+	//GPUSim             game10; game10.run();
+	//GuessingGame       game11; game11.run();
+	//HelloTriangle      game12; game12.run();
+	//ImageViewer        game13; game13.run(argc,argv);
+	//ImguiExample       game14; game14.run(); //shutdown issues
+	//MSDFText           game15; game15.run();
+	//Organizer          game17; game17.run();
+	//PhysicsPlayground  game18; game18.run();
+	//PrototypingSandbox game19; game19.run();
+	//Sandbox            game20; game20.run();
+	//SDFRenderer        game21; game21.run();
+	//SimpleRts          game22; game22.run();
+	//Snake              game23; game23.run();
+	//Sortr              game24; game24.run(argc, argv);
+	//UISandbox          game25; game25.run();
+	//Keva               game26; game26.run();
+	//FunctionFinder     game27; game27.run();
+}
 
 Int main(const Int argc, Char* argv[])
 {
@@ -97,6 +99,8 @@ Int main(const Int argc, Char* argv[])
 
 	SimpleRts game;
 	game.run();
+
+	//testAll(argc, argv);
 
 	//FunctionFinder game;
 	//game.run();

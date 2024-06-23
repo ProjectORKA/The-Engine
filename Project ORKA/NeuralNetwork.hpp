@@ -51,7 +51,7 @@ struct NeuralNet
 	Vector<Int>    desiredOutputValues;
 	Float          learningRate = 0.1f;
 
-	void addNeuron(Vec3 position, Vector<ULL> input, Vector<ULL> output)
+	void addNeuron(const Vec3 position, const Vector<ULL>& input, const Vector<ULL>& output)
 	{
 		Neuron n;
 		n.position   = position;

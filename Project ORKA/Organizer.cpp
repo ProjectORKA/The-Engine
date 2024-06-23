@@ -77,7 +77,14 @@ void OrganizerRenderer::renderConnections(Renderer& r) const
 {
 	r.useShader("color");
 	r.fill(Color(0.5, 0.5, 0.5, 1));
-	r.lines(connections);
+
+	Vector<Vec3> lines;
+	for(auto & c : connections)
+	{
+		lines.emplace_back(c.start);
+		lines.emplace_back(c.end);
+	}
+	r.lines(lines);
 }
 
 void OrganizerRenderer::render(Window& window, TiledRectangle area)

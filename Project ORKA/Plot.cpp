@@ -31,13 +31,7 @@ CPUMesh Plot::createMesh() const
 
 void Plot::render(Renderer& renderer) const
 {
-	Vec2 last = points[0];
-
-	for(Vec2 p : points)
-	{
-		renderer.lineRenderer.renderLine(renderer, Vec3(last, 0), Vec3(p, 0));
-		last = p;
-	}
+	renderer.line(points);
 }
 
 void Plot::add(const Float a, const Float b)

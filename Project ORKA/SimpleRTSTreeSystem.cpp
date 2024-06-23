@@ -59,7 +59,7 @@ void SimpleRtsTreeSystem::spawnTree(const SimpleRtsSimulation& sim)
 	treeCount++;
 }
 
-bool SimpleRtsTreeSystem::doesCollide(const Vec2 position, const Float radius) const
+Bool SimpleRtsTreeSystem::doesCollide(const Vec2 position, const Float radius) const
 {
 	return circleCollidingWithCircles(position, radius, positions, treeRadius);
 }

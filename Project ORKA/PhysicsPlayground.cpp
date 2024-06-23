@@ -400,17 +400,25 @@ void PhysicsPlayGroundRenderer::render(Window& window, TiledRectangle area)
 
 	for(PhysicsParticle& p : sim->nodes) p.render(window, sim->nodes);
 
-	Vector<Line3D> lines;
+	Vector<Vec2> lines;
 	if(smoothCurve)
 	{
 		Vector<Vec2> smoothCurve;
 
 		for(Index i = 0; i < 1000; i++) smoothCurve.push_back(sim->getPointOnSmoothCurve(static_cast<Float>(i) / 1000.0f));
 
-		for(Index i = 0; i < smoothCurve.size() - 1; i++) lines.emplace_back(smoothCurve[i], smoothCurve[i + 1]);
+		for(Index i = 0; i < smoothCurve.size() - 1; i++){
+			lines.emplace_back(smoothCurve[i]);
+			lines.emplace_back(smoothCurve[i+1]);
+		};
 	}
-	else for(const PhysicsPlaygroundConnection& c : sim->connections) lines.emplace_back(sim->nodes[c.a].position, sim->nodes[c.b].position);
-
+	else
+	{
+		for(const PhysicsPlaygroundConnection& c : sim->connections){
+			lines.emplace_back(sim->nodes[c.a].position);
+			lines.emplace_back(sim->nodes[c.b].position);
+		}
+	}
 	renderer.fill(Color(1));
 	renderer.useShader("color");
 	renderer.lines(lines);
@@ -426,5 +434,6 @@ void PhysicsPlayGroundRenderer::renderInteractive(Window& window, TiledRectangle
 void PhysicsParticle::render(Window& window, Vector<PhysicsParticle>& particles) const
 {
 	Renderer& renderer = window.renderer;
-	renderer.rectangle(position, Vec2(particleSize));
+	renderer.uniforms().setMMatrix(matrixFromPositionAndSize(position, Vec2(particleSize)));
+	renderer.plane();
 }

@@ -1,13 +1,18 @@
 #pragma once
 #include "Basics.hpp"
+#include "Renderer.hpp"
 #include "SimpleRtsSystem.hpp"
 
-struct SimpleRtsBushSystem : SimpleRtsEntitySystem
+struct SimpleRtsBushSystem : SimpleRtsSystem
 {
-	Name  getEntityName() const override;
-	Int   getEntityCount() const override;
-	Float getEntityRadius() const override;
-	void  update(SimpleRtsSimulation& sim) override {};
-	void  destroy(const SimpleRtsSimulation& sim) override {};
-	void  spawnEntity(const SimpleRtsSimulation& sim) override;
+	Int          count  = 5000;
+	Float        radius = 1.0f;
+	Vector<Vec2> positions;
+
+	void update(SimpleRtsSimulation& sim) override;
+	void render(Renderer& renderer) const override;
+	void spawnEntity(const SimpleRtsSimulation& sim);
+	void create(const SimpleRtsSimulation& sim) override;
+	void destroy(const SimpleRtsSimulation& sim) override;
+	Bool doesCollide(const Vec2 position, const Float radius) const;
 };
