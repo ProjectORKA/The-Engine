@@ -8,11 +8,13 @@ CPUMesh::CPUMesh() = default;
 
 void CPUMesh::clearGeometry()
 {
-	positions.clear();
-	textureCoordinates.clear();
 	normals.clear();
-	vertexColors.clear();
 	indices.clear();
+	tangents.clear();
+	positions.clear();
+	biTangents.clear();
+	vertexColors.clear();
+	textureCoordinates.clear();
 }
 
 void CPUMesh::removeDoubles()
@@ -213,7 +215,7 @@ void CPUMesh::load(Name name)
 	{
 		const Path path = resourceManager.getMeshResourcePath(name);
 
-		bool error = false;
+		Bool error = false;
 
 		InFile file(path);
 

@@ -25,7 +25,8 @@ void UIContainer::render(Window& window, const TiledRectangle renderArea)
 		window.renderer.screenSpace();
 		window.renderer.useShader("color");
 		window.renderer.fill(backgroundColor);
-		window.renderer.rectangle(renderArea.position + IVec2(20), renderArea.size - IVec2(40), false, false);
+		window.renderer.uniforms().setMMatrix(matrixFromPositionAndSize(renderArea.position + IVec2(20), renderArea.size - IVec2(40)));
+		window.renderer.plane();
 	}
 
 	for(UInt i = 0; i < contents.size(); i++)

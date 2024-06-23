@@ -7,7 +7,6 @@
 
 struct Sound
 {
-
 	~Sound()
 	{
 		delete[] samples;
@@ -20,7 +19,7 @@ struct Sound
 
 	void generate(Double frequency) const
 	{
-		for(int i = 0; i < numSamples; ++i)
+		for (int i = 0; i < numSamples; ++i)
 		{
 			Double t   = toDouble(i) / sampleRate;
 			samples[i] = static_cast<ALshort>(std::sin(2.0 * PI * frequency * t) * 32767.0);
@@ -29,7 +28,7 @@ struct Sound
 
 	void generate2(Double frequency) const
 	{
-		for(int i = 0; i < numSamples; ++i)
+		for (int i = 0; i < numSamples; ++i)
 		{
 			Double t   = toDouble(i) / sampleRate;
 			samples[i] = static_cast<ALshort>(std::sin(2.0 * PI * frequency * mod(t, 0.5) * 2 - 1) * 32767.0);
@@ -59,11 +58,10 @@ private:
 	ALshort* samples    = nullptr;
 };
 
-
 struct AudioBuffer
 {
 	Bool   initialized = false;
-	ALuint bufferID = 0;
+	ALuint bufferID    = 0;
 
 	void setData(const Sound& sound) const
 	{
@@ -101,7 +99,7 @@ struct AudioBuffer
 struct AudioSource
 {
 	Bool   initialized = false;
-	ALuint sourceID = 0;
+	ALuint sourceID    = 0;
 
 	void setBuffer(const AudioBuffer& buffer) const
 	{
@@ -166,8 +164,8 @@ struct AudioSource
 struct AudioSystem
 {
 	Bool        initialized = false;
-	ALCdevice* device = nullptr;
-	ALCcontext* context = nullptr;
+	ALCdevice*  device      = nullptr;
+	ALCcontext* context     = nullptr;
 	Int         sampleCount = 44100;
 
 	AudioSystem()

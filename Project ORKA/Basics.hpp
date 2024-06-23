@@ -92,9 +92,9 @@ struct Name
 	Name& operator=(const char* other);
 	Name& operator=(const String& other);
 	[[nodiscard]] String toString() const;
-	[[nodiscard]] bool  operator<(const Name& other) const;
-	[[nodiscard]] bool  operator==(const Name& other) const;
-	[[nodiscard]] bool  operator!=(const Name& other) const;
+	[[nodiscard]] Bool  operator<(const Name& other) const;
+	[[nodiscard]] Bool  operator==(const Name& other) const;
+	[[nodiscard]] Bool  operator!=(const Name& other) const;
 private:
 	char data[nameSize] = {};
 };

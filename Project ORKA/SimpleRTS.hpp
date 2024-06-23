@@ -8,6 +8,44 @@
 #include "SimpleRtsRabbitSystem.hpp"
 #include "SimpleRtsTerrainSystem.hpp"
 #include "SimpleRtsBerryBushSystem.hpp"
+#include "SimpleRtsBodySystem.hpp"
+
+
+
+//struct SimpleRtsOctreeNode
+//{
+//	Index treeCount = 0;
+//	Index parentNode = 0;
+//	Index cnet = 0;
+//	Index cnwt = 0;
+//	Index cset = 0;
+//	Index cswt = 0;
+//	Index cneb = 0;
+//	Index cnwb = 0;
+//	Index cseb = 0;
+//	Index cswb = 0;
+//	Index nn = 0;
+//	Index ne = 0;
+//	Index ns = 0;
+//	Index nw = 0;
+//	Index level = 0;
+//};
+//
+//struct SimpleRTSOctree
+//{
+//	Vector<Vector<SimpleRtsOctreeNode>> levels;
+//	Vector<Float> sizes;
+//
+//	void create()
+//	{
+//		levels.emplace_back().emplace_back();
+//	}
+//
+//	void destroy()
+//	{
+//		levels.clear();
+//	}
+//};
 
 struct SimpleRtsSimulation final : GameSimulation
 {
@@ -19,12 +57,17 @@ struct SimpleRtsSimulation final : GameSimulation
 	Bool  paused    = false;
 	Float timeScale = 1.0f;
 
-	SimpleRtsBushSystem      bushSystem;
-	SimpleRtsTreeSystem      treeSystem;
-	SimpleRtsHumanSystem     humanSystem;
-	SimpleRtsRabbitSystem    rabbitSystem;
-	SimpleRtsTerrainSystem   terrainSystem;
+	//SimpleRTSOctree octree;
+
+	SimpleRtsBodySystem bodySystem;
+	SimpleRtsBushSystem bushSystem;
+	SimpleRtsTreeSystem treeSystem;
+	SimpleRtsHumanSystem humanSystem;
+	SimpleRtsRabbitSystem rabbitSystem;
+	SimpleRtsTerrainSystem terrainSystem;
 	SimpleRtsBerryBushSystem berryBushSystem;
+
+	Vector<SimpleRtsSystem*> systems;
 
 	[[nodiscard]] Float timeStep() const;
 	[[nodiscard]] Vec2  getRandomSpawnPos(Float radius) const;

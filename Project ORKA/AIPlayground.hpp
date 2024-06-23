@@ -8,11 +8,14 @@ struct TerrainZoomNeuralNet : NeuralNet
 {
 	void create()
 	{
-		for(Int x = 0; x < 128; x++)
+		Vector<ULL> input;
+		for(Int y = 0; y < 10; y++) input.emplace_back(y);
+
+		for(Int x = 0; x < 10; x++)
 		{
-			for(Int y = 0; y < 128; y++)
+			for(Int y = 0; y < 10; y++)
 			{
-				addNeuron(Vec3(x, y, 0), {}, {});
+				addNeuron(Vec3(x, y, 0), input, {});
 			}
 		}
 	}

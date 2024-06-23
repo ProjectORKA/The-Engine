@@ -52,12 +52,12 @@ Bool ImageViewerDatabase::doesColumnExist(const String& columnName)
 {
 	Vector<String> schema;
 
-	dataBase << "PRAGMA table_info(" + imageTableName + ");" >> [&](Int cid, String name, String type, Int notnull, String dflt_value, Int pk)
+	dataBase << "PRAGMA table_info(" + imageTableName + ");" >> [&](Int cid, const String& name, String type, Int notnull, String dflt_value, Int pk)
 	{
 		schema.push_back(name);
 	};
 
-	for (const auto& column : schema) if (column == columnName) return true;
+	for(const auto& column : schema) if (column == columnName) return true;
 	return false;
 }
 

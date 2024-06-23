@@ -78,8 +78,11 @@ void MelonPlayer::render(Window& window)
 	renderer.uniforms().setCustomColor(Vec4(1));
 	renderer.renderMesh("melonPlayerRolling");
 
-	Vector<Line3D> lines;
-	for(Int i = 0; i < static_cast<Int>(trail.size()) - 1; i++) lines.emplace_back(trail[i], trail[i + 1]);
+	Vector<Vec3> lines;
+	for(Int i = 0; i < static_cast<Int>(trail.size()) - 1; i++){
+		lines.emplace_back(trail[i]);
+		lines.emplace_back(trail[i+1]);
+	}
 	renderer.lines(lines);
 
 	smoke.render(renderer);

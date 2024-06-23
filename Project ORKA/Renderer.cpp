@@ -37,13 +37,11 @@ void Renderer::create()
 	textureSystem.create();
 	meshSystem.create();
 	shaderSystem.create();
+	primitivesRenderer.create();
 
 	// advanced systems
-	lineRenderer.create();
-	pointRenderer.create();
 	textRenderSystem.create(*this);
 	renderObjectSystem.create(*this);
-	rectangleRenderer.create(*this);
 
 	idFramebuffer.create("IDFramebuffer", Area(1920, 1080));
 	idFramebuffer.add(WritePixelsFormat::RGBAInteger, DataType::UInt, FramebufferAttachment::Color0, true, Wrapping::Clamped);
@@ -61,8 +59,10 @@ void Renderer::create()
 
 void Renderer::destroy()
 {
-	lineRenderer.destroy();
-	pointRenderer.destroy();
+	//lineRenderer.destroy();
+	//pointRenderer.destroy();
+	primitivesRenderer.destroy();
+
 	idFramebuffer.destroy();
 	postProcessFramebuffer.destroy();
 
@@ -267,9 +267,14 @@ Matrix Renderer::getScreenSpaceMatrix() const
 	return screenSpaceMatrix(width, height);
 }
 
+void Renderer::line(const Vector<Vec2>& line)
+{
+	primitivesRenderer.line(line, uniforms());
+}
+
 void Renderer::line(const Vector<Vec3>& line)
 {
-	lineRenderer.renderLine(*this, line);
+	primitivesRenderer.line(line, uniforms());
 }
 
 void Renderer::setCulling(const Bool culling) const
@@ -291,28 +296,28 @@ void Renderer::renderSky(const Camera& camera)
 
 void Renderer::lines(const Vector<Vec2>& lines)
 {
-	lineRenderer.renderLines(*this, lines);
+	primitivesRenderer.lines(lines, uniforms());
 }
 
 void Renderer::lines(const Vector<Vec3>& lines)
 {
-	lineRenderer.renderLines(*this, lines);
+	primitivesRenderer.lines(lines, uniforms());
 }
 
 void Renderer::points(const Vector<Vec2>& points)
 {
-	pointRenderer.render(*this, points);
+	primitivesRenderer.points(points, uniforms());
 }
 
 void Renderer::points(const Vector<Vec3>& points)
 {
-	pointRenderer.render(*this, points);
+	primitivesRenderer.points(points, uniforms());
 }
 
-void Renderer::lines(const Vector<Line3D>& lines)
-{
-	lineRenderer.renderLines(*this, lines);
-}
+//void Renderer::lines(const Vector<Line3D>& lines)
+//{
+//	primitivesRenderer.lines(lines,uniforms());
+//}
 
 void Renderer::fullScreenShader(const Name& name)
 {
@@ -357,12 +362,14 @@ void Renderer::setAlphaBlending(const Bool blending) const
 
 void Renderer::line(const Vec3 start, const Vec3 end)
 {
-	lineRenderer.renderLine(*this, start, end);
+	const Vector<Vec3> line = {start, end};
+	primitivesRenderer.line(line, uniforms());
 }
 
 void Renderer::line(const Vec2 start, const Vec2 end)
 {
-	lineRenderer.renderLine(*this, Vec3(start, 0.0f), Vec3(end, 0.0f));
+	const Vector<Vec3> line = {Vec3(start, 0.0f), Vec3(end, 0.0f)};
+	primitivesRenderer.line(line, uniforms());
 }
 
 void Renderer::arrow(const Vec2 start, const Vec2 end)
@@ -408,12 +415,14 @@ void Renderer::useTexture(const Name& name, const Index position)
 
 void Renderer::line(const Vector<Vec2>& line, const Matrix& matrix)
 {
-	lineRenderer.renderLine(*this, line, matrix);
+	uniforms().setMMatrix(matrix);
+	primitivesRenderer.line(line, uniforms());
 }
 
 void Renderer::lines(const Vector<Vec2>& lines, const Matrix& matrix)
 {
-	lineRenderer.renderLines(*this, lines, matrix);
+	uniforms().setMMatrix(matrix);
+	primitivesRenderer.lines(lines, uniforms());
 }
 
 void Renderer::normalizedSpaceWithAspectRatio(const Float aspectRatio)
@@ -520,10 +529,10 @@ void Renderer::postProcess(const Name& name, const Framebuffer& source, const Fr
 	renderMesh("fullScreenQuad");
 }
 
-void Renderer::rectangle(const Vec2 pos, const Vec2 size, const Bool overrideColor, const Bool centered)
-{
-	rectangleRenderer.render(*this, pos, size, overrideColor, centered);
-}
+//void Renderer::rectangle(const Vec2 pos, const Vec2 size, const Bool overrideColor, const Bool centered)
+//{
+//	rectangleRenderer.render(*this, pos, size, overrideColor, centered);
+//}
 
 void Renderer::setAlphaBlending(const Bool enable, const BlendFunction src, const BlendFunction dst, const BlendEquation eq) const
 {

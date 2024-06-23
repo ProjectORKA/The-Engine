@@ -132,8 +132,10 @@
     <ClCompile Include="ShaderProgram.cpp" />
     <ClCompile Include="ShaderSystem.cpp" />
     <ClCompile Include="SimpleRtsBerryBushSystem.cpp" />
+    <ClCompile Include="SimpleRtsBodySystem.cpp" />
     <ClCompile Include="SimpleRtsBushSystem.cpp" />
     <ClCompile Include="SimpleRtsHumanSystem.cpp" />
+    <ClCompile Include="SimpleRtsQuadtree.cpp" />
     <ClCompile Include="SimpleRtsRabbitSystem.cpp" />
     <ClCompile Include="SimpleRtsSystem.cpp" />
     <ClCompile Include="SimpleRtsTerrainSystem.cpp" />
@@ -175,7 +177,9 @@
     <ClCompile Include="WindowAPI.cpp" />
     <ClInclude Include="Music Visualizer.hpp" />
     <ClInclude Include="SimpleRtsBerryBushSystem.hpp" />
+    <ClInclude Include="SimpleRtsBodySystem.hpp" />
     <ClInclude Include="SimpleRtsBushSystem.hpp" />
+    <ClInclude Include="SimpleRtsQuadtree.hpp" />
     <ClInclude Include="SimpleRtsRabbitSystem.hpp" />
     <ClInclude Include="SimpleRtsSystem.hpp" />
     <ClInclude Include="SimpleRtsTreeStumpSystem.hpp" />
