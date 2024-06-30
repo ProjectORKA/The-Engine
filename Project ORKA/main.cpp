@@ -97,10 +97,13 @@ Int main(const Int argc, Char* argv[])
 	Engine engine;
 	engine.create(argc, argv);
 
-	SimpleRts game;
-	game.run();
+	//SimpleRts game;
+	//game.run();
 
 	//testAll(argc, argv);
+
+	ImageViewer game;
+	game.run(argc, argv);
 
 	//FunctionFinder game;
 	//game.run();

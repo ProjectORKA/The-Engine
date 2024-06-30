@@ -10,7 +10,6 @@
 // add animated webp support
 // converter button
 
-
 struct ImageViewerRenderer final : GameRenderer
 {
 	Vector<ImageViewerResource> images;
