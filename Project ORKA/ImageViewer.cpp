@@ -324,10 +324,7 @@ void ImageViewerRenderer::inputEvent(Window& window, const InputEvent input)
 	{
 		if (!images.empty())
 		{
-			//deleteFile(images[currentImageId].getPath());
-			//images[currentImageId].destroy();
-			//images.erase(images.begin() + currentImageId);
-
+			deleteFile(images[currentImageId].getPath());
 			removeImage();
 		}
 	}
@@ -357,7 +354,7 @@ void ImageViewerRenderer::renderAllImages(Window& window, const TiledRectangle a
 			const Float height = static_cast<Float>(image.getHeight());
 			width              = width / height * desiredHeight;
 			image.use(0);
-			window.renderer.uniforms().setMMatrix(matrixFromPositionAndSize(Vec2(xOffset + width/2, yOffset + desiredHeight/2), Vec2(width, desiredHeight)));
+			window.renderer.uniforms().setMMatrix(matrixFromPositionAndSize(Vec2(xOffset + width / 2, yOffset + desiredHeight / 2), Vec2(width, desiredHeight)));
 			window.renderer.plane();
 			xOffset += width;
 		}
