@@ -57,7 +57,7 @@ Bool ImageViewerDatabase::doesColumnExist(const String& columnName)
 		schema.push_back(name);
 	};
 
-	for(const auto& column : schema) if (column == columnName) return true;
+	for (const auto& column : schema) if (column == columnName) return true;
 	return false;
 }
 

@@ -28,6 +28,7 @@
     <ClCompile Include="Debug.cpp" />
     <ClCompile Include="FileTypes.cpp" />
     <ClCompile Include="FlappyBird.cpp" />
+    <ClCompile Include="Fonts.cpp" />
     <ClCompile Include="FunctionFinder.cpp" />
     <ClCompile Include="Hash.cpp" />
     <ClCompile Include="Hello Triangle.cpp" />
@@ -39,6 +40,7 @@
     <ClInclude Include="AxisNeighborPrototype2.hpp" />
     <ClInclude Include="DelaunayTriangulation.hpp" />
     <ClInclude Include="DNDBase.hpp" />
+    <ClInclude Include="Fonts.hpp" />
     <ClInclude Include="FunctionFinder.hpp" />
     <ClInclude Include="Hash.hpp" />
     <ClInclude Include="ImageViewerDatabase.hpp" />
@@ -175,6 +177,7 @@
     <ClCompile Include="VoxelRenderer.cpp" />
     <ClCompile Include="Window.cpp" />
     <ClCompile Include="WindowAPI.cpp" />
+    <ClInclude Include="LockFreeQueue.hpp" />
     <ClInclude Include="Music Visualizer.hpp" />
     <ClInclude Include="SimpleRtsBerryBushSystem.hpp" />
     <ClInclude Include="SimpleRtsBodySystem.hpp" />
@@ -205,7 +208,6 @@
     <ClInclude Include="FileTypes.hpp" />
     <ClInclude Include="FramebufferTexture.hpp" />
     <ClInclude Include="Hello Triangle.hpp" />
-    <ClInclude Include="InputSystem.hpp" />
     <ClInclude Include="KDTreeImplementation.hpp" />
     <ClInclude Include="LifeTimeGuard.hpp" />
     <ClInclude Include="CPUMesh.hpp" />
@@ -448,7 +450,6 @@
     <None Include="Data\shaders\MelonUberShader.vert" />
     <None Include="Data\shaders\mooncrashVertexColor.frag" />
     <None Include="Data\shaders\mooncrashVertexColor.vert" />
-    <None Include="test.ui" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="icon.ico" />
