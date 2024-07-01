@@ -215,8 +215,11 @@ void loadImage(ImageViewerRenderer& viewer, const Index imageId)
 	{
 		try
 		{
-			viewer.images[imageId].loadIntoRam();
-			jobSystem.enqueue(addImageToDatabase, std::ref(viewer), imageId);
+			if (viewer.images.size() > imageId)
+			{
+				viewer.images[imageId].loadIntoRam();
+				jobSystem.enqueue(addImageToDatabase, std::ref(viewer), imageId);
+			}
 		}
 		catch (std::exception e)
 		{
@@ -230,13 +233,16 @@ void loadImage(ImageViewerRenderer& viewer, const Index imageId)
 void addImageToDatabase(ImageViewerRenderer& viewer, const Index imageId)
 {
 	viewer.imagesMutex.lock_shared();
-	const Path   imagePath   = viewer.images[imageId].getPath();
-	const String hash        = viewer.images[imageId].getHash();
-	const Float  aspectRatio = viewer.images[imageId].getAspectRatio();
-	viewer.imagesMutex.unlock_shared();
+	if (viewer.images.size() > imageId)
+	{
+		const Path   imagePath   = viewer.images[imageId].getPath();
+		const String hash        = viewer.images[imageId].getHash();
+		const Float  aspectRatio = viewer.images[imageId].getAspectRatio();
+		viewer.imagesMutex.unlock_shared();
 
-	viewer.database.add(hash, imagePath);
-	viewer.database.setValue(hash, "aspect", aspectRatio);
+		viewer.database.add(hash, imagePath);
+		viewer.database.setValue(hash, "aspect", aspectRatio);
+	}
 };
 
 void ImageViewerRenderer::renderInteractive(Window& window, TiledRectangle area) {}

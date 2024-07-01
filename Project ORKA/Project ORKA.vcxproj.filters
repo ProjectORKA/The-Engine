@@ -383,7 +383,6 @@
     <ClCompile Include="ParallelizedConvexHullPrototype.cpp">
       <Filter>Apps\3D Apps\Prototyping\Prototypes\ParalellizedConvexHullPrototype</Filter>
     </ClCompile>
-    <ClCompile Include="Platform.cpp" />
     <ClCompile Include="UIContainer.cpp">
       <Filter>Systems\UserInterface\UIContainer</Filter>
     </ClCompile>
@@ -414,7 +413,6 @@
     <ClCompile Include="SimpleRtsSystem.cpp">
       <Filter>Apps\3D Apps\SimpleRts</Filter>
     </ClCompile>
-    <ClCompile Include="Keva.cpp" />
     <ClCompile Include="SimpleRtsBerryBushSystem.cpp">
       <Filter>Apps\3D Apps\SimpleRts\SimpleRtsBerryBushSystem</Filter>
     </ClCompile>
@@ -423,6 +421,15 @@
     </ClCompile>
     <ClCompile Include="SimpleRtsQuadtree.cpp">
       <Filter>Apps\3D Apps\SimpleRts\SimpleRtsQuadtree</Filter>
+    </ClCompile>
+    <ClCompile Include="Keva.cpp">
+      <Filter>Apps\2D Apps\Keva</Filter>
+    </ClCompile>
+    <ClCompile Include="Fonts.cpp">
+      <Filter>Systems\UserInterface\Window\Renderer\TextRenderSystem\Fonts</Filter>
+    </ClCompile>
+    <ClCompile Include="Platform.cpp">
+      <Filter>Common\Platform</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -732,7 +739,6 @@
     <ClInclude Include="Scene.hpp">
       <Filter>Systems\SceneSystem\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="Settings.hpp" />
     <ClInclude Include="SceneSystem.hpp">
       <Filter>Systems\SceneSystem</Filter>
     </ClInclude>
@@ -901,7 +907,6 @@
     <ClInclude Include="UIContainer.hpp">
       <Filter>Systems\UserInterface\UIContainer</Filter>
     </ClInclude>
-    <ClInclude Include="InputSystem.hpp" />
     <ClInclude Include="JobQueue.hpp">
       <Filter>Common\Datastructures\JobQueue</Filter>
     </ClInclude>
@@ -911,7 +916,6 @@
     <ClInclude Include="AxisNeighborPrototype2.hpp">
       <Filter>Apps\3D Apps\Prototyping\Prototypes</Filter>
     </ClInclude>
-    <ClInclude Include="Windows.hpp" />
     <ClInclude Include="KDTree2.hpp">
       <Filter>Common\Datastructures\KDTree</Filter>
     </ClInclude>
@@ -954,7 +958,6 @@
     <ClInclude Include="DelaunayTriangulation.hpp">
       <Filter>Common\Math\DelaunayTriangulation</Filter>
     </ClInclude>
-    <ClInclude Include="Keva.hpp" />
     <ClInclude Include="SimpleRtsBerryBushSystem.hpp">
       <Filter>Apps\3D Apps\SimpleRts\SimpleRtsBerryBushSystem</Filter>
     </ClInclude>
@@ -963,6 +966,21 @@
     </ClInclude>
     <ClInclude Include="SimpleRtsQuadtree.hpp">
       <Filter>Apps\3D Apps\SimpleRts\SimpleRtsQuadtree</Filter>
+    </ClInclude>
+    <ClInclude Include="Keva.hpp">
+      <Filter>Apps\2D Apps\Keva</Filter>
+    </ClInclude>
+    <ClInclude Include="Fonts.hpp">
+      <Filter>Systems\UserInterface\Window\Renderer\TextRenderSystem\Fonts</Filter>
+    </ClInclude>
+    <ClInclude Include="Settings.hpp">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="LockFreeQueue.hpp">
+      <Filter>Common\Datastructures\LockFreeQueue</Filter>
+    </ClInclude>
+    <ClInclude Include="Windows.hpp">
+      <Filter>Common\Platform</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1251,7 +1269,6 @@
     <None Include="Data\Shaders\sortr.vert">
       <Filter>Apps\2D Apps\Sortr\Shaders</Filter>
     </None>
-    <None Include="test.ui" />
     <None Include="Data\Shaders\simpleRTSSky.frag">
       <Filter>Shaders</Filter>
     </None>
@@ -1473,9 +1490,6 @@
     <Filter Include="Systems\UserInterface\Window\Renderer\TextureSystem\CPUTexture">
       <UniqueIdentifier>{5363af42-9254-4f5c-85d1-89b6f486d0f7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Systems\UserInterface\Window\Renderer\Text Rendering">
-      <UniqueIdentifier>{04eb7452-1d0f-4a9b-8435-446d4ccc8b93}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Systems\UserInterface\Window\Renderer\ParticleSystem">
       <UniqueIdentifier>{cdcd5c3b-5d08-423a-9911-7d1f7db1e495}</UniqueIdentifier>
     </Filter>
@@ -1616,9 +1630,6 @@
     </Filter>
     <Filter Include="Common\Platform">
       <UniqueIdentifier>{8933aa0c-4666-44e8-a328-51823abb4e59}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Common\Platform\Device">
-      <UniqueIdentifier>{7a30a2ba-64e7-497a-81f1-973b0a71a6cb}</UniqueIdentifier>
     </Filter>
     <Filter Include="Common\Platform\FileSystem">
       <UniqueIdentifier>{cc2934b3-ce7a-4fef-9580-cd38895aa710}</UniqueIdentifier>
@@ -1778,6 +1789,15 @@
     </Filter>
     <Filter Include="Apps\3D Apps\SimpleRts\SimpleRtsQuadtree">
       <UniqueIdentifier>{9f1ea9f2-801b-4a90-b027-127b7aa4ba9a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Apps\2D Apps\Keva">
+      <UniqueIdentifier>{0cfeb7de-4e74-43b2-b730-f0786ab899bf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Systems\UserInterface\Window\Renderer\TextRenderSystem\Fonts">
+      <UniqueIdentifier>{26047a3d-2355-4b07-b9c0-aa5c411e2ebe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Common\Datastructures\LockFreeQueue">
+      <UniqueIdentifier>{d84e759e-a9a5-40d9-a9d6-90932ad99691}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

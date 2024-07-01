@@ -29,38 +29,37 @@
 //  You can already choose some games and projects to play around in.
 //  Just replace the Game in the main() function with one of the projects underneath
 
-#include "FlappyBird.hpp"
-#include "MoonCrash.hpp"
-#include "Orbital Oblivion.hpp"
-#include "ProjectMelon.hpp"
-#include "Pong.hpp"
-#include "TripleNine.hpp"
-
-#include "AIPlayground.hpp"
-#include "AudioSystem.hpp"
-#include "DungeonsAndDiscord.hpp"
-#include "FunctionFinder.hpp"
-#include "MindMapper.hpp"
-#include "GPUSim.hpp"
-#include "GuessingGame.hpp"
-#include "Hello Triangle.hpp"
+//#include "FlappyBird.hpp"
+//#include "MoonCrash.hpp"
+//#include "Orbital Oblivion.hpp"
+//#include "ProjectMelon.hpp"
+//#include "Pong.hpp"
+//#include "TripleNine.hpp"
+//
+//#include "AIPlayground.hpp"
+//#include "AudioSystem.hpp"
+//#include "DungeonsAndDiscord.hpp"
+//#include "FunctionFinder.hpp"
+//#include "MindMapper.hpp"
+//#include "GPUSim.hpp"
+//#include "GuessingGame.hpp"
+//#include "Hello Triangle.hpp"
 #include "ImageViewer.hpp"
-#include "ImguiExample.hpp"
-#include "JobSystem2.hpp"
-#include "MSDFText.hpp"
-#include "Organizer.hpp"
-#include "PhysicsPlayground.hpp"
-#include "PrototypingSandbox.hpp"
-#include "RedDotHack.hpp"
-#include "Sandbox.hpp"
-#include "SDFRenderer.hpp"
-#include "SimpleRTS.hpp"
-#include "Snake.hpp"
-#include "Sortr.hpp"
-#include "UISandbox.hpp"
-#include "Music Visualizer.hpp"
-#include "SoundBars.hpp"
-#include "Keva.hpp"
+//#include "ImguiExample.hpp"
+//#include "MSDFText.hpp"
+//#include "Organizer.hpp"
+//#include "PhysicsPlayground.hpp"
+//#include "PrototypingSandbox.hpp"
+//#include "RedDotHack.hpp"
+//#include "Sandbox.hpp"
+//#include "SDFRenderer.hpp"
+//#include "SimpleRTS.hpp"
+//#include "Snake.hpp"
+//#include "Sortr.hpp"
+//#include "UISandbox.hpp"
+//#include "Music Visualizer.hpp"
+//#include "SoundBars.hpp"
+//#include "Keva.hpp"
 
 void testAll(const Int argc, Char* argv[])
 {
@@ -97,19 +96,8 @@ Int main(const Int argc, Char* argv[])
 	Engine engine;
 	engine.create(argc, argv);
 
-	//SimpleRts game;
-	//game.run();
-
-	//testAll(argc, argv);
-
 	ImageViewer game;
 	game.run(argc, argv);
-
-	//FunctionFinder game;
-	//game.run();
-
-	//musicVisualizer();
-	//RayLib::soundBars();
 }
 
 #include "Windows.hpp"
