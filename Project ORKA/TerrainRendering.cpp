@@ -1,11 +1,11 @@
 #include "TerrainRendering.hpp"
 #include "Random.hpp"
 
-CPUMesh createTerrainMesh(const AdvancedHeightMap& heightmap)
+CpuMesh createTerrainMesh(const AdvancedHeightMap& heightmap)
 {
 	if(heightmap.loaded)
 	{
-		CPUMesh mesh;
+		CpuMesh mesh;
 		mesh.name          = "terrain";
 		mesh.primitiveMode = PrimitiveMode::TriangleStrip;
 		mesh.clearGeometry();

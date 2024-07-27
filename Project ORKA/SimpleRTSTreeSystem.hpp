@@ -34,8 +34,9 @@ struct SimpleRtsTreeSystem : SimpleRtsSystem
 	void  render(Renderer& renderer) const override;
 	void  update(SimpleRtsSimulation& sim) override;
 	void  spawnTree(const SimpleRtsSimulation& sim);
-	bool  doesCollide(Vec2 position, Float radius) const;
-	void  destroy(const SimpleRtsSimulation& sim) override;
-	void  create(const SimpleRtsSimulation& sim) override;
-	void  cutTree(const SimpleRtsSimulation& sim, UInt id);
+	bool doesCollide(Vec2 position, Float radius) const;
+	void create(const SimpleRtsSimulation& sim) override;
+	void destroy(const SimpleRtsSimulation& sim) override;
+	void cutTree(const SimpleRtsSimulation& sim, UInt id);
+	void forceSpawnTree(const SimpleRtsSimulation& sim, Vec2 position);
 };

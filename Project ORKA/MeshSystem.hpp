@@ -18,7 +18,7 @@ struct NameTable
 
 struct BasicMeshes
 {
-	GPUMesh fullscreenMesh;
+	GpuMesh fullscreenMesh;
 
 	void create();
 	void destroy();
@@ -27,15 +27,15 @@ struct BasicMeshes
 struct MeshSystem
 {
 	NameTable       meshNames;
-	Vector<GPUMesh> gpuMeshes;
+	Vector<GpuMesh> gpuMeshes;
 	BasicMeshes     basicMeshes;
 	Index           currentMeshId = 0;
 
 	void     create();
 	void     destroy();
-	GPUMesh& currentMesh();
+	GpuMesh& currentMesh();
 	void     use(Index meshId);
-	void     addMesh(const CPUMesh& cpuMesh);
+	void     addMesh(const CpuMesh& cpuMesh);
 	void     render(Uniforms& uniforms, Index meshId);
 	void     renderFullscreen(Uniforms& uniforms) const;
 	void     use(const Name& name);

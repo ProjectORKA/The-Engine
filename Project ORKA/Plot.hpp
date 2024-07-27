@@ -10,7 +10,7 @@ struct Plot
 	Vector<Vec2> points;
 
 	void                  add(Vec2 value);
-	[[nodiscard]] CPUMesh createMesh() const;
+	[[nodiscard]] CpuMesh createMesh() const;
 	void                  add(Float a, Float b);
 	void                  render(Renderer& renderer) const;
 };

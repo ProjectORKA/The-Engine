@@ -26,7 +26,7 @@ enum class MeshDataFlags : UShort
 	VertexColor   = 32,
 };
 
-struct CPUMesh
+struct CpuMesh
 {
 	Name          name          = "empty";
 	BufferUsage   drawMode      = BufferUsage::StaticDraw;
@@ -48,15 +48,15 @@ struct CPUMesh
 	[[nodiscard]] Bool hasVertexColors() const;
 	[[nodiscard]] Bool hasTextureCoordinates() const;
 
-	CPUMesh();
-	explicit CPUMesh(const Graph& graph);
+	CpuMesh();
+	explicit CpuMesh(const Graph& graph);
 
 	void clearGeometry();
 	void removeDoubles();
 	void checkIntegrity();
 	void move(Vec3 moveVector);
 	void calculateSmoothNormals();
-	void merge(const CPUMesh& source);
+	void merge(const CpuMesh& source);
 	void render(Renderer& renderer) const;
 	void load(Name name);
 	void saveMeshFile();

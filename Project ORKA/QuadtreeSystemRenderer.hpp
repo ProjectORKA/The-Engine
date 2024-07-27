@@ -8,7 +8,7 @@ struct PlanetSystemPlayer;
 
 struct QuadtreeNodeRenderData
 {
-	GPUMesh       terrainMesh;
+	GpuMesh       terrainMesh;
 	Float         nodeDrawDistance       = 0.0;
 	Bool          drawn                  = false;
 	Bool          subdivided             = false;

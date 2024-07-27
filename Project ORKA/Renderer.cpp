@@ -74,11 +74,6 @@ void Renderer::destroy()
 	textureSystem.destroy();
 }
 
-Bool Renderer::getCulling() const
-{
-	return openGlState.culling;
-}
-
 void Renderer::screenSpace()
 {
 	uniforms().setVMatrix(getScreenSpaceMatrix());
@@ -91,11 +86,6 @@ void Renderer::rerenderMesh()
 	meshSystem.currentMesh().render(uniforms());
 }
 
-void Renderer::drawToWindow() const
-{
-	OpenGL::apiBindDrawFramebuffer(0);
-}
-
 Area Renderer::getArea() const
 {
 	return windowSize;
@@ -106,10 +96,31 @@ Uniforms& Renderer::uniforms()
 	return shaderSystem.uniforms;
 }
 
+void Renderer::plane() {
+	primitivesRenderer.rectangle(uniforms());
+}
+
+void Renderer::wireframeCubeCentered() {
+	primitivesRenderer.wireframeCubeCentered(uniforms());
+}
+
+void Renderer::wireframeCube() {
+	primitivesRenderer.wireframeCube(uniforms());
+}
+
+void Renderer::wireframeCubes(const Vector<Matrix> & matrices) {
+	primitivesRenderer.wireframeCubes(uniforms(), matrices);
+}
+
 void Renderer::normalizedSpace()
 {
 	uniforms().setVMatrix(Matrix(1));
 	uniforms().setPMatrix(Matrix(1));
+}
+
+Bool Renderer::getCulling() const
+{
+	return openGlState.culling;
 }
 
 Float Renderer::deltaTime() const
@@ -117,11 +128,9 @@ Float Renderer::deltaTime() const
 	return time.getDelta();
 }
 
-void Renderer::blendModeAdditive() const
+void Renderer::drawToWindow() const
 {
-	OpenGL::apiSetBlending(true);
-	OpenGL::apiBlendFunc(BlendFunction::One, BlendFunction::One);
-	OpenGL::apiBlendEquation(BlendEquation::Add);
+	OpenGL::apiBindDrawFramebuffer(0);
 }
 
 Area Renderer::getWindowSize() const
@@ -154,9 +163,18 @@ void Renderer::fill(const Vec4 color)
 	uniforms().setCustomColor(color);
 }
 
-void Renderer::pollGraphicsApiError() const
+void Renderer::begin(const Area size)
 {
-	if (const UInt error = OpenGL::apiGetError()) logError("Opengl Error: " + toString(error));
+	time.update(); // advances the time
+
+	mutex.lock(); // used for synchronizing other threads
+	setFramebufferSize(size);
+	setRenderRegion(TiledRectangle(size));
+
+	uniforms().setWindowWidth(size.x);
+	uniforms().setWindowHeight(size.y);
+	uniforms().setTime(time.getDelta()); // makes time available to shaders
+	drawToWindow();
 }
 
 void Renderer::normalizedScreenSpace()
@@ -195,6 +213,13 @@ DepthTestOverride::~DepthTestOverride()
 	this->renderer->setDepthTest(stored);
 }
 
+void Renderer::blendModeAdditive() const
+{
+	OpenGL::apiSetBlending(true);
+	OpenGL::apiBlendFunc(BlendFunction::One, BlendFunction::One);
+	OpenGL::apiBlendEquation(BlendEquation::Add);
+}
+
 void Renderer::useMesh(const Name& name)
 {
 	// selects a mesh to be rendered but doesn't render it
@@ -206,18 +231,9 @@ void Renderer::setColor(const Color color)
 	uniforms().setCustomColor(color);
 }
 
-void Renderer::begin(const Area size)
+void Renderer::pollGraphicsApiError() const
 {
-	time.update(); // advances the time
-
-	mutex.lock(); // used for synchronizing other threads
-	setFramebufferSize(size);
-	setRenderRegion(TiledRectangle(size));
-
-	uniforms().setWindowWidth(size.x);
-	uniforms().setWindowHeight(size.y);
-	uniforms().setTime(time.getDelta()); // makes time available to shaders
-	drawToWindow();
+	if (const UInt error = OpenGL::apiGetError()) logError("Opengl Error: " + toString(error));
 }
 
 void Renderer::renderMesh(const Name& name)
@@ -277,11 +293,6 @@ void Renderer::line(const Vector<Vec3>& line)
 	primitivesRenderer.line(line, uniforms());
 }
 
-void Renderer::setCulling(const Bool culling) const
-{
-	OpenGL::apiSetCulling(culling);
-}
-
 void Renderer::renderSky(const Camera& camera)
 {
 	setCulling(false);
@@ -314,17 +325,56 @@ void Renderer::points(const Vector<Vec3>& points)
 	primitivesRenderer.points(points, uniforms());
 }
 
-//void Renderer::lines(const Vector<Line3D>& lines)
-//{
-//	primitivesRenderer.lines(lines,uniforms());
-//}
-
 void Renderer::fullScreenShader(const Name& name)
 {
 	setWireframeMode(false);
 	useShader(name);
 	meshSystem.renderFullscreen(uniforms());
 	setWireframeMode(wireframeMode);
+}
+
+void Renderer::setFramebufferSize(const Area area)
+{
+	windowSize = area;
+	idFramebuffer.resize(area);
+	postProcessFramebuffer.resize(area);
+}
+
+void Renderer::setCulling(const Bool culling) const
+{
+	OpenGL::apiSetCulling(culling);
+}
+
+void Renderer::line(const Vec3 start, const Vec3 end)
+{
+	const Vector<Vec3> line = {start, end};
+	primitivesRenderer.line(line, uniforms());
+}
+
+void Renderer::line(const Vec2 start, const Vec2 end)
+{
+	const Vector<Vec3> line = {Vec3(start, 0.0f), Vec3(end, 0.0f)};
+	primitivesRenderer.line(line, uniforms());
+}
+
+void Renderer::setWireframeMode(const Bool mode) const
+{
+	if (mode) OpenGL::apiPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	else OpenGL::apiPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+}
+
+void Renderer::arrow(const Vec2 start, const Vec2 end)
+{
+	arrow(Vec3(start, 0), Vec3(end, 0));
+}
+
+void Renderer::arrow(const Vec3 start, const Vec3 end)
+{
+	useShader("color");
+	fill(Vec4(1, 0, 0, 1));
+	const Vec3 direction = end - start;
+	uniforms().setMMatrix(matrixFromDirectionAndPosition(direction, start));
+	renderMesh("arrow");
 }
 
 void Renderer::clearBackground(const Color color) const
@@ -334,11 +384,10 @@ void Renderer::clearBackground(const Color color) const
 	OpenGL::apiClearDepth();
 }
 
-void Renderer::setFramebufferSize(const Area area)
+void Renderer::circle(const Vec2 pos, const Float radius)
 {
-	windowSize = area;
-	idFramebuffer.resize(area);
-	postProcessFramebuffer.resize(area);
+	uniforms().setMMatrix(matrixFromPositionAndSize(pos, radius));
+	renderMesh("circle");
 }
 
 void Renderer::setDepthTest(const Bool isUsingDepth) const
@@ -360,47 +409,9 @@ void Renderer::setAlphaBlending(const Bool blending) const
 	}
 }
 
-void Renderer::line(const Vec3 start, const Vec3 end)
-{
-	const Vector<Vec3> line = {start, end};
-	primitivesRenderer.line(line, uniforms());
-}
-
-void Renderer::line(const Vec2 start, const Vec2 end)
-{
-	const Vector<Vec3> line = {Vec3(start, 0.0f), Vec3(end, 0.0f)};
-	primitivesRenderer.line(line, uniforms());
-}
-
-void Renderer::arrow(const Vec2 start, const Vec2 end)
-{
-	arrow(Vec3(start, 0), Vec3(end, 0));
-}
-
-void Renderer::arrow(const Vec3 start, const Vec3 end)
-{
-	useShader("color");
-	fill(Vec4(1, 0, 0, 1));
-	const Vec3 direction = end - start;
-	uniforms().setMMatrix(matrixFromDirectionAndPosition(direction, start));
-	renderMesh("arrow");
-}
-
-void Renderer::circle(const Vec2 pos, const Float radius)
-{
-	uniforms().setMMatrix(matrixFromPositionAndSize(pos, radius));
-	renderMesh("circle");
-}
-
 void Renderer::setRenderRegion(const TiledRectangle region)
 {
 	renderRegion.set(region);
-}
-
-void Renderer::setWireframeMode(const Bool mode) const
-{
-	if (mode) OpenGL::apiPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	else OpenGL::apiPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 }
 
 void Renderer::fill(const Float r, const Float g, const Float b)
@@ -490,6 +501,11 @@ void Renderer::renderAtmosphere(const Player& player, const Vec3 sunDirection)
 	setDepthTest(true);
 }
 
+void Renderer::fill(const Float r, const Float g, const Float b, const Float a)
+{
+	fill(Vec4(r, g, b, a));
+}
+
 void Renderer::renderMeshInstanced(const Name& name, const Vector<Vec2>& positions)
 {
 	renderMeshInstanced(name, matrixArrayFromPositions(positions));
@@ -528,11 +544,6 @@ void Renderer::postProcess(const Name& name, const Framebuffer& source, const Fr
 	useShader(name);
 	renderMesh("fullScreenQuad");
 }
-
-//void Renderer::rectangle(const Vec2 pos, const Vec2 size, const Bool overrideColor, const Bool centered)
-//{
-//	rectangleRenderer.render(*this, pos, size, overrideColor, centered);
-//}
 
 void Renderer::setAlphaBlending(const Bool enable, const BlendFunction src, const BlendFunction dst, const BlendEquation eq) const
 {

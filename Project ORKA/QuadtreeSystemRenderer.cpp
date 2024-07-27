@@ -83,7 +83,7 @@ void QuadtreeNodeRenderData::loadTerrainMesh()
 {
 	if(!terrainMesh.isLoaded() && equivalentQuadtreeNode->data.terrain)
 	{
-		const CPUMesh cpuMesh = createTerrainMesh(equivalentQuadtreeNode->data.terrain->heightmap);
+		const CpuMesh cpuMesh = createTerrainMesh(equivalentQuadtreeNode->data.terrain->heightmap);
 		terrainMesh.upload(cpuMesh);
 	}
 }

@@ -59,6 +59,17 @@ void SimpleRtsTreeSystem::spawnTree(const SimpleRtsSimulation& sim)
 	treeCount++;
 }
 
+void SimpleRtsTreeSystem::forceSpawnTree(const SimpleRtsSimulation& sim, Vec2 position)
+{
+	positions.push_back(position);
+	lifeExpectancies.push_back(randomFloatFast(minTreeLifeExpectancy, maxTreeLifeExpectancy));
+	ages.push_back(randomFloatFast(0, minTreeLifeExpectancy));
+	directions.push_back(randomUnitVec2Fast());
+	maxHeights.push_back(randomFloatFast(minGrownTreeHeight, maxGrownTreeHeight));
+	scales.push_back(calculateTreeSize(treeCount));
+	treeCount++;
+}
+
 Bool SimpleRtsTreeSystem::doesCollide(const Vec2 position, const Float radius) const
 {
 	return circleCollidingWithCircles(position, radius, positions, treeRadius);

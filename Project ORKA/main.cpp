@@ -29,10 +29,11 @@
 //  You can already choose some games and projects to play around in.
 //  Just replace the Game in the main() function with one of the projects underneath
 
-//#include "FlappyBird.hpp"
+#include "FlappyBird.hpp"
 //#include "MoonCrash.hpp"
 //#include "Orbital Oblivion.hpp"
 //#include "ProjectMelon.hpp"
+//#include "ImageViewer.hpp"
 //#include "Pong.hpp"
 //#include "TripleNine.hpp"
 //
@@ -44,7 +45,6 @@
 //#include "GPUSim.hpp"
 //#include "GuessingGame.hpp"
 //#include "Hello Triangle.hpp"
-#include "ImageViewer.hpp"
 //#include "ImguiExample.hpp"
 //#include "MSDFText.hpp"
 //#include "Organizer.hpp"
@@ -91,13 +91,14 @@ void testAll(const Int argc, Char* argv[])
 	//FunctionFinder     game27; game27.run();
 }
 
+
 Int main(const Int argc, Char* argv[])
 {
 	Engine engine;
 	engine.create(argc, argv);
 
-	ImageViewer game;
-	game.run(argc, argv);
+	FlappyBird game;
+	game.run();
 }
 
 #include "Windows.hpp"

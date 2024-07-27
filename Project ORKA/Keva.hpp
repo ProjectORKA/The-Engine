@@ -100,9 +100,7 @@ struct KevaSimulation : GameSimulation
 
 	void create() override;
 	void destroy() override;
-
 	void printOptions() const;
-
 	void update(Float delta) override;
 };
 
@@ -110,13 +108,5 @@ struct Keva
 {
 	KevaSimulation sim;
 
-	void run()
-	{
-		sim.create();
-		while (sim.keeprunning)
-		{
-			sim.update(1.0);
-		}
-		sim.destroy();
-	};
+	void run();
 };

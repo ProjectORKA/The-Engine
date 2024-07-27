@@ -3,7 +3,7 @@
 
 void BranchStructure::render(Renderer& renderer, const Vector<Vec3>& points) const
 {
-	CPUMesh mesh;
+	CpuMesh mesh;
 	mesh.drawMode      = BufferUsage::DynamicDraw;
 	mesh.name          = "branchStructure";
 	mesh.normals       = Vector<Vec3>(points.size(), Vec3(0, 0, 1));
