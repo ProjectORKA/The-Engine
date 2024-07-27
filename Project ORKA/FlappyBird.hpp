@@ -5,6 +5,8 @@
 #include "Transform.hpp"
 #include "Camera.hpp"
 
+struct FlappyBirdRenderer;
+
 struct FlappyBirdPipes
 {
 	Float     maxGap     = 1.0f;
@@ -34,29 +36,30 @@ struct FlappyBirdBird
 	Bool      heldInPlace = true;
 	Vec3      velocity    = Vec3(0);
 
-	InputEvent jumpButton = InputEvent(InputType::KeyBoard, SPACE, true);
-
 	void jump();
 	void reset();
-	void inputEvent(InputEvent input);
 	void render(Renderer& r) const;
-	void update(const Vector<FlappyBirdPipes>& pipeColumns, Float delta);
-	void updateAI(const Vector<FlappyBirdPipes>& pipeColumns, Float delta);
+	void update(FlappyBirdRenderer& game, Float delta);
+	void updateAi(const Vector<FlappyBirdPipes>& pipeColumns, Float delta);
 
 	[[nodiscard]] FlappyBirdPipes getClosestPipeColumn(const Vector<FlappyBirdPipes>& pipeColumns) const;
 };
 
 struct FlappyBirdRenderer final : GameRenderer
 {
-	const Int   flappyBirdCount = 1;
-	const Bool  enableAI        = false;
+	const Int   aiBirdCount     = 100;
 	const Float gameSpeed       = 1.0f;
 	const Float slowMotionSpeed = 0.5f;
+	const Bool  aiEnabled       = true;
 
-	Vector<FlappyBirdBird>  birds;
 	Camera                  camera;
+	Vector<FlappyBirdBird>  aiBirds;
+	Time                    gameTime;
+	FlappyBirdBird          playerBird;
 	Vector<FlappyBirdPipes> pipeColumns;
+	Bool                    paused = true;
 
+	InputEvent jumpButton      = InputEvent(InputType::KeyBoard, SPACE, true);
 	InputEvent reloadShaders   = InputEvent(InputType::KeyBoard, T, true);
 	InputEvent toggleWireFrame = InputEvent(InputType::KeyBoard, F, true);
 

@@ -13,24 +13,24 @@ Chunk::Chunk()
 	}
 }
 
-CPUMesh Chunk::generateMesh() const
+CpuMesh Chunk::generateMesh() const
 {
-	CPUMesh terrain;
+	CpuMesh terrain;
 	terrain.name          = "terrain";
 	terrain.drawMode      = BufferUsage::StaticDraw;
 	terrain.primitiveMode = PrimitiveMode::Triangles;
 
-	CPUMesh topFace;
+	CpuMesh topFace;
 	topFace.load("voxelTop");
-	CPUMesh bottomFace;
+	CpuMesh bottomFace;
 	bottomFace.load("voxelBot");
-	CPUMesh rightFace;
+	CpuMesh rightFace;
 	rightFace.load("voxelRight");
-	CPUMesh leftFace;
+	CpuMesh leftFace;
 	leftFace.load("voxelLeft");
-	CPUMesh frontFace;
+	CpuMesh frontFace;
 	frontFace.load("voxelFront");
-	CPUMesh backFace;
+	CpuMesh backFace;
 	backFace.load("voxelBack");
 
 	for(Int x = 0; x < voxelChunkSize; x++)
@@ -39,7 +39,7 @@ CPUMesh Chunk::generateMesh() const
 		{
 			for(Int z = 0; z < voxelChunkHeight; z++)
 			{
-				CPUMesh currentFace;
+				CpuMesh currentFace;
 
 				if(voxels[x][y][z])
 				{

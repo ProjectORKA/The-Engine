@@ -1,6 +1,6 @@
 #include "ProceduralMeshes.hpp"
 
-void proceduralWireframeAxisLines(CPUMesh& cpuMesh)
+void proceduralWireframeAxisLines(CpuMesh& cpuMesh)
 {
 	cpuMesh.primitiveMode = PrimitiveMode::Lines;
 	cpuMesh.positions = Vector<Vec3>({Vec3(0.0f, 0.0f, 0.0f), Vec3(1.0f, 0.0f, 0.0f), Vec3(0.0f, 1.0f, 0.0f), Vec3(0.0f, 0.0f, 1.0f)});
@@ -11,7 +11,7 @@ void proceduralWireframeAxisLines(CPUMesh& cpuMesh)
 	cpuMesh.checkIntegrity();
 }
 
-void proceduralPlaneMesh(CPUMesh& cpuMesh, const Float width, const Float height)
+void proceduralPlaneMesh(CpuMesh& cpuMesh, const Float width, const Float height)
 {
 	cpuMesh.positions = Vector<Vec3>({Vec3(+width, +height, 0.0f), Vec3(+width, -height, 0.0f), Vec3(-width, +height, 0.0f), Vec3(-width, -height, 0.0f)});
 	cpuMesh.textureCoordinates = Vector<Vec2>({Vec2(1.0f, 1.0f), Vec2(1.0f, 0.0f), Vec2(0.0f, 1.0f), Vec2(0.0f, 0.0f)});
@@ -21,7 +21,7 @@ void proceduralPlaneMesh(CPUMesh& cpuMesh, const Float width, const Float height
 	cpuMesh.checkIntegrity();
 }
 
-void proceduralWireframeCubeMesh(CPUMesh& cpuMesh, const Float size, const Float size2)
+void proceduralWireframeCubeMesh(CpuMesh& cpuMesh, const Float size, const Float size2)
 {
 	cpuMesh.primitiveMode = PrimitiveMode::Lines;
 	cpuMesh.positions = Vector<Vec3>({Vec3(size, size, 1), Vec3(size, size, 0), Vec3(size, size2, 1), Vec3(size, size2, 0), Vec3(size2, size, 1), Vec3(size2, size, 0), Vec3(size2, size2, 1), Vec3(size2, size2, 0)});

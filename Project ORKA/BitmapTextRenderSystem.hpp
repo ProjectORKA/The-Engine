@@ -19,8 +19,8 @@ enum class Alignment
 
 struct BitmapTextRenderSystem
 {
-	GPUMesh    gpuText;
-	CPUMesh    cpuText;
+	GpuMesh    gpuText;
+	CpuMesh    cpuText;
 	GPUTexture textTexture;
 
 	void destroy();

@@ -24,10 +24,19 @@ void SimpleRtsSimulation::create()
 	systems.push_back(&rabbitSystem);
 	systems.push_back(&terrainSystem);
 	systems.push_back(&berryBushSystem);
-	for(auto s : systems) s->create(*this);
+	for (const auto s : systems) s->create(*this);
+
+	quadtreeSystem.create(*this);
+	quadtreeSystem.update(*this, mapSize);
 }
 
 void SimpleRtsRenderer::destroy(Window& window) {}
+
+Float SimpleRtsSimulation::timeStep() const
+{
+	if (paused) return 0.0;
+	return timeScale / frameRate;
+}
 
 void SimpleRtsSimulation::update(Float delta)
 {
@@ -62,12 +71,6 @@ void SimpleRtsSimulation::update(Float delta)
 	limitFramerate(frameRate);
 }
 
-Float SimpleRtsSimulation::timeStep() const
-{
-	if(paused) return 0.0;
-	return timeScale / frameRate;
-}
-
 void SimpleRtsRenderer::update(Window& window)
 {
 	player.update(window);
@@ -76,19 +79,21 @@ void SimpleRtsRenderer::update(Window& window)
 	player.camera.setPosition(pos);
 }
 
-void SimpleRtsRenderer::create(Window& window)
-{
-	//terrainRenderingSystem.create();
-}
+void SimpleRtsRenderer::create(Window& window) {}
 
 void SimpleRtsSimulation::render(Renderer& renderer) const
 {
-	for (auto s : systems) s->render(renderer);
+	for (const auto s : systems) s->render(renderer);
+
 	renderer.useShader("color");
-	renderer.fill(255,0,0);
-	renderer.uniforms().setMMatrix(2000);
+
+	renderer.fill(0, 0, 0);
+	quadtreeSystem.render(renderer);
+
+	renderer.fill(255, 0, 0);
+	renderer.uniforms().setMMatrix(mapSize * 2);
 	renderer.plane();
-	renderer.wireframeCube();
+	//renderer.wireframeCube();
 }
 
 void SimpleRtsRenderer::connect(GameSimulation& simulation)
@@ -96,61 +101,56 @@ void SimpleRtsRenderer::connect(GameSimulation& simulation)
 	this->sim = static_cast<SimpleRtsSimulation*>(&simulation);
 }
 
-void SimpleRtsRenderer::render(Window& window, TiledRectangle area)
+void SimpleRtsRenderer::render(Window& window, const TiledRectangle area)
 {
-	Renderer& renderer = window.renderer;
+	Renderer& r = window.renderer;
 
 	mutex.lock();
-	//default
-	renderer.setWireframeMode();
-	renderer.clearBackground(Color(0, 0, 0, 1));
-	renderer.uniforms().setMMatrix(Matrix(1));
-	renderer.setWireframeMode(wireframeMode);
+
+	//defaults
+	r.setWireframeMode();
+	r.clearBackground(Color(0, 0, 0, 1));
+	r.uniforms().setMMatrix(Matrix(1));
+	r.setWireframeMode(wireframeMode);
 
 	//sky
-	renderer.setCulling(false);
-	renderer.setDepthTest(false);
-	renderer.useShader("simpleRTSSky");
-	renderer.useTexture("simpleRTSTexture");
-	player.camera.renderOnlyRot(renderer);
-	renderer.uniforms().setSunDir(Vec4(normalize(Vec3(0.5, 0.25, 1)), 1));
-	renderer.renderMesh("SimpleRTSSky");
-	renderer.setDepthTest(true);
-	renderer.setCulling(true);
+	r.setCulling(false);
+	r.setDepthTest(false);
+	r.useShader("simpleRTSSky");
+	r.useTexture("simpleRTSTexture");
+	player.camera.renderOnlyRot(r);
+	r.uniforms().setSunDir(Vec4(normalize(Vec3(0.5, 0.25, 1)), 1));
+	r.renderMesh("SimpleRTSSky");
+	r.setDepthTest(true);
+	r.setCulling(true);
 
 	//world
 	player.render(window);
-	renderer.fill(1.0);
-	renderer.useTexture("simpleRTSTexture");
-	renderer.useShader("simpleRTS");
-	sim->render(renderer);
+	r.fill(1.0);
+	r.useTexture("simpleRTSTexture");
+	r.useShader("simpleRTS");
+	sim->render(r);
 
 	//ui
-	renderer.setDepthTest(false);
-	renderer.screenSpace();
-	renderer.fill(Color(1));
-	renderer.uniforms().setMMatrix(Matrix(1));
-	renderer.textRenderSystem.setSize(16.0f);
-	renderer.textRenderSystem.setLetterSpacing(0.6f);
-	renderer.textRenderSystem.render(renderer, toString(1.0f / renderer.time.getDelta()), Vec2(50));
+	r.setDepthTest(false);
+	r.screenSpace();
+	r.fill(Color(1));
+	r.uniforms().setMMatrix(Matrix(1));
+	r.textRenderSystem.setSize(16.0f);
+	r.textRenderSystem.setLetterSpacing(0.6f);
+	r.textRenderSystem.render(r, toString(1.0f / r.time.getDelta()), Vec2(50));
+
+	performanceGraph.addTime(r.time.getDelta());
+	performanceGraph.render(window, area);
 	////////////////////////
 
 	mutex.unlock();
 }
 
-Bool SimpleRtsSimulation::doesCollide(const Vec2 pos, const Float radius) const
-{
-	if (treeSystem.doesCollide(pos, radius)) return true;
-	if (bushSystem.doesCollide(pos, radius)) return true;
-	if (humanSystem.doesCollide(pos, radius)) return true;
-	if (rabbitSystem.doesCollide(pos, radius)) return true;
-	return false;
-}
-
 Vec2 SimpleRtsSimulation::getRandomSpawnPos(const Float radius) const
 {
 	Vec2 pos;
-	Int  tries       = 0;
+	Int  tries = 0;
 	do
 	{
 		pos = randomVec2Fast(-mapSize, mapSize);
@@ -169,4 +169,13 @@ void SimpleRtsRenderer::inputEvent(Window& window, const InputEvent input)
 	if (input == exit) window.releaseCursor();
 	if (input == toggleWireframe) wireframeMode = !wireframeMode;
 	player.inputEvent(window, input);
+}
+
+Bool SimpleRtsSimulation::doesCollide(const Vec2 pos, const Float radius) const
+{
+	if (treeSystem.doesCollide(pos, radius)) return true;
+	if (bushSystem.doesCollide(pos, radius)) return true;
+	if (humanSystem.doesCollide(pos, radius)) return true;
+	if (rabbitSystem.doesCollide(pos, radius)) return true;
+	return false;
 }

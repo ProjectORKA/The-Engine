@@ -100,7 +100,7 @@ void SimpleRtsHumanSystem::destroy(const SimpleRtsSimulation& sim) {}
 void SimpleRtsHumanSystem::die(const Index i)
 {
 	scales[i] = 0.0;
-	println(names[i] + " is fucking ded");
+	println(names[i] + " is dead");
 	states[i] = SimpleRtsHumanState::Dead;
 }
 

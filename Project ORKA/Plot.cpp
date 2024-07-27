@@ -6,9 +6,9 @@ void Plot::add(const Vec2 value)
 	points.push_back(value);
 }
 
-CPUMesh Plot::createMesh() const
+CpuMesh Plot::createMesh() const
 {
-	CPUMesh mesh;
+	CpuMesh mesh;
 
 	mesh.drawMode      = BufferUsage::DynamicDraw;
 	mesh.name          = "plot";

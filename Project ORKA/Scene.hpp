@@ -5,7 +5,7 @@
 
 struct Scene
 {
-	Vector<CPUMesh> meshes;
+	Vector<CpuMesh> meshes;
 	// materials
 	// textures
 	// animations

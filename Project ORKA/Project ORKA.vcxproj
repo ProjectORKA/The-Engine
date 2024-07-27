@@ -55,8 +55,10 @@
     <ClCompile Include="OctreeID.cpp" />
     <ClCompile Include="Orbital Oblivion.cpp" />
     <ClCompile Include="ParallelizedConvexHullPrototype.cpp" />
+    <ClCompile Include="PerformanceGraph.cpp" />
     <ClCompile Include="Platform.cpp" />
     <ClCompile Include="PointRenderer.cpp" />
+    <ClCompile Include="PrimitivesRenderer.cpp" />
     <ClCompile Include="PrototypingSandbox.cpp" />
     <ClCompile Include="SDFRenderer.cpp" />
     <ClCompile Include="Camera.cpp" />
@@ -124,7 +126,6 @@
     <ClCompile Include="QuadtreeNode.cpp" />
     <ClCompile Include="QuadtreeSystem.cpp" />
     <ClCompile Include="QuadtreeSystemRenderer.cpp" />
-    <ClCompile Include="RectangleRenderer.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="RenderObjectSystem.cpp" />
     <ClCompile Include="RenderRegion.cpp" />
@@ -137,7 +138,7 @@
     <ClCompile Include="SimpleRtsBodySystem.cpp" />
     <ClCompile Include="SimpleRtsBushSystem.cpp" />
     <ClCompile Include="SimpleRtsHumanSystem.cpp" />
-    <ClCompile Include="SimpleRtsQuadtree.cpp" />
+    <ClCompile Include="SimpleRtsQuadtreeSystem.cpp" />
     <ClCompile Include="SimpleRtsRabbitSystem.cpp" />
     <ClCompile Include="SimpleRtsSystem.cpp" />
     <ClCompile Include="SimpleRtsTerrainSystem.cpp" />
@@ -179,10 +180,12 @@
     <ClCompile Include="WindowAPI.cpp" />
     <ClInclude Include="LockFreeQueue.hpp" />
     <ClInclude Include="Music Visualizer.hpp" />
+    <ClInclude Include="PerformanceGraph.hpp" />
+    <ClInclude Include="PrimitivesRenderer.hpp" />
     <ClInclude Include="SimpleRtsBerryBushSystem.hpp" />
     <ClInclude Include="SimpleRtsBodySystem.hpp" />
     <ClInclude Include="SimpleRtsBushSystem.hpp" />
-    <ClInclude Include="SimpleRtsQuadtree.hpp" />
+    <ClInclude Include="SimpleRtsQuadtreeSystem.hpp" />
     <ClInclude Include="SimpleRtsRabbitSystem.hpp" />
     <ClInclude Include="SimpleRtsSystem.hpp" />
     <ClInclude Include="SimpleRtsTreeStumpSystem.hpp" />
@@ -287,7 +290,6 @@
     <ClInclude Include="QuadtreeNode.hpp" />
     <ClInclude Include="QuadtreeSystem.hpp" />
     <ClInclude Include="QuadtreeSystemRenderer.hpp" />
-    <ClInclude Include="RectangleRenderer.hpp" />
     <ClInclude Include="Renderable.hpp" />
     <ClInclude Include="Renderer.hpp" />
     <ClInclude Include="RenderObjectSystem.hpp" />
@@ -357,6 +359,8 @@
     <None Include="Data\DungeonsAndDiscord\dndSky.vert" />
     <None Include="Data\DungeonsAndDiscord\dndUberShader.frag" />
     <None Include="Data\DungeonsAndDiscord\dndUberShader.vert" />
+    <None Include="Data\Shaders\aiFlappyBird.frag" />
+    <None Include="Data\Shaders\aiFlappyBird.vert" />
     <None Include="Data\Shaders\atmosphere.frag" />
     <None Include="Data\Shaders\atmosphere.vert" />
     <None Include="Data\Shaders\flappyBird.frag" />

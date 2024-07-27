@@ -41,7 +41,7 @@ void Scene::loadFBX(Path path)
 						// get all meshes of object
 						UInt numMeshes = assimpScene->mRootNode->mChildren[objectId]->mNumMeshes;
 
-						CPUMesh mesh;
+						CpuMesh mesh;
 						mesh.name = assimpScene->mRootNode->mChildren[objectId]->mName.C_Str();
 
 						UInt lastIndex = 0;

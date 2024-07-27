@@ -4,9 +4,9 @@
 #include "Renderer.hpp"
 #include "ResourceManager.hpp"
 
-CPUMesh::CPUMesh() = default;
+CpuMesh::CpuMesh() = default;
 
-void CPUMesh::clearGeometry()
+void CpuMesh::clearGeometry()
 {
 	normals.clear();
 	indices.clear();
@@ -17,7 +17,7 @@ void CPUMesh::clearGeometry()
 	textureCoordinates.clear();
 }
 
-void CPUMesh::removeDoubles()
+void CpuMesh::removeDoubles()
 {
 	for(SizeT i = 0; i < positions.size(); i++)
 	{
@@ -28,7 +28,7 @@ void CPUMesh::removeDoubles()
 	}
 }
 
-void CPUMesh::checkIntegrity()
+void CpuMesh::checkIntegrity()
 {
 	dataFlags = 0;
 	if(!positions.empty()) dataFlags += static_cast<Short>(MeshDataFlags::Positions);
@@ -42,32 +42,32 @@ void CPUMesh::checkIntegrity()
 	else loaded                            = false;
 }
 
-Bool CPUMesh::isLoaded() const
+Bool CpuMesh::isLoaded() const
 {
 	return loaded;
 }
 
-Bool CPUMesh::hasNormals() const
+Bool CpuMesh::hasNormals() const
 {
 	return dataFlags & static_cast<UShort>(MeshDataFlags::Normals);
 }
 
-Bool CPUMesh::hasTangents() const
+Bool CpuMesh::hasTangents() const
 {
 	return dataFlags & static_cast<UShort>(MeshDataFlags::Tangents);
 }
 
-Bool CPUMesh::hasPositions() const
+Bool CpuMesh::hasPositions() const
 {
 	return dataFlags & static_cast<UShort>(MeshDataFlags::Positions);
 }
 
-Bool CPUMesh::hasBiTangents() const
+Bool CpuMesh::hasBiTangents() const
 {
 	return dataFlags & static_cast<UShort>(MeshDataFlags::BiTangents);
 }
 
-CPUMesh::CPUMesh(const Graph& graph)
+CpuMesh::CpuMesh(const Graph& graph)
 {
 	drawMode      = BufferUsage::DynamicDraw;
 	name          = "graph";
@@ -87,12 +87,12 @@ CPUMesh::CPUMesh(const Graph& graph)
 	checkIntegrity();
 }
 
-Bool CPUMesh::hasVertexColors() const
+Bool CpuMesh::hasVertexColors() const
 {
 	return dataFlags & static_cast<UShort>(MeshDataFlags::VertexColor);
 }
 
-void CPUMesh::calculateSmoothNormals()
+void CpuMesh::calculateSmoothNormals()
 {
 	switch(primitiveMode)
 	{
@@ -108,12 +108,12 @@ void CPUMesh::calculateSmoothNormals()
 	}
 }
 
-void CPUMesh::move(const Vec3 moveVector)
+void CpuMesh::move(const Vec3 moveVector)
 {
 	for(auto& position : positions) position += moveVector;
 }
 
-void CPUMesh::merge(const CPUMesh& source)
+void CpuMesh::merge(const CpuMesh& source)
 {
 	for(ULL i = 0; i < source.positions.size(); i++)
 	{
@@ -127,20 +127,20 @@ void CPUMesh::merge(const CPUMesh& source)
 	for(const Index index : source.indices) indices.push_back(index + indexOffset);
 }
 
-Bool CPUMesh::hasTextureCoordinates() const
+Bool CpuMesh::hasTextureCoordinates() const
 {
 	return dataFlags & static_cast<UShort>(MeshDataFlags::TextureCoords);
 }
 
-void CPUMesh::render(Renderer& renderer) const
+void CpuMesh::render(Renderer& renderer) const
 {
-	GPUMesh mesh;
+	GpuMesh mesh;
 	mesh.upload(*this);
 	mesh.render(renderer.uniforms());
 	mesh.unload();
 }
 
-void CPUMesh::calculateSmoothNormalsForTriangleMesh()
+void CpuMesh::calculateSmoothNormalsForTriangleMesh()
 {
 	normals.resize(positions.size());
 
@@ -169,7 +169,7 @@ void CPUMesh::calculateSmoothNormalsForTriangleMesh()
 	for(Vec3& normal : normals) normal = normalize(normal);
 }
 
-void CPUMesh::calculateSmoothNormalsForTriangleStrip()
+void CpuMesh::calculateSmoothNormalsForTriangleStrip()
 {
 	normals.resize(positions.size());
 
@@ -209,7 +209,7 @@ void CPUMesh::calculateSmoothNormalsForTriangleStrip()
 	for(Vec3& normal : normals) normal = normalize(normal);
 }
 
-void CPUMesh::load(Name name)
+void CpuMesh::load(Name name)
 {
 	if(resourceManager.hasMeshResource(name))
 	{
@@ -264,7 +264,7 @@ void CPUMesh::load(Name name)
 	else logWarning("Mesh (" + toString(name) + ") not found as resource!");
 }
 
-void CPUMesh::saveMeshFile()
+void CpuMesh::saveMeshFile()
 {
 	MeshHeader2 header;
 	header.version       = 2;
@@ -290,7 +290,7 @@ void CPUMesh::saveMeshFile()
 	mesh.write(reinterpret_cast<Char*>(indices.data()), indices.size() * sizeof(Index));
 }
 
-void CPUMesh::meshFromHeightMap(Array2D<Float>& heightMap, const UInt size)
+void CpuMesh::meshFromHeightMap(Array2D<Float>& heightMap, const UInt size)
 {
 	name          = "terrain";
 	primitiveMode = PrimitiveMode::TriangleStrip;

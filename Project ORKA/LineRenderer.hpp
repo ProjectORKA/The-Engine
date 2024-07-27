@@ -4,12 +4,12 @@
 
 struct Renderer;
 
-inline CPUMesh convertLineToMesh(const Line3D& line);
-inline CPUMesh convertLineToMesh(const Vector<Vec2>& line);
-inline CPUMesh convertLineToMesh(const Vector<Vec3>& line);
-inline CPUMesh createMeshFromLines(const Vector<Vec2>& lines);
-inline CPUMesh createMeshFromLines(const Vector<Vec3>& lines);
-inline CPUMesh createMeshFromLines(const Vector<Line3D>& lines);
+inline CpuMesh convertLineToMesh(const Line3D& line);
+inline CpuMesh convertLineToMesh(const Vector<Vec2>& line);
+inline CpuMesh convertLineToMesh(const Vector<Vec3>& line);
+inline CpuMesh createMeshFromLines(const Vector<Vec2>& lines);
+inline CpuMesh createMeshFromLines(const Vector<Vec3>& lines);
+inline CpuMesh createMeshFromLines(const Vector<Line3D>& lines);
 
 //struct LineRenderer
 //{

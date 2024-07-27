@@ -78,6 +78,16 @@ void KevaSimulation::update(Float delta)
 	}
 }
 
+void Keva::run()
+{
+	sim.create();
+	while (sim.keeprunning)
+	{
+		sim.update(1.0);
+	}
+	sim.destroy();
+}
+
 void KevaSimulation::create()
 {
 	items.emplace_back("Nothing", 0);   //0

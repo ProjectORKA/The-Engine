@@ -3,12 +3,12 @@
 
 void MeshSystem::create()
 {
-	CPUMesh standard;
+	CpuMesh standard;
 	standard.name = "default";
 	proceduralPlaneMesh(standard, 1, 1);
 	addMesh(standard);
 
-	CPUMesh boundingBox;
+	CpuMesh boundingBox;
 	boundingBox.name = "boundingBox";
 	proceduralWireframeAxisLines(boundingBox);
 	addMesh(boundingBox);
@@ -17,7 +17,7 @@ void MeshSystem::create()
 
 void BasicMeshes::create()
 {
-	CPUMesh fullScreenTriangleMesh;
+	CpuMesh fullScreenTriangleMesh;
 	fullScreenTriangleMesh.drawMode           = BufferUsage::StaticDraw;
 	fullScreenTriangleMesh.name               = "FullScreenTriangle";
 	fullScreenTriangleMesh.primitiveMode      = PrimitiveMode::Triangles;
@@ -30,7 +30,7 @@ void BasicMeshes::create()
 
 void MeshSystem::destroy()
 {
-	for(GPUMesh& gpuMesh : gpuMeshes) gpuMesh.unload();
+	for(GpuMesh& gpuMesh : gpuMeshes) gpuMesh.unload();
 	gpuMeshes.clear();
 	basicMeshes.destroy();
 }
@@ -40,7 +40,7 @@ void BasicMeshes::destroy()
 	fullscreenMesh.unload();
 }
 
-GPUMesh& MeshSystem::currentMesh()
+GpuMesh& MeshSystem::currentMesh()
 {
 	return gpuMeshes[currentMeshId];
 }
@@ -50,7 +50,7 @@ void MeshSystem::use(const Index meshId)
 	currentMeshId = meshId;
 }
 
-void MeshSystem::addMesh(const CPUMesh& cpuMesh)
+void MeshSystem::addMesh(const CpuMesh& cpuMesh)
 {
 	if(cpuMesh.isLoaded())
 	{
@@ -59,7 +59,10 @@ void MeshSystem::addMesh(const CPUMesh& cpuMesh)
 		use(toUIntSafe(gpuMeshes.size() - 1));
 		meshNames.add(cpuMesh.name, currentMeshId);
 	}
-	else logWarning("Mesh could not be loaded! (" + toString(cpuMesh.name) + ")");
+	else
+	{
+		logWarning("Mesh could not be loaded! (" + toString(cpuMesh.name) + ")");
+	}
 }
 
 void NameTable::add(const Name& name, const Index id)
@@ -99,7 +102,7 @@ void MeshSystem::use(const Name& name)
 	if(meshNames.find(name, id)) currentMeshId = id;
 	else
 	{
-		CPUMesh mesh;
+		CpuMesh mesh;
 		mesh.load(name);
 		addMesh(mesh);
 		if(meshNames.find(name, id)) currentMeshId = id;

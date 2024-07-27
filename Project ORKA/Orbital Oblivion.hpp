@@ -69,7 +69,7 @@ struct OrbitalOblivionSimulation final : GameSimulation
 struct OrbitalOblivionRenderer final : GameRenderer
 {
 	OrbitalOblivionPlayer      player;
-	GPUMesh*                   unitMesh;
+	GpuMesh*                   unitMesh;
 	Bool                       bloom           = true;
 	OrbitalOblivionSimulation* sim             = nullptr;
 	InputEvent                 enter           = InputEvent(InputType::Mouse, LMB, true);

@@ -218,9 +218,6 @@
     <ClCompile Include="Player.cpp">
       <Filter>Systems\Game\Player</Filter>
     </ClCompile>
-    <ClCompile Include="RectangleRenderer.cpp">
-      <Filter>Systems\UserInterface\Window\Renderer\RectangleRenderer</Filter>
-    </ClCompile>
     <ClCompile Include="GPUTexture.cpp">
       <Filter>Systems\UserInterface\Window\Renderer\TextureSystem\GPUTexture</Filter>
     </ClCompile>
@@ -419,9 +416,6 @@
     <ClCompile Include="SimpleRtsBodySystem.cpp">
       <Filter>Apps\3D Apps\SimpleRts\SimpleRtsBodySystem</Filter>
     </ClCompile>
-    <ClCompile Include="SimpleRtsQuadtree.cpp">
-      <Filter>Apps\3D Apps\SimpleRts\SimpleRtsQuadtree</Filter>
-    </ClCompile>
     <ClCompile Include="Keva.cpp">
       <Filter>Apps\2D Apps\Keva</Filter>
     </ClCompile>
@@ -430,6 +424,15 @@
     </ClCompile>
     <ClCompile Include="Platform.cpp">
       <Filter>Common\Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="PerformanceGraph.cpp">
+      <Filter>Systems\Profiler\PerformanceGraph</Filter>
+    </ClCompile>
+    <ClCompile Include="PrimitivesRenderer.cpp">
+      <Filter>Systems\UserInterface\Window\Renderer\PrimitivesRenderer</Filter>
+    </ClCompile>
+    <ClCompile Include="SimpleRtsQuadtreeSystem.cpp">
+      <Filter>Apps\3D Apps\SimpleRts\SimpleRtsQuadtreeSystem</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -706,9 +709,6 @@
     <ClInclude Include="Player.hpp">
       <Filter>Systems\Game\Player</Filter>
     </ClInclude>
-    <ClInclude Include="RectangleRenderer.hpp">
-      <Filter>Systems\UserInterface\Window\Renderer\RectangleRenderer</Filter>
-    </ClInclude>
     <ClInclude Include="GPUTexture.hpp">
       <Filter>Systems\UserInterface\Window\Renderer\TextureSystem\GPUTexture</Filter>
     </ClInclude>
@@ -964,9 +964,6 @@
     <ClInclude Include="SimpleRtsBodySystem.hpp">
       <Filter>Apps\3D Apps\SimpleRts\SimpleRtsBodySystem</Filter>
     </ClInclude>
-    <ClInclude Include="SimpleRtsQuadtree.hpp">
-      <Filter>Apps\3D Apps\SimpleRts\SimpleRtsQuadtree</Filter>
-    </ClInclude>
     <ClInclude Include="Keva.hpp">
       <Filter>Apps\2D Apps\Keva</Filter>
     </ClInclude>
@@ -981,6 +978,15 @@
     </ClInclude>
     <ClInclude Include="Windows.hpp">
       <Filter>Common\Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="PerformanceGraph.hpp">
+      <Filter>Systems\Profiler\PerformanceGraph</Filter>
+    </ClInclude>
+    <ClInclude Include="PrimitivesRenderer.hpp">
+      <Filter>Systems\UserInterface\Window\Renderer\PrimitivesRenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="SimpleRtsQuadtreeSystem.hpp">
+      <Filter>Apps\3D Apps\SimpleRts\SimpleRtsQuadtreeSystem</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1274,6 +1280,12 @@
     </None>
     <None Include="Data\Shaders\simpleRTSSky.vert">
       <Filter>Shaders</Filter>
+    </None>
+    <None Include="Data\Shaders\aiFlappyBird.frag">
+      <Filter>Apps\3D Apps\Flappy Bird\Shaders</Filter>
+    </None>
+    <None Include="Data\Shaders\aiFlappyBird.vert">
+      <Filter>Apps\3D Apps\Flappy Bird\Shaders</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -1667,9 +1679,6 @@
     <Filter Include="Systems\Game\Player">
       <UniqueIdentifier>{73254390-1a39-43e8-9a89-552d893242af}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Systems\UserInterface\Window\Renderer\RectangleRenderer">
-      <UniqueIdentifier>{4b2078f7-a380-463c-b4a2-62c0a70d6ebc}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Systems\TreeSystem">
       <UniqueIdentifier>{11dea7c5-8e88-4770-9ce6-006eeac23036}</UniqueIdentifier>
     </Filter>
@@ -1739,9 +1748,6 @@
     <Filter Include="Apps\3D Apps\Prototyping\Prototypes\KDTree">
       <UniqueIdentifier>{f7b24238-8111-4ea7-a14e-ce86f4bc9cd9}</UniqueIdentifier>
     </Filter>
-    <Filter Include="UI">
-      <UniqueIdentifier>{cbb8e8b9-d954-4eb1-901d-96aa4be38696}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Apps\Console Apps\DNDBase">
       <UniqueIdentifier>{beaaf7d9-61a4-4ca3-b7f1-d4ba092ed089}</UniqueIdentifier>
     </Filter>
@@ -1787,9 +1793,6 @@
     <Filter Include="Apps\3D Apps\SimpleRts\SimpleRtsBodySystem">
       <UniqueIdentifier>{99e6eaa5-40ce-491b-be07-3b193b5a5d05}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Apps\3D Apps\SimpleRts\SimpleRtsQuadtree">
-      <UniqueIdentifier>{9f1ea9f2-801b-4a90-b027-127b7aa4ba9a}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Apps\2D Apps\Keva">
       <UniqueIdentifier>{0cfeb7de-4e74-43b2-b730-f0786ab899bf}</UniqueIdentifier>
     </Filter>
@@ -1798,6 +1801,15 @@
     </Filter>
     <Filter Include="Common\Datastructures\LockFreeQueue">
       <UniqueIdentifier>{d84e759e-a9a5-40d9-a9d6-90932ad99691}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Systems\Profiler\PerformanceGraph">
+      <UniqueIdentifier>{0e763830-1202-4537-b356-0e3d7220cbfc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Systems\UserInterface\Window\Renderer\PrimitivesRenderer">
+      <UniqueIdentifier>{0b800092-8777-4e7d-a00d-b3f0fdfdd9a0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Apps\3D Apps\SimpleRts\SimpleRtsQuadtreeSystem">
+      <UniqueIdentifier>{114a064c-e1b5-4982-b19c-d064ef052cc4}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

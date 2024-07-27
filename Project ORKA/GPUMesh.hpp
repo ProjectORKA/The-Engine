@@ -5,12 +5,12 @@
 
 struct Uniforms;
 
-struct GPUMesh
+struct GpuMesh
 {
 	[[nodiscard]] Bool isLoaded() const;
 
 	void unload();
-	void upload(const CPUMesh& cpuMesh);
+	void upload(const CpuMesh& cpuMesh);
 	void render(Uniforms& uniforms) const;
 	void renderInstances(Uniforms& uniforms, const Vector<Matrix>& transforms) const;
 

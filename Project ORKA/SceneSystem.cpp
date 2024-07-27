@@ -41,7 +41,7 @@ void processNode(SceneNode& sceneNode, const aiNode* fileNode)
 	}
 }
 
-void loadAssimpMesh(CPUMesh& destinationMesh, aiMesh& sourceMesh)
+void loadAssimpMesh(CpuMesh& destinationMesh, aiMesh& sourceMesh)
 {
 	if(sourceMesh.HasTangentsAndBitangents())
 	{
@@ -153,7 +153,7 @@ void loadAssimpScene(Scene2& destinationScene, const aiScene& sourceScene)
 	for(Int i = 0; i < sourceScene.mNumMeshes; i++)
 	{
 		destinationScene.meshes.emplace_back();
-		CPUMesh& destinationMesh = destinationScene.meshes.back();
+		CpuMesh& destinationMesh = destinationScene.meshes.back();
 		aiMesh&  sourceMesh      = *sourceScene.mMeshes[i];
 
 		checkMesh(sourceMesh);
