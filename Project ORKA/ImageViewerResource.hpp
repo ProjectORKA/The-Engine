@@ -30,7 +30,7 @@ struct ImageViewerResource
 private:
 	String     name;
 	String     hash;
-	CPUTexture cpuTexture;
+	CpuTexture cpuTexture;
 	GPUTexture gpuTexture;
 	Int        width                = 0;
 	Int        height               = 0;

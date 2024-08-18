@@ -15,6 +15,12 @@ void SimpleRts::run()
 
 void SimpleRtsSimulation::destroy() {}
 
+void SimpleRtsSimulation::reset()
+{
+	destroy();
+	create();
+}
+
 void SimpleRtsSimulation::create()
 {
 	systems.push_back(&bodySystem);
@@ -29,6 +35,8 @@ void SimpleRtsSimulation::create()
 	quadtreeSystem.create(*this);
 	quadtreeSystem.update(*this, mapSize);
 }
+
+void SimpleRtsRenderer::create(Window& window) {}
 
 void SimpleRtsRenderer::destroy(Window& window) {}
 
@@ -79,8 +87,6 @@ void SimpleRtsRenderer::update(Window& window)
 	player.camera.setPosition(pos);
 }
 
-void SimpleRtsRenderer::create(Window& window) {}
-
 void SimpleRtsSimulation::render(Renderer& renderer) const
 {
 	for (const auto s : systems) s->render(renderer);
@@ -90,7 +96,7 @@ void SimpleRtsSimulation::render(Renderer& renderer) const
 	renderer.fill(0, 0, 0);
 	quadtreeSystem.render(renderer);
 
-	renderer.fill(255, 0, 0);
+	renderer.fill(1, 0, 0);
 	renderer.uniforms().setMMatrix(mapSize * 2);
 	renderer.plane();
 	//renderer.wireframeCube();
@@ -100,6 +106,21 @@ void SimpleRtsRenderer::connect(GameSimulation& simulation)
 {
 	this->sim = static_cast<SimpleRtsSimulation*>(&simulation);
 }
+
+Vec2 SimpleRtsSimulation::getRandomSpawnPos(const Float radius) const
+{
+	Vec2 pos;
+	Int  tries = 0;
+	do
+	{
+		pos = randomVec2Fast(-mapSize, mapSize);
+		tries++;
+	}
+	while (doesCollide(pos, radius) && tries < 100);
+	return pos;
+}
+
+void SimpleRtsRenderer::renderInteractive(Window& window, TiledRectangle area) {}
 
 void SimpleRtsRenderer::render(Window& window, const TiledRectangle area)
 {
@@ -126,7 +147,7 @@ void SimpleRtsRenderer::render(Window& window, const TiledRectangle area)
 
 	//world
 	player.render(window);
-	r.fill(1.0);
+	r.fill(1.0f);
 	r.useTexture("simpleRTSTexture");
 	r.useShader("simpleRTS");
 	sim->render(r);
@@ -147,27 +168,13 @@ void SimpleRtsRenderer::render(Window& window, const TiledRectangle area)
 	mutex.unlock();
 }
 
-Vec2 SimpleRtsSimulation::getRandomSpawnPos(const Float radius) const
-{
-	Vec2 pos;
-	Int  tries = 0;
-	do
-	{
-		pos = randomVec2Fast(-mapSize, mapSize);
-		tries++;
-	}
-	while (doesCollide(pos, radius) && tries < 100);
-	return pos;
-}
-
-void SimpleRtsRenderer::renderInteractive(Window& window, TiledRectangle area) {}
-
 void SimpleRtsRenderer::inputEvent(Window& window, const InputEvent input)
 {
 	if (input == enter) window.captureCursor();
 	if (input == pause) sim->paused = !sim->paused;
 	if (input == exit) window.releaseCursor();
 	if (input == toggleWireframe) wireframeMode = !wireframeMode;
+	if (input == reset) sim->reset();
 	player.inputEvent(window, input);
 }
 

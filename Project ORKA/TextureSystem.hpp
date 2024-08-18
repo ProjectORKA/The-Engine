@@ -13,7 +13,7 @@ struct TextureSystem
 	GPUTexture& currentTexture();
 	void        resize(Area size);
 	void        use(Index textureId);
-	void        add(const CPUTexture& cpuTexture);
+	void        add(const CpuTexture& cpuTexture);
 	Index       use(const Name& name);
 	void        use(const Name& name, Index slot);
 };

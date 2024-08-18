@@ -37,26 +37,50 @@ struct WeirdSphereNode
 			{
 				if(isEast)
 				{
-					if(ne) ne->inject(point);
-					else ne = new WeirdSphereNode(this, point);
+					if(ne)
+					{
+						ne->inject(point);
+					}
+					else
+					{
+						ne = new WeirdSphereNode(this, point);
+					}
 				}
 				else
 				{
-					if(nw) nw->inject(point);
-					else nw = new WeirdSphereNode(this, point);
+					if(nw)
+					{
+						nw->inject(point);
+					}
+					else
+					{
+						nw = new WeirdSphereNode(this, point);
+					}
 				}
 			}
 			else
 			{
 				if(isEast)
 				{
-					if(se) se->inject(point);
-					else se = new WeirdSphereNode(this, point);
+					if(se)
+					{
+						se->inject(point);
+					}
+					else
+					{
+						se = new WeirdSphereNode(this, point);
+					}
 				}
 				else
 				{
-					if(se) se->inject(point);
-					else se = new WeirdSphereNode(this, point);
+					if(se)
+					{
+						se->inject(point);
+					}
+					else
+					{
+						se = new WeirdSphereNode(this, point);
+					}
 				}
 			}
 		}
@@ -197,8 +221,14 @@ struct WeirdSphereAlgorithmPrototype : Prototype
 		const Vec3 point = randomPointOnSphereFast(100) * Vec3(1,1,0);//-100, 100, -100, 100, 0, 0);
 		points.push_back(point);
 
-		if(!rootNode) rootNode = new WeirdSphereNode(nullptr, point);
-		else rootNode->inject(point);
+		if(!rootNode)
+		{
+			rootNode = new WeirdSphereNode(nullptr, point);
+		}
+		else
+		{
+			rootNode->inject(point);
+		}
 	}
 
 	void create() override

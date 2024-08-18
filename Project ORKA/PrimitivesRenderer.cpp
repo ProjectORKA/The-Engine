@@ -46,7 +46,7 @@ void PrimitivesRenderer::create()
 
 	// wireframe cube
 	genMesh.drawMode           = BufferUsage::StaticDraw;
-	genMesh.name               = "wireframeCube";
+	genMesh.name               = "WireframeCube";
 	genMesh.primitiveMode      = PrimitiveMode::Lines;
 	genMesh.positions          = {Vec3(0, 0, 0), Vec3(1, 0, 0), Vec3(1, 1, 0), Vec3(0, 1, 0), Vec3(0, 0, 1), Vec3(1, 0, 1), Vec3(1, 1, 1), Vec3(0, 1, 1),};
 	genMesh.textureCoordinates = {Vec2(0, 0), Vec2(1, 0), Vec2(1, 1), Vec2(0, 1), Vec2(0, 0), Vec2(1, 0), Vec2(1, 1), Vec2(0, 1),};
@@ -57,7 +57,7 @@ void PrimitivesRenderer::create()
 
 	// wireframe cube centered
 	genMesh.drawMode           = BufferUsage::StaticDraw;
-	genMesh.name               = "wireframeCube";
+	genMesh.name               = "WireframeCubeCentered";
 	genMesh.primitiveMode      = PrimitiveMode::Lines;
 	genMesh.positions          = {Vec3(-0.5f, -0.5f, -0.5f), Vec3(0.5f, -0.5f, -0.5f), Vec3(0.5f, 0.5f, -0.5f), Vec3(-0.5f, 0.5f, -0.5f), Vec3(-0.5f, -0.5f, 0.5f), Vec3(0.5f, -0.5f, 0.5f), Vec3(0.5f, 0.5f, 0.5f), Vec3(-0.5f, 0.5f, 0.5f),};
 	genMesh.textureCoordinates = {Vec2(0, 0), Vec2(1, 0), Vec2(1, 1), Vec2(0, 1), Vec2(0, 0), Vec2(1, 0), Vec2(1, 1), Vec2(0, 1),};
@@ -65,15 +65,31 @@ void PrimitivesRenderer::create()
 	genMesh.checkIntegrity();
 	wireframeCubeCenteredMesh.upload(genMesh);
 	genMesh.clearGeometry();
+
+	// circle
+	genMesh.drawMode           = BufferUsage::StaticDraw;
+	genMesh.name               = "Circle";
+	genMesh.primitiveMode      = PrimitiveMode::TriangleFan;
+	Int circleResolution = 6;
+	genMesh.positions          = circleOfPoints(0.5f, circleResolution);
+	genMesh.positions.emplace_back(0,0,0);
+	
+	genMesh.textureCoordinates = vec3VectorToVec2Vector(genMesh.positions);
+
+	genMesh.indices            = {6,0,1,2,3,4,5,0};
+	genMesh.checkIntegrity();
+	circleMesh.upload(genMesh);
+	genMesh.clearGeometry();
 }
 
 void PrimitivesRenderer::destroy()
 {
 	lineMesh.unload();
-	linesMesh.unload();
 	cubeMesh.unload();
+	linesMesh.unload();
 	planeMesh.unload();
 	pointsMesh.unload();
+	circleMesh.unload();
 	wireframeCubeMesh.unload();
 	wireframeCubeCenteredMesh.unload();
 }
@@ -133,7 +149,12 @@ void PrimitivesRenderer::lines(const Vector<Vec3>& positions, Uniforms& uniforms
 	lines(positions, indices, uniforms);
 }
 
-void PrimitivesRenderer::wireframeCubes(Uniforms& uniforms, const Vector<Matrix>& matrices) const
+void PrimitivesRenderer::circles(const Vector<Matrix>& matrices, Uniforms& uniforms) const
+{
+	circleMesh.renderInstances(uniforms, matrices);
+}
+
+void PrimitivesRenderer::wireframeCubes(const Vector<Matrix>& matrices, Uniforms& uniforms) const
 {
 	wireframeCubeMesh.renderInstances(uniforms, matrices);
 }

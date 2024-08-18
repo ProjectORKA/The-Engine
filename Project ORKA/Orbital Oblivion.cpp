@@ -263,8 +263,14 @@ void OrbitalOblivionRenderer::inputEvent(Window& window, const InputEvent input)
 	if(input == toggleBloom) bloom = !bloom;
 	if(input == pause)
 	{
-		if(window.renderer.time.isPaused()) window.renderer.time.unpause();
-		else window.renderer.time.pause();
+		if(window.renderer.time.isPaused())
+		{
+			window.renderer.time.unpause();
+		}
+		else
+		{
+			window.renderer.time.pause();
+		}
 	}
 	player.inputEvent(window, input);
 }

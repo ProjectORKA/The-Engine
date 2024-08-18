@@ -1,5 +1,4 @@
 #include "ShaderSystem.hpp"
-#include <ranges>
 #include "Debug.hpp"
 #include "ResourceManager.hpp"
 
@@ -68,14 +67,23 @@ void ShaderSystem::add(const Name& name)
 Index ShaderSystem::use(const Name& name)
 {
 	auto it = shaderNames.find(name);
-	if(it != shaderNames.end()) use(it->second);
+	if(it != shaderNames.end())
+	{
+		use(it->second);
+	}
 	else
 	{
 		// try loading the shader
 		add(name);
 		it = shaderNames.find(name);
-		if(it != shaderNames.end()) use(it->second);
-		else logError("Shader could not be found!");
+		if(it != shaderNames.end())
+		{
+			use(it->second);
+		}
+		else
+		{
+			logError("Shader could not be found!");
+		}
 	}
 	return currentShaderProgramId;
 }

@@ -49,14 +49,14 @@ struct Renderer
 
 	//render state
 	void drawToWindow() const;
+	void setWireframeMode() const;
 	void blendModeAdditive() const;
 	void pollGraphicsApiError() const;
-	void setWireframeMode() const;
-	void setCulling(Bool culling) const;
 	void setFramebufferSize(Area area);
+	void setCulling(Bool culling) const;
+	void setWireframeMode(Bool mode) const;
 	void setAlphaBlending(Bool blending) const;
 	void setDepthTest(Bool isUsingDepth) const;
-	void setWireframeMode(Bool mode) const;
 	void setRenderRegion(TiledRectangle region);
 	void addRenderObject(const RenderObjectNames& renderObjectNames); // [TODO] remove?
 	void setAlphaBlending(Bool enable, BlendFunction src, BlendFunction dst, BlendEquation eq) const;
@@ -88,6 +88,8 @@ struct Renderer
 	void  fill(Int color);
 	void  fill(Vec3 color);
 	void  fill(Vec4 color);
+	void  fill(Float color);
+	void  fill(Double color);
 	void  setColor(Color color);
 	Index useShader(const Name& name);
 	void  fill(Float r, Float g, Float b);
@@ -100,7 +102,6 @@ struct Renderer
 	void plane();
 	void wireframeCube();
 	void wireframeCubeCentered();
-	void centeredCube(Float size);
 	void line(Vec2 start, Vec2 end);
 	void line(Vec3 start, Vec3 end);
 	void arrow(Vec2 start, Vec2 end);
@@ -111,8 +112,10 @@ struct Renderer
 	void renderSky(const Camera& camera);
 	void lines(const Vector<Vec3>& lines);
 	void lines(const Vector<Vec2>& lines);
+	void wireframeCubeCentered(Float size);
 	void points(const Vector<Vec2>& points);
 	void points(const Vector<Vec3>& points);
+	void circles(const Vector<Matrix>& matrices);
 	void wireframeCubes(const Vector<Matrix>& matrices);
 	void line(const Vector<Vec2>& line, const Matrix& matrix);
 	void lines(const Vector<Vec2>& lines, const Matrix& matrix);

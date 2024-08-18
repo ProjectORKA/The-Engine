@@ -45,7 +45,7 @@ WritePixelsFormat GPUTexture::getFormat() const
 	return format;
 }
 
-void GPUTexture::load(const CPUTexture& cpuTexture)
+void GPUTexture::load(const CpuTexture& cpuTexture)
 {
 	if(cpuTexture.isLoaded())
 	{
@@ -73,18 +73,27 @@ void GPUTexture::load(const CPUTexture& cpuTexture)
 
 		loaded = true;
 	}
-	else logWarning("CPUTexture not loaded!");
+	else
+	{
+		logWarning("CPUTexture not loaded!");
+	}
 }
 
 void GPUTexture::useTextureInSlot(const UInt textureSlot) const
 {
-	if(loaded) openglTexture.useTextureInSlot(textureSlot);
-	else openglTexture.emptyTextureFromSlot(textureSlot);
+	if(loaded)
+	{
+		openglTexture.useTextureInSlot(textureSlot);
+	}
+	else
+	{
+		openglTexture.emptyTextureFromSlot(textureSlot);
+	}
 }
 
 void GPUTexture::load(const Name& name)
 {
-	CPUTexture t;
+	CpuTexture t;
 	t.load(name, Filter::Linear, Filter::LinearMm, Wrapping::Repeat);
 	load(t);
 }
@@ -104,7 +113,7 @@ void GPUTexture::generateMipMaps(const Filter nearFilterValue, const Filter farF
 
 void GPUTexture::load(const IVec2 size, const WritePixelsFormat format, const DataType type, const Wrapping wrapping)
 {
-	const CPUTexture cpuTexture(size.x, size.y, "generated", Filter::Linear, Filter::Linear, type, wrapping, format);
+	const CpuTexture cpuTexture(size.x, size.y, "generated", Filter::Linear, Filter::Linear, type, wrapping, format);
 	load(cpuTexture);
 }
 

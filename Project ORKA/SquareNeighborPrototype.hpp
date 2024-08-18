@@ -85,7 +85,10 @@ struct SquareNeighborPrototype : Prototype
 					point.south      = i;
 				}
 			}
-			else logError("The following vector should have been square normalized: " + toString(delta));
+			else
+			{
+				logError("The following vector should have been square normalized: " + toString(delta));
+			}
 		}
 	}
 

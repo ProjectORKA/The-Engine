@@ -1,7 +1,11 @@
 #pragma once
 
-#include <AL/al.h>
-#include <AL/alc.h>
+namespace External
+{
+	#include "AL/al.h"
+	#include "AL/alc.h"
+}
+
 #include "Math.hpp"
 #include "SoundGenerators.hpp"
 
@@ -22,7 +26,7 @@ struct Sound
 		for (int i = 0; i < numSamples; ++i)
 		{
 			Double t   = toDouble(i) / sampleRate;
-			samples[i] = static_cast<ALshort>(std::sin(2.0 * PI * frequency * t) * 32767.0);
+			samples[i] = static_cast<External::ALshort>(std::sin(2.0 * PI * frequency * t) * 32767.0);
 		}
 	}
 
@@ -31,16 +35,16 @@ struct Sound
 		for (int i = 0; i < numSamples; ++i)
 		{
 			Double t   = toDouble(i) / sampleRate;
-			samples[i] = static_cast<ALshort>(std::sin(2.0 * PI * frequency * mod(t, 0.5) * 2 - 1) * 32767.0);
+			samples[i] = static_cast<External::ALshort>(std::sin(2.0 * PI * frequency * mod(t, 0.5) * 2 - 1) * 32767.0);
 		}
 	}
 
-	[[nodiscard]] ALsizei byteSize() const
+	[[nodiscard]] External::ALsizei byteSize() const
 	{
-		return numSamples * sizeof(ALshort);
+		return numSamples * sizeof(External::ALshort);
 	}
 
-	[[nodiscard]] const ALvoid* data() const
+	[[nodiscard]] const External::ALvoid* data() const
 	{
 		return samples;
 	}
@@ -48,24 +52,24 @@ struct Sound
 	explicit Sound(const Double duration, const Int sampleRate = 48000)
 	{
 		this->numSamples = duration * sampleRate;
-		samples          = new ALshort[numSamples];
+		samples          = new External::ALshort[numSamples];
 	}
 
 private:
 	Int      numSamples = 0;
 	Double   duration   = 0.0;
 	Int      sampleRate = 48000;
-	ALshort* samples    = nullptr;
+	External::ALshort* samples    = nullptr;
 };
 
 struct AudioBuffer
 {
 	Bool   initialized = false;
-	ALuint bufferID    = 0;
+	External::ALuint bufferID    = 0;
 
 	void setData(const Sound& sound) const
 	{
-		alBufferData(bufferID, AL_FORMAT_MONO16, sound.data(), sound.byteSize(), sound.getSampleRate());
+		External::alBufferData(bufferID, AL_FORMAT_MONO16, sound.data(), sound.byteSize(), sound.getSampleRate());
 	}
 
 	void destroy()
@@ -75,7 +79,7 @@ struct AudioBuffer
 			logError("Buffer destroyed without being created!");
 			return;
 		}
-		alDeleteBuffers(1, &bufferID);
+		External::alDeleteBuffers(1, &bufferID);
 		initialized = false;
 	}
 
@@ -91,7 +95,7 @@ struct AudioBuffer
 			logError("Buffer already initialized!");
 			return;
 		}
-		alGenBuffers(1, &bufferID);
+		External::alGenBuffers(1, &bufferID);
 		initialized = true;
 	}
 };
@@ -99,36 +103,60 @@ struct AudioBuffer
 struct AudioSource
 {
 	Bool   initialized = false;
-	ALuint sourceID    = 0;
+	External::ALuint sourceID    = 0;
 
 	void setBuffer(const AudioBuffer& buffer) const
 	{
-		if (initialized) alSourcei(sourceID, AL_BUFFER, buffer.bufferID);
-		else logError("Audio Source not initialized!");
+		if (initialized)
+		{
+			External::alSourcei(sourceID, AL_BUFFER, buffer.bufferID);
+		}
+		else
+		{
+			logError("Audio Source not initialized!");
+		}
 	}
 
 	void play() const
 	{
-		if (initialized) alSourcePlay(sourceID);
-		else logError("Audio Source not initialized!");
+		if (initialized)
+		{
+			External::alSourcePlay(sourceID);
+		}
+		else
+		{
+			logError("Audio Source not initialized!");
+		}
 	}
 
 	void pause() const
 	{
-		if (initialized) alSourcePause(sourceID);
-		else logError("Audio Source not initialized!");
+		if (initialized)
+		{
+			External::alSourcePause(sourceID);
+		}
+		else
+		{
+			logError("Audio Source not initialized!");
+		}
 	}
 
 	void stop() const
 	{
-		if (initialized) alSourceStop(sourceID);
-		else logError("Audio Source not initialized!");
+		if (initialized)
+		{
+			External::alSourceStop(sourceID);
+		}
+		else
+		{
+			logError("Audio Source not initialized!");
+		}
 	}
 
 	Bool isPlaying() const
 	{
-		ALint state;
-		alGetSourcei(sourceID, AL_SOURCE_STATE, &state);
+		External::ALint state;
+		External::alGetSourcei(sourceID, AL_SOURCE_STATE, &state);
 		return state == AL_PLAYING;
 	}
 
@@ -144,8 +172,8 @@ struct AudioSource
 			logError("Audio Source already created!");
 			return;
 		}
-		alGenSources(1, &sourceID);
-		alSourcei(sourceID, AL_LOOPING, looping);
+		External::alGenSources(1, &sourceID);
+		External::alSourcei(sourceID, AL_LOOPING, looping);
 		initialized = true;
 	}
 
@@ -156,7 +184,7 @@ struct AudioSource
 			logError("Audio Source was not initialized!");
 			return;
 		}
-		alDeleteSources(1, &sourceID);
+		External::alDeleteSources(1, &sourceID);
 		initialized = false;
 	}
 };
@@ -164,8 +192,8 @@ struct AudioSource
 struct AudioSystem
 {
 	Bool        initialized = false;
-	ALCdevice*  device      = nullptr;
-	ALCcontext* context     = nullptr;
+	External::ALCdevice*  device      = nullptr;
+	External::ALCcontext* context     = nullptr;
 	Int         sampleCount = 44100;
 
 	AudioSystem()
@@ -178,7 +206,7 @@ struct AudioSystem
 			return;
 		}
 
-		device = alcOpenDevice(nullptr); //get default sound device
+		device = External::alcOpenDevice(nullptr); //get default sound device
 		if (!device) logError("Failed to get sound device!");
 		context = alcCreateContext(device, nullptr);
 		if (!context) logError("Failed to create audio context!");
@@ -190,7 +218,7 @@ struct AudioSystem
 		if (debugAudioSystem) logDebug("Destroying Audio System!");
 		if (initialized)
 		{
-			alcMakeContextCurrent(nullptr);
+			External::alcMakeContextCurrent(nullptr);
 			alcDestroyContext(context);
 			alcCloseDevice(device);
 			initialized = false;

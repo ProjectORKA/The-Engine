@@ -24,8 +24,14 @@ void Framebuffer::clear() const
 
 	for(const FramebufferTexture& framebufferTexture : framebufferTextures)
 	{
-		if(framebufferTexture.isColor()) openglFramebuffer.clearColor(framebufferTexture.getAttachmentSlot(), Color(0, 0, 0, 1));
-		else openglFramebuffer.clearDepth(1.0f);
+		if(framebufferTexture.isColor())
+		{
+			openglFramebuffer.clearColor(framebufferTexture.getAttachmentSlot(), Color(0, 0, 0, 1));
+		}
+		else
+		{
+			openglFramebuffer.clearDepth(1.0f);
+		}
 	}
 }
 
@@ -37,7 +43,10 @@ Int Framebuffer::getWidth() const
 void Framebuffer::checkComplete()
 {
 	// makes sure the framebuffer is complete
-	if(openglFramebuffer.isComplete()) complete = true;
+	if(openglFramebuffer.isComplete())
+	{
+		complete = true;
+	}
 	else
 	{
 		complete = false;
@@ -154,14 +163,14 @@ void Framebuffer::attachTexture(const FramebufferTexture& framebufferTexture)
 	}
 }
 
-IVec4 Framebuffer::readPixelsAtCenterUIntRgb(const FramebufferMode attachment) const
+IVec4 Framebuffer::readPixelsAtCenterUIntRGB(const FramebufferMode attachment) const
 {
 	if(debugFramebuffersIsEnabled) if(!complete) logError("Framebuffer not complete!");
 
-	return readPixelsUIntRgb(size.x / 2, size.y / 2, attachment);
+	return readPixelsUIntRGB(size.x / 2, size.y / 2, attachment);
 }
 
-IVec4 Framebuffer::readPixelsUIntRgb(const Int x, const Int y, const FramebufferMode attachment) const
+IVec4 Framebuffer::readPixelsUIntRGB(const Int x, const Int y, const FramebufferMode attachment) const
 {
 	if(debugFramebuffersIsEnabled) if(!complete) logError("Framebuffer not complete!");
 

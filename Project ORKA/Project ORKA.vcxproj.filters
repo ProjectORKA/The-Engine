@@ -191,9 +191,6 @@
     <ClCompile Include="Debug.cpp">
       <Filter>Common\Platform\Debug</Filter>
     </ClCompile>
-    <ClCompile Include="ImguiExample.cpp">
-      <Filter>Apps\2D Apps\Imgui</Filter>
-    </ClCompile>
     <ClCompile Include="Logger.cpp">
       <Filter>Common\Platform\Debug\Logger</Filter>
     </ClCompile>
@@ -433,6 +430,15 @@
     </ClCompile>
     <ClCompile Include="SimpleRtsQuadtreeSystem.cpp">
       <Filter>Apps\3D Apps\SimpleRts\SimpleRtsQuadtreeSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="TriangulationPrototype.cpp">
+      <Filter>Apps\3D Apps\Prototyping\Prototypes\TriangulationPrototype</Filter>
+    </ClCompile>
+    <ClCompile Include="LabyrinthGeneratorPrototype.cpp">
+      <Filter>Apps\3D Apps\Prototyping\Prototypes\Labyrinth Generator</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine.cpp">
+      <Filter>Systems\Engine</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -675,9 +681,6 @@
     </ClInclude>
     <ClInclude Include="ProceduralMeshes.hpp">
       <Filter>Systems\Meshing\Procedural Meshes</Filter>
-    </ClInclude>
-    <ClInclude Include="ImguiExample.hpp">
-      <Filter>Apps\2D Apps\Imgui</Filter>
     </ClInclude>
     <ClInclude Include="MSDFText.hpp">
       <Filter>Apps\2D Apps\MSDFText</Filter>
@@ -987,6 +990,18 @@
     </ClInclude>
     <ClInclude Include="SimpleRtsQuadtreeSystem.hpp">
       <Filter>Apps\3D Apps\SimpleRts\SimpleRtsQuadtreeSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="TriangulationPrototype.hpp">
+      <Filter>Apps\3D Apps\Prototyping\Prototypes\TriangulationPrototype</Filter>
+    </ClInclude>
+    <ClInclude Include="ClosestConnectionPrototype.hpp">
+      <Filter>Apps\3D Apps\Prototyping\Prototypes</Filter>
+    </ClInclude>
+    <ClInclude Include="PersistentInfoPrototype.hpp">
+      <Filter>Apps\3D Apps\Prototyping\Prototypes</Filter>
+    </ClInclude>
+    <ClInclude Include="LabyrinthGeneratorPrototype.hpp">
+      <Filter>Apps\3D Apps\Prototyping\Prototypes\Labyrinth Generator</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1460,9 +1475,6 @@
     <Filter Include="Apps\2D Apps\GPUSim\Shaders">
       <UniqueIdentifier>{5093d9db-c67d-48c7-9557-d2986e6358ff}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Apps\2D Apps\Imgui">
-      <UniqueIdentifier>{8422808a-175e-4e8f-b8e9-6d2153991cf2}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Apps\2D Apps\MSDFText">
       <UniqueIdentifier>{d2c110fa-3ba1-4a8c-87a0-13ab36b88c7f}</UniqueIdentifier>
     </Filter>
@@ -1745,9 +1757,6 @@
     <Filter Include="Systems\Engine">
       <UniqueIdentifier>{7b41519f-b775-41ee-abf8-e19107bbb02f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Apps\3D Apps\Prototyping\Prototypes\KDTree">
-      <UniqueIdentifier>{f7b24238-8111-4ea7-a14e-ce86f4bc9cd9}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Apps\Console Apps\DNDBase">
       <UniqueIdentifier>{beaaf7d9-61a4-4ca3-b7f1-d4ba092ed089}</UniqueIdentifier>
     </Filter>
@@ -1810,6 +1819,15 @@
     </Filter>
     <Filter Include="Apps\3D Apps\SimpleRts\SimpleRtsQuadtreeSystem">
       <UniqueIdentifier>{114a064c-e1b5-4982-b19c-d064ef052cc4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Apps\3D Apps\Prototyping\Prototypes\TriangulationPrototype">
+      <UniqueIdentifier>{ae35deb2-ba69-4be2-8fe5-883c4c3eafcd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Apps\3D Apps\Prototyping\Prototypes\Labyrinth Generator">
+      <UniqueIdentifier>{327acd63-0d65-4b89-bd22-4b069d14d03f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Apps\2D Apps\ImGui">
+      <UniqueIdentifier>{8422808a-175e-4e8f-b8e9-6d2153991cf2}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

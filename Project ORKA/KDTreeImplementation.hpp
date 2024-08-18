@@ -47,10 +47,6 @@
 #include "Basics.hpp"
 #include "Debug.hpp"
 
-#include <array>
-#include <future>
-#include <unordered_set>
-
 template <typename T, typename = Int> struct has_resize : std::false_type {};
 
 template <typename T> struct has_resize<T, decltype((void)std::declval<T>().resize(1), 0)> : std::true_type {};
@@ -126,7 +122,10 @@ public:
 					indices[i] = indices[i - 1];
 				}
 			}
-			else break;
+			else
+			{
+				break;
+			}
 		}
 		if(i < capacity)
 		{
@@ -452,7 +451,10 @@ template <class T, class DataSource, typename _DistanceType = T, typename IndexT
 		DistanceType result = DistanceType();
 		DistanceType pi     = 3.14159265358979323846;//pi_const<DistanceType>();
 		result              = b - a;
-		if(result > pi) result -= 2 * pi;
+		if(result > pi)
+		{
+			result -= 2 * pi;
+		}
 		else if(result < -pi) result += 2 * pi;
 		return result;
 	}
@@ -1069,16 +1071,34 @@ public:
 		ElementType  min_elem, max_elem;
 		computeMinMax(obj, ind, count, cutfeat, min_elem, max_elem);
 
-		if(split_val < min_elem) cutval = min_elem;
-		else if(split_val > max_elem) cutval = max_elem;
-		else cutval                          = split_val;
+		if(split_val < min_elem)
+		{
+			cutval = min_elem;
+		}
+		else if(split_val > max_elem)
+		{
+			cutval = max_elem;
+		}
+		else
+		{
+			cutval                          = split_val;
+		}
 
 		Offset lim1, lim2;
 		planeSplit(obj, ind, count, cutfeat, cutval, lim1, lim2);
 
-		if(lim1 > count / 2) index = lim1;
-		else if(lim2 < count / 2) index = lim2;
-		else index                      = count / 2;
+		if(lim1 > count / 2)
+		{
+			index = lim1;
+		}
+		else if(lim2 < count / 2)
+		{
+			index = lim2;
+		}
+		else
+		{
+			index                      = count / 2;
+		}
 	}
 
 	/**
@@ -1302,7 +1322,10 @@ private:
 		Base::dim_                 = dimensionality;
 		if(DIM > 0) Base::dim_ = DIM;
 		Base::leaf_max_size_ = params.leaf_max_size;
-		if(params.n_thread_build > 0) Base::n_thread_build_ = params.n_thread_build;
+		if(params.n_thread_build > 0)
+		{
+			Base::n_thread_build_ = params.n_thread_build;
+		}
 		else
 		{
 			Base::n_thread_build_ = std::max(std::thread::hardware_concurrency(), 1u);
@@ -1680,7 +1703,10 @@ public:
 		Base::dim_ = dimensionality;
 		if(DIM > 0) Base::dim_ = DIM;
 		Base::leaf_max_size_ = params.leaf_max_size;
-		if(params.n_thread_build > 0) Base::n_thread_build_ = params.n_thread_build;
+		if(params.n_thread_build > 0)
+		{
+			Base::n_thread_build_ = params.n_thread_build;
+		}
 		else
 		{
 			Base::n_thread_build_ = std::max(std::thread::hardware_concurrency(), 1u);

@@ -6,7 +6,7 @@
 
 struct ORKAIntroSequence : GameRenderer
 {
-	Bool          decorated              = true; // weather the apps window is decoreted or not
+	Bool          decorated              = true;
 	Bool          initializedRenderer    = false;
 	GameRenderer* gameStartingAfterIntro = nullptr;
 

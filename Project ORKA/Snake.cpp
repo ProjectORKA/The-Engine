@@ -54,8 +54,14 @@ void SnakeSnake::update(SnakeFood& snakeFood, const Float deltaTime)
 
 	for(Int i = 0; i < bodySegments.size(); i++)
 	{
-		if(i == 0) bodySegments[i] = normalize(bodySegments[i] - headPosition) * Vec2(2 * segmentRadius) + headPosition;
-		else bodySegments[i]       = normalize(bodySegments[i] - bodySegments[i - 1]) * Vec2(2 * segmentRadius) + bodySegments[i - 1];
+		if(i == 0)
+		{
+			bodySegments[i] = normalize(bodySegments[i] - headPosition) * Vec2(2 * segmentRadius) + headPosition;
+		}
+		else
+		{
+			bodySegments[i]       = normalize(bodySegments[i] - bodySegments[i - 1]) * Vec2(2 * segmentRadius) + bodySegments[i - 1];
+		}
 	}
 }
 

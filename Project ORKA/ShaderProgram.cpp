@@ -2,14 +2,26 @@
 
 void ShaderProgram::destroy()
 {
-	if(isLoaded()) openglShaderProgram.destroy();
-	else logError("ShaderProgram already unloaded!");
+	if(isLoaded())
+	{
+		openglShaderProgram.destroy();
+	}
+	else
+	{
+		logError("ShaderProgram already unloaded!");
+	}
 }
 
 void ShaderProgram::use() const
 {
-	if(loaded) openglShaderProgram.use();
-	else logError("ShaderProgram not loaded!");
+	if(loaded)
+	{
+		openglShaderProgram.use();
+	}
+	else
+	{
+		logError("ShaderProgram not loaded!");
+	}
 }
 
 Bool ShaderProgram::isLoaded() const

@@ -29,6 +29,7 @@ void ORKAIntroSequence::render(Window& window, TiledRectangle area)
 
 	renderer.setCulling(true);
 	renderer.setDepthTest(true);
+	renderer.setAlphaBlending(true);
 	renderer.setWireframeMode(false);
 
 	// camera stuff

@@ -8,7 +8,7 @@ void TripleNineEnemy::die()
 
 void TripleNinePlayer::jump()
 {
-	if(isMoving)
+	if (isMoving)
 	{
 		velocity.z = 0;
 		velocity += Vec3(0, 0, minJumpVelocity);
@@ -40,8 +40,8 @@ void TripleNineSimulation::createEnemy()
 
 void TripleNinePlayer::collisionResponse()
 {
-	if(velocity.z < 0) velocity.z = 0;
-	if(position.z < 0) position.z = 0;
+	if (velocity.z < 0) velocity.z = 0;
+	if (position.z < 0) position.z = 0;
 }
 
 void TripleNinePlayer::update(Window& window)
@@ -53,64 +53,103 @@ void TripleNinePlayer::update(Window& window)
 	forwardVector = normalize(Vec3(sin(camera.getRotationZ()), cos(camera.getRotationZ()), 0));
 	rightVector   = Vec3(forwardVector.y, -forwardVector.x, 0);
 	// process input
-	if(window.capturing) targetCameraRotation += window.mouseDelta * DVec2(mouseSensitivity);
+	if (window.capturing) targetCameraRotation += window.mouseDelta * DVec2(mouseSensitivity);
 	movementControl = Vec3(0);
-	if(window.pressed(forward)) movementControl += forwardVector;
-	if(window.pressed(backward)) movementControl -= forwardVector;
-	if(window.pressed(right)) movementControl += rightVector;
-	if(window.pressed(left)) movementControl -= rightVector;
+	if (window.pressed(forward)) movementControl += forwardVector;
+	if (window.pressed(backward)) movementControl -= forwardVector;
+	if (window.pressed(right)) movementControl += rightVector;
+	if (window.pressed(left)) movementControl -= rightVector;
 	upperBodyLeanControl = 0;
-	if(window.pressed(leanRight) && onGround) upperBodyLeanControl += 1;
-	if(window.pressed(leanLeft) && onGround) upperBodyLeanControl -= 1;
+	if (window.pressed(leanRight) && onGround) upperBodyLeanControl += 1;
+	if (window.pressed(leanLeft) && onGround) upperBodyLeanControl -= 1;
 	movementInput = movementControl != Vec3(0);
-	if(onGround)
+	if (onGround)
 	{
-		if(window.pressed(crouch))
+		if (window.pressed(crouch))
 		{
-			if(window.pressed(holdJump))
+			if (window.pressed(holdJump))
 			{
-				if(movementInput) state = State::crawling;
-				else state              = State::proning;
+				if (movementInput)
+				{
+					state = State::crawling;
+				}
+				else
+				{
+					state = State::proning;
+				}
 			}
 			else
 			{
-				if(movementInput) state = State::sneaking;
-				else state              = State::crouching;
+				if (movementInput)
+				{
+					state = State::sneaking;
+				}
+				else
+				{
+					state = State::crouching;
+				}
 			}
 		}
 		else
 		{
-			if(movementInput)
+			if (movementInput)
 			{
-				if(window.pressed(run)) state = State::sprinting;
-				else state                    = State::walking;
+				if (window.pressed(run))
+				{
+					state = State::sprinting;
+				}
+				else
+				{
+					state = State::walking;
+				}
 			}
-			else state = State::standing;
+			else
+			{
+				state = State::standing;
+			}
 		}
 	}
 	else
 	{
-		if(velocity.z >= 0) state = State::jumping;
-		else state                = State::falling;
+		if (velocity.z >= 0)
+		{
+			state = State::jumping;
+		}
+		else
+		{
+			state = State::falling;
+		}
 	}
 	// update values
 	// running
-	if(state == State::sprinting) speedControl += delta * speedControlAcceleration;
-	else speedControl -= delta * speedControlDeceleration;
+	if (state == State::sprinting)
+	{
+		speedControl += delta * speedControlAcceleration;
+	}
+	else
+	{
+		speedControl -= delta * speedControlDeceleration;
+	}
 	speedControl = clamp(speedControl, 0.0f, 1.0f);
 	camera.rotate(targetCameraRotation);
 	calculatePhysics(window);
-	if(isCollidingWithGround())
+	if (isCollidingWithGround())
 	{
 		onGround         = true;
 		doubleJumpCharge = true;
-		if(window.pressed(holdJump)) jump();
+		if (window.pressed(holdJump)) jump();
 		// if (queueJump) {
 		//	queueJump = false;
 		// }
 		collisionResponse();
-		if(movementInput) actualFriction = movementFriction;
-		else actualFriction              = stopFriction;
+		if (movementInput)
+		{
+			actualFriction = movementFriction;
+		}
+		else
+		{
+			actualFriction = stopFriction;
+		}
 		actualFriction *= normalFrictionFactor;
 		velocity /= 1 + delta * actualFriction;
 	}
@@ -118,20 +157,20 @@ void TripleNinePlayer::update(Window& window)
 	{
 		onGround = false;
 	}
-	if(state == State::jumping) debugCurrentMaxJumpHeight = position.z;
+	if (state == State::jumping) debugCurrentMaxJumpHeight = position.z;
 	isMoving = movementControl != Vec3(0);
 	// air strafing
-	if(movementInput && !onGround)
+	if (movementInput && !onGround)
 	{
 		const Vec3  strafeVector     = movementControl * Vec3(maxStrafeSpeed);
 		const Vec3  projectionVector = proj(velocity, movementControl);
 		const Vec3  deltaVec         = strafeVector - projectionVector;
 		const Float velocityAddMax   = length(deltaVec);
-		if(length(projectionVector) < velocityAddMax) velocity += movementControl * min(delta * maxStrafeAcceleration, velocityAddMax);
+		if (length(projectionVector) < velocityAddMax) velocity += movementControl * min(delta * maxStrafeAcceleration, velocityAddMax);
 	}
 	// movement speed
 	targetSpeed = lerp(walkingSpeed, runningSpeed, speedControl);
-	if(movementInput && onGround)
+	if (movementInput && onGround)
 	{
 		// add speed to direction
 		approach(actualInputSpeed, targetSpeed, delta * 2);
@@ -178,8 +217,14 @@ void TripleNinePlayer::calculatePhysics(const Window& window)
 	position += velocity1 * window.renderer.deltaTime();
 	// step 3 calculate forces
 	// player keeps jumping higher when holding space but falls faster when releasing it
-	if(!onGround && window.pressed(holdJump)) acceleration = Vec3(0, 0, -airTimeGravity);
-	else acceleration                                      = Vec3(0, 0, -gravity);
+	if (!onGround && window.pressed(holdJump))
+	{
+		acceleration = Vec3(0, 0, -airTimeGravity);
+	}
+	else
+	{
+		acceleration = Vec3(0, 0, -gravity);
+	}
 	// step4
 	const Vec3 velocity2 = velocity1 + acceleration * window.renderer.deltaTime() / Vec3(2);
 	velocity             = velocity2 * pow(airResistance, window.renderer.deltaTime());
@@ -188,19 +233,22 @@ void TripleNinePlayer::calculatePhysics(const Window& window)
 void TripleNineSimulation::create()
 {
 	// create targets
-	for(Int i = 0; i < 100; i++) createEnemy();
+	for (Int i = 0; i < 100; i++) createEnemy();
 }
 
 void TripleNineEnemy::create(Window& window) {}
 
 void TripleNinePlayer::inputEvent(Window& window, const InputEvent input)
 {
-	if(input == jumpTrigger)
+	if (input == jumpTrigger)
 	{
-		if(onGround) jump();
+		if (onGround)
+		{
+			jump();
+		}
 		else
 		{
-			if(doubleJumpCharge)
+			if (doubleJumpCharge)
 			{
 				doubleJumpCharge = false;
 				jump();
@@ -214,17 +262,20 @@ void TripleNinePlayer::inputEvent(Window& window, const InputEvent input)
 
 void TripleNineRenderer::inputEvent(Window& window, const InputEvent input)
 {
-	if(input == enter)
+	if (input == enter)
 	{
-		if(!window.capturing) window.captureCursor();
+		if (!window.capturing)
+		{
+			window.captureCursor();
+		}
 		else
 		{
-			if(window.renderer.objectId != static_cast<UInt>(-1)) sim->enemies[window.renderer.objectId].die();
+			if (window.renderer.objectId != static_cast<UInt>(-1)) sim->enemies[window.renderer.objectId].die();
 		}
 	}
-	if(input == exit) window.releaseCursor();
-	if(input == reloadShaders) window.renderer.shaderSystem.rebuild();
-	if(input == toggleBloom) bloom = !bloom;
+	if (input == exit) window.releaseCursor();
+	if (input == reloadShaders) window.renderer.shaderSystem.rebuild();
+	if (input == toggleBloom) bloom = !bloom;
 	player.inputEvent(window, input);
 }
 
@@ -234,48 +285,44 @@ void TripleNinePlayer::calculateHeadPosition(Window& window, const Float delta)
 	// advance walk cycle
 	walkCycle += actualSpeed * delta / unit;
 	// height
-	switch(state)
+	switch (state)
 	{
-		case State::standing:
-			eyeHeightTarget = eyeHeightNormal;
-			break;
-		case State::walking:
-			eyeHeightTarget = eyeHeightWalking;
-			break;
-		case State::sprinting:
-			eyeHeightTarget = eyeHeightRunning;
-			break;
-		case State::falling:
-			eyeHeightTarget = eyeHeightFlying;
-			break;
-		case State::jumping:
-			eyeHeightTarget = eyeHeightNormal;
-			break;
-		case State::crouching:
-			eyeHeightTarget = eyeHeightCrouching;
-			break;
-		case State::proning:
-			eyeHeightTarget = eyeHeightProning;
-			break;
-		case State::sliding:
-			eyeHeightTarget = eyeHeightSliding;
-			break;
-		case State::sneaking:
-			eyeHeightTarget = eyeHeightCrouching;
-			break;
-		case State::crawling:
-			eyeHeightTarget = eyeHeightSliding;
-			break;
+	case State::standing: eyeHeightTarget = eyeHeightNormal;
+		break;
+	case State::walking: eyeHeightTarget = eyeHeightWalking;
+		break;
+	case State::sprinting: eyeHeightTarget = eyeHeightRunning;
+		break;
+	case State::falling: eyeHeightTarget = eyeHeightFlying;
+		break;
+	case State::jumping: eyeHeightTarget = eyeHeightNormal;
+		break;
+	case State::crouching: eyeHeightTarget = eyeHeightCrouching;
+		break;
+	case State::proning: eyeHeightTarget = eyeHeightProning;
+		break;
+	case State::sliding: eyeHeightTarget = eyeHeightSliding;
+		break;
+	case State::sneaking: eyeHeightTarget = eyeHeightCrouching;
+		break;
+	case State::crawling: eyeHeightTarget = eyeHeightSliding;
+		break;
 	}
 	// bob
 	Float bobTarget = 0;
-	if(isMoving && onGround) bobTarget = sin(lerp(1, headBobSpeed, 0.5) * 2 * walkCycle) * actualSpeed * headBobIntensity;
+	if (isMoving && onGround) bobTarget = sin(lerp(1, headBobSpeed, 0.5) * 2 * walkCycle) * actualSpeed * headBobIntensity;
 	// sway
 	// Float swayTarget = 0;
 	// if(onGround) swayTarget = sin(lerp(1, headBobSpeed, 0.5) * walkCycle) * actualSpeed * headSwayImpact;
 	// lean
-	if(onGround) fullBodyLeanControl = approach(2.0f * actualSpeed / unit * targetCameraRotation.x, 1.0f);
-	else fullBodyLeanControl         = 0;
+	if (onGround)
+	{
+		fullBodyLeanControl = approach(2.0f * actualSpeed / unit * targetCameraRotation.x, 1.0f);
+	}
+	else
+	{
+		fullBodyLeanControl = 0;
+	}
 	// smooth motion
 	approach(upperBodyLean, upperBodyLeanControl, delta * upperBodyLeanSpeed);
 	approach(fullBodyLean, fullBodyLeanControl, delta * fullBodyLeanSpeed);
@@ -461,7 +508,7 @@ void TripleNineRenderer::render(Window& window, const TiledRectangle area)
 	r.renderMesh("Map9");
 
 	r.useTexture("tripleNineTarget_baked");
-	for(TripleNineEnemy& enemy : sim->enemies) enemy.render(r);
+	for (TripleNineEnemy& enemy : sim->enemies) enemy.render(r);
 
 	// sphere
 	r.useShader("color");
@@ -485,7 +532,7 @@ void TripleNineRenderer::render(Window& window, const TiledRectangle area)
 	r.uniforms().setMMatrix(matrixFromPositionAndSize(Vec2(window.getFrameSize() / 2), 2));
 	r.renderMesh("circle");
 
-	if(renderText)
+	if (renderText)
 	{
 		r.screenSpace();
 		Int             i       = 1;
@@ -528,7 +575,7 @@ void TripleNineRenderer::renderInteractive(Window& window, const TiledRectangle 
 	Renderer& r = window.renderer;
 
 	r.idFramebuffer.resize(area.size);
-	r.idFramebuffer.clearColor(IVec4(-1));
+	r.idFramebuffer.clearColor(IVec4(0));
 	r.idFramebuffer.clearDepth();
 	r.idFramebuffer.bindDraw();
 	r.setWireframeMode(false);
@@ -548,12 +595,18 @@ void TripleNineRenderer::renderInteractive(Window& window, const TiledRectangle 
 	r.renderMesh("Map8");
 	r.renderMesh("Map9");
 	r.uniforms().setMMatrix(Matrix(1));
-	for(TripleNineEnemy& enemy : sim->enemies) enemy.renderInteractive(window, area);
+	for (TripleNineEnemy& enemy : sim->enemies) enemy.renderInteractive(window, area);
 
 	r.idFramebuffer.bindRead();
 	IVec4 idData;
-	if(window.capturing) idData = r.idFramebuffer.readPixelsAtCenterUIntRgb(FramebufferMode::Color0);
-	else idData                 = r.idFramebuffer.readPixelsUIntRgb(static_cast<Int>(window.mousePosBotLeft.x), static_cast<Int>(window.mousePosBotLeft.y), FramebufferMode::Color0);
+	if (window.capturing)
+	{
+		idData = r.idFramebuffer.readPixelsAtCenterUIntRGB(FramebufferMode::Color0);
+	}
+	else
+	{
+		idData = r.idFramebuffer.readPixelsUIntRGB(static_cast<Int>(window.mousePosBotLeft.x), static_cast<Int>(window.mousePosBotLeft.y), FramebufferMode::Color0);
+	}
 	r.objectId    = idData.x;
 	r.instanceId  = idData.y;
 	r.primitiveId = idData.z;
@@ -563,4 +616,16 @@ void TripleNineRenderer::renderInteractive(Window& window, const TiledRectangle 
 	// idFramebuffer.setAsTexture(0);
 	// r.drawToWindow();
 	// r.fullScreenShader("debugID");
+}
+
+void TripleNine::run()
+{
+	ui.create();
+	intro.init(renderer);
+	simulation.start();
+	renderer.connect(simulation);
+	window.add(intro);
+	ui.window("Triple Nine", Area(1920, 1080), true, false, WindowState::Windowed, intro);
+	ui.run();
+	simulation.stop();
 }

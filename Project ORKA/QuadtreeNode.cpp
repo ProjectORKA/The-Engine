@@ -52,8 +52,14 @@ void QuadtreeNode::unsubdivide()
 
 void QuadtreeNode::decrementUsers()
 {
-	if(users) users--;
-	else logError("Cant have less than 0 users, error must have happened!");
+	if(users)
+	{
+		users--;
+	}
+	else
+	{
+		logError("Cant have less than 0 users, error must have happened!");
+	}
 }
 
 void QuadtreeNode::incrementUsers()
@@ -66,8 +72,14 @@ QuadtreeNode& QuadtreeNode::nlr() const
 	const QuadtreeNode* cur = this;
 	while(!cur->nl)
 	{
-		if(cur->parent) cur = cur->parent;
-		else logError("Quadtree Critical Failure!");
+		if(cur->parent)
+		{
+			cur = cur->parent;
+		}
+		else
+		{
+			logError("Quadtree Critical Failure!");
+		}
 	}
 	return *cur->nl;
 }
@@ -77,8 +89,14 @@ QuadtreeNode& QuadtreeNode::nrr() const
 	const QuadtreeNode* cur = this;
 	while(!cur->nr)
 	{
-		if(cur->parent) cur = cur->parent;
-		else logError("Quadtree Critical Failure!");
+		if(cur->parent)
+		{
+			cur = cur->parent;
+		}
+		else
+		{
+			logError("Quadtree Critical Failure!");
+		}
 	}
 	return *cur->nr;
 }
@@ -88,8 +106,14 @@ QuadtreeNode& QuadtreeNode::nbr() const
 	const QuadtreeNode* cur = this;
 	while(!cur->nb)
 	{
-		if(cur->parent) cur = cur->parent;
-		else logError("Quadtree Critical Failure!");
+		if(cur->parent)
+		{
+			cur = cur->parent;
+		}
+		else
+		{
+			logError("Quadtree Critical Failure!");
+		}
 	}
 	return *cur->nb;
 }
@@ -99,8 +123,14 @@ QuadtreeNode& QuadtreeNode::nfr() const
 	const QuadtreeNode* cur = this;
 	while(!cur->nf)
 	{
-		if(cur->parent) cur = cur->parent;
-		else logError("Quadtree Critical Failure!");
+		if(cur->parent)
+		{
+			cur = cur->parent;
+		}
+		else
+		{
+			logError("Quadtree Critical Failure!");
+		}
 	}
 	return *cur->nf;
 }
@@ -168,9 +198,15 @@ void QuadtreeNode::update(QuadtreeSystem& quadtreeSystem, TerrainSystem& terrain
 			c10->update(quadtreeSystem, terrainSystem);
 			c11->update(quadtreeSystem, terrainSystem);
 		}
-		else subdivide(terrainSystem);
+		else
+		{
+			subdivide(terrainSystem);
+		}
 	}
-	else unsubdivide();
+	else
+	{
+		unsubdivide();
+	}
 }
 
 void QuadtreeNode::create(const TerrainSystem& terrainSystem, QuadtreeNode* parent, const Bool x, const Bool y)

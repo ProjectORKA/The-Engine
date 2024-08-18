@@ -45,6 +45,9 @@ struct Orientation
 [[nodiscard]] Bool isNear(Vec3 a, Vec3 b, Float error);
 [[nodiscard]] Bool isNear(Float a, Float b, Float error);
 
+//angles
+[[nodiscard]] Bool compareByAngle(const Vec2& a, const Vec2& b);
+
 //lines
 [[nodiscard]] Bool linesIntersecting(Vec2 a, Vec2 b, Vec2 c, Vec2 d);
 
@@ -58,11 +61,13 @@ struct Orientation
 //circles
 [[nodiscard]] Bool circleCollidingWithCircles(Vec2 pos, Float radius, const Vector<Vec2>& circles, Float pointsRadius);
 
-[[nodiscard]]  UInt max(UInt a, UInt b);
-[[nodiscard]]  UInt nextPowerOfTwo(UInt value);
-[[nodiscard]]  UInt countBitsInFlags(UInt flags);
-[[nodiscard]]  UInt fibonacciSequence(UInt iterations);
+[[nodiscard]] UInt max(UInt a, UInt b);
+[[nodiscard]] UInt nextPowerOfTwo(UInt value);
+[[nodiscard]] UInt countBitsInFlags(UInt flags);
+[[nodiscard]] UInt fibonacciSequence(UInt iterations);
 
+[[nodiscard]] Index xyToIndex(Int x, Int y, Int size);
+[[nodiscard]] Index xyToIndex(Int x, Int y, Int width, Int height);
 [[nodiscard]] Index idOfClosestPoint(Vec2 origin, const Vector<Vec2>& positions);
 [[nodiscard]] Index idOfClosestPointInLoopingSpace(Vec2 origin, const Vector<Vec2>& positions, Float extend);
 [[nodiscard]] Index idOfClosestPoint(Vec2 origin, const Vector<Index>& indices, const Vector<Vec2>& positions);
@@ -94,7 +99,7 @@ struct Orientation
 [[nodiscard]] Vec2 clerp(Vec2 a, Vec2 b, Float alpha);
 [[nodiscard]] Vec2 deltaInLoopingSpace(Vec2 a, Vec2 b, Float extend);
 
-[[nodiscard]] Vec3  normalize(Vec3 a);
+[[nodiscard]] Vec3 normalize(Vec3 a);
 [[nodiscard]] Vec3 max(Vec3 a, Vec3 b);
 [[nodiscard]] Vec3 projectToCube(Vec3 vec);
 [[nodiscard]] Vec3 vectorFromAToB(Vec3 a, Vec3 b);
@@ -113,10 +118,12 @@ struct Orientation
 [[nodiscard]] Matrix matrixFromSize(Float size);
 [[nodiscard]] Matrix matrixFromPosition(Vec2 position);
 [[nodiscard]] Matrix matrixFromPosition(Vec3 position);
+[[nodiscard]] Matrix matrixFromPosition(Float x, Float y);
 [[nodiscard]] Matrix matrixFromAxis(Vec3 x, Vec3 y, Vec3 z);
 [[nodiscard]] Matrix clerp(Matrix a, Matrix b, Float alpha);
 [[nodiscard]] Matrix matrixFromOrientation(const Orientation& o);
 [[nodiscard]] Matrix screenSpaceMatrix(Float width, Float height);
+[[nodiscard]] Matrix matrixFromPosition(Float x, Float y, Float z);
 [[nodiscard]] Matrix matrixFromTiledRectangle(TiledRectangle area);
 [[nodiscard]] Matrix matrixFromRotation(Float x, Float y, Float z);
 [[nodiscard]] Matrix matrixFromPositionAndSize(Vec2 pos, Vec2 size);
@@ -130,7 +137,11 @@ struct Orientation
 [[nodiscard]] Matrix matrixFromPositionDirectionAndSize(Vec2 pos, Vec2 dir, Float size);
 [[nodiscard]] Matrix matrixFromOrientation(const Orientation& o, Vec3 position, Float size);
 
+[[nodiscard]] Vector<Index> shuffledIndices(UInt size);
+
+[[nodiscard]] Vector<Vec3> circleOfPoints(Float radius, UInt amount);
 [[nodiscard]] Vector<Vec3> vec2VectorToVec3Vector(const Vector<Vec2>& vec2Vector);
+[[nodiscard]] Vector<Vec2> vec3VectorToVec2Vector(const Vector<Vec3>& vec3Vector);
 
 [[nodiscard]] Vector<Matrix> matrixArrayFromPositions(const Vector<Vec3>& positions);
 [[nodiscard]] Vector<Matrix> matrixArrayFromPositions(const Vector<Vec2>& positions);
@@ -145,24 +156,28 @@ void removePointsInRadius(Vec3 point, Vector<Vec3>& points, Float radius);
 void getClosestPoint(Vec3 point, const Vector<Vec3>& points, Index& closestId, Vec3& closestPoint);
 void spaceColonization(Vector<Vec3>& points, Vector<Vec3>& branches, Vector<Index>& connections, Float segmentSize, Float killRadius);
 
-template <typename T> T max(T a, T b)
+template <typename T>
+T max(T a, T b)
 {
 	return a < b ? b : a;
 }
 
-template <typename T> T min(T a, T b)
+template <typename T>
+T min(T a, T b)
 {
 	return !(b < a) ? a : b;
 }
 
-template <typename T> T clamp(T a, T min, T max)
+template <typename T>
+T clamp(T a, T min, T max)
 {
-	if(a > max) return max;
-	if(a < min) return min;
+	if (a > max) return max;
+	if (a < min) return min;
 	return a;
 }
 
-template <typename T> void approach(T& a, T b, Float rateOfChange)
+template <typename T>
+void approach(T& a, T b, Float rateOfChange)
 {
 	a = clerp(a, b, rateOfChange);
 }

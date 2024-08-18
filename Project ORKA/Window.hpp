@@ -35,7 +35,7 @@ struct Window final : LifetimeGuard
 	Bool         capturing   = false;
 	Bool         profiling   = false;
 	UIContainer  content;
-	APIWindow    apiWindow        = nullptr;
+	ApiWindow    apiWindow        = nullptr;
 	Area         windowedModeSize = Area(1);
 	IVec2        windowPosition   = IVec2(0);
 	WindowState  windowState      = WindowState::Windowed;
@@ -44,12 +44,12 @@ struct Window final : LifetimeGuard
 	DVec2 mouseDelta      = DVec2(0);
 	DVec2 mousePosBotLeft = DVec2(0);
 	//input
-	InputId    altKey         = InputId(InputType::KeyBoard, ALT);
+	InputId    altKey         = InputId(InputType::KeyBoard, Alt);
 	InputEvent reloadShaders  = InputEvent(InputType::KeyBoard, F7, true);
 	InputEvent startProfiling = InputEvent(InputType::KeyBoard, F8, true);
 	InputEvent stopProfiling  = InputEvent(InputType::KeyBoard, F8, false);
-	InputEvent escape         = InputEvent(InputType::KeyBoard, ESC, true);
-	InputEvent enter          = InputEvent(InputType::KeyBoard, ENTER, true);
+	InputEvent escape         = InputEvent(InputType::KeyBoard, Esc, true);
+	InputEvent enter          = InputEvent(InputType::KeyBoard, Enter, true);
 
 	void destroy();
 	void setWindowed();
@@ -89,10 +89,10 @@ struct Window final : LifetimeGuard
 void windowThread(Window& window);
 
 // window callbacks
-void whenWindowCloseRequest(APIWindow apiWindow);
-void whenMouseIsMoving(APIWindow apiWindow, Double mouseX, Double mouseY);
-void whenFramebufferIsResized(APIWindow apiWindow, Int width, Int height);
-void whenMouseIsScrolling(APIWindow apiWindow, Double xAxis, Double yAxis);
-void whenFilesDroppedOnWindow(APIWindow apiWindow, Int count, const Char** paths);
-void whenMouseIsPressed(APIWindow apiWindow, Int mouseButton, Int action, Int modifiers);
-void whenButtonIsPressed(APIWindow apiWindow, Int key, Int scanCode, Int action, Int modifiers);
+void whenWindowCloseRequest(ApiWindow apiWindow);
+void whenMouseIsMoving(ApiWindow apiWindow, Double mouseX, Double mouseY);
+void whenFramebufferIsResized(ApiWindow apiWindow, Int width, Int height);
+void whenMouseIsScrolling(ApiWindow apiWindow, Double xAxis, Double yAxis);
+void whenFilesDroppedOnWindow(ApiWindow apiWindow, Int count, const Char** paths);
+void whenMouseIsPressed(ApiWindow apiWindow, Int mouseButton, Int action, Int modifiers);
+void whenButtonIsPressed(ApiWindow apiWindow, Int key, Int scanCode, Int action, Int modifiers);

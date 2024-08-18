@@ -2,14 +2,18 @@
 
 #include "Settings.hpp"
 #include "Basics.hpp"
+
 #include "fmt/core.h"
 #include "fmt/color.h"
 
-inline void print(const String& text) {
+
+inline void print(const String& text)
+{
 	std::cout << text;
 }
 
-inline void println(const String& text) {
+inline void println(const String& text)
+{
 	std::cout << text + "\n";
 }
 
@@ -22,23 +26,23 @@ inline void pause()
 {
 	if (debugLoggingIsEnabled)
 	{
-#ifdef _WIN32
+		#ifdef _WIN32
 		system("pause");
-#else
+		#else
 	std::cout << "Thread was paused..." << "\n";
 	char a;
 	std::cin >> a;
-#endif
+		#endif
 	}
 }
 
 inline void clearConsole()
 {
-#ifdef _WIN32
+	#ifdef _WIN32
 	system("cls");
-#else
+	#else
     system("clear");
-#endif
+	#endif
 }
 
 void messageBox(const String& message, const String& title);

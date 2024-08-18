@@ -4,66 +4,66 @@
 #include "Math.hpp"
 #include "ResourceManager.hpp"
 
-CPUTexture::~CPUTexture()
+CpuTexture::~CpuTexture()
 {
 	unload();
 }
 
-Float CPUTexture::getAspectRatio() const
+Float CpuTexture::getAspectRatio() const
 {
 	if(width > 0.0f && height > 0.0f) return static_cast<Float>(width) / static_cast<Float>(height);
 	return 1.0f;
 }
 
-void CPUTexture::unload()
+void CpuTexture::unload()
 {
 	loaded = false;
 	pixelMemory.destroy();
 }
 
-Int CPUTexture::getWidth() const
+Int CpuTexture::getWidth() const
 {
 	if(width <= 0) logError("Width is 0");
 	return width;
 }
 
-Name CPUTexture::getName() const
+Name CpuTexture::getName() const
 {
 	return name;
 }
 
-Bool CPUTexture::isLoaded() const
+Bool CpuTexture::isLoaded() const
 {
 	return loaded;
 }
 
-Int CPUTexture::getHeight() const
+Int CpuTexture::getHeight() const
 {
 	if(width <= 0) logError("Height is 0");
 	return height;
 }
 
-Filter CPUTexture::getFarFilter() const
+Filter CpuTexture::getFarFilter() const
 {
 	return farFilter;
 }
 
-Filter CPUTexture::getNearFilter() const
+Filter CpuTexture::getNearFilter() const
 {
 	return nearFilter;
 }
 
-DataType CPUTexture::getDataType() const
+DataType CpuTexture::getDataType() const
 {
 	return dataType;
 }
 
-Wrapping CPUTexture::getWrapping() const
+Wrapping CpuTexture::getWrapping() const
 {
 	return wrapping;
 }
 
-inline void CPUTexture::checkIntegrity()
+inline void CpuTexture::checkIntegrity()
 {
 	if(width < 1)
 	{
@@ -82,12 +82,12 @@ inline void CPUTexture::checkIntegrity()
 	loaded = true;
 }
 
-const Byte* CPUTexture::getPixels() const
+const Byte* CpuTexture::getPixels() const
 {
 	return static_cast<const Byte*>(pixelMemory.getData());
 }
 
-Int CPUTexture::getNumberOfChannels() const
+Int CpuTexture::getNumberOfChannels() const
 {
 	switch(format)
 	{
@@ -113,12 +113,12 @@ Int CPUTexture::getNumberOfChannels() const
 	return -1;
 }
 
-WritePixelsFormat CPUTexture::getFormat() const
+WritePixelsFormat CpuTexture::getFormat() const
 {
 	return format;
 }
 
-CPUTexture::CPUTexture(const CPUTexture& other)
+CpuTexture::CpuTexture(const CpuTexture& other)
 {
 	this->pixelMemory = other.pixelMemory;
 	this->width       = other.width;
@@ -132,9 +132,9 @@ CPUTexture::CPUTexture(const CPUTexture& other)
 	this->name        = other.name;
 }
 
-CPUTexture& CPUTexture::operator=(const CPUTexture& other) = default;
+CpuTexture& CpuTexture::operator=(const CpuTexture& other) = default;
 
-Float CPUTexture::getRed(const UInt x, const UInt y) const
+Float CpuTexture::getRed(const UInt x, const UInt y) const
 {
 	Float result = 0.0f;
 	switch(dataType)
@@ -215,7 +215,7 @@ Float CPUTexture::getRed(const UInt x, const UInt y) const
 //	return result;
 //}
 //
-Float CPUTexture::getRed(const Float x, const Float y) const
+Float CpuTexture::getRed(const Float x, const Float y) const
 {
 	//convert normalized coordinates to texture space
 	const Float texX = x * static_cast<Float>(width);
@@ -336,19 +336,19 @@ Float CPUTexture::getRed(const Float x, const Float y) const
 //	return lerp(lerp(a, b, fracX), lerp(c, d, fracX), fracY);
 //}
 
-Index CPUTexture::xyToIndex(const Int x, const Int y, const Int channel, const Int numBytes) const
+Index CpuTexture::xyToIndex(const Int x, const Int y, const Int channel, const Int numBytes) const
 {
 	// [TODO] make sure it can handle negative values
 	return static_cast<UInt>(getNumberOfChannels()) * (y * width + x) + channel * numBytes;
 }
 
-void CPUTexture::load(const Path& path, const Filter nearFilter, const Filter farFilter, const Wrapping wrapping)
+void CpuTexture::load(const Path& path, const Filter nearFilter, const Filter farFilter, const Wrapping wrapping)
 {
 	const Name name = getFileName(path);
 	load(path, name, nearFilter, farFilter, wrapping);
 }
 
-void CPUTexture::load(const Path& path, const Name& name, const Filter nearFilter, const Filter farFilter, const Wrapping wrapping)
+void CpuTexture::load(const Path& path, const Name& name, const Filter nearFilter, const Filter farFilter, const Wrapping wrapping)
 {
 	if(loaded) return;
 	Image image;
@@ -356,7 +356,7 @@ void CPUTexture::load(const Path& path, const Name& name, const Filter nearFilte
 	load(image, nearFilter, farFilter, wrapping, name);
 }
 
-void CPUTexture::load(const Image& image, const Filter nearFilter, const Filter farFilter, const Wrapping wrapping, const Name& name)
+void CpuTexture::load(const Image& image, const Filter nearFilter, const Filter farFilter, const Wrapping wrapping, const Name& name)
 {
 	if(image.isLoaded())
 	{
@@ -435,16 +435,25 @@ void CPUTexture::load(const Image& image, const Filter nearFilter, const Filter 
 				break;
 		}
 	}
-	else logError("Image could not be loaded into texture!");
+	else
+	{
+		logError("Image could not be loaded into texture!");
+	}
 }
 
-void CPUTexture::load(const Name& name, const Filter nearFilter, const Filter farFilter, const Wrapping wrapping)
+void CpuTexture::load(const Name& name, const Filter nearFilter, const Filter farFilter, const Wrapping wrapping)
 {
-	if(!loaded) load(resourceManager.getTextureResourcePath(name), name, nearFilter, farFilter, wrapping);
-	else logWarning("Texture already loaded, you are trying to load it again, something must be wrong!");
+	if(!loaded)
+	{
+		load(resourceManager.getTextureResourcePath(name), name, nearFilter, farFilter, wrapping);
+	}
+	else
+	{
+		logWarning("Texture already loaded, you are trying to load it again, something must be wrong!");
+	}
 }
 
-CPUTexture::CPUTexture(const Int width, const Int height, const Name& name, const Filter farFilter, const Filter nearFilter, const DataType dataType, const Wrapping wrapping, const WritePixelsFormat format)
+CpuTexture::CpuTexture(const Int width, const Int height, const Name& name, const Filter farFilter, const Filter nearFilter, const DataType dataType, const Wrapping wrapping, const WritePixelsFormat format)
 {
 	this->width      = width;
 	this->height     = height;

@@ -68,8 +68,14 @@ void NeighborQuadtree::update(const Vec3 position)
 
 void NeighborQuadtreeNode::update(const Vec3 pos)
 {
-	if(distance(position, pos) < pow(2.0f, 5.0f - toFloat(level))) subdivide();
-	else unSubdivide();
+	if(distance(position, pos) < pow(2.0f, 5.0f - toFloat(level)))
+	{
+		subdivide();
+	}
+	else
+	{
+		unSubdivide();
+	}
 
 	if(subdivided)
 	{
@@ -85,8 +91,14 @@ NeighborQuadtreeNode& NeighborQuadtreeNode::nlr() const
 	const NeighborQuadtreeNode* cur = this;
 	while(!cur->nl)
 	{
-		if(cur->parent) cur = cur->parent;
-		else logError("Quadtree Critical Failure!");
+		if(cur->parent)
+		{
+			cur = cur->parent;
+		}
+		else
+		{
+			logError("Quadtree Critical Failure!");
+		}
 	}
 	return *cur->nl;
 }
@@ -96,8 +108,14 @@ NeighborQuadtreeNode& NeighborQuadtreeNode::nrr() const
 	const NeighborQuadtreeNode* cur = this;
 	while(!cur->nr)
 	{
-		if(cur->parent) cur = cur->parent;
-		else logError("Quadtree Critical Failure!");
+		if(cur->parent)
+		{
+			cur = cur->parent;
+		}
+		else
+		{
+			logError("Quadtree Critical Failure!");
+		}
 	}
 	return *cur->nr;
 }
@@ -107,8 +125,14 @@ NeighborQuadtreeNode& NeighborQuadtreeNode::nbr() const
 	const NeighborQuadtreeNode* cur = this;
 	while(!cur->nb)
 	{
-		if(cur->parent) cur = cur->parent;
-		else logError("Quadtree Critical Failure!");
+		if(cur->parent)
+		{
+			cur = cur->parent;
+		}
+		else
+		{
+			logError("Quadtree Critical Failure!");
+		}
 	}
 	return *cur->nb;
 }
@@ -118,8 +142,14 @@ NeighborQuadtreeNode& NeighborQuadtreeNode::nfr() const
 	const NeighborQuadtreeNode* cur = this;
 	while(!cur->nf)
 	{
-		if(cur->parent) cur = cur->parent;
-		else logError("Quadtree Critical Failure!");
+		if(cur->parent)
+		{
+			cur = cur->parent;
+		}
+		else
+		{
+			logError("Quadtree Critical Failure!");
+		}
 	}
 	return *cur->nf;
 }
@@ -171,10 +201,22 @@ void NeighborQuadtreeNode::create(NeighborQuadtreeNode& parentNode, const Bool x
 {
 	this->parent = &parentNode;
 	level        = parentNode.level + 1;
-	if(x) position.x = parentNode.position.x + pow(2.0f, 1.0f - toFloat(level));
-	else position.x  = parentNode.position.x - pow(2.0f, 1.0f - toFloat(level));
-	if(y) position.y = parentNode.position.y + pow(2.0f, 1.0f - toFloat(level));
-	else position.y  = parentNode.position.y - pow(2.0f, 1.0f - toFloat(level));
+	if(x)
+	{
+		position.x = parentNode.position.x + pow(2.0f, 1.0f - toFloat(level));
+	}
+	else
+	{
+		position.x  = parentNode.position.x - pow(2.0f, 1.0f - toFloat(level));
+	}
+	if(y)
+	{
+		position.y = parentNode.position.y + pow(2.0f, 1.0f - toFloat(level));
+	}
+	else
+	{
+		position.y  = parentNode.position.y - pow(2.0f, 1.0f - toFloat(level));
+	}
 
 	// calculate neighbors
 	if(x && y)

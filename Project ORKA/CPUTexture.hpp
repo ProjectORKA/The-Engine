@@ -2,14 +2,14 @@
 #include "Image.hpp"
 #include "GraphicsAPI.hpp"
 
-struct CPUTexture
+struct CpuTexture
 {
-	CPUTexture& operator=(const CPUTexture& other);
+	CpuTexture& operator=(const CpuTexture& other);
 
-	~CPUTexture();
-	CPUTexture() = default;
-	CPUTexture(const CPUTexture& other);
-	CPUTexture(Int width, Int height, const Name& name, Filter farFilter, Filter nearFilter, DataType dataType, Wrapping wrapping, WritePixelsFormat format);
+	~CpuTexture();
+	CpuTexture() = default;
+	CpuTexture(const CpuTexture& other);
+	CpuTexture(Int width, Int height, const Name& name, Filter farFilter, Filter nearFilter, DataType dataType, Wrapping wrapping, WritePixelsFormat format);
 
 	[[nodiscard]] Name              getName() const;
 	[[nodiscard]] Int               getWidth() const;

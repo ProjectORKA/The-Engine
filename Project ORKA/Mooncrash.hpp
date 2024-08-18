@@ -34,9 +34,9 @@ struct MoonCrashRenderer final : GameRenderer
 	Float                mouseSensitivity  = 0.0015f;
 	MoonCrashSimulation* simulation        = nullptr;
 	Vec3                 sunDirection      = Vec3(0.0f, 0.0f, 1.0f);
-	InputEvent           enter             = InputEvent(InputType::Mouse, LMB, true);
+	InputEvent           enter             = InputEvent(InputType::Mouse, Lmb, true);
 	InputEvent           worldDistortion   = InputEvent(InputType::KeyBoard, K, true);
-	InputEvent           exit              = InputEvent(InputType::Mouse, RMB, false);
+	InputEvent           exit              = InputEvent(InputType::Mouse, Rmb, false);
 	InputEvent           vertexColorToggle = InputEvent(InputType::KeyBoard, H, false);
 	InputEvent           wireFrameToggle   = InputEvent(InputType::KeyBoard, F, false);
 	InputEvent           countNodesButton  = InputEvent(InputType::KeyBoard, G, false);

@@ -10,7 +10,10 @@ void GameSimulation::stop()
 		loaded = false;
 		thread.join();
 	}
-	else logError("Simulation not initialized!");
+	else
+	{
+		logError("Simulation not initialized!");
+	}
 }
 
 Bool GameSimulation::isLoaded() const
@@ -41,7 +44,10 @@ void gameSimulationThread(GameSimulation& sim)
 		}
 		logDebug("Game simulation stopped!");
 	}
-	else logError("Simulation not initialized!");
+	else
+	{
+		logError("Simulation not initialized!");
+	}
 }
 
 void GameSimulation::start()
@@ -54,5 +60,8 @@ void GameSimulation::start()
 		keepRunning = true;
 		thread      = Thread(gameSimulationThread, std::ref(*this));
 	}
-	else logError("Simulation already initialized!");
+	else
+	{
+		logError("Simulation already initialized!");
+	}
 }

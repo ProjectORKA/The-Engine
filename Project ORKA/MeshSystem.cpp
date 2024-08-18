@@ -99,14 +99,23 @@ void MeshSystem::render(Uniforms& uniforms, const Index meshId)
 void MeshSystem::use(const Name& name)
 {
 	Index id;
-	if(meshNames.find(name, id)) currentMeshId = id;
+	if(meshNames.find(name, id))
+	{
+		currentMeshId = id;
+	}
 	else
 	{
 		CpuMesh mesh;
 		mesh.load(name);
 		addMesh(mesh);
-		if(meshNames.find(name, id)) currentMeshId = id;
-		else logError("Mesh could not be loaded! (" + toString(name) + ")");
+		if(meshNames.find(name, id))
+		{
+			currentMeshId = id;
+		}
+		else
+		{
+			logError("Mesh could not be loaded! (" + toString(name) + ")");
+		}
 	}
 }
 

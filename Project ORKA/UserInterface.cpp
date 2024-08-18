@@ -4,13 +4,13 @@
 
 void UserInterface::create() const
 {
-	if(glfwInit() != GLFW_TRUE)
+	if(External::glfwInit() != GLFW_TRUE)
 	{
 		logError("GLFW could not be initialized");
 		return;
 	}
 	logDebug("GLFW initialized!");
-	glfwSetErrorCallback(whenWindowAPIThrowsError);
+	External::glfwSetErrorCallback(whenWindowApiThrowsError);
 }
 
 void UIImage::update(Window& window) {}
@@ -116,7 +116,7 @@ void UserInterface::run()
 	while(!windows.empty())
 	{
 		// collect input
-		glfwPollEvents();
+		External::glfwPollEvents();
 
 		////check if window needs to be removed
 		//for(ULL i = 0; i < windows.size(); i++)
@@ -146,14 +146,17 @@ void UserInterface::run()
 				window->destroy();
 				window = windows.erase(window);
 			}
-			else ++window;
+			else
+			{
+				++window;
+			}
 		}
 	}
 
 	for(Window& window : windows) window.destroy();
 	windows.clear();
-	glfwPollEvents();
-	glfwTerminate();
+	External::glfwPollEvents();
+	External::glfwTerminate();
 }
 
 void UIImage::render(Window& window, const TiledRectangle renderArea)

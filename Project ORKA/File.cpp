@@ -32,7 +32,10 @@ InFile::InFile(const Path& path)
 	filePath = makeAbsolute(path);
 
 	file = std::ifstream(path, std::ios::binary);
-	if(file.is_open()) isOpen = true;
+	if(file.is_open())
+	{
+		isOpen = true;
+	}
 	else
 	{
 		isOpen = false;
@@ -53,7 +56,10 @@ OutFile::OutFile(const Path& path)
 	}
 
 	file = std::ofstream(filePath, std::ios::trunc | std::ios::binary | std::ios::out);
-	if(file.is_open()) isOpen = true;
+	if(file.is_open())
+	{
+		isOpen = true;
+	}
 	else
 	{
 		isOpen = false;
@@ -63,12 +69,24 @@ OutFile::OutFile(const Path& path)
 
 void InFile::read(char* data, const SizeT size)
 {
-	if(isOpen) file.read(data, size);
-	else logError("The binary file" + filePath.string() + "could not be opened! Dont try to read it!");
+	if(isOpen)
+	{
+		file.read(data, size);
+	}
+	else
+	{
+		logError("The binary file" + filePath.string() + "could not be opened! Dont try to read it!");
+	}
 }
 
 void OutFile::write(const char* data, const SizeT size)
 {
-	if(isOpen) file.write(data, size);
-	else logError("The binary file" + filePath.string() + "could not be opened!");
+	if(isOpen)
+	{
+		file.write(data, size);
+	}
+	else
+	{
+		logError("The binary file" + filePath.string() + "could not be opened!");
+	}
 }

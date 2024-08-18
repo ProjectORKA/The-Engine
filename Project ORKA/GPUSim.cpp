@@ -51,8 +51,14 @@ void GPUSimRenderer::render(Window& window, TiledRectangle area)
 	r.clearBackground(Color(0.1, 0.1, 0.1, 1));
 
 	// and simulate from one texture to the other
-	if(flipFlop) r.postProcess("gpuSim", framebuffer1, framebuffer2);
-	else r.postProcess("gpuSim", framebuffer2, framebuffer1);
+	if(flipFlop)
+	{
+		r.postProcess("gpuSim", framebuffer1, framebuffer2);
+	}
+	else
+	{
+		r.postProcess("gpuSim", framebuffer2, framebuffer1);
+	}
 
 	// then we render that texture to the screen
 
@@ -61,8 +67,14 @@ void GPUSimRenderer::render(Window& window, TiledRectangle area)
 	r.aspectCorrectNormalizedSpace();
 	r.drawToWindow();
 
-	if(flipFlop) framebuffer2.setAsTexture(0);
-	else framebuffer1.setAsTexture(0);
+	if(flipFlop)
+	{
+		framebuffer2.setAsTexture(0);
+	}
+	else
+	{
+		framebuffer1.setAsTexture(0);
+	}
 
 	r.useShader("texture");
 	r.renderMesh("centeredPlane");

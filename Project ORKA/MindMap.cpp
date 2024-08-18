@@ -58,8 +58,14 @@ void MindMap::addNode()
 	numForces.emplace_back();
 	Index a = randomIntFast(nodeCount);
 	connections.emplace_back(a, nodeCount);
-	if (nodeCount) positions.push_back(randomVec2Fast(-1.0f, 1.0f) + positions[connections.back().a]);
-	else positions.emplace_back(0);
+	if (nodeCount)
+	{
+		positions.push_back(randomVec2Fast(-1.0f, 1.0f) + positions[connections.back().a]);
+	}
+	else
+	{
+		positions.emplace_back(0);
+	}
 	nodeCount++;
 }
 

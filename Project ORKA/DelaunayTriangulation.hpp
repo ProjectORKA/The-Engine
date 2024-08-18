@@ -1,12 +1,5 @@
 #pragma once
 
-#include <algorithm>
-#include <cmath>
-#include <exception>
-#include <limits>
-#include <memory>
-#include <utility>
-#include <vector>
 #include "Basics.hpp"
 
 namespace Delaunator
@@ -55,8 +48,14 @@ namespace Delaunator
 		const Double x = (ey * bl - dy * cl) * 0.5 / d;
 		const Double y = (dx * cl - ex * bl) * 0.5 / d;
 
-		if ((bl > 0.0 || bl < 0.0) && (cl > 0.0 || cl < 0.0) && (d > 0.0 || d < 0.0)) return x * x + y * y;
-		else return std::numeric_limits<Double>::max();
+		if ((bl > 0.0 || bl < 0.0) && (cl > 0.0 || cl < 0.0) && (d > 0.0 || d < 0.0))
+		{
+			return x * x + y * y;
+		}
+		else
+		{
+			return std::numeric_limits<Double>::max();
+		}
 	}
 
 	inline Bool orient(const Double px, const Double py, const Double qx, const Double qy, const Double rx, const Double ry)
@@ -350,6 +349,7 @@ namespace Delaunator
 
 			// walk backward from the other side, adding more triangles and flipping
 			if (e == start)
+			{
 				while (q = hullPrev[e], orient(x, y, coords[2 * q], coords[2 * q + 1], coords[2 * e], coords[2 * e + 1]))
 				{
 					t = addTriangle(q, i, e, invalidIndex, hullTri[e], hullTri[q]);
@@ -359,6 +359,7 @@ namespace Delaunator
 					hullSize--;
 					e = q;
 				}
+			}
 
 			// update the hull indices
 			hullPrev[i]    = e;
@@ -465,8 +466,14 @@ namespace Delaunator
 				link(ar, bl);
 				SizeT br = b0 + (b + 1) % 3;
 
-				if (i < mEdgeStack.size()) mEdgeStack[i] = br;
-				else mEdgeStack.push_back(br);
+				if (i < mEdgeStack.size())
+				{
+					mEdgeStack[i] = br;
+				}
+				else
+				{
+					mEdgeStack.push_back(br);
+				}
 				i++;
 			}
 			else
@@ -504,15 +511,33 @@ namespace Delaunator
 
 	inline void Delaunator::link(const SizeT a, const SizeT b)
 	{
-		if (const SizeT s = halfedges.size(); a == s) halfedges.push_back(b);
-		else if (a < s) halfedges[a] = b;
-		else throw std::runtime_error("Cannot link edge");
+		if (const SizeT s = halfedges.size(); a == s)
+		{
+			halfedges.push_back(b);
+		}
+		else if (a < s)
+		{
+			halfedges[a] = b;
+		}
+		else
+		{
+			throw std::runtime_error("Cannot link edge");
+		}
 		if (b != invalidIndex)
 		{
 			const SizeT s2 = halfedges.size();
-			if (b == s2) halfedges.push_back(a);
-			else if (b < s2) halfedges[b] = a;
-			else throw std::runtime_error("Cannot link edge");
+			if (b == s2)
+			{
+				halfedges.push_back(a);
+			}
+			else if (b < s2)
+			{
+				halfedges[b] = a;
+			}
+			else
+			{
+				throw std::runtime_error("Cannot link edge");
+			}
 		}
 	}
 }

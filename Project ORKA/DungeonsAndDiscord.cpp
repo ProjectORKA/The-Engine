@@ -167,8 +167,14 @@ void DNDRenderer::render(Window& window, const TiledRectangle area)
 	for(Int i = 0; i < world->entities.size(); i++)
 	{
 		// render selected objects with an orange highlight
-		if(std::find(selectedObjects.begin(), selectedObjects.end(), i) != selectedObjects.end()) r.setColor(Color(0.4, 0.25, 0.1, 0));
-		else r.setColor(Color(0, 0, 0, 0));
+		if(std::find(selectedObjects.begin(), selectedObjects.end(), i) != selectedObjects.end())
+		{
+			r.setColor(Color(0.4, 0.25, 0.1, 0));
+		}
+		else
+		{
+			r.setColor(Color(0, 0, 0, 0));
+		}
 
 		// render last object with brighter highlight
 		if(lastSelectedObject == i) r.setColor(Color(0.5, 0.4, 0.15, 0));

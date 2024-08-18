@@ -1,5 +1,7 @@
 #pragma once
-
+#include "Windows.hpp"
 // config is in optick.config.h
-
-#include "optick/optick.h"
+namespace External
+{
+	#include "optick/optick.h"
+}

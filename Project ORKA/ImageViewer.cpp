@@ -160,8 +160,14 @@ void ImageViewer::run(const Int argc, Char* argv[])
 
 		if (isExecutableFile(path)) continue;
 
-		if (isImageFile(path)) filePaths.push_back(path);
-		else logWarning("Can't process input: " + path.string());
+		if (isImageFile(path))
+		{
+			filePaths.push_back(path);
+		}
+		else
+		{
+			logWarning("Can't process input: " + path.string());
+		}
 	}
 
 	Window& window = ui.window("ORKA Image Viewer", Area(1920, 1080), true, true, WindowState::Windowed, renderer);
@@ -227,7 +233,10 @@ void loadImage(ImageViewerRenderer& viewer, const Index imageId)
 			viewer.removeImage(imageId);
 		}
 	}
-	else logWarning("Image could not be loaded! RAM is full!");
+	else
+	{
+		logWarning("Image could not be loaded! RAM is full!");
+	}
 }
 
 void addImageToDatabase(ImageViewerRenderer& viewer, const Index imageId)
@@ -293,8 +302,14 @@ void ImageViewerRenderer::render(Window& window, const TiledRectangle area)
 	finalMatrix      = scale(finalMatrix, Vec3(size * imgX, size * imgY, 0));
 	finalMatrix      = scale(finalMatrix, Vec3(zoom));
 
-	if (smoothCameraTransition) approach(actualMatrix, finalMatrix, renderer.deltaTime() * smoothCameraSpeed);
-	else actualMatrix = finalMatrix;
+	if (smoothCameraTransition)
+	{
+		approach(actualMatrix, finalMatrix, renderer.deltaTime() * smoothCameraSpeed);
+	}
+	else
+	{
+		actualMatrix = finalMatrix;
+	}
 
 	renderer.uniforms().setMMatrix(actualMatrix);
 
@@ -354,8 +369,14 @@ void ImageViewerRenderer::renderAllImages(Window& window, const TiledRectangle a
 	{
 		if (ImageViewerResource& image = images[i]; image.onGpu())
 		{
-			if (currentImageId == i) yOffset = desiredHeight / 2;
-			else yOffset                     = 0;
+			if (currentImageId == i)
+			{
+				yOffset = desiredHeight / 2;
+			}
+			else
+			{
+				yOffset                     = 0;
+			}
 			Float       width  = static_cast<Float>(image.getWidth());
 			const Float height = static_cast<Float>(image.getHeight());
 			width              = width / height * desiredHeight;

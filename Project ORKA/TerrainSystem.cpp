@@ -13,10 +13,16 @@ void TerrainSystem::create()
 {
 	for(Int i = 0; i < MAX_CHUNK_LEVEL; i++)
 	{
-		CPUTexture h;
+		CpuTexture h;
 
-		if(i == 0) h.load(Name("blah"), Filter::Linear, Filter::Linear, Wrapping::Repeat);
-		else h.load(Name("terrainNoise"), Filter::Linear, Filter::Linear, Wrapping::Repeat);
+		if(i == 0)
+		{
+			h.load(Name("blah"), Filter::Linear, Filter::Linear, Wrapping::Repeat);
+		}
+		else
+		{
+			h.load(Name("terrainNoise"), Filter::Linear, Filter::Linear, Wrapping::Repeat);
+		}
 
 		for(UInt x = 0; x < TERRAIN_TEXTURE_SIZE; x++)
 		{
@@ -102,7 +108,10 @@ Terrain::Terrain(const TerrainSystem& terrainSystem, const QuadtreeId& id, const
 
 				heightmap.height[x][y] = (ah + bh + ch + dh) / 4.0;
 			}
-			else heightmap.height[x][y] = ULLONG_MAX / 2;
+			else
+			{
+				heightmap.height[x][y] = ULLONG_MAX / 2;
+			}
 		}
 	}
 	for(UInt x = 0; x < TERRAIN_MAP_SIZE; x++)

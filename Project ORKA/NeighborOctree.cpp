@@ -104,10 +104,19 @@ void NeighborOctreeNode::updateIsSurface()
 {
 	if(hasAllNeighbors)
 	{
-		if(isTerrain) isSurface = !(nfr().isTerrain && nbr().isTerrain && nlr().isTerrain && nrr().isTerrain);
-		else isSurface          = nfr().isTerrain || nbr().isTerrain || nlr().isTerrain || nrr().isTerrain;
+		if(isTerrain)
+		{
+			isSurface = !(nfr().isTerrain && nbr().isTerrain && nlr().isTerrain && nrr().isTerrain);
+		}
+		else
+		{
+			isSurface          = nfr().isTerrain || nbr().isTerrain || nlr().isTerrain || nrr().isTerrain;
+		}
 	}
-	else isSurface = true;
+	else
+	{
+		isSurface = true;
+	}
 
 	if(isSurface)
 	{
@@ -135,8 +144,14 @@ NeighborOctreeNode& NeighborOctreeNode::nlr() const
 	const NeighborOctreeNode* cur = this;
 	while(!cur->nl)
 	{
-		if(cur->parent) cur = cur->parent;
-		else logError("Quadtree Critical Failure!");
+		if(cur->parent)
+		{
+			cur = cur->parent;
+		}
+		else
+		{
+			logError("Quadtree Critical Failure!");
+		}
 	}
 	return *cur->nl;
 }
@@ -146,8 +161,14 @@ NeighborOctreeNode& NeighborOctreeNode::nrr() const
 	const NeighborOctreeNode* cur = this;
 	while(!cur->nr)
 	{
-		if(cur->parent) cur = cur->parent;
-		else logError("Quadtree Critical Failure!");
+		if(cur->parent)
+		{
+			cur = cur->parent;
+		}
+		else
+		{
+			logError("Quadtree Critical Failure!");
+		}
 	}
 	return *cur->nr;
 }
@@ -157,8 +178,14 @@ NeighborOctreeNode& NeighborOctreeNode::nbr() const
 	const NeighborOctreeNode* cur = this;
 	while(!cur->nb)
 	{
-		if(cur->parent) cur = cur->parent;
-		else logError("Quadtree Critical Failure!");
+		if(cur->parent)
+		{
+			cur = cur->parent;
+		}
+		else
+		{
+			logError("Quadtree Critical Failure!");
+		}
 	}
 	return *cur->nb;
 }
@@ -168,8 +195,14 @@ NeighborOctreeNode& NeighborOctreeNode::nfr() const
 	const NeighborOctreeNode* cur = this;
 	while(!cur->nf)
 	{
-		if(cur->parent) cur = cur->parent;
-		else logError("Quadtree Critical Failure!");
+		if(cur->parent)
+		{
+			cur = cur->parent;
+		}
+		else
+		{
+			logError("Quadtree Critical Failure!");
+		}
 	}
 	return *cur->nf;
 }
@@ -179,8 +212,14 @@ NeighborOctreeNode& NeighborOctreeNode::ntr() const
 	const NeighborOctreeNode* cur = this;
 	while(!cur->nt)
 	{
-		if(cur->parent) cur = cur->parent;
-		else logError("Quadtree Critical Failure!"); // will probably crash at root, because it doesn't loop
+		if(cur->parent)
+		{
+			cur = cur->parent;
+		}
+		else
+		{
+			logError("Quadtree Critical Failure!"); // will probably crash at root, because it doesn't loop
+		}
 	}
 	return *cur->nt;
 }
@@ -190,8 +229,14 @@ NeighborOctreeNode& NeighborOctreeNode::ndr() const
 	const NeighborOctreeNode* cur = this;
 	while(!cur->nd)
 	{
-		if(cur->parent) cur = cur->parent;
-		else logError("Quadtree Critical Failure!");
+		if(cur->parent)
+		{
+			cur = cur->parent;
+		}
+		else
+		{
+			logError("Quadtree Critical Failure!");
+		}
 	}
 	return *cur->nd;
 }
@@ -231,12 +276,30 @@ void NeighborOctreeNode::create(NeighborOctreeNode& parent, const Bool x, const 
 {
 	this->parent = &parent;
 	level        = parent.level + 1;
-	if(x) position.x = parent.position.x + powf(2, 1 - level);
-	else position.x  = parent.position.x - powf(2, 1 - level);
-	if(y) position.y = parent.position.y + powf(2, 1 - level);
-	else position.y  = parent.position.y - powf(2, 1 - level);
-	if(z) position.z = parent.position.z + powf(2, 1 - level);
-	else position.z  = parent.position.z - powf(2, 1 - level);
+	if(x)
+	{
+		position.x = parent.position.x + powf(2, 1 - level);
+	}
+	else
+	{
+		position.x  = parent.position.x - powf(2, 1 - level);
+	}
+	if(y)
+	{
+		position.y = parent.position.y + powf(2, 1 - level);
+	}
+	else
+	{
+		position.y  = parent.position.y - powf(2, 1 - level);
+	}
+	if(z)
+	{
+		position.z = parent.position.z + powf(2, 1 - level);
+	}
+	else
+	{
+		position.z  = parent.position.z - powf(2, 1 - level);
+	}
 
 	// calculate neighbours
 	if(x)

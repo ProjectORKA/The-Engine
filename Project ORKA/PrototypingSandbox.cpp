@@ -6,7 +6,7 @@ void PrototypingRenderer::update(Window& window)
 {
 	player.update(window);
 
-	if(window.isKeyPressed(SPACE)) prototype.action();
+	if(window.isKeyPressed(Space)) prototype.action();
 }
 
 void PrototypingRenderer::destroy(Window& window)
@@ -24,6 +24,7 @@ void PrototypingRenderer::inputEvent(Window& window, const InputEvent input)
 	if(input == action) prototype.action();
 
 	player.inputEvent(window, input);
+	prototype.inputEvent(window, input);
 }
 
 void PrototypingRenderer::create(Window& window)
@@ -55,12 +56,17 @@ void PrototypingRenderer::render(Window& window, const TiledRectangle area)
 	// render scene
 	player.render(window); // sets the position, rotation and projection
 
-	r.useShader("debug");
-	r.centeredCube(10);
+	if(wireframeCube)
+	{
+		r.useShader("debug");
+		r.fill(1);
+		r.wireframeCubeCentered(10.0f);
+	}
 
 	prototype.render(r, player);
 
 	// text rendering
+	r.fill(1);
 	r.setDepthTest(false); // disables depth to always draw on top
 	r.screenSpace(); // aligns coordinate system with screenspace
 	r.uniforms().setMMatrix(Matrix(1));
@@ -77,21 +83,4 @@ void PrototypingRenderer::render(Window& window, const TiledRectangle area)
 	framebuffer.setAsTexture(0);
 	r.drawToWindow();
 	r.fullScreenShader("final");
-}
-
-// PROTOTYPES
-
-void PlaneIntersectionPrototype::action() {}
-
-void PlaneIntersectionPrototype::create() {}
-
-void PlaneIntersectionPrototype::render(Renderer& r, const Player& player)
-{
-	const Vec3 dir = normalize(Vec3(noise.noise0_1(r.time.getTotal()) * 2 - 1, noise.noise0_1(r.time.getTotal() + 123.456) * 2 - 1, noise.noise0_1(r.time.getTotal() - 654.321) * 2 - 1));
-	r.arrow(Vec3(0, 0, 0), dir);
-	r.useShader("normals"); // sets the color / material for the rendered objects
-	r.renderMesh("centeredPlane");
-
-	const Vec3 rayPosition  = player.camera.getPosition();
-	const Vec3 rayDirection = player.camera.getForwardVector();
 }

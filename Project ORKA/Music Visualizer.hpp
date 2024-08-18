@@ -1,6 +1,12 @@
-#include <GL/glew.h>
-#include <GLFW/glfw3.h>
+
+#pragma once
 #include <iostream>
+
+namespace External
+{
+	#include "GL/glew.h"
+	#include "GLFW/glfw3.h"
+}
 
 const char *vertexShaderSource = R"(
     #version 330 core
@@ -54,57 +60,57 @@ const char *fragmentShaderSource = R"(
     }
 )";
 
-void errorCallback(int error, const char *description) {
+inline void errorCallback(int error, const char *description) {
     std::cerr << "Error: " << description << std::endl;
 }
 
 int musicVisualizer() {
-    if (!glfwInit()) {
+    if (!External::glfwInit()) {
         std::cerr << "Failed to initialize GLFW" << std::endl;
         return -1;
     }
 
-    glfwSetErrorCallback(errorCallback);
+	External::glfwSetErrorCallback(errorCallback);
 
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	External::glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+	External::glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+	External::glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    GLFWwindow *window = glfwCreateWindow(2560, 1440, "ShaderToy Shader", glfwGetPrimaryMonitor(), nullptr);
+	External::GLFWwindow *window = External::glfwCreateWindow(2560, 1440, "ShaderToy Shader", External::glfwGetPrimaryMonitor(), nullptr);
     if (!window) {
         std::cerr << "Failed to create GLFW window" << std::endl;
-        glfwTerminate();
+		External::glfwTerminate();
         return -1;
     }
 
     glfwMakeContextCurrent(window);
 
-    if (glewInit() != GLEW_OK) {
+    if (External::glewInit() != GLEW_OK) {
         std::cerr << "Failed to initialize GLEW" << std::endl;
-        glfwTerminate();
+		External::glfwTerminate();
         return -1;
     }
 
-    GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(vertexShader, 1, &vertexShaderSource, nullptr);
-    glCompileShader(vertexShader);
+	External::GLuint vertexShader = External::__glewCreateShader(GL_VERTEX_SHADER);
+    External::glShaderSource(vertexShader, 1, &vertexShaderSource, nullptr);
+    External::glCompileShader(vertexShader);
 
-    GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fragmentShader, 1, &fragmentShaderSource, nullptr);
-    glCompileShader(fragmentShader);
+	External::GLuint fragmentShader = External::glCreateShader(GL_FRAGMENT_SHADER);
+    External::glShaderSource(fragmentShader, 1, &fragmentShaderSource, nullptr);
+    External::glCompileShader(fragmentShader);
 
-    GLuint shaderProgram = glCreateProgram();
-    glAttachShader(shaderProgram, vertexShader);
-    glAttachShader(shaderProgram, fragmentShader);
-    glLinkProgram(shaderProgram);
-    glUseProgram(shaderProgram);
+	External::GLuint shaderProgram = External::glCreateProgram();
+    External::glAttachShader(shaderProgram, vertexShader);
+    External::glAttachShader(shaderProgram, fragmentShader);
+    External::glLinkProgram(shaderProgram);
+    External::glUseProgram(shaderProgram);
 
-    GLuint vao, vbo;
-    glGenVertexArrays(1, &vao);
-    glGenBuffers(1, &vbo);
+	External::GLuint vao, vbo;
+    External::glGenVertexArrays(1, &vao);
+    External::glGenBuffers(1, &vbo);
 
-    glBindVertexArray(vao);
-    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    External::glBindVertexArray(vao);
+    External::glBindBuffer(GL_ARRAY_BUFFER, vbo);
 
     float vertices[] = {
         -1.0f, -1.0f,
@@ -112,42 +118,42 @@ int musicVisualizer() {
         -1.0f,  1.0f,
          1.0f,  1.0f,
     };
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void *)0);
+    External::glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    External::glEnableVertexAttribArray(0);
+    External::glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), static_cast<void*>(0));
 
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindVertexArray(0);
+    External::glBindBuffer(GL_ARRAY_BUFFER, 0);
+    External::glBindVertexArray(0);
 
-    GLint resolutionLoc = glGetUniformLocation(shaderProgram, "iResolution");
-    glUniform2f(resolutionLoc, 2560.0f, 1440.0f);
+	External::GLint resolutionLoc = External::glGetUniformLocation(shaderProgram, "iResolution");
+    External::glUniform2f(resolutionLoc, 2560.0f, 1440.0f);
 
-    GLint timeLoc = glGetUniformLocation(shaderProgram, "iTime");
-    GLint mouseLoc = glGetUniformLocation(shaderProgram, "iMouse");
+	External::GLint           timeLoc  = External::glGetUniformLocation(shaderProgram, "iTime");
+	External::GLint mouseLoc = External::glGetUniformLocation(shaderProgram, "iMouse");
 
     while (!glfwWindowShouldClose(window)) {
-        float time = glfwGetTime();
-        glUniform1f(timeLoc, time);
+        float time = External::glfwGetTime();
+        External::glUniform1f(timeLoc, time);
 
         double mouseX, mouseY;
         glfwGetCursorPos(window, &mouseX, &mouseY);
-        glUniform2f(mouseLoc, (float)mouseX, (float)mouseY);
+        External::glUniform2f(mouseLoc, static_cast<float>(mouseX), static_cast<float>(mouseY));
 
-        glClear(GL_COLOR_BUFFER_BIT);
-        glBindVertexArray(vao);
-        glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-        glBindVertexArray(0);
+		External::glClear(GL_COLOR_BUFFER_BIT);
+        External::glBindVertexArray(vao);
+		External::glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+        External::glBindVertexArray(0);
 
-        glfwSwapBuffers(window);
-        glfwPollEvents();
+		glfwSwapBuffers(window);
+		External::glfwPollEvents();
     }
 
-    glDeleteVertexArrays(1, &vao);
-    glDeleteBuffers(1, &vbo);
-    glDeleteShader(vertexShader);
-    glDeleteShader(fragmentShader);
-    glDeleteProgram(shaderProgram);
+    External::glDeleteVertexArrays(1, &vao);
+    External::glDeleteBuffers(1, &vbo);
+    External::glDeleteShader(vertexShader);
+    External::glDeleteShader(fragmentShader);
+    External::glDeleteProgram(shaderProgram);
 
-    glfwTerminate();
+	External::glfwTerminate();
     return 0;
 }
