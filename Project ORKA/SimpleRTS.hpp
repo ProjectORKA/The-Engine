@@ -37,6 +37,7 @@ struct SimpleRtsSimulation final : GameSimulation
 	[[nodiscard]] Vec2  getRandomSpawnPos(Float radius) const;
 	[[nodiscard]] Bool  doesCollide(Vec2 pos, Float radius) const;
 
+	void reset();
 	void create() override;
 	void destroy() override;
 	void update(Float delta) override;
@@ -52,10 +53,11 @@ struct SimpleRtsRenderer final : GameRenderer
 	SimpleRtsSimulation* sim           = nullptr;
 
 	//input
-	InputEvent enter           = InputEvent(InputType::Mouse, LMB, true);
-	InputEvent exit            = InputEvent(InputType::Mouse, RMB, false);
+	InputEvent enter           = InputEvent(InputType::Mouse, Lmb, true);
+	InputEvent exit            = InputEvent(InputType::Mouse, Rmb, false);
 	InputEvent pause           = InputEvent(InputType::KeyBoard, P, true);
 	InputEvent toggleWireframe = InputEvent(InputType::KeyBoard, F, false);
+	InputEvent reset           = InputEvent(InputType::KeyBoard, R, false);
 
 	void update(Window& window) override;
 	void create(Window& window) override;

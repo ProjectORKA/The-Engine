@@ -37,19 +37,19 @@ struct ImageViewerRenderer final : GameRenderer
 	String                      appName                    = "ORKA Image Viewer";
 	String                      windowTitleSubstring       = "ORKA Image Viewer - ";
 	// input
-	InputId    mouseDown                 = InputId(InputType::Mouse, LMB);
-	InputId    previousImageHolding      = InputId(InputType::KeyBoard, LEFT);
-	InputId    nextImageHolding          = InputId(InputType::KeyBoard, RIGHT);
+	InputId    mouseDown                 = InputId(InputType::Mouse, Lmb);
+	InputId    previousImageHolding      = InputId(InputType::KeyBoard, Left);
+	InputId    nextImageHolding          = InputId(InputType::KeyBoard, Right);
 	InputEvent zoomIn                    = InputEvent(InputType::Scroll, 1, true);
 	InputEvent zoomOut                   = InputEvent(InputType::Scroll, 1, false);
-	InputEvent resetView                 = InputEvent(InputType::Mouse, MMB, false);
-	InputId    nextImageHoldingMouse     = InputId(InputType::Mouse, MOUSE_BUTTON_5);
-	InputId    previousImageHoldingMouse = InputId(InputType::Mouse, MOUSE_BUTTON_4);
-	InputEvent deleteImage               = InputEvent(InputType::KeyBoard, DEL, false);
-	InputEvent previousImage             = InputEvent(InputType::KeyBoard, LEFT, false);
-	InputEvent nextImage                 = InputEvent(InputType::KeyBoard, RIGHT, false);
-	InputEvent nextImageMouse            = InputEvent(InputType::Mouse, MOUSE_BUTTON_5, false);
-	InputEvent previousImageMouse        = InputEvent(InputType::Mouse, MOUSE_BUTTON_4, false);
+	InputEvent resetView                 = InputEvent(InputType::Mouse, Mmb, false);
+	InputId    nextImageHoldingMouse     = InputId(InputType::Mouse, MouseButton5);
+	InputId    previousImageHoldingMouse = InputId(InputType::Mouse, MouseButton4);
+	InputEvent deleteImage               = InputEvent(InputType::KeyBoard, Del, false);
+	InputEvent previousImage             = InputEvent(InputType::KeyBoard, Left, false);
+	InputEvent nextImage                 = InputEvent(InputType::KeyBoard, Right, false);
+	InputEvent nextImageMouse            = InputEvent(InputType::Mouse, MouseButton5, false);
+	InputEvent previousImageMouse        = InputEvent(InputType::Mouse, MouseButton4, false);
 
 	[[nodiscard]] Vector<Index> indicesOfImagesSortedByPriority() const;
 

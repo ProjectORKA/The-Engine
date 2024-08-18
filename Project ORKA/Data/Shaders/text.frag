@@ -10,7 +10,8 @@ layout (location = 4) out uint gBufferObjectID;
 in vec2 textureCoordinate;
 
 void main(){
-	gBufferColor = vec4(customColor.xyz,texture(texture0,textureCoordinate).x > 0.5);
+	if(texture(texture0,textureCoordinate).x < 0.5) discard;
+	gBufferColor = vec4(customColor.xyz,texture(texture0,textureCoordinate).x >= 0.5);
 	gBufferNormal = vec3(0,0,1);
 	gBufferPosition = vec3(textureCoordinate,0);
 	gBufferObjectID = objectID;

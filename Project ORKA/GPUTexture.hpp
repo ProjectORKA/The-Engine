@@ -13,7 +13,7 @@ struct GPUTexture
 	void resize(Area size);
 	void load(const Name& name);
 	void generateMipMaps() const;
-	void load(const CPUTexture& cpuTexture);
+	void load(const CpuTexture& cpuTexture);
 	void useTextureInSlot(UInt textureSlot) const;
 	void setFilters(Filter nearFilterValue, Filter farFilterValue);
 	void generateMipMaps(Filter nearFilterValue, Filter farFilterValue);

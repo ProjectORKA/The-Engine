@@ -16,7 +16,7 @@ void PerformanceGraph::render(Window& window, TiledRectangle area)
 	window.renderer.uniforms().setMMatrix(matrixFromPositionAndSize(100 + width / 2.0f, 100 + height / 2.0f, width, height));
 	window.renderer.plane();
 	window.renderer.uniforms().setMMatrix(matrixFromPositionAndSize(100, 100, 1, 1));
-	window.renderer.fill(255);
+	window.renderer.fill(1);
 	Vector<Vec2> line;
 	for (Int i = 0; i < times.size(); i++) line.emplace_back(i, times[i] / maxSample * height);
 	window.renderer.line(line);

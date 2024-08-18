@@ -27,8 +27,14 @@ void PlanetRenderSystem::renderAllLevels(PlanetSystem& planetSystem, Renderer& r
 	for(UShort level = 0; level < MAX_CHUNK_LEVEL; level++)
 	{
 		framebuffer.clearDepth();
-		if(vertexColors) renderer.shaderSystem.use("mooncrashVertexColor");
-		else renderer.shaderSystem.use("terrain");
+		if(vertexColors)
+		{
+			renderer.shaderSystem.use("mooncrashVertexColor");
+		}
+		else
+		{
+			renderer.shaderSystem.use("terrain");
+		}
 		renderer.textureSystem.use("terrainColor");
 		quadtreeRenderSystem.renderLevel(level, renderer);
 	}
@@ -42,8 +48,14 @@ void PlanetRenderSystem::renderLevel(PlanetSystem& planetSystem, Renderer& rende
 	renderer.setDepthTest(true);
 
 	framebuffer.clearDepth();
-	if(vertexColors) renderer.shaderSystem.use("mooncrashVertexColor");
-	else renderer.shaderSystem.use("terrain");
+	if(vertexColors)
+	{
+		renderer.shaderSystem.use("mooncrashVertexColor");
+	}
+	else
+	{
+		renderer.shaderSystem.use("terrain");
+	}
 	renderer.textureSystem.use("terrainColor");
 	quadtreeRenderSystem.renderLevel(level, renderer);
 }

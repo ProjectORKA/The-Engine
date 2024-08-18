@@ -44,14 +44,14 @@ struct TripleNinePlayer final : Player
 	InputId left      = InputId(InputType::KeyBoard, A);
 	InputId leanRight = InputId(InputType::KeyBoard, E);
 	InputId leanLeft  = InputId(InputType::KeyBoard, Q);
-	InputId run       = InputId(InputType::KeyBoard, SHIFT);
-	InputId shoot     = InputId(InputType::Mouse, LMB);
-	InputId aim       = InputId(InputType::Mouse, RMB);
-	InputId holdJump  = InputId(InputType::KeyBoard, SPACE);
-	InputId crouch    = InputId(InputType::KeyBoard, CTRL);
-	InputId precision = InputId(InputType::KeyBoard, ALT);
+	InputId run       = InputId(InputType::KeyBoard, Shift);
+	InputId shoot     = InputId(InputType::Mouse, Lmb);
+	InputId aim       = InputId(InputType::Mouse, Rmb);
+	InputId holdJump  = InputId(InputType::KeyBoard, Space);
+	InputId crouch    = InputId(InputType::KeyBoard, Ctrl);
+	InputId precision = InputId(InputType::KeyBoard, Alt);
 	// event input
-	InputEvent jumpTrigger = InputEvent(InputType::KeyBoard, SPACE, true);
+	InputEvent jumpTrigger = InputEvent(InputType::KeyBoard, Space, true);
 
 	// InputEvent jumpRelease = InputEvent(InputType::KeyBoard, SPACE, 0);
 	enum class State
@@ -195,8 +195,8 @@ struct TripleNineRenderer final : GameRenderer
 	Bool                  renderText    = true;
 	Bool                  bloom         = false;
 	TripleNineSimulation* sim           = nullptr;
-	InputEvent            enter         = InputEvent(InputType::Mouse, LMB, true);
-	InputEvent            exit          = InputEvent(InputType::Mouse, RMB, false);
+	InputEvent            enter         = InputEvent(InputType::Mouse, Lmb, true);
+	InputEvent            exit          = InputEvent(InputType::Mouse, Rmb, false);
 	InputEvent            toggleBloom   = InputEvent(InputType::KeyBoard, B, false);
 	InputEvent            reloadShaders = InputEvent(InputType::KeyBoard, T, false);
 	Vec3                  sunDirection  = normalize(Vec3(0.675394f, -0.485956f, 0.554698f));
@@ -219,15 +219,5 @@ struct TripleNine
 	TripleNineRenderer   renderer;
 	TripleNineSimulation simulation;
 
-	void run()
-	{
-		ui.create();
-		intro.init(renderer);
-		simulation.start();
-		renderer.connect(simulation);
-		window.add(intro);
-		ui.window("Triple Nine", Area(1920, 1080), true, false, WindowState::Windowed, intro);
-		ui.run();
-		simulation.stop();
-	}
+	void run();
 };

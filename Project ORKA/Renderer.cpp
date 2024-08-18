@@ -8,7 +8,7 @@ void Renderer::end()
 {
 	OPTICK_EVENT();
 	setWireframeMode(false);
-	setAlphaBlending(false);
+	setAlphaBlending(true);
 	setRenderRegion(TiledRectangle(windowSize));
 	drawToWindow();
 	pollGraphicsApiError();
@@ -21,6 +21,11 @@ void Renderer::sync()
 {
 	mutex.lock();
 	mutex.unlock();
+}
+
+void Renderer::plane()
+{
+	primitivesRenderer.rectangle(uniforms());
 }
 
 void Renderer::create()
@@ -96,20 +101,9 @@ Uniforms& Renderer::uniforms()
 	return shaderSystem.uniforms;
 }
 
-void Renderer::plane() {
-	primitivesRenderer.rectangle(uniforms());
-}
-
-void Renderer::wireframeCubeCentered() {
-	primitivesRenderer.wireframeCubeCentered(uniforms());
-}
-
-void Renderer::wireframeCube() {
+void Renderer::wireframeCube()
+{
 	primitivesRenderer.wireframeCube(uniforms());
-}
-
-void Renderer::wireframeCubes(const Vector<Matrix> & matrices) {
-	primitivesRenderer.wireframeCubes(uniforms(), matrices);
 }
 
 void Renderer::normalizedSpace()
@@ -177,6 +171,11 @@ void Renderer::begin(const Area size)
 	drawToWindow();
 }
 
+void Renderer::fill(const Float color)
+{
+	fill(Vec4(Vec3(color), 1.0f));
+}
+
 void Renderer::normalizedScreenSpace()
 {
 	const auto width  = static_cast<Float>(getWindowWidth());
@@ -186,9 +185,19 @@ void Renderer::normalizedScreenSpace()
 	uniforms().setPMatrix(Matrix(1));
 }
 
+void Renderer::wireframeCubeCentered()
+{
+	primitivesRenderer.wireframeCubeCentered(uniforms());
+}
+
 Float Renderer::getAspectRatio() const
 {
 	return renderRegion.getAspectRatio();
+}
+
+void Renderer::fill(const Double color)
+{
+	fill(Vec4(Vec3(color), 1.0f));
 }
 
 void Renderer::setWireframeMode() const
@@ -256,24 +265,18 @@ void Renderer::renderMesh(const Index meshId)
 	meshSystem.render(uniforms(), meshId);
 }
 
-void Renderer::centeredCube(const Float size)
-{
-	Bool tmp = wireframeMode;
-	setWireframeMode(true);
-	useShader("color");
-	fill(Vec4(1, 0, 0, 1));
-	uniforms().setMMatrix(matrixFromSize(size * 2));
-	renderMesh("centeredCube");
-	setWireframeMode(false);
-	wireframeMode = tmp;
-}
-
 void Renderer::aspectCorrectNormalizedSpace()
 {
 	const Float aspect = getAspectRatio();
 	uniforms().setVMatrix(Matrix(1));
-	if (aspect >= 1.0f) uniforms().setPMatrix(glm::ortho(-aspect, aspect, -1.0f, 1.0f, 1.0f, -1.0f));
-	else uniforms().setPMatrix(glm::ortho(-1.0f, 1.0f, -1 / aspect, 1 / aspect, 1.0f, -1.0f));
+	if (aspect >= 1.0f)
+	{
+		uniforms().setPMatrix(glm::ortho(-aspect, aspect, -1.0f, 1.0f, 1.0f, -1.0f));
+	}
+	else
+	{
+		uniforms().setPMatrix(glm::ortho(-1.0f, 1.0f, -1 / aspect, 1 / aspect, 1.0f, -1.0f));
+	}
 }
 
 Matrix Renderer::getScreenSpaceMatrix() const
@@ -357,10 +360,22 @@ void Renderer::line(const Vec2 start, const Vec2 end)
 	primitivesRenderer.line(line, uniforms());
 }
 
+void Renderer::wireframeCubeCentered(const Float size)
+{
+	uniforms().setMMatrix(size);
+	primitivesRenderer.wireframeCubeCentered(uniforms());
+}
+
 void Renderer::setWireframeMode(const Bool mode) const
 {
-	if (mode) OpenGL::apiPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	else OpenGL::apiPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	if (mode)
+	{
+		OpenGL::apiPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	}
+	else
+	{
+		OpenGL::apiPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	}
 }
 
 void Renderer::arrow(const Vec2 start, const Vec2 end)
@@ -375,6 +390,11 @@ void Renderer::arrow(const Vec3 start, const Vec3 end)
 	const Vec3 direction = end - start;
 	uniforms().setMMatrix(matrixFromDirectionAndPosition(direction, start));
 	renderMesh("arrow");
+}
+
+void Renderer::circles(const Vector<Matrix>& matrices)
+{
+	primitivesRenderer.circles(matrices, uniforms());
 }
 
 void Renderer::clearBackground(const Color color) const
@@ -412,6 +432,11 @@ void Renderer::setAlphaBlending(const Bool blending) const
 void Renderer::setRenderRegion(const TiledRectangle region)
 {
 	renderRegion.set(region);
+}
+
+void Renderer::wireframeCubes(const Vector<Matrix>& matrices)
+{
+	primitivesRenderer.wireframeCubes(matrices, uniforms());
 }
 
 void Renderer::fill(const Float r, const Float g, const Float b)

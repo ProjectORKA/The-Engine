@@ -46,21 +46,21 @@ struct OrganizerRenderer : GameRenderer
 	Vector<Company> companies;
 	Vector<Line3D>  connections;
 	Float           mouseSensitivity = 0.0015f;
-	InputEvent      enter            = InputEvent(InputType::Mouse, LMB, true);
-	InputEvent      exit             = InputEvent(InputType::Mouse, RMB, false);
+	InputEvent      enter            = InputEvent(InputType::Mouse, Lmb, true);
+	InputEvent      exit             = InputEvent(InputType::Mouse, Rmb, false);
 	InputEvent      wireFrameToggle  = InputEvent(InputType::KeyBoard, F, true);
 
 	void addTask(const Task& task);
 	void update(Window& window) override;
-	void destroy(Window& window) override;
-	void connect(GameSimulation& simulation) override;
-	void inputEvent(Window& window, InputEvent input) override;
 	void create(Window& window) override;
+	void destroy(Window& window) override;
 	void renderConnections(Renderer& r) const;
-	void addCompany(Index guid, const String& companyName, const String& domain);
+	void connect(GameSimulation& simulation) override;
 	void render(Window& window, TiledRectangle area) override;
-	void addUser(Index userGuid, Index companyGuid, const String& firstName, const String& lastName);
+	void inputEvent(Window& window, InputEvent input) override;
 	void renderInteractive(Window& window, TiledRectangle area) override;
+	void addCompany(Index guid, const String& companyName, const String& domain);
+	void addUser(Index userGuid, Index companyGuid, const String& firstName, const String& lastName);
 };
 
 struct Organizer

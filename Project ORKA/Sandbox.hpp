@@ -10,8 +10,8 @@ struct SandboxRenderer final : GameRenderer
 	DebugPlayer player;
 	Framebuffer framebuffer;
 	Float       mouseSensitivity = 0.0015f;
-	InputEvent  enter            = InputEvent(InputType::Mouse, LMB, true);
-	InputEvent  exit             = InputEvent(InputType::Mouse, RMB, false);
+	InputEvent  enter            = InputEvent(InputType::Mouse, Lmb, true);
+	InputEvent  exit             = InputEvent(InputType::Mouse, Rmb, false);
 	InputEvent  wireframeToggle  = InputEvent(InputType::KeyBoard, F, true);
 
 	void update(Window& window) override;

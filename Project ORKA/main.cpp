@@ -29,39 +29,38 @@
 //  You can already choose some games and projects to play around in.
 //  Just replace the Game in the main() function with one of the projects underneath
 
-#include "FlappyBird.hpp"
-//#include "MoonCrash.hpp"
-//#include "Orbital Oblivion.hpp"
-//#include "ProjectMelon.hpp"
-//#include "ImageViewer.hpp"
 //#include "Pong.hpp"
-//#include "TripleNine.hpp"
-//
-//#include "AIPlayground.hpp"
-//#include "AudioSystem.hpp"
-//#include "DungeonsAndDiscord.hpp"
-//#include "FunctionFinder.hpp"
-//#include "MindMapper.hpp"
-//#include "GPUSim.hpp"
-//#include "GuessingGame.hpp"
-//#include "Hello Triangle.hpp"
-//#include "ImguiExample.hpp"
-//#include "MSDFText.hpp"
-//#include "Organizer.hpp"
-//#include "PhysicsPlayground.hpp"
-//#include "PrototypingSandbox.hpp"
-//#include "RedDotHack.hpp"
-//#include "Sandbox.hpp"
-//#include "SDFRenderer.hpp"
-//#include "SimpleRTS.hpp"
-//#include "Snake.hpp"
-//#include "Sortr.hpp"
-//#include "UISandbox.hpp"
-//#include "Music Visualizer.hpp"
-//#include "SoundBars.hpp"
-//#include "Keva.hpp"
+//#include "MoonCrash.hpp"
+//#include "FlappyBird.hpp"
+#include "TripleNine.hpp"
+//#include "ImageViewer.hpp"
+//#include "ProjectMelon.hpp"
+//#include "Orbital Oblivion.hpp"
 
-void testAll(const Int argc, Char* argv[])
+//#include "Keva.hpp"
+#include "Snake.hpp"
+//#include "Sortr.hpp"
+//#include "GPUSim.hpp"
+//#include "Sandbox.hpp"
+//#include "MSDFText.hpp"
+#include "Organizer.hpp"
+//#include "SimpleRTS.hpp"
+#include "SoundBars.hpp"
+#include "UISandbox.hpp"
+//#include "MindMapper.hpp"
+//#include "RedDotHack.hpp"
+//#include "AudioSystem.hpp"
+//#include "SDFRenderer.hpp"
+//#include "AIPlayground.hpp"
+//#include "GuessingGame.hpp"
+//#include "FunctionFinder.hpp"
+#include "Hello Triangle.hpp"
+//#include "Music Visualizer.hpp"
+//#include "PrototypingSandbox.hpp"
+#include "PhysicsPlayground.hpp"
+//#include "DungeonsAndDiscord.hpp"
+
+void testAll(const int argc, char* argv[])
 {
 	//FlappyBird		 game1;  game1.run();
 	//MoonCrash          game2;  game2.run();
@@ -76,34 +75,39 @@ void testAll(const Int argc, Char* argv[])
 	//GuessingGame       game11; game11.run();
 	//HelloTriangle      game12; game12.run();
 	//ImageViewer        game13; game13.run(argc,argv);
-	//ImguiExample       game14; game14.run(); //shutdown issues
 	//MSDFText           game15; game15.run();
 	//Organizer          game17; game17.run();
-	//PhysicsPlayground  game18; game18.run();
+	PhysicsPlayground  game18; game18.run();
 	//PrototypingSandbox game19; game19.run();
 	//Sandbox            game20; game20.run();
 	//SDFRenderer        game21; game21.run();
 	//SimpleRts          game22; game22.run();
-	//Snake              game23; game23.run();
+	Snake              game23; game23.run();
 	//Sortr              game24; game24.run(argc, argv);
-	//UISandbox          game25; game25.run();
+	UISandbox          game25; game25.run();
 	//Keva               game26; game26.run();
 	//FunctionFinder     game27; game27.run();
 }
 
+using namespace External;
 
-Int main(const Int argc, Char* argv[])
+int main(const int argc, char* argv[])
 {
 	Engine engine;
 	engine.create(argc, argv);
 
-	FlappyBird game;
-	game.run();
+	testAll(argc, argv);
 }
 
 #include "Windows.hpp"
 
-Int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, Int nShowCmd)
+namespace External
 {
-	return main(__argc, __argv);
+	#include <stdlib.h>
+
+	// ReSharper disable once CppInconsistentNaming
+	int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd)
+	{
+		return main(__argc, __argv);
+	}
 }

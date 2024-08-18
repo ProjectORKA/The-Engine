@@ -7,8 +7,8 @@ struct SignedDistanceFieldRenderer final : GameRenderer
 {
 	DebugPlayer player;
 	Framebuffer framebuffer;
-	InputEvent  enter         = InputEvent(InputType::Mouse, LMB, true);
-	InputEvent  exit          = InputEvent(InputType::Mouse, RMB, false);
+	InputEvent  enter         = InputEvent(InputType::Mouse, Lmb, true);
+	InputEvent  exit          = InputEvent(InputType::Mouse, Rmb, false);
 	InputEvent  reloadShaders = InputEvent(InputType::KeyBoard, T, false);
 
 	void update(Window& window) override;

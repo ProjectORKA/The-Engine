@@ -8,7 +8,10 @@
 void ResourceManager::create()
 {
 	// make sure the resource manager is only initialized once
-	if(initialized) logError("Resource manager already initialized!");
+	if(initialized)
+	{
+		logError("Resource manager already initialized!");
+	}
 	else
 	{
 		// the "ORKA" path is the folder that contains the executable
@@ -74,8 +77,14 @@ void ResourceManager::loadResourcesFromFbxFiles() const
 
 		// read contents and check if newer
 		InFile resourceManagerConfigFile(resourceManagerConfigPath);
-		if(resourceManagerConfigFile.isOpen) resourceManagerConfigFile.read(reinterpret_cast<Char*>(&oldConfig), sizeof(ResourceManagerConfig));
-		else logError("Resource manager config file could not be loaded!");
+		if(resourceManagerConfigFile.isOpen)
+		{
+			resourceManagerConfigFile.read(reinterpret_cast<Char*>(&oldConfig), sizeof(ResourceManagerConfig));
+		}
+		else
+		{
+			logError("Resource manager config file could not be loaded!");
+		}
 
 		if(newConfig.lastNumberOfFbxFiles == oldConfig.lastNumberOfFbxFiles && newConfig.lastTimeFbxWasEdited <= oldConfig.lastTimeFbxWasEdited) return;
 	}
@@ -87,8 +96,14 @@ void ResourceManager::loadResourcesFromFbxFiles() const
 	}
 
 	OutFile resourceManagerConfigFile(resourceManagerConfigPath);
-	if(resourceManagerConfigFile.isOpen) resourceManagerConfigFile.write(reinterpret_cast<Char*>(&newConfig), sizeof(ResourceManagerConfig));
-	else logError("Resource manager config file could not be created!");
+	if(resourceManagerConfigFile.isOpen)
+	{
+		resourceManagerConfigFile.write(reinterpret_cast<Char*>(&newConfig), sizeof(ResourceManagerConfig));
+	}
+	else
+	{
+		logError("Resource manager config file could not be created!");
+	}
 }
 
 Path ResourceManager::getOrkaDataPath() const

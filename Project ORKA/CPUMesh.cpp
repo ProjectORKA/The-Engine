@@ -38,8 +38,14 @@ void CpuMesh::checkIntegrity()
 	if(!biTangents.empty()) dataFlags += static_cast<Short>(MeshDataFlags::BiTangents);
 	if(!vertexColors.empty()) dataFlags += static_cast<Short>(MeshDataFlags::VertexColor);
 
-	if(countBitsInFlags(dataFlags)) loaded = true;
-	else loaded                            = false;
+	if(countBitsInFlags(dataFlags))
+	{
+		loaded = true;
+	}
+	else
+	{
+		loaded                            = false;
+	}
 }
 
 Bool CpuMesh::isLoaded() const
@@ -251,7 +257,10 @@ void CpuMesh::load(Name name)
 				error = true;
 			}
 		}
-		else error = true;
+		else
+		{
+			error = true;
+		}
 
 		if(error)
 		{
@@ -261,7 +270,10 @@ void CpuMesh::load(Name name)
 		}
 		checkIntegrity();
 	}
-	else logWarning("Mesh (" + toString(name) + ") not found as resource!");
+	else
+	{
+		logWarning("Mesh (" + toString(name) + ") not found as resource!");
+	}
 }
 
 void CpuMesh::saveMeshFile()

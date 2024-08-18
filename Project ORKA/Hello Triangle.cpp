@@ -63,7 +63,7 @@ void HelloTriangleRenderer::render(Window& window, const TiledRectangle area)
 
 	r.setRenderRegion(area);
 
-	r.clearBackground(Color(0, 0, 0, 1));
+	r.clearBackground(Color(0, 0, 0, 0));
 
 	r.useShader("HelloTriangle");
 

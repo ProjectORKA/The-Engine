@@ -50,10 +50,10 @@ struct DNDRenderer final : GameRenderer
 	Index          lastSelectedObject  = -1;
 	Float          mouseSensitivity    = 0.0015f;
 	DNDSimulation* world               = nullptr;
-	InputId        selectMultiple      = InputId(InputType::KeyBoard, SHIFT);
-	InputEvent     select              = InputEvent(InputType::Mouse, LMB, true);
-	InputEvent     enter               = InputEvent(InputType::Mouse, LMB, true);
-	InputEvent     exit                = InputEvent(InputType::Mouse, RMB, false);
+	InputId        selectMultiple      = InputId(InputType::KeyBoard, Shift);
+	InputEvent     select              = InputEvent(InputType::Mouse, Lmb, true);
+	InputEvent     enter               = InputEvent(InputType::Mouse, Lmb, true);
+	InputEvent     exit                = InputEvent(InputType::Mouse, Rmb, false);
 	InputEvent     toggleWireframeMode = InputEvent(InputType::KeyBoard, F, true);
 
 	void update(Window& window) override;

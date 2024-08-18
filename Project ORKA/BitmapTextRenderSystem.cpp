@@ -9,7 +9,7 @@ void BitmapTextRenderSystem::destroy()
 
 void BitmapTextRenderSystem::create(Renderer& renderer)
 {
-	CPUTexture cpuTextTexture;
+	CpuTexture cpuTextTexture;
 	cpuTextTexture.load(Name("font"), Filter::Nearest, Filter::Linear, Wrapping::Repeat);
 	textTexture.load(cpuTextTexture);
 	renderer.shaderSystem.add("text");
@@ -17,7 +17,6 @@ void BitmapTextRenderSystem::create(Renderer& renderer)
 
 void BitmapTextRenderSystem::render(Renderer& renderer, const String& text, const Vec2 position, const Alignment x, const Alignment y, const Float absoluteSize, const Float letterSpacing)
 {
-	renderer.setDepthTest(false);
 	const UInt  length = static_cast<UInt>(text.size());
 	const Float size   = absoluteSize;
 	Float       up     = 0, down = 0, start = 0;

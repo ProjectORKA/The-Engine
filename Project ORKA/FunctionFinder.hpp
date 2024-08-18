@@ -24,7 +24,7 @@ struct FunctionFinderRenderer final : GameRenderer
 	DebugPlayer player;
 	Framebuffer framebuffer;
 	Float       mouseSensitivity = 0.0015f;
-	InputEvent  enter            = InputEvent(InputType::Mouse, LMB, true);
+	InputEvent  enter            = InputEvent(InputType::Mouse, Lmb, true);
 	InputEvent  wireframeToggle  = InputEvent(InputType::KeyBoard, F, true);
 
 	static Float function1(const Float x, const Float a)

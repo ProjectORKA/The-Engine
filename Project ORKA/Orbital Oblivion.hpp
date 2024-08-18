@@ -72,8 +72,8 @@ struct OrbitalOblivionRenderer final : GameRenderer
 	GpuMesh*                   unitMesh;
 	Bool                       bloom           = true;
 	OrbitalOblivionSimulation* sim             = nullptr;
-	InputEvent                 enter           = InputEvent(InputType::Mouse, LMB, true);
-	InputEvent                 exit            = InputEvent(InputType::Mouse, RMB, false);
+	InputEvent                 enter           = InputEvent(InputType::Mouse, Lmb, true);
+	InputEvent                 exit            = InputEvent(InputType::Mouse, Rmb, false);
 	InputEvent                 toggleWireframe = InputEvent(InputType::KeyBoard, F, true);
 	InputEvent                 toggleBloom     = InputEvent(InputType::KeyBoard, T, true);
 	InputEvent                 pause           = InputEvent(InputType::KeyBoard, P, true);

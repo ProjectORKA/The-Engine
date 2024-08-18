@@ -126,11 +126,11 @@ void FunctionFinderRenderer::render(Window& window, const TiledRectangle area)
 	if (render2D)
 	{
 		r.normalizedSpace();
-		r.fill(255);
+		r.fill(1);
 		r.line(data, plotMatrix());
-		//r.fill(255, 0, 0);
+		//r.fill(1, 0, 0);
 		//r.line(estimate, plotMatrix());
-		r.fill(0, 0, 255);
+		r.fill(0, 0, 1);
 		r.line(best, plotMatrix());
 	}
 	else

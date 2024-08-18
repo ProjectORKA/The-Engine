@@ -4,24 +4,20 @@
 
 #include "lodepng.h"
 
-namespace stbi
-{
-#define STBI_WINDOWS_UTF8
-#define STBI_FAILURE_USERMSG
-#define STB_IMAGE_IMPLEMENTATION
-#include "stb_image.h"
+namespace External {
+	#include "webp/decode.h"
+	#include "jpeglib.h"
+	#include "gif_lib.h"
+	#define STBI_WINDOWS_UTF8
+	#define STBI_FAILURE_USERMSG
+	#define STB_IMAGE_IMPLEMENTATION
+	#include "stb_image.h"
 }
 
-#include "webp/decode.h"
-
-#include <jpeglib.h>
-
-#include <gif_lib.h>
-
-using ImageHeader = Vector<Byte>;
+using ImageHeader       = Vector<Byte>;
 Int imageHeaderReadSize = 10;
 
-void jpegErrorCallback(const j_common_ptr info)
+void jpegErrorCallback(const External::j_common_ptr info)
 {
 	Char buffer[JMSG_LENGTH_MAX];
 	(*info->err->format_message)(info, buffer);
@@ -188,7 +184,7 @@ void Image::loadWebP(const Path& path)
 	fclose(file);
 
 	// create a WebPDecoderConfig object
-	WebPDecoderConfig config;
+	External::WebPDecoderConfig config;
 	if (WebPInitDecoderConfig(&config) != 1)
 	{
 		logWarning("Could not initialize WebP Decoder Config!\n File: (" + path.string() + ")");
@@ -202,7 +198,7 @@ void Image::loadWebP(const Path& path)
 	config.options.use_threads = 1;
 
 	// get the WebP info
-	if (WebPGetFeatures(fileData, fileSize, &config.input) != VP8_STATUS_OK)
+	if (WebPGetFeatures(fileData, fileSize, &config.input) != External::VP8_STATUS_OK)
 	{
 		logWarning("Could not get WebP Information!\n File: (" + path.string() + ")");
 		loaded = false;
@@ -219,16 +215,22 @@ void Image::loadWebP(const Path& path)
 	}
 
 	// handle alpha
-	if (config.input.has_alpha) config.output.colorspace = MODE_RGBA;
-	else config.output.colorspace                        = MODE_RGB;
+	if (config.input.has_alpha)
+	{
+		config.output.colorspace = External::MODE_RGBA;
+	}
+	else
+	{
+		config.output.colorspace = External::MODE_RGB;
+	}
 
 	// decode
-	if (const auto result = WebPDecode(fileData, fileSize, &config); result == VP8_STATUS_OK)
+	if (const auto result = WebPDecode(fileData, fileSize, &config); result == External::VP8_STATUS_OK)
 	{
 		// set channels
 		channels = Channels::Red;
-		if (config.output.colorspace == MODE_RGB) channels = Channels::RGB;
-		if (config.output.colorspace == MODE_RGBA) channels = Channels::RGBA;
+		if (config.output.colorspace == External::MODE_RGB) channels = Channels::RGB;
+		if (config.output.colorspace == External::MODE_RGBA) channels = Channels::RGBA;
 		if (channels == Channels::Red)
 		{
 			WebPFreeDecBuffer(&config.output);
@@ -300,16 +302,16 @@ void Image::loadEXR(const Path& path)
 
 void Image::loadGIF(const Path& path, const Int frameId)
 {
-	const String stringPath = toString(path);
-	const char*  charPath   = stringPath.c_str();
-	GifFileType* gif        = DGifOpenFileName(charPath, nullptr);
+	const String           stringPath = toString(path);
+	const char*            charPath   = stringPath.c_str();
+	External::GifFileType* gif        = External::DGifOpenFileName(charPath, nullptr);
 	if (gif == nullptr)
 	{
 		logError("Could not load gif!");
 		return;
 	}
 
-	if (DGifSlurp(gif) != GIF_OK)
+	if (DGifSlurp(gif) != 1)
 	{
 		logError("Error slurping Gif File!");
 		DGifCloseFile(gif, nullptr);
@@ -327,11 +329,11 @@ void Image::loadGIF(const Path& path, const Int frameId)
 
 	unsigned char* pixelPtr = pixelMemory.getData();
 
-	const SavedImage*   frame     = &gif->SavedImages[frameId];
-	const GifImageDesc* frameDesc = &frame->ImageDesc;
-	const GifByteType*  raster    = frame->RasterBits;
+	const External::SavedImage*   frame     = &gif->SavedImages[frameId];
+	const External::GifImageDesc* frameDesc = &frame->ImageDesc;
+	const External::GifByteType*  raster    = frame->RasterBits;
 
-	const GifColorType* colorMap = nullptr;
+	const External::GifColorType* colorMap = nullptr;
 	if (gif->SColorMap) colorMap = gif->SColorMap->Colors;
 	if (gif->SavedImages[frameId].ImageDesc.ColorMap) colorMap = gif->SavedImages[frameId].ImageDesc.ColorMap->Colors;
 
@@ -346,9 +348,9 @@ void Image::loadGIF(const Path& path, const Int frameId)
 	{
 		for (Int x = 0; x < width; x++)
 		{
-			const Int          index      = y * width + x;
-			const Int          colorIndex = raster[index];
-			const GifColorType color      = colorMap[colorIndex];
+			const Int                    index      = y * width + x;
+			const Int                    colorIndex = raster[index];
+			const External::GifColorType color      = colorMap[colorIndex];
 
 			*pixelPtr++ = color.Red;
 			*pixelPtr++ = color.Green;
@@ -369,7 +371,7 @@ void Image::loadHDR(const Path& path)
 
 void Image::loadJPEG(const Path& path)
 {
-	FILE* inFile = stbi::stbi__fopen(toString(path).c_str(), "rb");
+	FILE* inFile = External::stbi__fopen(toString(path).c_str(), "rb");
 
 	if (!inFile)
 	{
@@ -377,8 +379,8 @@ void Image::loadJPEG(const Path& path)
 		return;
 	}
 
-	jpeg_decompress_struct info;
-	jpeg_error_mgr         error;
+	External::jpeg_decompress_struct info;
+	External::jpeg_error_mgr         error;
 	info.err         = jpeg_std_error(&error);
 	error.error_exit = jpegErrorCallback;
 
@@ -388,9 +390,9 @@ void Image::loadJPEG(const Path& path)
 	//    return 1;
 	//}
 
-	jpeg_create_decompress(&info);
+	jpeg_CreateDecompress((&info), 62, (size_t)sizeof(struct External::jpeg_decompress_struct));
 	jpeg_stdio_src(&info, inFile);
-	jpeg_read_header(&info, TRUE);
+	jpeg_read_header(&info, 1);
 	jpeg_start_decompress(&info);
 
 	width           = info.output_width;
@@ -523,7 +525,7 @@ ImageDataType Image::getDataType() const
 
 void Image::loadOther(const Path& path, const Bool inverted)
 {
-	stbi::stbi_set_flip_vertically_on_load(inverted);
+	External::stbi_set_flip_vertically_on_load(inverted);
 
 	Int   channelsInt = 0;
 	Byte* address     = nullptr;
@@ -533,10 +535,10 @@ void Image::loadOther(const Path& path, const Bool inverted)
 
 	switch (dataType)
 	{
-	case ImageDataType::Byte: address = stbi::stbi_load(filePath.c_str(), &width, &height, &channelsInt, stbi::STBI_rgb_alpha);
+	case ImageDataType::Byte: address = External::stbi_load(filePath.c_str(), &width, &height, &channelsInt, External::STBI_rgb_alpha);
 		byteSize = static_cast<SizeT>(width) * static_cast<SizeT>(height) * 4 * sizeof(Byte); // Force RGBA, 4 channels
 		break;
-	case ImageDataType::Float: address = reinterpret_cast<Byte*>(stbi::stbi_loadf(filePath.c_str(), &width, &height, &channelsInt, stbi::STBI_rgb_alpha));
+	case ImageDataType::Float: address = reinterpret_cast<Byte*>(External::stbi_loadf(filePath.c_str(), &width, &height, &channelsInt, External::STBI_rgb_alpha));
 		byteSize = static_cast<SizeT>(width) * static_cast<SizeT>(height) * 4 * sizeof(Float); // Force RGBA, 4 channels
 		break;
 	default: logError("Data type not supported!");
@@ -546,7 +548,7 @@ void Image::loadOther(const Path& path, const Bool inverted)
 
 	pixelMemory = Memory(address, byteSize);
 
-	stbi::stbi_image_free(address);
+	External::stbi_image_free(address);
 
 	channels = Channels::RGBA; // Force RGBA
 

@@ -8,7 +8,8 @@ struct ShaderProgram
 	void               use() const;
 	[[nodiscard]] Bool isLoaded() const;
 	void               create(const Name& name, const String& vertexShaderCode, const String& fragmentShaderCode);
+
 private:
 	Bool                loaded = false;
-	OpenGLShaderProgram openglShaderProgram;
+	OpenGlShaderProgram openglShaderProgram;
 };

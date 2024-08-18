@@ -26,6 +26,7 @@
     <ClCompile Include="BitmapTextRenderSystem.cpp" />
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="Debug.cpp" />
+    <ClCompile Include="Engine.cpp" />
     <ClCompile Include="FileTypes.cpp" />
     <ClCompile Include="FlappyBird.cpp" />
     <ClCompile Include="Fonts.cpp" />
@@ -34,10 +35,10 @@
     <ClCompile Include="Hello Triangle.cpp" />
     <ClCompile Include="ImageViewerDatabase.cpp" />
     <ClCompile Include="ImageViewerResource.cpp" />
-    <ClCompile Include="ImguiExample.cpp" />
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="KDTreePrototype.cpp" />
     <ClInclude Include="AxisNeighborPrototype2.hpp" />
+    <ClInclude Include="ClosestConnectionPrototype.hpp" />
     <ClInclude Include="DelaunayTriangulation.hpp" />
     <ClInclude Include="DNDBase.hpp" />
     <ClInclude Include="Fonts.hpp" />
@@ -49,6 +50,7 @@
     <ClInclude Include="KDTree2.hpp" />
     <ClInclude Include="KDTreePrototype.hpp" />
     <ClCompile Include="Keva.cpp" />
+    <ClCompile Include="LabyrinthGeneratorPrototype.cpp" />
     <ClCompile Include="Logger.cpp" />
     <ClCompile Include="MSDFText.cpp" />
     <ClCompile Include="NameGenerator.cpp" />
@@ -148,6 +150,7 @@
     <ClCompile Include="TextRenderSystem.cpp" />
     <ClCompile Include="TextureSystem.cpp" />
     <ClCompile Include="TransformationStack.cpp" />
+    <ClCompile Include="TriangulationPrototype.cpp" />
     <ClCompile Include="TripleNine.cpp" />
     <ClCompile Include="Random.cpp" />
     <ClCompile Include="RedDotHack.cpp" />
@@ -178,9 +181,11 @@
     <ClCompile Include="VoxelRenderer.cpp" />
     <ClCompile Include="Window.cpp" />
     <ClCompile Include="WindowAPI.cpp" />
+    <ClInclude Include="LabyrinthGeneratorPrototype.hpp" />
     <ClInclude Include="LockFreeQueue.hpp" />
     <ClInclude Include="Music Visualizer.hpp" />
     <ClInclude Include="PerformanceGraph.hpp" />
+    <ClInclude Include="PersistentInfoPrototype.hpp" />
     <ClInclude Include="PrimitivesRenderer.hpp" />
     <ClInclude Include="SimpleRtsBerryBushSystem.hpp" />
     <ClInclude Include="SimpleRtsBodySystem.hpp" />
@@ -192,6 +197,7 @@
     <ClInclude Include="SoundBars.hpp" />
     <ClInclude Include="SoundGenerators.hpp" />
     <ClInclude Include="Keva.hpp" />
+    <ClInclude Include="TriangulationPrototype.hpp" />
     <ClInclude Include="Windows.hpp" />
   </ItemGroup>
   <ItemGroup>
@@ -227,7 +233,6 @@
     <ClInclude Include="GuessingGame.hpp" />
     <ClInclude Include="Heightmap.hpp" />
     <ClInclude Include="ImageViewer.hpp" />
-    <ClInclude Include="ImguiExample.hpp" />
     <ClInclude Include="IndexBufferObject.hpp" />
     <ClInclude Include="InfiniteDetailPrototype.hpp" />
     <ClInclude Include="Input.hpp" />

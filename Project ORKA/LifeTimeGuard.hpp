@@ -9,14 +9,26 @@ struct LifetimeGuard
 
 	void create()
 	{
-		if(initialized) logError("Already initialized!");
-		else initialized = true;
+		if(initialized)
+		{
+			logError("Already initialized!");
+		}
+		else
+		{
+			initialized = true;
+		}
 	}
 
 	void destroy()
 	{
-		if(!initialized) logError("Object never created");
-		else initialized = false;
+		if(!initialized)
+		{
+			logError("Object never created");
+		}
+		else
+		{
+			initialized = false;
+		}
 		logDebug("Destroyed");
 	}
 

@@ -52,7 +52,10 @@ void deleteFile(const Path& path)
 		const Int result = SHFileOperation(&fileOp);
 		if (result != 0) logError("Could not delete file!");
 	}
-	else std::filesystem::remove(path);
+	else
+	{
+		std::filesystem::remove(path);
+	}
 }
 
 UInt getFileSize(const Path& path)
@@ -188,8 +191,14 @@ void moveFile(const Path& source, const Path& destination)
 	const Bool fileValid = doesPathExist(destination);
 
 	//comp sizes
-	if (fileValid && sourceFileSize == destFileSize) deleteFile(source);
-	else logError("File size corrupted during moving, doesn't match!");
+	if (fileValid && sourceFileSize == destFileSize)
+	{
+		deleteFile(source);
+	}
+	else
+	{
+		logError("File size corrupted during moving, doesn't match!");
+	}
 }
 
 FileTime getLastWrittenTimeOfFiles(const Vector<Path>& paths)

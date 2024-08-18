@@ -72,8 +72,14 @@ void FlappyBirdRenderer::connect(GameSimulation& simulation) {}
 
 void FlappyBirdBird::render(Renderer& r) const
 {
-	if (alive) r.fill(Color(1));
-	else r.fill(Color(1, 0, 0, 1));
+	if (alive)
+	{
+		r.fill(Color(1));
+	}
+	else
+	{
+		r.fill(Color(1, 0, 0, 1));
+	}
 
 	transform.render(r);
 	r.renderMesh("flappyBirdBird");

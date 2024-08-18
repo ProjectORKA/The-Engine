@@ -96,6 +96,12 @@ CpuMesh Chunk::generateMesh() const
 
 void VoxelRenderer::render(Renderer& renderer)
 {
-	if(!terrainMesh.isLoaded()) terrainMesh.upload(world.chunk.generateMesh());
-	else terrainMesh.render(renderer.uniforms());
+	if(!terrainMesh.isLoaded())
+	{
+		terrainMesh.upload(world.chunk.generateMesh());
+	}
+	else
+	{
+		terrainMesh.render(renderer.uniforms());
+	}
 }

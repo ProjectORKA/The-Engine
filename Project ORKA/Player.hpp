@@ -13,12 +13,12 @@ struct Player
 	Double mouseSensitivity = 0.0015;
 
 	// input
-	InputId forward  = InputId(InputType::KeyBoard, W);
-	InputId backward = InputId(InputType::KeyBoard, S);
-	InputId right    = InputId(InputType::KeyBoard, D);
-	InputId left     = InputId(InputType::KeyBoard, A);
-	InputId up       = InputId(InputType::KeyBoard, E);
-	InputId down     = InputId(InputType::KeyBoard, Q);
+	InputId forward  = InputId(InputType::KeyBoard, Key::W);
+	InputId backward = InputId(InputType::KeyBoard, Key::S);
+	InputId right    = InputId(InputType::KeyBoard, Key::D);
+	InputId left     = InputId(InputType::KeyBoard, Key::A);
+	InputId up       = InputId(InputType::KeyBoard, Key::E);
+	InputId down     = InputId(InputType::KeyBoard, Key::Q);
 
 	Player()          = default;
 	virtual ~Player() = default;

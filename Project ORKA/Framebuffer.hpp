@@ -7,8 +7,8 @@ struct Framebuffer
 	[[nodiscard]] Int   getWidth() const;
 	[[nodiscard]] Int   getHeight() const;
 	[[nodiscard]] Float aspectRatio() const;
-	[[nodiscard]] IVec4 readPixelsAtCenterUIntRgb(FramebufferMode attachment) const;
-	[[nodiscard]] IVec4 readPixelsUIntRgb(Int x, Int y, FramebufferMode attachment) const;
+	[[nodiscard]] IVec4 readPixelsAtCenterUIntRGB(FramebufferMode attachment) const;
+	[[nodiscard]] IVec4 readPixelsUIntRGB(Int x, Int y, FramebufferMode attachment) const;
 
 	void                destroy();
 	void                clear() const;

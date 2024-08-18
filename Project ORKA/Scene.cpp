@@ -1,9 +1,9 @@
 #include "Scene.hpp"
 #include "FileSystem.hpp"
 
-#include <assimp/Importer.hpp>
-#include <assimp/postprocess.h>
-#include <assimp/scene.h>
+#include "assimp/Importer.hpp"
+#include "assimp/postprocess.h"
+#include "assimp/scene.h"
 
 void Scene::loadFBX(Path path)
 {
@@ -14,19 +14,19 @@ void Scene::loadFBX(Path path)
 	{
 		logDebug("Loading mesh: (" + path.stem().string() + ") from (" + path.string() + ")");
 
-		Assimp::Importer importer;
-		const aiScene*   assimpScene = importer.ReadFile(path.string(),
-		                                                 // aiProcess_GenUVCoords |
-		                                                 aiProcess_Triangulate | 0
-		                                                 // aiProcess_SortByPType |
-		                                                 // aiProcess_FindInvalidData |
-		                                                 // aiProcess_FindDegenerates |
-		                                                 // aiProcess_CalcTangentSpace |
-		                                                 // aiProcess_GenSmoothNormals |
-		                                                 // aiProcess_ImproveCacheLocality |
-		                                                 // aiProcess_ValidateDataStructure |
-		                                                 // aiProcess_JoinIdenticalVertices |
-		                                                 // aiProcess_RemoveRedundantMaterials
+		Assimp::Importer         importer;
+		const aiScene* assimpScene = importer.ReadFile(path.string(),
+																 // aiProcess_GenUVCoords |
+																 aiProcess_Triangulate | 0
+																 // aiProcess_SortByPType |
+																 // aiProcess_FindInvalidData |
+																 // aiProcess_FindDegenerates |
+																 // aiProcess_CalcTangentSpace |
+																 // aiProcess_GenSmoothNormals |
+																 // aiProcess_ImproveCacheLocality |
+																 // aiProcess_ValidateDataStructure |
+																 // aiProcess_JoinIdenticalVertices |
+																 // aiProcess_RemoveRedundantMaterials
 		);
 
 		errorMessage = importer.GetErrorString();
@@ -51,7 +51,7 @@ void Scene::loadFBX(Path path)
 							Index meshId = assimpScene->mRootNode->mChildren[objectId]->mMeshes[objectsMeshId];
 
 							aiColor4D diffuseColor(0.0f, 0.0f, 0.0f, 0.0f);
-							aiGetMaterialColor(assimpScene->mMaterials[assimpScene->mMeshes[meshId]->mMaterialIndex], AI_MATKEY_COLOR_DIFFUSE, &diffuseColor);
+							aiGetMaterialColor(assimpScene->mMaterials[assimpScene->mMeshes[meshId]->mMaterialIndex], "$clr.diffuse", 0, 0, &diffuseColor);
 
 							Vec3 color(diffuseColor.r, diffuseColor.g, diffuseColor.b);
 
@@ -98,9 +98,15 @@ void Scene::loadFBX(Path path)
 										}
 									}
 								}
-								else errorMessage = "Mesh does not have faces!";
+								else
+								{
+									errorMessage = "Mesh does not have faces!";
+								}
 							}
-							else errorMessage = "Mesh does not have positions stored!";
+							else
+							{
+								errorMessage = "Mesh does not have positions stored!";
+							}
 
 							lastIndex += assimpScene->mMeshes[meshId]->mNumVertices;
 						}
@@ -112,10 +118,16 @@ void Scene::loadFBX(Path path)
 					}
 				}
 			}
-			else errorMessage = "No meshes in fbx scene!";
+			else
+			{
+				errorMessage = "No meshes in fbx scene!";
+			}
 		}
 	}
-	else errorMessage = path.parent_path().string() + " does not exist!";
+	else
+	{
+		errorMessage = path.parent_path().string() + " does not exist!";
+	}
 
 	if(!errorMessage.empty()) logError("The scene (" + path.stem().string() + ") could not be loaded! (" + path.string() + ") Error: " + errorMessage);
 }

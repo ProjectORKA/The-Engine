@@ -52,7 +52,7 @@ void Window::captureCursor()
 
 void Window::setFullscreen()
 {
-	glfwSetWindowMonitor(apiWindow, glfwGetPrimaryMonitor(), 0, 0, glfwGetVideoMode(glfwGetPrimaryMonitor())->width, glfwGetVideoMode(glfwGetPrimaryMonitor())->height, GLFW_DONT_CARE);
+	glfwSetWindowMonitor(apiWindow, External::glfwGetPrimaryMonitor(), 0, 0, glfwGetVideoMode(External::glfwGetPrimaryMonitor())->width, External::glfwGetVideoMode(External::glfwGetPrimaryMonitor())->height, GLFW_DONT_CARE);
 	windowState = WindowState::Fullscreen;
 }
 
@@ -110,8 +110,14 @@ void Window::updateWindowState()
 
 void Window::updateDecorations()
 {
-	if(decorated) decorateWindow();
-	else unDecorateWindow();
+	if(decorated)
+	{
+		decorateWindow();
+	}
+	else
+	{
+		unDecorateWindow();
+	}
 }
 
 Bool Window::shouldClose() const
@@ -239,7 +245,7 @@ void Window::initializeGraphicsApi() const
 {
 	glfwMakeContextCurrent(apiWindow);
 
-	glfwSwapInterval(0);
+	External::glfwSwapInterval(0);
 }
 
 void Window::setVisible(const Bool visible)
@@ -255,13 +261,16 @@ void Window::setIcon(const Path& path) const
 	logo.flipVertically();
 	if(logo.getDataType() == ImageDataType::Byte)
 	{
-		GLFWimage icon;
+		External::GLFWimage icon;
 		icon.pixels = logo.getDataPointer();
 		icon.width  = static_cast<Int>(logo.getWidth());
 		icon.height = static_cast<Int>(logo.getHeight());
 		glfwSetWindowIcon(apiWindow, 1, &icon);
 	}
-	else logWarning("Logo could not be Loaded!");
+	else
+	{
+		logWarning("Logo could not be Loaded!");
+	}
 }
 
 void Window::setPosition(const IVec2 position)
@@ -294,7 +303,7 @@ void Window::setTitle(const String& string) const
 	glfwSetWindowTitle(apiWindow, string.c_str());
 }
 
-void whenWindowCloseRequest(const APIWindow apiWindow)
+void whenWindowCloseRequest(const ApiWindow apiWindow)
 {
 	glfwSetWindowShouldClose(apiWindow, true);
 }
@@ -309,29 +318,34 @@ void Window::createApiWindow(const String& title, const Area size)
 	if(!apiWindow)
 	{
 		// video mode
-		const GLFWvidmode* videoMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-		glfwWindowHint(GLFW_RED_BITS, videoMode->redBits);
-		glfwWindowHint(GLFW_GREEN_BITS, videoMode->greenBits);
-		glfwWindowHint(GLFW_BLUE_BITS, videoMode->blueBits);
-		glfwWindowHint(GLFW_DEPTH_BITS, 24);
-		glfwWindowHint(GLFW_REFRESH_RATE, videoMode->refreshRate);
+		const External::GLFWvidmode* videoMode = glfwGetVideoMode(External::glfwGetPrimaryMonitor());
+		External::glfwWindowHint(GLFW_RED_BITS, videoMode->redBits);
+		External::glfwWindowHint(GLFW_GREEN_BITS, videoMode->greenBits);
+		External::glfwWindowHint(GLFW_BLUE_BITS, videoMode->blueBits);
+		External::glfwWindowHint(GLFW_DEPTH_BITS, 24);
+		External::glfwWindowHint(GLFW_REFRESH_RATE, videoMode->refreshRate);
 		// opengl stuff
-		glfwWindowHint(GLFW_SAMPLES, 0);
-		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
-		glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_API);
-		glfwWindowHint(GLFW_CONTEXT_CREATION_API, GLFW_NATIVE_CONTEXT_API);
-		glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, true);
+		External::glfwWindowHint(GLFW_SAMPLES, 0);
+		External::glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+		External::glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
+		External::glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_API);
+		External::glfwWindowHint(GLFW_CONTEXT_CREATION_API, GLFW_NATIVE_CONTEXT_API);
+		External::glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, true);
 
-		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-		// glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_COMPAT_PROFILE);
-		glfwWindowHint(GLFW_TRANSPARENT_FRAMEBUFFER, true);
-		glfwWindowHint(GLFW_CENTER_CURSOR, true);
-		glfwWindowHint(GLFW_VISIBLE, false);
-		if(!decorated) glfwWindowHint(GLFW_DECORATED, false);
-		else glfwWindowHint(GLFW_DECORATED, true);
+		External::glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+		External::glfwWindowHint(GLFW_TRANSPARENT_FRAMEBUFFER, true);
+		External::glfwWindowHint(GLFW_CENTER_CURSOR, true);
+		External::glfwWindowHint(GLFW_VISIBLE, false);
+		if(!decorated)
+		{
+			External::glfwWindowHint(GLFW_DECORATED, false);
+		}
+		else
+		{
+			External::glfwWindowHint(GLFW_DECORATED, true);
+		}
 
-		if(debugLoggingIsEnabled) glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
+		if(debugLoggingIsEnabled) External::glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
 
 		apiWindow = apiCreateWindow(size, title.c_str(), nullptr);
 
@@ -341,30 +355,33 @@ void Window::createApiWindow(const String& title, const Area size)
 
 		setIcon("Data/textures/ORKA Logo.png");
 
-		if(glfwRawMouseMotionSupported()) glfwSetInputMode(apiWindow, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
+		if(External::glfwRawMouseMotionSupported()) glfwSetInputMode(apiWindow, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
 	}
-	else logError("Window already exists!");
+	else
+	{
+		logError("Window already exists!");
+	}
 }
 
-void whenFramebufferIsResized(const APIWindow apiWindow, const Int width, const Int height)
+void whenFramebufferIsResized(const ApiWindow apiWindow, const Int width, const Int height)
 {
 	Window& window = *static_cast<Window*>(glfwGetWindowUserPointer(apiWindow));
 
 	if(!window.isFullScreen()) window.windowedModeSize = Area(width, height);
 
-	if(apiWindowKeyIsPressed(apiWindow, LEFT_SHIFT)) window.centerWindow();
+	if(apiWindowKeyIsPressed(apiWindow, LeftShift)) window.centerWindow();
 
 	window.renderer.sync();
 }
 
-void whenMouseIsMoving(const APIWindow apiWindow, const Double mouseX, const Double mouseY)
+void whenMouseIsMoving(const ApiWindow apiWindow, const Double mouseX, const Double mouseY)
 {
 	Window& window         = *static_cast<Window*>(glfwGetWindowUserPointer(apiWindow));
 	window.mousePos        = DVec2(mouseX, mouseY);
 	window.mousePosBotLeft = DVec2(mouseX, window.getContentSize().y - mouseY);
 }
 
-void whenMouseIsScrolling(const APIWindow apiWindow, const Double xAxis, const Double yAxis)
+void whenMouseIsScrolling(const ApiWindow apiWindow, const Double xAxis, const Double yAxis)
 {
 	Window& window = *static_cast<Window*>(glfwGetWindowUserPointer(apiWindow));
 
@@ -375,7 +392,7 @@ void whenMouseIsScrolling(const APIWindow apiWindow, const Double xAxis, const D
 	for(Int i = 0; i < countY; i++) window.content.inputEvent(window, InputEvent(InputType::Scroll, 1, yAxis > 0));
 }
 
-void whenFilesDroppedOnWindow(const APIWindow apiWindow, const Int count, const Char** paths)
+void whenFilesDroppedOnWindow(const ApiWindow apiWindow, const Int count, const Char** paths)
 {
 	Window&      window = *static_cast<Window*>(glfwGetWindowUserPointer(apiWindow));
 	Vector<Path> pathVector;
@@ -391,14 +408,14 @@ void whenFilesDroppedOnWindow(const APIWindow apiWindow, const Int count, const 
 	window.droppedFilePaths = pathVector;
 }
 
-void whenMouseIsPressed(const APIWindow apiWindow, const Int mouseButton, const Int action, Int modifiers)
+void whenMouseIsPressed(const ApiWindow apiWindow, const Int mouseButton, const Int action, Int modifiers)
 {
 	Window& window                 = *static_cast<Window*>(glfwGetWindowUserPointer(apiWindow));
 	window.mouseState[mouseButton] = action > 0;
 	window.content.inputEvent(window, InputEvent(InputType::Mouse, mouseButton, action));
 }
 
-void whenButtonIsPressed(const APIWindow apiWindow, const Int key, Int scanCode, const Int action, Int modifiers)
+void whenButtonIsPressed(const ApiWindow apiWindow, const Int key, Int scanCode, const Int action, Int modifiers)
 {
 	Window& window = *static_cast<Window*>(glfwGetWindowUserPointer(apiWindow));
 
@@ -414,8 +431,14 @@ void whenButtonIsPressed(const APIWindow apiWindow, const Int key, Int scanCode,
 	}
 	if(input == window.enter && window.pressed(window.altKey))
 	{
-		if(window.windowState == WindowState::Windowed) window.windowState = WindowState::Fullscreen;
-		else window.windowState                                            = WindowState::Windowed;
+		if(window.windowState == WindowState::Windowed)
+		{
+			window.windowState = WindowState::Fullscreen;
+		}
+		else
+		{
+			window.windowState                                            = WindowState::Windowed;
+		}
 		window.updateWindowState();
 	}
 	if(input == window.startProfiling)

@@ -1,18 +1,18 @@
 #include "SceneSystem.hpp"
 #include "FileSystem.hpp"
 
-#include <assimp/Importer.hpp>
-#include <assimp/postprocess.h>
-#include <assimp/scene.h>
+#include "assimp/Importer.hpp"
+#include "assimp/postprocess.h"
+#include "assimp/scene.h"
 
 void checkMesh(const aiMesh& mesh)
 {
 	String errorMessage;
 
 	// check for triangulation
-	for(UInt faceIndex = 0; faceIndex < mesh.mNumFaces; faceIndex++) if(mesh.mFaces[faceIndex].mNumIndices != 3) errorMessage = "Mesh is not triangulated!";
+	for (UInt faceIndex = 0; faceIndex < mesh.mNumFaces; faceIndex++) if (mesh.mFaces[faceIndex].mNumIndices != 3) errorMessage = "Mesh is not triangulated!";
 
-	if(!errorMessage.empty()) logError(errorMessage);
+	if (!errorMessage.empty()) logError(errorMessage);
 }
 
 void loadAssimpScene(Scene2& destinationScene, const aiScene& sourceScene);
@@ -31,10 +31,10 @@ void processNode(SceneNode& sceneNode, const aiNode* fileNode)
 	sceneNode.transform.setRotation(rotation.x, rotation.y, rotation.z);
 
 	// get meshes
-	for(Int i = 0; i < fileNode->mNumMeshes; i++) sceneNode.meshes.push_back(fileNode->mMeshes[i]);
+	for (Int i = 0; i < fileNode->mNumMeshes; i++) sceneNode.meshes.push_back(fileNode->mMeshes[i]);
 
 	// get child nodes
-	for(Int i = 0; i < fileNode->mNumChildren; i++)
+	for (Int i = 0; i < fileNode->mNumChildren; i++)
 	{
 		sceneNode.children.emplace_back();
 		processNode(sceneNode.children.back(), fileNode->mChildren[i]);
@@ -43,10 +43,10 @@ void processNode(SceneNode& sceneNode, const aiNode* fileNode)
 
 void loadAssimpMesh(CpuMesh& destinationMesh, aiMesh& sourceMesh)
 {
-	if(sourceMesh.HasTangentsAndBitangents())
+	if (sourceMesh.HasTangentsAndBitangents())
 	{
 		// tangents
-		for(Int tangentIndex = 0; tangentIndex < sourceMesh.mTangents->Length(); tangentIndex++)
+		for (Int tangentIndex = 0; tangentIndex < sourceMesh.mTangents->Length(); tangentIndex++)
 		{
 			Vec3 tangent;
 			tangent.x = sourceMesh.mTangents[tangentIndex].x;
@@ -56,7 +56,7 @@ void loadAssimpMesh(CpuMesh& destinationMesh, aiMesh& sourceMesh)
 		}
 
 		// bitangents
-		for(Int bitangentIndex = 0; bitangentIndex < sourceMesh.mBitangents->Length(); bitangentIndex++)
+		for (Int bitangentIndex = 0; bitangentIndex < sourceMesh.mBitangents->Length(); bitangentIndex++)
 		{
 			Vec3 bitangent;
 			bitangent.x = sourceMesh.mBitangents[bitangentIndex].x;
@@ -67,7 +67,7 @@ void loadAssimpMesh(CpuMesh& destinationMesh, aiMesh& sourceMesh)
 	}
 
 	// vertecies
-	for(Int vertexIndex = 0; vertexIndex < sourceMesh.mNumVertices; vertexIndex++)
+	for (Int vertexIndex = 0; vertexIndex < sourceMesh.mNumVertices; vertexIndex++)
 	{
 		// positions
 		Vec3 position;
@@ -90,9 +90,9 @@ void loadAssimpMesh(CpuMesh& destinationMesh, aiMesh& sourceMesh)
 		destinationMesh.textureCoordinates.push_back(texCoord);
 	}
 
-	if(sourceMesh.GetNumColorChannels() > 0)
+	if (sourceMesh.GetNumColorChannels() > 0)
 	{
-		for(Int vertexIndex = 0; vertexIndex < sourceMesh.mNumVertices; vertexIndex++)
+		for (Int vertexIndex = 0; vertexIndex < sourceMesh.mNumVertices; vertexIndex++)
 		{
 			// colors
 			Vec4 vertexColor;
@@ -105,7 +105,7 @@ void loadAssimpMesh(CpuMesh& destinationMesh, aiMesh& sourceMesh)
 	}
 
 	Index index;
-	for(UInt faceIndex = 0; faceIndex < sourceMesh.mNumFaces; faceIndex++)
+	for (UInt faceIndex = 0; faceIndex < sourceMesh.mNumFaces; faceIndex++)
 	{
 		index = sourceMesh.mFaces[faceIndex].mIndices[0];
 		destinationMesh.indices.push_back(index);
@@ -122,35 +122,29 @@ void Scene2::importFBX(Path path)
 	// check if file is valid
 	String errorMessage;
 
-	if(doesPathExist(path))
+	if (doesPathExist(path))
 	{
 		logDebug("Loading mesh: (" + path.string() + ")");
 
 		Assimp::Importer importer;
-		const aiScene*   assimpScene = importer.ReadFile(path.string(), aiProcess_GenUVCoords | aiProcess_Triangulate |
-		                                                 // aiProcess_SortByPType |
-		                                                 // aiProcess_FindInvalidData |
-		                                                 // aiProcess_FindDegenerates |
-		                                                 // aiProcess_CalcTangentSpace |
-		                                                 aiProcess_GenSmoothNormals |
-		                                                 // aiProcess_ImproveCacheLocality |
-		                                                 // aiProcess_ValidateDataStructure |
-		                                                 // aiProcess_JoinIdenticalVertices |
-		                                                 aiProcess_RemoveRedundantMaterials);
+		const aiScene*   assimpScene = importer.ReadFile(path.string(), aiProcess_GenUVCoords | aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_RemoveRedundantMaterials);
 
 		errorMessage = importer.GetErrorString();
 
-		if(errorMessage.empty()) loadAssimpScene(*this, *assimpScene);
+		if (errorMessage.empty()) loadAssimpScene(*this, *assimpScene);
 	}
-	else errorMessage = path.parent_path().string() + " does not exist!";
+	else
+	{
+		errorMessage = path.parent_path().string() + " does not exist!";
+	}
 
-	if(!errorMessage.empty()) logError("The model (" + path.stem().string() + ") could not be loaded! (" + path.string() + ")" + " Error: " + errorMessage);
+	if (!errorMessage.empty()) logError("The model (" + path.stem().string() + ") could not be loaded! (" + path.string() + ")" + " Error: " + errorMessage);
 }
 
 void loadAssimpScene(Scene2& destinationScene, const aiScene& sourceScene)
 {
 	// get meshes
-	for(Int i = 0; i < sourceScene.mNumMeshes; i++)
+	for (Int i = 0; i < sourceScene.mNumMeshes; i++)
 	{
 		destinationScene.meshes.emplace_back();
 		CpuMesh& destinationMesh = destinationScene.meshes.back();

@@ -11,7 +11,7 @@ ULong compileFromSource(const char* args)
 	String cmdLine(R"(C:\Program Files\LLVM\bin\clang++.exe)");
 	cmdLine += args;
 
-	if(!CreateProcessA(nullptr, const_cast<char*>(cmdLine.c_str()), nullptr, nullptr, FALSE, 0, nullptr, nullptr, &startupInfo, &processInfo)) return false;
+	if (!CreateProcessA(nullptr, const_cast<char*>(cmdLine.c_str()), nullptr, nullptr, FALSE, 0, nullptr, nullptr, &startupInfo, &processInfo)) return false;
 	WaitForSingleObject(processInfo.hProcess, INFINITE);
 	DWORD exitCode;
 	GetExitCodeProcess(processInfo.hProcess, &exitCode);

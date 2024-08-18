@@ -42,10 +42,10 @@ struct PongRenderer final : GameRenderer
 	InputId      shootButton1secondary = InputId(InputType::Mouse, 0);
 	InputId      moveUpButton1         = InputId(InputType::KeyBoard, W);
 	InputId      moveDownButton1       = InputId(InputType::KeyBoard, S);
-	InputId      moveUpButton2         = InputId(InputType::KeyBoard, UP);
-	InputId      moveDownButton2       = InputId(InputType::KeyBoard, DOWN);
-	InputId      shootButton2          = InputId(InputType::KeyBoard, LEFT);
-	InputId      shootButton1          = InputId(InputType::KeyBoard, SPACE);
+	InputId      moveUpButton2         = InputId(InputType::KeyBoard, Up);
+	InputId      moveDownButton2       = InputId(InputType::KeyBoard, Down);
+	InputId      shootButton2          = InputId(InputType::KeyBoard, Left);
+	InputId      shootButton1          = InputId(InputType::KeyBoard, Space);
 
 	void update(Window& window) override;
 	void destroy(Window& window) override;

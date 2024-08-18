@@ -1,6 +1,10 @@
 #include "Hash.hpp"
 #include "Debug.hpp"
-#include "openssl/sha.h"
+
+namespace External
+{
+	#include "openssl/sha.h"
+}
 
 // [TODO] current approach is deprecated
 String calculateSha256Hash(const Path& filePath)
@@ -13,7 +17,7 @@ String calculateSha256Hash(const Path& filePath)
 		return "";
 	}
 
-	SHA256_CTX sha256Context;
+	External::SHA256_CTX sha256Context;
 	SHA256_Init(&sha256Context);
 
 	while (!file.eof())

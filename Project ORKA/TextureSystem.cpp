@@ -22,7 +22,7 @@ void TextureSystem::create()
 	pixels[15] = 255;
 	const Image image(2, 2, Channels::RGBA, ImageDataType::Byte, Memory(pixels.data(), pixels.size()));
 
-	CPUTexture defaultTexture;
+	CpuTexture defaultTexture;
 
 	defaultTexture.load(image, Filter::Nearest, Filter::NearestMm, Wrapping::Repeat, "DefaultTexture");
 
@@ -47,13 +47,13 @@ GPUTexture& TextureSystem::currentTexture()
 	return gpuTextures[currentTextureId];
 }
 
-void TextureSystem::use(const Index textureIndex)
+void TextureSystem::use(const Index textureId)
 {
-	currentTextureId = textureIndex;
+	currentTextureId = textureId;
 	currentTexture().useTextureInSlot(0);
 }
 
-void TextureSystem::add(const CPUTexture& cpuTexture)
+void TextureSystem::add(const CpuTexture& cpuTexture)
 {
 	gpuTextures.emplace_back();
 	gpuTextures.back().load(cpuTexture);
@@ -77,7 +77,7 @@ void TextureSystem::use(const Name& name, const Index slot)
 	}
 	else
 	{
-		CPUTexture cpuTexture;
+		CpuTexture cpuTexture;
 
 		cpuTexture.load(name, Filter::Linear, Filter::LinearMm, Wrapping::Repeat);
 

@@ -2,19 +2,25 @@
 
 void GPUFont::load()
 {
-	if(loaded) logError("Font already loaded!");
+	if(loaded)
+	{
+		logError("Font already loaded!");
+	}
 	else
 	{
-		FT_Library ft;
+		External::FT_Library ft;
 
 		// initialize freetype
-		if(FT_Init_FreeType(&ft)) logError("Could not initialize FreeType!");
+		if(FT_Init_FreeType(&ft))
+		{
+			logError("Could not initialize FreeType!");
+		}
 		else
 		{
 			logDebug("Initialized Freetype!");
 
 			// load font
-			FT_Face face;
+			External::FT_Face face;
 			if(FT_New_Face(ft, "data/fonts/minimal.ttf", 0, &face)) logError("Failed to load font!");
 
 			// set desired size

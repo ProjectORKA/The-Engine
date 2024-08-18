@@ -1,35 +1,39 @@
 #pragma once
 
 #include "TiledMath.hpp"
-#include "KeyMap.hpp"
 
-using APIWindow = GLFWwindow*;
-using APIMonitor = GLFWmonitor*;
+namespace External
+{
+	#include "GLFW/glfw3.h"
+}
 
-void           apiWindowRestore(APIWindow apiWindow);
-void           apiMaximizeWindow(APIWindow apiWindow);
-void           apiWindowDecorate(APIWindow apiWindow);
-void           apiMinimizeWindow(APIWindow apiWindow);
-void           apiWindowUndecorate(APIWindow apiWindow);
-Bool           apiWindowIsCapturing(APIWindow apiWindow);
-Bool           apiWindowIsDecorated(APIWindow apiWindow);
-void           apiWindowSwapBuffers(APIWindow apiWindow);
-void           apiWindowEnableCursor(APIWindow apiWindow);
-Bool           apiWindowIsFullscreen(APIWindow apiWindow);
-void           apiWindowDisableCursor(APIWindow apiWindow);
-TiledRectangle apiWindowGetWorkableArea(APIWindow apiWindow);
-Bool           apiWindowCursorIsCaptured(APIWindow apiWindow);
-DVec2          apiWindowGetCursorPosition(APIWindow apiWindow);
-Area           apiWindowGetFramebufferSize(APIWindow apiWindow);
-Area           apiWindowGetWindowFrameSize(APIWindow apiWindow);
-Int            apiWindowGetFramebufferWidth(APIWindow apiWindow);
-Int            apiWindowGetFramebufferHeight(APIWindow apiWindow);
-Bool           apiWindowKeyIsPressed(APIWindow apiWindow, Int key);
-void           apiWindowSetExclusiveFullscreen(APIWindow apiWindow);
-void           apiWindowSetVisibility(APIWindow apiWindow, Bool visible);
-void           apiWindowResize(APIWindow apiWindow, Int width, Int height);
-void           whenWindowAPIThrowsError(Int error, const Char* description);
-void           apiSetWindowShouldClose(APIWindow apiWindow, Bool shouldClose);
-void           apiWindowSetCursorPosition(APIWindow apiWindow, DVec2 position);
-APIWindow      apiCreateWindow(Area size, const Char* title, APIWindow shared);
-void           apiWindowSetWindowedMode(APIWindow apiWindow, TiledRectangle monitorArea);
+using ApiWindow  = External::GLFWwindow*;
+using ApiMonitor = External::GLFWmonitor*;
+
+void           apiWindowRestore(ApiWindow apiWindow);
+void           apiMaximizeWindow(ApiWindow apiWindow);
+void           apiWindowDecorate(ApiWindow apiWindow);
+void           apiMinimizeWindow(ApiWindow apiWindow);
+void           apiWindowUndecorate(ApiWindow apiWindow);
+Bool           apiWindowIsCapturing(ApiWindow apiWindow);
+Bool           apiWindowIsDecorated(ApiWindow apiWindow);
+void           apiWindowSwapBuffers(ApiWindow apiWindow);
+void           apiWindowEnableCursor(ApiWindow apiWindow);
+Bool           apiWindowIsFullscreen(ApiWindow apiWindow);
+void           apiWindowDisableCursor(ApiWindow apiWindow);
+TiledRectangle apiWindowGetWorkableArea(ApiWindow apiWindow);
+Bool           apiWindowCursorIsCaptured(ApiWindow apiWindow);
+DVec2          apiWindowGetCursorPosition(ApiWindow apiWindow);
+Area           apiWindowGetFramebufferSize(ApiWindow apiWindow);
+Area           apiWindowGetWindowFrameSize(ApiWindow apiWindow);
+Int            apiWindowGetFramebufferWidth(ApiWindow apiWindow);
+Int            apiWindowGetFramebufferHeight(ApiWindow apiWindow);
+Bool           apiWindowKeyIsPressed(ApiWindow apiWindow, Int key);
+void           apiWindowSetExclusiveFullscreen(ApiWindow apiWindow);
+void           apiWindowSetVisibility(ApiWindow apiWindow, Bool visible);
+void           apiWindowResize(ApiWindow apiWindow, Int width, Int height);
+void           whenWindowApiThrowsError(Int error, const Char* description);
+void           apiSetWindowShouldClose(ApiWindow apiWindow, Bool shouldClose);
+void           apiWindowSetCursorPosition(ApiWindow apiWindow, DVec2 position);
+ApiWindow      apiCreateWindow(Area size, const Char* title, ApiWindow shared);
+void           apiWindowSetWindowedMode(ApiWindow apiWindow, TiledRectangle monitorArea);

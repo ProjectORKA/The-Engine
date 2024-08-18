@@ -80,7 +80,10 @@ struct AxisNeighborPrototype2 : Prototype
 		while(points[comparisonID].position.x < point.position.x)
 		{
 			// if we can, step east
-			if(points[comparisonID].east != -1) comparisonID = points[comparisonID].east;
+			if(points[comparisonID].east != -1)
+			{
+				comparisonID = points[comparisonID].east;
+			}
 
 			// if we cant, point is inserted on the east
 			else
@@ -120,7 +123,10 @@ struct AxisNeighborPrototype2 : Prototype
 		while(points[comparisonID].position.y < point.position.y)
 		{
 			// if we can, step north
-			if(points[comparisonID].north != -1) comparisonID = points[comparisonID].north;
+			if(points[comparisonID].north != -1)
+			{
+				comparisonID = points[comparisonID].north;
+			}
 
 			// if we cant, point is inserted on the north
 			else

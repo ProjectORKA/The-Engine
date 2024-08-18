@@ -1,8 +1,11 @@
 #pragma once
 
 #include "Basics.hpp"
-#include "GL/glew.h"
 #include "Debug.hpp"
+namespace External
+{
+	#include "GL/glew.h"
+}
 
 // #define DEBUG_OPENGL
 // #define TRACE_OPENGL
@@ -95,6 +98,7 @@ enum class PrimitiveMode : UInt
 	Points        = GL_POINTS,
 	Triangles     = GL_TRIANGLES,
 	LineStrip     = GL_LINE_STRIP,
+	TriangleFan   = GL_TRIANGLE_FAN,
 	TriangleStrip = GL_TRIANGLE_STRIP
 };
 
@@ -142,11 +146,11 @@ enum class GetParameters : UInt
 	BlendDestinationAlpha                = GL_BLEND_DST_ALPHA,
 	BlendDestinationRGB                  = GL_BLEND_DST_RGB,
 	BlendEquationRGB                     = GL_BLEND_EQUATION_RGB,
-	BlendEquationAplha                   = GL_BLEND_EQUATION_ALPHA,
+	BlendEquationAlpha                   = GL_BLEND_EQUATION_ALPHA,
 	BlendSourceAlpha                     = GL_BLEND_SRC_ALPHA,
 	BlendSourceRGB                       = GL_BLEND_SRC_RGB,
 	ColorClearValue                      = GL_COLOR_CLEAR_VALUE,
-	ColorLogicOP                         = GL_COLOR_LOGIC_OP,
+	ColorLogicOp                         = GL_COLOR_LOGIC_OP,
 	ColorWriteMask                       = GL_COLOR_WRITEMASK,
 	CompressedTextureFormats             = GL_COMPRESSED_TEXTURE_FORMATS,
 	MaxComputeShaderStorageBlocks        = GL_MAX_COMPUTE_SHADER_STORAGE_BLOCKS,
@@ -242,7 +246,7 @@ enum class GetParameters : UInt
 	MaxProgramTexelOffset                = GL_MAX_PROGRAM_TEXEL_OFFSET,
 	MinProgramTexelOffset                = GL_MIN_PROGRAM_TEXEL_OFFSET,
 	MaxRectangleTextureSize              = GL_MAX_RECTANGLE_TEXTURE_SIZE,
-	MaxRenderbufferSize                  = GL_MAX_RENDERBUFFER_SIZE,
+	MaxRenderBufferSize                  = GL_MAX_RENDERBUFFER_SIZE,
 	MaxSampleMaskWords                   = GL_MAX_SAMPLE_MASK_WORDS,
 	MaxServerWaitTimeout                 = GL_MAX_SERVER_WAIT_TIMEOUT,
 	MaxShaderStorageBufferBindings       = GL_MAX_SHADER_STORAGE_BUFFER_BINDINGS,
@@ -261,7 +265,7 @@ enum class GetParameters : UInt
 	MaxVaryingVectors                    = GL_MAX_VARYING_VECTORS,
 	MaxVaryingFloats                     = GL_MAX_VARYING_FLOATS,
 	MaxVertexAtomicCounters              = GL_MAX_VERTEX_ATOMIC_COUNTERS,
-	MaxVertexAttribs                     = GL_MAX_VERTEX_ATTRIBS,
+	MaxVertexAttributes                     = GL_MAX_VERTEX_ATTRIBS,
 	MaxVertexShaderStorageBlocks         = GL_MAX_VERTEX_SHADER_STORAGE_BLOCKS,
 	MaxVertexTextureImageUnits           = GL_MAX_VERTEX_TEXTURE_IMAGE_UNITS,
 	MaxVertexUniformComponents           = GL_MAX_VERTEX_UNIFORM_COMPONENTS,
@@ -806,29 +810,74 @@ inline void __stdcall debugOutputCallback(const UInt source, const UInt type, UI
 	{
 		String outputMessage = "OpenGL Debug Output message : ";
 
-		if(source == GL_DEBUG_SOURCE_API_ARB) outputMessage = "Source : API; ";
-		else if(source == GL_DEBUG_SOURCE_WINDOW_SYSTEM_ARB) outputMessage = "Source : WINDOW_SYSTEM; ";
-		else if(source == GL_DEBUG_SOURCE_SHADER_COMPILER_ARB) outputMessage = "Source : SHADER_COMPILER; ";
-		else if(source == GL_DEBUG_SOURCE_THIRD_PARTY_ARB) outputMessage = "Source : THIRD_PARTY; ";
-		else if(source == GL_DEBUG_SOURCE_APPLICATION_ARB) outputMessage = "Source : APPLICATION; ";
+		if(source == GL_DEBUG_SOURCE_API_ARB)
+		{
+			outputMessage = "Source : API; ";
+		}
+		else if(source == GL_DEBUG_SOURCE_WINDOW_SYSTEM_ARB)
+		{
+			outputMessage = "Source : WINDOW_SYSTEM; ";
+		}
+		else if(source == GL_DEBUG_SOURCE_SHADER_COMPILER_ARB)
+		{
+			outputMessage = "Source : SHADER_COMPILER; ";
+		}
+		else if(source == GL_DEBUG_SOURCE_THIRD_PARTY_ARB)
+		{
+			outputMessage = "Source : THIRD_PARTY; ";
+		}
+		else if(source == GL_DEBUG_SOURCE_APPLICATION_ARB)
+		{
+			outputMessage = "Source : APPLICATION; ";
+		}
 		else if(source == GL_DEBUG_SOURCE_OTHER_ARB) outputMessage = "Source : OTHER; ";
 
-		if(type == GL_DEBUG_TYPE_ERROR_ARB) outputMessage.append("Type : ERROR; ");
-		else if(type == GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR_ARB) outputMessage.append("Type : DEPRECATED_BEHAVIOR; ");
-		else if(type == GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR_ARB) outputMessage.append("Type : UNDEFINED_BEHAVIOR; ");
-		else if(type == GL_DEBUG_TYPE_PORTABILITY_ARB) outputMessage.append("Type : PORTABILITY; ");
-		else if(type == GL_DEBUG_TYPE_PERFORMANCE_ARB) outputMessage.append("Type : PERFORMANCE; ");
+		if(type == GL_DEBUG_TYPE_ERROR_ARB)
+		{
+			outputMessage.append("Type : ERROR; ");
+		}
+		else if(type == GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR_ARB)
+		{
+			outputMessage.append("Type : DEPRECATED_BEHAVIOR; ");
+		}
+		else if(type == GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR_ARB)
+		{
+			outputMessage.append("Type : UNDEFINED_BEHAVIOR; ");
+		}
+		else if(type == GL_DEBUG_TYPE_PORTABILITY_ARB)
+		{
+			outputMessage.append("Type : PORTABILITY; ");
+		}
+		else if(type == GL_DEBUG_TYPE_PERFORMANCE_ARB)
+		{
+			outputMessage.append("Type : PERFORMANCE; ");
+		}
 		else if(type == GL_DEBUG_TYPE_OTHER_ARB) outputMessage.append("Type : OTHER; ");
 
-		if(severity == GL_DEBUG_SEVERITY_HIGH_ARB) outputMessage.append("Severity : HIGH; ");
-		else if(severity == GL_DEBUG_SEVERITY_MEDIUM_ARB) outputMessage.append("Severity : MEDIUM; ");
+		if(severity == GL_DEBUG_SEVERITY_HIGH_ARB)
+		{
+			outputMessage.append("Severity : HIGH; ");
+		}
+		else if(severity == GL_DEBUG_SEVERITY_MEDIUM_ARB)
+		{
+			outputMessage.append("Severity : MEDIUM; ");
+		}
 		else if(severity == GL_DEBUG_SEVERITY_LOW_ARB) outputMessage.append("Severity : LOW; ");
 
 		outputMessage.append(message);
 
-		if(severity == GL_DEBUG_SEVERITY_HIGH_ARB) logError(outputMessage);
-		else if(severity == GL_DEBUG_SEVERITY_MEDIUM_ARB) logWarning(outputMessage);
-		else logDebug(outputMessage);
+		if(severity == GL_DEBUG_SEVERITY_HIGH_ARB)
+		{
+			logError(outputMessage);
+		}
+		else if(severity == GL_DEBUG_SEVERITY_MEDIUM_ARB)
+		{
+			logWarning(outputMessage);
+		}
+		else
+		{
+			logDebug(outputMessage);
+		}
 	}
 }
 
@@ -1073,17 +1122,17 @@ struct OpenGLFramebuffer
 	void attachTexture(FramebufferAttachment attachment, TextureID textureId) const;
 
 private:
-	UInt framebufferID = -1;
+	UInt framebufferId = -1;
 };
 
-struct OpenGLShaderProgram
+struct OpenGlShaderProgram
 {
 	void               destroy();
 	void               use() const;
 	[[nodiscard]] Bool create(const String& name, const String& vertexShaderSource, const String& fragmentShaderSource);
 
 private:
-	GLuint programId = -1;
+	UInt programId = -1;
 };
 
 // TEMPLATES

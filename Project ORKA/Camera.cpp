@@ -5,7 +5,10 @@ void Camera::update()
 {
 	// prevent looking upside down
 	constexpr Float cap = PI / 2.0f;
-	if(rotation.x < -cap) rotation.x = -cap;
+	if(rotation.x < -cap)
+	{
+		rotation.x = -cap;
+	}
 	else if(rotation.x > cap) rotation.x = cap;
 
 	// figure out direction based on z rotation

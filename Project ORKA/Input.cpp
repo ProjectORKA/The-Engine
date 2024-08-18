@@ -3,7 +3,7 @@
 InputId::InputId()
 {
 	type = InputType::KeyBoard;
-	id   = UNKNOWN;
+	id   = Key::Unknown;
 }
 
 InputId::InputId(const InputType type, const Int id)

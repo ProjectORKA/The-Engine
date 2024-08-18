@@ -77,7 +77,7 @@ void OrganizerRenderer::renderConnections(Renderer& r) const
 {
 	r.useShader("color");
 	r.fill(Color(0.5, 0.5, 0.5, 1));
-
+	r.uniforms().setMMatrix(Matrix(1));
 	Vector<Vec3> lines;
 	for(auto & c : connections)
 	{

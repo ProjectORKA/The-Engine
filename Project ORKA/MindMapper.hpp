@@ -24,7 +24,7 @@ struct MindMapperRenderer final : GameRenderer
 	MindMapperSim* sim        = nullptr;
 	InputEvent     enter      = InputEvent(InputType::Mouse, 0, true);
 	InputEvent     exit       = InputEvent(InputType::Mouse, 1, false);
-	InputEvent     growToggle = InputEvent(InputType::KeyBoard, SPACE, false);
+	InputEvent     growToggle = InputEvent(InputType::KeyBoard, Space, false);
 
 	void update(Window& window) override;
 	void create(Window& window) override;

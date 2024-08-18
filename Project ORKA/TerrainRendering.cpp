@@ -18,8 +18,14 @@ CpuMesh createTerrainMesh(const AdvancedHeightMap& heightmap)
 				Vec3 position;
 				position.x = static_cast<Float>(x) / static_cast<Float>(TERRAIN_MAP_SIZE - 1);
 				position.y = static_cast<Float>(y) / static_cast<Float>(TERRAIN_MAP_SIZE - 1);
-				if(static_cast<ULL>(heightmap.upperLimit) == static_cast<ULL>(heightmap.lowerLimit)) position.z = 0;
-				else position.z                                                                                 = static_cast<Float>((heightmap.height[x][y] - heightmap.lowerLimit) / (heightmap.upperLimit - heightmap.lowerLimit));
+				if(static_cast<ULL>(heightmap.upperLimit) == static_cast<ULL>(heightmap.lowerLimit))
+				{
+					position.z = 0;
+				}
+				else
+				{
+					position.z                                                                                 = static_cast<Float>((heightmap.height[x][y] - heightmap.lowerLimit) / (heightmap.upperLimit - heightmap.lowerLimit));
+				}
 				mesh.positions.push_back(position);
 
 				// create normals

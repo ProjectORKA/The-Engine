@@ -45,13 +45,22 @@ void UIButton::render(Window& window, TiledRectangle renderArea)
 	constraints.update(renderArea);
 
 	renderer.useShader("color");
-	if(pressed) renderer.uniforms().setCustomColor(Color(1, 1, 0, 1));
+	if(pressed)
+	{
+		renderer.uniforms().setCustomColor(Color(1, 1, 0, 1));
+	}
 	else
 	{
 		const UInt objectId = renderer.objectId;
 
-		if(objectId == id) renderer.uniforms().setCustomColor(Color(1));
-		else renderer.uniforms().setCustomColor(Color(0.1, 0.1, 0.1, 1));
+		if(objectId == id)
+		{
+			renderer.uniforms().setCustomColor(Color(1));
+		}
+		else
+		{
+			renderer.uniforms().setCustomColor(Color(0.1, 0.1, 0.1, 1));
+		}
 	}
 
 	renderer.screenSpace();

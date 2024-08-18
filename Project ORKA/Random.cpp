@@ -1,7 +1,7 @@
 #include "Random.hpp"
-#include <random>
 #include "Math.hpp"
 #include "Time.hpp"
+#include <random>
 
 using RandomDevice = std::random_device;
 

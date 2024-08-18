@@ -1,6 +1,7 @@
 #include "TiledMath.hpp"
-#include <iostream>
 #include "Math.hpp"
+
+#include <iostream>
 
 Area::Area(const Int a)
 {

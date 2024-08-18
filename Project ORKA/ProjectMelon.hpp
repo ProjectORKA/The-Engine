@@ -30,8 +30,8 @@ struct MelonRenderer final : GameRenderer
 	MelonPlayer player;
 	Float       mouseSensitivity                = 0.0015f;
 	Vec3        mousePosA, mousePosB, mousePosC = Vec3(0);
-	InputEvent  exit                            = InputEvent(InputType::Mouse, RMB, false);
-	InputEvent  enter                           = InputEvent(InputType::Mouse, LMB, true);
+	InputEvent  exit                            = InputEvent(InputType::Mouse, Rmb, false);
+	InputEvent  enter                           = InputEvent(InputType::Mouse, Lmb, true);
 
 	void update(Window& window) override;
 	void create(Window& window) override;

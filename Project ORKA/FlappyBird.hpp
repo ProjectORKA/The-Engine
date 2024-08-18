@@ -59,7 +59,7 @@ struct FlappyBirdRenderer final : GameRenderer
 	Vector<FlappyBirdPipes> pipeColumns;
 	Bool                    paused = true;
 
-	InputEvent jumpButton      = InputEvent(InputType::KeyBoard, SPACE, true);
+	InputEvent jumpButton      = InputEvent(InputType::KeyBoard, Space, true);
 	InputEvent reloadShaders   = InputEvent(InputType::KeyBoard, T, true);
 	InputEvent toggleWireFrame = InputEvent(InputType::KeyBoard, F, true);
 

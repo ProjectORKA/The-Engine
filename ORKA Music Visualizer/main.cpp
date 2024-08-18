@@ -1,5 +1,11 @@
-#include <iostream>
-#include "raylib.h"
+
+#define PI 3.14159265358979323846
+
+namespace External
+{
+	#include "raylib.h"
+	#include <math.h>
+}
 
 bool          fakeData         = false;
 constexpr int sampleRate       = 48000;
@@ -47,13 +53,13 @@ void callback(void* bufferData, const unsigned int unsignedFrameCount)
 
 int main()
 {
-	InitWindow(2000, 1024, "ORKA Music Visualizer");
-	SetTargetFPS(144);
-	InitAudioDevice();
-	const Music audio = LoadMusicStream("sound.mp3");
+	External::InitWindow(2000, 1024, "ORKA Music Visualizer");
+	External::SetTargetFPS(144);
+	External::InitAudioDevice();
+	const External::Music audio = External::LoadMusicStream("sound.mp3");
 
-    SetConfigFlags(FLAG_VSYNC_HINT);
-    SetTargetFPS(144);
+	External::SetConfigFlags(External::FLAG_VSYNC_HINT);
+	External::SetTargetFPS(144);
 
 	//set buffer pointers
 	frontBufferPtr = &bufferA[0];
@@ -62,33 +68,33 @@ int main()
 	if (!fakeData) AttachAudioStreamProcessor(audio.stream, callback);
 
 	PlayMusicStream(audio);
-	while (!WindowShouldClose())
+	while (!External::WindowShouldClose())
 	{
-		const float width  = GetRenderWidth();
-		const float height = GetRenderHeight();
+		const float width  = External::GetRenderWidth();
+		const float height = External::GetRenderHeight();
 
 		if (!fakeData) UpdateMusicStream(audio);
 
 		if (fakeData)
 		{
 			float data[frameBufferSize];
-			for (float& i : data) i = sin(PI * (static_cast<float>(currentSample++) / static_cast<float>(sampleRate) * 20.0f));
+			for (float& i : data) i = External::sin(PI * (static_cast<float>(currentSample++) / static_cast<float>(sampleRate) * 20.0f));
 			callback(data, frameBufferSize);
 		}
 
-		BeginDrawing();
-		ClearBackground({255, 0, 0, 255});
+		External::BeginDrawing();
+		External::ClearBackground({255, 0, 0, 255});
 
 		int i = 0;
 		while (i < frameBufferSize)
 		{
 			const float sampleA = frontBufferPtr[i] * 512;
 			const float sampleB = frontBufferPtr[i + 2] * 512;
-			DrawLine(i, 512 - (sampleA), i + 2, 512 - (sampleB), {255, 255, 255, 255});
+			External::DrawLine(i, 512 - (sampleA), i + 2, 512 - (sampleB), {255, 255, 255, 255});
 			i += 2;
 		}
 
-		EndDrawing();
+		External::EndDrawing();
 	}
 
 	return 0;
