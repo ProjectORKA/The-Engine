@@ -15,7 +15,7 @@ struct MindMapConnection
 struct MindMap
 {
 	Mutex                     mutex;
-	Vector<Vec2>              positions;
+	Vec2Vector              positions;
 	Vector<MindMapConnection> connections;
 	UInt                      nodeCount = 0;
 
@@ -25,6 +25,6 @@ struct MindMap
 	void renderInteractive(Window& window) const;
 
 private:
-	Vector<Vec2> forces;
+	Vec2Vector forces;
 	Vector<UInt> numForces;
 };

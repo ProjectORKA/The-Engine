@@ -45,7 +45,7 @@ void GPUSimRenderer::render(Window& window, TiledRectangle area)
 	r.setRenderRegion(area);
 
 	// we also don't use any depth
-	DepthTestOverride depthOverride(false, r);
+	DepthTestOverride depthOverride(r, false);
 
 	// we make sure the background is clear
 	r.clearBackground(Color(0.1, 0.1, 0.1, 1));

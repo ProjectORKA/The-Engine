@@ -375,7 +375,7 @@ void ImageViewerRenderer::renderAllImages(Window& window, const TiledRectangle a
 			}
 			else
 			{
-				yOffset                     = 0;
+				yOffset = 0;
 			}
 			Float       width  = static_cast<Float>(image.getWidth());
 			const Float height = static_cast<Float>(image.getHeight());

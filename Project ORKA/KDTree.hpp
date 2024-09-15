@@ -12,12 +12,12 @@ struct KDTreeNode
 
 struct KDTree
 {
-	Vector<Vec3>*      points;
+	Vec3Vector*      points;
 	Vector<KDTreeNode> nodes;
 
 	KDTree() = delete;
 
-	explicit KDTree(Vector<Vec3>& points)
+	explicit KDTree(Vec3Vector& points)
 	{
 		this->points = &points;
 		nodes.emplace_back();

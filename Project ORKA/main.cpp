@@ -29,39 +29,41 @@
 //  You can already choose some games and projects to play around in.
 //  Just replace the Game in the main() function with one of the projects underneath
 
-//#include "Pong.hpp"
-//#include "MoonCrash.hpp"
-//#include "FlappyBird.hpp"
+#include "Pong.hpp"
+#include "MoonCrash.hpp"
+#include "FlappyBird.hpp"
 #include "TripleNine.hpp"
-//#include "ImageViewer.hpp"
-//#include "ProjectMelon.hpp"
-//#include "Orbital Oblivion.hpp"
+#include "ImageViewer.hpp"
+#include "ProjectMelon.hpp"
+#include "Orbital Oblivion.hpp"
 
-//#include "Keva.hpp"
+#include "Keva.hpp"
 #include "Snake.hpp"
-//#include "Sortr.hpp"
-//#include "GPUSim.hpp"
-//#include "Sandbox.hpp"
-//#include "MSDFText.hpp"
+#include "Sortr.hpp"
+#include "GPUSim.hpp"
+#include "Sandbox.hpp"
+#include "MSDFText.hpp"
 #include "Organizer.hpp"
-//#include "SimpleRTS.hpp"
+#include "SimpleRTS.hpp"
 #include "SoundBars.hpp"
 #include "UISandbox.hpp"
-//#include "MindMapper.hpp"
-//#include "RedDotHack.hpp"
-//#include "AudioSystem.hpp"
-//#include "SDFRenderer.hpp"
-//#include "AIPlayground.hpp"
-//#include "GuessingGame.hpp"
-//#include "FunctionFinder.hpp"
+#include "MindMapper.hpp"
+#include "RedDotHack.hpp"
+#include "AudioSystem.hpp"
+#include "SDFRenderer.hpp"
+#include "AIPlayground.hpp"
+#include "GuessingGame.hpp"
+#include "FunctionFinder.hpp"
 #include "Hello Triangle.hpp"
-//#include "Music Visualizer.hpp"
-//#include "PrototypingSandbox.hpp"
+#include "Music Visualizer.hpp"
+#include "PrototypingSandbox.hpp"
 #include "PhysicsPlayground.hpp"
-//#include "DungeonsAndDiscord.hpp"
+#include "DungeonsAndDiscord.hpp"
 
 void testAll(const int argc, char* argv[])
 {
+	//BROKEN
+
 	//FlappyBird		 game1;  game1.run();
 	//MoonCrash          game2;  game2.run();
 	//OrbitalOblivion    game3;  game3.run();
@@ -77,14 +79,14 @@ void testAll(const int argc, char* argv[])
 	//ImageViewer        game13; game13.run(argc,argv);
 	//MSDFText           game15; game15.run();
 	//Organizer          game17; game17.run();
-	PhysicsPlayground  game18; game18.run();
+	//PhysicsPlayground  game18; game18.run();
 	//PrototypingSandbox game19; game19.run();
 	//Sandbox            game20; game20.run();
 	//SDFRenderer        game21; game21.run();
 	//SimpleRts          game22; game22.run();
-	Snake              game23; game23.run();
+	//Snake              game23; game23.run();
 	//Sortr              game24; game24.run(argc, argv);
-	UISandbox          game25; game25.run();
+	//UISandbox          game25; game25.run();
 	//Keva               game26; game26.run();
 	//FunctionFinder     game27; game27.run();
 }
@@ -93,21 +95,19 @@ using namespace External;
 
 int main(const int argc, char* argv[])
 {
-	Engine engine;
+	const Engine engine;
 	engine.create(argc, argv);
 
-	testAll(argc, argv);
+	TripleNine game;
+	game.run();
 }
 
 #include "Windows.hpp"
 
-namespace External
-{
-	#include <stdlib.h>
+#include <stdlib.h>
 
-	// ReSharper disable once CppInconsistentNaming
-	int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd)
-	{
-		return main(__argc, __argv);
-	}
+// ReSharper disable once CppInconsistentNaming
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd)
+{
+	return main(__argc, __argv);
 }

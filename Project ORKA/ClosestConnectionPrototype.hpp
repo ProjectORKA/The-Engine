@@ -5,8 +5,8 @@
 struct ClosestConnectionPrototype : Prototype
 {
 	const int    pointCount = 10000;
-	Vector<Vec2> points;
-	Vector<Vec2> lines;
+	Vec2Vector points;
+	Vec2Vector lines;
 
 	void addPoint()
 	{

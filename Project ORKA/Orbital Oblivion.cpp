@@ -138,7 +138,7 @@ void OrbitalOblivionSimulation::destroy() {}
 void OOPlanet::render(Renderer& r) const
 {
 	r.uniforms().setMMatrix(matrixFromPositionAndSize(position, 10));
-	r.rerenderMesh();
+	r.meshSystem.currentMesh().render(r.uniforms());
 }
 
 void OrbitalOblivionRenderer::update(Window& window) {}
@@ -158,7 +158,6 @@ void OrbitalOblivionPlayer::update(Window& window)
 
 	//set up temporary data
 	Vec3  movementVector = Vec3(0);
-	Float desiredSpeed   = 0;
 
 	//process input
 	if(window.capturing) camera.rotate(window.mouseDelta * DVec2(mouseSensitivity));
@@ -171,11 +170,12 @@ void OrbitalOblivionPlayer::update(Window& window)
 
 	//calculate movement
 	if(length(movementVector) > 0)
-	{					//if there is movement input
-		desiredSpeed   = powf(baseNumber, static_cast<Float>(speedExponent));	//calculate speed
-		movementVector = normalize(movementVector);		//get direction of movement (just direction)
-		movementVector *= desiredSpeed * delta;			//add speed to direction
-		camera.setPosition(camera.getPosition() + movementVector);				//add it to cameras position
+	{
+		//if there is movement input
+		const Float desiredSpeed = powf(baseNumber, static_cast<Float>(speedExponent)); //calculate speed
+		movementVector     = normalize(movementVector);									//get direction of movement (just direction)
+		movementVector *= desiredSpeed * delta;											//add speed to direction
+		camera.setPosition(camera.getPosition() + movementVector);						//add it to cameras position
 	}
 }
 

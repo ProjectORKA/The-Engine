@@ -1,12 +1,12 @@
 #include "BranchStructure.hpp"
 #include "Renderer.hpp"
 
-void BranchStructure::render(Renderer& renderer, const Vector<Vec3>& points) const
+void BranchStructure::render(Renderer& renderer, const Vec3Vector& points) const
 {
 	CpuMesh mesh;
 	mesh.drawMode      = BufferUsage::DynamicDraw;
 	mesh.name          = "branchStructure";
-	mesh.normals       = Vector<Vec3>(points.size(), Vec3(0, 0, 1));
+	mesh.normals       = Vec3Vector(points.size(), Vec3(0, 0, 1));
 	mesh.primitiveMode = PrimitiveMode::Lines;
 	mesh.positions     = points;
 

@@ -2,7 +2,7 @@
 
 #include "Basics.hpp"
 #include "TiledMath.hpp"
-#include "Renderer.hpp" //do not remove
+//#include "Renderer.hpp" //do not remove
 #include "Input.hpp"
 
 extern Index nextInteractiveElementId;
@@ -24,7 +24,7 @@ struct UIElement
 {
 	Constraints constraints;
 	Bool        hasBackground   = false;
-	String      debugName            = "Unknown";
+	String      debugName       = "Unknown";
 	Color       backgroundColor = Color(0, 0, 0, 0);
 	Index       id              = nextInteractiveElementId++;
 

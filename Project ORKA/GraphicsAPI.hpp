@@ -2,6 +2,8 @@
 
 #include "Basics.hpp"
 #include "Debug.hpp"
+#include "GlobalUniformData.hpp"
+
 namespace External
 {
 	#include "GL/glew.h"
@@ -265,7 +267,7 @@ enum class GetParameters : UInt
 	MaxVaryingVectors                    = GL_MAX_VARYING_VECTORS,
 	MaxVaryingFloats                     = GL_MAX_VARYING_FLOATS,
 	MaxVertexAtomicCounters              = GL_MAX_VERTEX_ATOMIC_COUNTERS,
-	MaxVertexAttributes                     = GL_MAX_VERTEX_ATTRIBS,
+	MaxVertexAttributes                  = GL_MAX_VERTEX_ATTRIBS,
 	MaxVertexShaderStorageBlocks         = GL_MAX_VERTEX_SHADER_STORAGE_BLOCKS,
 	MaxVertexTextureImageUnits           = GL_MAX_VERTEX_TEXTURE_IMAGE_UNITS,
 	MaxVertexUniformComponents           = GL_MAX_VERTEX_UNIFORM_COMPONENTS,
@@ -791,86 +793,86 @@ enum class ShaderProgramParameters : UInt
 	ActiveUniformsMaxLength   = GL_ACTIVE_UNIFORM_MAX_LENGTH,
 };
 
-using Mask = UInt;
-using ShaderID = UInt; // id of a shader object that need to be linked to a program
-using BufferID = UInt; // the id of a buffer object
-using ProgramID = UInt; // id of a shader program object
-using TextureID = UInt; // the id of a texture object
-using TextureSlot = UInt; // one of 16 texture slots used in shaders
-using BindingPoint = UInt; // a predefined slot for each target that data is bound to
-using FramebufferID = UInt; // the id of a framebuffer object
-using VertexArrayID = UInt; // the id of a vertex array object, it stores multiple pieces of mesh data using vertex buffers
+using Mask           = UInt;
+using ShaderID       = UInt; // id of a shader object that need to be linked to a program
+using BufferID       = UInt; // the id of a buffer object
+using ProgramID      = UInt; // id of a shader program object
+using TextureID      = UInt; // the id of a texture object
+using TextureSlot    = UInt; // one of 16 texture slots used in shaders
+using BindingPoint   = UInt; // a predefined slot for each target that data is bound to
+using FramebufferID  = UInt; // the id of a framebuffer object
+using VertexArrayID  = UInt; // the id of a vertex array object, it stores multiple pieces of mesh data using vertex buffers
 using AttributeIndex = UInt; // represents the global id for mesh data or "attributes"
 using VertexBufferID = UInt; // the id of a vertex buffer, it stores individual mesh data
 using UniformBlockID = UInt; // id for a uniform block inside the shader code
 
 inline void __stdcall debugOutputCallback(const UInt source, const UInt type, UInt id, const UInt severity, Int length, const Char* message, const void* userParam)
 {
-	if(severity != GL_DEBUG_SEVERITY_NOTIFICATION)
+	if (severity != GL_DEBUG_SEVERITY_NOTIFICATION)
 	{
 		String outputMessage = "OpenGL Debug Output message : ";
 
-		if(source == GL_DEBUG_SOURCE_API_ARB)
+		if (source == GL_DEBUG_SOURCE_API_ARB)
 		{
 			outputMessage = "Source : API; ";
 		}
-		else if(source == GL_DEBUG_SOURCE_WINDOW_SYSTEM_ARB)
+		else if (source == GL_DEBUG_SOURCE_WINDOW_SYSTEM_ARB)
 		{
 			outputMessage = "Source : WINDOW_SYSTEM; ";
 		}
-		else if(source == GL_DEBUG_SOURCE_SHADER_COMPILER_ARB)
+		else if (source == GL_DEBUG_SOURCE_SHADER_COMPILER_ARB)
 		{
 			outputMessage = "Source : SHADER_COMPILER; ";
 		}
-		else if(source == GL_DEBUG_SOURCE_THIRD_PARTY_ARB)
+		else if (source == GL_DEBUG_SOURCE_THIRD_PARTY_ARB)
 		{
 			outputMessage = "Source : THIRD_PARTY; ";
 		}
-		else if(source == GL_DEBUG_SOURCE_APPLICATION_ARB)
+		else if (source == GL_DEBUG_SOURCE_APPLICATION_ARB)
 		{
 			outputMessage = "Source : APPLICATION; ";
 		}
-		else if(source == GL_DEBUG_SOURCE_OTHER_ARB) outputMessage = "Source : OTHER; ";
+		else if (source == GL_DEBUG_SOURCE_OTHER_ARB) outputMessage = "Source : OTHER; ";
 
-		if(type == GL_DEBUG_TYPE_ERROR_ARB)
+		if (type == GL_DEBUG_TYPE_ERROR_ARB)
 		{
 			outputMessage.append("Type : ERROR; ");
 		}
-		else if(type == GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR_ARB)
+		else if (type == GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR_ARB)
 		{
 			outputMessage.append("Type : DEPRECATED_BEHAVIOR; ");
 		}
-		else if(type == GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR_ARB)
+		else if (type == GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR_ARB)
 		{
 			outputMessage.append("Type : UNDEFINED_BEHAVIOR; ");
 		}
-		else if(type == GL_DEBUG_TYPE_PORTABILITY_ARB)
+		else if (type == GL_DEBUG_TYPE_PORTABILITY_ARB)
 		{
 			outputMessage.append("Type : PORTABILITY; ");
 		}
-		else if(type == GL_DEBUG_TYPE_PERFORMANCE_ARB)
+		else if (type == GL_DEBUG_TYPE_PERFORMANCE_ARB)
 		{
 			outputMessage.append("Type : PERFORMANCE; ");
 		}
-		else if(type == GL_DEBUG_TYPE_OTHER_ARB) outputMessage.append("Type : OTHER; ");
+		else if (type == GL_DEBUG_TYPE_OTHER_ARB) outputMessage.append("Type : OTHER; ");
 
-		if(severity == GL_DEBUG_SEVERITY_HIGH_ARB)
+		if (severity == GL_DEBUG_SEVERITY_HIGH_ARB)
 		{
 			outputMessage.append("Severity : HIGH; ");
 		}
-		else if(severity == GL_DEBUG_SEVERITY_MEDIUM_ARB)
+		else if (severity == GL_DEBUG_SEVERITY_MEDIUM_ARB)
 		{
 			outputMessage.append("Severity : MEDIUM; ");
 		}
-		else if(severity == GL_DEBUG_SEVERITY_LOW_ARB) outputMessage.append("Severity : LOW; ");
+		else if (severity == GL_DEBUG_SEVERITY_LOW_ARB) outputMessage.append("Severity : LOW; ");
 
 		outputMessage.append(message);
 
-		if(severity == GL_DEBUG_SEVERITY_HIGH_ARB)
+		if (severity == GL_DEBUG_SEVERITY_HIGH_ARB)
 		{
 			logError(outputMessage);
 		}
-		else if(severity == GL_DEBUG_SEVERITY_MEDIUM_ARB)
+		else if (severity == GL_DEBUG_SEVERITY_MEDIUM_ARB)
 		{
 			logWarning(outputMessage);
 		}
@@ -881,14 +883,14 @@ inline void __stdcall debugOutputCallback(const UInt source, const UInt type, UI
 	}
 }
 
-struct OpenGlStateCopy
+struct OpenGLStateCopy
 {
 	const Bool openglStateTracking  = false;
 	const Bool errorCheckingEnabled = true;
 	Bool       loggingEnabled       = false;
-#ifdef TRACE_OPENGL
+	#ifdef TRACE_OPENGL
 	Logger log            = Logger("OpenGL");
-#endif
+	#endif
 	// current state
 	Bool  culling                = false;
 	Bool  blending               = false;
@@ -914,7 +916,7 @@ struct OpenGlStateCopy
 	UInt maxVertexAttributes = 0;
 
 	void print() const;
-	~OpenGlStateCopy();
+	~OpenGLStateCopy();
 	void enableLogging();
 	void disableLogging();
 	void printOpenGLInfo() const;
@@ -925,113 +927,119 @@ struct OpenGlStateCopy
 	void removeVAO(VertexArrayID vertexArrayID);
 };
 
-extern OpenGlStateCopy openGlState;
+extern OpenGLStateCopy openGlState;
 
-namespace OpenGL{
-void apiInit();
-void apiFinish();
-UInt apiGetError();
-void apiClearColor();
-void apiClearDepth();
-void apiSetCulling(Bool value);
-void apiSetBlending(Bool value);
-void apiSetDebugging(Bool value);
-void apiSetDepthTest(Bool value);
-void apiSetScissorTest(Bool value);
-void apiSetClearColor(Color color);
-void apiPolygonMode(UInt face, UInt mode);
-void apiEnable(EnableParameters parameter);
-void apiDisable(EnableParameters parameter);
-void apiScissor(Int x, Int y, Int w, Int h);
-Int  apiGetIntegerv(GetParameters parameter);
-void apiViewport(Int x, Int y, Int w, Int h);
-void apiClipControl(UInt origin, UInt depth);
-void apiBlendEquation(BlendEquation equation);
-void apiBindDrawFramebuffer(FramebufferID framebufferID);
-void apiBindReadFramebuffer(FramebufferID framebufferID);
-void apiObjectLabel(ObjectLabelType type, UInt objectID, const String& label);
-void apiBlendFunc(BlendFunction sourceFactor, BlendFunction destinationFactor);
+namespace OpenGL
+{
+	void apiInit();
+	void apiFinish();
+	UInt apiGetError();
+	void apiClearColor();
+	void apiClearDepth();
+	void apiSetCulling(Bool value);
+	void apiSetBlending(Bool value);
+	void apiSetDebugging(Bool value);
+	void apiSetDepthTest(Bool value);
+	void apiSetScissorTest(Bool value);
+	void apiSetClearColor(Color color);
+	void apiPolygonMode(UInt face, UInt mode);
+	void apiEnable(EnableParameters parameter);
+	void apiDisable(EnableParameters parameter);
+	void apiScissor(Int x, Int y, Int w, Int h);
+	Int  apiGetIntegerv(GetParameters parameter);
+	void apiViewport(Int x, Int y, Int w, Int h);
+	void apiClipControl(UInt origin, UInt depth);
+	void apiBlendEquation(BlendEquation equation);
+	void apiBindDrawFramebuffer(FramebufferID framebufferID);
+	void apiBindReadFramebuffer(FramebufferID framebufferID);
+	void apiObjectLabel(ObjectLabelType type, UInt objectID, const String& label);
+	void apiBlendFunc(BlendFunction sourceFactor, BlendFunction destinationFactor);
 }
 
-namespace OpenGL::Textures{
-[[nodiscard]] TextureID apiCreateTexture(TextureTarget target);
+namespace OpenGL::Textures
+{
+	[[nodiscard]] TextureID apiCreateTexture(TextureTarget target);
 
-void apiDeleteTexture(TextureID textureID);
-void apiGenerateTextureMipmap(TextureID textureID);
-void apiBindTextureUnit(TextureSlot textureUnitSlot, TextureID textureID);
-void apiTextureParameteri(TextureID textureId, TextureParameterSet parameter, Int value);
-void apiTextureParameterf(TextureID textureId, TextureParameterSet parameter, Float value);
-void apiTextureParameteriv(TextureID textureId, TextureParameterSet parameter, const Int* value);
-void apiTextureParameterIiv(TextureID textureId, TextureParameterSet parameter, const Int* value);
-void apiGetTextureParameteriv(TextureID textureID, TextureParameterGet parameterName, Int& output);
-void apiTextureParameterfv(TextureID textureId, TextureParameterSet parameter, const Float* value);
-void apiTextureParameterIuiv(TextureID textureId, TextureParameterSet parameter, const UInt* value);
-void apiGetTextureParameterIiv(TextureID textureID, TextureParameterGet parameterName, Int* output);
-void apiGetTextureParameterfv(TextureID textureID, TextureParameterGet parameterName, Float& output);
-void apiGetTextureParameterIuiv(TextureID textureID, TextureParameterGet parameterName, UInt* output);
-void apiClearTexImage(TextureID texture, Int mipmapLevel, WritePixelsFormat format, DataType type, const void* data);
-void apiTextureStorage2D(TextureID texture, Int mipmapLevel, SizedInternalFormat internalFormat, Int width, Int height);
-void apiTextureSubImage2D(TextureID texture, Int mipmapLevel, Int xOffset, Int yOffset, Int width, Int height, WritePixelsFormat format, DataType type, const void* pixels);
+	void apiDeleteTexture(TextureID textureID);
+	void apiGenerateTextureMipmap(TextureID textureID);
+	void apiBindTextureUnit(TextureSlot textureUnitSlot, TextureID textureID);
+	void apiTextureParameteri(TextureID textureId, TextureParameterSet parameter, Int value);
+	void apiTextureParameterf(TextureID textureId, TextureParameterSet parameter, Float value);
+	void apiTextureParameteriv(TextureID textureId, TextureParameterSet parameter, const Int* value);
+	void apiTextureParameterIiv(TextureID textureId, TextureParameterSet parameter, const Int* value);
+	void apiGetTextureParameteriv(TextureID textureID, TextureParameterGet parameterName, Int& output);
+	void apiTextureParameterfv(TextureID textureId, TextureParameterSet parameter, const Float* value);
+	void apiTextureParameterIuiv(TextureID textureId, TextureParameterSet parameter, const UInt* value);
+	void apiGetTextureParameterIiv(TextureID textureID, TextureParameterGet parameterName, Int* output);
+	void apiGetTextureParameterfv(TextureID textureID, TextureParameterGet parameterName, Float& output);
+	void apiGetTextureParameterIuiv(TextureID textureID, TextureParameterGet parameterName, UInt* output);
+	void apiClearTexImage(TextureID texture, Int mipmapLevel, WritePixelsFormat format, DataType type, const void* data);
+	void apiTextureStorage2D(TextureID texture, Int mipmapLevel, SizedInternalFormat internalFormat, Int width, Int height);
+	void apiTextureSubImage2D(TextureID texture, Int mipmapLevel, Int xOffset, Int yOffset, Int width, Int height, WritePixelsFormat format, DataType type, const void* pixels);
 }
 
-namespace OpenGL::Buffers{
-[[nodiscard]] inline BufferID apiCreateBuffer();
+namespace OpenGL::Buffers
+{
+	[[nodiscard]] inline BufferID apiCreateBuffer();
 
-inline void apiDeleteBuffer(UInt buffer);
-inline void apiBindBuffer(BufferTarget target, BufferID bufferID);
-inline void apiBindBufferBase(BufferTarget target, BindingPoint bindingLocation, BufferID buffer);
-inline void apiNamedBufferData(BufferID bufferID, ULL byteCount, const void* data, BufferUsage usage);
+	inline void apiDeleteBuffer(UInt buffer);
+	inline void apiBindBuffer(BufferTarget target, BufferID bufferID);
+	inline void apiBindBufferBase(BufferTarget target, BindingPoint bindingLocation, BufferID buffer);
+	inline void apiNamedBufferData(BufferID bufferID, ULL byteCount, const void* data, BufferUsage usage);
 }
 
-namespace OpenGL::VertexArray{
-[[nodiscard]] VertexArrayID apiCreateVertexArray();
+namespace OpenGL::VertexArray
+{
+	[[nodiscard]] VertexArrayID apiCreateVertexArray();
 
-void apiBindVertexArray(VertexArrayID vertexArrayID);
-void apiDeleteVertexArray(const VertexArrayID& vertexArrayID);
-void apiDrawElements(PrimitiveMode mode, Int indexCount, const void* indices);
-void apiVertexArrayElementBuffer(VertexArrayID vertexArrayID, BufferID indexBufferID);
-void apiEnableVertexArrayAttrib(VertexArrayID vertexArrayID, AttributeIndex attributeID);
-void apiDisableVertexArrayAttrib(VertexArrayID vertexArrayID, AttributeIndex attributeID);
-void apiVertexArrayBindingDivisor(VertexArrayID vertexArrayID, Index layoutBinding, UInt divisor);
-void apiDrawElementsInstanced(PrimitiveMode mode, Int indexCount, const void* indices, Int primitiveCount);
-void apiVertexArrayAttribBinding(VertexArrayID vertexArrayID, AttributeIndex attributeID, Index layoutBinding);
-void apiVertexArrayVertexBuffer(VertexArrayID vertexArrayID, UInt layoutBinding, VertexBufferID buffer, LL offset, Int stride);
-void apiVertexArrayAttribFormat(VertexArrayID vertexArrayID, AttributeIndex attributeID, Int size, DataType type, Bool normalized, UInt relativeOffset);
+	void apiBindVertexArray(VertexArrayID vertexArrayID);
+	void apiDeleteVertexArray(const VertexArrayID& vertexArrayID);
+	void apiDrawElements(PrimitiveMode mode, Int indexCount, const void* indices);
+	void apiVertexArrayElementBuffer(VertexArrayID vertexArrayID, BufferID indexBufferID);
+	void apiEnableVertexArrayAttrib(VertexArrayID vertexArrayID, AttributeIndex attributeID);
+	void apiDisableVertexArrayAttrib(VertexArrayID vertexArrayID, AttributeIndex attributeID);
+	void apiVertexArrayBindingDivisor(VertexArrayID vertexArrayID, Index layoutBinding, UInt divisor);
+	void apiDrawElementsInstanced(PrimitiveMode mode, Int indexCount, const void* indices, Int primitiveCount);
+	void apiVertexArrayAttribBinding(VertexArrayID vertexArrayID, AttributeIndex attributeID, Index layoutBinding);
+	void apiVertexArrayVertexBuffer(VertexArrayID vertexArrayID, UInt layoutBinding, VertexBufferID buffer, LL offset, Int stride);
+	void apiVertexArrayAttribFormat(VertexArrayID vertexArrayID, AttributeIndex attributeID, Int size, DataType type, Bool normalized, UInt relativeOffset);
 }
 
-namespace OpenGL::Framebuffer{
-[[nodiscard]] FramebufferID apiCreateFramebuffer();
-Int                         attachmentToIndex(FramebufferAttachment attachment);
-FramebufferStatus           apiCheckNamedFramebufferStatus(FramebufferID framebufferID, FramebufferTarget target);
+namespace OpenGL::Framebuffer
+{
+	[[nodiscard]] FramebufferID apiCreateFramebuffer();
+	Int                         attachmentToIndex(FramebufferAttachment attachment);
+	FramebufferStatus           apiCheckNamedFramebufferStatus(FramebufferID framebufferID, FramebufferTarget target);
 
-void apiDeleteFramebuffer(FramebufferID framebufferID);
-void apiNamedFramebufferReadBuffer(FramebufferID framebufferID, FramebufferMode mode);
-void apiNamedFramebufferDrawBuffers(FramebufferID framebuffer, const Vector<UInt>& buffers);
-void apiReadPixels(Int x, Int y, Int width, Int height, ReadPixelsFormat format, DataType type, void* data);
-void apiNamedFramebufferTexture(FramebufferID framebufferID, FramebufferAttachment attachmentID, TextureID texture, Int mipmapLevel);
-void apiClearNamedFramebufferiv(FramebufferID framebufferID, ClearBufferType buffer, FramebufferAttachment attachmentSlot, const Int* value);
-void apiClearNamedFramebufferuiv(FramebufferID framebufferID, ClearBufferType buffer, FramebufferAttachment attachmentSlot, const UInt* value);
-void apiClearNamedFramebufferfv(FramebufferID framebufferID, ClearBufferType buffer, FramebufferAttachment attachmentSlot, const Float* value);
-void apiClearNamedFramebufferfi(FramebufferID framebufferID, ClearBufferType buffer, FramebufferAttachment attachmentSlot, Float depth, Int stencil);
+	void apiDeleteFramebuffer(FramebufferID framebufferID);
+	void apiNamedFramebufferReadBuffer(FramebufferID framebufferID, FramebufferMode mode);
+	void apiNamedFramebufferDrawBuffers(FramebufferID framebuffer, const Vector<UInt>& buffers);
+	void apiReadPixels(Int x, Int y, Int width, Int height, ReadPixelsFormat format, DataType type, void* data);
+	void apiNamedFramebufferTexture(FramebufferID framebufferID, FramebufferAttachment attachmentID, TextureID texture, Int mipmapLevel);
+	void apiClearNamedFramebufferiv(FramebufferID framebufferID, ClearBufferType buffer, FramebufferAttachment attachmentSlot, const Int* value);
+	void apiClearNamedFramebufferuiv(FramebufferID framebufferID, ClearBufferType buffer, FramebufferAttachment attachmentSlot, const UInt* value);
+	void apiClearNamedFramebufferfv(FramebufferID framebufferID, ClearBufferType buffer, FramebufferAttachment attachmentSlot, const Float* value);
+	void apiClearNamedFramebufferfi(FramebufferID framebufferID, ClearBufferType buffer, FramebufferAttachment attachmentSlot, Float depth, Int stencil);
 }
 
-namespace OpenGL::Shaders{
-[[nodiscard]] ProgramID apiCreateProgram();
-[[nodiscard]] ShaderID  apiCreateShader(ShaderType type);
-[[nodiscard]] String    apiGetShaderInfoLog(ShaderID shaderId);
-[[nodiscard]] String    apiGetProgramInfoLog(ProgramID programId);
-[[nodiscard]] Int       apiGetShaderIntegerValue(ShaderID shaderId, ShaderParameters parameter);
-[[nodiscard]] Int       apiGetProgramIntegerValue(ProgramID programId, ShaderProgramParameters parameter);
+namespace OpenGL::Shaders
+{
+	[[nodiscard]] ProgramID apiCreateProgram();
+	[[nodiscard]] ShaderID  apiCreateShader(ShaderType type);
+	[[nodiscard]] String    apiGetShaderInfoLog(ShaderID shaderId);
+	[[nodiscard]] String    apiGetProgramInfoLog(ProgramID programId);
+	[[nodiscard]] Int       apiGetShaderIntegerValue(ShaderID shaderId, ShaderParameters parameter);
+	[[nodiscard]] Int       apiGetProgramIntegerValue(ProgramID programId, ShaderProgramParameters parameter);
 
-void apiUseProgram(ProgramID programId);
-void apiDeleteShader(ShaderID shaderId);
-void apiCompileShader(ShaderID shaderId);
-void apiLinkProgram(ProgramID programId);
-void apiDeleteProgram(ProgramID programId);
-void apiAttachShader(ProgramID programId, ShaderID shaderId);
-void apiDetachShader(ProgramID programId, ShaderID shaderId);
-void apiShaderSource(ShaderID shaderId, Int count, const Char* const* string, const Int* length);
-void apiUniformBlockBinding(ProgramID programId, UniformBlockID uniformBlockIndex, BindingPoint uniformBlockBinding);
+	void apiUseProgram(ProgramID programId);
+	void apiDeleteShader(ShaderID shaderId);
+	void apiCompileShader(ShaderID shaderId);
+	void apiLinkProgram(ProgramID programId);
+	void apiDeleteProgram(ProgramID programId);
+	void apiAttachShader(ProgramID programId, ShaderID shaderId);
+	void apiDetachShader(ProgramID programId, ShaderID shaderId);
+	void apiShaderSource(ShaderID shaderId, Int count, const Char* const* string, const Int* length);
+	void apiUniformBlockBinding(ProgramID programId, UniformBlockID uniformBlockIndex, BindingPoint uniformBlockBinding);
 }
 
 struct OpenGLTexture2D
@@ -1058,13 +1066,22 @@ struct OpenGLBuffer
 	void bind() const;
 	void unbind() const;
 	void destroy() const;
+	void update(const Matrix& data) const;
+	void update(const Vec2Vector& data) const;
+	void update(const Vec3Vector& data) const;
+	void update(const Vector<Int>& data) const;
+	void update(const Vector<UInt>& data) const;
+	void update(const Vector<Vec2>& data) const;
+	void update(const Vector<Vec3>& data) const;
+	void update(const Vector<Matrix>& data) const;
+	void update(const GlobalUniformData& data) const;
 
 	[[nodiscard]] BufferID getID() const;
 
-	template <typename T> void update(T data) const;
-	template <typename T> void update(const Vector<T>& data) const;
-	template <typename T> void create(BufferTarget targetValue, T data, BufferUsage usageValue, const String& name, BindingPoint bindingLocation);
-	template <typename T> void create(BufferTarget targetValue, const Vector<T>& data, BufferUsage usageValue, const String& name, BindingPoint bindingLocation);
+	template <typename T>
+	void update(T data) const;
+	template <typename T>
+	void create(BufferTarget targetValue, T data, BufferUsage usageValue, const String& name, BindingPoint bindingLocation);
 
 private:
 	BufferTarget   target         = BufferTarget::Array;
@@ -1079,12 +1096,14 @@ struct OpenGLIndexBuffer : OpenGLBuffer
 
 struct OpenGLVertexBuffer : OpenGLBuffer
 {
-	template <typename T> void create(const Vector<T>& data, BufferUsage usage, const String& name);
+	template <typename T>
+	void create(const Vector<T>& data, BufferUsage usage, const String& name);
 };
 
 struct OpenGLUniformBuffer : OpenGLBuffer
 {
-	template <typename T> void create(T data, BindingPoint bindingLocation);
+	template <typename T>
+	void create(T data, BindingPoint bindingLocation);
 };
 
 struct OpenGLVertexArrayObject
@@ -1125,7 +1144,7 @@ private:
 	UInt framebufferId = -1;
 };
 
-struct OpenGlShaderProgram
+struct OpenGLShaderProgram
 {
 	void               destroy();
 	void               use() const;
@@ -1137,42 +1156,32 @@ private:
 
 // TEMPLATES
 
-template <typename T> void OpenGLBuffer::update(T data) const
+template <typename T>
+void OpenGLBuffer::update(T data) const
 {
-	OpenGL::Buffers::apiNamedBufferData(bufferObjectID, sizeof(T), &data, usage);
+	logError("OpenGLBuffer update implementation missing!");
+	//OpenGL::Buffers::apiNamedBufferData(bufferObjectID, sizeof(T), &data, usage);
 }
 
-template <typename T> void OpenGLBuffer::update(const Vector<T>& data) const
-{
-	OpenGL::Buffers::apiNamedBufferData(bufferObjectID, data.size() * sizeof(T), data.data(), usage);
-}
-
-template <typename T> void OpenGLUniformBuffer::create(const T data, BindingPoint bindingLocation)
+template <typename T>
+void OpenGLUniformBuffer::create(const T data, BindingPoint bindingLocation)
 {
 	OpenGLBuffer::create(BufferTarget::Uniform, data, BufferUsage::DynamicDraw, "Uniform Buffer", bindingLocation);
 }
 
-template <typename T> void OpenGLVertexBuffer::create(const Vector<T>& data, const BufferUsage usage, const String& name)
+template <typename T>
+void OpenGLVertexBuffer::create(const Vector<T>& data, const BufferUsage usage, const String& name)
 {
 	OpenGLBuffer::create(BufferTarget::Array, data, usage, name, 0);
 }
 
-template <typename T> void OpenGLBuffer::create(const BufferTarget targetValue, const T data, const BufferUsage usageValue, const String& name, const BindingPoint bindingLocation)
+template <typename T>
+void OpenGLBuffer::create(const BufferTarget targetValue, const T data, const BufferUsage usageValue, const String& name, const BindingPoint bindingLocation)
 {
 	this->target   = targetValue;
 	this->usage    = usageValue;
 	bufferObjectID = OpenGL::Buffers::apiCreateBuffer();
 	OpenGL::apiObjectLabel(ObjectLabelType::Buffer, bufferObjectID, name);
-	if(target == BufferTarget::TransformFeedback || target == BufferTarget::Uniform || target == BufferTarget::ShaderStorage || target == BufferTarget::AtomicCounter) OpenGL::Buffers::apiBindBufferBase(target, bindingLocation, bufferObjectID);
-	update(data);
-}
-
-template <typename T> void OpenGLBuffer::create(const BufferTarget targetValue, const Vector<T>& data, const BufferUsage usageValue, const String& name, const BindingPoint bindingLocation)
-{
-	this->target   = targetValue;
-	this->usage    = usageValue;
-	bufferObjectID = OpenGL::Buffers::apiCreateBuffer();
-	OpenGL::apiObjectLabel(ObjectLabelType::Buffer, bufferObjectID, name);
-	if(target == BufferTarget::TransformFeedback || target == BufferTarget::Uniform || target == BufferTarget::ShaderStorage || target == BufferTarget::AtomicCounter) OpenGL::Buffers::apiBindBufferBase(target, bindingLocation, bufferObjectID);
+	if (target == BufferTarget::TransformFeedback || target == BufferTarget::Uniform || target == BufferTarget::ShaderStorage || target == BufferTarget::AtomicCounter) OpenGL::Buffers::apiBindBufferBase(target, bindingLocation, bufferObjectID);
 	update(data);
 }

@@ -7,7 +7,7 @@ struct Renderer;
 
 struct Plot
 {
-	Vector<Vec2> points;
+	Vec2Vector points;
 
 	void                  add(Vec2 value);
 	[[nodiscard]] CpuMesh createMesh() const;

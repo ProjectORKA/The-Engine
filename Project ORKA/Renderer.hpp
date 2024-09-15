@@ -7,12 +7,12 @@
 #include "RenderRegion.hpp"
 #include "ShaderSystem.hpp"
 #include "MatrixSystem.hpp"
-#include "LineRenderer.hpp"
 #include "TextureSystem.hpp"
 #include "TextRenderSystem.hpp"
 #include "RenderObjectSystem.hpp"
 #include "PlanetRenderSystem.hpp"
 #include "PrimitivesRenderer.hpp"
+#include "RenderingOverrides.hpp"
 
 struct Camera;
 struct Player;
@@ -74,15 +74,15 @@ struct Renderer
 	void useTexture(const Name& name, Index position);
 
 	//meshes
-	void rerenderMesh();
+	//void rerenderMesh();
 	void renderMesh(Index meshId);
 	void useMesh(const Name& name);
 	void renderMesh(const Name& name);
-	void renderMeshInstanced(const Name& name, const Vector<Vec2>& positions);
-	void renderMeshInstanced(const Name& name, const Vector<Vec3>& positions);
+	void renderMeshInstanced(const Name& name, const Vec2Vector& positions);
+	void renderMeshInstanced(const Name& name, const Vec3Vector& positions);
 	void renderMeshInstanced(const Name& name, const Vector<Matrix>& transforms);
-	void renderMeshInstanced(const Name& name, const Vector<Vec3>& positions, Float size);
-	void renderMeshInstanced(const Name& name, const Vector<Vec2>& positions, const Vector<Vec2>& directions, const Vector<Float>& scales);
+	void renderMeshInstanced(const Name& name, const Vec3Vector& positions, Float size);
+	void renderMeshInstanced(const Name& name, const Vec2Vector& positions, const Vec2Vector& directions, const Vector<Float>& scales);
 
 	//shaders
 	void  fill(Int color);
@@ -100,25 +100,26 @@ struct Renderer
 
 	//primitives
 	void plane();
+	void rectangle();
 	void wireframeCube();
 	void wireframeCubeCentered();
 	void line(Vec2 start, Vec2 end);
 	void line(Vec3 start, Vec3 end);
 	void arrow(Vec2 start, Vec2 end);
 	void arrow(Vec3 start, Vec3 end);
-	void line(const Vector<Vec2>& line);
-	void line(const Vector<Vec3>& line);
+	void line(const Vec2Vector& line);
+	void line(const Vec3Vector& line);
 	void circle(Vec2 pos, Float radius);
 	void renderSky(const Camera& camera);
-	void lines(const Vector<Vec3>& lines);
-	void lines(const Vector<Vec2>& lines);
+	void lines(const Vec3Vector& lines);
+	void lines(const Vec2Vector& lines);
 	void wireframeCubeCentered(Float size);
-	void points(const Vector<Vec2>& points);
-	void points(const Vector<Vec3>& points);
+	void points(const Vec2Vector& points);
+	void points(const Vec3Vector& points);
 	void circles(const Vector<Matrix>& matrices);
 	void wireframeCubes(const Vector<Matrix>& matrices);
-	void line(const Vector<Vec2>& line, const Matrix& matrix);
-	void lines(const Vector<Vec2>& lines, const Matrix& matrix);
+	void line(const Vec2Vector& line, const Matrix& matrix);
+	void lines(const Vec2Vector& lines, const Matrix& matrix);
 	void renderAtmosphere(const Player& player, Vec3 sunDirection);
 
 	[[nodiscard]] Bool   getCulling() const;
@@ -135,16 +136,4 @@ struct Renderer
 private:
 	RenderRegion renderRegion;
 	Area         windowSize = Area(0);
-};
-
-class DepthTestOverride
-{
-public:
-	~DepthTestOverride();
-	DepthTestOverride() = delete;
-	DepthTestOverride(Bool value, Renderer& renderer);
-
-private:
-	Bool      stored;
-	Renderer* renderer;
 };

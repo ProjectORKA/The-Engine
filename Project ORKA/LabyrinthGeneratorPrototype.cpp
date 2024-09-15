@@ -187,8 +187,8 @@ void LabyrinthGeneratorPrototype::render(Renderer& r, const Player& player)
 	r.textRenderSystem.setSize(0.5);
 
 	Vector<Matrix> positions;
-	Vector<Vec2>   lines;
-	Vector<Vec2>   pathLines;
+	Vec2Vector   lines;
+	Vec2Vector   pathLines;
 
 	for (auto& node : nodes)
 	{

@@ -33,7 +33,7 @@ void PrimitivesRenderer::create()
 	linesMesh.upload(genMesh);
 	genMesh.clearGeometry();
 
-	// plane / rectangle
+	// plane
 	genMesh.drawMode           = BufferUsage::StaticDraw;
 	genMesh.name               = "Plane";
 	genMesh.primitiveMode      = PrimitiveMode::Triangles;
@@ -42,6 +42,16 @@ void PrimitivesRenderer::create()
 	genMesh.indices            = {0, 1, 2, 2, 1, 3};
 	genMesh.checkIntegrity();
 	planeMesh.upload(genMesh);
+	genMesh.clearGeometry();
+
+	genMesh.drawMode           = BufferUsage::StaticDraw;
+	genMesh.name               = "Rectangle";
+	genMesh.primitiveMode      = PrimitiveMode::Triangles;
+	genMesh.positions          = {Vec3(0.0f, 0.0f, 0), Vec3(1.0f, 0.0f, 0), Vec3(0.0f, 1.0f, 0), Vec3(1.0f, 1.0f, 0)};
+	genMesh.textureCoordinates = {Vec2(0, 0), Vec2(1, 0), Vec2(0, 1), Vec2(1, 1)};
+	genMesh.indices            = {0, 1, 2, 2, 1, 3};
+	genMesh.checkIntegrity();
+	rectangleMesh.upload(genMesh);
 	genMesh.clearGeometry();
 
 	// wireframe cube
@@ -90,11 +100,17 @@ void PrimitivesRenderer::destroy()
 	planeMesh.unload();
 	pointsMesh.unload();
 	circleMesh.unload();
+	rectangleMesh.unload();
 	wireframeCubeMesh.unload();
 	wireframeCubeCenteredMesh.unload();
 }
 
 void PrimitivesRenderer::rectangle(Uniforms& uniforms) const
+{
+	rectangleMesh.render(uniforms);
+}
+
+void PrimitivesRenderer::plane(Uniforms& uniforms) const
 {
 	planeMesh.render(uniforms);
 }
@@ -109,7 +125,7 @@ void PrimitivesRenderer::wireframeCubeCentered(Uniforms& uniforms) const
 	wireframeCubeCenteredMesh.render(uniforms);
 }
 
-void PrimitivesRenderer::points(const Vector<Vec3>& pos, Uniforms& uniforms)
+void PrimitivesRenderer::points(const Vec3Vector& pos, Uniforms& uniforms)
 {
 	Vector<Index> indices;
 	for (int i = 0; i < pos.size(); i++) indices.emplace_back(i);
@@ -118,17 +134,17 @@ void PrimitivesRenderer::points(const Vector<Vec3>& pos, Uniforms& uniforms)
 	pointsMesh.render(uniforms);
 }
 
-void PrimitivesRenderer::points(const Vector<Vec2>& pos, Uniforms& uniforms)
+void PrimitivesRenderer::points(const Vec2Vector& pos, Uniforms& uniforms)
 {
 	points(vec2VectorToVec3Vector(pos), uniforms);
 }
 
-void PrimitivesRenderer::line(const Vector<Vec2>& positions, Uniforms& uniforms)
+void PrimitivesRenderer::line(const Vec2Vector& positions, Uniforms& uniforms)
 {
 	line(vec2VectorToVec3Vector(positions), uniforms);
 }
 
-void PrimitivesRenderer::line(const Vector<Vec3>& positions, Uniforms& uniforms)
+void PrimitivesRenderer::line(const Vec3Vector& positions, Uniforms& uniforms)
 {
 	Vector<Index> indices;
 	for (int i = 0; i < positions.size(); i++) indices.emplace_back(i);
@@ -137,12 +153,12 @@ void PrimitivesRenderer::line(const Vector<Vec3>& positions, Uniforms& uniforms)
 	lineMesh.render(uniforms);
 }
 
-void PrimitivesRenderer::lines(const Vector<Vec2>& positions, Uniforms& uniforms)
+void PrimitivesRenderer::lines(const Vec2Vector& positions, Uniforms& uniforms)
 {
 	lines(vec2VectorToVec3Vector(positions), uniforms);
 }
 
-void PrimitivesRenderer::lines(const Vector<Vec3>& positions, Uniforms& uniforms)
+void PrimitivesRenderer::lines(const Vec3Vector& positions, Uniforms& uniforms)
 {
 	Vector<Index> indices;
 	for (int i = 0; i < positions.size(); i++) indices.emplace_back(i);
@@ -159,7 +175,7 @@ void PrimitivesRenderer::wireframeCubes(const Vector<Matrix>& matrices, Uniforms
 	wireframeCubeMesh.renderInstances(uniforms, matrices);
 }
 
-void PrimitivesRenderer::lines(const Vector<Vec3>& positions, const Vector<Index>& indices, Uniforms& uniforms)
+void PrimitivesRenderer::lines(const Vec3Vector& positions, const Vector<Index>& indices, Uniforms& uniforms)
 {
 	linesMesh.updatePositionBuffer(positions);
 	linesMesh.updateIndexBuffer(indices);

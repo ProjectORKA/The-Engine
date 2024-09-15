@@ -28,7 +28,7 @@ struct MelonPlayer : Player
 	InputEvent zoomOut = InputEvent(InputType::Scroll, 1, true);
 
 	//trail
-	Vector<Vec3> trail;
+	Vec3Vector trail;
 
 	MelonPlayer();
 	void update(Window& window) override;

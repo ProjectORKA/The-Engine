@@ -278,7 +278,7 @@ Bool withinDiamondArea(const Vec3 a, const Float b)
 	return abs(a.x) + abs(a.y) + abs(a.z) < 2 * b;
 }
 
-UllVec4 getBoundingBoxIds(const Vector<Vec2>& points)
+UllVec4 getBoundingBoxIds(const Vec2Vector& points)
 {
 	if (points.empty()) return {0.0, 0.0, 0.0, 0.0};
 	Float west    = points[0].x;
@@ -530,7 +530,7 @@ Matrix matrixFromPositionAndSize(const Vec2 pos, const Vec2 size)
 	return m;
 }
 
-Vec2 getClosestPoint(const Vec2 point, const Vector<Vec2>& points)
+Vec2 getClosestPoint(const Vec2 point, const Vec2Vector& points)
 {
 	if (points.empty()) return point;
 
@@ -554,9 +554,9 @@ LDouble lerp(const LDouble a, const LDouble b, const LDouble alpha)
 	return a * (1 - alpha) + b * alpha;
 }
 
-Vector<Vec3> circleOfPoints(const Float radius, const UInt amount)
+Vec3Vector circleOfPoints(const Float radius, const UInt amount)
 {
-	Vector<Vec3> points;
+	Vec3Vector points;
 	points.reserve(amount);
 
 	const Float angleIncrement = 2.0f * PI / static_cast<Float>(amount);
@@ -573,16 +573,16 @@ Vector<Vec3> circleOfPoints(const Float radius, const UInt amount)
 	return points;
 }
 
-Vector<Vec3> vec2VectorToVec3Vector(const Vector<Vec2>& vec2Vector)
+Vec3Vector vec2VectorToVec3Vector(const Vec2Vector& vec2Vector)
 {
-	Vector<Vec3> vec3Vector(vec2Vector.size());
+	Vec3Vector vec3Vector(vec2Vector.size());
 	for (ULL i = 0; i < vec2Vector.size(); i++) vec3Vector[i] = Vec3(vec2Vector[i], 0);
 	return vec3Vector;
 }
 
-Vector<Vec2> vec3VectorToVec2Vector(const Vector<Vec3>& vec3Vector)
+Vec2Vector vec3VectorToVec2Vector(const Vec3Vector& vec3Vector)
 {
-	Vector<Vec2> vec2Vector(vec3Vector.size());
+	Vec2Vector vec2Vector(vec3Vector.size());
 	for (ULL i = 0; i < vec3Vector.size(); i++) vec2Vector[i] = Vec2(vec3Vector[i]);
 	return vec2Vector;
 }
@@ -597,7 +597,7 @@ Matrix matrixFromPositionAndDirection(const Vec2 pos, const Vec2 dir)
 	return m;
 }
 
-Vector<Matrix> matrixArrayFromPositions(const Vector<Vec3>& positions)
+Vector<Matrix> matrixArrayFromPositions(const Vec3Vector& positions)
 {
 	Vector<Matrix> matrixArray;
 	matrixArray.resize(positions.size());
@@ -605,7 +605,7 @@ Vector<Matrix> matrixArrayFromPositions(const Vector<Vec3>& positions)
 	return matrixArray;
 }
 
-Vector<Matrix> matrixArrayFromPositions(const Vector<Vec2>& positions)
+Vector<Matrix> matrixArrayFromPositions(const Vec2Vector& positions)
 {
 	Vector<Matrix> matrixArray;
 	matrixArray.resize(positions.size());
@@ -650,7 +650,7 @@ Vec2 deltaInLoopingSpace(const Vec2 a, const Vec2 b, const Float extend)
 	return Vec2(deltaInLoopingSpace(a.x, b.x, extend), deltaInLoopingSpace(a.y, b.y, extend));
 }
 
-Index idOfClosestPoint(const Vec2 origin, const Vector<Vec2>& positions)
+Index idOfClosestPoint(const Vec2 origin, const Vec2Vector& positions)
 {
 	Index index           = 0;
 	Float closestDistance = distance(origin, positions.front());
@@ -693,7 +693,7 @@ Index xyToIndex(const Int x, const Int y, const Int width, const Int height)
 	return y * width + x;
 }
 
-Float getDistanceToClosestPoint(const Vec3 point, const Vector<Vec3>& points)
+Float getDistanceToClosestPoint(const Vec3 point, const Vec3Vector& points)
 {
 	Float minimalDistance = distance(point, points[0]);
 
@@ -746,9 +746,9 @@ Float distanceToPointInLoopingSpace(const Vec2 a, const Vec2 b, const Float exte
 	return length(deltaInLoopingSpace(a, b, extend));
 }
 
-void removePointsInRadius(const Vec3 point, Vector<Vec3>& points, const Float radius)
+void removePointsInRadius(const Vec3 point, Vec3Vector& points, const Float radius)
 {
-	Vector<Vec3> available;
+	Vec3Vector available;
 
 	for (Vec3 current : points) if (distance(point, current) > radius) available.push_back(current);
 
@@ -781,7 +781,7 @@ Matrix matrixFromPositionAndSize(const Float x, const Float y, const Float w, co
 	return m;
 }
 
-Vector<Matrix> matrixArrayFromPositionsAndSize(const Vector<Vec2>& positions, const Float size)
+Vector<Matrix> matrixArrayFromPositionsAndSize(const Vec2Vector& positions, const Float size)
 {
 	Vector<Matrix> matrixArray;
 	matrixArray.resize(positions.size());
@@ -789,7 +789,7 @@ Vector<Matrix> matrixArrayFromPositionsAndSize(const Vector<Vec2>& positions, co
 	return matrixArray;
 }
 
-Vector<Matrix> matrixArrayFromPositionsAndSize(const Vector<Vec3>& positions, const Float size)
+Vector<Matrix> matrixArrayFromPositionsAndSize(const Vec3Vector& positions, const Float size)
 {
 	Vector<Matrix> matrixArray;
 	matrixArray.resize(positions.size());
@@ -802,7 +802,7 @@ Vec3 quadraticInterpolation(const Vec3 start, const Vec3 control, const Vec3 end
 	return lerp(lerp(start, control, time), lerp(control, end, time), time);
 }
 
-Index getClosestPointId(const Vec2 point, const Vector<Index>& pointIDs, const Vector<Vec2>& points)
+Index getClosestPointId(const Vec2 point, const Vector<Index>& pointIDs, const Vec2Vector& points)
 {
 	Float dist  = distance(point, points[pointIDs[0]]);
 	Index index = pointIDs[0];
@@ -818,7 +818,7 @@ Index getClosestPointId(const Vec2 point, const Vector<Index>& pointIDs, const V
 	return index;
 }
 
-Bool pointWithinDistanceOfOtherPoints(const Vec2 point, const Vector<Vec2>& points, const Float dist)
+Bool pointWithinDistanceOfOtherPoints(const Vec2 point, const Vec2Vector& points, const Float dist)
 {
 	for (const Vec2& p : points)
 	{
@@ -832,7 +832,7 @@ Bool pointInsideSphereAtPositionWithRadius(const Vec3 point, const Vec3 position
 	return distance(point, position) < radius;
 }
 
-Index idOfClosestPoint(const Vec2 origin, const Vector<Index>& indices, const Vector<Vec2>& positions)
+Index idOfClosestPoint(const Vec2 origin, const Vector<Index>& indices, const Vec2Vector& positions)
 {
 	Index closestIndex    = 0;
 	Float closestDistance = distance(origin, positions.front());
@@ -847,7 +847,7 @@ Index idOfClosestPoint(const Vec2 origin, const Vector<Index>& indices, const Ve
 	return closestIndex;
 }
 
-Vector<Matrix> matrixArrayFromPositionsAndDirections(const Vector<Vec2>& pos, const Vector<Vec2>& dir)
+Vector<Matrix> matrixArrayFromPositionsAndDirections(const Vec2Vector& pos, const Vec2Vector& dir)
 {
 	Vector<Matrix> matrixArray;
 	matrixArray.resize(pos.size());
@@ -865,7 +865,7 @@ Matrix matrixFromAxis(const Vec3 x, const Vec3 y, const Vec3 z, const Vec3 posit
 	return m;
 }
 
-void getClosestPoint(const Vec3 point, const Vector<Vec3>& points, Index& closestId, Vec3& closestPoint)
+void getClosestPoint(const Vec3 point, const Vec3Vector& points, Index& closestId, Vec3& closestPoint)
 {
 	Float minimalDistance = distance(point, points[0]);
 	Index closestPointId  = 0;
@@ -884,7 +884,7 @@ void getClosestPoint(const Vec3 point, const Vector<Vec3>& points, Index& closes
 	closestPoint = points[closestPointId];
 }
 
-Index idOfClosestPointInLoopingSpace(const Vec2 origin, const Vector<Vec2>& positions, const Float extend)
+Index idOfClosestPointInLoopingSpace(const Vec2 origin, const Vec2Vector& positions, const Float extend)
 {
 	Index index           = 0;
 	Float closestDistance = distanceToPointInLoopingSpace(origin, positions.front(), extend);
@@ -900,7 +900,7 @@ Index idOfClosestPointInLoopingSpace(const Vec2 origin, const Vector<Vec2>& posi
 	return index;
 }
 
-Bool circleCollidingWithCircles(const Vec2 pos, const Float radius, const Vector<Vec2>& circles, const Float pointsRadius)
+Bool circleCollidingWithCircles(const Vec2 pos, const Float radius, const Vec2Vector& circles, const Float pointsRadius)
 {
 	const Float dist = radius + pointsRadius;
 	for (const Vec2& p : circles)
@@ -910,7 +910,7 @@ Bool circleCollidingWithCircles(const Vec2 pos, const Float radius, const Vector
 	return false;
 }
 
-Vector<Matrix> matrixArrayFromPositionsDirectionsAndSizes(const Vector<Vec2>& position, const Vector<Vec2>& direction, const Vector<Float>& size)
+Vector<Matrix> matrixArrayFromPositionsDirectionsAndSizes(const Vec2Vector& position, const Vec2Vector& direction, const Vector<Float>& size)
 {
 	Vector<Matrix> matrixArray;
 	matrixArray.resize(position.size());
@@ -918,13 +918,13 @@ Vector<Matrix> matrixArrayFromPositionsDirectionsAndSizes(const Vector<Vec2>& po
 	return matrixArray;
 }
 
-void spaceColonization(Vector<Vec3>& points, Vector<Vec3>& branches, Vector<Index>& connections, const Float segmentSize, const Float killRadius)
+void spaceColonization(Vec3Vector& points, Vec3Vector& branches, Vector<Index>& connections, const Float segmentSize, const Float killRadius)
 {
 	if (points.empty()) return;
 	if (branches.empty()) branches.emplace_back(0);
 	if (connections.empty()) connections.push_back(0);
 
-	Vector<Vec3> pull(branches.size(), Vec3(0));
+	Vec3Vector pull(branches.size(), Vec3(0));
 
 	// check every space
 	for (const Vec3& point : points)
@@ -936,7 +936,7 @@ void spaceColonization(Vector<Vec3>& points, Vector<Vec3>& branches, Vector<Inde
 		pull[closestId] += vectorFromAToB(closestPoint, point);
 	}
 
-	Vector<Vec3> newBranches;
+	Vec3Vector newBranches;
 
 	// calculate branches
 	for (ULL i = 0; i < pull.size(); i++)

@@ -7,7 +7,7 @@ struct SimpleRtsBushSystem : SimpleRtsSystem
 {
 	Int          count  = 5000;
 	Float        radius = 1.0f;
-	Vector<Vec2> positions;
+	Vec2Vector positions;
 
 	void update(SimpleRtsSimulation& sim) override;
 	void render(Renderer& renderer) const override;

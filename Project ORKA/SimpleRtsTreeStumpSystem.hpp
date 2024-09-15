@@ -3,7 +3,7 @@
 
 struct SimpleRtsTreeStumpSystem
 {
-	Vector<Vec2> treeStumpPosition;
+	Vec2Vector treeStumpPosition;
 	UInt         lastTreeStump  = 0;
 	UInt         treeStumpCount = 0;
 	void render(Renderer& renderer)

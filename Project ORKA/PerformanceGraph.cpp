@@ -9,6 +9,11 @@ void PerformanceGraph::addTime(const Float time)
 
 void PerformanceGraph::render(Window& window, TiledRectangle area)
 {
+	AlphaBlendOverride(window.renderer, true);
+
+	OpenGL::apiSetBlending(true);
+	OpenGL::apiBlendFunc(BlendFunction::SrcAlpha, BlendFunction::OneMinusSrcAlpha);
+	OpenGL::apiBlendEquation(BlendEquation::Add);
 	if (times.empty()) return;
 	window.renderer.useShader("color");
 	window.renderer.screenSpace();
@@ -17,7 +22,7 @@ void PerformanceGraph::render(Window& window, TiledRectangle area)
 	window.renderer.plane();
 	window.renderer.uniforms().setMMatrix(matrixFromPositionAndSize(100, 100, 1, 1));
 	window.renderer.fill(1);
-	Vector<Vec2> line;
+	Vec2Vector line;
 	for (Int i = 0; i < times.size(); i++) line.emplace_back(i, times[i] / maxSample * height);
 	window.renderer.line(line);
 }

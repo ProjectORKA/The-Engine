@@ -202,16 +202,27 @@ using Array = std::array<T, size>;
 struct Vec2Vector;
 struct Vec3Vector;
 
-struct Vec2Vector : Vector<Vec2>
+struct Vec2Vector : std::vector<Vec2>
 {
 	explicit Vec2Vector(const Vec3Vector& other);
-	Vec3Vector toVec3() const;
+	explicit Vec2Vector(const std::size_t size) : std::vector<Vec2>(size) {}
+	explicit Vec2Vector(const std::vector<Vec2>& other) : std::vector<Vec2>(other) {}
+
+	Vec2Vector() = default;
+	Vec2Vector(const std::size_t size, const Vec2& value) : std::vector<Vec2>(size, value) {}
+	Vec2Vector(const std::initializer_list<Vec2> initList) : std::vector<Vec2>(initList) {}
+
+	[[nodiscard]] Vec3Vector toVec3() const;
 };
 
 struct Vec3Vector : Vector<Vec3>
 {
-	explicit Vec3Vector(const Vec2Vector& other);
-	Vec2Vector toVec2() const;
+	Vec3Vector() = default;
+	[[nodiscard]] Vec2Vector toVec2() const;
+	explicit                 Vec3Vector(const Vec2Vector& other);
+	explicit                 Vec3Vector(const SizeT size) : Vector<Vec3>(size) {}
+	Vec3Vector(const SizeT size, const Vec3& value) : Vector<Vec3>(size, value) {}
+	Vec3Vector(const std::initializer_list<Vec3> initList) : Vector<Vec3>(initList) {}
 };
 
 inline Float toFloat(const Byte v)
@@ -435,7 +446,7 @@ inline Double toDouble(const Int a)
 
 inline Double toDouble(const ULL a)
 {
-	return a;
+	return static_cast<Double>(a);
 }
 
 inline Double toDouble(const Double a)

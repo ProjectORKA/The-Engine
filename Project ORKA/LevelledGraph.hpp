@@ -15,9 +15,9 @@ struct LeveledGraphConnection
 
 struct LeveledGraph
 {
-	Vector<Vec2>                   forces;
+	Vec2Vector                   forces;
 	Vector<Float>                  numForces;
-	Vector<Vec2>                   positions;
+	Vec2Vector                   positions;
 	Vector<LeveledGraphConnection> connections;
 	UInt                           nodeCount = 0;
 

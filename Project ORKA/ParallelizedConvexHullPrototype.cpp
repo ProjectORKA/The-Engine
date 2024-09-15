@@ -1,7 +1,7 @@
 #include "ParallelizedConvexHullPrototype.hpp"
 #include "Player.hpp"
 
-Vector<ULL> getConvexHullPointIDs(Vector<Vec2>& points)
+Vector<ULL> getConvexHullPointIDs(Vec2Vector& points)
 {
 	UllVec4 bounds = getBoundingBoxIds(points);
 	UllVec4 currentIdOfBounds = bounds;
@@ -115,7 +115,7 @@ void ParallelizedConvexHullPrototype::render(Renderer& r, const Player& player)
 	{
 		if(!convexHullIds.empty())
 		{
-			Vector<Vec2> boundaryLine;
+			Vec2Vector boundaryLine;
 			for(const auto& b : convexHullIds) boundaryLine.push_back(points[b]);
 			boundaryLine.push_back(points[convexHullIds[0]]);
 			r.fill(1, 0, 0);

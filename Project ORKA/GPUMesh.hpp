@@ -16,12 +16,12 @@ struct GpuMesh
 
 	// update buffers manually
 	void updateIndexBuffer(const Vector<UInt>& indices);
-	void updateNormalBuffer(const Vector<Vec3>& normals) const;
-	void updateTangentBuffer(const Vector<Vec3>& tangents) const;
-	void updatePositionBuffer(const Vector<Vec3>& positions) const;
-	void updateBiTangentBuffer(const Vector<Vec3>& biTangents) const;
-	void updateVertexColorBuffer(const Vector<Vec3>& vertexColors) const;
-	void updateTextureCoordinateBuffer(const Vector<Vec2>& textureCoordinates) const;
+	void updateNormalBuffer(const Vec3Vector& normals) const;
+	void updateTangentBuffer(const Vec3Vector& tangents) const;
+	void updatePositionBuffer(const Vec3Vector& positions) const;
+	void updateBiTangentBuffer(const Vec3Vector& biTangents) const;
+	void updateVertexColorBuffer(const Vec3Vector& vertexColors) const;
+	void updateTextureCoordinateBuffer(const Vec2Vector& textureCoordinates) const;
 
 private:
 	OpenGLVertexArrayObject vao;

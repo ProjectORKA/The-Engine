@@ -9,9 +9,9 @@ struct Renderer;
 //
 //	void create();
 //	void destroy();
-//	void render(Renderer& renderer, const Vector<Vec3>& points);
-//	void render(Renderer& renderer, const Vector<Vec2>& points);
+//	void render(Renderer& renderer, const Vec3Vector& points);
+//	void render(Renderer& renderer, const Vec2Vector& points);
 //
 //private:
-//	void update(const Vector<Vec3>& points);
+//	void update(const Vec3Vector& points);
 //};

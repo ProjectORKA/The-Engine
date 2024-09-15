@@ -11,5 +11,5 @@ struct ShaderProgram
 
 private:
 	Bool                loaded = false;
-	OpenGlShaderProgram openglShaderProgram;
+	OpenGLShaderProgram openglShaderProgram;
 };

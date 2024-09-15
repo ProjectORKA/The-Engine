@@ -15,7 +15,7 @@ struct SimpleRtsSystem
 
 //struct SimpleRtsEntitySystem : SimpleRtsSystem
 //{
-//	Vector<Vec2> positions;
+//	Vec2Vector positions;
 //
 //	virtual Name       getEntityName() const = 0;
 //	virtual Int        getEntityCount() const = 0;
