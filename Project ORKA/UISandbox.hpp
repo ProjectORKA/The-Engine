@@ -41,34 +41,34 @@ struct UISandbox
 	void run()
 	{
 		UIContainer global;
-		UIContainer top;
-		UIContainer main;
-		UIContainer side;
-		UIContainer page;
+		//UIContainer top;
+		//UIContainer main;
+		//UIContainer side;
+		//UIContainer page;
 
 		global.name("GlobalView");
 		global.fill(Color(0,0,1,1));
 		global.vertical();
-		global.add(top);
-		global.add(main);
+		//global.add(top);
+		//global.add(main);
 
-		top.name("TopBar");
-		top.fill(Color(1,0,0,1));
-		top.horizontal();
+		//top.name("TopBar");
+		//top.fill(Color(1,0,0,1));
+		//top.horizontal();
 
-		main.name("MainView");
-		main.horizontal();
-		main.add(side);
-		main.add(page);
-		main.fill(randomColorFast());
+		//main.name("MainView");
+		//main.horizontal();
+		//main.add(side);
+		//main.add(page);
+		//main.fill(randomColorFast());
 
-		side.name("SideView");
-		side.fill(randomColorFast());
-		side.vertical();
+		//side.name("SideView");
+		//side.fill(randomColorFast());
+		//side.vertical();
 
-		page.name("MainPage");
-		page.fill(randomColorFast());
-		page.vertical();
+		//page.name("MainPage");
+		//page.fill(randomColorFast());
+		//page.vertical();
 
 
 		ui.create();

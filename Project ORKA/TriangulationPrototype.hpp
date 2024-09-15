@@ -14,7 +14,7 @@ struct TriangulationPrototype final : Prototype
 		Bool operator<(const Connection& other) const;
 	};
 
-	Vector<Vec2>       positions;
+	Vec2Vector       positions;
 	Vector<Connection> connections;
 	Int                pointCount = 1000;
 

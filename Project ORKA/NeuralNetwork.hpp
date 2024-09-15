@@ -133,7 +133,7 @@ struct NeuralNet
 		r.fill(Color(0.5, 0.5, 0.5, 1));
 		r.setDepthTest(false);
 		// render connections
-		Vector<Vec3> lines;
+		Vec3Vector lines;
 		for(const Neuron& n : neurons)
 		{
 			for(const ULL i : n.input)
@@ -146,7 +146,7 @@ struct NeuralNet
 
 		r.fill(Color(1));
 		// render neurons
-		Vector<Vec3> positions;
+		Vec3Vector positions;
 		for(const Neuron& n : neurons) positions.push_back(n.position);
 		r.renderMeshInstanced("centeredCube", positions, 0.5);
 	}

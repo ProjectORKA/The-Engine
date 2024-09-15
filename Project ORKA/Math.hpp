@@ -56,10 +56,10 @@ struct Orientation
 [[nodiscard]] Bool pointInsideSpheres(Vec3 point, List<Sphere> spheres);
 [[nodiscard]] Bool pointInsideSpheres(Vec3 point, const Vector<Sphere>& spheres);
 [[nodiscard]] Bool pointInsideSphereAtPositionWithRadius(Vec3 point, Vec3 position, Float radius);
-[[nodiscard]] Bool pointWithinDistanceOfOtherPoints(Vec2 point, const Vector<Vec2>& points, Float dist);
+[[nodiscard]] Bool pointWithinDistanceOfOtherPoints(Vec2 point, const Vec2Vector& points, Float dist);
 
 //circles
-[[nodiscard]] Bool circleCollidingWithCircles(Vec2 pos, Float radius, const Vector<Vec2>& circles, Float pointsRadius);
+[[nodiscard]] Bool circleCollidingWithCircles(Vec2 pos, Float radius, const Vec2Vector& circles, Float pointsRadius);
 
 [[nodiscard]] UInt max(UInt a, UInt b);
 [[nodiscard]] UInt nextPowerOfTwo(UInt value);
@@ -68,9 +68,9 @@ struct Orientation
 
 [[nodiscard]] Index xyToIndex(Int x, Int y, Int size);
 [[nodiscard]] Index xyToIndex(Int x, Int y, Int width, Int height);
-[[nodiscard]] Index idOfClosestPoint(Vec2 origin, const Vector<Vec2>& positions);
-[[nodiscard]] Index idOfClosestPointInLoopingSpace(Vec2 origin, const Vector<Vec2>& positions, Float extend);
-[[nodiscard]] Index idOfClosestPoint(Vec2 origin, const Vector<Index>& indices, const Vector<Vec2>& positions);
+[[nodiscard]] Index idOfClosestPoint(Vec2 origin, const Vec2Vector& positions);
+[[nodiscard]] Index idOfClosestPointInLoopingSpace(Vec2 origin, const Vec2Vector& positions, Float extend);
+[[nodiscard]] Index idOfClosestPoint(Vec2 origin, const Vector<Index>& indices, const Vec2Vector& positions);
 
 [[nodiscard]] Int max(Int a, Int b);
 [[nodiscard]] Int mod(Int a, Int b);
@@ -87,7 +87,7 @@ struct Orientation
 [[nodiscard]] Float angleBetweenAAndB(const Vec3& a, const Vec3& b);
 [[nodiscard]] Float deltaInLoopingSpace(Float a, Float b, Float extend);
 [[nodiscard]] Float distanceToPointInLoopingSpace(Vec2 a, Vec2 b, Float extend);
-[[nodiscard]] Float getDistanceToClosestPoint(Vec3 point, const Vector<Vec3>& points);
+[[nodiscard]] Float getDistanceToClosestPoint(Vec3 point, const Vec3Vector& points);
 
 [[nodiscard]] Double mod(Double a, Double b);
 
@@ -106,10 +106,10 @@ struct Orientation
 [[nodiscard]] Vec3 lerp(Vec3 a, Vec3 b, Float alpha);
 [[nodiscard]] Vec3 clerp(Vec3 a, Vec3 b, Float alpha);
 [[nodiscard]] Vec3 getClosestPoint(Vec3 point, const List<Vec3>& points);
-[[nodiscard]] Vec2 getClosestPoint(Vec2 point, const Vector<Vec2>& points);
+[[nodiscard]] Vec2 getClosestPoint(Vec2 point, const Vec2Vector& points);
 [[nodiscard]] Vec3 quadraticInterpolation(Vec3 start, Vec3 control, Vec3 end, Float time);
 
-[[nodiscard]] UllVec4 getBoundingBoxIds(const Vector<Vec2>& points);
+[[nodiscard]] UllVec4 getBoundingBoxIds(const Vec2Vector& points);
 
 [[nodiscard]] Rotation getRotationBetweenVectors(Vec3 start, Vec3 dest);
 
@@ -139,22 +139,22 @@ struct Orientation
 
 [[nodiscard]] Vector<Index> shuffledIndices(UInt size);
 
-[[nodiscard]] Vector<Vec3> circleOfPoints(Float radius, UInt amount);
-[[nodiscard]] Vector<Vec3> vec2VectorToVec3Vector(const Vector<Vec2>& vec2Vector);
-[[nodiscard]] Vector<Vec2> vec3VectorToVec2Vector(const Vector<Vec3>& vec3Vector);
+[[nodiscard]] Vec3Vector circleOfPoints(Float radius, UInt amount);
+[[nodiscard]] Vec3Vector vec2VectorToVec3Vector(const Vec2Vector& vec2Vector);
+[[nodiscard]] Vec2Vector vec3VectorToVec2Vector(const Vec3Vector& vec3Vector);
 
-[[nodiscard]] Vector<Matrix> matrixArrayFromPositions(const Vector<Vec3>& positions);
-[[nodiscard]] Vector<Matrix> matrixArrayFromPositions(const Vector<Vec2>& positions);
+[[nodiscard]] Vector<Matrix> matrixArrayFromPositions(const Vec3Vector& positions);
+[[nodiscard]] Vector<Matrix> matrixArrayFromPositions(const Vec2Vector& positions);
 [[nodiscard]] Vector<Matrix> matrixArrayFromCompactVec4(const Vector<Vec4>& compactTransform);
-[[nodiscard]] Vector<Matrix> matrixArrayFromPositionsAndSize(const Vector<Vec2>& positions, Float size);
-[[nodiscard]] Vector<Matrix> matrixArrayFromPositionsAndSize(const Vector<Vec3>& positions, Float size);
-[[nodiscard]] Vector<Matrix> matrixArrayFromPositionsAndDirections(const Vector<Vec2>& pos, const Vector<Vec2>& dir);
-[[nodiscard]] Vector<Matrix> matrixArrayFromPositionsDirectionsAndSizes(const Vector<Vec2>& position, const Vector<Vec2>& direction, const Vector<Float>& size);
+[[nodiscard]] Vector<Matrix> matrixArrayFromPositionsAndSize(const Vec2Vector& positions, Float size);
+[[nodiscard]] Vector<Matrix> matrixArrayFromPositionsAndSize(const Vec3Vector& positions, Float size);
+[[nodiscard]] Vector<Matrix> matrixArrayFromPositionsAndDirections(const Vec2Vector& pos, const Vec2Vector& dir);
+[[nodiscard]] Vector<Matrix> matrixArrayFromPositionsDirectionsAndSizes(const Vec2Vector& position, const Vec2Vector& direction, const Vector<Float>& size);
 
 void loopWithinCentered(Vec2& point, Float extend);
-void removePointsInRadius(Vec3 point, Vector<Vec3>& points, Float radius);
-void getClosestPoint(Vec3 point, const Vector<Vec3>& points, Index& closestId, Vec3& closestPoint);
-void spaceColonization(Vector<Vec3>& points, Vector<Vec3>& branches, Vector<Index>& connections, Float segmentSize, Float killRadius);
+void removePointsInRadius(Vec3 point, Vec3Vector& points, Float radius);
+void getClosestPoint(Vec3 point, const Vec3Vector& points, Index& closestId, Vec3& closestPoint);
+void spaceColonization(Vec3Vector& points, Vec3Vector& branches, Vector<Index>& connections, Float segmentSize, Float killRadius);
 
 template <typename T>
 T max(T a, T b)

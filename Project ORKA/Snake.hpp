@@ -11,7 +11,7 @@ struct SnakeFood;
 
 struct SnakeSnake
 {
-	Vector<Vec2> bodySegments;
+	Vec2Vector bodySegments;
 	Float        speed         = 10.0f;
 	Float        segmentRadius = 0.03f;
 	Vec2         direction     = Vec2(0, 0);

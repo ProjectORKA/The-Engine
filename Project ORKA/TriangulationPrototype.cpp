@@ -58,7 +58,7 @@ void TriangulationPrototype::render(Renderer& r, const Player& player) {
 
 	r.uniforms().setMMatrix(Matrix(1));
 
-	Vector<Vec2> lines;
+	Vec2Vector lines;
 	for (const Connection& c : connections)
 	{
 		lines.push_back(positions[c.a]);

@@ -128,7 +128,7 @@ struct SquareNeighborPrototype : Prototype
 		r.useShader("debug");
 
 		Vector<Matrix> matrices;
-		Vector<Vec3>   connections;
+		Vec3Vector   connections;
 		for(const auto p : points)
 		{
 			matrices.push_back(matrixFromPositionAndSize(p.position, 0.01f));

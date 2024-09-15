@@ -177,7 +177,7 @@ struct WeirdSphereNode
 		if(se) se->getMatrices(matrices);
 	}
 
-	void getLines(Vector<Vec3>& lines) const
+	void getLines(Vec3Vector& lines) const
 	{
 		if(parent)
 		{
@@ -213,7 +213,7 @@ struct WeirdSphereAlgorithmPrototype : Prototype
 	const ULL  numPoints    = 1;
 
 	DebugPlayer      player;
-	Vector<Vec3>     points;
+	Vec3Vector     points;
 	WeirdSphereNode* rootNode = nullptr;
 
 	void addPoint()
@@ -246,7 +246,7 @@ struct WeirdSphereAlgorithmPrototype : Prototype
 		//rootNode->getMatrices(matrices);
 		//rootNode->getMatricesLowest(matrices);
 
-		Vector<Vec3> lines;
+		Vec3Vector lines;
 		rootNode->getLines(lines);
 
 		r.lines(lines);

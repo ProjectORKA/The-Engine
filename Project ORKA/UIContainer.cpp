@@ -21,28 +21,29 @@ void UIContainer::render(Window& window, const TiledRectangle renderArea)
 {
 	if(hasBackground)
 	{
-		DepthTestOverride override(false, window.renderer);
-		window.renderer.screenSpace();
+		DepthTestOverride override(window.renderer, false);
 		window.renderer.useShader("color");
+		window.renderer.screenSpace();
 		window.renderer.fill(backgroundColor);
 		window.renderer.uniforms().setMMatrix(matrixFromPositionAndSize(renderArea.position + IVec2(20), renderArea.size - IVec2(40)));
-		window.renderer.plane();
+		window.renderer.rectangle();
 	}
 
-	for(UInt i = 0; i < contents.size(); i++)
+	const UInt contentCount = contents.size();
+
+	for(UInt i = 0; i < contentCount; i++)
 	{
 		TiledRectangle a = renderArea;
 		if(renderVertical)
 		{
-			a.size.y /= contents.size();
+			a.size.y /= contentCount;
 			a.position.y -= a.size.y * i;
 		}
 		else
 		{
-			a.size.x /= contents.size();
+			a.size.x /= contentCount;
 			a.position.x += a.size.x * i;
 		}
-
 		contents[i]->render(window, a);
 	}
 }

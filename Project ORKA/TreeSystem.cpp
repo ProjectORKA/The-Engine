@@ -37,14 +37,14 @@ void TreeGenerator::render(Renderer& renderer) const
 	tree.render(renderer, branches);
 }
 
-void treeGeneration(Vector<Vec3>& leaves, Vector<Vec3>& branches, Vector<Index>& connections, const Float segmentSize, const Float killRadius, const Float leafPull)
+void treeGeneration(Vec3Vector& leaves, Vec3Vector& branches, Vector<Index>& connections, const Float segmentSize, const Float killRadius, const Float leafPull)
 {
 	if(leaves.empty()) return;
 	if(branches.empty()) branches.emplace_back(0);
 	if(connections.empty()) connections.push_back(0);
 
-	Vector<Vec3> pullBranches(branches.size(), Vec3(0));
-	Vector<Vec3> pullLeaves(leaves.size(), Vec3(0));
+	Vec3Vector pullBranches(branches.size(), Vec3(0));
+	Vec3Vector pullLeaves(leaves.size(), Vec3(0));
 
 	// check every space
 	for(Int i = 0; i < leaves.size(); i++)
@@ -58,7 +58,7 @@ void treeGeneration(Vector<Vec3>& leaves, Vector<Vec3>& branches, Vector<Index>&
 		pullLeaves[i] -= delta;
 	}
 
-	Vector<Vec3> newBranches;
+	Vec3Vector newBranches;
 
 	// calculate branches
 	for(int i = 0; i < pullBranches.size(); i++)

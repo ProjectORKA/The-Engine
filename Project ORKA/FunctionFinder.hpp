@@ -7,18 +7,18 @@
 struct FunctionFinderRenderer final : GameRenderer
 {
 	// math
-	Vector<Vec2> data;
-	Vector<Vec2> best;
-	Float        learnRate      = 10;
-	Bool         threading      = true;
-	Float        bestA          = 5.8;
-	Float        bestB          = -1.6f;
-	Float        bestC          = 3.1f;
-	Float        bestD          = 0.0f;
-	Bool         render2D       = true;
-	Bool         disableUi      = false;
-	Vec4         functionBounds = Vec4(0);
-	Float        bestScore      = std::numeric_limits<float>::lowest();
+	Vec2Vector data;
+	Vec2Vector best;
+	Float      learnRate      = 10;
+	Bool       threading      = true;
+	Float      bestA          = 5.8;
+	Float      bestB          = -1.6f;
+	Float      bestC          = 3.1f;
+	Float      bestD          = 0.0f;
+	Bool       render2D       = true;
+	Bool       disableUi      = false;
+	Vec4       functionBounds = Vec4(0);
+	Float      bestScore      = std::numeric_limits<float>::lowest();
 
 	Mutex       mutex;
 	DebugPlayer player;

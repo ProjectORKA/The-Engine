@@ -25,6 +25,11 @@ void Renderer::sync()
 
 void Renderer::plane()
 {
+	primitivesRenderer.plane(uniforms());
+}
+
+void Renderer::rectangle()
+{
 	primitivesRenderer.rectangle(uniforms());
 }
 
@@ -64,8 +69,6 @@ void Renderer::create()
 
 void Renderer::destroy()
 {
-	//lineRenderer.destroy();
-	//pointRenderer.destroy();
 	primitivesRenderer.destroy();
 
 	idFramebuffer.destroy();
@@ -85,11 +88,11 @@ void Renderer::screenSpace()
 	uniforms().setPMatrix(Matrix(1));
 }
 
-void Renderer::rerenderMesh()
-{
-	// simply renders the previous mesh again (saves performance)
-	meshSystem.currentMesh().render(uniforms());
-}
+//void Renderer::rerenderMesh()
+//{
+//	// simply renders the previous mesh again (saves performance)
+//	meshSystem.currentMesh().render(uniforms());
+//}
 
 Area Renderer::getArea() const
 {
@@ -217,10 +220,7 @@ void Renderer::screenSpaceFromTopLeft()
 	uniforms().setPMatrix(matrix);
 }
 
-DepthTestOverride::~DepthTestOverride()
-{
-	this->renderer->setDepthTest(stored);
-}
+
 
 void Renderer::blendModeAdditive() const
 {
@@ -286,12 +286,12 @@ Matrix Renderer::getScreenSpaceMatrix() const
 	return screenSpaceMatrix(width, height);
 }
 
-void Renderer::line(const Vector<Vec2>& line)
+void Renderer::line(const Vec2Vector& line)
 {
 	primitivesRenderer.line(line, uniforms());
 }
 
-void Renderer::line(const Vector<Vec3>& line)
+void Renderer::line(const Vec3Vector& line)
 {
 	primitivesRenderer.line(line, uniforms());
 }
@@ -308,22 +308,22 @@ void Renderer::renderSky(const Camera& camera)
 	setDepthTest(true);
 }
 
-void Renderer::lines(const Vector<Vec2>& lines)
+void Renderer::lines(const Vec2Vector& lines)
 {
 	primitivesRenderer.lines(lines, uniforms());
 }
 
-void Renderer::lines(const Vector<Vec3>& lines)
+void Renderer::lines(const Vec3Vector& lines)
 {
 	primitivesRenderer.lines(lines, uniforms());
 }
 
-void Renderer::points(const Vector<Vec2>& points)
+void Renderer::points(const Vec2Vector& points)
 {
 	primitivesRenderer.points(points, uniforms());
 }
 
-void Renderer::points(const Vector<Vec3>& points)
+void Renderer::points(const Vec3Vector& points)
 {
 	primitivesRenderer.points(points, uniforms());
 }
@@ -350,13 +350,13 @@ void Renderer::setCulling(const Bool culling) const
 
 void Renderer::line(const Vec3 start, const Vec3 end)
 {
-	const Vector<Vec3> line = {start, end};
+	const Vec3Vector line = {start, end};
 	primitivesRenderer.line(line, uniforms());
 }
 
 void Renderer::line(const Vec2 start, const Vec2 end)
 {
-	const Vector<Vec3> line = {Vec3(start, 0.0f), Vec3(end, 0.0f)};
+	const Vec3Vector line = {Vec3(start, 0.0f), Vec3(end, 0.0f)};
 	primitivesRenderer.line(line, uniforms());
 }
 
@@ -417,15 +417,20 @@ void Renderer::setDepthTest(const Bool isUsingDepth) const
 
 void Renderer::setAlphaBlending(const Bool blending) const
 {
-	if (blending)
+	if (openGlState.blending != blending)
 	{
-		OpenGL::apiSetBlending(true);
-		OpenGL::apiBlendFunc(BlendFunction::SrcAlpha, BlendFunction::OneMinusSrcAlpha);
-		OpenGL::apiBlendEquation(BlendEquation::Add);
-	}
-	else
-	{
-		OpenGL::apiSetBlending(false);
+		if (blending)
+		{
+			openGlState.blending = true;
+			OpenGL::apiSetBlending(true);
+			OpenGL::apiBlendFunc(BlendFunction::SrcAlpha, BlendFunction::OneMinusSrcAlpha);
+			OpenGL::apiBlendEquation(BlendEquation::Add);
+		}
+		else
+		{
+			openGlState.blending = false;
+			OpenGL::apiSetBlending(false);
+		}
 	}
 }
 
@@ -449,13 +454,13 @@ void Renderer::useTexture(const Name& name, const Index position)
 	textureSystem.use(name, position);
 }
 
-void Renderer::line(const Vector<Vec2>& line, const Matrix& matrix)
+void Renderer::line(const Vec2Vector& line, const Matrix& matrix)
 {
 	uniforms().setMMatrix(matrix);
 	primitivesRenderer.line(line, uniforms());
 }
 
-void Renderer::lines(const Vector<Vec2>& lines, const Matrix& matrix)
+void Renderer::lines(const Vec2Vector& lines, const Matrix& matrix)
 {
 	uniforms().setMMatrix(matrix);
 	primitivesRenderer.lines(lines, uniforms());
@@ -504,13 +509,6 @@ void Renderer::addRenderObject(const RenderObjectNames& renderObjectNames)
 	renderObjectSystem.addRenderObject(renderObjectNames);
 }
 
-DepthTestOverride::DepthTestOverride(const Bool value, Renderer& renderer)
-{
-	this->renderer = &renderer;
-	stored         = openGlState.depthTest;
-	this->renderer->setDepthTest(value);
-}
-
 void Renderer::renderAtmosphere(const Player& player, const Vec3 sunDirection)
 {
 	const Bool culling = getCulling();
@@ -531,12 +529,12 @@ void Renderer::fill(const Float r, const Float g, const Float b, const Float a)
 	fill(Vec4(r, g, b, a));
 }
 
-void Renderer::renderMeshInstanced(const Name& name, const Vector<Vec2>& positions)
+void Renderer::renderMeshInstanced(const Name& name, const Vec2Vector& positions)
 {
 	renderMeshInstanced(name, matrixArrayFromPositions(positions));
 }
 
-void Renderer::renderMeshInstanced(const Name& name, const Vector<Vec3>& positions)
+void Renderer::renderMeshInstanced(const Name& name, const Vec3Vector& positions)
 {
 	renderMeshInstanced(name, matrixArrayFromPositions(positions));
 }
@@ -546,7 +544,7 @@ void Renderer::renderMeshInstanced(const Name& name, const Vector<Matrix>& trans
 	meshSystem.renderInstanced(uniforms(), name, transforms);
 }
 
-void Renderer::renderMeshInstanced(const Name& name, const Vector<Vec3>& positions, const Float size)
+void Renderer::renderMeshInstanced(const Name& name, const Vec3Vector& positions, const Float size)
 {
 	renderMeshInstanced(name, matrixArrayFromPositionsAndSize(positions, size));
 }
@@ -554,7 +552,7 @@ void Renderer::renderMeshInstanced(const Name& name, const Vector<Vec3>& positio
 void Renderer::postProcess(const Name& name, const Framebuffer& source, const Framebuffer& destination)
 {
 	// draw to second buffer
-	DepthTestOverride depthOverride(false, *this);
+	DepthTestOverride depthOverride(*this, false);
 
 	setRenderRegion(TiledRectangle(destination.getWidth(), destination.getHeight()));
 
@@ -577,7 +575,7 @@ void Renderer::setAlphaBlending(const Bool enable, const BlendFunction src, cons
 	OpenGL::apiBlendEquation(eq);
 }
 
-void Renderer::renderMeshInstanced(const Name& name, const Vector<Vec2>& positions, const Vector<Vec2>& directions, const Vector<Float>& scales)
+void Renderer::renderMeshInstanced(const Name& name, const Vec2Vector& positions, const Vec2Vector& directions, const Vector<Float>& scales)
 {
 	renderMeshInstanced(name, matrixArrayFromPositionsDirectionsAndSizes(positions, directions, scales));
 }

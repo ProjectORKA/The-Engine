@@ -8,7 +8,7 @@ void testParameters(FunctionFinderRenderer& ff)
 {
 	Float fitness = 0;
 
-	Vector<Vec2>  estimate;
+	Vec2Vector  estimate;
 	estimate.resize(ff.data.size());
 	Vector<Float> difference;
 	difference.resize(ff.data.size());
@@ -128,8 +128,6 @@ void FunctionFinderRenderer::render(Window& window, const TiledRectangle area)
 		r.normalizedSpace();
 		r.fill(1);
 		r.line(data, plotMatrix());
-		//r.fill(1, 0, 0);
-		//r.line(estimate, plotMatrix());
 		r.fill(0, 0, 1);
 		r.line(best, plotMatrix());
 	}

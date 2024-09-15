@@ -4,12 +4,12 @@
 #include "Prototype.hpp"
 #include "Random.hpp"
 
-Vector<ULL> getConvexHullPointIDs(Vector<Vec2>& points);
+Vector<ULL> getConvexHullPointIDs(Vec2Vector& points);
 
 struct ParallelizedConvexHullPrototype final : Prototype
 {
 	DebugPlayer  player;
-	Vector<Vec2> points;
+	Vec2Vector points;
 	Vector<ULL>  convexHullIds;
 	ULL          pointCount       = 10000;
 	Float        extend           = 100.0f;

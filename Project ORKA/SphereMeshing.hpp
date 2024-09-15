@@ -5,7 +5,7 @@ using Face = Index[3];
 
 struct Mesh
 {
-	Vector<Vec3>  positions;
+	Vec3Vector  positions;
 	Vector<Index> faces;
 
 	// void removeVerticesInsideSphere(Sphere s){
@@ -24,7 +24,7 @@ struct SphereMeshing
 {
 	Bool               loaded = false;
 	PointCloud         terrain;
-	Vector<Vec3>       air;
+	Vec3Vector       air;
 	Vector<Vec4>       spheres;
 	PointCloudRenderer pcRenderer;
 

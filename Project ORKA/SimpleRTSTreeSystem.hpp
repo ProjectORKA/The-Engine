@@ -25,8 +25,8 @@ struct SimpleRtsTreeSystem : SimpleRtsSystem
 	Vector<Float> ages;
 	Vector<Float> scales;
 	Vector<Float> maxHeights;
-	Vector<Vec2>  positions;
-	Vector<Vec2>  directions;
+	Vec2Vector  positions;
+	Vec2Vector  directions;
 	Vector<Float> lifeExpectancies;
 
 	Float calculateTreeSize(UInt id) const;

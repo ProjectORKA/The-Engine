@@ -32,12 +32,12 @@ struct CpuMesh
 	BufferUsage   drawMode      = BufferUsage::StaticDraw;
 	PrimitiveMode primitiveMode = PrimitiveMode::Triangles;
 
-	Vector<Vec3>  positions;			// 0
-	Vector<Vec2>  textureCoordinates;	// 1
-	Vector<Vec3>  normals;				// 2
-	Vector<Vec3>  tangents;				// 3
-	Vector<Vec3>  biTangents;			// 4
-	Vector<Vec3>  vertexColors;			// 5
+	Vec3Vector  positions;			// 0
+	Vec2Vector  textureCoordinates;	// 1
+	Vec3Vector  normals;				// 2
+	Vec3Vector  tangents;				// 3
+	Vec3Vector  biTangents;			// 4
+	Vec3Vector  vertexColors;			// 5
 	Vector<Index> indices;
 
 	[[nodiscard]] Bool isLoaded() const;

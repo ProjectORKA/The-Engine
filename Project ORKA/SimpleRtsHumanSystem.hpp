@@ -40,11 +40,11 @@ struct SimpleRtsHumanSystem : SimpleRtsSystem
 	Vector<SimpleRtsHumanState> states;
 	Vector<Float>               hunger;
 	Vector<String>              surNames;
-	Vector<Vec2>                positions;
-	Vector<Vec2>                directions;
+	Vec2Vector                positions;
+	Vec2Vector                directions;
 	//targets
 	Vector<Index>				targetId;
-	Vector<Vec2>                targetPositions;
+	Vec2Vector                targetPositions;
 
 	void render(Renderer& renderer) const override;
 	void spawnHuman(const SimpleRtsSimulation& sim);

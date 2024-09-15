@@ -200,9 +200,6 @@
     <ClCompile Include="IndexBufferObject.cpp">
       <Filter>Systems\UserInterface\Window\Renderer\MeshSystem\GPUMesh\IndexBufferObject</Filter>
     </ClCompile>
-    <ClCompile Include="LineRenderer.cpp">
-      <Filter>Systems\UserInterface\Window\Renderer\LineRenderer</Filter>
-    </ClCompile>
     <ClCompile Include="MatrixSystem.cpp">
       <Filter>Systems\UserInterface\Window\Renderer\MatrixSystem</Filter>
     </ClCompile>
@@ -439,6 +436,12 @@
     </ClCompile>
     <ClCompile Include="Engine.cpp">
       <Filter>Systems\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderingOverrides.cpp">
+      <Filter>Systems\UserInterface\Window\Renderer\RenderingOverrides</Filter>
+    </ClCompile>
+    <ClCompile Include="Voxels.cpp">
+      <Filter>Apps\3D Apps\PerformantVoxelRenderer</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -696,9 +699,6 @@
     </ClInclude>
     <ClInclude Include="KeyMap.hpp">
       <Filter>Systems\UserInterface\Window\Input</Filter>
-    </ClInclude>
-    <ClInclude Include="LineRenderer.hpp">
-      <Filter>Systems\UserInterface\Window\Renderer\LineRenderer</Filter>
     </ClInclude>
     <ClInclude Include="MatrixSystem.hpp">
       <Filter>Systems\UserInterface\Window\Renderer\MatrixSystem</Filter>
@@ -1002,6 +1002,15 @@
     </ClInclude>
     <ClInclude Include="LabyrinthGeneratorPrototype.hpp">
       <Filter>Apps\3D Apps\Prototyping\Prototypes\Labyrinth Generator</Filter>
+    </ClInclude>
+    <ClInclude Include="GlobalUniformData.hpp">
+      <Filter>Systems\UserInterface\Window\Renderer\ShaderSystem\Uniforms</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderingOverrides.hpp">
+      <Filter>Systems\UserInterface\Window\Renderer\RenderingOverrides</Filter>
+    </ClInclude>
+    <ClInclude Include="Voxels.hpp">
+      <Filter>Apps\3D Apps\PerformantVoxelRenderer</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1529,9 +1538,6 @@
     <Filter Include="Systems\UserInterface\Window\Renderer\MeshSystem\CPUMesh">
       <UniqueIdentifier>{153472d1-2c13-4d2d-ae2a-21047476543d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Systems\UserInterface\Window\Renderer\LineRenderer">
-      <UniqueIdentifier>{5963a845-f7ae-4b3d-9d14-981c8f782f50}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Systems\UserInterface\Window\Renderer\Framebuffer">
       <UniqueIdentifier>{3ebce9a2-b762-45a0-abeb-807fbc66b43d}</UniqueIdentifier>
     </Filter>
@@ -1828,6 +1834,12 @@
     </Filter>
     <Filter Include="Apps\2D Apps\ImGui">
       <UniqueIdentifier>{8422808a-175e-4e8f-b8e9-6d2153991cf2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Systems\UserInterface\Window\Renderer\RenderingOverrides">
+      <UniqueIdentifier>{c0656f0c-f556-491f-bb9c-df54d8612c42}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Apps\3D Apps\PerformantVoxelRenderer">
+      <UniqueIdentifier>{bab7a4d7-0f5b-411f-bdc3-efa042181272}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

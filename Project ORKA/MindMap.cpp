@@ -83,7 +83,7 @@ void MindMap::render(Renderer& renderer) const
 	// render connections
 	renderer.fill(Color(0.5, 0.5, 0.5, 1));
 
-	Vector<Vec2> lines;
+	Vec2Vector lines;
 
 	for (const auto connection : connections)
 	{
@@ -94,7 +94,7 @@ void MindMap::render(Renderer& renderer) const
 
 	// render nodes
 	renderer.fill(Color(1));
-	Vector<Vec3> posArray;
+	Vec3Vector posArray;
 	for (auto position : positions) posArray.emplace_back(position, 0.0f);
 
 	renderer.renderMeshInstanced("centeredPlane", posArray);

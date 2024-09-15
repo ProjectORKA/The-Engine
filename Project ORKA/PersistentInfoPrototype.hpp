@@ -234,7 +234,7 @@ struct PersistentInfoPrototype : Prototype
 		r.fill(1);
 		//for(Int i = 0; i < points.size(); i++) points[i].render(r,i);
 
-		Vector<Vec2> lines;
+		Vec2Vector lines;
 		for (const Connection& connection : connections)
 		{
 			lines.push_back(points[connection.a].position);

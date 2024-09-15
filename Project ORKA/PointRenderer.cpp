@@ -13,7 +13,7 @@
 //	gpuMesh.unload();
 //}
 
-//void PointRenderer::update(const Vector<Vec3>& points)
+//void PointRenderer::update(const Vec3Vector& points)
 //{
 //	if(gpuMesh.isLoaded()) gpuMesh.unload();
 //	cpuMesh.indices.clear();
@@ -23,13 +23,13 @@
 //	gpuMesh.upload(cpuMesh);
 //}
 
-//void PointRenderer::render(Renderer& renderer, const Vector<Vec3>& points)
+//void PointRenderer::render(Renderer& renderer, const Vec3Vector& points)
 //{
 //	update(points);
 //	gpuMesh.render(renderer.uniforms());
 //}
 //
-//void PointRenderer::render(Renderer& renderer, const Vector<Vec2>& points)
+//void PointRenderer::render(Renderer& renderer, const Vec2Vector& points)
 //{
 //	render(renderer, vec2VectorToVec3Vector(points));
 //}

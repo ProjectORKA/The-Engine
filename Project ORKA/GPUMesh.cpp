@@ -101,7 +101,7 @@ void GpuMesh::render(Uniforms& uniforms) const
 	}
 }
 
-void GpuMesh::updateNormalBuffer(const Vector<Vec3>& normals) const
+void GpuMesh::updateNormalBuffer(const Vec3Vector& normals) const
 {
 	if (loaded) normalBuffer.update(normals);
 }
@@ -111,27 +111,27 @@ void GpuMesh::updateIndexBuffer(const Vector<unsigned int>& indices)
 	if (loaded) indexBuffer.update(indices);
 }
 
-void GpuMesh::updateTangentBuffer(const Vector<Vec3>& tangents) const
+void GpuMesh::updateTangentBuffer(const Vec3Vector& tangents) const
 {
 	if (loaded) tangentBuffer.update(tangents);
 }
 
-void GpuMesh::updatePositionBuffer(const Vector<Vec3>& positions) const
+void GpuMesh::updatePositionBuffer(const Vec3Vector& positions) const
 {
 	if (loaded) positionBuffer.update(positions);
 }
 
-void GpuMesh::updateBiTangentBuffer(const Vector<Vec3>& biTangents) const
+void GpuMesh::updateBiTangentBuffer(const Vec3Vector& biTangents) const
 {
 	if (loaded) biTangentBuffer.update(biTangents);
 }
 
-void GpuMesh::updateVertexColorBuffer(const Vector<Vec3>& vertexColors) const
+void GpuMesh::updateVertexColorBuffer(const Vec3Vector& vertexColors) const
 {
 	if (loaded) vertexColorBuffer.update(vertexColors);
 }
 
-void GpuMesh::updateTextureCoordinateBuffer(const Vector<Vec2>& textureCoordinates) const
+void GpuMesh::updateTextureCoordinateBuffer(const Vec2Vector& textureCoordinates) const
 {
 	if (loaded) textureCoordinateBuffer.update(textureCoordinates);
 }

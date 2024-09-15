@@ -11,22 +11,24 @@ private:
 	GpuMesh planeMesh;
 	GpuMesh pointsMesh;
 	GpuMesh circleMesh;
+	GpuMesh rectangleMesh;
 	GpuMesh wireframeCubeMesh;
 	GpuMesh wireframeCubeCenteredMesh;
 
 public:
 	void create();
 	void destroy();
+	void plane(Uniforms& uniforms) const;
 	void rectangle(Uniforms& uniforms) const;
 	void wireframeCube(Uniforms& uniforms) const;
 	void wireframeCubeCentered(Uniforms& uniforms) const;
-	void points(const Vector<Vec3>& pos, Uniforms& uniforms);
-	void points(const Vector<Vec2>& pos, Uniforms& uniforms);
-	void line(const Vector<Vec2>& positions, Uniforms& uniforms);
-	void line(const Vector<Vec3>& positions, Uniforms& uniforms);
-	void lines(const Vector<Vec2>& positions, Uniforms& uniforms);
-	void lines(const Vector<Vec3>& positions, Uniforms& uniforms);
+	void points(const Vec3Vector& pos, Uniforms& uniforms);
+	void points(const Vec2Vector& pos, Uniforms& uniforms);
+	void line(const Vec2Vector& positions, Uniforms& uniforms);
+	void line(const Vec3Vector& positions, Uniforms& uniforms);
+	void lines(const Vec2Vector& positions, Uniforms& uniforms);
+	void lines(const Vec3Vector& positions, Uniforms& uniforms);
 	void circles(const Vector<Matrix>& matrices, Uniforms& uniforms) const;
 	void wireframeCubes(const Vector<Matrix>& matrices, Uniforms& uniforms) const;
-	void lines(const Vector<Vec3>& positions, const Vector<Index>& indices, Uniforms& uniforms);
+	void lines(const Vec3Vector& positions, const Vector<Index>& indices, Uniforms& uniforms);
 };

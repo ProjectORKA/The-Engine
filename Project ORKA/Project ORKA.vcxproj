@@ -43,6 +43,7 @@
     <ClInclude Include="DNDBase.hpp" />
     <ClInclude Include="Fonts.hpp" />
     <ClInclude Include="FunctionFinder.hpp" />
+    <ClInclude Include="GlobalUniformData.hpp" />
     <ClInclude Include="Hash.hpp" />
     <ClInclude Include="ImageViewerDatabase.hpp" />
     <ClInclude Include="ImageViewerResource.hpp" />
@@ -58,10 +59,12 @@
     <ClCompile Include="Orbital Oblivion.cpp" />
     <ClCompile Include="ParallelizedConvexHullPrototype.cpp" />
     <ClCompile Include="PerformanceGraph.cpp" />
+    <ClCompile Include="Voxels.cpp" />
     <ClCompile Include="Platform.cpp" />
     <ClCompile Include="PointRenderer.cpp" />
     <ClCompile Include="PrimitivesRenderer.cpp" />
     <ClCompile Include="PrototypingSandbox.cpp" />
+    <ClCompile Include="RenderingOverrides.cpp" />
     <ClCompile Include="SDFRenderer.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Collision.cpp" />
@@ -82,7 +85,6 @@
     <ClCompile Include="InfiniteDetailPrototype.cpp" />
     <ClCompile Include="JobSystem.cpp" />
     <ClCompile Include="LevelledGraph.cpp" />
-    <ClCompile Include="LineRenderer.cpp" />
     <ClCompile Include="MathDNA.cpp" />
     <ClCompile Include="MatrixSystem.cpp" />
     <ClCompile Include="MelonPlayer.cpp" />
@@ -185,8 +187,10 @@
     <ClInclude Include="LockFreeQueue.hpp" />
     <ClInclude Include="Music Visualizer.hpp" />
     <ClInclude Include="PerformanceGraph.hpp" />
+    <ClInclude Include="Voxels.hpp" />
     <ClInclude Include="PersistentInfoPrototype.hpp" />
     <ClInclude Include="PrimitivesRenderer.hpp" />
+    <ClInclude Include="RenderingOverrides.hpp" />
     <ClInclude Include="SimpleRtsBerryBushSystem.hpp" />
     <ClInclude Include="SimpleRtsBodySystem.hpp" />
     <ClInclude Include="SimpleRtsBushSystem.hpp" />
@@ -238,7 +242,6 @@
     <ClInclude Include="Input.hpp" />
     <ClInclude Include="JobSystem.hpp" />
     <ClInclude Include="KeyMap.hpp" />
-    <ClInclude Include="LineRenderer.hpp" />
     <ClInclude Include="Logger.hpp" />
     <ClInclude Include="MathDNA.hpp" />
     <ClInclude Include="MatrixSystem.hpp" />

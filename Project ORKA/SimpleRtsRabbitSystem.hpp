@@ -14,8 +14,8 @@ struct SimpleRtsRabbitSystem : SimpleRtsSystem
 	const Float rabbitJitter = 10;
 
 	Vector<Float> age;
-	Vector<Vec2>  positions;
-	Vector<Vec2>  velocity;
+	Vec2Vector  positions;
+	Vec2Vector  velocity;
 
 	void render(Renderer& renderer) const override;
 	void spawnRabbit(const SimpleRtsSimulation& sim);

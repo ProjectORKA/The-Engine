@@ -7,7 +7,7 @@
 
 struct KDTreeBase
 {
-	Vector<Vec3> points;
+	Vec3Vector points;
 
 	[[nodiscard]] SizeT pointCount() const;
 	[[nodiscard]] Float getPoint(SizeT id, SizeT axis) const;
@@ -22,9 +22,9 @@ struct KDTreeBase
 struct KDTreePrototype final : Prototype
 {
 	Time         time;
-	Vector<Vec3> lines;
+	Vec3Vector lines;
 	DebugPlayer player;
-	Vector<Vec3> velocity;
+	Vec3Vector velocity;
 	KDTreeBase   pointCloud;
 	SizeT        pointCount = 1000;
 
@@ -35,11 +35,11 @@ struct KDTreePrototype final : Prototype
 
 struct KDTreePrototype2 : Prototype
 {
-	Vector<Vec3> velocity;
+	Vec3Vector velocity;
 	Time         time;
-	Vector<Vec3> points;
+	Vec3Vector points;
 	SizeT        pointCount = 1;
-	Vector<Vec3> lines;
+	Vec3Vector lines;
 
 	void action(Renderer& r);
 	void create(Renderer& r, Player& player);
