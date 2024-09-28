@@ -14,9 +14,8 @@ OutFile::~OutFile()
 
 ULL InFile::fileSize()
 {
-	ULL size = 0;
 	file.seekg(0, std::ios::end);
-	size = file.tellg();
+	const ULL size = file.tellg();
 	file.seekg(0, std::ios::beg);
 	return size;
 }

@@ -18,7 +18,17 @@ void ResourceManager::create()
 		if(executablePath == "") logError("Executable path not set!");
 		orkaPath = makeAbsolute(executablePath);
 
-		// in in we will always have a "Data" and "Cache" folder
+		// Check if the path ends with "Debug" or "Release"
+		if (String folderName = getFolderName(orkaPath); folderName == "Debug" || folderName == "Release") {
+			// ORKA is run in dev environment
+			// change paths accordingly
+			orkaPath = getParentFolder(orkaPath);
+			orkaPath = getParentFolder(orkaPath);
+			orkaPath = getParentFolder(orkaPath);
+		    orkaPath /= "Project ORKA\\";
+	    }
+		
+		// we will always have a "Data" and "Cache" folder
 		// "Data" contains all resources like meshes, shaders, levels, textures, scrips, etc
 		orkaDataPath = orkaPath;
 		orkaDataPath.append("Data");
@@ -33,6 +43,7 @@ void ResourceManager::create()
 
 		// setup data folder
 		if(!doesPathExist(orkaDataPath)) createDirectory(orkaDataPath);
+		
 		// setup cache folder
 		if(!doesPathExist(orkaCachePath)) createDirectory(orkaCachePath);
 

@@ -76,12 +76,11 @@ void KDTreePrototype::render(Renderer& r, const Player& player)
 
 	for(SizeT i = 0; i < pointCount; i++)
 	{
-		Vec3                            currentPoint    = pointCloud.points[i];
-		SizeT                           connectionCount = 0;
-		Float                           searchRadius    = 500.0f;
+		Vec3                            currentPoint = pointCloud.points[i];
+		Float                           searchRadius = 500.0f;
 		Vector<ResultItem<UInt, Float>> searchResult;
-		connectionCount = kdTree.radiusSearch(&currentPoint.x, searchRadius, searchResult);
-		Vec3 pushForce  = Vec3(0);
+		SizeT                           connectionCount = kdTree.radiusSearch(&currentPoint.x, searchRadius, searchResult);
+		Vec3                            pushForce       = Vec3(0);
 
 		for(SizeT j = 1; j < connectionCount; j++)
 		{

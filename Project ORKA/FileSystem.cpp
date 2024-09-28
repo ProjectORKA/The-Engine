@@ -18,11 +18,6 @@ Path getDirectory(Path path)
 	return path;
 }
 
-Bool hasExtension(const Path& path)
-{
-	return path.has_extension();
-}
-
 Path removeFileName(Path path)
 {
 	if (hasExtension(path)) return path.remove_filename();
@@ -58,20 +53,18 @@ void deleteFile(const Path& path)
 	}
 }
 
-UInt getFileSize(const Path& path)
+ULL getFileSize(const Path& path)
 {
 	return file_size(path);
 }
 
 String loadString(const Path& path)
 {
-	String        s;
-	std::ifstream stream(path, std::ios::in);
-	if (stream.is_open())
+	if (std::ifstream stream(path, std::ios::in); stream.is_open())
 	{
-		std::stringstream sstr;
-		sstr << stream.rdbuf();
-		s = sstr.str();
+		std::stringstream stringStream;
+		stringStream << stream.rdbuf();
+		String s = stringStream.str();
 		stream.close();
 		return s;
 	}
@@ -82,6 +75,11 @@ String loadString(const Path& path)
 Path makeAbsolute(const Path& path)
 {
 	return absolute(path);
+}
+
+Bool hasExtension(const Path& path)
+{
+	return path.has_extension();
 }
 
 Bool doesPathExist(const Path& path)
@@ -99,7 +97,7 @@ String getFileName(const Path& path)
 	if (path.has_filename())
 	{
 		// there seems to be an issue with, for example japanese characters, that make this conversion necessary
-		WString                                          wideString = path.filename().wstring();
+		const WString                                    wideString = path.filename().wstring();
 		std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
 		return converter.to_bytes(wideString);
 	}
@@ -107,9 +105,28 @@ String getFileName(const Path& path)
 	return "error";
 }
 
+String getFolderName(const Path& path)
+{
+	if (is_directory(path))
+	{
+		if (path.string().back() == '\\' || path.string().back() == '/')
+		{
+			return path.parent_path().filename().string();
+		}
+		return path.filename().string();
+	}
+	logError("Path is not folder!");
+	return "";
+}
+
 void setCurrentPath(const Path& path)
 {
 	std::filesystem::current_path(path);
+}
+
+Path getParentFolder(const Path& path)
+{
+	return path.parent_path();
 }
 
 FileTime getLastWrittenTime(const Path& path)
@@ -151,13 +168,6 @@ Vector<Path> getAllFilesInDirectory(const Path& path)
 	return paths;
 }
 
-Path nameToPath(const Name& name, const String& fileType)
-{
-	if (fileType == ".fbx") return "Data/objects/" + toString(name) + ".fbx";
-	if (fileType == ".mesh") return "Data/meshes/" + toString(name) + ".mesh";
-	logError("Filetype not supported!");
-}
-
 void copyFile(const Path& source, const Path& destination)
 {
 	logDebug("Copying file (" + source.string() + ") to (" + destination.string() + ")");
@@ -188,10 +198,8 @@ void moveFile(const Path& source, const Path& destination)
 	logDebug(sourceFileSize);
 	logDebug(destFileSize);
 
-	const Bool fileValid = doesPathExist(destination);
-
 	//comp sizes
-	if (fileValid && sourceFileSize == destFileSize)
+	if (const Bool fileValid = doesPathExist(destination); fileValid && sourceFileSize == destFileSize)
 	{
 		deleteFile(source);
 	}
@@ -204,28 +212,25 @@ void moveFile(const Path& source, const Path& destination)
 FileTime getLastWrittenTimeOfFiles(const Vector<Path>& paths)
 {
 	FileTime t1;
-	for (auto p : paths)
+	for (const auto& p : paths)
 	{
-		FileTime t2 = getLastWrittenTime(p);
-		if (t2 > t1) t1 = t2;
+		if (FileTime t2 = getLastWrittenTime(p); t2 > t1) t1 = t2;
 	}
 	return t1;
 }
 
 Vector<Path> getFilesInDirectory(const Path& path, const Vector<String>& filter)
 {
-	Vector<Path> filesInDirectory;
-	Vector<Path> outputFiles;
-	filesInDirectory = getFilesInDirectory(path);
+	Vector<Path>       outputFiles;
+	const Vector<Path> filesInDirectory = getFilesInDirectory(path);
 	for (const Path& filePath : filesInDirectory) for (const String& extension : filter) if (getFileExtension(filePath) == extension) outputFiles.push_back(filePath);
 	return outputFiles;
 }
 
 Vector<Path> getAllFilesInDirectory(const Path& path, const Vector<String>& filter)
 {
-	Vector<Path> filesInDirectory;
-	Vector<Path> outputFiles;
-	filesInDirectory = getAllFilesInDirectory(path);
+	Vector<Path>       outputFiles;
+	const Vector<Path> filesInDirectory = getAllFilesInDirectory(path);
 	for (const Path& filePath : filesInDirectory) for (const String& extension : filter) if (getFileExtension(filePath) == extension) outputFiles.push_back(filePath);
 	return outputFiles;
 }
