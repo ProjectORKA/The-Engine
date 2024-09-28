@@ -2,6 +2,7 @@
 #include "FileSystem.hpp"
 #include "UserInterface.hpp"
 #include "Profiler.hpp"
+#include "ResourceManager.hpp"
 
 UShort nextWindowId = 0;
 
@@ -353,7 +354,9 @@ void Window::createApiWindow(const String& title, const Area size)
 
 		glfwSetWindowUserPointer(apiWindow, this);
 
-		setIcon("Data/textures/ORKA Logo.png");
+		const Path iconPath = resourceManager.getOrkaDataPath().string() + "\\textures\\ORKA Logo.png";
+
+		setIcon(iconPath);
 
 		if(External::glfwRawMouseMotionSupported()) glfwSetInputMode(apiWindow, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
 	}

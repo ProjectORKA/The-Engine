@@ -2,7 +2,6 @@
 #include "CPUTexture.hpp"
 #include "Math.hpp"
 #include "QuadtreeSystem.hpp"
-#include "Random.hpp"
 
 void terrainDistributionFunction(LDouble& height)
 {
@@ -28,10 +27,10 @@ void TerrainSystem::create()
 		{
 			for(UInt y = 0; y < TERRAIN_TEXTURE_SIZE; y++)
 			{
-				const Float xCoord = static_cast<Float>(x) / static_cast<Float>(TERRAIN_TEXTURE_SIZE);
-				const Float yCoord = static_cast<Float>(y) / static_cast<Float>(TERRAIN_TEXTURE_SIZE);
+				const Float xPos = static_cast<Float>(x) / static_cast<Float>(TERRAIN_TEXTURE_SIZE);
+				const Float yPos = static_cast<Float>(y) / static_cast<Float>(TERRAIN_TEXTURE_SIZE);
 
-				heightTextures[i].setHeight(x, y, h.getRed(xCoord, yCoord));
+				heightTextures[i].setHeight(x, y, h.getRed(xPos, yPos));
 			}
 		}
 
@@ -93,12 +92,11 @@ Terrain::Terrain(const TerrainSystem& terrainSystem, const QuadtreeId& id, const
 		{
 			if(parentTerrain)
 			{
-				UInt xl, xh, yl, yh;
-				xl = x / 2 + TERRAIN_MAP_SIZE / 2 * cx;
-				xh = xl;
+				UInt xl = x / 2 + TERRAIN_MAP_SIZE / 2 * cx;
+				UInt xh = xl;
 				if(isOdd(x)) xh++;
-				yl = y / 2 + TERRAIN_MAP_SIZE / 2 * cy;
-				yh = yl;
+				UInt yl = y / 2 + TERRAIN_MAP_SIZE / 2 * cy;
+				UInt yh = yl;
 				if(isOdd(y)) yh++;
 
 				const LDouble ah = parentTerrain->heightmap.height[xl][yl];

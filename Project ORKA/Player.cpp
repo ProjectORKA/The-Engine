@@ -50,12 +50,11 @@ void DebugPlayer::update(Window& window)
 	// calculate movement
 	if(length(movementVector) > 0)
 	{
-		Float desiredSpeed = 0.0f;
 		// if there is movement input
-		desiredSpeed   = powf(baseNumber, static_cast<Float>(speedExponent));	// calculate speed
-		movementVector = normalize(movementVector);								// get direction of movement (just direction)
-		movementVector *= desiredSpeed * delta;									// add speed to direction
-		camera.setPosition(camera.getPosition() + movementVector);				// add it to cameras position
+		const Float desiredSpeed = powf(baseNumber, static_cast<Float>(speedExponent)); // calculate speed
+		movementVector     = normalize(movementVector);                           // get direction of movement (just direction)
+		movementVector *= desiredSpeed * delta;                                   // add speed to direction
+		camera.setPosition(camera.getPosition() + movementVector);                // add it to cameras position
 	}
 }
 

@@ -157,8 +157,7 @@ struct PersistentInfoPrototype : Prototype
 
 		for (const Int connectionID : connectionIds)
 		{
-			const Float dist2 = distance(points[connections[connectionID].a].position, points[connections[connectionID].b].position);
-			if (dist2 < dist1) return false;
+			if (const Float dist2 = distance(points[connections[connectionID].a].position, points[connections[connectionID].b].position); dist2 < dist1) return false;
 		}
 
 		std::ranges::sort(connectionIds, std::greater<UInt>());
@@ -169,19 +168,19 @@ struct PersistentInfoPrototype : Prototype
 		return true;
 	}
 
-	Index closestPoint(const Vec2 pos, const Vector<Index>& samplePoints)
+	Index closestPoint(const Vec2 pos, const Vector<Index>& samplePoints) const
 	{
 		Float dist   = distance(pos, points[samplePoints[0]].position);
-		Int   nearID = samplePoints[0];
+		Int nearID   = samplePoints[0];
 		for (Int i = 1; i < samplePoints.size(); i++)
 		{
-			const Float dist2 = distance(pos, points[samplePoints[0]].position);
-			if (dist2 < dist)
+			if (const Float dist2 = distance(pos, points[samplePoints[0]].position); dist2 < dist)
 			{
-				dist   = dist2;
+				dist       = dist2;
 				nearID = samplePoints[i];
 			}
 		}
+		return nearID;
 	}
 
 	void addPoint()
