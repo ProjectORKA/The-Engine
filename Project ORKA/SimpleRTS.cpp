@@ -97,7 +97,7 @@ void SimpleRtsSimulation::render(Renderer& renderer) const
 	quadtreeSystem.render(renderer);
 
 	renderer.fill(1, 0, 0);
-	renderer.uniforms().setMMatrix(mapSize * 2);
+	renderer.uniforms().setMMatrix(Matrix(mapSize*2));
 	renderer.plane();
 	//renderer.wireframeCube();
 }

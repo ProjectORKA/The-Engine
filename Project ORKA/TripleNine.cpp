@@ -53,6 +53,7 @@ void TripleNinePlayer::update(Window& window)
 	forwardVector = normalize(Vec3(sin(camera.getRotationZ()), cos(camera.getRotationZ()), 0));
 	rightVector   = Vec3(forwardVector.y, -forwardVector.x, 0);
 	// process input
+	if (window.pressed(aim)) camera.setFieldOfView(fovScoped); else camera.setFieldOfView(fovDefault);
 	if (window.capturing) targetCameraRotation += window.mouseDelta * DVec2(mouseSensitivity);
 	movementControl = Vec3(0);
 	if (window.pressed(forward)) movementControl += forwardVector;
@@ -273,7 +274,7 @@ void TripleNineRenderer::inputEvent(Window& window, const InputEvent input)
 			if (window.renderer.objectId != static_cast<UInt>(-1)) sim->enemies[window.renderer.objectId].die();
 		}
 	}
-	if (input == exit) window.releaseCursor();
+	// if (input == exit) window.releaseCursor();
 	if (input == reloadShaders) window.renderer.shaderSystem.rebuild();
 	if (input == toggleBloom) bloom = !bloom;
 	player.inputEvent(window, input);
