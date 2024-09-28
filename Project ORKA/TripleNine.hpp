@@ -166,6 +166,10 @@ struct TripleNinePlayer final : Player
 	Float       actualFriction       = stopFriction;
 	// debug
 	Float debugCurrentMaxJumpHeight = 0.0f;
+	// fov
+	const Float fovDefault = 90.0f;
+	const Float fovScoped = 55.0f;
+	
 
 	[[nodiscard]] Bool isCollidingWithGround() const;
 
@@ -196,7 +200,7 @@ struct TripleNineRenderer final : GameRenderer
 	Bool                  bloom         = false;
 	TripleNineSimulation* sim           = nullptr;
 	InputEvent            enter         = InputEvent(InputType::Mouse, Lmb, true);
-	InputEvent            exit          = InputEvent(InputType::Mouse, Rmb, false);
+	// InputEvent            exit          = InputEvent(InputType::Mouse, Rmb, false);
 	InputEvent            toggleBloom   = InputEvent(InputType::KeyBoard, B, false);
 	InputEvent            reloadShaders = InputEvent(InputType::KeyBoard, T, false);
 	Vec3                  sunDirection  = normalize(Vec3(0.675394f, -0.485956f, 0.554698f));

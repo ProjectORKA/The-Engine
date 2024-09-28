@@ -223,7 +223,7 @@ void LabyrinthGeneratorPrototype::render(Renderer& r, const Player& player)
 	if (renderConnections)
 	{
 		r.fill(0.1f);
-		r.uniforms().setMMatrix(1);
+		r.uniforms().setMMatrix(Matrix(1));
 		r.lines(lines);
 	}
 

@@ -17,12 +17,12 @@ void Scene::loadFBX(Path path)
 		Assimp::Importer         importer;
 		const aiScene* assimpScene = importer.ReadFile(path.string(),
 																 // aiProcess_GenUVCoords |
-																 aiProcess_Triangulate | 0
+																 aiProcess_Triangulate | 
 																 // aiProcess_SortByPType |
 																 // aiProcess_FindInvalidData |
 																 // aiProcess_FindDegenerates |
 																 // aiProcess_CalcTangentSpace |
-																 // aiProcess_GenSmoothNormals |
+																 aiProcess_GenSmoothNormals 
 																 // aiProcess_ImproveCacheLocality |
 																 // aiProcess_ValidateDataStructure |
 																 // aiProcess_JoinIdenticalVertices |

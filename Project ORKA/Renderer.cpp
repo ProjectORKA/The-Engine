@@ -362,7 +362,7 @@ void Renderer::line(const Vec2 start, const Vec2 end)
 
 void Renderer::wireframeCubeCentered(const Float size)
 {
-	uniforms().setMMatrix(size);
+	uniforms().setMMatrix(Matrix(size));
 	primitivesRenderer.wireframeCubeCentered(uniforms());
 }
 
