@@ -11,7 +11,7 @@ void PrototypingRenderer::update(Window& window)
 
 void PrototypingRenderer::destroy(Window& window)
 {
-	framebuffer.destroy();
+	framebuffer.destroy(window.renderer);
 }
 
 void PrototypingRenderer::connect(GameSimulation& simulation) {}
@@ -32,8 +32,8 @@ void PrototypingRenderer::create(Window& window)
 	player.camera.setPosition(Vec3(0.0f, 0.0f, 10.0f));
 
 	framebuffer.create("MainFramebuffer", Area(1920, 1080));
-	framebuffer.add(WritePixelsFormat::RGBA, DataType::Float, FramebufferAttachment::Color0, true, Wrapping::Clamped);
-	framebuffer.add(WritePixelsFormat::Depth, DataType::Float, FramebufferAttachment::Depth, false, Wrapping::Clamped);
+	framebuffer.add(window.renderer, WritePixelsFormat::RGBA, DataType::Float, FramebufferAttachment::Color0, true, Wrapping::Clamped);
+	framebuffer.add(window.renderer, WritePixelsFormat::Depth, DataType::Float, FramebufferAttachment::Depth, false, Wrapping::Clamped);
 	framebuffer.checkComplete();
 
 	prototype.create();
@@ -49,9 +49,9 @@ void PrototypingRenderer::render(Window& window, const TiledRectangle area)
 	r.setCulling(false);
 	r.setDepthTest(true);
 
-	framebuffer.resize(area.size);
+	framebuffer.resize(window.renderer, area.size);
 	framebuffer.clear();
-	framebuffer.bindDraw();
+	framebuffer.bindDraw(r);
 
 	// render scene
 	player.render(window); // sets the position, rotation and projection

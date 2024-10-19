@@ -33,7 +33,7 @@ struct RenderObjectSystem
 	ShaderSystem*             shaderSystemPtr;
 	TextureSystem*            textureSystemPtr;
 	Vector<RenderObjectNames> renderObjectNamesQueue;
-	Index                     currentRenderobjectId = 0;
+	Index                     currentRenderObjectId = 0;
 
 	RenderObject& current();
 	void          destroy();
@@ -41,9 +41,9 @@ struct RenderObjectSystem
 	void          select(Index id);
 	void          render(Index id);
 	void          create(Renderer& renderer);
+	void          render(Renderer& renderer, const Name& name);
+	void          select(Renderer& renderer, const Name& name);
 	Index         addRenderObject(const RenderObject& renderObject);
-	void          addRenderObject(const RenderObjectNames& renderobject);
-	void          render(const Name& name);
-	void          select(const Name& name);
+	void          addRenderObject(const RenderObjectNames& renderObject);
 	void          addRenderObject(const Name& name, const Name& meshName, const Name& textureName, const Name& shaderName);
 };

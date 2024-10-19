@@ -1,8 +1,8 @@
 #include "FramebufferTexture.hpp"
 
-void FramebufferTexture::destroy()
+void FramebufferTexture::destroy(Renderer& renderer)
 {
-	texture.unload();
+	texture.unload(renderer);
 }
 
 Bool FramebufferTexture::isColor() const
@@ -16,9 +16,9 @@ TextureID FramebufferTexture::getGLID() const
 	return texture.getOpenGLID();
 }
 
-void FramebufferTexture::resize(const Area area)
+void FramebufferTexture::resize(Renderer& renderer, const Area area)
 {
-	texture.resize(area);
+	texture.resize(renderer, area);
 }
 
 FramebufferAttachment FramebufferTexture::getAttachmentSlot() const
@@ -31,9 +31,9 @@ void FramebufferTexture::useTextureInSlot(const TextureSlot textureSlot) const
 	texture.useTextureInSlot(textureSlot);
 }
 
-void FramebufferTexture::create(const Area size, const WritePixelsFormat format, const DataType type, const FramebufferAttachment framebufferAttachmentSlot, const Wrapping wrapping)
+void FramebufferTexture::create(Renderer& renderer, const Area size, const WritePixelsFormat format, const DataType type, const FramebufferAttachment framebufferAttachmentSlot, const Wrapping wrapping)
 {
-	texture.load(size, format, type, wrapping);
+	texture.load(renderer, size, format, type, wrapping);
 	this->format                    = format;
 	this->type                      = type;
 	this->framebufferAttachmentSlot = framebufferAttachmentSlot;

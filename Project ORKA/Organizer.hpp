@@ -65,17 +65,13 @@ struct OrganizerRenderer : GameRenderer
 
 struct Organizer
 {
-	UserInterface     ui;
 	ORKAIntroSequence intro;
-	Window            window;
 	OrganizerRenderer renderer;
 
 	void run()
 	{
-		ui.create();
 		intro.init(renderer);
-		window.add(intro);
-		ui.window("Organizer", Area(1920, 1080), true, true, WindowState::Windowed, renderer);
+		ui.window("Organizer", Area(1920, 1080), true, true, WindowState::Windowed, intro);
 		ui.run();
 	}
 };

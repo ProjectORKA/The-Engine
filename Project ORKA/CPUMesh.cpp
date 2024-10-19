@@ -141,9 +141,9 @@ Bool CpuMesh::hasTextureCoordinates() const
 void CpuMesh::render(Renderer& renderer) const
 {
 	GpuMesh mesh;
-	mesh.upload(*this);
+	mesh.upload(renderer, *this);
 	mesh.render(renderer.uniforms());
-	mesh.unload();
+	mesh.unload(renderer);
 }
 
 void CpuMesh::calculateSmoothNormalsForTriangleMesh()

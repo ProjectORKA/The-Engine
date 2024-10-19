@@ -44,13 +44,10 @@ struct MelonRenderer final : GameRenderer
 
 struct ProjectMelon
 {
-	UserInterface ui;
-	Window        window;
 	MelonRenderer renderer;
 
 	void run()
 	{
-		ui.create();
 		ui.window("Project Melon", Area(1920, 1080), true, true, WindowState::Windowed, renderer);
 		ui.run();
 	}

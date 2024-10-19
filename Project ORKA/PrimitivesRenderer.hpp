@@ -16,8 +16,8 @@ private:
 	GpuMesh wireframeCubeCenteredMesh;
 
 public:
-	void create();
-	void destroy();
+	void create(Renderer & renderer);
+	void destroy(Renderer & renderer);
 	void plane(Uniforms& uniforms) const;
 	void rectangle(Uniforms& uniforms) const;
 	void wireframeCube(Uniforms& uniforms) const;

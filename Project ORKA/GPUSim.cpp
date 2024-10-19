@@ -4,8 +4,8 @@ void GPUSimRenderer::update(Window& window) {}
 
 void GPUSimRenderer::destroy(Window& window)
 {
-	framebuffer1.destroy();
-	framebuffer2.destroy();
+	framebuffer1.destroy(window.renderer);
+	framebuffer2.destroy(window.renderer);
 }
 
 void GPUSimRenderer::connect(GameSimulation& simulation) {}
@@ -17,12 +17,12 @@ void GPUSimRenderer::create(Window& window)
 	Renderer& r = window.renderer;
 
 	framebuffer1.create("GPUSimTexture1", Area(worldSize));
-	framebuffer1.add(WritePixelsFormat::RGBA, DataType::Float, FramebufferAttachment::Color0, true, Wrapping::Repeat);
-	framebuffer1.add(WritePixelsFormat::Depth, DataType::Float, FramebufferAttachment::Depth, false, Wrapping::Repeat);
+	framebuffer1.add(r, WritePixelsFormat::RGBA, DataType::Float, FramebufferAttachment::Color0, true, Wrapping::Repeat);
+	framebuffer1.add(r, WritePixelsFormat::Depth, DataType::Float, FramebufferAttachment::Depth, false, Wrapping::Repeat);
 	framebuffer1.checkComplete();
 
 	// draw rectangle on it
-	framebuffer1.bindDraw();
+	framebuffer1.bindDraw(r);
 	framebuffer1.clearColor(Color(0, 0, 0, 1));
 
 	r.setRenderRegion(TiledRectangle(worldSize));
@@ -32,8 +32,8 @@ void GPUSimRenderer::create(Window& window)
 	r.renderMesh("suzanne");
 
 	framebuffer2.create("GPUSimTexture1", Area(worldSize));
-	framebuffer2.add(WritePixelsFormat::RGBA, DataType::Float, FramebufferAttachment::Color0, true, Wrapping::Repeat);
-	framebuffer2.add(WritePixelsFormat::Depth, DataType::Float, FramebufferAttachment::Depth, false, Wrapping::Repeat);
+	framebuffer2.add(window.renderer, WritePixelsFormat::RGBA, DataType::Float, FramebufferAttachment::Color0, true, Wrapping::Repeat);
+	framebuffer2.add(window.renderer, WritePixelsFormat::Depth, DataType::Float, FramebufferAttachment::Depth, false, Wrapping::Repeat);
 	framebuffer2.checkComplete();
 }
 
@@ -51,7 +51,7 @@ void GPUSimRenderer::render(Window& window, TiledRectangle area)
 	r.clearBackground(Color(0.1, 0.1, 0.1, 1));
 
 	// and simulate from one texture to the other
-	if(flipFlop)
+	if (flipFlop)
 	{
 		r.postProcess("gpuSim", framebuffer1, framebuffer2);
 	}
@@ -67,7 +67,7 @@ void GPUSimRenderer::render(Window& window, TiledRectangle area)
 	r.aspectCorrectNormalizedSpace();
 	r.drawToWindow();
 
-	if(flipFlop)
+	if (flipFlop)
 	{
 		framebuffer2.setAsTexture(0);
 	}

@@ -24,7 +24,6 @@
   <ItemGroup>
     <ClCompile Include="AIPlayground.cpp" />
     <ClCompile Include="BitmapTextRenderSystem.cpp" />
-    <ClCompile Include="Client.cpp" />
     <ClCompile Include="Debug.cpp" />
     <ClCompile Include="Engine.cpp" />
     <ClCompile Include="FileTypes.cpp" />
@@ -59,6 +58,7 @@
     <ClCompile Include="Orbital Oblivion.cpp" />
     <ClCompile Include="ParallelizedConvexHullPrototype.cpp" />
     <ClCompile Include="PerformanceGraph.cpp" />
+    <ClCompile Include="Standalone Music Visualizer.cpp" />
     <ClCompile Include="Voxels.cpp" />
     <ClCompile Include="Platform.cpp" />
     <ClCompile Include="PointRenderer.cpp" />
@@ -93,7 +93,6 @@
     <ClCompile Include="File.cpp" />
     <ClCompile Include="Memory.cpp" />
     <ClCompile Include="MeshSystem.cpp" />
-    <ClCompile Include="Message.cpp" />
     <ClCompile Include="MindMap.cpp" />
     <ClCompile Include="MindMapper.cpp" />
     <ClCompile Include="Molecules2D.cpp" />
@@ -215,7 +214,6 @@
     <ClInclude Include="WeirdSphereAlgorithm.hpp" />
     <ClInclude Include="BitmapTextRenderSystem.hpp" />
     <ClInclude Include="Camera.hpp" />
-    <ClInclude Include="Client.hpp" />
     <ClInclude Include="Collision.hpp" />
     <ClInclude Include="Engine.hpp" />
     <ClInclude Include="FileTypes.hpp" />
@@ -249,7 +247,6 @@
     <ClInclude Include="MelonWorld.hpp" />
     <ClInclude Include="Memory.hpp" />
     <ClInclude Include="MeshSystem.hpp" />
-    <ClInclude Include="Message.hpp" />
     <ClInclude Include="MindMap.hpp" />
     <ClInclude Include="MindMapper.hpp" />
     <ClInclude Include="Molecules2D.hpp" />
@@ -305,7 +302,6 @@
     <ClInclude Include="ResourceManager.hpp" />
     <ClInclude Include="Scene.hpp" />
     <ClInclude Include="SceneSystem.hpp" />
-    <ClInclude Include="Server.hpp" />
     <ClInclude Include="Settings.hpp" />
     <ClInclude Include="ShaderProgram.hpp" />
     <ClInclude Include="ShaderSystem.hpp" />
@@ -576,7 +572,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <ConformanceMode>false</ConformanceMode>
+      <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>
       </AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
@@ -623,6 +619,7 @@
       <PreprocessorDefinitions>_MBCS;%(PreprocessorDefinitions);%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <CompileAs>CompileAsCpp</CompileAs>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -636,6 +633,7 @@
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>false</GenerateDebugInformation>
+      <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
     </Link>
     <PostBuildEvent>
       <Command>
@@ -673,6 +671,7 @@
       <SubSystem>Windows</SubSystem>
       <StackReserveSize>4194304</StackReserveSize>
       <GenerateDebugInformation>false</GenerateDebugInformation>
+      <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
     </Link>
     <PostBuildEvent>
       <Command>

@@ -74,13 +74,10 @@ struct FlappyBirdRenderer final : GameRenderer
 
 struct FlappyBird
 {
-	UserInterface      ui;
-	Window             window;
 	FlappyBirdRenderer renderer;
 
 	void run()
 	{
-		ui.create();
 		ui.window("ORKA Flappy Bird", Area(settings.defaultWindowWidth, settings.defaultWindowHeight), true, true, WindowState::Windowed, renderer);
 		ui.run();
 	}

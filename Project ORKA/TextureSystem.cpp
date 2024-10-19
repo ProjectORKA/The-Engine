@@ -1,6 +1,6 @@
 #include "TextureSystem.hpp"
 
-void TextureSystem::create()
+void TextureSystem::create(Renderer& renderer)
 {
 	Vector<Byte> pixels;
 	pixels.resize(16);
@@ -26,20 +26,20 @@ void TextureSystem::create()
 
 	defaultTexture.load(image, Filter::Nearest, Filter::NearestMm, Wrapping::Repeat, "DefaultTexture");
 
-	add(defaultTexture);
+	add(renderer, defaultTexture);
 }
 
-void TextureSystem::destroy()
+void TextureSystem::destroy(Renderer& renderer)
 {
-	for(GPUTexture& gpuTexture : gpuTextures) gpuTexture.unload();
+	for (GPUTexture& gpuTexture : gpuTextures) gpuTexture.unload(renderer);
 	gpuTextures.clear();
 
 	textureNames.clear();
 }
 
-void TextureSystem::resize(const Area size)
+void TextureSystem::resize(Renderer& renderer, const Area size)
 {
-	currentTexture().resize(size);
+	currentTexture().resize(renderer, size);
 }
 
 GPUTexture& TextureSystem::currentTexture()
@@ -53,24 +53,24 @@ void TextureSystem::use(const Index textureId)
 	currentTexture().useTextureInSlot(0);
 }
 
-void TextureSystem::add(const CpuTexture& cpuTexture)
+void TextureSystem::add(Renderer& renderer, const CpuTexture& cpuTexture)
 {
 	gpuTextures.emplace_back();
-	gpuTextures.back().load(cpuTexture);
+	gpuTextures.back().load(renderer, cpuTexture);
 	currentTextureId                   = gpuTextures.size() - 1;
 	textureNames[cpuTexture.getName()] = currentTextureId;
 }
 
-Index TextureSystem::use(const Name& name)
+Index TextureSystem::use(Renderer& renderer, const Name& name)
 {
-	use(name, 0);
+	use(renderer, name, 0);
 	return currentTextureId;
 }
 
-void TextureSystem::use(const Name& name, const Index slot)
+void TextureSystem::use(Renderer& renderer, const Name& name, const Index slot)
 {
 	auto it = textureNames.find(name);
-	if(it != textureNames.end())
+	if (it != textureNames.end())
 	{
 		currentTextureId = it->second;
 		currentTexture().useTextureInSlot(slot);
@@ -81,10 +81,10 @@ void TextureSystem::use(const Name& name, const Index slot)
 
 		cpuTexture.load(name, Filter::Linear, Filter::LinearMm, Wrapping::Repeat);
 
-		add(cpuTexture);
+		add(renderer, cpuTexture);
 
 		it = textureNames.find(name);
-		if(it != textureNames.end())
+		if (it != textureNames.end())
 		{
 			currentTextureId = it->second;
 			currentTexture().useTextureInSlot(slot);
@@ -92,7 +92,7 @@ void TextureSystem::use(const Name& name, const Index slot)
 		else
 		{
 			logError("Could not find Texture!");
-			use("empty");
+			use(renderer, "empty");
 		}
 	}
 }

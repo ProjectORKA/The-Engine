@@ -21,13 +21,10 @@ struct HelloTriangleRenderer final : GameRenderer
 
 struct HelloTriangle
 {
-	UserInterface         ui;
-	Window                window;
 	HelloTriangleRenderer renderer;
 
 	void run()
 	{
-		ui.create();
 		ui.window("Hello Triangle", Area(1920, 1080), true, true, WindowState::Windowed, renderer);
 		ui.run();
 	}

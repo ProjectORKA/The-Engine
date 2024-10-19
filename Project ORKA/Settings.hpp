@@ -16,13 +16,13 @@ constexpr bool debugBreakOnWarning     = false;
 #endif
 
 
+constexpr bool debugFramebuffersIsEnabled = true;
 constexpr bool debugAudioSystem           = true;
 constexpr bool printDeviceInfo            = false;
 constexpr bool printULLWithBits           = false;
 constexpr bool debugWindowIsEnabled       = false;
 constexpr bool debugJobSystemIsEnabled    = false;
 constexpr bool debugImageLoadingIsEnabled = false;
-constexpr bool debugFramebuffersIsEnabled = false;
 
 
 // planet renderer

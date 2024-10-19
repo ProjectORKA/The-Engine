@@ -57,13 +57,10 @@ struct SnakeRenderer : GameRenderer
 
 struct Snake
 {
-	UserInterface ui;
-	Window        window;
 	SnakeRenderer renderer;
 
 	void run()
 	{
-		ui.create();
 		ui.window("ORKA Sandbox", Area(settings.defaultWindowWidth, settings.defaultWindowHeight), true, true, WindowState::Windowed, renderer);
 		ui.run();
 	}

@@ -1,17 +1,17 @@
 #include "BitmapTextRenderSystem.hpp"
 #include "Renderer.hpp"
 
-void BitmapTextRenderSystem::destroy()
+void BitmapTextRenderSystem::destroy(Renderer & renderer)
 {
-	gpuText.unload();
-	textTexture.unload();
+	gpuText.unload(renderer);
+	textTexture.unload(renderer);
 }
 
 void BitmapTextRenderSystem::create(Renderer& renderer)
 {
 	CpuTexture cpuTextTexture;
 	cpuTextTexture.load(Name("font"), Filter::Nearest, Filter::Linear, Wrapping::Repeat);
-	textTexture.load(cpuTextTexture);
+	textTexture.load(renderer, cpuTextTexture);
 	renderer.shaderSystem.add("text");
 }
 
@@ -81,8 +81,8 @@ void BitmapTextRenderSystem::render(Renderer& renderer, const String& text, cons
 
 	cpuText.checkIntegrity();
 
-	gpuText.unload();
-	gpuText.upload(cpuText);
+	gpuText.unload(renderer);
+	gpuText.upload(renderer, cpuText);
 
 	renderer.useShader("text");
 	textTexture.useTextureInSlot(0);

@@ -90,14 +90,11 @@ struct OrbitalOblivionRenderer final : GameRenderer
 
 struct OrbitalOblivion
 {
-	UserInterface             ui;
-	Window                    window;
 	OrbitalOblivionRenderer   renderer;
 	OrbitalOblivionSimulation simulation;
 
 	void run()
 	{
-		ui.create();
 		simulation.start();
 		renderer.connect(simulation);
 		ui.window("Orbital Oblivion", Area(settings.defaultWindowWidth, settings.defaultWindowHeight), true, true, WindowState::Windowed, renderer);

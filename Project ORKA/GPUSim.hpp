@@ -20,13 +20,10 @@ struct GPUSimRenderer final : GameRenderer
 
 struct GPUSim
 {
-	UserInterface  ui;
-	Window         window;
 	GPUSimRenderer renderer;
 
 	void run()
 	{
-		ui.create();
 		ui.window("ORKA GPU Simulation", Area(settings.defaultWindowWidth, settings.defaultWindowHeight), true, true, WindowState::Windowed, renderer);
 		ui.run();
 	}

@@ -8,8 +8,8 @@ void SignedDistanceFieldRenderer::update(Window& window)
 void SignedDistanceFieldRenderer::create(Window& window)
 {
 	framebuffer.create("MainFramebuffer", Area(1920, 1080));
-	framebuffer.add(WritePixelsFormat::RGBA, DataType::Float, FramebufferAttachment::Color0, true, Wrapping::Clamped);
-	framebuffer.add(WritePixelsFormat::Depth, DataType::Float, FramebufferAttachment::Depth, false, Wrapping::Clamped);
+	framebuffer.add(window.renderer, WritePixelsFormat::RGBA, DataType::Float, FramebufferAttachment::Color0, true, Wrapping::Clamped);
+	framebuffer.add(window.renderer, WritePixelsFormat::Depth, DataType::Float, FramebufferAttachment::Depth, false, Wrapping::Clamped);
 	framebuffer.checkComplete();
 
 	player.camera.setPosition(Vec3(1.0f, -5.0f, 2.0f));
@@ -17,7 +17,7 @@ void SignedDistanceFieldRenderer::create(Window& window)
 
 void SignedDistanceFieldRenderer::destroy(Window& window)
 {
-	framebuffer.destroy();
+	framebuffer.destroy(window.renderer);
 }
 
 void SignedDistanceFieldRenderer::connect(GameSimulation& simulation) {}
@@ -26,9 +26,9 @@ void SignedDistanceFieldRenderer::render(Window& window, const TiledRectangle ar
 {
 	Renderer& r = window.renderer;
 
-	framebuffer.resize(area.size);
+	framebuffer.resize(window.renderer, area.size);
 	framebuffer.clear();
-	framebuffer.bindDraw();
+	framebuffer.bindDraw(r);
 
 	// setup
 	r.setCulling(false);

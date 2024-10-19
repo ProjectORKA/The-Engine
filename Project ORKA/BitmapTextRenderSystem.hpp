@@ -23,7 +23,7 @@ struct BitmapTextRenderSystem
 	CpuMesh    cpuText;
 	GPUTexture textTexture;
 
-	void destroy();
 	void create(Renderer& renderer);
+	void destroy(Renderer & renderer);
 	void render(Renderer& renderer, const String& text, Vec2 position, Alignment x, Alignment y, Float absoluteSize, Float letterSpacing);
 };

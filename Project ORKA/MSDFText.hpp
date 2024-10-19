@@ -15,13 +15,10 @@ struct MSDFTextRenderer : GameRenderer
 
 struct MSDFText
 {
-	UserInterface    ui;
-	Window           window;
 	MSDFTextRenderer renderer;
 
 	void run()
 	{
-		ui.create();
 		ui.window("MSDF Text Rendering", Area(settings.defaultWindowWidth, settings.defaultWindowHeight), true, true, WindowState::Windowed, renderer);
 		ui.run();
 	}
