@@ -4,10 +4,10 @@
 #include "FileSystem.hpp"
 #include "Hash.hpp"
 
-void ImageViewerResource::destroy()
+void ImageViewerResource::destroy(Renderer & renderer)
 {
 	cpuTexture.unload();
-	gpuTexture.unload();
+	gpuTexture.unload(renderer);
 }
 
 Path ImageViewerResource::getPath() const
@@ -20,9 +20,9 @@ String ImageViewerResource::getName() const
 	return name;
 }
 
-void ImageViewerResource::loadOntoGpu()
+void ImageViewerResource::loadOntoGpu(Renderer & renderer)
 {
-	gpuTexture.load(cpuTexture);
+	gpuTexture.load(renderer, cpuTexture);
 }
 
 void ImageViewerResource::loadIntoRam()
@@ -54,9 +54,9 @@ Bool ImageViewerResource::onGpu() const
 	return gpuTexture.isLoaded();
 }
 
-void ImageViewerResource::unloadFromGpu()
+void ImageViewerResource::unloadFromGpu(Renderer & renderer)
 {
-	gpuTexture.unload();
+	gpuTexture.unload(renderer);
 }
 
 void ImageViewerResource::unloadFromRam()

@@ -3,9 +3,9 @@
 #include "Random.hpp"
 #include "UserInterface.hpp"
 
+
 void SimpleRts::run()
 {
-	ui.create();
 	sim.start();
 	renderer.connect(sim);
 	ui.window("Simple RTS", Area(1920, 1080), true, true, WindowState::Windowed, renderer);

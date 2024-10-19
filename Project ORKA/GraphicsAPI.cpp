@@ -1,51 +1,58 @@
 #include "GraphicsAPI.hpp"
 #include "Math.hpp"
 
-OpenGLStateCopy openGlState;
-
 // OpenGLTexture2D
 
 UInt OpenGLTexture2D::getID() const
 {
 	return textureID;
 }
-void OpenGLTexture2D::destroy() const
+
+void OpenGLTexture2D::destroy(OpenGlContext& openGlContext) const
 {
 	OpenGL::Textures::apiDeleteTexture(textureID);
-	openGlState.removeTexture(textureID);
+	openGlContext.removeTexture(textureID);
 }
+
 void OpenGLTexture2D::generateMipMap() const
 {
 	OpenGL::Textures::apiGenerateTextureMipmap(textureID);
 }
-void OpenGLTexture2D::create(const String& name)
+
+void OpenGLTexture2D::create(OpenGlContext& openGlContext, const String& name)
 {
 	textureID = OpenGL::Textures::apiCreateTexture(TextureTarget::Texture2D);
 	OpenGL::apiObjectLabel(ObjectLabelType::Texture, textureID, name);
-	openGlState.addTexture(textureID);
+	openGlContext.addTexture(textureID);
 }
+
 void OpenGLTexture2D::setBorderColor(Color color) const
 {
 	OpenGL::Textures::apiTextureParameterfv(textureID, TextureParameterSet::BorderColor, value_ptr(color));
 }
+
 void OpenGLTexture2D::setWrapping(Wrapping wrapping) const
 {
 	OpenGL::Textures::apiTextureParameteri(textureID, TextureParameterSet::WrapS, static_cast<Int>(wrapping));
 	OpenGL::Textures::apiTextureParameteri(textureID, TextureParameterSet::WrapT, static_cast<Int>(wrapping));
 }
+
 void OpenGLTexture2D::useTextureInSlot(const UInt textureUnitSlot) const
 {
 	OpenGL::Textures::apiBindTextureUnit(textureUnitSlot, textureID);
 }
+
 void OpenGLTexture2D::emptyTextureFromSlot(const UInt textureUnitSlot) const
 {
 	OpenGL::Textures::apiBindTextureUnit(textureUnitSlot, 0);
 }
+
 void OpenGLTexture2D::setFilters(Filter nearFilter, Filter farFilter) const
 {
 	OpenGL::Textures::apiTextureParameteri(textureID, TextureParameterSet::MagFilter, static_cast<Int>(nearFilter));
 	OpenGL::Textures::apiTextureParameteri(textureID, TextureParameterSet::MinFilter, static_cast<Int>(farFilter));
 }
+
 void OpenGLTexture2D::setDataToDepth(const Int width, const Int height, const void* data) const
 {
 	constexpr Float clearData = 1.0f;
@@ -59,24 +66,17 @@ void OpenGLTexture2D::setDataToDepth(const Int width, const Int height, const vo
 		OpenGL::Textures::apiClearTexImage(textureID, 0, WritePixelsFormat::Depth, DataType::Float, &clearData);
 	}
 }
+
 void OpenGLTexture2D::setData(const SizedInternalFormat internalFormat, const Int width, const Int height, const WritePixelsFormat colorFormat, const DataType dataType, const void* data) const
 {
 	OpenGL::Textures::apiTextureStorage2D(textureID, 1, internalFormat, width, height);
 	if (data) OpenGL::Textures::apiTextureSubImage2D(textureID, 0, 0, 0, width, height, colorFormat, dataType, data);
 }
 
-
-
-
-
-
-
-
-
-void OpenGL::apiInit()
+void OpenGL::apiInit(OpenGlContext& openGlContext)
 {
 	#ifdef TRACE_OPENGL
-		openGlState.write("glewInit();");
+		openGlContext.write("glewInit();");
 	#endif // TRACE_OPENGL
 
 	External::glewExperimental = GL_TRUE;
@@ -95,13 +95,13 @@ void OpenGL::apiInit()
 		logError("DSA is not supported!");
 	}
 
-	openGlState.maxVertexAttributes = OpenGL::apiGetIntegerv(GetParameters::MaxVertexAttributes);
+	openGlContext.maxVertexAttributes = OpenGL::apiGetIntegerv(GetParameters::MaxVertexAttributes);
 }
 
 void OpenGL::apiFinish()
 {
 	#ifdef TRACE_OPENGL
-		openGlState.write("glFinish();");
+		openGlContext.write("glFinish();");
 	#endif // TRACE_OPENGL
 	External::glFinish();
 }
@@ -109,7 +109,7 @@ void OpenGL::apiFinish()
 UInt OpenGL::apiGetError()
 {
 	#ifdef TRACE_OPENGL
-		openGlState.write("glGetError();");
+		openGlContext.write("glGetError();");
 	#endif // TRACE_OPENGL
 	return External::glGetError();
 }
@@ -117,7 +117,7 @@ UInt OpenGL::apiGetError()
 void OpenGL::apiClearColor()
 {
 	#ifdef TRACE_OPENGL
-		openGlState.write("glClear(...);");
+		openGlContext.write("glClear(...);");
 	#endif // TRACE_OPENGL
 	External::glClear(GL_COLOR_BUFFER_BIT);
 }
@@ -125,7 +125,7 @@ void OpenGL::apiClearColor()
 void OpenGL::apiClearDepth()
 {
 	#ifdef TRACE_OPENGL
-		openGlState.write("glClear(...);");
+		openGlContext.write("glClear(...);");
 	#endif // TRACE_OPENGL
 	External::glClear(GL_DEPTH_BUFFER_BIT);
 }
@@ -190,11 +190,10 @@ void OpenGLBuffer::update(const GlobalUniformData& data) const
 	OpenGL::Buffers::apiNamedBufferData(bufferObjectID, sizeof(GlobalUniformData), &data, usage);
 }
 
-OpenGLStateCopy::~OpenGLStateCopy()
+OpenGlContext::~OpenGlContext()
 {
 	if (!textures.empty()) logError("Not all textures have been unloaded!");
 }
-
 
 void OpenGLShaderProgram::destroy()
 {
@@ -202,7 +201,7 @@ void OpenGLShaderProgram::destroy()
 	programId = 0;
 }
 
-void OpenGLStateCopy::print() const
+void OpenGlContext::print() const
 {
 	logDebug("Culling: " + toString(culling));
 	logDebug("Blending: " + toString(blending));
@@ -225,7 +224,7 @@ UInt OpenGLFramebuffer::getID() const
 	return framebufferId;
 }
 
-void OpenGLStateCopy::enableLogging()
+void OpenGlContext::enableLogging()
 {
 	loggingEnabled = true;
 }
@@ -235,16 +234,15 @@ void OpenGLShaderProgram::use() const
 	OpenGL::Shaders::apiUseProgram(programId);
 }
 
-
-void OpenGLStateCopy::disableLogging()
+void OpenGlContext::disableLogging()
 {
 	loggingEnabled = false;
 }
 
-void OpenGLVertexArrayObject::create()
+void OpenGLVertexArrayObject::create(OpenGlContext& openGlContext)
 {
 	vertexArrayID = OpenGL::VertexArray::apiCreateVertexArray();
-	openGlState.addVAO(vertexArrayID);
+	openGlContext.addVAO(vertexArrayID);
 }
 
 void OpenGLFramebuffer::destroy() const
@@ -278,26 +276,25 @@ BufferID OpenGL::Buffers::apiCreateBuffer()
 	External::__glewCreateBuffers(1, &bufferID);
 
 	#ifdef TRACE_OPENGL
-		openGlState.write("glCreateBuffers(1, " + toString(bufferID) + ");");
+		openGlContext.write("glCreateBuffers(1, " + toString(bufferID) + ");");
 	#endif // TRACE_OPENGL
 
 	return bufferID;
 }
-
 
 void OpenGLVertexArrayObject::unbind() const
 {
 	OpenGL::VertexArray::apiBindVertexArray(0);
 }
 
-void OpenGL::apiSetCulling(const Bool value)
+void OpenGL::apiSetCulling(OpenGlContext& openGlContext, const Bool value)
 {
-	if (value && !openGlState.culling) apiEnable(EnableParameters::CullFace);
-	if (!value && openGlState.culling) apiDisable(EnableParameters::CullFace);
-	openGlState.culling = value;
+	if (value && !openGlContext.culling) apiEnable(EnableParameters::CullFace);
+	if (!value && openGlContext.culling) apiDisable(EnableParameters::CullFace);
+	openGlContext.culling = value;
 }
 
-void OpenGLStateCopy::printOpenGLInfo() const
+void OpenGlContext::printOpenGLInfo() const
 {
 	const Byte* vendor = External::glGetString(GL_VENDOR);
 	logDebug("Vendor: " + toString(vendor));
@@ -404,35 +401,35 @@ void OpenGLStateCopy::printOpenGLInfo() const
 ProgramID OpenGL::Shaders::apiCreateProgram()
 {
 	#ifdef TRACE_OPENGL
-		openGlState.write("glCreateProgram(...);");
+		openGlContext.write("glCreateProgram(...);");
 	#endif // TRACE_OPENGL
 	return External::glCreateProgram();
 }
 
-void OpenGL::apiSetBlending(const Bool value)
+void OpenGL::apiSetBlending(OpenGlContext& openGlContext, const Bool value)
 {
-	if (value && !openGlState.blending) apiEnable(EnableParameters::Blend);
-	if (!value && openGlState.blending) apiDisable(EnableParameters::Blend);
-	openGlState.blending = value;
+	if (value && !openGlContext.blending) apiEnable(EnableParameters::Blend);
+	if (!value && openGlContext.blending) apiDisable(EnableParameters::Blend);
+	openGlContext.blending = value;
 }
 
-void OpenGLVertexArrayObject::destroy() const
+void OpenGLVertexArrayObject::destroy(OpenGlContext& openGlContext) const
 {
 	OpenGL::VertexArray::apiDeleteVertexArray(vertexArrayID);
-	openGlState.removeVAO(vertexArrayID);
+	openGlContext.removeVAO(vertexArrayID);
 }
 
-void OpenGL::apiSetDepthTest(const Bool value)
+void OpenGL::apiSetDepthTest(OpenGlContext& openGlContext, const Bool value)
 {
-	if (value && !openGlState.depthTest) apiEnable(EnableParameters::DepthTest);
-	if (!value && openGlState.depthTest) apiDisable(EnableParameters::DepthTest);
-	openGlState.depthTest = value;
+	if (value && !openGlContext.depthTest) apiEnable(EnableParameters::DepthTest);
+	if (!value && openGlContext.depthTest) apiDisable(EnableParameters::DepthTest);
+	openGlContext.depthTest = value;
 }
 
-void OpenGL::apiSetDebugging(const Bool value)
+void OpenGL::apiSetDebugging(OpenGlContext& openGlContext, const Bool value)
 {
 	#ifdef TRACE_OPENGL
-		openGlState.write("glDebugMessageCallback(nullptr,nullptr);");
+		openGlContext.write("glDebugMessageCallback(nullptr,nullptr);");
 	#endif // TRACE_OPENGL
 	if (value)
 	{
@@ -446,25 +443,24 @@ void OpenGL::apiSetDebugging(const Bool value)
 		apiDisable(EnableParameters::DebugOutput);
 		apiDisable(EnableParameters::DebugOutputSyncronous);
 	}
-	openGlState.debugging = value;
+	openGlContext.debugging = value;
 }
 
-
-void OpenGL::apiSetScissorTest(const Bool value)
+void OpenGL::apiSetScissorTest(OpenGlContext& openGlContext, const Bool value)
 {
-	if (value && !openGlState.scissorTest) apiEnable(EnableParameters::ScissorTest);
-	if (!value && openGlState.scissorTest) apiDisable(EnableParameters::ScissorTest);
-	openGlState.scissorTest = value;
+	if (value && !openGlContext.scissorTest) apiEnable(EnableParameters::ScissorTest);
+	if (!value && openGlContext.scissorTest) apiDisable(EnableParameters::ScissorTest);
+	openGlContext.scissorTest = value;
 }
 
-void OpenGL::apiSetClearColor(const Color color)
+void OpenGL::apiSetClearColor(OpenGlContext& openGlContext, const Color color)
 {
 	#ifdef TRACE_OPENGL
-		openGlState.write("glClearColor(...);");
+		openGlContext.write("glClearColor(...);");
 	#endif // TRACE_OPENGL
-	if (openGlState.clearColor != color)
+	if (openGlContext.clearColor != color)
 	{
-		openGlState.clearColor = color;
+		openGlContext.clearColor = color;
 		External::glClearColor(color.r, color.g, color.b, color.a);
 	}
 }
@@ -478,7 +474,7 @@ void OpenGLFramebuffer::create(const String& name)
 void OpenGL::apiEnable(EnableParameters parameter)
 {
 	#ifdef TRACE_OPENGL
-		openGlState.write("glEnable(" + toString(static_cast<UInt>(parameter)) + ");");
+		openGlContext.write("glEnable(" + toString(static_cast<UInt>(parameter)) + ");");
 	#endif // TRACE_OPENGL
 	External::glEnable(static_cast<UInt>(parameter));
 }
@@ -486,7 +482,7 @@ void OpenGL::apiEnable(EnableParameters parameter)
 void OpenGL::apiDisable(EnableParameters parameter)
 {
 	#ifdef TRACE_OPENGL
-		openGlState.write("glDisable(" + toString(static_cast<UInt>(parameter)) + ");");
+		openGlContext.write("glDisable(" + toString(static_cast<UInt>(parameter)) + ");");
 	#endif // TRACE_OPENGL
 
 	External::glDisable(static_cast<UInt>(parameter));
@@ -495,20 +491,19 @@ void OpenGL::apiDisable(EnableParameters parameter)
 Int OpenGL::apiGetIntegerv(GetParameters parameter)
 {
 	#ifdef TRACE_OPENGL
-		openGlState.write("glGetIntegerv(...);");
+		openGlContext.write("glGetIntegerv(...);");
 	#endif // TRACE_OPENGL
 	Int result;
 	External::glGetIntegerv(static_cast<UInt>(parameter), &result);
 	return result;
 }
 
-
 void OpenGLVertexArrayObject::unbindIndexBuffer() const
 {
 	OpenGL::VertexArray::apiVertexArrayElementBuffer(vertexArrayID, 0);
 }
 
-void OpenGLStateCopy::write(const String& message) const
+void OpenGlContext::write(const String& message) const
 {
 	#ifdef TRACE_OPENGL
 		if(loggingEnabled) log.write(message);
@@ -518,7 +513,7 @@ void OpenGLStateCopy::write(const String& message) const
 void OpenGL::Buffers::apiDeleteBuffer(const UInt buffer)
 {
 	#ifdef TRACE_OPENGL
-		openGlState.write("glDeleteBuffers(...);");
+		openGlContext.write("glDeleteBuffers(...);");
 	#endif // TRACE_OPENGL
 	External::glDeleteBuffers(1, &buffer);
 }
@@ -529,7 +524,7 @@ VertexArrayID OpenGL::VertexArray::apiCreateVertexArray()
 	External::glCreateVertexArrays(1, &vertexArrayID);
 
 	#ifdef TRACE_OPENGL
-		openGlState.write("glCreateVertexArrays(1," + toString(vertexArrayID) + ");");
+		openGlContext.write("glCreateVertexArrays(1," + toString(vertexArrayID) + ");");
 	#endif // TRACE_OPENGL
 
 	return vertexArrayID;
@@ -538,15 +533,14 @@ VertexArrayID OpenGL::VertexArray::apiCreateVertexArray()
 FramebufferID OpenGL::Framebuffer::apiCreateFramebuffer()
 {
 	#ifdef TRACE_OPENGL
-		openGlState.write("glCreateFramebuffers(...);");
+		openGlContext.write("glCreateFramebuffers(...);");
 	#endif // TRACE_OPENGL
 	FramebufferID framebufferID;
 	External::glCreateFramebuffers(1, &framebufferID);
 	return framebufferID;
 }
 
-
-void OpenGLStateCopy::addTexture(const TextureID textureID)
+void OpenGlContext::addTexture(const TextureID textureID)
 {
 	if (openglStateTracking)
 	{
@@ -559,7 +553,7 @@ void OpenGLStateCopy::addTexture(const TextureID textureID)
 void OpenGL::apiBlendEquation(const BlendEquation equation)
 {
 	#ifdef TRACE_OPENGL
-		openGlState.write("glBlendEquation(" + toString(static_cast<UInt>(equation)) + ");");
+		openGlContext.write("glBlendEquation(" + toString(static_cast<UInt>(equation)) + ");");
 	#endif // TRACE_OPENGL
 	External::glBlendEquation(static_cast<UInt>(equation));
 }
@@ -567,7 +561,7 @@ void OpenGL::apiBlendEquation(const BlendEquation equation)
 void OpenGL::apiPolygonMode(const UInt face, const UInt mode)
 {
 	#ifdef TRACE_OPENGL
-		openGlState.write("glPolygonMode(" + toString(face) + ", " + toString(mode) + ");");
+		openGlContext.write("glPolygonMode(" + toString(face) + ", " + toString(mode) + ");");
 	#endif // TRACE_OPENGL
 	External::glPolygonMode(face, mode);
 }
@@ -575,12 +569,12 @@ void OpenGL::apiPolygonMode(const UInt face, const UInt mode)
 void OpenGL::Shaders::apiUseProgram(const ProgramID programId)
 {
 	#ifdef TRACE_OPENGL
-		openGlState.write("glUseProgram(...);");
+		openGlContext.write("glUseProgram(...);");
 	#endif // TRACE_OPENGL
 	External::glUseProgram(programId);
 }
 
-void OpenGLStateCopy::removeTexture(const TextureID textureID)
+void OpenGlContext::removeTexture(const TextureID textureID)
 {
 	if (openglStateTracking)
 	{
@@ -595,12 +589,12 @@ void OpenGLStateCopy::removeTexture(const TextureID textureID)
 void OpenGL::Shaders::apiDeleteShader(const ShaderID shaderId)
 {
 	#ifdef TRACE_OPENGL
-		openGlState.write("glDeleteShader(...);");
+		openGlContext.write("glDeleteShader(...);");
 	#endif // TRACE_OPENGL
 	External::glDeleteShader(shaderId);
 }
 
-void OpenGLStateCopy::addVAO(const VertexArrayID vertexArrayID)
+void OpenGlContext::addVAO(const VertexArrayID vertexArrayID)
 {
 	if (openglStateTracking)
 	{
@@ -613,7 +607,7 @@ void OpenGLStateCopy::addVAO(const VertexArrayID vertexArrayID)
 void OpenGL::Shaders::apiCompileShader(const ShaderID shaderId)
 {
 	#ifdef TRACE_OPENGL
-		openGlState.write("glCompileShader(...);");
+		openGlContext.write("glCompileShader(...);");
 	#endif // TRACE_OPENGL
 	External::glCompileShader(shaderId);
 }
@@ -621,7 +615,7 @@ void OpenGL::Shaders::apiCompileShader(const ShaderID shaderId)
 void OpenGL::Shaders::apiLinkProgram(const ProgramID programId)
 {
 	#ifdef TRACE_OPENGL
-		openGlState.write("glLinkProgram(...);");
+		openGlContext.write("glLinkProgram(...);");
 	#endif // TRACE_OPENGL
 	External::glLinkProgram(programId);
 }
@@ -629,7 +623,7 @@ void OpenGL::Shaders::apiLinkProgram(const ProgramID programId)
 ShaderID OpenGL::Shaders::apiCreateShader(const ShaderType type)
 {
 	#ifdef TRACE_OPENGL
-		openGlState.write("glCreateShader(...);");
+		openGlContext.write("glCreateShader(...);");
 	#endif // TRACE_OPENGL
 	return External::glCreateShader(static_cast<UInt>(type));
 }
@@ -642,7 +636,7 @@ void OpenGLFramebuffer::clearDepth(const Float clearDepth) const
 void OpenGL::apiClipControl(const UInt origin, const UInt depth)
 {
 	#ifdef TRACE_OPENGL
-		openGlState.write("glClipControl(" + toString(origin) + ", " + toString(depth) + ");");
+		openGlContext.write("glClipControl(" + toString(origin) + ", " + toString(depth) + ");");
 	#endif // TRACE_OPENGL
 	External::glClipControl(origin, depth);
 }
@@ -650,12 +644,12 @@ void OpenGL::apiClipControl(const UInt origin, const UInt depth)
 void OpenGL::Shaders::apiDeleteProgram(const ProgramID programId)
 {
 	#ifdef TRACE_OPENGL
-		openGlState.write("glDeleteProgram(...);");
+		openGlContext.write("glDeleteProgram(...);");
 	#endif // TRACE_OPENGL
 	External::glDeleteProgram(programId);
 }
 
-void OpenGLStateCopy::removeVAO(const VertexArrayID vertexArrayID)
+void OpenGlContext::removeVAO(const VertexArrayID vertexArrayID)
 {
 	if (openglStateTracking)
 	{
@@ -671,11 +665,11 @@ TextureID OpenGL::Textures::apiCreateTexture(TextureTarget target)
 {
 	TextureID textureID;
 	#ifdef TRACE_OPENGL
-		openGlState.write("glCreateTextures(...);");
+		openGlContext.write("glCreateTextures(...);");
 	#endif // TRACE_OPENGL
 	External::glCreateTextures(static_cast<UInt>(target), 1, &textureID);
 	#ifdef DEBUG_OPENGL
-		openGlState.addTexture(textureID);
+		openGlContext.addTexture(textureID);
 	#endif // DEBUG_OPENGL
 	return textureID;
 }
@@ -683,18 +677,18 @@ TextureID OpenGL::Textures::apiCreateTexture(TextureTarget target)
 void OpenGL::Textures::apiDeleteTexture(const TextureID textureID)
 {
 	#ifdef TRACE_OPENGL
-		openGlState.write("glDeleteTextures(...);");
+		openGlContext.write("glDeleteTextures(...);");
 	#endif // TRACE_OPENGL
 	External::glDeleteTextures(1, &textureID);
 	#ifdef DEBUG_OPENGL
-		openGlState.removeTexture(textureID);
+		openGlContext.removeTexture(textureID);
 	#endif // DEBUG_OPENGL
 }
 
 String OpenGL::Shaders::apiGetShaderInfoLog(const ShaderID shaderId)
 {
 	#ifdef TRACE_OPENGL
-		openGlState.write("glGetShaderInfoLog(...);");
+		openGlContext.write("glGetShaderInfoLog(...);");
 	#endif // TRACE_OPENGL
 	const Int    logLength = apiGetShaderIntegerValue(shaderId, ShaderParameters::InfoLogLength);
 	Vector<Char> log(logLength);
@@ -705,7 +699,7 @@ String OpenGL::Shaders::apiGetShaderInfoLog(const ShaderID shaderId)
 void OpenGL::apiBindDrawFramebuffer(const FramebufferID framebufferID)
 {
 	#ifdef TRACE_OPENGL
-		openGlState.write("glBindFramebuffer(" + toString(static_cast<UInt>(FramebufferTarget::Draw)) + "," + toString(framebufferID) + ");");
+		openGlContext.write("glBindFramebuffer(" + toString(static_cast<UInt>(FramebufferTarget::Draw)) + "," + toString(framebufferID) + ");");
 	#endif // TRACE_OPENGL
 	External::glBindFramebuffer(static_cast<UInt>(FramebufferTarget::Draw), framebufferID);
 }
@@ -713,7 +707,7 @@ void OpenGL::apiBindDrawFramebuffer(const FramebufferID framebufferID)
 void OpenGL::apiBindReadFramebuffer(const FramebufferID framebufferID)
 {
 	#ifdef TRACE_OPENGL
-		openGlState.write("glBindFramebuffer(" + toString(static_cast<UInt>(FramebufferTarget::Read)) + "," + toString(framebufferID) + ");");
+		openGlContext.write("glBindFramebuffer(" + toString(static_cast<UInt>(FramebufferTarget::Read)) + "," + toString(framebufferID) + ");");
 	#endif // TRACE_OPENGL
 	External::glBindFramebuffer(static_cast<UInt>(FramebufferTarget::Read), framebufferID);
 }
@@ -721,15 +715,13 @@ void OpenGL::apiBindReadFramebuffer(const FramebufferID framebufferID)
 String OpenGL::Shaders::apiGetProgramInfoLog(const ProgramID programId)
 {
 	#ifdef TRACE_OPENGL
-		openGlState.write("glGetProgramInfoLog(...);");
+		openGlContext.write("glGetProgramInfoLog(...);");
 	#endif // TRACE_OPENGL
 	const Int    logLength = apiGetProgramIntegerValue(programId, ShaderProgramParameters::InfoLogLength);
 	Vector<Char> log(logLength);
 	External::glGetProgramInfoLog(programId, logLength, nullptr, log.data());
 	return {log.begin(), log.end()};
 }
-
-
 
 void OpenGLFramebuffer::drawBuffers(const Vector<UInt>& attachments) const
 {
@@ -739,24 +731,23 @@ void OpenGLFramebuffer::drawBuffers(const Vector<UInt>& attachments) const
 void OpenGL::Textures::apiGenerateTextureMipmap(const TextureID textureID)
 {
 	#ifdef TRACE_OPENGL
-		openGlState.write("glGenerateTextureMipmap(...);");
+		openGlContext.write("glGenerateTextureMipmap(...);");
 	#endif // TRACE_OPENGL
 	External::glGenerateTextureMipmap(textureID);
 }
 
-
-void OpenGL::apiScissor(const Int x, const Int y, const Int w, const Int h)
+void OpenGL::apiScissor(OpenGlContext& openGlContext, const Int x, const Int y, const Int w, const Int h)
 {
-	if (openGlState.scissorX != x || openGlState.scissorY != y || openGlState.scissorW != w || openGlState.scissorH != h)
+	if (openGlContext.scissorX != x || openGlContext.scissorY != y || openGlContext.scissorW != w || openGlContext.scissorH != h)
 	{
 		#ifdef TRACE_OPENGL
-			openGlState.write("glScissor(" + toString(x) + ", " + toString(y) + ", " + toString(w) + ", " + toString(h) + ");");
+			openGlContext.write("glScissor(" + toString(x) + ", " + toString(y) + ", " + toString(w) + ", " + toString(h) + ");");
 		#endif // TRACE_OPENGL
 		External::glScissor(x, y, w, h);
-		openGlState.scissorX = x;
-		openGlState.scissorY = y;
-		openGlState.scissorW = w;
-		openGlState.scissorH = h;
+		openGlContext.scissorX = x;
+		openGlContext.scissorY = y;
+		openGlContext.scissorW = w;
+		openGlContext.scissorH = h;
 	}
 }
 
@@ -766,25 +757,25 @@ Int OpenGL::Framebuffer::attachmentToIndex(FramebufferAttachment attachment)
 	return static_cast<Int>(attachment) - GL_COLOR_ATTACHMENT0;
 }
 
-void OpenGL::apiViewport(const Int x, const Int y, const Int w, const Int h)
+void OpenGL::apiViewport(OpenGlContext& openGlContext, const Int x, const Int y, const Int w, const Int h)
 {
-	if (openGlState.viewportX != x || openGlState.viewportY != y || openGlState.viewportW != w || openGlState.viewportH != h)
+	if (openGlContext.viewportX != x || openGlContext.viewportY != y || openGlContext.viewportW != w || openGlContext.viewportH != h)
 	{
 		#ifdef TRACE_OPENGL
-			openGlState.write("glViewport(" + toString(x) + ", " + toString(y) + ", " + toString(w) + ", " + toString(h) + ");");
+			openGlContext.write("glViewport(" + toString(x) + ", " + toString(y) + ", " + toString(w) + ", " + toString(h) + ");");
 		#endif // TRACE_OPENGL
 		External::glViewport(x, y, w, h);
-		openGlState.viewportX = x;
-		openGlState.viewportY = y;
-		openGlState.viewportW = w;
-		openGlState.viewportH = h;
+		openGlContext.viewportX = x;
+		openGlContext.viewportY = y;
+		openGlContext.viewportW = w;
+		openGlContext.viewportH = h;
 	}
 }
 
 void OpenGL::VertexArray::apiBindVertexArray(const VertexArrayID vertexArrayID)
 {
 	#ifdef TRACE_OPENGL
-		openGlState.write("glBindVertexArray(...);");
+		openGlContext.write("glBindVertexArray(...);");
 	#endif // TRACE_OPENGL
 	External::glBindVertexArray(vertexArrayID);
 }
@@ -797,7 +788,7 @@ void OpenGLVertexArrayObject::bindIndexBuffer(const BufferID indexBufferID) cons
 void OpenGL::Framebuffer::apiDeleteFramebuffer(const FramebufferID framebufferID)
 {
 	#ifdef TRACE_OPENGL
-		openGlState.write("glDeleteFramebuffers(...);");
+		openGlContext.write("glDeleteFramebuffers(...);");
 	#endif // TRACE_OPENGL
 	External::glDeleteFramebuffers(1, &framebufferID);
 }
@@ -805,7 +796,7 @@ void OpenGL::Framebuffer::apiDeleteFramebuffer(const FramebufferID framebufferID
 void OpenGL::VertexArray::apiDeleteVertexArray(const VertexArrayID& vertexArrayID)
 {
 	#ifdef TRACE_OPENGL
-		openGlState.write("glDeleteVertexArrays(...);");
+		openGlContext.write("glDeleteVertexArrays(...);");
 	#endif // TRACE_OPENGL
 	External::glDeleteVertexArrays(1, &vertexArrayID);
 }
@@ -813,7 +804,7 @@ void OpenGL::VertexArray::apiDeleteVertexArray(const VertexArrayID& vertexArrayI
 void OpenGL::Buffers::apiBindBuffer(const BufferTarget target, const BufferID bufferID)
 {
 	#ifdef TRACE_OPENGL
-		openGlState.write("glBindBuffer(...);");
+		openGlContext.write("glBindBuffer(...);");
 	#endif // TRACE_OPENGL
 	External::glBindBuffer(static_cast<UInt>(target), bufferID);
 }
@@ -821,7 +812,7 @@ void OpenGL::Buffers::apiBindBuffer(const BufferTarget target, const BufferID bu
 void OpenGL::Shaders::apiAttachShader(const ProgramID programId, const ShaderID shaderId)
 {
 	#ifdef TRACE_OPENGL
-		openGlState.write("glAttachShader(...);");
+		openGlContext.write("glAttachShader(...);");
 	#endif // TRACE_OPENGL
 	External::glAttachShader(programId, shaderId);
 }
@@ -829,7 +820,7 @@ void OpenGL::Shaders::apiAttachShader(const ProgramID programId, const ShaderID 
 void OpenGL::Shaders::apiDetachShader(const ProgramID programId, const ShaderID shaderId)
 {
 	#ifdef TRACE_OPENGL
-		openGlState.write("glDetachShader(...);");
+		openGlContext.write("glDetachShader(...);");
 	#endif // TRACE_OPENGL
 	External::glDetachShader(programId, shaderId);
 }
@@ -843,11 +834,10 @@ void OpenGLVertexArrayObject::unbindVertexBuffer(const AttributeIndex attributeI
 void OpenGL::apiObjectLabel(ObjectLabelType type, const UInt objectID, const String& label)
 {
 	#ifdef TRACE_OPENGL
-		openGlState.write("glObjectLabel(" + toString(static_cast<UInt>(type)) + "," + toString(objectID) + ",\"" + label + "\");");
+		openGlContext.write("glObjectLabel(" + toString(static_cast<UInt>(type)) + "," + toString(objectID) + ",\"" + label + "\");");
 	#endif // TRACE_OPENGL
 	External::glObjectLabel(static_cast<UInt>(type), objectID, static_cast<Int>(label.size()), label.c_str());
 }
-
 
 Vec4 OpenGLFramebuffer::readPixelVec4(const Int x, const Int y, const FramebufferMode mode) const
 {
@@ -864,7 +854,7 @@ Vec4 OpenGLFramebuffer::readPixelVec4(const Int x, const Int y, const Framebuffe
 void OpenGL::apiBlendFunc(const BlendFunction sourceFactor, const BlendFunction destinationFactor)
 {
 	#ifdef TRACE_OPENGL
-		openGlState.write("glBlendFunc(" + toString(static_cast<UInt>(sourceFactor)) + ", " + toString(static_cast<UInt>(destinationFactor)) + ");");
+		openGlContext.write("glBlendFunc(" + toString(static_cast<UInt>(sourceFactor)) + ", " + toString(static_cast<UInt>(destinationFactor)) + ");");
 	#endif // TRACE_OPENGL
 	External::glBlendFunc(static_cast<UInt>(sourceFactor), static_cast<UInt>(destinationFactor));
 }
@@ -894,7 +884,7 @@ void OpenGLFramebuffer::clearColor(const FramebufferAttachment attachmentSlot, c
 void OpenGL::Textures::apiBindTextureUnit(const TextureSlot textureUnitSlot, const TextureID textureID)
 {
 	#ifdef TRACE_OPENGL
-		openGlState.write("glBindTextureUnit(...);");
+		openGlContext.write("glBindTextureUnit(...);");
 	#endif // TRACE_OPENGL
 	External::glBindTextureUnit(textureUnitSlot, textureID);
 }
@@ -902,7 +892,7 @@ void OpenGL::Textures::apiBindTextureUnit(const TextureSlot textureUnitSlot, con
 Int OpenGL::Shaders::apiGetShaderIntegerValue(const ShaderID shaderId, const ShaderParameters parameter)
 {
 	#ifdef TRACE_OPENGL
-		openGlState.write("glGetShaderiv(...);");
+		openGlContext.write("glGetShaderiv(...);");
 	#endif // TRACE_OPENGL
 	Int result;
 	External::glGetShaderiv(shaderId, static_cast<UInt>(parameter), &result);
@@ -920,7 +910,7 @@ void OpenGL::VertexArray::apiDrawElements(const PrimitiveMode mode, const Int in
 	// indexCount:	the number of indices that will be used for rendering, equivalent to the total number of indices unless partial or batch rendering is used
 	// indices:		would read from an actual array of indices on cpu side, however when a VAO is used, it represents an offset instead, usually 0
 	#ifdef TRACE_OPENGL
-		openGlState.write("glDrawElements(" + toString(static_cast<UInt>(mode)) + ", " + toString(indexCount) + ", " + toString(GL_UNSIGNED_INT) + ", [...]);");
+		openGlContext.write("glDrawElements(" + toString(static_cast<UInt>(mode)) + ", " + toString(indexCount) + ", " + toString(GL_UNSIGNED_INT) + ", [...]);");
 	#endif // TRACE_OPENGL
 	External::glDrawElements(static_cast<UInt>(mode), indexCount, GL_UNSIGNED_INT, indices);
 }
@@ -934,7 +924,7 @@ void OpenGLFramebuffer::attachTexture(const FramebufferAttachment attachment, co
 void OpenGL::Framebuffer::apiNamedFramebufferReadBuffer(const FramebufferID framebufferID, FramebufferMode mode)
 {
 	#ifdef TRACE_OPENGL
-		openGlState.write("glNamedFramebufferReadBuffer(...);");
+		openGlContext.write("glNamedFramebufferReadBuffer(...);");
 	#endif // TRACE_OPENGL
 	External::glNamedFramebufferReadBuffer(framebufferID, static_cast<UInt>(mode));
 }
@@ -942,7 +932,7 @@ void OpenGL::Framebuffer::apiNamedFramebufferReadBuffer(const FramebufferID fram
 Int OpenGL::Shaders::apiGetProgramIntegerValue(const ProgramID programId, const ShaderProgramParameters parameter)
 {
 	#ifdef TRACE_OPENGL
-		openGlState.write("glGetProgramiv(...);");
+		openGlContext.write("glGetProgramiv(...);");
 	#endif // TRACE_OPENGL
 	Int value;
 	External::glGetProgramiv(programId, static_cast<UInt>(parameter), &value);
@@ -952,7 +942,7 @@ Int OpenGL::Shaders::apiGetProgramIntegerValue(const ProgramID programId, const 
 void OpenGL::VertexArray::apiVertexArrayElementBuffer(const VertexArrayID vertexArrayID, const BufferID indexBufferID)
 {
 	#ifdef TRACE_OPENGL
-		openGlState.write("glVertexArrayElementBuffer(" + toString(vertexArrayID) + ", " + toString(indexBufferID) + ");");
+		openGlContext.write("glVertexArrayElementBuffer(" + toString(vertexArrayID) + ", " + toString(indexBufferID) + ");");
 	#endif // TRACE_OPENGL
 	External::__glewVertexArrayElementBuffer(vertexArrayID, indexBufferID);
 }
@@ -960,7 +950,7 @@ void OpenGL::VertexArray::apiVertexArrayElementBuffer(const VertexArrayID vertex
 void OpenGL::Textures::apiTextureParameteri(const TextureID textureId, TextureParameterSet parameter, const Int value)
 {
 	#ifdef TRACE_OPENGL
-		openGlState.write("glTextureParameteri(...);");
+		openGlContext.write("glTextureParameteri(...);");
 	#endif // TRACE_OPENGL
 	External::glTextureParameteri(textureId, static_cast<UInt>(parameter), value);
 }
@@ -968,7 +958,7 @@ void OpenGL::Textures::apiTextureParameteri(const TextureID textureId, TexturePa
 void OpenGL::Framebuffer::apiNamedFramebufferDrawBuffers(const FramebufferID framebuffer, const Vector<UInt>& buffers)
 {
 	#ifdef TRACE_OPENGL
-		openGlState.write("glNamedFramebufferDrawBuffers(...);");
+		openGlContext.write("glNamedFramebufferDrawBuffers(...);");
 	#endif // TRACE_OPENGL
 	External::glNamedFramebufferDrawBuffers(framebuffer, static_cast<Int>(buffers.size()), buffers.data());
 }
@@ -976,7 +966,7 @@ void OpenGL::Framebuffer::apiNamedFramebufferDrawBuffers(const FramebufferID fra
 void OpenGL::Textures::apiTextureParameterf(const TextureID textureId, TextureParameterSet parameter, const Float value)
 {
 	#ifdef TRACE_OPENGL
-		openGlState.write("glTextureParameterf(...);");
+		openGlContext.write("glTextureParameterf(...);");
 	#endif // TRACE_OPENGL
 	External::glTextureParameterf(textureId, static_cast<UInt>(parameter), value);
 }
@@ -984,7 +974,7 @@ void OpenGL::Textures::apiTextureParameterf(const TextureID textureId, TexturePa
 void OpenGL::Textures::apiTextureParameteriv(const TextureID textureId, TextureParameterSet parameter, const Int* value)
 {
 	#ifdef TRACE_OPENGL
-		openGlState.write("glTextureParameteriv(...);");
+		openGlContext.write("glTextureParameteriv(...);");
 	#endif // TRACE_OPENGL
 	External::glTextureParameteriv(textureId, static_cast<UInt>(parameter), value);
 }
@@ -992,11 +982,11 @@ void OpenGL::Textures::apiTextureParameteriv(const TextureID textureId, TextureP
 void OpenGL::VertexArray::apiEnableVertexArrayAttrib(const VertexArrayID vertexArrayID, const AttributeIndex attributeID)
 {
 	#ifdef CHECK_OPENGL
-		if(attributeID > openGlState.maxVertexAttributes - 1) logError("Attribute Index out of bounds!");
+		if(attributeID > openGlContext.maxVertexAttributes - 1) logError("Attribute Index out of bounds!");
 	#endif // CHECK_OPENGL
 
 	#ifdef TRACE_OPENGL
-		openGlState.write("glEnableVertexArrayAttrib(" + toString(vertexArrayID) + ", " + toString(attributeID) + ");");
+		openGlContext.write("glEnableVertexArrayAttrib(" + toString(vertexArrayID) + ", " + toString(attributeID) + ");");
 	#endif // TRACE_OPENGL
 
 	External::glEnableVertexArrayAttrib(vertexArrayID, attributeID);
@@ -1005,7 +995,7 @@ void OpenGL::VertexArray::apiEnableVertexArrayAttrib(const VertexArrayID vertexA
 void OpenGL::Textures::apiTextureParameterIiv(const TextureID textureId, TextureParameterSet parameter, const Int* value)
 {
 	#ifdef TRACE_OPENGL
-		openGlState.write("glTextureParameterIiv(...);");
+		openGlContext.write("glTextureParameterIiv(...);");
 	#endif // TRACE_OPENGL
 	External::glTextureParameterIiv(textureId, static_cast<UInt>(parameter), value);
 }
@@ -1013,11 +1003,11 @@ void OpenGL::Textures::apiTextureParameterIiv(const TextureID textureId, Texture
 void OpenGL::VertexArray::apiDisableVertexArrayAttrib(const VertexArrayID vertexArrayID, const AttributeIndex attributeID)
 {
 	#ifdef CHECK_OPENGL
-		if(attributeID > openGlState.maxVertexAttributes - 1) logError("Attribute Index out of bounds!");
+		if(attributeID > openGlContext.maxVertexAttributes - 1) logError("Attribute Index out of bounds!");
 	#endif // CHECK_OPENGL
 
 	#ifdef TRACE_OPENGL
-		openGlState.write("glDisableVertexArrayAttrib(...);");
+		openGlContext.write("glDisableVertexArrayAttrib(...);");
 	#endif // TRACE_OPENGL
 	External::glDisableVertexArrayAttrib(vertexArrayID, attributeID);
 }
@@ -1025,7 +1015,7 @@ void OpenGL::VertexArray::apiDisableVertexArrayAttrib(const VertexArrayID vertex
 void OpenGL::Textures::apiGetTextureParameteriv(const TextureID textureID, TextureParameterGet parameterName, Int& output)
 {
 	#ifdef TRACE_OPENGL
-		openGlState.write("glGetTextureParameteriv(...);");
+		openGlContext.write("glGetTextureParameteriv(...);");
 	#endif // TRACE_OPENGL
 	External::glGetTextureParameteriv(textureID, static_cast<UInt>(parameterName), &output);
 }
@@ -1097,7 +1087,7 @@ Bool OpenGLShaderProgram::create(const String& name, const String& vertexShaderS
 void OpenGL::Textures::apiTextureParameterfv(const TextureID textureId, TextureParameterSet parameter, const Float* value)
 {
 	#ifdef TRACE_OPENGL
-		openGlState.write("glTextureParameterfv(...);");
+		openGlContext.write("glTextureParameterfv(...);");
 	#endif // TRACE_OPENGL
 	External::glTextureParameterfv(textureId, static_cast<UInt>(parameter), value);
 }
@@ -1105,7 +1095,7 @@ void OpenGL::Textures::apiTextureParameterfv(const TextureID textureId, TextureP
 void OpenGL::Buffers::apiNamedBufferData(const BufferID bufferID, const ULL byteCount, const void* data, BufferUsage usage)
 {
 	#ifdef TRACE_OPENGL
-		openGlState.write("glNamedBufferData(" + toString(bufferID) + ", " + toString(byteCount) + ", [...] , " + toString(static_cast<UInt>(usage)) + ");");
+		openGlContext.write("glNamedBufferData(" + toString(bufferID) + ", " + toString(byteCount) + ", [...] , " + toString(static_cast<UInt>(usage)) + ");");
 	#endif // TRACE_OPENGL
 	// use for dynamic buffer data, like uniform buffer
 	External::glNamedBufferData(bufferID, static_cast<LL>(byteCount), data, static_cast<UInt>(usage));
@@ -1114,7 +1104,7 @@ void OpenGL::Buffers::apiNamedBufferData(const BufferID bufferID, const ULL byte
 void OpenGL::Textures::apiGetTextureParameterIiv(const TextureID textureID, TextureParameterGet parameterName, Int* output)
 {
 	#ifdef TRACE_OPENGL
-		openGlState.write("glGetTextureParameterIiv(...);");
+		openGlContext.write("glGetTextureParameterIiv(...);");
 	#endif // TRACE_OPENGL
 	External::glGetTextureParameterIiv(textureID, static_cast<UInt>(parameterName), output);
 }
@@ -1122,7 +1112,7 @@ void OpenGL::Textures::apiGetTextureParameterIiv(const TextureID textureID, Text
 void OpenGL::Textures::apiTextureParameterIuiv(const TextureID textureId, TextureParameterSet parameter, const UInt* value)
 {
 	#ifdef TRACE_OPENGL
-		openGlState.write("glTextureParameterIuiv(...);");
+		openGlContext.write("glTextureParameterIuiv(...);");
 	#endif // TRACE_OPENGL
 	External::glTextureParameterIuiv(textureId, static_cast<UInt>(parameter), value);
 }
@@ -1130,7 +1120,7 @@ void OpenGL::Textures::apiTextureParameterIuiv(const TextureID textureId, Textur
 void OpenGL::Textures::apiGetTextureParameterfv(const TextureID textureID, TextureParameterGet parameterName, Float& output)
 {
 	#ifdef TRACE_OPENGL
-		openGlState.write("glGetTextureParameterfv(...);");
+		openGlContext.write("glGetTextureParameterfv(...);");
 	#endif // TRACE_OPENGL
 	External::glGetTextureParameterfv(textureID, static_cast<UInt>(parameterName), &output);
 }
@@ -1138,7 +1128,7 @@ void OpenGL::Textures::apiGetTextureParameterfv(const TextureID textureID, Textu
 void OpenGL::Textures::apiGetTextureParameterIuiv(const TextureID textureID, TextureParameterGet parameterName, UInt* output)
 {
 	#ifdef TRACE_OPENGL
-		openGlState.write("glGetTextureParameterIuiv(...);");
+		openGlContext.write("glGetTextureParameterIuiv(...);");
 	#endif // TRACE_OPENGL
 	External::glGetTextureParameterIuiv(textureID, static_cast<UInt>(parameterName), output);
 }
@@ -1149,7 +1139,7 @@ void OpenGL::Buffers::apiBindBufferBase(const BufferTarget target, const Binding
 	// e.g. you can bind a uniform buffer using its bufferID to BufferTarget::Uniform at binding point 0
 
 	#ifdef TRACE_OPENGL
-		openGlState.write("glBindBufferBase(...);");
+		openGlContext.write("glBindBufferBase(...);");
 	#endif // TRACE_OPENGL
 	External::glBindBufferBase(static_cast<UInt>(target), bindingLocation, buffer);
 }
@@ -1157,7 +1147,7 @@ void OpenGL::Buffers::apiBindBufferBase(const BufferTarget target, const Binding
 void OpenGL::Shaders::apiShaderSource(const ShaderID shaderId, const Int count, const Char* const* string, const Int* length)
 {
 	#ifdef TRACE_OPENGL
-		openGlState.write("glShaderSource(...);");
+		openGlContext.write("glShaderSource(...);");
 	#endif // TRACE_OPENGL
 	External::glShaderSource(shaderId, count, string, length);
 }
@@ -1170,7 +1160,7 @@ void OpenGLVertexArrayObject::render(const PrimitiveMode primitiveMode, const In
 FramebufferStatus OpenGL::Framebuffer::apiCheckNamedFramebufferStatus(const FramebufferID framebufferID, FramebufferTarget target)
 {
 	#ifdef TRACE_OPENGL
-		openGlState.write("glCheckNamedFramebufferStatus(...);");
+		openGlContext.write("glCheckNamedFramebufferStatus(...);");
 	#endif // TRACE_OPENGL
 	return static_cast<FramebufferStatus>(External::glCheckNamedFramebufferStatus(framebufferID, static_cast<UInt>(target)));
 }
@@ -1178,7 +1168,7 @@ FramebufferStatus OpenGL::Framebuffer::apiCheckNamedFramebufferStatus(const Fram
 void OpenGL::VertexArray::apiVertexArrayBindingDivisor(const VertexArrayID vertexArrayID, const Index layoutBinding, const UInt divisor)
 {
 	#ifdef TRACE_OPENGL
-		openGlState.write("glVertexArrayBindingDivisor(" + toString(vertexArrayID) + ", " + toString(layoutBinding) + ", " + toString(divisor) + ");");
+		openGlContext.write("glVertexArrayBindingDivisor(" + toString(vertexArrayID) + ", " + toString(layoutBinding) + ", " + toString(divisor) + ");");
 	#endif // TRACE_OPENGL
 	External::glVertexArrayBindingDivisor(vertexArrayID, layoutBinding, divisor);
 }
@@ -1190,7 +1180,7 @@ void OpenGL::VertexArray::apiDrawElementsInstanced(const PrimitiveMode mode, con
 	// indices:			would read from an actual array of indices on cpu side, however when a VBO is used, it represents an offset instead, usually nullptr
 	// primitiveCount:	the number of instances, usually the number of total instances unless instances are partially rendered
 	#ifdef TRACE_OPENGL
-		openGlState.write("glDrawElementsInstanced(...);");
+		openGlContext.write("glDrawElementsInstanced(...);");
 	#endif // TRACE_OPENGL
 	External::glDrawElementsInstanced(static_cast<UInt>(mode), indexCount, GL_UNSIGNED_INT, indices, primitiveCount);
 }
@@ -1198,7 +1188,7 @@ void OpenGL::VertexArray::apiDrawElementsInstanced(const PrimitiveMode mode, con
 void OpenGL::Textures::apiClearTexImage(const TextureID texture, const Int mipmapLevel, WritePixelsFormat format, DataType type, const void* data)
 {
 	#ifdef TRACE_OPENGL
-		openGlState.write("glClearTexImage(...);");
+		openGlContext.write("glClearTexImage(...);");
 	#endif // TRACE_OPENGL
 	External::glClearTexImage(texture, mipmapLevel, static_cast<UInt>(format), static_cast<UInt>(type), data);
 }
@@ -1209,7 +1199,7 @@ void OpenGL::Textures::apiTextureStorage2D(const TextureID texture, const Int mi
 	height = max(1, height);
 
 	#ifdef TRACE_OPENGL
-		openGlState.write("glTextureStorage2D(...);");
+		openGlContext.write("glTextureStorage2D(...);");
 	#endif // TRACE_OPENGL
 	External::glTextureStorage2D(texture, mipmapLevel, static_cast<UInt>(internalFormat), width, height);
 }
@@ -1217,11 +1207,11 @@ void OpenGL::Textures::apiTextureStorage2D(const TextureID texture, const Int mi
 void OpenGL::VertexArray::apiVertexArrayAttribBinding(const VertexArrayID vertexArrayID, const AttributeIndex attributeID, const Index layoutBinding)
 {
 	#ifdef CHECK_OPENGL
-		if(attributeID > openGlState.maxVertexAttributes - 1) logError("Attribute Index out of bounds!");
+		if(attributeID > openGlContext.maxVertexAttributes - 1) logError("Attribute Index out of bounds!");
 	#endif // CHECK_OPENGL
 
 	#ifdef TRACE_OPENGL
-		openGlState.write("glVertexArrayAttribBinding(" + toString(vertexArrayID) + ", " + toString(attributeID) + ", " + toString(layoutBinding) + ");");
+		openGlContext.write("glVertexArrayAttribBinding(" + toString(vertexArrayID) + ", " + toString(attributeID) + ", " + toString(layoutBinding) + ");");
 	#endif // TRACE_OPENGL
 	External::glVertexArrayAttribBinding(vertexArrayID, attributeID, layoutBinding);
 }
@@ -1230,7 +1220,7 @@ void OpenGL::Shaders::apiUniformBlockBinding(const ProgramID programId, const Un
 {
 	// binds the uniform block id of each shader to a predefined binding point that shaders attach to
 	#ifdef TRACE_OPENGL
-		openGlState.write("glUniformBlockBinding(...);");
+		openGlContext.write("glUniformBlockBinding(...);");
 	#endif // TRACE_OPENGL
 	External::glUniformBlockBinding(programId, uniformBlockIndex, uniformBlockBinding);
 }
@@ -1238,7 +1228,7 @@ void OpenGL::Shaders::apiUniformBlockBinding(const ProgramID programId, const Un
 void OpenGL::Framebuffer::apiReadPixels(const Int x, const Int y, const Int width, const Int height, ReadPixelsFormat format, DataType type, void* data)
 {
 	#ifdef TRACE_OPENGL
-		openGlState.write("glReadPixels(...);");
+		openGlContext.write("glReadPixels(...);");
 	#endif // TRACE_OPENGL
 	External::glReadPixels(x, y, width, height, static_cast<UInt>(format), static_cast<UInt>(type), data);
 }
@@ -1251,7 +1241,7 @@ void OpenGLVertexArrayObject::renderInstanced(const PrimitiveMode primitiveMode,
 void OpenGL::Framebuffer::apiClearNamedFramebufferiv(const FramebufferID framebufferID, ClearBufferType buffer, const FramebufferAttachment attachmentSlot, const Int* value)
 {
 	#ifdef TRACE_OPENGL
-		openGlState.write("glClearNamedFramebufferiv(...);");
+		openGlContext.write("glClearNamedFramebufferiv(...);");
 	#endif // TRACE_OPENGL
 	External::glClearNamedFramebufferiv(framebufferID, static_cast<UInt>(buffer), attachmentToIndex(attachmentSlot), value);
 }
@@ -1259,7 +1249,7 @@ void OpenGL::Framebuffer::apiClearNamedFramebufferiv(const FramebufferID framebu
 void OpenGL::Framebuffer::apiClearNamedFramebufferfv(const FramebufferID framebufferID, ClearBufferType buffer, const FramebufferAttachment attachmentSlot, const Float* value)
 {
 	#ifdef TRACE_OPENGL
-		openGlState.write("glClearNamedFramebufferfv(...);");
+		openGlContext.write("glClearNamedFramebufferfv(...);");
 	#endif // TRACE_OPENGL
 	External::glClearNamedFramebufferfv(framebufferID, static_cast<UInt>(buffer), attachmentToIndex(attachmentSlot), value);
 }
@@ -1267,7 +1257,7 @@ void OpenGL::Framebuffer::apiClearNamedFramebufferfv(const FramebufferID framebu
 void OpenGL::Framebuffer::apiClearNamedFramebufferuiv(const FramebufferID framebufferID, ClearBufferType buffer, const FramebufferAttachment attachmentSlot, const UInt* value)
 {
 	#ifdef TRACE_OPENGL
-		openGlState.write("glClearNamedFramebufferuiv(...);");
+		openGlContext.write("glClearNamedFramebufferuiv(...);");
 	#endif // TRACE_OPENGL
 	External::glClearNamedFramebufferuiv(framebufferID, static_cast<UInt>(buffer), attachmentToIndex(attachmentSlot), value);
 }
@@ -1275,7 +1265,7 @@ void OpenGL::Framebuffer::apiClearNamedFramebufferuiv(const FramebufferID frameb
 void OpenGL::Framebuffer::apiNamedFramebufferTexture(const FramebufferID framebufferID, const FramebufferAttachment attachmentID, const TextureID texture, const Int mipmapLevel)
 {
 	#ifdef TRACE_OPENGL
-		openGlState.write("glNamedFramebufferTexture(...);");
+		openGlContext.write("glNamedFramebufferTexture(...);");
 	#endif // TRACE_OPENGL
 	External::glNamedFramebufferTexture(framebufferID, static_cast<UInt>(attachmentID), texture, mipmapLevel);
 }
@@ -1283,16 +1273,15 @@ void OpenGL::Framebuffer::apiNamedFramebufferTexture(const FramebufferID framebu
 void OpenGL::VertexArray::apiVertexArrayVertexBuffer(const VertexArrayID vertexArrayID, const UInt layoutBinding, const VertexBufferID buffer, const LL offset, const Int stride)
 {
 	#ifdef TRACE_OPENGL
-		openGlState.write("glVertexArrayVertexBuffer(" + toString(vertexArrayID) + ", " + toString(layoutBinding) + ", " + toString(buffer) + ", " + toString(offset) + ", " + toString(stride) + ");");
+		openGlContext.write("glVertexArrayVertexBuffer(" + toString(vertexArrayID) + ", " + toString(layoutBinding) + ", " + toString(buffer) + ", " + toString(offset) + ", " + toString(stride) + ");");
 	#endif // TRACE_OPENGL
 	External::glVertexArrayVertexBuffer(vertexArrayID, layoutBinding, buffer, offset, stride);
 }
 
-
 void OpenGL::Framebuffer::apiClearNamedFramebufferfi(const FramebufferID framebufferID, ClearBufferType buffer, const FramebufferAttachment attachmentSlot, const Float depth, const Int stencil)
 {
 	#ifdef TRACE_OPENGL
-		openGlState.write("glClearNamedFramebufferfi(...);");
+		openGlContext.write("glClearNamedFramebufferfi(...);");
 	#endif // TRACE_OPENGL
 	External::glClearNamedFramebufferfi(framebufferID, static_cast<UInt>(buffer), attachmentToIndex(attachmentSlot), depth, stencil);
 }
@@ -1300,11 +1289,11 @@ void OpenGL::Framebuffer::apiClearNamedFramebufferfi(const FramebufferID framebu
 void OpenGL::VertexArray::apiVertexArrayAttribFormat(const VertexArrayID vertexArrayID, const AttributeIndex attributeID, const Int size, DataType type, const Bool normalized, const UInt relativeOffset)
 {
 	#ifdef CHECK_OPENGL
-		if(attributeID > openGlState.maxVertexAttributes - 1) logError("Attribute Index out of bounds!");
+		if(attributeID > openGlContext.maxVertexAttributes - 1) logError("Attribute Index out of bounds!");
 	#endif // CHECK_OPENGL
 
 	#ifdef TRACE_OPENGL
-		openGlState.write("glVertexArrayAttribFormat(" + toString(vertexArrayID) + ", " + toString(attributeID) + ", " + toString(size) + ", " + toString(static_cast<UInt>(type)) + ", " + toString(normalized) + ", " + toString(relativeOffset) + ");");
+		openGlContext.write("glVertexArrayAttribFormat(" + toString(vertexArrayID) + ", " + toString(attributeID) + ", " + toString(size) + ", " + toString(static_cast<UInt>(type)) + ", " + toString(normalized) + ", " + toString(relativeOffset) + ");");
 	#endif // TRACE_OPENGL
 	External::glVertexArrayAttribFormat(vertexArrayID, attributeID, size, static_cast<UInt>(type), normalized, relativeOffset);
 }
@@ -1312,7 +1301,7 @@ void OpenGL::VertexArray::apiVertexArrayAttribFormat(const VertexArrayID vertexA
 void OpenGL::Textures::apiTextureSubImage2D(const TextureID texture, const Int mipmapLevel, const Int xOffset, const Int yOffset, const Int width, const Int height, WritePixelsFormat format, DataType type, const void* pixels)
 {
 	#ifdef TRACE_OPENGL
-		openGlState.write("glTextureSubImage2D(...);");
+		openGlContext.write("glTextureSubImage2D(...);");
 	#endif // TRACE_OPENGL
 	External::glPixelStorei(GL_PACK_ALIGNMENT, 1);
 	External::glPixelStorei(GL_UNPACK_ALIGNMENT, 1);

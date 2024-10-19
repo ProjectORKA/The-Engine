@@ -1,12 +1,13 @@
 #include "GPUMesh.hpp"
 #include "Uniforms.hpp"
+#include "Renderer.hpp"
 
-void GpuMesh::unload()
+void GpuMesh::unload(Renderer& renderer)
 {
 	// make unavailable for rendering
 	if (loaded)
 	{
-		vao.destroy();
+		vao.destroy(renderer.openGlContext);
 		positionBuffer.destroy();
 		textureCoordinateBuffer.destroy();
 		normalBuffer.destroy();
@@ -22,7 +23,7 @@ Bool GpuMesh::isLoaded() const
 	return loaded;
 }
 
-void GpuMesh::upload(const CpuMesh& cpuMesh)
+void GpuMesh::upload(Renderer& renderer, const CpuMesh& cpuMesh)
 {
 	if (loaded)
 	{
@@ -38,7 +39,7 @@ void GpuMesh::upload(const CpuMesh& cpuMesh)
 
 	primitiveMode = cpuMesh.primitiveMode;
 
-	vao.create();
+	vao.create(renderer.openGlContext);
 
 	if (cpuMesh.hasPositions())
 	{

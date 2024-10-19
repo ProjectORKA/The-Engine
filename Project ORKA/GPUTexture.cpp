@@ -1,11 +1,12 @@
 #include "GPUTexture.hpp"
 #include "AIPlayground.hpp"
+#include "Renderer.hpp"
 
-void GPUTexture::unload()
+void GPUTexture::unload(Renderer & renderer)
 {
 	if(loaded)
 	{
-		openglTexture.destroy();
+		openglTexture.destroy(renderer.openGlContext);
 		loaded = false;
 	}
 }
@@ -26,12 +27,12 @@ Float GPUTexture::getAspectRatio() const
 	return 1.0f;
 }
 
-void GPUTexture::resize(const Area size)
+void GPUTexture::resize(Renderer & renderer, const Area size)
 {
-	openglTexture.destroy();
+	openglTexture.destroy(renderer.openGlContext);
 	width  = size.x;
 	height = size.y;
-	openglTexture.create(toString(name));
+	openglTexture.create(renderer.openGlContext, toString(name));
 	setData(dataType, format, width, height, nullptr);
 }
 
@@ -45,11 +46,11 @@ WritePixelsFormat GPUTexture::getFormat() const
 	return format;
 }
 
-void GPUTexture::load(const CpuTexture& cpuTexture)
+void GPUTexture::load(Renderer& renderer, const CpuTexture& cpuTexture)
 {
 	if(cpuTexture.isLoaded())
 	{
-		if(loaded) unload();
+		if(loaded) unload(renderer);
 
 		name       = cpuTexture.getName();
 		wrapping   = cpuTexture.getWrapping();
@@ -61,7 +62,7 @@ void GPUTexture::load(const CpuTexture& cpuTexture)
 		height     = cpuTexture.getHeight();
 
 		// create texture
-		openglTexture.create(toString(cpuTexture.getName()));
+		openglTexture.create(renderer.openGlContext, toString(cpuTexture.getName()));
 
 		setData(cpuTexture.getDataType(), cpuTexture.getFormat(), cpuTexture.getWidth(), cpuTexture.getHeight(), cpuTexture.getPixels());
 
@@ -91,11 +92,11 @@ void GPUTexture::useTextureInSlot(const UInt textureSlot) const
 	}
 }
 
-void GPUTexture::load(const Name& name)
+void GPUTexture::load(Renderer& renderer, const Name& name)
 {
 	CpuTexture t;
 	t.load(name, Filter::Linear, Filter::LinearMm, Wrapping::Repeat);
-	load(t);
+	load(renderer, t);
 }
 
 void GPUTexture::setFilters(const Filter nearFilterValue, const Filter farFilterValue)
@@ -111,10 +112,10 @@ void GPUTexture::generateMipMaps(const Filter nearFilterValue, const Filter farF
 	generateMipMaps();
 }
 
-void GPUTexture::load(const IVec2 size, const WritePixelsFormat format, const DataType type, const Wrapping wrapping)
+void GPUTexture::load(Renderer& renderer, const IVec2 size, const WritePixelsFormat format, const DataType type, const Wrapping wrapping)
 {
 	const CpuTexture cpuTexture(size.x, size.y, "generated", Filter::Linear, Filter::Linear, type, wrapping, format);
-	load(cpuTexture);
+	load(renderer, cpuTexture);
 }
 
 void GPUTexture::setData(const DataType dataType, const WritePixelsFormat format, const Int width, const Int height, const Byte* data)

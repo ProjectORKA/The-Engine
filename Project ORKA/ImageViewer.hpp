@@ -54,15 +54,15 @@ struct ImageViewerRenderer final : GameRenderer
 	[[nodiscard]] Vector<Index> indicesOfImagesSortedByPriority() const;
 
 	void updateZoom();
-	void removeImage();
-	void updateLoadedImages();
 	void calculatePriorities();
-	void removeImage(Int imageId);
+	void showNextImage(Window& window);
+	void showPrevImage(Window& window);
+	void removeImage(Renderer& renderer);
 	void update(Window& window) override;
 	void create(Window& window) override;
 	void destroy(Window& window) override;
-	void showNextImage(const Window& window);
-	void showPrevImage(const Window& window);
+	void removeImage(Renderer& r, Int imageId);
+	void updateLoadedImages(Renderer& renderer);
 	void connect(GameSimulation& simulation) override;
 	void renderAllImages(Window& window, TiledRectangle area);
 	void render(Window& window, TiledRectangle area) override;
@@ -72,7 +72,6 @@ struct ImageViewerRenderer final : GameRenderer
 
 struct ImageViewer
 {
-	UserInterface       ui;
 	ImageViewerRenderer renderer;
 	Vector<Path>        filePaths;
 	Path                currentPath = getCurrentPath();
@@ -82,6 +81,6 @@ struct ImageViewer
 
 void loadNextImage(ImageViewerRenderer& viewer);
 
-void loadImage(ImageViewerRenderer& viewer, Index imageId);
+void loadImage(Renderer& renderer, ImageViewerRenderer& viewer, Index imageId);
 
 void addImageToDatabase(ImageViewerRenderer& viewer, Index imageId);

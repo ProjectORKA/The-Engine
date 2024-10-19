@@ -1,6 +1,6 @@
 #include "PrimitivesRenderer.hpp"
 
-void PrimitivesRenderer::create()
+void PrimitivesRenderer::create(Renderer & renderer)
 {
 	CpuMesh genMesh;
 
@@ -10,7 +10,7 @@ void PrimitivesRenderer::create()
 	genMesh.primitiveMode = PrimitiveMode::Points;
 	genMesh.positions     = {Vec3(0.0f, 0.0f, 0.0f)};
 	genMesh.checkIntegrity();
-	pointsMesh.upload(genMesh);
+	pointsMesh.upload(renderer, genMesh);
 	genMesh.clearGeometry();
 
 	// line
@@ -20,7 +20,7 @@ void PrimitivesRenderer::create()
 	genMesh.positions     = {Vec3(-0.5f, 0.0f, 0.0f), Vec3(0.5f, 0.0f, 0.0f)};
 	genMesh.indices       = {0, 1};
 	genMesh.checkIntegrity();
-	lineMesh.upload(genMesh);
+	lineMesh.upload(renderer, genMesh);
 	genMesh.clearGeometry();
 
 	// lines
@@ -30,7 +30,7 @@ void PrimitivesRenderer::create()
 	genMesh.positions     = {Vec3(-0.5f, 0.0f, 0.0f), Vec3(0.5f, 0.0f, 0.0f)};
 	genMesh.indices       = {0, 1};
 	genMesh.checkIntegrity();
-	linesMesh.upload(genMesh);
+	linesMesh.upload(renderer, genMesh);
 	genMesh.clearGeometry();
 
 	// plane
@@ -41,7 +41,7 @@ void PrimitivesRenderer::create()
 	genMesh.textureCoordinates = {Vec2(0, 0), Vec2(1, 0), Vec2(0, 1), Vec2(1, 1)};
 	genMesh.indices            = {0, 1, 2, 2, 1, 3};
 	genMesh.checkIntegrity();
-	planeMesh.upload(genMesh);
+	planeMesh.upload(renderer, genMesh);
 	genMesh.clearGeometry();
 
 	genMesh.drawMode           = BufferUsage::StaticDraw;
@@ -51,7 +51,7 @@ void PrimitivesRenderer::create()
 	genMesh.textureCoordinates = {Vec2(0, 0), Vec2(1, 0), Vec2(0, 1), Vec2(1, 1)};
 	genMesh.indices            = {0, 1, 2, 2, 1, 3};
 	genMesh.checkIntegrity();
-	rectangleMesh.upload(genMesh);
+	rectangleMesh.upload(renderer, genMesh);
 	genMesh.clearGeometry();
 
 	// wireframe cube
@@ -62,7 +62,7 @@ void PrimitivesRenderer::create()
 	genMesh.textureCoordinates = {Vec2(0, 0), Vec2(1, 0), Vec2(1, 1), Vec2(0, 1), Vec2(0, 0), Vec2(1, 0), Vec2(1, 1), Vec2(0, 1),};
 	genMesh.indices            = {0, 1, 1, 2, 2, 3, 3, 0, 4, 5, 5, 6, 6, 7, 7, 4, 0, 4, 1, 5, 2, 6, 3, 7};
 	genMesh.checkIntegrity();
-	wireframeCubeMesh.upload(genMesh);
+	wireframeCubeMesh.upload(renderer, genMesh);
 	genMesh.clearGeometry();
 
 	// wireframe cube centered
@@ -73,7 +73,7 @@ void PrimitivesRenderer::create()
 	genMesh.textureCoordinates = {Vec2(0, 0), Vec2(1, 0), Vec2(1, 1), Vec2(0, 1), Vec2(0, 0), Vec2(1, 0), Vec2(1, 1), Vec2(0, 1),};
 	genMesh.indices            = {0, 1, 1, 2, 2, 3, 3, 0, 4, 5, 5, 6, 6, 7, 7, 4, 0, 4, 1, 5, 2, 6, 3, 7};
 	genMesh.checkIntegrity();
-	wireframeCubeCenteredMesh.upload(genMesh);
+	wireframeCubeCenteredMesh.upload(renderer, genMesh);
 	genMesh.clearGeometry();
 
 	// circle
@@ -88,21 +88,21 @@ void PrimitivesRenderer::create()
 
 	genMesh.indices            = {6,0,1,2,3,4,5,0};
 	genMesh.checkIntegrity();
-	circleMesh.upload(genMesh);
+	circleMesh.upload(renderer, genMesh);
 	genMesh.clearGeometry();
 }
 
-void PrimitivesRenderer::destroy()
+void PrimitivesRenderer::destroy(Renderer & renderer)
 {
-	lineMesh.unload();
-	cubeMesh.unload();
-	linesMesh.unload();
-	planeMesh.unload();
-	pointsMesh.unload();
-	circleMesh.unload();
-	rectangleMesh.unload();
-	wireframeCubeMesh.unload();
-	wireframeCubeCenteredMesh.unload();
+	lineMesh.unload(renderer);
+	cubeMesh.unload(renderer);
+	linesMesh.unload(renderer);
+	planeMesh.unload(renderer);
+	pointsMesh.unload(renderer);
+	circleMesh.unload(renderer);
+	rectangleMesh.unload(renderer);
+	wireframeCubeMesh.unload(renderer);
+	wireframeCubeCenteredMesh.unload(renderer);
 }
 
 void PrimitivesRenderer::rectangle(Uniforms& uniforms) const

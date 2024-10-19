@@ -10,10 +10,10 @@ void SortrFolderRing::add()
 	updatePosition();
 }
 
-void SortrResource::destroy()
+void SortrResource::destroy(Renderer& renderer)
 {
 	cpuTexture.unload();
-	gpuTexture.unload();
+	gpuTexture.unload(renderer);
 }
 
 void SortrFolderRing::create()
@@ -55,7 +55,7 @@ void SortrRenderer::showPrevImage()
 	}
 }
 
-void SortrRenderer::preloadImages()
+void SortrRenderer::preloadImages(Renderer& renderer)
 {
 	//load resources
 	calculatePriorities();
@@ -91,7 +91,7 @@ void SortrRenderer::preloadImages()
 					//load gpu image
 					if (!images[currentImageIndex].gpuTexture.isLoaded())
 					{
-						images[currentImageIndex].gpuTexture.load(images[currentImageIndex].cpuTexture);
+						images[currentImageIndex].gpuTexture.load(renderer, images[currentImageIndex].cpuTexture);
 						gpuLoadedCount++;
 						//logDebug(gpuLoadedCount);
 					}
@@ -101,7 +101,7 @@ void SortrRenderer::preloadImages()
 					//unload gpu image
 					if (images[currentImageIndex].gpuTexture.isLoaded())
 					{
-						images[currentImageIndex].gpuTexture.unload();
+						images[currentImageIndex].gpuTexture.unload(renderer);
 						gpuLoadedCount--;
 						//logDebug(gpuLoadedCount);
 					}
@@ -120,7 +120,7 @@ void SortrRenderer::preloadImages()
 				//unload gpu image just to be safe
 				if (images[currentImageIndex].gpuTexture.isLoaded())
 				{
-					images[currentImageIndex].gpuTexture.unload();
+					images[currentImageIndex].gpuTexture.unload(renderer);
 					gpuLoadedCount--;
 					//logDebug(gpuLoadedCount);
 				}
@@ -148,14 +148,14 @@ void SortrRenderer::sortLeft() const
 
 void SortrRenderer::destroy(Window& window) {}
 
-void SortrRenderer::loadGpuResource()
+void SortrRenderer::loadGpuResource(Renderer& renderer)
 {
 	if (!images.empty())
 	{
 		//if max loaded image count is reached
-		if (gpuLoadedCount >= gpuMaxPreloadCount) unloadGpuImageWithLowestPriority();
+		if (gpuLoadedCount >= gpuMaxPreloadCount) unloadGpuImageWithLowestPriority(renderer);
 		//if there are images available to load into ram and we still have space
-		if (gpuLoadedCount <= min(gpuMaxPreloadCount, images.size())) loadGpuImageWithHighestPriority();
+		if (gpuLoadedCount <= min(gpuMaxPreloadCount, images.size())) loadGpuImageWithHighestPriority(renderer);
 	}
 }
 
@@ -213,7 +213,7 @@ void SortrRenderer::update(Window& window)
 		if (imagePath != "")
 		{
 			//delete currently loaded resource
-			for (auto i : images) i.destroy();
+			for (auto i : images) i.destroy(window.renderer);
 			images.clear();
 
 			//get folder
@@ -259,7 +259,6 @@ void SortrRenderer::addSortrFolderElement()
 
 void Sortr::run(const Int argc, Char* argv[])
 {
-	ui.create();
 	//file management
 	// process parameters
 	for (Int i = 0; i < argc; i++)
@@ -282,22 +281,20 @@ void Sortr::run(const Int argc, Char* argv[])
 		}
 	}
 
-	ui.window("Sortr", Area(1920, 1080), true, true, WindowState::Windowed, renderer);
-
+	Window & window = ui.window("Sortr", Area(1920, 1080), true, true, WindowState::Windowed, renderer);
 	Vector<Path>& windowFilePaths = window.droppedFilePaths;
 	for (auto& path : filePaths) if (isImageFile(path)) windowFilePaths.push_back(path);
-
 	ui.run();
 }
 
 void SortrRenderer::connect(GameSimulation& simulation) {}
 
-void SortrRenderer::loadGpuImageWithHighestPriority()
+void SortrRenderer::loadGpuImageWithHighestPriority(Renderer& renderer)
 {
 	if (!images.empty())
 	{
 		const Index imageId = indexOfGpuImageWithHighestPriority();
-		images[imageId].gpuTexture.load(images[imageId].cpuTexture);
+		images[imageId].gpuTexture.load(renderer, images[imageId].cpuTexture);
 		if (images[imageId].gpuTexture.isLoaded())
 		{
 			gpuLoadedCount++;
@@ -326,12 +323,12 @@ void SortrRenderer::loadCpuImageWithHighestPriority()
 	}
 }
 
-void SortrRenderer::unloadGpuImageWithLowestPriority()
+void SortrRenderer::unloadGpuImageWithLowestPriority(Renderer& renderer)
 {
 	if (!images.empty())
 	{
 		const Index imageId = indexOfGpuImageWithLowestPriority();
-		images[imageId].gpuTexture.unload();
+		images[imageId].gpuTexture.unload(renderer);
 		if (!images[imageId].gpuTexture.isLoaded())
 		{
 			gpuLoadedCount--;
@@ -527,7 +524,7 @@ void SortrRenderer::render(Window& window, TiledRectangle area)
 	renderer.textRenderSystem.alignText(Alignment::left, Alignment::bottom);
 	renderer.textRenderSystem.render(renderer, "Left click to add nodes", Vec2(50));
 
-	preloadImages();
+	preloadImages(renderer);
 }
 
 void SortrRenderer::renderInteractive(Window& window, TiledRectangle area) {}
@@ -570,7 +567,7 @@ void SortrRenderer::inputEvent(Window& window, const InputEvent input)
 	if (input == deleteImage && !images.empty())
 	{
 		deleteFile(images[currentImageId].path);
-		images[currentImageId].destroy();
+		images[currentImageId].destroy(window.renderer);
 		images.erase(images.begin() + currentImageId);
 		if (currentImageId >= static_cast<Int>(images.size())) currentImageId--;
 	}
@@ -588,13 +585,13 @@ void SortrRenderer::inputEvent(Window& window, const InputEvent input)
 	}
 }
 
-void SortrRenderer::preloadImage(const Path& path, GPUTexture& texture) const
+void SortrRenderer::preloadImage(Renderer& renderer, const Path& path, GPUTexture& texture) const
 {
-	if (texture.isLoaded()) texture.unload();
+	if (texture.isLoaded()) texture.unload(renderer);
 	CpuTexture cpuTexture;
 	cpuTexture.unload();
 	cpuTexture.load(path, "SortrImage", Filter::Nearest, Filter::Linear, Wrapping::Clamped);
-	texture.load(cpuTexture);
+	texture.load(renderer, cpuTexture);
 }
 
 void SortrResource::calculateRating(const Index currentImageIndex, const UInt resourceCount)

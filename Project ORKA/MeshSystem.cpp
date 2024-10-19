@@ -1,21 +1,21 @@
 #include "MeshSystem.hpp"
 #include "Uniforms.hpp"
 
-void MeshSystem::create()
+void MeshSystem::create(Renderer& renderer)
 {
 	CpuMesh standard;
 	standard.name = "default";
 	proceduralPlaneMesh(standard, 1, 1);
-	addMesh(standard);
+	addMesh(renderer, standard);
 
 	CpuMesh boundingBox;
 	boundingBox.name = "boundingBox";
 	proceduralWireframeAxisLines(boundingBox);
-	addMesh(boundingBox);
-	basicMeshes.create();
+	addMesh(renderer, boundingBox);
+	basicMeshes.create(renderer);
 }
 
-void BasicMeshes::create()
+void BasicMeshes::create(Renderer& renderer)
 {
 	CpuMesh fullScreenTriangleMesh;
 	fullScreenTriangleMesh.drawMode           = BufferUsage::StaticDraw;
@@ -25,19 +25,19 @@ void BasicMeshes::create()
 	fullScreenTriangleMesh.textureCoordinates = {Vec2(0, 0), Vec2(3, 0), Vec2(0, 3)};
 	fullScreenTriangleMesh.indices            = {0, 1, 2};
 	fullScreenTriangleMesh.checkIntegrity();
-	fullscreenMesh.upload(fullScreenTriangleMesh);
+	fullscreenMesh.upload(renderer, fullScreenTriangleMesh);
 }
 
-void MeshSystem::destroy()
+void MeshSystem::destroy(Renderer& renderer)
 {
-	for(GpuMesh& gpuMesh : gpuMeshes) gpuMesh.unload();
+	for(GpuMesh& gpuMesh : gpuMeshes) gpuMesh.unload(renderer);
 	gpuMeshes.clear();
-	basicMeshes.destroy();
+	basicMeshes.destroy(renderer);
 }
 
-void BasicMeshes::destroy()
+void BasicMeshes::destroy(Renderer& renderer)
 {
-	fullscreenMesh.unload();
+	fullscreenMesh.unload(renderer);
 }
 
 GpuMesh& MeshSystem::currentMesh()
@@ -50,12 +50,12 @@ void MeshSystem::use(const Index meshId)
 	currentMeshId = meshId;
 }
 
-void MeshSystem::addMesh(const CpuMesh& cpuMesh)
+void MeshSystem::addMesh(Renderer& renderer, const CpuMesh& cpuMesh)
 {
 	if(cpuMesh.isLoaded())
 	{
 		gpuMeshes.emplace_back();
-		gpuMeshes.back().upload(cpuMesh);
+		gpuMeshes.back().upload(renderer, cpuMesh);
 		use(toUIntSafe(gpuMeshes.size() - 1));
 		meshNames.add(cpuMesh.name, currentMeshId);
 	}
@@ -96,7 +96,7 @@ void MeshSystem::render(Uniforms& uniforms, const Index meshId)
 	currentMesh().render(uniforms);
 }
 
-void MeshSystem::use(const Name& name)
+void MeshSystem::use(Renderer& renderer, const Name& name)
 {
 	Index id;
 	if(meshNames.find(name, id))
@@ -107,7 +107,7 @@ void MeshSystem::use(const Name& name)
 	{
 		CpuMesh mesh;
 		mesh.load(name);
-		addMesh(mesh);
+		addMesh(renderer, mesh);
 		if(meshNames.find(name, id))
 		{
 			currentMeshId = id;
@@ -119,14 +119,14 @@ void MeshSystem::use(const Name& name)
 	}
 }
 
-void MeshSystem::render(Uniforms& uniforms, const Name& meshName)
+void MeshSystem::render(Renderer& renderer, Uniforms& uniforms, const Name& meshName)
 {
-	use(meshName);
+	use(renderer, meshName);
 	currentMesh().render(uniforms);
 }
 
-void MeshSystem::renderInstanced(Uniforms& uniforms, const Name& meshName, const Vector<Matrix>& transforms)
+void MeshSystem::renderInstanced(Renderer& renderer, Uniforms& uniforms, const Name& meshName, const Vector<Matrix>& transforms)
 {
-	use(meshName);
+	use(renderer, meshName);
 	currentMesh().renderInstances(uniforms, transforms);
 }

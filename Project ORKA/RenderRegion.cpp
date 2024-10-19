@@ -1,33 +1,46 @@
 #include "RenderRegion.hpp"
 #include "GraphicsAPI.hpp"
+#include "Renderer.hpp"
 
 RenderRegion::RenderRegion() = default;
 
-void RenderRegion::set(const Area area)
+void RenderRegion::set(Renderer& renderer, const IVec2& area)
 {
-	region = area;
-	if(region.size.x <= 0) region.size.x = 1;
-	if(region.size.y <= 0) region.size.y = 1;
-	OpenGL::apiViewport(region.position.x, region.position.y, region.size.x, region.size.y);
-	OpenGL::apiScissor(region.position.x, region.position.y, region.size.x, region.size.y);
+	size = area;
+	if (size.x <= 0) size.x = 1;
+	if (size.y <= 0) size.y = 1;
+	OpenGL::apiViewport(renderer.openGlContext, position.x, position.y, size.x, size.y);
+	OpenGL::apiScissor(renderer.openGlContext, position.x, position.y, size.x, size.y);
 }
 
 Float RenderRegion::getAspectRatio() const
 {
-	if(region.size.x == 0 | region.size.y == 0) return 1.0; // prevents divide by zero
-	return static_cast<Float>(region.size.x) / static_cast<Float>(region.size.y);
+	if (size.x == 0 | size.y == 0) return 1.0; // prevents divide by zero
+	return static_cast<Float>(size.x) / static_cast<Float>(size.y);
+}
+
+Int RenderRegion::getWidth() const
+{
+	return size.x;
+}
+
+Int RenderRegion::getHeight() const
+{
+	return size.y;
 }
 
 RenderRegion::RenderRegion(const Area area)
 {
-	region = area;
+	size = area;
 }
 
-void RenderRegion::set(const TiledRectangle& newRegion)
+void RenderRegion::set(Renderer& renderer, const TiledRectangle& newRegion)
 {
-	this->region = newRegion;
-	if(region.size.x <= 0) region.size.x = 1;
-	if(region.size.y <= 0) region.size.y = 1;
-	OpenGL::apiViewport(region.position.x, region.position.y, region.size.x, region.size.y);
-	OpenGL::apiScissor(region.position.x, region.position.y, region.size.x, region.size.y);
+	size     = newRegion.size;
+	position = newRegion.position;
+
+	if (size.x <= 0) size.x = 1;
+	if (size.y <= 0) size.y = 1;
+	OpenGL::apiViewport(renderer.openGlContext, position.x, position.y, size.x, size.y);
+	OpenGL::apiScissor(renderer.openGlContext, position.x, position.y, size.x, size.y);
 }

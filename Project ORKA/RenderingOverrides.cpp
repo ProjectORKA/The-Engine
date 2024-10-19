@@ -14,13 +14,13 @@ AlphaBlendOverride::~AlphaBlendOverride()
 DepthTestOverride::DepthTestOverride(Renderer& renderer, const Bool value)
 {
 	this->renderer = &renderer;
-	stored         = openGlState.depthTest;
+	stored         = renderer.openGlContext.depthTest;
 	this->renderer->setDepthTest(value);
 }
 
 AlphaBlendOverride::AlphaBlendOverride(Renderer& renderer, const Bool value)
 {
 	this->renderer = &renderer;
-	stored         = openGlState.blending;
+	stored         = renderer.openGlContext.blending;
 	this->renderer->setAlphaBlending(value);
 }

@@ -1,25 +1,29 @@
 #include "UIContainer.hpp"
 #include "Window.hpp"
 
-void UIContainer::update(Window& window) {
-	for(UIElement* c : contents) c->update(window);
+void UIContainer::update(Window& window)
+{
+	for (UIElement* c : contents) c->update(window);
 }
 
-void UIContainer::destroy(Window& window) {
-	for(UIElement* c : contents) c->destroy(window);
+void UIContainer::destroy(Window& window)
+{
+	for (UIElement* c : contents) c->destroy(window);
 }
 
-void UIContainer::inputEvent(Window& window, const InputEvent input) {
-	for(UIElement* c : contents) c->inputEvent(window, input);
+void UIContainer::inputEvent(Window& window, const InputEvent input)
+{
+	for (UIElement* c : contents) c->inputEvent(window, input);
 }
 
-void UIContainer::create(Window& window) {
-	for(UIElement* c : contents) c->create(window);
+void UIContainer::create(Window& window)
+{
+	for (UIElement* c : contents) c->create(window);
 }
 
 void UIContainer::render(Window& window, const TiledRectangle renderArea)
 {
-	if(hasBackground)
+	if (hasBackground)
 	{
 		DepthTestOverride override(window.renderer, false);
 		window.renderer.useShader("color");
@@ -31,10 +35,10 @@ void UIContainer::render(Window& window, const TiledRectangle renderArea)
 
 	const UInt contentCount = contents.size();
 
-	for(UInt i = 0; i < contentCount; i++)
+	for (UInt i = 0; i < contentCount; i++)
 	{
 		TiledRectangle a = renderArea;
-		if(renderVertical)
+		if (renderVertical)
 		{
 			a.size.y /= contentCount;
 			a.position.y -= a.size.y * i;
@@ -48,11 +52,12 @@ void UIContainer::render(Window& window, const TiledRectangle renderArea)
 	}
 }
 
-void UIContainer::renderInteractive(Window& window, const TiledRectangle renderArea) {
-	for(UInt i = 0; i < contents.size(); i++)
+void UIContainer::renderInteractive(Window& window, const TiledRectangle renderArea)
+{
+	for (UInt i = 0; i < contents.size(); i++)
 	{
 		TiledRectangle a = renderArea;
-		if(renderVertical)
+		if (renderVertical)
 		{
 			a.size.y /= contents.size();
 			a.position.y += a.size.y * i;
@@ -66,24 +71,29 @@ void UIContainer::renderInteractive(Window& window, const TiledRectangle renderA
 	}
 }
 
-Bool UIContainer::isEmpty() const {
+Bool UIContainer::isEmpty() const
+{
 	return contents.empty();
 }
 
-void UIContainer::drop(const UIElement* element) {
-	for(Int i = 0; i < contents.size(); i++) if(contents[i] == element) contents.erase(contents.begin() + i);
+void UIContainer::drop(const UIElement* element)
+{
+	for (Int i = 0; i < contents.size(); i++) if (contents[i] == element) contents.erase(contents.begin() + i);
 }
 
-UIContainer& UIContainer::vertical() {
+UIContainer& UIContainer::vertical()
+{
 	renderVertical = true;
 	return *this;
 }
 
-UIContainer& UIContainer::horizontal() {
+UIContainer& UIContainer::horizontal()
+{
 	renderVertical = false;
 	return *this;
 }
 
-void UIContainer::add(UIElement& element) {
+void UIContainer::add(UIElement& element)
+{
 	contents.push_back(&element);
 }

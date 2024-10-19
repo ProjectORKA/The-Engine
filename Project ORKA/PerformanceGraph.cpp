@@ -11,7 +11,8 @@ void PerformanceGraph::render(Window& window, TiledRectangle area)
 {
 	AlphaBlendOverride(window.renderer, true);
 
-	OpenGL::apiSetBlending(true);
+	// [TODO] remove opengl calls
+	OpenGL::apiSetBlending(window.renderer.openGlContext,true);
 	OpenGL::apiBlendFunc(BlendFunction::SrcAlpha, BlendFunction::OneMinusSrcAlpha);
 	OpenGL::apiBlendEquation(BlendEquation::Add);
 	if (times.empty()) return;

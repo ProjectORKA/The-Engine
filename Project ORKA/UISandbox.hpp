@@ -36,8 +36,6 @@ struct UIBucketGraph : UIElement
 
 struct UISandbox
 {
-	UserInterface     ui;
-
 	void run()
 	{
 		UIContainer global;
@@ -70,8 +68,6 @@ struct UISandbox
 		//page.fill(randomColorFast());
 		//page.vertical();
 
-
-		ui.create();
 		Window& window = ui.window("ORKA UI Sandbox", Area(settings.defaultWindowWidth, settings.defaultWindowHeight), true, true, WindowState::Windowed, global);
 		window.renderer.setWireframeMode(true);
 		ui.run();

@@ -76,13 +76,10 @@ struct FunctionFinderRenderer final : GameRenderer
 
 struct FunctionFinder
 {
-	UserInterface          ui;
-	Window                 window;
 	FunctionFinderRenderer renderer;
 
 	void run()
 	{
-		ui.create();
 		ui.window("FunctionFinder", Area(settings.defaultWindowWidth, settings.defaultWindowHeight), true, true, WindowState::Windowed, renderer);
 		ui.run();
 	}

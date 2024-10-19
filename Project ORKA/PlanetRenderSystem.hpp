@@ -16,8 +16,8 @@ struct PlanetRenderSystem
 	Bool                 worldDistortion = true;
 	Bool                 vertexColors    = false;
 
-	void destroy();
-	void update(const PlanetSystem& planetSystem, PlanetSystemPlayer& player);
+	void destroy(Renderer& renderer);
+	void update(Renderer& renderer, const PlanetSystem& planetSystem, PlanetSystemPlayer& player);
 	void renderAllLevels(PlanetSystem& planetSystem, Renderer& renderer, const PlanetSystemPlayer& player, const Framebuffer& framebuffer);
 	void renderLevel(PlanetSystem& planetSystem, Renderer& renderer, const PlanetSystemPlayer& player, UShort level, const Framebuffer& framebuffer);
 };

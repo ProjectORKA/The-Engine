@@ -45,14 +45,11 @@ struct PhysicsPlayGroundRenderer : GameRenderer
 
 struct PhysicsPlayground
 {
-	UserInterface               ui;
 	PhysicsPlaygroundSimulation sim;
-	Window                      window;
 	PhysicsPlayGroundRenderer   renderer;
 
 	void run()
 	{
-		ui.create();
 		sim.start();
 		renderer.connect(sim);
 		ui.window("Physics Playground", Area(1024, 1024), true, true, WindowState::Windowed, renderer);

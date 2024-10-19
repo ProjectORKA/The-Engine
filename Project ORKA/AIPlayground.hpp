@@ -43,13 +43,10 @@ struct AIPlaygroundRenderer final : GameRenderer
 
 struct AIPlayground
 {
-	UserInterface        ui;
-	Window               window;
 	AIPlaygroundRenderer renderer;
 
 	void run()
 	{
-		ui.create();
 		ui.window("ORKA AI Playground", Area(settings.defaultWindowWidth, settings.defaultWindowHeight), true, true, WindowState::Windowed, renderer);
 		ui.run();
 	}
