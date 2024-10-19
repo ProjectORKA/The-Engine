@@ -3,13 +3,21 @@
 #include "TiledMath.hpp"
 #include "Basics.hpp"
 
+struct Renderer;
+
+//[TODO] check if this can be removed / simplified
 struct RenderRegion
 {
-	RenderRegion();
-	void                set(Area area);
+	[[nodiscard]] Int   getWidth() const;
+	[[nodiscard]] Int   getHeight() const;
 	[[nodiscard]] Float getAspectRatio() const;
-	explicit            RenderRegion(Area area);
-	void                set(const TiledRectangle& newRegion);
+
+	RenderRegion();
+	explicit RenderRegion(Area area);
+	void     set(Renderer& renderer, const IVec2& area);
+	void     set(Renderer& renderer, const TiledRectangle& newRegion);
+
 private:
-	TiledRectangle region;
+	IVec2 size;
+	IVec2 position;
 };

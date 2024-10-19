@@ -2,6 +2,8 @@
 #include "CPUTexture.hpp"
 #include "TiledMath.hpp"
 
+struct Renderer;
+
 struct GPUTexture
 {
 	[[nodiscard]] Bool              isLoaded() const;
@@ -9,15 +11,15 @@ struct GPUTexture
 	[[nodiscard]] UInt              getOpenGLID() const;
 	[[nodiscard]] Float             getAspectRatio() const;
 
-	void unload();
-	void resize(Area size);
-	void load(const Name& name);
 	void generateMipMaps() const;
-	void load(const CpuTexture& cpuTexture);
+	void unload(Renderer & renderer);
+	void resize(Renderer & renderer, Area size);
 	void useTextureInSlot(UInt textureSlot) const;
+	void load(Renderer& renderer, const Name& name);
+	void load(Renderer& renderer, const CpuTexture& cpuTexture);
 	void setFilters(Filter nearFilterValue, Filter farFilterValue);
 	void generateMipMaps(Filter nearFilterValue, Filter farFilterValue);
-	void load(IVec2 size, WritePixelsFormat format, DataType type, Wrapping wrapping);
+	void load(Renderer& renderer, IVec2 size, WritePixelsFormat format, DataType type, Wrapping wrapping);
 private:
 	Int               width  = 1;
 	Int               height = 1;

@@ -67,14 +67,11 @@ struct DNDRenderer final : GameRenderer
 
 struct DungeonsAndDiscord
 {
-	UserInterface ui;
 	DNDSimulation sim;
-	Window        window;
 	DNDRenderer   renderer;
 
 	void run()
 	{
-		ui.create();
 		sim.start();
 		renderer.connect(sim);
 		ui.window("Dungeons and Discord", Area(1920, 1080), true, true, WindowState::Windowed, renderer);

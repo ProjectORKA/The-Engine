@@ -4,10 +4,10 @@ void HelloTriangleRenderer::update(Window& window) {}
 
 void HelloTriangleRenderer::destroy(Window& window)
 {
-	vao.destroy();
+	vao.destroy(window.renderer.openGlContext);
 	indVBO.destroy();
 	posVBO.destroy();
-	mainFramebuffer.destroy();
+	mainFramebuffer.destroy(window.renderer);
 }
 
 void HelloTriangleRenderer::connect(GameSimulation& simulation) {}
@@ -44,14 +44,14 @@ out vec4 color; void main()
 	colVBO.create(vertColors, BufferUsage::StaticDraw, "Colors");
 	indVBO.create(indices, BufferUsage::StaticDraw, "Indices");
 
-	vao.create();
+	vao.create(window.renderer.openGlContext);
 	vao.bindVertexBuffer(0, posVBO.getID(), 0, sizeof(Vec3), 0, 3, DataType::Float, false, 0);
 	vao.bindVertexBuffer(5, colVBO.getID(), 0, sizeof(Vec3), 0, 3, DataType::Float, false, 0);
 	vao.bindIndexBuffer(indVBO.getID());
 
 	mainFramebuffer.create("Main Framebuffer", Area(1920, 1080));
-	mainFramebuffer.add(WritePixelsFormat::RGBA, DataType::Float, FramebufferAttachment::Color0, true, Wrapping::Clamped);
-	mainFramebuffer.add(WritePixelsFormat::Depth, DataType::Float, FramebufferAttachment::Depth, false, Wrapping::Clamped);
+	mainFramebuffer.add(window.renderer, WritePixelsFormat::RGBA, DataType::Float, FramebufferAttachment::Color0, true, Wrapping::Clamped);
+	mainFramebuffer.add(window.renderer, WritePixelsFormat::Depth, DataType::Float, FramebufferAttachment::Depth, false, Wrapping::Clamped);
 	mainFramebuffer.checkComplete();
 }
 

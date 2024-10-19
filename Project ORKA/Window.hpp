@@ -61,7 +61,6 @@ struct Window final : LifetimeGuard
 	void decorateWindow();
 	void releaseCursor();
 	void unDecorateWindow();
-	void destroyApiWindow();
 	void updateWindowState();
 	void updateDecorations();
 	void setCallbacks() const;

@@ -9,7 +9,7 @@ void AIPlaygroundRenderer::update(Window& window)
 
 void AIPlaygroundRenderer::destroy(Window& window)
 {
-	framebuffer.destroy();
+	framebuffer.destroy(window.renderer);
 }
 
 void AIPlaygroundRenderer::connect(GameSimulation& simulation) {}
@@ -17,14 +17,14 @@ void AIPlaygroundRenderer::connect(GameSimulation& simulation) {}
 void AIPlaygroundRenderer::create(Window& window)
 {
 	framebuffer.create("MainFramebuffer", Area(1920, 1080));
-	framebuffer.add(WritePixelsFormat::RGBA, DataType::Float, FramebufferAttachment::Color0, true, Wrapping::Clamped);
-	framebuffer.add(WritePixelsFormat::Depth, DataType::Float, FramebufferAttachment::Depth, false, Wrapping::Clamped);
+	framebuffer.add(window.renderer, WritePixelsFormat::RGBA, DataType::Float, FramebufferAttachment::Color0, true, Wrapping::Clamped);
+	framebuffer.add(window.renderer, WritePixelsFormat::Depth, DataType::Float, FramebufferAttachment::Depth, false, Wrapping::Clamped);
 	framebuffer.checkComplete();
 
 	network.create();
 }
 
-void AIPlaygroundRenderer::renderInteractive(Window& window, TiledRectangle area) { }
+void AIPlaygroundRenderer::renderInteractive(Window& window, TiledRectangle area) {}
 
 void AIPlaygroundRenderer::render(Window& window, const TiledRectangle area)
 {
@@ -33,9 +33,9 @@ void AIPlaygroundRenderer::render(Window& window, const TiledRectangle area)
 	r.setCulling(true);
 	r.setDepthTest(true);
 
-	framebuffer.resize(area.size);
+	framebuffer.resize(window.renderer, area.size);
 	framebuffer.clear();
-	framebuffer.bindDraw();
+	framebuffer.bindDraw(r);
 	r.setWireframeMode();
 	r.useShader("color");
 
@@ -64,9 +64,9 @@ void AIPlaygroundRenderer::render(Window& window, const TiledRectangle area)
 
 void AIPlaygroundRenderer::inputEvent(Window& window, const InputEvent input)
 {
-	if(input == enter) window.captureCursor();
-	if(input == exit) window.releaseCursor();
-	if(input == wireframeToggle) window.renderer.wireframeMode = !window.renderer.wireframeMode;
+	if (input == enter) window.captureCursor();
+	if (input == exit) window.releaseCursor();
+	if (input == wireframeToggle) window.renderer.wireframeMode = !window.renderer.wireframeMode;
 
 	player.inputEvent(window, input);
 }

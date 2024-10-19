@@ -3,9 +3,9 @@
 
 #include "Renderer.hpp"
 
-void TextRenderSystem::destroy()
+void TextRenderSystem::destroy(Renderer& renderer)
 {
-	bitmapTextRenderSystem.destroy();
+	bitmapTextRenderSystem.destroy(renderer);
 }
 
 void TextRenderSystem::setSize(const Float fontSize)

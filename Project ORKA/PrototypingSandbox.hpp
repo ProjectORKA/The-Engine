@@ -56,13 +56,10 @@ struct PrototypingRenderer final : GameRenderer
 
 struct PrototypingSandbox
 {
-	UserInterface       ui;
-	Window              window;
 	PrototypingRenderer renderer;
 
 	void run()
 	{
-		ui.create();
 		ui.window("Prototyping Sandbox", Area(settings.defaultWindowWidth, settings.defaultWindowHeight), true, true, WindowState::Windowed, renderer);
 		ui.run();
 	}

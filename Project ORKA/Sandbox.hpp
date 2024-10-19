@@ -25,14 +25,13 @@ struct SandboxRenderer final : GameRenderer
 
 struct Sandbox
 {
-	UserInterface   ui;
-	Window          window;
-	SandboxRenderer renderer;
+	SandboxRenderer renderer1;
+	SandboxRenderer renderer2;
 
 	void run()
 	{
-		ui.create();
-		ui.window("ORKA Sandbox", Area(settings.defaultWindowWidth, settings.defaultWindowHeight), true, true, WindowState::Windowed, renderer);
+		Window& window = ui.window("ORKA Sandbox", Area(settings.defaultWindowWidth, settings.defaultWindowHeight), true, true, WindowState::Windowed, renderer1);
+		window.add(renderer2);
 		ui.run();
 	}
 };

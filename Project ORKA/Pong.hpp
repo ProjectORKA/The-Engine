@@ -58,12 +58,10 @@ struct PongRenderer final : GameRenderer
 
 struct Pong
 {
-	UserInterface ui;
 	PongRenderer  renderer;
 
 	void run()
 	{
-		ui.create();
 		ui.window("Pong", Area(1920, 1080), true, true, WindowState::Windowed, renderer);
 		ui.run();
 	}

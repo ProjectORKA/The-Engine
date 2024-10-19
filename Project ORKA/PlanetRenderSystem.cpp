@@ -3,18 +3,18 @@
 #include "PlanetSystem.hpp"
 #include "PlanetSystemPlayer.hpp"
 
-void PlanetRenderSystem::destroy()
+void PlanetRenderSystem::destroy(Renderer& renderer)
 {
-	quadtreeRenderSystem.destroy();
+	quadtreeRenderSystem.destroy(renderer);
 }
 
-void PlanetRenderSystem::update(const PlanetSystem& planetSystem, PlanetSystemPlayer& player)
+void PlanetRenderSystem::update(Renderer& renderer, const PlanetSystem& planetSystem, PlanetSystemPlayer& player)
 {
 	// create if necessary
-	if(quadtreeRenderSystem.root.equivalentQuadtreeNode == nullptr) quadtreeRenderSystem.root.create(*planetSystem.quadtreeSystem.root);
+	if (quadtreeRenderSystem.root.equivalentQuadtreeNode == nullptr) quadtreeRenderSystem.root.create(*planetSystem.quadtreeSystem.root);
 
 	//update before rendering
-	quadtreeRenderSystem.update(player);
+	quadtreeRenderSystem.update(renderer, player);
 }
 
 void PlanetRenderSystem::renderAllLevels(PlanetSystem& planetSystem, Renderer& renderer, const PlanetSystemPlayer& player, const Framebuffer& framebuffer)
@@ -24,10 +24,10 @@ void PlanetRenderSystem::renderAllLevels(PlanetSystem& planetSystem, Renderer& r
 	player.camera.renderOnlyRot(renderer);
 	renderer.setDepthTest(true);
 
-	for(UShort level = 0; level < MAX_CHUNK_LEVEL; level++)
+	for (UShort level = 0; level < MAX_CHUNK_LEVEL; level++)
 	{
 		framebuffer.clearDepth();
-		if(vertexColors)
+		if (vertexColors)
 		{
 			renderer.shaderSystem.use("mooncrashVertexColor");
 		}
@@ -35,7 +35,7 @@ void PlanetRenderSystem::renderAllLevels(PlanetSystem& planetSystem, Renderer& r
 		{
 			renderer.shaderSystem.use("terrain");
 		}
-		renderer.textureSystem.use("terrainColor");
+		renderer.textureSystem.use(renderer, "terrainColor");
 		quadtreeRenderSystem.renderLevel(level, renderer);
 	}
 }
@@ -48,7 +48,7 @@ void PlanetRenderSystem::renderLevel(PlanetSystem& planetSystem, Renderer& rende
 	renderer.setDepthTest(true);
 
 	framebuffer.clearDepth();
-	if(vertexColors)
+	if (vertexColors)
 	{
 		renderer.shaderSystem.use("mooncrashVertexColor");
 	}
@@ -56,6 +56,6 @@ void PlanetRenderSystem::renderLevel(PlanetSystem& planetSystem, Renderer& rende
 	{
 		renderer.shaderSystem.use("terrain");
 	}
-	renderer.textureSystem.use("terrainColor");
+	renderer.textureSystem.use(renderer, "terrainColor");
 	quadtreeRenderSystem.renderLevel(level, renderer);
 }

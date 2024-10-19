@@ -15,7 +15,7 @@ void MoonCrashSimulation::destroy()
 
 void MoonCrashRenderer::destroy(Window& window)
 {
-	mainFramebuffer.destroy();
+	mainFramebuffer.destroy(window.renderer);
 }
 
 void MoonCrashRenderer::connect(GameSimulation& simulation)
@@ -135,7 +135,7 @@ void MoonCrashSimulation::update(Float delta)
 void MoonCrashRenderer::update(Window& window)
 {
 	player.update(window);
-	window.renderer.planetRenderSystem.update(simulation->planetSystem, player);
+	window.renderer.planetRenderSystem.update(window.renderer, simulation->planetSystem, player);
 }
 
 void MoonCrashSimulation::create()
@@ -174,8 +174,8 @@ void MoonCrashRenderer::create(Window& window)
 	player.chunkPosition.z = 16000000000000000000;
 
 	mainFramebuffer.create("MainFramebuffer", Area(1920, 1080));
-	mainFramebuffer.add(WritePixelsFormat::RGBA, DataType::Float, FramebufferAttachment::Color0, true, Wrapping::Clamped);
-	mainFramebuffer.add(WritePixelsFormat::Depth, DataType::Float, FramebufferAttachment::Depth, false, Wrapping::Clamped);
+	mainFramebuffer.add(window.renderer, WritePixelsFormat::RGBA, DataType::Float, FramebufferAttachment::Color0, true, Wrapping::Clamped);
+	mainFramebuffer.add(window.renderer, WritePixelsFormat::Depth, DataType::Float, FramebufferAttachment::Depth, false, Wrapping::Clamped);
 	mainFramebuffer.checkComplete();
 }
 
@@ -183,8 +183,8 @@ void MoonCrashRenderer::render(Window& window, TiledRectangle area)
 {
 	Renderer& r = window.renderer;
 
-	mainFramebuffer.resize(area.size);
-	mainFramebuffer.bindDraw();
+	mainFramebuffer.resize(r, area.size);
+	mainFramebuffer.bindDraw(r);
 	mainFramebuffer.clear();
 
 	player.render(window);

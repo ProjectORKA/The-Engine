@@ -70,9 +70,7 @@ struct SimpleRtsRenderer final : GameRenderer
 
 struct SimpleRts
 {
-	UserInterface       ui;
 	SimpleRtsSimulation sim;
-	Window              window;
 	SimpleRtsRenderer   renderer;
 
 	void run();

@@ -8,12 +8,13 @@ struct TextureSystem
 	Map<Name, Index>   textureNames;
 	Index              currentTextureId = 0;
 
-	void        create();
-	void        destroy();
 	GPUTexture& currentTexture();
-	void        resize(Area size);
 	void        use(Index textureId);
-	void        add(const CpuTexture& cpuTexture);
-	Index       use(const Name& name);
-	void        use(const Name& name, Index slot);
+	void        create(Renderer& renderer);
+	void        destroy(Renderer& renderer);
+	void        resize(Renderer& renderer, Area size);
+	Index       use(Renderer& renderer, const Name& name);
+	void        use(Renderer& renderer, const Name& name, Index slot);
+	void        add(Renderer& renderer, const CpuTexture& cpuTexture);
 };
+ 

@@ -12,7 +12,7 @@ struct SortrResource
 	Float      priority = 0;
 	Path       path     = Path("");
 
-	void destroy();
+	void destroy(Renderer& renderer);
 	void calculateRating(Index currentImageIndex, UInt resourceCount);
 };
 
@@ -67,27 +67,27 @@ struct SortrRenderer final : GameRenderer
 	InputEvent            right              = InputEvent(InputType::KeyBoard, Right, false);
 
 	void updateZoom();
-	void preloadImages();
 	void showNextImage();
 	void showPrevImage();
 	void sortLeft() const;
-	void loadGpuResource();
 	void loadCpuResource();
 	void sortRight() const;
 	void calculatePriorities();
 	void addSortrFolderElement();
 	void update(Window& window) override;
-	void destroy(Window& window) override;
-	void loadCpuImageWithHighestPriority();
-	void loadGpuImageWithHighestPriority();
-	void unloadGpuImageWithLowestPriority();
-	void unloadCpuImageWithLowestPriority();
-	void connect(GameSimulation& simulation) override;
-	void inputEvent(Window& window, InputEvent input) override;
-	void preloadImage(const Path& path, GPUTexture& texture) const;
 	void create(Window& window) override;
+	void destroy(Window& window) override;
+	void preloadImages(Renderer& renderer);
+	void loadCpuImageWithHighestPriority();
+	void unloadCpuImageWithLowestPriority();
+	void loadGpuResource(Renderer& renderer);
+	void connect(GameSimulation& simulation) override;
+	void loadGpuImageWithHighestPriority(Renderer& renderer);
+	void unloadGpuImageWithLowestPriority(Renderer& renderer);
 	void render(Window& window, TiledRectangle area) override;
+	void inputEvent(Window& window, InputEvent input) override;
 	void renderInteractive(Window& window, TiledRectangle area) override;
+	void preloadImage(Renderer& renderer, const Path& path, GPUTexture& texture) const;
 
 	[[nodiscard]] Vector<Index> indicesOfImagesSortedByPriority() const;
 	[[nodiscard]] Index         indexOfCpuImageWithLowestPriority() const;
@@ -98,11 +98,9 @@ struct SortrRenderer final : GameRenderer
 
 struct Sortr
 {
-	UserInterface ui;
-	Window        window;
 	SortrRenderer renderer;
-	Path          currentPath = getCurrentPath();
 	Vector<Path>  filePaths;
+	Path          currentPath = getCurrentPath();
 
 	void run(const Int argc, Char* argv[]);
 };

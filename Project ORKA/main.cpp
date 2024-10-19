@@ -29,36 +29,38 @@
 //  You can already choose some games and projects to play around in.
 //  Just replace the Game in the main() function with one of the projects underneath
 
-#include "Pong.hpp"
-#include "MoonCrash.hpp"
-#include "FlappyBird.hpp"
+//#include "Pong.hpp"
+//#include "MoonCrash.hpp"
+//#include "FlappyBird.hpp"
+//#include "TripleNine.hpp"
+//#include "ImageViewer.hpp"
+//#include "ProjectMelon.hpp"
+//#include "Orbital Oblivion.hpp"
+//
+//#include "Keva.hpp"
+//#include "Snake.hpp"
+//#include "Sortr.hpp"
+//#include "GPUSim.hpp"
+//#include "Sandbox.hpp"
+//#include "MSDFText.hpp"
+//#include "Organizer.hpp"
+#include "JobSystem.hpp"
 #include "TripleNine.hpp"
-#include "ImageViewer.hpp"
-#include "ProjectMelon.hpp"
-#include "Orbital Oblivion.hpp"
-
-#include "Keva.hpp"
-#include "Snake.hpp"
-#include "Sortr.hpp"
-#include "GPUSim.hpp"
-#include "Sandbox.hpp"
-#include "MSDFText.hpp"
-#include "Organizer.hpp"
-#include "SimpleRTS.hpp"
-#include "SoundBars.hpp"
-#include "UISandbox.hpp"
-#include "MindMapper.hpp"
-#include "RedDotHack.hpp"
-#include "AudioSystem.hpp"
-#include "SDFRenderer.hpp"
-#include "AIPlayground.hpp"
-#include "GuessingGame.hpp"
-#include "FunctionFinder.hpp"
-#include "Hello Triangle.hpp"
-#include "Music Visualizer.hpp"
-#include "PrototypingSandbox.hpp"
-#include "PhysicsPlayground.hpp"
-#include "DungeonsAndDiscord.hpp"
+//#include "SimpleRTS.hpp"
+//#include "SoundBars.hpp"
+//#include "UISandbox.hpp"
+//#include "MindMapper.hpp"
+//#include "RedDotHack.hpp"
+//#include "AudioSystem.hpp"
+//#include "SDFRenderer.hpp"
+//#include "AIPlayground.hpp"
+//#include "GuessingGame.hpp"
+//#include "FunctionFinder.hpp"
+//#include "Hello Triangle.hpp"
+//#include "Music Visualizer.hpp"
+//#include "PrototypingSandbox.hpp"
+//#include "PhysicsPlayground.hpp"
+//#include "DungeonsAndDiscord.hpp"
 
 void testAll(const int argc, char* argv[])
 {
@@ -100,6 +102,30 @@ int main(const int argc, char* argv[])
 
 	TripleNine game;
 	game.run();
+	//Server server;
+	//server.start();
+
+	//server.waitTillReady();
+
+	//Client a;
+	//a.start();
+	//a.waitTillConnected();
+	//a.stop();
+
+	//Client b;
+	//Client c;
+
+	//b.start();
+	//c.start();
+
+	//b.waitTillConnected();
+	//c.waitTillConnected();
+
+	//b.stop();
+	//c.stop();
+
+	//server.stop();
+	//pause();
 }
 
 #include "Windows.hpp"

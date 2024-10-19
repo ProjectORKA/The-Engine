@@ -47,11 +47,23 @@ struct UICheckBox : UIElement
 
 struct UserInterface
 {
+	UserInterface()
+	{
+		if (External::glfwInit() != GLFW_TRUE)
+		{
+			logError("GLFW could not be initialized");
+			return;
+		}
+		logDebug("GLFW initialized!");
+		External::glfwSetErrorCallback(whenWindowApiThrowsError);
+	}
+
 	void    run();
 	Window& window(const String& title, Area size, Bool decorated, Bool visible, WindowState state);
 	Window& window(const String& title, Area size, Bool decorated, Bool visible, WindowState state, UIElement& content);
 
 	List<Window> windows;
-	void         create() const;
 	Bool         running = false;
 };
+
+extern UserInterface ui;

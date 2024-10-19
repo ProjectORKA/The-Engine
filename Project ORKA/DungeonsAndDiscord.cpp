@@ -44,7 +44,7 @@ void DNDRenderer::update(Window& window)
 
 void DNDRenderer::destroy(Window& window)
 {
-	framebuffer.destroy();
+	framebuffer.destroy(window.renderer);
 }
 
 void DNDRenderer::connect(GameSimulation& simulation)
@@ -112,8 +112,8 @@ void DNDRenderer::create(Window& window)
 	player.camera.setPosition(world->position);
 
 	framebuffer.create("MainFramebuffer", Area(1920, 1080));
-	framebuffer.add(WritePixelsFormat::RGBA, DataType::Float, FramebufferAttachment::Color0, true, Wrapping::Clamped);
-	framebuffer.add(WritePixelsFormat::Depth, DataType::Float, FramebufferAttachment::Depth, false, Wrapping::Clamped);
+	framebuffer.add(window.renderer, WritePixelsFormat::RGBA, DataType::Float, FramebufferAttachment::Color0, true, Wrapping::Clamped);
+	framebuffer.add( window.renderer, WritePixelsFormat::Depth, DataType::Float, FramebufferAttachment::Depth, false, Wrapping::Clamped);
 	framebuffer.checkComplete();
 }
 
@@ -127,9 +127,9 @@ void DNDRenderer::render(Window& window, const TiledRectangle area)
 {
 	Renderer& r = window.renderer;
 
-	framebuffer.resize(area.size);
+	framebuffer.resize(r, area.size);
 	framebuffer.clear();
-	framebuffer.bindDraw();
+	framebuffer.bindDraw(r);
 
 	// preprocess
 	r.setWireframeMode();

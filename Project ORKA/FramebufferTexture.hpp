@@ -9,10 +9,11 @@ struct FramebufferTexture
 	[[nodiscard]] TextureID             getGLID() const;
 	[[nodiscard]] FramebufferAttachment getAttachmentSlot() const;
 
-	void destroy();
-	void resize(Area area);
+	void destroy(Renderer& renderer);
+	void resize(Renderer& renderer, Area area);
 	void useTextureInSlot(TextureSlot textureSlot) const;
-	void create(Area size, WritePixelsFormat format, DataType type, FramebufferAttachment framebufferAttachmentSlot, Wrapping wrapping);
+	void create(Renderer& renderer, Area size, WritePixelsFormat format, DataType type, FramebufferAttachment framebufferAttachmentSlot, Wrapping wrapping);
+
 private:
 	GPUTexture            texture;
 	DataType              type                      = DataType::Float;

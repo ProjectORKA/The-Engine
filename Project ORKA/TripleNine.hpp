@@ -3,6 +3,7 @@
 #include "ORKAIntroSequence.hpp"
 #include "Player.hpp"
 #include "Random.hpp"
+#include "Networking.hpp"
 
 enum class PlayerState
 {
@@ -23,8 +24,7 @@ struct TripleNineEnemy final : UIElement
 	void destroy(Window& window) override;
 	void inputEvent(Window& window, InputEvent input) override;
 	void create(Window& window) override;
-	void render(Renderer& renderer) const;
-	void render(Window& window, TiledRectangle area) override;
+	void render(Window& window, TiledRectangle area) override {};
 	void renderInteractive(Window& window, TiledRectangle area) override;
 };
 
@@ -108,20 +108,20 @@ struct TripleNinePlayer final : Player
 	// Vec2 strafeControl = Vec2(0);
 	// player physique
 	const Float height                     = 1.8f * unit; // total height when standing
-	const Float lowerChestHeightMultiplier = 0.6f; // height of lower chest based on total height //0.73
-	const Float eyeHeightMultilpier        = 0.94f; // height of camera based on total height
+	const Float lowerChestHeightMultiplier = 0.6f;        // height of lower chest based on total height //0.73
+	const Float eyeHeightMultilpier        = 0.94f;       // height of camera based on total height
 	const Float lowerChestHeight           = height * lowerChestHeightMultiplier;
 	// head movement
 	Float walkCycle  = 0;
 	Vec3  headOffset = Vec3(0);
 	// height
-	const Float eyeHeightNormal    = height * eyeHeightMultilpier; // standing
-	const Float eyeHeightFlying    = height * 1.1f * eyeHeightMultilpier; // off ground
-	const Float eyeHeightWalking   = height * 0.9f * eyeHeightMultilpier; // walking
-	const Float eyeHeightCrouching = height * 0.5f * eyeHeightMultilpier; // charging jump
+	const Float eyeHeightNormal    = height * eyeHeightMultilpier;         // standing
+	const Float eyeHeightFlying    = height * 1.1f * eyeHeightMultilpier;  // off ground
+	const Float eyeHeightWalking   = height * 0.9f * eyeHeightMultilpier;  // walking
+	const Float eyeHeightCrouching = height * 0.5f * eyeHeightMultilpier;  // charging jump
 	const Float eyeHeightRunning   = height * 0.75f * eyeHeightMultilpier; // running
-	const Float eyeHeightProning   = height * 0.2f * eyeHeightMultilpier; // proning
-	const Float eyeHeightSliding   = height * 0.3f * eyeHeightMultilpier; // sliding
+	const Float eyeHeightProning   = height * 0.2f * eyeHeightMultilpier;  // proning
+	const Float eyeHeightSliding   = height * 0.3f * eyeHeightMultilpier;  // sliding
 	const Float eyeMovementSpeed   = 10.0f;
 	Float       eyeHeight          = 0.0f;
 	// headbob
@@ -166,10 +166,13 @@ struct TripleNinePlayer final : Player
 	Float       actualFriction       = stopFriction;
 	// debug
 	Float debugCurrentMaxJumpHeight = 0.0f;
-	// fov
-	const Float fovDefault = 90.0f;
-	const Float fovScoped = 55.0f;
-	
+	// aiming
+	const Float  fovDefault              = 100.0f;
+	const Float  fovScoped               = 45.0f;
+	Float        fov                     = fovDefault;
+	const Double mouseSensitivityDefault = 0.0015;
+	const Double mouseSensitivityScoped  = 0.00075;
+	const float  scopeSpeed              = 30.0f;
 
 	[[nodiscard]] Bool isCollidingWithGround() const;
 
@@ -193,35 +196,76 @@ struct TripleNineSimulation final : GameSimulation
 
 struct TripleNineRenderer final : GameRenderer
 {
+	Framebuffer mainFramebuffer;
+	Framebuffer bloom1Framebuffer;
+	Framebuffer bloom2Framebuffer;
+	Framebuffer bloom3Framebuffer;
+	Framebuffer bloom4Framebuffer;
+	Framebuffer bloom5Framebuffer;
+	Framebuffer bloom6Framebuffer;
+	Framebuffer bloom7Framebuffer;
+	Framebuffer bloom8Framebuffer;
+
 	TripleNinePlayer      player;
-	Framebuffer           framebuffer;
 	Float                 mapSize       = 0.5f;
+	Bool                  vsync         = false;
+	Bool                  renderMap     = true;
 	Bool                  renderText    = true;
 	Bool                  bloom         = false;
 	TripleNineSimulation* sim           = nullptr;
+	Area                  frameSize     = Area(1, 1);
 	InputEvent            enter         = InputEvent(InputType::Mouse, Lmb, true);
-	// InputEvent            exit          = InputEvent(InputType::Mouse, Rmb, false);
 	InputEvent            toggleBloom   = InputEvent(InputType::KeyBoard, B, false);
 	InputEvent            reloadShaders = InputEvent(InputType::KeyBoard, T, false);
 	Vec3                  sunDirection  = normalize(Vec3(0.675394f, -0.485956f, 0.554698f));
 
+	void renderBloom(Renderer& r) const;
 	void update(Window& window) override;
+	void create(Window& window) override;
 	void destroy(Window& window) override;
 	void connect(GameSimulation& simulation) override;
-	void inputEvent(Window& window, InputEvent input) override;
-	void renderBloom(Renderer& r) const;
-	void create(Window& window) override;
 	void render(Window& window, TiledRectangle area) override;
+	void inputEvent(Window& window, InputEvent input) override;
 	void renderInteractive(Window& window, TiledRectangle area) override;
 };
 
+//class TripleNineMessage {
+//public:
+//    String message;
+//};
+//
+//class TripleNineServer {
+//public:
+//    External::ENetHost* server;
+//    External::ENetAddress address;
+//    Vector<TripleNineMessage> messages;
+//
+//    void create();
+//    void destroy() const;
+//};
+//
+//class TripleNineClient {
+//public:
+//    External::ENetHost* client;
+//    External::ENetPeer* peer;
+//    Vector<TripleNineMessage> messages;
+//
+//    void create();
+//    void destroy() const;
+//};
+
 struct TripleNine
 {
-	UserInterface        ui;
+	Bool                 useIntro = false;
 	ORKAIntroSequence    intro;
-	Window               window;
-	TripleNineRenderer   renderer;
+	TripleNineRenderer   renderer1;
+	TripleNineRenderer   renderer2;
 	TripleNineSimulation simulation;
+	//TripleNineServer     server;
+	//TripleNineClient     client;
 
 	void run();
 };
+
+//void serverLoop(TripleNineServer& server);
+//void clientLoop(TripleNineClient& client);
