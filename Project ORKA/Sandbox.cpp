@@ -8,7 +8,7 @@ void SandboxRenderer::update(Window& window)
 
 void SandboxRenderer::destroy(Window& window)
 {
-	framebuffer.destroy();
+	framebuffer.destroy(window.renderer);
 }
 
 void SandboxRenderer::connect(GameSimulation& simulation) {}
@@ -27,8 +27,8 @@ void SandboxRenderer::create(Window& window)
 	player.camera.setPosition(Vec3(0.0f, -5.0f, 0.0f));
 
 	framebuffer.create("MainFramebuffer", Area(1920, 1080));
-	framebuffer.add(WritePixelsFormat::RGBA, DataType::Float, FramebufferAttachment::Color0, true, Wrapping::Clamped);
-	framebuffer.add(WritePixelsFormat::Depth, DataType::Float, FramebufferAttachment::Depth, false, Wrapping::Clamped);
+	framebuffer.add(window.renderer, WritePixelsFormat::RGBA, DataType::Float, FramebufferAttachment::Color0, true, Wrapping::Clamped);
+	framebuffer.add(window.renderer, WritePixelsFormat::Depth, DataType::Float, FramebufferAttachment::Depth, false, Wrapping::Clamped);
 	framebuffer.checkComplete();
 }
 
@@ -36,13 +36,16 @@ void SandboxRenderer::render(Window& window, const TiledRectangle area)
 {
 	Renderer& r = window.renderer;
 
+	r.setRenderRegion(area);
+
 	r.setWireframeMode();
 	r.setCulling(true);
 	r.setDepthTest(true);
 
-	framebuffer.resize(area.size);
+	if(framebuffer.getSize() != area.size)
+	framebuffer.resize(r, area.size);
 	framebuffer.clear();
-	framebuffer.bindDraw();
+	framebuffer.bindDraw(r);
 
 	// render scene
 	player.render(window); // sets the position, rotation and projection

@@ -35,51 +35,51 @@ void Renderer::rectangle()
 
 void Renderer::create()
 {
-	OpenGL::apiInit();
+	OpenGL::apiInit(openGlContext);
 
-	OpenGL::apiSetDebugging(true);
+	OpenGL::apiSetDebugging(openGlContext, true);
 
-	if (printDeviceInfo) openGlState.printOpenGLInfo();
+	if (printDeviceInfo) openGlContext.printOpenGLInfo();
 
 	randomizeSeed();
 	// basic systems
 	time.reset();
-	textureSystem.create();
-	meshSystem.create();
+	textureSystem.create(*this);
+	meshSystem.create(*this);
 	shaderSystem.create();
-	primitivesRenderer.create();
+	primitivesRenderer.create(*this);
 
 	// advanced systems
 	textRenderSystem.create(*this);
 	renderObjectSystem.create(*this);
 
 	idFramebuffer.create("IDFramebuffer", Area(1920, 1080));
-	idFramebuffer.add(WritePixelsFormat::RGBAInteger, DataType::UInt, FramebufferAttachment::Color0, true, Wrapping::Clamped);
-	idFramebuffer.add(WritePixelsFormat::Depth, DataType::Float, FramebufferAttachment::Depth, false, Wrapping::Clamped);
+	idFramebuffer.add(*this, WritePixelsFormat::RGBAInteger, DataType::UInt, FramebufferAttachment::Color0, true, Wrapping::Clamped);
+	idFramebuffer.add(*this, WritePixelsFormat::Depth, DataType::Float, FramebufferAttachment::Depth, false, Wrapping::Clamped);
 	idFramebuffer.checkComplete();
 
 	postProcessFramebuffer.create("PostProcessFramebuffer", Area(1920, 1080));
-	postProcessFramebuffer.add(WritePixelsFormat::RGBA, DataType::Float, FramebufferAttachment::Color0, true, Wrapping::Clamped);
-	postProcessFramebuffer.add(WritePixelsFormat::Depth, DataType::Float, FramebufferAttachment::Depth, false, Wrapping::Clamped);
+	postProcessFramebuffer.add(*this, WritePixelsFormat::RGBA, DataType::Float, FramebufferAttachment::Color0, true, Wrapping::Clamped);
+	postProcessFramebuffer.add(*this, WritePixelsFormat::Depth, DataType::Float, FramebufferAttachment::Depth, false, Wrapping::Clamped);
 	postProcessFramebuffer.checkComplete();
 
 	OpenGL::apiClipControl(GL_LOWER_LEFT, GL_ZERO_TO_ONE);
-	OpenGL::apiSetScissorTest(true);
+	OpenGL::apiSetScissorTest(openGlContext, true);
 }
 
 void Renderer::destroy()
 {
-	primitivesRenderer.destroy();
+	primitivesRenderer.destroy(*this);
 
-	idFramebuffer.destroy();
-	postProcessFramebuffer.destroy();
+	idFramebuffer.destroy(*this);
+	postProcessFramebuffer.destroy(*this);
 
-	textRenderSystem.destroy();
+	textRenderSystem.destroy(*this);
 	renderObjectSystem.destroy();
 
-	meshSystem.destroy();
+	meshSystem.destroy(*this);
 	shaderSystem.destroy();
-	textureSystem.destroy();
+	textureSystem.destroy(*this);
 }
 
 void Renderer::screenSpace()
@@ -87,12 +87,6 @@ void Renderer::screenSpace()
 	uniforms().setVMatrix(getScreenSpaceMatrix());
 	uniforms().setPMatrix(Matrix(1));
 }
-
-//void Renderer::rerenderMesh()
-//{
-//	// simply renders the previous mesh again (saves performance)
-//	meshSystem.currentMesh().render(uniforms());
-//}
 
 Area Renderer::getArea() const
 {
@@ -117,7 +111,7 @@ void Renderer::normalizedSpace()
 
 Bool Renderer::getCulling() const
 {
-	return openGlState.culling;
+	return openGlContext.culling;
 }
 
 Float Renderer::deltaTime() const
@@ -165,7 +159,7 @@ void Renderer::begin(const Area size)
 	time.update(); // advances the time
 
 	mutex.lock(); // used for synchronizing other threads
-	setFramebufferSize(size);
+	setFramebufferSize(*this, size);
 	setRenderRegion(TiledRectangle(size));
 
 	uniforms().setWindowWidth(size.x);
@@ -200,7 +194,7 @@ Float Renderer::getAspectRatio() const
 
 void Renderer::fill(const Double color)
 {
-	fill(Vec4(Vec3(color), 1.0f));
+	fill(Vec4(Vec3(static_cast<Float>(color)), 1.0f));
 }
 
 void Renderer::setWireframeMode() const
@@ -220,11 +214,9 @@ void Renderer::screenSpaceFromTopLeft()
 	uniforms().setPMatrix(matrix);
 }
 
-
-
-void Renderer::blendModeAdditive() const
+void Renderer::blendModeAdditive()
 {
-	OpenGL::apiSetBlending(true);
+	OpenGL::apiSetBlending(openGlContext, true);
 	OpenGL::apiBlendFunc(BlendFunction::One, BlendFunction::One);
 	OpenGL::apiBlendEquation(BlendEquation::Add);
 }
@@ -232,7 +224,7 @@ void Renderer::blendModeAdditive() const
 void Renderer::useMesh(const Name& name)
 {
 	// selects a mesh to be rendered but doesn't render it
-	meshSystem.use(name);
+	meshSystem.use(*this, name);
 }
 
 void Renderer::setColor(const Color color)
@@ -247,12 +239,12 @@ void Renderer::pollGraphicsApiError() const
 
 void Renderer::renderMesh(const Name& name)
 {
-	meshSystem.render(uniforms(), name);
+	meshSystem.render(*this, uniforms(), name);
 }
 
 void Renderer::useTexture(const Name& name)
 {
-	textureSystem.use(name);
+	textureSystem.use(*this, name);
 }
 
 Index Renderer::useShader(const Name& name)
@@ -281,8 +273,8 @@ void Renderer::aspectCorrectNormalizedSpace()
 
 Matrix Renderer::getScreenSpaceMatrix() const
 {
-	const auto width  = static_cast<Float>(getWindowWidth());
-	const auto height = static_cast<Float>(getWindowHeight());
+	const auto width  = static_cast<Float>(renderRegion.getWidth());
+	const auto height = static_cast<Float>(renderRegion.getHeight());
 	return screenSpaceMatrix(width, height);
 }
 
@@ -336,16 +328,16 @@ void Renderer::fullScreenShader(const Name& name)
 	setWireframeMode(wireframeMode);
 }
 
-void Renderer::setFramebufferSize(const Area area)
+void Renderer::setFramebufferSize(Renderer& renderer, const Area area)
 {
 	windowSize = area;
-	idFramebuffer.resize(area);
-	postProcessFramebuffer.resize(area);
+	idFramebuffer.resize(renderer, area);
+	postProcessFramebuffer.resize(renderer, area);
 }
 
-void Renderer::setCulling(const Bool culling) const
+void Renderer::setCulling(const Bool culling)
 {
-	OpenGL::apiSetCulling(culling);
+	OpenGL::apiSetCulling(openGlContext, culling);
 }
 
 void Renderer::line(const Vec3 start, const Vec3 end)
@@ -397,9 +389,9 @@ void Renderer::circles(const Vector<Matrix>& matrices)
 	primitivesRenderer.circles(matrices, uniforms());
 }
 
-void Renderer::clearBackground(const Color color) const
+void Renderer::clearBackground(const Color color)
 {
-	OpenGL::apiSetClearColor(color);
+	OpenGL::apiSetClearColor(openGlContext, color);
 	OpenGL::apiClearColor();
 	OpenGL::apiClearDepth();
 }
@@ -410,33 +402,31 @@ void Renderer::circle(const Vec2 pos, const Float radius)
 	renderMesh("circle");
 }
 
-void Renderer::setDepthTest(const Bool isUsingDepth) const
+void Renderer::setDepthTest(const Bool isUsingDepth)
 {
-	OpenGL::apiSetDepthTest(isUsingDepth);
+	OpenGL::apiSetDepthTest(openGlContext, isUsingDepth);
 }
 
-void Renderer::setAlphaBlending(const Bool blending) const
+void Renderer::setAlphaBlending(const Bool blending)
 {
-	if (openGlState.blending != blending)
+	if (openGlContext.blending != blending)
 	{
 		if (blending)
 		{
-			openGlState.blending = true;
-			OpenGL::apiSetBlending(true);
+			OpenGL::apiSetBlending(openGlContext, true);
 			OpenGL::apiBlendFunc(BlendFunction::SrcAlpha, BlendFunction::OneMinusSrcAlpha);
 			OpenGL::apiBlendEquation(BlendEquation::Add);
 		}
 		else
 		{
-			openGlState.blending = false;
-			OpenGL::apiSetBlending(false);
+			OpenGL::apiSetBlending(openGlContext, false);
 		}
 	}
 }
 
 void Renderer::setRenderRegion(const TiledRectangle region)
 {
-	renderRegion.set(region);
+	renderRegion.set(*this, region);
 }
 
 void Renderer::wireframeCubes(const Vector<Matrix>& matrices)
@@ -451,7 +441,7 @@ void Renderer::fill(const Float r, const Float g, const Float b)
 
 void Renderer::useTexture(const Name& name, const Index position)
 {
-	textureSystem.use(name, position);
+	textureSystem.use(*this, name, position);
 }
 
 void Renderer::line(const Vec2Vector& line, const Matrix& matrix)
@@ -541,7 +531,7 @@ void Renderer::renderMeshInstanced(const Name& name, const Vec3Vector& positions
 
 void Renderer::renderMeshInstanced(const Name& name, const Vector<Matrix>& transforms)
 {
-	meshSystem.renderInstanced(uniforms(), name, transforms);
+	meshSystem.renderInstanced(*this, uniforms(), name, transforms);
 }
 
 void Renderer::renderMeshInstanced(const Name& name, const Vec3Vector& positions, const Float size)
@@ -561,16 +551,16 @@ void Renderer::postProcess(const Name& name, const Framebuffer& source, const Fr
 	source.bindRead();
 	source.setAsTexture(0);
 
-	destination.bindDraw();
+	destination.bindDraw(*this);
 	destination.clear();
 
 	useShader(name);
 	renderMesh("fullScreenQuad");
 }
 
-void Renderer::setAlphaBlending(const Bool enable, const BlendFunction src, const BlendFunction dst, const BlendEquation eq) const
+void Renderer::setAlphaBlending(const Bool enable, const BlendFunction src, const BlendFunction dst, const BlendEquation eq)
 {
-	OpenGL::apiSetBlending(enable);
+	OpenGL::apiSetBlending(openGlContext, enable);
 	OpenGL::apiBlendFunc(src, dst);
 	OpenGL::apiBlendEquation(eq);
 }

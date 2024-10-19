@@ -57,14 +57,11 @@ void renderPlanet(Renderer& renderer, PlanetSystem& planetSystem, const PlanetSy
 
 struct MoonCrash
 {
-	UserInterface       ui;
 	MoonCrashSimulation sim;
-	Window              window;
 	MoonCrashRenderer   renderer;
 
 	void run()
 	{
-		ui.create();
 		sim.start();
 		renderer.connect(sim);
 		ui.window("MoonCrash", Area(1920, 1080), true, true, WindowState::Windowed, renderer);

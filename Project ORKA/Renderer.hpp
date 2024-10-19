@@ -40,6 +40,8 @@ struct Renderer
 	RenderObjectSystem renderObjectSystem;
 	PlanetRenderSystem planetRenderSystem;
 
+	OpenGlContext openGlContext;
+
 	//general usage
 	void end();
 	void sync();
@@ -48,18 +50,18 @@ struct Renderer
 	void begin(Area size);
 
 	//render state
+	void blendModeAdditive();
 	void drawToWindow() const;
+	void setCulling(Bool culling);
 	void setWireframeMode() const;
-	void blendModeAdditive() const;
 	void pollGraphicsApiError() const;
-	void setFramebufferSize(Area area);
-	void setCulling(Bool culling) const;
+	void setAlphaBlending(Bool blending);
+	void setDepthTest(Bool isUsingDepth);
 	void setWireframeMode(Bool mode) const;
-	void setAlphaBlending(Bool blending) const;
-	void setDepthTest(Bool isUsingDepth) const;
 	void setRenderRegion(TiledRectangle region);
+	void setFramebufferSize(Renderer& renderer, Area area);
 	void addRenderObject(const RenderObjectNames& renderObjectNames); // [TODO] remove?
-	void setAlphaBlending(Bool enable, BlendFunction src, BlendFunction dst, BlendEquation eq) const;
+	void setAlphaBlending(Bool enable, BlendFunction src, BlendFunction dst, BlendEquation eq);
 
 	//spaces
 	void screenSpace();
@@ -92,8 +94,8 @@ struct Renderer
 	void  fill(Double color);
 	void  setColor(Color color);
 	Index useShader(const Name& name);
+	void  clearBackground(Color color);
 	void  fill(Float r, Float g, Float b);
-	void  clearBackground(Color color) const;
 	void  fullScreenShader(const Name& name);
 	void  fill(Float r, Float g, Float b, Float a);
 	void  postProcess(const Name& name, const Framebuffer& source, const Framebuffer& destination);

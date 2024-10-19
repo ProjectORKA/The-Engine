@@ -95,6 +95,7 @@ using String  = std::string;
 using WString = std::wstring;
 
 using Exception = std::exception;
+using ErrorCode = std::error_code;
 
 constexpr unsigned short nameSize = 64;
 

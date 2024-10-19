@@ -320,7 +320,7 @@ void OrbitalOblivionRenderer::create(Window& window)
 	//fs.addFrameBuffer("bloom7", pow(0.5, 7));
 	//fs.addFrameBuffer("bloom8", pow(0.5, 8));
 	//fs.addFrameBuffer("bloom9", pow(0.5, 9));
-	window.renderer.meshSystem.use("unit");
+	window.renderer.meshSystem.use(window.renderer, "unit");
 	unitMesh = &window.renderer.meshSystem.currentMesh();
 }
 

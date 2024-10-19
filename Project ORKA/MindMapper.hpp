@@ -37,14 +37,11 @@ struct MindMapperRenderer final : GameRenderer
 
 struct MindMapper
 {
-	UserInterface      ui;
 	MindMapperSim      sim;
-	Window             window;
 	MindMapperRenderer renderer;
 
 	void run()
 	{
-		ui.create();
 		sim.start();
 		renderer.connect(sim);
 		ui.window("ORKA MindMapper", Area(1920, 1080), true, true, WindowState::Windowed, renderer);

@@ -341,15 +341,6 @@
     <ClCompile Include="VoxelRenderer.cpp">
       <Filter>Systems\Meshing\VoxelMeshing</Filter>
     </ClCompile>
-    <ClCompile Include="Client.cpp">
-      <Filter>Systems\Networking\Client</Filter>
-    </ClCompile>
-    <ClCompile Include="Message.cpp">
-      <Filter>Systems\Networking\Message</Filter>
-    </ClCompile>
-    <ClCompile Include="Networking.cpp">
-      <Filter>Systems\Networking\Networking</Filter>
-    </ClCompile>
     <ClCompile Include="BitmapTextRenderSystem.cpp">
       <Filter>Systems\UserInterface\Window\Renderer\TextRenderSystem\BitmapTextRenderSystem</Filter>
     </ClCompile>
@@ -442,6 +433,12 @@
     </ClCompile>
     <ClCompile Include="Voxels.cpp">
       <Filter>Apps\3D Apps\PerformantVoxelRenderer</Filter>
+    </ClCompile>
+    <ClCompile Include="Standalone Music Visualizer.cpp">
+      <Filter>Apps\2D Apps\Music Visualizer</Filter>
+    </ClCompile>
+    <ClCompile Include="Networking.cpp">
+      <Filter>Systems\Networking</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -641,9 +638,6 @@
       <Filter>Systems\Audio</Filter>
     </ClInclude>
     <ClInclude Include="ASIONetworking.hpp">
-      <Filter>Systems\Networking</Filter>
-    </ClInclude>
-    <ClInclude Include="Server.hpp">
       <Filter>Systems\Networking</Filter>
     </ClInclude>
     <ClInclude Include="NeighborQuadtree.hpp">
@@ -856,15 +850,6 @@
     <ClInclude Include="VoxelRenderer.hpp">
       <Filter>Systems\Meshing\VoxelMeshing</Filter>
     </ClInclude>
-    <ClInclude Include="Client.hpp">
-      <Filter>Systems\Networking\Client</Filter>
-    </ClInclude>
-    <ClInclude Include="Message.hpp">
-      <Filter>Systems\Networking\Message</Filter>
-    </ClInclude>
-    <ClInclude Include="Networking.hpp">
-      <Filter>Systems\Networking\Networking</Filter>
-    </ClInclude>
     <ClInclude Include="BitmapTextRenderSystem.hpp">
       <Filter>Systems\UserInterface\Window\Renderer\TextRenderSystem\BitmapTextRenderSystem</Filter>
     </ClInclude>
@@ -1011,6 +996,9 @@
     </ClInclude>
     <ClInclude Include="Voxels.hpp">
       <Filter>Apps\3D Apps\PerformantVoxelRenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Networking.hpp">
+      <Filter>Systems\Networking</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1709,15 +1697,6 @@
     <Filter Include="Systems\Meshing\VoxelMeshing">
       <UniqueIdentifier>{4a4430ca-41be-4c64-a6f1-a7404bb332de}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Systems\Networking\Client">
-      <UniqueIdentifier>{9659bcbc-7049-49d0-9d52-c9e744c78bfe}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Systems\Networking\Message">
-      <UniqueIdentifier>{bd7ae2ae-af72-4f7a-b924-0d49b0c6914f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Systems\Networking\Networking">
-      <UniqueIdentifier>{068a7071-8f13-4546-9b24-89d295ab34ce}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Systems\UserInterface\Window\Renderer\TextRenderSystem\BitmapTextRenderSystem">
       <UniqueIdentifier>{494ff01b-3242-497b-b2e2-0261890654b7}</UniqueIdentifier>
     </Filter>
@@ -1831,9 +1810,6 @@
     </Filter>
     <Filter Include="Apps\3D Apps\Prototyping\Prototypes\Labyrinth Generator">
       <UniqueIdentifier>{327acd63-0d65-4b89-bd22-4b069d14d03f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Apps\2D Apps\ImGui">
-      <UniqueIdentifier>{8422808a-175e-4e8f-b8e9-6d2153991cf2}</UniqueIdentifier>
     </Filter>
     <Filter Include="Systems\UserInterface\Window\Renderer\RenderingOverrides">
       <UniqueIdentifier>{c0656f0c-f556-491f-bb9c-df54d8612c42}</UniqueIdentifier>

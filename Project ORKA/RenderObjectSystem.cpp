@@ -19,12 +19,12 @@ void RenderObjectSystem::renderCurrent()
 
 RenderObject& RenderObjectSystem::current()
 {
-	return renderObjects[currentRenderobjectId];
+	return renderObjects[currentRenderObjectId];
 }
 
 void RenderObjectSystem::select(const Index id)
 {
-	currentRenderobjectId = id;
+	currentRenderObjectId = id;
 }
 
 void RenderObjectSystem::render(const Index id)
@@ -43,28 +43,28 @@ void RenderObjectSystem::create(Renderer& renderer)
 Index RenderObjectSystem::addRenderObject(const RenderObject& renderObject)
 {
 	renderObjects.push_back(renderObject);
-	currentRenderobjectId = renderObjects.size() - 1;
-	return currentRenderobjectId;
+	currentRenderObjectId = renderObjects.size() - 1;
+	return currentRenderObjectId;
 }
 
-void RenderObjectSystem::addRenderObject(const RenderObjectNames& renderobject)
+void RenderObjectSystem::addRenderObject(const RenderObjectNames& renderObject)
 {
-	addRenderObject(renderobject.renderObjectName, renderobject.meshName, renderobject.textureName, renderobject.shaderName);
+	addRenderObject(renderObject.renderObjectName, renderObject.meshName, renderObject.textureName, renderObject.shaderName);
 }
 
-void RenderObjectSystem::render(const Name& name)
+void RenderObjectSystem::render(Renderer& renderer, const Name& name)
 {
-	select(name);
+	select(renderer, name);
 	renderCurrent();
 }
 
-void RenderObjectSystem::select(const Name& name)
+void RenderObjectSystem::select(Renderer& renderer, const Name& name)
 {
 	const auto it = nameToIndex.find(name);
 	if(it != nameToIndex.end())
 	{
 		// id found, set to current
-		currentRenderobjectId = it->second;
+		currentRenderObjectId = it->second;
 	}
 	else
 	{
@@ -74,8 +74,8 @@ void RenderObjectSystem::select(const Name& name)
 			if(renderObjectNamesQueue[i].renderObjectName == name)
 			{
 				shaderSystemPtr->use(renderObjectNamesQueue[i].shaderName);
-				textureSystemPtr->use(renderObjectNamesQueue[i].textureName);
-				meshSystemPtr->use(renderObjectNamesQueue[i].meshName);
+				textureSystemPtr->use(renderer, renderObjectNamesQueue[i].textureName);
+				meshSystemPtr->use(renderer, renderObjectNamesQueue[i].meshName);
 
 				if(shaderSystemPtr->currentShaderProgram().isLoaded() && textureSystemPtr->currentTexture().isLoaded() && meshSystemPtr->currentMesh().isLoaded())
 				{
@@ -85,8 +85,8 @@ void RenderObjectSystem::select(const Name& name)
 					renderObject.meshId    = meshSystemPtr->currentMeshId;
 					renderObjects.push_back(renderObject);
 
-					currentRenderobjectId = renderObjects.size() - 1;
-					nameToIndex[name]     = currentRenderobjectId;
+					currentRenderObjectId = renderObjects.size() - 1;
+					nameToIndex[name]     = currentRenderObjectId;
 
 					// remove from queue
 					renderObjectNamesQueue.erase(renderObjectNamesQueue.begin() + i);

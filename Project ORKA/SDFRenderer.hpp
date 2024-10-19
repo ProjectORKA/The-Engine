@@ -20,15 +20,12 @@ struct SignedDistanceFieldRenderer final : GameRenderer
 	void renderInteractive(Window& window, TiledRectangle area) override;
 };
 
-struct SDFRenderer
+struct SdfRenderer
 {
-	UserInterface               ui;
-	Window                      window;
 	SignedDistanceFieldRenderer renderer;
 
 	void run()
 	{
-		ui.create();
 		ui.window("SDFRenderer", Area(settings.defaultWindowWidth, settings.defaultWindowHeight), true, true, WindowState::Windowed, renderer);
 		ui.run();
 	}

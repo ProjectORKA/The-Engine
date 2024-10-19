@@ -4,13 +4,14 @@
 #include "IndexBufferObject.hpp"
 
 struct Uniforms;
+struct Renderer;
 
 struct GpuMesh
 {
 	[[nodiscard]] Bool isLoaded() const;
 
-	void unload();
-	void upload(const CpuMesh& cpuMesh);
+	void unload(Renderer & renderer);
+	void upload(Renderer & renderer, const CpuMesh& cpuMesh);
 	void render(Uniforms& uniforms) const;
 	void renderInstances(Uniforms& uniforms, const Vector<Matrix>& transforms) const;
 

@@ -20,8 +20,8 @@ struct BasicMeshes
 {
 	GpuMesh fullscreenMesh;
 
-	void create();
-	void destroy();
+	void create(Renderer& renderer);
+	void destroy(Renderer& renderer);
 };
 
 struct MeshSystem
@@ -31,14 +31,14 @@ struct MeshSystem
 	BasicMeshes     basicMeshes;
 	Index           currentMeshId = 0;
 
-	void     create();
-	void     destroy();
 	GpuMesh& currentMesh();
 	void     use(Index meshId);
-	void     addMesh(const CpuMesh& cpuMesh);
+	void     create(Renderer& renderer);
+	void     destroy(Renderer& renderer);
 	void     render(Uniforms& uniforms, Index meshId);
+	void     use(Renderer& renderer, const Name& name);
 	void     renderFullscreen(Uniforms& uniforms) const;
-	void     use(const Name& name);
-	void     render(Uniforms& uniforms, const Name& meshName);
-	void     renderInstanced(Uniforms& uniforms, const Name& meshName, const Vector<Matrix>& transforms);
+	void     addMesh(Renderer& renderer, const CpuMesh& cpuMesh);
+	void     render(Renderer& renderer, Uniforms& uniforms, const Name& meshName);
+	void     renderInstanced(Renderer& renderer, Uniforms& uniforms, const Name& meshName, const Vector<Matrix>& transforms);
 };

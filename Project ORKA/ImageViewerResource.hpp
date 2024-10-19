@@ -19,12 +19,12 @@ struct ImageViewerResource
 	[[nodiscard]] Float  getAspectRatio() const;
 	[[nodiscard]] Bool   hasLoadAttemptFailed() const;
 
-	void destroy();
-	void loadOntoGpu();
 	void loadIntoRam();
-	void unloadFromGpu();
 	void unloadFromRam();
 	void use(Int textureSlot) const;
+	void destroy(Renderer & renderer);
+	void loadOntoGpu(Renderer & renderer);
+	void unloadFromGpu(Renderer & renderer);
 	void calculateRating(Index currentImageIndex, UInt resourceCount);
 
 private:

@@ -883,7 +883,7 @@ inline void __stdcall debugOutputCallback(const UInt source, const UInt type, UI
 	}
 }
 
-struct OpenGLStateCopy
+struct OpenGlContext
 {
 	const Bool openglStateTracking  = false;
 	const Bool errorCheckingEnabled = true;
@@ -892,11 +892,6 @@ struct OpenGLStateCopy
 	Logger log            = Logger("OpenGL");
 	#endif
 	// current state
-	Bool  culling                = false;
-	Bool  blending               = false;
-	Bool  depthTest              = false;
-	Bool  debugging              = false;
-	Bool  scissorTest            = false;
 	Int   currentDrawFramebuffer = -1;
 	Int   currentReadFramebuffer = -1;
 	Int   viewportX              = -1;
@@ -907,6 +902,11 @@ struct OpenGLStateCopy
 	Int   scissorY               = -1;
 	Int   scissorW               = -1;
 	Int   scissorH               = -1;
+	Bool  culling                = false;
+	Bool  blending               = false;
+	Bool  depthTest              = false;
+	Bool  debugging              = false;
+	Bool  scissorTest            = false;
 	Color clearColor             = Color(0, 0, 0, 0);
 	// objects
 	List<TextureID>     textures;
@@ -916,7 +916,7 @@ struct OpenGLStateCopy
 	UInt maxVertexAttributes = 0;
 
 	void print() const;
-	~OpenGLStateCopy();
+	~OpenGlContext();
 	void enableLogging();
 	void disableLogging();
 	void printOpenGLInfo() const;
@@ -927,31 +927,29 @@ struct OpenGLStateCopy
 	void removeVAO(VertexArrayID vertexArrayID);
 };
 
-extern OpenGLStateCopy openGlState;
-
 namespace OpenGL
 {
-	void apiInit();
 	void apiFinish();
 	UInt apiGetError();
 	void apiClearColor();
 	void apiClearDepth();
-	void apiSetCulling(Bool value);
-	void apiSetBlending(Bool value);
-	void apiSetDebugging(Bool value);
-	void apiSetDepthTest(Bool value);
-	void apiSetScissorTest(Bool value);
-	void apiSetClearColor(Color color);
 	void apiPolygonMode(UInt face, UInt mode);
 	void apiEnable(EnableParameters parameter);
+	void apiInit(OpenGlContext& openGlContext);
 	void apiDisable(EnableParameters parameter);
-	void apiScissor(Int x, Int y, Int w, Int h);
 	Int  apiGetIntegerv(GetParameters parameter);
-	void apiViewport(Int x, Int y, Int w, Int h);
 	void apiClipControl(UInt origin, UInt depth);
 	void apiBlendEquation(BlendEquation equation);
 	void apiBindDrawFramebuffer(FramebufferID framebufferID);
 	void apiBindReadFramebuffer(FramebufferID framebufferID);
+	void apiSetCulling(OpenGlContext& openGlContext, Bool value);
+	void apiSetBlending(OpenGlContext& openGlContext, Bool value);
+	void apiSetDebugging(OpenGlContext& openGlContext, Bool value);
+	void apiSetDepthTest(OpenGlContext& openGlContext, Bool value);
+	void apiSetScissorTest(OpenGlContext& openGlContext, Bool value);
+	void apiSetClearColor(OpenGlContext& openGlContext, Color color);
+	void apiScissor(OpenGlContext& openGlContext, Int x, Int y, Int w, Int h);
+	void apiViewport(OpenGlContext& openGlContext, Int x, Int y, Int w, Int h);
 	void apiObjectLabel(ObjectLabelType type, UInt objectID, const String& label);
 	void apiBlendFunc(BlendFunction sourceFactor, BlendFunction destinationFactor);
 }
@@ -1046,14 +1044,14 @@ struct OpenGLTexture2D
 {
 	[[nodiscard]] UInt getID() const;
 
-	void destroy() const;
 	void generateMipMap() const;
-	void create(const String& name);
 	void setBorderColor(Color color) const;
 	void setWrapping(Wrapping wrapping) const;
+	void destroy(OpenGlContext& openGlContext) const;
 	void useTextureInSlot(UInt textureUnitSlot) const;
 	void emptyTextureFromSlot(UInt textureUnitSlot) const;
 	void setFilters(Filter nearFilter, Filter farFilter) const;
+	void create(OpenGlContext& openGlContext, const String& name);
 	void setDataToDepth(Int width, Int height, const void* data) const;
 	void setData(SizedInternalFormat internalFormat, Int width, Int height, WritePixelsFormat colorFormat, DataType dataType, const void* data) const;
 
@@ -1108,11 +1106,11 @@ struct OpenGLUniformBuffer : OpenGLBuffer
 
 struct OpenGLVertexArrayObject
 {
-	void create();
 	void bind() const;
 	void unbind() const;
-	void destroy() const;
 	void unbindIndexBuffer() const;
+	void create(OpenGlContext& openGlContext);
+	void destroy(OpenGlContext& openGlContext) const;
 	void bindIndexBuffer(BufferID indexBufferID) const;
 	void unbindVertexBuffer(AttributeIndex attributeIndex) const;
 	void render(PrimitiveMode primitiveMode, Int indexCount, const void* indicesOrOffset) const;

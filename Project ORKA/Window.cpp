@@ -10,15 +10,20 @@ void Window::destroy()
 {
 	keepRunning = false;
 	thread.join();
-	content.destroy(*this);
-	destroyApiWindow();
+	releaseCursor();
+	if (apiWindow)
+	{
+		glfwDestroyWindow(apiWindow);
+		apiWindow = nullptr;
+	}
 	LifetimeGuard::destroy();
+	if (debugWindowIsEnabled) logDebug("API Window destroyed!");
 }
 
 void Window::setWindowed()
 {
 	apiWindowSetWindowedMode(apiWindow, TiledRectangle(windowedModeSize));
-	if(isVisible) apiWindowRestore(apiWindow);
+	if (isVisible) apiWindowRestore(apiWindow);
 	centerWindow();
 	windowState = WindowState::Windowed;
 }
@@ -43,7 +48,7 @@ void Window::setMinimized()
 
 void Window::captureCursor()
 {
-	if(!capturing)
+	if (!capturing)
 	{
 		mousePos = apiWindowGetCursorPosition(apiWindow);
 		apiWindowDisableCursor(apiWindow);
@@ -65,7 +70,7 @@ void Window::decorateWindow()
 
 void Window::releaseCursor()
 {
-	if(capturing)
+	if (capturing)
 	{
 		apiWindowEnableCursor(apiWindow);
 		apiWindowSetCursorPosition(apiWindow, mousePos);
@@ -79,39 +84,24 @@ void Window::unDecorateWindow()
 	decorated = false;
 }
 
-void Window::destroyApiWindow()
-{
-	releaseCursor();
-	if(apiWindow)
-	{
-		glfwDestroyWindow(apiWindow);
-		apiWindow = nullptr;
-	}
-	logDebug("API Window destroyed!");
-}
-
 void Window::updateWindowState()
 {
-	switch(windowState)
+	switch (windowState)
 	{
-		case WindowState::Fullscreen:
-			setFullscreen();
-			break;
-		case WindowState::Maximized:
-			setMaximized();
-			break;
-		case WindowState::Windowed:
-			setWindowed();
-			break;
-		case WindowState::Minimized:
-			setMinimized();
-			break;
+	case WindowState::Fullscreen: setFullscreen();
+		break;
+	case WindowState::Maximized: setMaximized();
+		break;
+	case WindowState::Windowed: setWindowed();
+		break;
+	case WindowState::Minimized: setMinimized();
+		break;
 	}
 }
 
 void Window::updateDecorations()
 {
-	if(decorated)
+	if (decorated)
 	{
 		decorateWindow();
 	}
@@ -140,23 +130,23 @@ void windowThread(Window& window)
 {
 	Renderer& renderer = window.renderer;
 	window.initializeGraphicsApi(); // needs to be in this thread
-	renderer.create(); // also needs to be in this thread
+	renderer.create();              // also needs to be in this thread
 	window.updateWindowState();
 
 	window.content.create(window);
 
-	if(window.windowState == WindowState::Windowed) window.centerWindow();
-	if(window.windowState == WindowState::Windowed || window.windowState == WindowState::Maximized) window.updateDecorations();
+	if (window.windowState == WindowState::Windowed) window.centerWindow();
+	if (window.windowState == WindowState::Windowed || window.windowState == WindowState::Maximized) window.updateDecorations();
 
 	auto prevPos = DVec2(0);
 
 	OPTICK_THREAD("Window Thread");
 
 	// main render loop for the window
-	while(window.keepRunning)
+	while (window.keepRunning)
 	{
 		OPTICK_FRAME("Window Frame");
-		if(window.isVisible)
+		if (window.isVisible)
 		{
 			OPTICK_PUSH("Setup");
 
@@ -183,12 +173,12 @@ void windowThread(Window& window)
 			window.content.render(window, windowArea);
 			OPTICK_POP();
 
-			if constexpr(USE_OPTICK)
+			if constexpr (USE_OPTICK)
 			{
 				renderer.aspectCorrectNormalizedSpace();
 				renderer.textRenderSystem.setSize(0.02f);
 				renderer.textRenderSystem.setLetterSpacing(0.6f);
-				if(window.profiling) renderer.textRenderSystem.render(renderer, "[R]", Vec2(0.9f));
+				if (window.profiling) renderer.textRenderSystem.render(renderer, "[R]", Vec2(0.9f));
 			}
 
 			OPTICK_PUSH("Finalize");
@@ -260,7 +250,7 @@ void Window::setIcon(const Path& path) const
 	Image logo;
 	logo.load(path);
 	logo.flipVertically();
-	if(logo.getDataType() == ImageDataType::Byte)
+	if (logo.getDataType() == ImageDataType::Byte)
 	{
 		External::GLFWimage icon;
 		icon.pixels = logo.getDataPointer();
@@ -287,14 +277,11 @@ Bool Window::isKeyPressed(const Int key) const
 
 Bool Window::pressed(const InputId input) const
 {
-	switch(input.type)
+	switch (input.type)
 	{
-		case InputType::KeyBoard:
-			return glfwGetKey(apiWindow, input.id);
-		case InputType::Mouse:
-			return mouseState[input.id];
-		default:
-			logError("Unsupported InputType!");
+	case InputType::KeyBoard: return glfwGetKey(apiWindow, input.id);
+	case InputType::Mouse: return mouseState[input.id];
+	default: logError("Unsupported InputType!");
 	}
 	return false;
 }
@@ -316,7 +303,7 @@ void Window::resize(const Int width, const Int height) const
 
 void Window::createApiWindow(const String& title, const Area size)
 {
-	if(!apiWindow)
+	if (!apiWindow)
 	{
 		// video mode
 		const External::GLFWvidmode* videoMode = glfwGetVideoMode(External::glfwGetPrimaryMonitor());
@@ -337,7 +324,7 @@ void Window::createApiWindow(const String& title, const Area size)
 		External::glfwWindowHint(GLFW_TRANSPARENT_FRAMEBUFFER, true);
 		External::glfwWindowHint(GLFW_CENTER_CURSOR, true);
 		External::glfwWindowHint(GLFW_VISIBLE, false);
-		if(!decorated)
+		if (!decorated)
 		{
 			External::glfwWindowHint(GLFW_DECORATED, false);
 		}
@@ -346,11 +333,11 @@ void Window::createApiWindow(const String& title, const Area size)
 			External::glfwWindowHint(GLFW_DECORATED, true);
 		}
 
-		if(debugLoggingIsEnabled) External::glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
+		if (debugLoggingIsEnabled) External::glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
 
 		apiWindow = apiCreateWindow(size, title.c_str(), nullptr);
 
-		if(!apiWindow) logError("Window could not be created!");
+		if (!apiWindow) logError("Window could not be created!");
 
 		glfwSetWindowUserPointer(apiWindow, this);
 
@@ -358,7 +345,7 @@ void Window::createApiWindow(const String& title, const Area size)
 
 		setIcon(iconPath);
 
-		if(External::glfwRawMouseMotionSupported()) glfwSetInputMode(apiWindow, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
+		if (External::glfwRawMouseMotionSupported()) glfwSetInputMode(apiWindow, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
 	}
 	else
 	{
@@ -370,9 +357,9 @@ void whenFramebufferIsResized(const ApiWindow apiWindow, const Int width, const 
 {
 	Window& window = *static_cast<Window*>(glfwGetWindowUserPointer(apiWindow));
 
-	if(!window.isFullScreen()) window.windowedModeSize = Area(width, height);
+	if (!window.isFullScreen()) window.windowedModeSize = Area(width, height);
 
-	if(apiWindowKeyIsPressed(apiWindow, LeftShift)) window.centerWindow();
+	if (apiWindowKeyIsPressed(apiWindow, LeftShift)) window.centerWindow();
 
 	window.renderer.sync();
 }
@@ -391,8 +378,8 @@ void whenMouseIsScrolling(const ApiWindow apiWindow, const Double xAxis, const D
 	const Int countX = abs(static_cast<Int>(xAxis));
 	const Int countY = abs(static_cast<Int>(yAxis));
 
-	for(Int i = 0; i < countX; i++) window.content.inputEvent(window, InputEvent(InputType::Scroll, 0, xAxis > 0));
-	for(Int i = 0; i < countY; i++) window.content.inputEvent(window, InputEvent(InputType::Scroll, 1, yAxis > 0));
+	for (Int i = 0; i < countX; i++) window.content.inputEvent(window, InputEvent(InputType::Scroll, 0, xAxis > 0));
+	for (Int i = 0; i < countY; i++) window.content.inputEvent(window, InputEvent(InputType::Scroll, 1, yAxis > 0));
 }
 
 void whenFilesDroppedOnWindow(const ApiWindow apiWindow, const Int count, const Char** paths)
@@ -400,12 +387,12 @@ void whenFilesDroppedOnWindow(const ApiWindow apiWindow, const Int count, const 
 	Window&      window = *static_cast<Window*>(glfwGetWindowUserPointer(apiWindow));
 	Vector<Path> pathVector;
 
-	for(Int i = 0; i < count; i++)
+	for (Int i = 0; i < count; i++)
 	{
 		pathVector.emplace_back(paths[i]);
 		logDebug("File dropped: " + pathVector.back().string());
 		pathVector.push_back(paths[i]);
-		if(debugWindowIsEnabled) logDebug("File dropped: " + pathVector.back().string());
+		if (debugWindowIsEnabled) logDebug("File dropped: " + pathVector.back().string());
 	}
 
 	window.droppedFilePaths = pathVector;
@@ -422,38 +409,38 @@ void whenButtonIsPressed(const ApiWindow apiWindow, const Int key, Int scanCode,
 {
 	Window& window = *static_cast<Window*>(glfwGetWindowUserPointer(apiWindow));
 
-	if(action == 2) return; // we do not process repeat button presses
+	if (action == 2) return; // we do not process repeat button presses
 	// [TODO] make sure that "typing events" use them
 
 	const auto input = InputEvent(InputType::KeyBoard, key, action);
 
-	if(input == window.escape)
+	if (input == window.escape)
 	{
 		window.keepRunning = false;
 		apiSetWindowShouldClose(apiWindow, true);
 	}
-	if(input == window.enter && window.pressed(window.altKey))
+	if (input == window.enter && window.pressed(window.altKey))
 	{
-		if(window.windowState == WindowState::Windowed)
+		if (window.windowState == WindowState::Windowed)
 		{
 			window.windowState = WindowState::Fullscreen;
 		}
 		else
 		{
-			window.windowState                                            = WindowState::Windowed;
+			window.windowState = WindowState::Windowed;
 		}
 		window.updateWindowState();
 	}
-	if(input == window.startProfiling)
+	if (input == window.startProfiling)
 	{
 		window.profiling = true;
 		OPTICK_START_CAPTURE() }
-	if(input == window.stopProfiling)
+	if (input == window.stopProfiling)
 	{
 		window.profiling = false;
 		OPTICK_STOP_CAPTURE() OPTICK_SAVE_CAPTURE("profileDump");
 	}
-	if(input == window.reloadShaders) window.renderer.shaderSystem.rebuild();
+	if (input == window.reloadShaders) window.renderer.shaderSystem.rebuild();
 
 	window.content.inputEvent(window, input);
 }
@@ -466,8 +453,8 @@ void Window::create(const String& title, const Area size, const Bool decorated, 
 	this->windowState      = state;
 	this->id               = nextWindowId++;
 	this->windowedModeSize = size;
-	createApiWindow(title, size);	// needs to be in this thread
-	setVisible(visible);			// glfw does weird stuff, so we need to force it
+	createApiWindow(title, size); // needs to be in this thread
+	setVisible(visible);          // glfw does weird stuff, so we need to force it
 	setCallbacks();
 	thread = Thread(windowThread, std::ref(*this));
 	logDebug("Created Window in Main Thread!");

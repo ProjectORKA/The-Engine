@@ -2,16 +2,7 @@
 #include "Renderer.hpp"
 #include "Window.hpp"
 
-void UserInterface::create() const
-{
-	if(External::glfwInit() != GLFW_TRUE)
-	{
-		logError("GLFW could not be initialized");
-		return;
-	}
-	logDebug("GLFW initialized!");
-	External::glfwSetErrorCallback(whenWindowApiThrowsError);
-}
+UserInterface ui;
 
 void UIImage::update(Window& window) {}
 
@@ -118,27 +109,7 @@ void UserInterface::run()
 		// collect input
 		External::glfwPollEvents();
 
-		////check if window needs to be removed
-		//for(ULL i = 0; i < windows.size(); i++)
-		//{
-		//	if(windows[i].shouldClose())
-		//	{
-		//		windows[i].destroy();
-		//		windows.erase(windows.begin() + i);
-		//		break;
-		//	}
-		//}
-
-		//for(Window & w : windows)
-		//{
-		//	if(w.shouldClose())
-		//	{
-		//		w.destroy();
-		//		windows.remove(w);
-		//		break;
-		//	}
-		//}
-
+		// iterate over all windows while being able to delete them at the same time
 		for(auto window = windows.begin(); window != windows.end();)
 		{
 			if(window->shouldClose())

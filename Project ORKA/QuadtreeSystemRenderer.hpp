@@ -20,24 +20,24 @@ struct QuadtreeNodeRenderData
 	QuadtreeNodeRenderData* c10 = nullptr;
 	QuadtreeNodeRenderData* c11 = nullptr;
 
-	void destroy();
 	void subdivide();
-	void unsubdivide();
 	void count() const;
-	void loadTerrainMesh();
+	void destroy(Renderer& renderer);
+	void unsubdivide(Renderer& renderer);
 	void renderTerrain(Renderer& renderer);
-	void update(PlanetSystemPlayer& player);
 	void create(QuadtreeNode& quadtreeNode);
-	void updateWithoutSubdivision(PlanetSystemPlayer& player);
+	void loadTerrainMesh(Renderer& renderer);
 	void renderTerrainLevel(UShort level, Renderer& renderer);
+	void update(Renderer& renderer, PlanetSystemPlayer& player);
+	void updateWithoutSubdivision(Renderer& renderer, PlanetSystemPlayer& player);
 };
 
 struct QuadtreeRenderSystem
 {
 	QuadtreeNodeRenderData root;
 
-	void destroy();
 	void count() const;
-	void update(PlanetSystemPlayer& player);
+	void destroy(Renderer& renderer);
 	void renderLevel(UShort level, Renderer& renderer);
+	void update(Renderer& renderer, PlanetSystemPlayer& player);
 };

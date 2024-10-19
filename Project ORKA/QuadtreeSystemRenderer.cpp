@@ -6,15 +6,15 @@
 
 QuadtreeNodeRenderData* needsSubDiv = nullptr;
 
-void QuadtreeRenderSystem::destroy()
+void QuadtreeRenderSystem::destroy(Renderer& renderer)
 {
-	root.destroy();
+	root.destroy(renderer);
 }
 
-void QuadtreeNodeRenderData::destroy()
+void QuadtreeNodeRenderData::destroy(Renderer& renderer)
 {
-	unsubdivide();
-	terrainMesh.unload();
+	unsubdivide(renderer);
+	terrainMesh.unload(renderer);
 	equivalentQuadtreeNode->decrementUsers();
 }
 
@@ -41,14 +41,14 @@ void QuadtreeNodeRenderData::subdivide()
 	}
 }
 
-void QuadtreeNodeRenderData::unsubdivide()
+void QuadtreeNodeRenderData::unsubdivide(Renderer& renderer)
 {
 	if(subdivided)
 	{
-		c00->destroy();
-		c01->destroy();
-		c10->destroy();
-		c11->destroy();
+		c00->destroy(renderer);
+		c01->destroy(renderer);
+		c10->destroy(renderer);
+		c11->destroy(renderer);
 
 		delete c00;
 		delete c01;
@@ -79,30 +79,30 @@ void QuadtreeNodeRenderData::count() const
 	if(equivalentQuadtreeNode->id.level == 0) logDebug("QuadTreeNodeRenderData count: " + toString(nodeCount));
 }
 
-void QuadtreeNodeRenderData::loadTerrainMesh()
+void QuadtreeNodeRenderData::loadTerrainMesh(Renderer& renderer)
 {
 	if(!terrainMesh.isLoaded() && equivalentQuadtreeNode->data.terrain)
 	{
 		const CpuMesh cpuMesh = createTerrainMesh(equivalentQuadtreeNode->data.terrain->heightmap);
-		terrainMesh.upload(cpuMesh);
+		terrainMesh.upload(renderer, cpuMesh);
 	}
 }
 
-void QuadtreeRenderSystem::update(PlanetSystemPlayer& player)
+void QuadtreeRenderSystem::update(Renderer& renderer, PlanetSystemPlayer& player)
 {
 	if(needsSubDiv)
 	{
 		needsSubDiv->subdivide();
 		needsSubDiv = nullptr;
 	}
-	root.update(player);
+	root.update(renderer, player);
 }
 
 void QuadtreeNodeRenderData::renderTerrain(Renderer& renderer)
 {
 	const QuadtreeNode& node = *equivalentQuadtreeNode;
 
-	loadTerrainMesh();
+	loadTerrainMesh(renderer);
 	const Double actualHeight = node.data.terrain->heightmap.upperLimit - node.data.terrain->heightmap.lowerLimit;
 	Double       heightScale;
 	if(actualHeight == 0.0f)
@@ -144,9 +144,9 @@ void QuadtreeNodeRenderData::create(QuadtreeNode& quadtreeNode)
 	quadtreeNode.incrementUsers();
 }
 
-void QuadtreeNodeRenderData::update(PlanetSystemPlayer& player)
+void QuadtreeNodeRenderData::update(Renderer& renderer, PlanetSystemPlayer& player)
 {
-	updateWithoutSubdivision(player);
+	updateWithoutSubdivision(renderer, player);
 }
 
 void QuadtreeRenderSystem::renderLevel(const UShort level, Renderer& renderer)
@@ -154,7 +154,7 @@ void QuadtreeRenderSystem::renderLevel(const UShort level, Renderer& renderer)
 	root.renderTerrainLevel(level, renderer);
 }
 
-void QuadtreeNodeRenderData::updateWithoutSubdivision(PlanetSystemPlayer& player)
+void QuadtreeNodeRenderData::updateWithoutSubdivision(Renderer& renderer, PlanetSystemPlayer& player)
 {
 	// create 3d chunk id
 	OctreeId tmp;
@@ -187,14 +187,14 @@ void QuadtreeNodeRenderData::updateWithoutSubdivision(PlanetSystemPlayer& player
 
 	drawn = inDrawDistance; // &notCulled; // [TODO] enable back in
 
-	if(!drawn) unsubdivide();
+	if(!drawn) unsubdivide(renderer);
 
 	if(subdivided)
 	{
-		c00->updateWithoutSubdivision(player);
-		c01->updateWithoutSubdivision(player);
-		c10->updateWithoutSubdivision(player);
-		c11->updateWithoutSubdivision(player);
+		c00->updateWithoutSubdivision(renderer, player);
+		c01->updateWithoutSubdivision(renderer, player);
+		c10->updateWithoutSubdivision(renderer, player);
+		c11->updateWithoutSubdivision(renderer, player);
 	}
 	else
 	{
