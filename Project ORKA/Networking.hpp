@@ -25,7 +25,7 @@ struct Server
 	void        sendMessage();
 	void        waitTillReady() const;
 	static void serverThread(Server& server);
-	void disconnectClients();
+	void        disconnectClients();
 
 	//events
 	void clientIsAlive();
@@ -72,6 +72,6 @@ private:
 	Bool      keepRunning = true;
 	UShort    port        = 42069;
 	Bool      connected   = false;
-	String    host        = "24.217.226.59";
+	String    host        = "localhost";
 	UDPSocket socket      = UDPSocket(context);
 };
