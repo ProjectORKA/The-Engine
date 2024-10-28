@@ -709,16 +709,13 @@ void TripleNine::run()
 
 	if (useIntro)
 	{
-		//intro.init(renderer);
+		intro.init(renderer1);
 		ui.window("Triple Nine", Area(1920, 1080), true, false, WindowState::Windowed, intro);
 	}
 	else
 	{
-		Window& window1 = ui.window("Triple Nine", Area(1920, 1080), true, true, WindowState::Windowed);
-		window1.add(renderer1);
-		window1.add(renderer2);
-
-		ui.window("Triple Nine", Area(1920, 1080), true, true, WindowState::Windowed, renderer2);
+		ui.window("Triple Nine", Area(1920, 1080), true, true, WindowState::Windowed, renderer1);
+		//ui.window("Triple Nine", Area(1920, 1080), true, true, WindowState::Windowed, renderer2);
 	}
 
 	ui.run();

@@ -2,11 +2,10 @@
 #include "Debug.hpp"
 #include "ASIONetworking.hpp"
 
-// 0 - register new client - receive clientID
-// 1 - disconnect clients - disconnect from server
-// 2 - keep alive message - keep alive message
-// 3 - send message to client - send message to server
-// 4 - broadcast message - send to all clients
+Server::~Server()
+{
+	stop();
+}
 
 void Server::run()
 {
@@ -19,18 +18,23 @@ void Server::run()
 		{
 			socket.receive_from(asio::buffer(inMessageBuffer, sizeof(Message)), senderEndpoint);
 			inMessage = *reinterpret_cast<Message*>(&inMessageBuffer);
-			//logDebug("Server: Event " + toString(inMessage.eventID) + " sent from " + toString(inMessage.clientID));
-			switch (inMessage.eventID)
+			switch (inMessage.event.clientEvent)
 			{
-			case 0: registerNewClient();
+			case ClientToServerMessages::WantsToConnect: clientWantsToConnect();
 				break;
-			case 1: disconnectClient();
+			case ClientToServerMessages::SendPlayerData: broadcastPlayerData();
 				break;
-			case 2: clientIsAlive();
+			case ClientToServerMessages::WantsToDisconnect: disconnectClient();
+				break;
+			case ClientToServerMessages::IsAlive: clientIsAlive();
 				break;
 			default: break;
 			}
 		}
+
+		removeDeadClients();
+
+		sendKeepAliveMessage();
 	}
 
 	disconnectClients();
@@ -38,8 +42,28 @@ void Server::run()
 
 void Server::sendMessage()
 {
-	Array<Char, sizeof(Message)> outMessageBuffer = *reinterpret_cast<Array<Char, sizeof(Message)>*>(&outMessage);
-	socket.send_to(asio::buffer(outMessageBuffer), senderEndpoint);
+	outMessage.timeStamp = now();
+	for (ClientInfo& client : clients)
+	{
+		if (client.clientID == outMessage.clientID)
+		{
+			client.lastSent                               = now();
+			Array<Char, sizeof(Message)> outMessageBuffer = *reinterpret_cast<Array<Char, sizeof(Message)>*>(&outMessage);
+			socket.send_to(asio::buffer(outMessageBuffer), client.endpoint);
+			return;
+		}
+	}
+}
+
+void Server::broadcastMessage()
+{
+	outMessage.timeStamp = now();
+	for (ClientInfo& client : clients)
+	{
+		client.lastSent                               = now();
+		Array<Char, sizeof(Message)> outMessageBuffer = *reinterpret_cast<Array<Char, sizeof(Message)>*>(&outMessage);
+		socket.send_to(asio::buffer(outMessageBuffer), client.endpoint);
+	}
 }
 
 void Server::waitTillReady() const
@@ -47,7 +71,40 @@ void Server::waitTillReady() const
 	while (!running) {}
 }
 
-void Server::registerNewClient()
+void Server::removeDeadClients()
+{
+	for (Int i = 0; i < clients.size(); i++)
+	{
+		if (now() - clients[i].lastReceived > deadClientTimeout)
+		{
+			logDebug("Server: Client (" + toString(clients[i].clientID) + ") timed out");
+			clients.erase(clients.begin() + i);
+			i--;
+		}
+	}
+}
+
+void Server::broadcastPlayerData()
+{
+	UShort currentClient = inMessage.clientID;
+
+	for (ClientInfo& client : clients)
+	{
+		if (client.clientID == currentClient)
+		{
+			client.playerData.position = inMessage.position;
+			client.playerData.rotation = inMessage.rotation;
+			continue;
+		}
+		outMessage.event.serverEvent  = ServerToClientMessages::BroadcastPlayerData;
+		outMessage.clientID = client.clientID;
+		outMessage.position = inMessage.position;
+		outMessage.rotation = inMessage.rotation;
+		sendMessage();
+	}
+}
+
+void Server::clientWantsToConnect()
 {
 	logDebug("Server: Registering new client...");
 
@@ -67,7 +124,7 @@ void Server::registerNewClient()
 			if (client.endpoint == senderEndpoint)
 			{
 				//send him his already existing id
-				outMessage.eventID  = 0;
+				outMessage.event.serverEvent  = ServerToClientMessages::ConfirmConnection;
 				outMessage.clientID = client.clientID;
 				logDebug("Server: Client (" + toString(outMessage.clientID) + ") already exists, sending again");
 				sendMessage();
@@ -90,7 +147,7 @@ void Server::registerNewClient()
 	clients.push_back(info);
 
 	// give client its new id
-	outMessage.eventID  = 0;
+	outMessage.event.serverEvent  = ServerToClientMessages::ConfirmConnection;
 	outMessage.clientID = runningNewClientId;
 	logDebug("Server: New client registered");
 
@@ -122,20 +179,34 @@ void Server::serverThread(Server& server)
 	}
 }
 
-void Server::disconnectClients() {
+void Server::disconnectClients()
+{
 	logDebug("Server: Disconnecting clients...");
-	for(ClientInfo& client : clients)
+	for (ClientInfo& client : clients)
 	{
 		logDebug("Server: Disconnecting client (" + toString(client.clientID) + ")");
 		outMessage.clientID = client.clientID;
-		outMessage.eventID  = 1;
-		sendMessage();
+		outMessage.event.serverEvent  = ServerToClientMessages::BroadcastDisconnectClient;
+		broadcastMessage();
 	}
 	clients.clear();
 }
 
+void Server::sendKeepAliveMessage()
+{
+	if (now() - lastPingSent > pingInterval)
+	{
+		lastPingSent = now();
+		outMessage.clientID          = 0;
+		outMessage.event.serverEvent = ServerToClientMessages::CheckIsAlive;
+		broadcastMessage();
+	}
+}
+
 void Server::clientIsAlive()
 {
+	//calculate ping
+
 	for (ClientInfo& client : clients)
 	{
 		if (client.endpoint == senderEndpoint)
@@ -148,27 +219,18 @@ void Server::clientIsAlive()
 void Server::start()
 {
 	logDebug("Server: Starting...");
-
-	//logDebug("Opening Firewall");
-
-	//String command = "netsh advfirewall firewall add rule name=\"MyServer\" dir=in action=allow protocol=UDP localport=" + toString(port);
- //   Int result = system(command.c_str());
-
-	//if (result == 0) {
- //       logDebug("Firewall rule added successfully for port" + toString(port));
- //   } else {
-	//	logError("Failed to add firewall rule for port" + toString(port));
- //   }
-
 	thread = Thread(serverThread, std::ref(*this));
 }
 
 void Server::stop()
 {
-	logDebug("Server: Shutting down...");
-	keepRunning = false;
-	thread.join();
-	logDebug("Server: Shut down complete");
+	if (keepRunning)
+	{
+		logDebug("Server: Shutting down...");
+		keepRunning = false;
+		thread.join();
+		logDebug("Server: Shut down complete");
+	}
 }
 
 void Client::start()
@@ -179,10 +241,91 @@ void Client::start()
 
 void Client::stop()
 {
-	logDebug("Client (" + toString(clientID) + "): Shutting down...");
+	if (keepRunning)
+	{
+		logDebug("Client (" + toString(clientID) + "): Shutting down...");
+		keepRunning = false;
+		thread.join();
+		logDebug("Client (" + toString(clientID) + "): Shut down complete");
+	}
+}
+
+Client::~Client()
+{
+	stop();
+}
+
+void Client::respondToPing()
+{
+	logDebug("Client (" + toString(clientID) + "): I am alive");
+	outMessage.event.clientEvent = ClientToServerMessages::IsAlive;
+	outMessage.clientID          = clientID;
+	sendMessage();
+}
+
+void Client::connectionDeclined()
+{
+	logDebug("Client (" + toString(clientID) + "): Server refused connection");
+	connected = false;
 	keepRunning = false;
-	thread.join();
-	logDebug("Client (" + toString(clientID) + "): Shut down complete");
+}
+
+void Client::playerDataReceived()
+{
+	// update player data
+	for (ClientInfo& client : clients)
+	{
+		if (client.clientID == inMessage.clientID)
+		{
+			client.playerData.position = inMessage.position;
+			client.playerData.rotation = inMessage.rotation;
+			return;
+		}
+	}
+
+	// must be new client
+	ClientInfo newClient;
+	newClient.clientID            = inMessage.clientID;
+	newClient.playerData.position = inMessage.position;
+	newClient.playerData.rotation = inMessage.rotation;
+	clients.push_back(newClient);
+}
+
+void Client::playerDisconnected()
+{
+	if (inMessage.clientID == clientID)
+	{
+		// disconnect
+		keepRunning = false;
+		connected   = false;
+		logDebug("Client (" + toString(clientID) + "): Server requested disconnect!");
+	}
+	else
+	{
+		for (Int i = 0; i < clients.size(); i++)
+		{
+			// [TODO] remove player
+			if (clients[i].clientID == inMessage.clientID)
+			{
+				clients.erase(clients.begin() + i);
+				logDebug("Client (" + toString(clientID) + "): Player (" + toString(inMessage.clientID) + ") disconnected");
+				return;
+			}
+		}
+	}
+}
+
+void Client::connectionConfirmed()
+{
+	logDebug("Client (" + toString(clientID) + "): Server confirmed connection");
+	logDebug("Client (" + toString(clientID) + "): Server requested ID change");
+	this->clientID = inMessage.clientID;
+	logDebug("Client (" + toString(clientID) + "): Client was assigned ID:" + toString(clientID));
+	if (!connected)
+	{
+		logDebug("Client (" + toString(clientID) + "): Connected...");
+		connected = true;
+	}
 }
 
 void Client::run()
@@ -190,7 +333,7 @@ void Client::run()
 	serverEndpoint = *UDPResolver(context).resolve(asio::ip::udp::v4(), host, toString(port)).begin();
 	logDebug(serverEndpoint.address().to_string() + ":" + toString(serverEndpoint.port()));
 	socket.open(asio::ip::udp::v4());
-
+	lastReceived = now();
 	while (keepRunning)
 	{
 		if (!connected) connectToServer();
@@ -201,13 +344,18 @@ void Client::run()
 
 			socket.receive_from(asio::buffer(inMessageBuffer, sizeof(Message)), serverEndpoint);
 			inMessage = *reinterpret_cast<Message*>(&inMessageBuffer);
-			switch (inMessage.eventID)
+
+			switch (inMessage.event.serverEvent)
 			{
-			case 0: changeClientID(inMessage.clientID);
+			case ServerToClientMessages::DeclineConnection: connectionDeclined();
 				break;
-			case 1: disconnectFromServer();
+			case ServerToClientMessages::ConfirmConnection: connectionConfirmed();
 				break;
-			default: customEvents(inMessage);
+			case ServerToClientMessages::BroadcastPlayerData: playerDataReceived();
+				break;
+			case ServerToClientMessages::BroadcastDisconnectClient: playerDisconnected();
+				break;
+			case ServerToClientMessages::CheckIsAlive: respondToPing();
 				break;
 			}
 		}
@@ -223,28 +371,17 @@ void Client::waitTillConnected() const
 
 void Client::sendMessage()
 {
+	outMessage.timeStamp                          = now();
+	lastSent                                      = now();
 	Array<Char, sizeof(Message)> outMessageBuffer = *reinterpret_cast<Array<Char, sizeof(Message)>*>(&outMessage);
 	socket.send_to(asio::buffer(outMessageBuffer), serverEndpoint);
-}
-
-void Client::changeClientID(UShort clientID)
-{
-	logDebug("Client (" + toString(clientID) + "): Server requested ID change");
-	this->clientID = clientID;
-	logDebug("Client (" + toString(clientID) + "): Client was assigned ID:" + toString(clientID));
-
-	if (!connected)
-	{
-		logDebug("Client (" + toString(clientID) + "): Connected...");
-		connected = true;
-	}
 }
 
 void Client::disconnectFromServer()
 {
 	logDebug("Client (" + toString(clientID) + "): Disconnecting...");
-	outMessage.eventID  = 1;
-	outMessage.clientID = clientID;
+	outMessage.event.clientEvent = ClientToServerMessages::WantsToDisconnect;
+	outMessage.clientID          = clientID;
 	sendMessage();
 	connected = false;
 }
@@ -252,8 +389,8 @@ void Client::disconnectFromServer()
 void Client::connectToServer()
 {
 	logDebug("Client (" + toString(clientID) + "): Client trying to connect...");
-	outMessage.eventID  = 0;
-	outMessage.clientID = 0;
+	outMessage.event.clientEvent = ClientToServerMessages::WantsToConnect;
+	outMessage.clientID          = 0;
 	sendMessage();
 	Sleep(1000);
 }
@@ -269,5 +406,3 @@ void Client::clientThread(Client& client)
 		logError(e.what());
 	}
 }
-
-void Client::customEvents(Message& message) {}

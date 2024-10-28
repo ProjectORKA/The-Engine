@@ -1,39 +1,79 @@
 #pragma once
-#include "ASIONetworking.hpp"
-#include "Basics.hpp"
 #include "Time.hpp"
+#include "Basics.hpp"
+#include "ASIONetworking.hpp"
+
+enum class ClientToServerMessages : Byte
+{
+	WantsToConnect,
+	SendPlayerData,
+	WantsToDisconnect,
+	IsAlive
+};
+
+enum class ServerToClientMessages : Byte
+{
+	DeclineConnection,
+	ConfirmConnection, //send back id
+	BroadcastPlayerData,
+	BroadcastDisconnectClient,
+	CheckIsAlive
+};
+
+struct PlayerData
+{
+	Vec3 position = Vec3(0);
+	Vec3 rotation = Vec3(0);
+};
+
+union EventID
+{
+	ClientToServerMessages clientEvent;
+	ServerToClientMessages serverEvent;
+};
 
 struct Message
 {
-	Byte eventID  = 0;
+	EventID event;
 	Byte clientID = 0;
+	TimePoint timeStamp;
+	Vec3 position = Vec3(0);
+	Vec3 rotation = Vec3(0);
 };
 
 struct ClientInfo
 {
 	UDPEndpoint endpoint;
+	PlayerData  playerData;
 	Short       clientID     = 0;
-	TimePoint   lastSent     = TimePoint::min();
-	TimePoint   lastReceived = TimePoint::min();
+	TimePoint   lastSent     = now();
+	TimePoint   lastReceived = now();
 };
 
 struct Server
 {
+	~Server();
+
 	void        run();
 	void        stop();
 	void        start();
 	void        sendMessage();
+	void        broadcastMessage();
+	void        removeDeadClients();
 	void        waitTillReady() const;
 	static void serverThread(Server& server);
-	void        disconnectClients();
 
-	//events
+	// request
 	void clientIsAlive();
 	void disconnectClient();
-	void registerNewClient();
+	void broadcastPlayerData();
+	void clientWantsToConnect();
+
+	// response
+	void disconnectClients();
+	void sendKeepAliveMessage();
 
 private:
-	UShort             runningNewClientId = 0;
 	Thread             thread;
 	NetworkingContext  context;
 	Vector<ClientInfo> clients;
@@ -41,25 +81,37 @@ private:
 	Message            outMessage;
 	UDPEndpoint        senderEndpoint;
 
-	Bool      running     = true;
-	Bool      keepRunning = true;
-	UShort    port        = 42069;
-	UDPSocket socket      = UDPSocket(context, UDPEndpoint(asio::ip::udp::v4(), port));
+	UShort    runningNewClientId = 0;
+	Bool      running            = true;
+	Bool      keepRunning        = true;
+	UShort    port               = 42069;
+	Duration  pingInterval       = Milliseconds(1000);
+	Duration  deadClientTimeout  = Milliseconds(5000);
+	TimePoint lastPingSent       = now();
+	UDPSocket socket             = UDPSocket(context, UDPEndpoint(asio::ip::udp::v4(), port));
 };
 
 struct Client
 {
+	Vector<PlayerData> playerData;
+
+	~Client();
+
 	void        run();
 	void        stop();
 	void        start();
 	void        sendMessage();
+	void        connectToServer();
+	void        disconnectFromServer();
 	void        waitTillConnected() const;
 	static void clientThread(Client& client);
-	void        customEvents(Message& message);;
+
 	//events
-	void connectToServer();
-	void disconnectFromServer();
-	void changeClientID(UShort clientID);
+	void respondToPing();
+	void connectionDeclined();
+	void playerDataReceived();
+	void playerDisconnected();
+	void connectionConfirmed();
 
 private:
 	Thread            thread;
@@ -68,10 +120,15 @@ private:
 	Message           outMessage;
 	UDPEndpoint       serverEndpoint;
 
-	Byte      clientID    = 0;
-	Bool      keepRunning = true;
-	UShort    port        = 42069;
-	Bool      connected   = false;
-	String    host        = "localhost";
-	UDPSocket socket      = UDPSocket(context);
+	Vector<ClientInfo> clients;
+
+	Byte      clientID          = 0;
+	Bool      keepRunning       = true;
+	UShort    port              = 42069;
+	TimePoint lastSent          = now();
+	TimePoint lastReceived      = now();
+	Bool      connected         = false;
+	String    host              = "localhost";
+	Duration  keepAliveInterval = Milliseconds(5000);
+	UDPSocket socket            = UDPSocket(context);
 };
