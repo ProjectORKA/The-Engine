@@ -97,35 +97,38 @@ using namespace External;
 
 int main(const int argc, char* argv[])
 {
-	const Engine engine;
-	engine.create(argc, argv);
+	//const Engine engine;
+	//engine.create(argc, argv);
 
-	TripleNine game;
-	game.run();
-	//Server server;
-	//server.start();
+	//TripleNine game;
+	//game.run();
 
-	//server.waitTillReady();
+	Server server;
+	server.start();
+	server.waitTillReady();
 
-	//Client a;
-	//a.start();
-	//a.waitTillConnected();
-	//a.stop();
 
-	//Client b;
-	//Client c;
+	Client a;
+	a.start();
+	a.waitTillConnected();
+	a.stop();
 
-	//b.start();
-	//c.start();
+	Client b;
+	Client c;
 
-	//b.waitTillConnected();
-	//c.waitTillConnected();
+	b.start();
+	c.start();
 
-	//b.stop();
-	//c.stop();
+	b.waitTillConnected();
+	c.waitTillConnected();
 
-	//server.stop();
-	//pause();
+	pause();
+
+	b.stop();
+	c.stop();
+
+	server.stop();
+	pause();
 }
 
 #include "Windows.hpp"
