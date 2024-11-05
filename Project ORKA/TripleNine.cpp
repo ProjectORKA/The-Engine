@@ -2,10 +2,36 @@
 #include "JobSystem.hpp"
 #include "Window.hpp"
 
-void TripleNineEnemy::die()
+#ifdef TRIPLE_NINE_ENEMY
+void TripleNineEnemy::update(Window& window) {}
+
+void TripleNineEnemy::destroy(Window& window) {}
+
+const Vector<TripleNineEnemy>& TripleNineGameState::getEnemies()
 {
-	position = Vec3(randomVec2Fast(-85.0f, 85.0f), 0.0f);
+	return enemies;
 }
+
+void TripleNineSimulation::createEnemy()
+{
+	TripleNineEnemy& newEnemy =gameState.createEnemy();
+}
+
+TripleNineEnemy& TripleNineGameState::createEnemy()
+{
+	enemies.emplace_back();
+	enemies.back().id = static_cast<Index>(enemies.size()) - static_cast<Index>(1);
+	return enemies.back();
+}
+
+void TripleNineEnemy::inputEvent(Window& window, InputEvent input) {}
+
+void TripleNineEnemy::create(Window& window) {}
+
+void TripleNineEnemy::setPosition(const Vec3 position) {
+	this->position = position;
+}
+#endif
 
 void TripleNinePlayer::jump()
 {
@@ -22,21 +48,32 @@ void TripleNinePlayer::jump()
 	}
 	// queueJump = false;
 	onGround = false;
-	state    = State::jumping;
+	state    = State::Jumping;
 }
 
-void TripleNineSimulation::destroy() {}
+void TripleNineSimulation::destroy()
+{
+	server.stop();
+}
 
-void TripleNineEnemy::update(Window& window) {}
-
-void TripleNineEnemy::destroy(Window& window) {}
+void TripleNineSimulation::updatePlayer(const Byte playerId, const Vec3 position)
+{
+	gameState.updatePlayer(playerId, position);
+}
 
 void TripleNineSimulation::update(Float delta) {}
 
-void TripleNineSimulation::createEnemy()
+void TripleNineGameState::updatePlayer(const Byte playerId, const Vec3 position)
 {
-	enemies.emplace_back();
-	enemies.back().id = static_cast<Index>(enemies.size()) - static_cast<Index>(1);
+	for (TripleNinePlayerProxy& player : players)
+	{
+		if (player.playerId == playerId)
+		{
+			player.position = position;
+			return;
+		}
+	}
+	players.push_back({playerId, position});
 }
 
 void TripleNinePlayer::collisionResponse()
@@ -83,22 +120,22 @@ void TripleNinePlayer::update(Window& window)
 			{
 				if (movementInput)
 				{
-					state = State::crawling;
+					state = State::Crawling;
 				}
 				else
 				{
-					state = State::proning;
+					state = State::Proning;
 				}
 			}
 			else
 			{
 				if (movementInput)
 				{
-					state = State::sneaking;
+					state = State::Sneaking;
 				}
 				else
 				{
-					state = State::crouching;
+					state = State::Crouching;
 				}
 			}
 		}
@@ -108,16 +145,16 @@ void TripleNinePlayer::update(Window& window)
 			{
 				if (window.pressed(run))
 				{
-					state = State::sprinting;
+					state = State::Sprinting;
 				}
 				else
 				{
-					state = State::walking;
+					state = State::Walking;
 				}
 			}
 			else
 			{
-				state = State::standing;
+				state = State::Standing;
 			}
 		}
 	}
@@ -125,16 +162,16 @@ void TripleNinePlayer::update(Window& window)
 	{
 		if (velocity.z >= 0)
 		{
-			state = State::jumping;
+			state = State::Jumping;
 		}
 		else
 		{
-			state = State::falling;
+			state = State::Falling;
 		}
 	}
 	// update values
 	// running
-	if (state == State::sprinting)
+	if (state == State::Sprinting)
 	{
 		speedControl += delta * speedControlAcceleration;
 	}
@@ -169,7 +206,7 @@ void TripleNinePlayer::update(Window& window)
 	{
 		onGround = false;
 	}
-	if (state == State::jumping) debugCurrentMaxJumpHeight = position.z;
+	if (state == State::Jumping) debugCurrentMaxJumpHeight = position.z;
 	isMoving = movementControl != Vec3(0);
 	// air strafing
 	if (movementInput && !onGround)
@@ -202,6 +239,7 @@ void TripleNinePlayer::update(Window& window)
 void TripleNineRenderer::update(Window& window)
 {
 	player.update(window);
+	gameState.updatePlayer(client.getClientID(), player.position);
 }
 
 void TripleNineRenderer::destroy(Window& window)
@@ -215,6 +253,8 @@ void TripleNineRenderer::destroy(Window& window)
 	bloom2Framebuffer.destroy(window.renderer);
 	bloom1Framebuffer.destroy(window.renderer);
 	mainFramebuffer.destroy(window.renderer);
+
+	client.stop();
 }
 
 Bool TripleNinePlayer::isCollidingWithGround() const
@@ -222,12 +262,7 @@ Bool TripleNinePlayer::isCollidingWithGround() const
 	return position.z <= 0;
 }
 
-void TripleNineRenderer::connect(GameSimulation& simulation)
-{
-	this->sim = static_cast<TripleNineSimulation*>(&simulation);
-}
-
-void TripleNineEnemy::inputEvent(Window& window, InputEvent input) {}
+void TripleNineRenderer::connect(GameSimulation& simulation) {}
 
 void TripleNinePlayer::calculatePhysics(const Window& window)
 {
@@ -250,13 +285,142 @@ void TripleNinePlayer::calculatePhysics(const Window& window)
 	velocity             = velocity2 * pow(airResistance, window.renderer.deltaTime());
 }
 
-void TripleNineSimulation::create()
+void TripleNineServer::processEvents()
 {
-	// create targets
-	for (Int i = 0; i < 100; i++) createEnemy();
+	Array<Char, sizeof(TripleNineMessage)> inMessageBuffer;
+	if (socket.available())
+	{
+		socket.receive_from(asio::buffer(inMessageBuffer, sizeof(TripleNineMessage)), senderEndpoint);
+		inMessage = *reinterpret_cast<TripleNineMessage*>(&inMessageBuffer);
+		switch (inMessage.event.clientEvent)
+		{
+		case TripleNineClientToServerMessages::WantsToConnect: clientWantsToConnect();
+			break;
+		case TripleNineClientToServerMessages::SendPlayerData: broadcastPlayerData();
+			break;
+		case TripleNineClientToServerMessages::WantsToDisconnect: disconnectClient();
+			break;
+		case TripleNineClientToServerMessages::IsAlive: clientIsAlive();
+			break;
+		default: logWarning("Unknown event!");
+			break;
+		}
+	}
+
+	// remove dead clients
+	for (Int i = 0; i < clients.size(); i++)
+	{
+		if (now() - clients[i].lastReceived > deadClientTimeout)
+		{
+			logDebug("Server: Client (" + toString(clients[i].clientID) + ") timed out");
+			clients.erase(clients.begin() + i);
+			i--;
+		}
+	}
+
+	//send keep-alive message
+	if (now() - lastPingSent > pingInterval)
+	{
+		lastPingSent                 = now();
+		outMessage.clientID          = 0;
+		outMessage.event.serverEvent = TripleNineServerToClientMessages::CheckIsAlive;
+		broadcastMessage();
+	}
 }
 
-void TripleNineEnemy::create(Window& window) {}
+void TripleNineServer::broadcastPlayerData()
+{
+	UShort currentClient = inMessage.clientID;
+
+	for (TripleNineClientInfo& client : clients)
+	{
+		if (client.clientID == currentClient)
+		{
+			client.playerData.position = inMessage.position;
+			client.playerData.rotation = inMessage.rotation;
+			continue;
+		}
+		outMessage.event.serverEvent = TripleNineServerToClientMessages::BroadcastPlayerData;
+		outMessage.clientID          = client.clientID;
+		outMessage.position          = inMessage.position;
+		outMessage.rotation          = inMessage.rotation;
+		sendMessage();
+	}
+}
+
+void TripleNineServer::clientWantsToConnect()
+{
+	logDebug("Server: Registering new client...");
+
+	if (inMessage.clientID != 0) logDebug("Server: Warning: Client already has id");
+
+	Bool newIdAvailable;
+
+	logDebug(senderEndpoint.address().to_string() + ":" + toString(senderEndpoint.port()));
+
+	do
+	{
+		if (runningNewClientId == 0) runningNewClientId++;
+
+		newIdAvailable = false;
+		for (TripleNineClientInfo& client : clients)
+		{
+			if (client.endpoint == senderEndpoint)
+			{
+				//send him his already existing id
+				outMessage.event.serverEvent = TripleNineServerToClientMessages::ConfirmConnection;
+				outMessage.clientID          = client.clientID;
+				logDebug("Server: Client (" + toString(outMessage.clientID) + ") already exists, sending again");
+				sendMessage();
+				return;
+			}
+			if (client.clientID == runningNewClientId)
+			{
+				newIdAvailable = true;
+				logDebug("Server: ID already in use, trying next id");
+			}
+		}
+		if (newIdAvailable) runningNewClientId++;
+	}
+	while (newIdAvailable);
+
+	// store info
+	TripleNineClientInfo info;
+	info.clientID = runningNewClientId;
+	info.endpoint = senderEndpoint;
+	clients.push_back(info);
+
+	// give client its new id
+	outMessage.event.serverEvent = TripleNineServerToClientMessages::ConfirmConnection;
+	outMessage.clientID          = runningNewClientId;
+	logDebug("Server: New client registered");
+
+	logDebug("Server: Client assigned id: " + toString(outMessage.clientID));
+	sendMessage();
+}
+
+void TripleNineServer::disconnectClients()
+{
+	logDebug("Server: Disconnecting clients...");
+	for (TripleNineClientInfo& client : clients)
+	{
+		logDebug("Server: Disconnecting client (" + toString(client.clientID) + ")");
+		outMessage.clientID          = client.clientID;
+		outMessage.event.serverEvent = TripleNineServerToClientMessages::BroadcastDisconnectClient;
+		broadcastMessage();
+	}
+	clients.clear();
+}
+
+void TripleNineSimulation::create()
+{
+	server.start();
+	server.waitTillReady();
+
+	#ifdef TRIPLE_NINE_ENEMY
+	for (Int i = 0; i < 100; i++) createEnemy();
+	#endif
+}
 
 void TripleNinePlayer::inputEvent(Window& window, const InputEvent input)
 {
@@ -290,7 +454,9 @@ void TripleNineRenderer::inputEvent(Window& window, const InputEvent input)
 		}
 		else
 		{
-			if (window.renderer.objectId != static_cast<UInt>(-1)) sim->enemies[window.renderer.objectId].die();
+			#ifdef TRIPLE_NINE_ENEMY
+			//if (window.renderer.objectId != static_cast<UInt>(-1)) killEnemy(window.renderer.objectId);
+			#endif
 		}
 	}
 	// if (input == exit) window.releaseCursor();
@@ -307,25 +473,25 @@ void TripleNinePlayer::calculateHeadPosition(Window& window, const Float delta)
 	// height
 	switch (state)
 	{
-	case State::standing: eyeHeightTarget = eyeHeightNormal;
+	case State::Standing: eyeHeightTarget = eyeHeightNormal;
 		break;
-	case State::walking: eyeHeightTarget = eyeHeightWalking;
+	case State::Walking: eyeHeightTarget = eyeHeightWalking;
 		break;
-	case State::sprinting: eyeHeightTarget = eyeHeightRunning;
+	case State::Sprinting: eyeHeightTarget = eyeHeightRunning;
 		break;
-	case State::falling: eyeHeightTarget = eyeHeightFlying;
+	case State::Falling: eyeHeightTarget = eyeHeightFlying;
 		break;
-	case State::jumping: eyeHeightTarget = eyeHeightNormal;
+	case State::Jumping: eyeHeightTarget = eyeHeightNormal;
 		break;
-	case State::crouching: eyeHeightTarget = eyeHeightCrouching;
+	case State::Crouching: eyeHeightTarget = eyeHeightCrouching;
 		break;
-	case State::proning: eyeHeightTarget = eyeHeightProning;
+	case State::Proning: eyeHeightTarget = eyeHeightProning;
 		break;
-	case State::sliding: eyeHeightTarget = eyeHeightSliding;
+	case State::Sliding: eyeHeightTarget = eyeHeightSliding;
 		break;
-	case State::sneaking: eyeHeightTarget = eyeHeightCrouching;
+	case State::Sneaking: eyeHeightTarget = eyeHeightCrouching;
 		break;
-	case State::crawling: eyeHeightTarget = eyeHeightSliding;
+	case State::Crawling: eyeHeightTarget = eyeHeightSliding;
 		break;
 	}
 	// bob
@@ -367,6 +533,8 @@ void TripleNinePlayer::calculateHeadPosition(Window& window, const Float delta)
 
 void TripleNineRenderer::create(Window& window)
 {
+	client.start();
+
 	Renderer& r = window.renderer;
 
 	mainFramebuffer.create("MainFramebuffer", Area(1920, 1080));
@@ -579,13 +747,15 @@ void TripleNineRenderer::render(Window& window, const TiledRectangle area)
 		r.renderMesh("Map9");
 	}
 
+	#ifdef TRIPLE_NINE_ENEMY
 	r.useTexture("tripleNineTarget_baked");
 	Vector<Matrix> enemies;
-	for (const TripleNineEnemy& enemy : sim->enemies)
+	for (const TripleNineEnemy& enemy : gameState.enemies)
 	{
 		enemies.push_back(matrixFromPosition(enemy.position));
 	}
 	r.renderMeshInstanced("tripleNineTarget", enemies);
+	#endif
 
 	// sphere
 	r.useShader("color");
@@ -640,13 +810,6 @@ void TripleNineRenderer::render(Window& window, const TiledRectangle area)
 	if (vsync) limitFramerate(60);
 }
 
-void TripleNineEnemy::renderInteractive(Window& window, TiledRectangle area)
-{
-	window.renderer.uniforms().setMMatrix(matrixFromPositionAndSize(position, 1));
-	window.renderer.uniforms().setObjectId(id);
-	window.renderer.renderMesh("tripleNineTarget");
-}
-
 void TripleNineRenderer::renderInteractive(Window& window, const TiledRectangle area)
 {
 	Renderer& r = window.renderer;
@@ -676,8 +839,17 @@ void TripleNineRenderer::renderInteractive(Window& window, const TiledRectangle 
 		r.renderMesh("Map9");
 	}
 
+	#ifdef TRIPLE_NINE_ENEMY
 	r.uniforms().setMMatrix(Matrix(1));
-	for (TripleNineEnemy& enemy : sim->enemies) enemy.renderInteractive(window, area);
+	for (TripleNineEnemy& enemy : gameState.getEnemies())
+	{
+		r.uniforms().setMMatrix(matrixFromPositionAndSize(enemy.getPosition(), 1));
+		r.uniforms().setObjectId(enemy.getId());
+		r.renderMesh("tripleNineTarget");
+
+		enemy.renderInteractive(window, area);
+	}
+	#endif
 
 	r.idFramebuffer.bindRead();
 	IVec4 idData;
@@ -704,8 +876,6 @@ void TripleNineRenderer::renderInteractive(Window& window, const TiledRectangle 
 void TripleNine::run()
 {
 	simulation.start();
-	renderer1.connect(simulation);
-	renderer2.connect(simulation);
 
 	if (useIntro)
 	{
@@ -715,9 +885,245 @@ void TripleNine::run()
 	else
 	{
 		ui.window("Triple Nine", Area(1920, 1080), true, true, WindowState::Windowed, renderer1);
-		//ui.window("Triple Nine", Area(1920, 1080), true, true, WindowState::Windowed, renderer2);
+
+		Sleep(3000);
+
+		ui.window("Triple Nine", Area(1920, 1080), true, true, WindowState::Windowed, renderer2);
 	}
 
 	ui.run();
 	simulation.stop();
+}
+
+TripleNineServer::~TripleNineServer()
+{
+	stop();
+}
+
+void TripleNineServer::run()
+{
+	try
+	{
+		logDebug("Server: Listening...");
+		running = true;
+		while (keepRunning)
+		{
+			processEvents();
+		}
+
+		disconnectClients();
+	}
+	catch (Exception& e)
+	{
+		logError(e.what());
+	}
+}
+
+void TripleNineServer::sendMessage()
+{
+	outMessage.timeStamp = now();
+	for (TripleNineClientInfo& client : clients)
+	{
+		if (client.clientID == outMessage.clientID)
+		{
+			client.lastSent                         = now();
+			Array<Char, sizeof(T)> outMessageBuffer = *reinterpret_cast<Array<Char, sizeof(T)>*>(&outMessage);
+			socket.send_to(asio::buffer(outMessageBuffer), client.endpoint);
+			return;
+		}
+	}
+}
+
+void TripleNineServer::broadcastMessage()
+{
+	outMessage.timeStamp = now();
+	for (TripleNineClientInfo& client : clients)
+	{
+		client.lastSent                         = now();
+		Array<Char, sizeof(T)> outMessageBuffer = *reinterpret_cast<Array<Char, sizeof(T)>*>(&outMessage);
+		socket.send_to(asio::buffer(outMessageBuffer), client.endpoint);
+	}
+}
+
+void TripleNineServer::waitTillReady() const
+{
+	while (!running) {}
+}
+
+void TripleNineServer::disconnectClient()
+{
+	logDebug("Server: Client (" + toString(inMessage.clientID) + ") disconnecting");
+	for (Int i = 0; i < clients.size(); i++)
+	{
+		if (clients[i].clientID == inMessage.clientID)
+		{
+			clients.erase(clients.begin() + i);
+		}
+	}
+}
+
+void TripleNineServer::serverThread(TripleNineServer& server)
+{
+	server.run();
+}
+
+void TripleNineServer::clientIsAlive()
+{
+	//calculate ping
+
+	for (TripleNineClientInfo& client : clients)
+	{
+		if (client.endpoint == senderEndpoint)
+		{
+			client.lastReceived = now();
+		}
+	}
+}
+
+void TripleNineServer::start()
+{
+	logDebug("Server: Starting...");
+	thread = Thread(serverThread, std::ref(*this));
+}
+
+void TripleNineServer::stop()
+{
+	if (keepRunning)
+	{
+		logDebug("Server: Shutting down...");
+		keepRunning = false;
+		thread.join();
+		logDebug("Server: Shut down complete");
+	}
+}
+
+void TripleNineClient::start()
+{
+	logDebug("Client: Starting...");
+	thread = Thread(clientThread, std::ref(*this));
+}
+
+void TripleNineClient::stop()
+{
+	if (keepRunning)
+	{
+		logDebug("Client (" + toString(clientID) + "): Shutting down...");
+		keepRunning = false;
+		thread.join();
+		logDebug("Client (" + toString(clientID) + "): Shut down complete");
+	}
+}
+
+TripleNineClient::~TripleNineClient()
+{
+	stop();
+}
+
+void TripleNineClient::connectionDeclined()
+{
+	logDebug("Client (" + toString(clientID) + "): Server refused connection");
+	connected   = false;
+	keepRunning = false;
+}
+
+void TripleNineClient::playerDataReceived()
+{
+	// update player data
+	for (TripleNineClientInfo& client : clients)
+	{
+		if (client.clientID == inMessage.clientID)
+		{
+			client.playerData.position = inMessage.position;
+			client.playerData.rotation = inMessage.rotation;
+			return;
+		}
+	}
+
+	// must be new client
+	TripleNineClientInfo newClient;
+	newClient.clientID            = inMessage.clientID;
+	newClient.playerData.position = inMessage.position;
+	newClient.playerData.rotation = inMessage.rotation;
+	clients.push_back(newClient);
+}
+
+void TripleNineClient::playerDisconnected()
+{
+	if (inMessage.clientID == clientID)
+	{
+		// disconnect
+		keepRunning = false;
+		connected   = false;
+		logDebug("Client (" + toString(clientID) + "): Server requested disconnect!");
+	}
+	else
+	{
+		for (Int i = 0; i < clients.size(); i++)
+		{
+			// [TODO] remove player
+			if (clients[i].clientID == inMessage.clientID)
+			{
+				clients.erase(clients.begin() + i);
+				logDebug("Client (" + toString(clientID) + "): Player (" + toString(inMessage.clientID) + ") disconnected");
+				return;
+			}
+		}
+	}
+}
+
+void TripleNineClient::connectionConfirmed()
+{
+	logDebug("Client (" + toString(clientID) + "): Server confirmed connection");
+	logDebug("Client (" + toString(clientID) + "): Server requested ID change");
+	this->clientID = inMessage.clientID;
+	logDebug("Client (" + toString(clientID) + "): Client was assigned ID:" + toString(clientID));
+	if (!connected)
+	{
+		logDebug("Client (" + toString(clientID) + "): Connected...");
+		connected = true;
+	}
+}
+
+Byte TripleNineClient::getClientID() const
+{
+	return clientID;
+}
+
+void TripleNineClient::run()
+{
+	try
+	{
+		serverEndpoint = *UDPResolver(context).resolve(asio::ip::udp::v4(), host, toString(port)).begin();
+		logDebug(serverEndpoint.address().to_string() + ":" + toString(serverEndpoint.port()));
+		socket.open(asio::ip::udp::v4());
+		lastReceived = now();
+		while (keepRunning)
+		{
+			processEvents();
+		}
+
+		disconnectFromServer();
+	}
+	catch (Exception& e)
+	{
+		logError(e.what());
+	}
+}
+
+void TripleNineClient::waitTillConnected() const
+{
+	while (!connected) {}
+}
+
+void TripleNineClient::sendMessage()
+{
+	outMessage.timeStamp                    = now();
+	lastSent                                = now();
+	Array<Char, sizeof(T)> outMessageBuffer = *reinterpret_cast<Array<Char, sizeof(T)>*>(&outMessage);
+	socket.send_to(asio::buffer(outMessageBuffer), serverEndpoint);
+}
+
+void TripleNineClient::clientThread(TripleNineClient& client)
+{
+	client.run();
 }

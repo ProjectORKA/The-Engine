@@ -2,7 +2,7 @@
 
 void GameSimulation::stop()
 {
-	if(loaded)
+	if (loaded)
 	{
 		logDebug("Stopping game simulation thread!");
 		keepRunning = false;
@@ -33,10 +33,10 @@ Bool GameSimulation::getKeepRunning() const
 
 void gameSimulationThread(GameSimulation& sim)
 {
-	if(sim.isLoaded())
+	if (sim.isLoaded())
 	{
 		logDebug("Game simulation started!");
-		while(sim.getKeepRunning())
+		while (sim.getKeepRunning())
 		{
 			TimePoint t = Clock::now() + Milliseconds(static_cast<Int>(1000.0f / sim.getTickRate()));
 			sim.update(1.0f / sim.getTickRate());
@@ -52,13 +52,13 @@ void gameSimulationThread(GameSimulation& sim)
 
 void GameSimulation::start()
 {
-	if(!loaded)
+	if (!loaded)
 	{
 		create();
-		loaded = true;
-		logDebug("Starting game simulation thread!");
+		loaded      = true;
 		keepRunning = true;
-		thread      = Thread(gameSimulationThread, std::ref(*this));
+		logDebug("Starting game simulation thread!");
+		thread = Thread(gameSimulationThread, std::ref(*this));
 	}
 	else
 	{
