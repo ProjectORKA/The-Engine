@@ -6,7 +6,6 @@
 #include "fmt/core.h"
 #include "fmt/color.h"
 
-
 inline void print(const String& text)
 {
 	std::cout << text;

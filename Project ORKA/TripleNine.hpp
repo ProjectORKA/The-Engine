@@ -1,32 +1,25 @@
 #pragma once
+#include "ASIONetworking.hpp"
 #include "Game.hpp"
 #include "ORKAIntroSequence.hpp"
 #include "Player.hpp"
 #include "Random.hpp"
 #include "Networking.hpp"
 
-enum class PlayerState
+#ifdef TRIPLE_NINE_ENEMY
+struct TripleNineEnemy
 {
-	standing,
-	running,
-	crouching,
-	sliding,
-	flying,
-};
+	void update(Window& window);
+	void create(Window& window);
+	void destroy(Window& window);
+	void setPosition(Vec3 position);
+	void inputEvent(Window& window, InputEvent input);
 
-struct TripleNineEnemy final : UIElement
-{
-	Index id       = static_cast<Index>(-1);
-	Vec3  position = Vec3(randomVec2Fast(-85, 85), 0);
-
-	void die();
-	void update(Window& window) override;
-	void destroy(Window& window) override;
-	void inputEvent(Window& window, InputEvent input) override;
-	void create(Window& window) override;
-	void render(Window& window, TiledRectangle area) override {};
-	void renderInteractive(Window& window, TiledRectangle area) override;
+private:
+	Index enemyID = 0;
+	Vec3 position = Vec3(0);
 };
+#endif
 
 struct TripleNinePlayer final : Player
 {
@@ -54,27 +47,27 @@ struct TripleNinePlayer final : Player
 	InputEvent jumpTrigger = InputEvent(InputType::KeyBoard, Space, true);
 
 	// InputEvent jumpRelease = InputEvent(InputType::KeyBoard, SPACE, 0);
-	enum class State
+	enum class State: Byte
 	{
-		standing,
+		Standing,
 		// ground
-		walking,
+		Walking,
 		// ground, slow move
-		sprinting,
+		Sprinting,
 		// ground, fast move
-		crouching,
+		Crouching,
 		// ground, crouch
-		sneaking,
+		Sneaking,
 		// ground, crouch, slow move
-		sliding,
+		Sliding,
 		// ground, crouch, fast move
-		proning,
+		Proning,
 		// ground, holding jump and crouch
-		crawling,
+		Crawling,
 		// ground, holding jump and crouch, slow move
-		jumping,
+		Jumping,
 		// air, positive z velocity
-		falling,
+		Falling,
 		// air, negative z velocity
 	};
 
@@ -84,7 +77,7 @@ struct TripleNinePlayer final : Player
 	Vec2  targetCameraRotation = Vec2(0.0f);
 	Float inputTurnX           = 0.0f;
 	Bool  movementInput        = false;
-	State state                = State::standing;
+	State state                = State::Standing;
 	// player vectors
 	Vec3 forwardVector = Vec3(0.0f, 1.0f, 0.0f);
 	Vec3 rightVector   = Vec3(1.0f, 0.0f, 0.0f);
@@ -184,18 +177,248 @@ struct TripleNinePlayer final : Player
 	void inputEvent(Window& window, InputEvent input) override;
 };
 
+struct TripleNinePlayerProxy
+{
+	Byte playerId = 0;
+	Vec3 position = Vec3(0.0f);
+};
+
+struct TripleNineGameState
+{
+	void updatePlayer(Byte playerId, Vec3 position);
+
+	#ifdef TRIPLE_NINE_ENEMY
+	[[nodiscard]] TripleNineEnemy&               createEnemy();
+	[[nodiscard]] const Vector<TripleNineEnemy>& getEnemies();
+	#endif
+
+private:
+	#ifdef TRIPLE_NINE_ENEMY
+	Vector<TripleNineEnemy>       enemies;
+	#endif
+	Vector<TripleNinePlayerProxy> players;
+};
+
+enum class TripleNineClientToServerMessages : Byte
+{
+	WantsToConnect,
+	SendPlayerData,
+	WantsToDisconnect,
+	IsAlive
+};
+
+enum class TripleNineServerToClientMessages : Byte
+{
+	DeclineConnection,
+	ConfirmConnection, //send back id
+	BroadcastPlayerData,
+	BroadcastDisconnectClient,
+	CheckIsAlive
+};
+
+struct TripleNineMessage
+{
+	union TripleNineEventID
+	{
+		TripleNineClientToServerMessages clientEvent;
+		TripleNineServerToClientMessages serverEvent;
+	};
+
+	TripleNineEventID event;
+	ULL               tick      = 0;
+	Byte              clientID  = 0;
+	TimePoint         timeStamp = now();
+	Vec3              position  = Vec3(0);
+	Vec3              rotation  = Vec3(0);
+};
+
+struct TripleNinePlayerData
+{
+	Vec3 position = Vec3(0);
+	Vec3 rotation = Vec3(0);
+};
+
+struct TripleNineClientInfo
+{
+	UDPEndpoint          endpoint;
+	TripleNinePlayerData playerData;
+	Short                clientID     = 0;
+	TimePoint            lastSent     = now();
+	TimePoint            lastReceived = now();
+};
+
+struct TripleNineServer
+{
+	void processEvents();
+
+	void broadcastPlayerData();
+
+	void clientWantsToConnect();
+
+	~TripleNineServer();
+
+	void        run();
+	void        stop();
+	void        start();
+	void        sendMessage();
+	void        broadcastMessage();
+	void        waitTillReady() const;
+	static void serverThread(TripleNineServer& server);
+	// request
+	void clientIsAlive();
+	void disconnectClient();
+
+	// response
+	void disconnectClients();
+
+protected:
+	Thread                       thread;
+	NetworkingContext            context;
+	Vector<TripleNineClientInfo> clients;
+	TripleNineMessage            inMessage;
+	TripleNineMessage            outMessage;
+	UDPEndpoint                  senderEndpoint;
+
+	UShort    runningNewClientId = 0;
+	Bool      running            = true;
+	Bool      keepRunning        = true;
+	UShort    port               = 42069;
+	TimePoint lastPingSent       = now();
+	Duration  pingInterval       = Milliseconds(1000);
+	Duration  deadClientTimeout  = Milliseconds(5000);
+	UDPSocket socket             = UDPSocket(context, UDPEndpoint(asio::ip::udp::v4(), port));
+};
+
 struct TripleNineSimulation final : GameSimulation
 {
-	Vector<TripleNineEnemy> enemies;
+	TripleNineServer server;
 
+	#ifdef TRIPLE_NINE_ENEMY
 	void createEnemy();
+	void killEnemy(const Index enemyId)
+	{
+		for (auto& enemy : gameState.getEnemies())
+		{
+			if (enemy.id == enemyId)
+			{
+				enemy.setPosition(Vec3(randomVec2Fast(-85.0f, 85.0f), 0.0f));
+				break;
+			}
+		}
+	}
+	#endif
+
+	void create() override;
 	void destroy() override;
 	void update(Float delta) override;
-	void create() override;
+	void updatePlayer(Byte playerId, Vec3 position);
+
+private:
+	TripleNineGameState gameState;
+};
+
+struct TripleNineClient
+{
+	void processEvents()
+	{
+		if (!connected) connectToServer();
+
+		if (socket.available())
+		{
+			Array<Char, sizeof(T)> inMessageBuffer;
+
+			socket.receive_from(asio::buffer(inMessageBuffer, sizeof(T)), serverEndpoint);
+			inMessage = *reinterpret_cast<TripleNineMessage*>(&inMessageBuffer);
+
+			switch (inMessage.event.serverEvent)
+			{
+			case TripleNineServerToClientMessages::DeclineConnection: connectionDeclined();
+				break;
+			case TripleNineServerToClientMessages::ConfirmConnection: connectionConfirmed();
+				break;
+			case TripleNineServerToClientMessages::BroadcastPlayerData: playerDataReceived();
+				break;
+			case TripleNineServerToClientMessages::BroadcastDisconnectClient: playerDisconnected();
+				break;
+			case TripleNineServerToClientMessages::CheckIsAlive: respondToPing();
+				break;
+			default: logWarning("Unknown event!");
+				break;
+			}
+		}
+	}
+
+	void respondToPing()
+	{
+		logDebug("Client (" + toString(clientID) + "): I am alive");
+		outMessage.event.clientEvent = TripleNineClientToServerMessages::IsAlive;
+		outMessage.clientID          = clientID;
+		sendMessage();
+	}
+
+	void disconnectFromServer()
+	{
+		logDebug("Client (" + toString(clientID) + "): Disconnecting...");
+		outMessage.event.clientEvent = TripleNineClientToServerMessages::WantsToDisconnect;
+		outMessage.clientID          = clientID;
+		sendMessage();
+		connected = false;
+	}
+
+	void connectToServer()
+	{
+		logDebug("Client (" + toString(clientID) + "): Client trying to connect...");
+		outMessage.event.clientEvent = TripleNineClientToServerMessages::WantsToConnect;
+		outMessage.clientID          = 0;
+		sendMessage();
+		Sleep(1000);
+	}
+
+	Vector<TripleNinePlayerData> playerData;
+
+	~TripleNineClient();
+
+	void        run();
+	void        stop();
+	void        start();
+	void        sendMessage();
+	void        waitTillConnected() const;
+	static void clientThread(TripleNineClient& client);
+
+	//events
+	void connectionDeclined();
+	void playerDataReceived();
+	void playerDisconnected();
+	void connectionConfirmed();
+
+	[[nodiscard]] Byte getClientID() const;
+
+protected:
+	Thread            thread;
+	NetworkingContext context;
+	TripleNineMessage inMessage;
+	TripleNineMessage outMessage;
+	UDPEndpoint       serverEndpoint;
+
+	Vector<TripleNineClientInfo> clients;
+
+	Byte      clientID          = 0;
+	Bool      keepRunning       = true;
+	UShort    port              = 42069;
+	TimePoint lastSent          = now();
+	TimePoint lastReceived      = now();
+	Bool      connected         = false;
+	String    host              = "localhost";
+	Duration  keepAliveInterval = Milliseconds(5000);
+	UDPSocket socket            = UDPSocket(context);
 };
 
 struct TripleNineRenderer final : GameRenderer
 {
+	TripleNineGameState gameState;
+
+	TripleNineClient client;
+
 	Framebuffer mainFramebuffer;
 	Framebuffer bloom1Framebuffer;
 	Framebuffer bloom2Framebuffer;
@@ -206,18 +429,18 @@ struct TripleNineRenderer final : GameRenderer
 	Framebuffer bloom7Framebuffer;
 	Framebuffer bloom8Framebuffer;
 
-	TripleNinePlayer      player;
-	Float                 mapSize       = 0.5f;
-	Bool                  vsync         = false;
-	Bool                  renderMap     = true;
-	Bool                  renderText    = true;
-	Bool                  bloom         = false;
-	TripleNineSimulation* sim           = nullptr;
-	Area                  frameSize     = Area(1, 1);
-	InputEvent            enter         = InputEvent(InputType::Mouse, Lmb, true);
-	InputEvent            toggleBloom   = InputEvent(InputType::KeyBoard, B, false);
-	InputEvent            reloadShaders = InputEvent(InputType::KeyBoard, T, false);
-	Vec3                  sunDirection  = normalize(Vec3(0.675394f, -0.485956f, 0.554698f));
+	TripleNinePlayer player;
+	Float            mapSize    = 0.5f;
+	Bool             vsync      = false;
+	Bool             renderMap  = true;
+	Bool             renderText = true;
+	Bool             bloom      = false;
+
+	Area       frameSize     = Area(1, 1);
+	InputEvent enter         = InputEvent(InputType::Mouse, Lmb, true);
+	InputEvent toggleBloom   = InputEvent(InputType::KeyBoard, B, false);
+	InputEvent reloadShaders = InputEvent(InputType::KeyBoard, T, false);
+	Vec3       sunDirection  = normalize(Vec3(0.675394f, -0.485956f, 0.554698f));
 
 	void renderBloom(Renderer& r) const;
 	void update(Window& window) override;
@@ -225,34 +448,24 @@ struct TripleNineRenderer final : GameRenderer
 	void destroy(Window& window) override;
 	void connect(GameSimulation& simulation) override;
 	void render(Window& window, TiledRectangle area) override;
+
+	#ifdef TRIPLE_NINE_ENEMY
+	void killEnemy(UInt uiId)
+	{
+		for (auto& enemy : gameState.enemies)
+		{
+			if (enemy.id == uiId)
+			{
+				enemy.position = Vec3(randomVec2Fast(-85.0f, 85.0f), 0.0f);
+				break;
+			}
+		}
+	}
+	#endif
+
 	void inputEvent(Window& window, InputEvent input) override;
 	void renderInteractive(Window& window, TiledRectangle area) override;
 };
-
-//class TripleNineMessage {
-//public:
-//    String message;
-//};
-//
-//class TripleNineServer {
-//public:
-//    External::ENetHost* server;
-//    External::ENetAddress address;
-//    Vector<TripleNineMessage> messages;
-//
-//    void create();
-//    void destroy() const;
-//};
-//
-//class TripleNineClient {
-//public:
-//    External::ENetHost* client;
-//    External::ENetPeer* peer;
-//    Vector<TripleNineMessage> messages;
-//
-//    void create();
-//    void destroy() const;
-//};
 
 struct TripleNine
 {
@@ -261,11 +474,6 @@ struct TripleNine
 	TripleNineRenderer   renderer1;
 	TripleNineRenderer   renderer2;
 	TripleNineSimulation simulation;
-	//TripleNineServer     server;
-	//TripleNineClient     client;
 
 	void run();
 };
-
-//void serverLoop(TripleNineServer& server);
-//void clientLoop(TripleNineClient& client);
