@@ -47,7 +47,7 @@ struct TripleNinePlayer final : Player
 	InputEvent jumpTrigger = InputEvent(InputType::KeyBoard, Space, true);
 
 	// InputEvent jumpRelease = InputEvent(InputType::KeyBoard, SPACE, 0);
-	enum class State: Byte
+	enum class State : Byte
 	{
 		Standing,
 		// ground
@@ -188,7 +188,7 @@ struct TripleNineGameState
 	void updatePlayer(Byte playerId, Vec3 position);
 
 	#ifdef TRIPLE_NINE_ENEMY
-	[[nodiscard]] TripleNineEnemy&               createEnemy();
+	[[nodiscard]] TripleNineEnemy& createEnemy();
 	[[nodiscard]] const Vector<TripleNineEnemy>& getEnemies();
 	#endif
 
@@ -220,7 +220,7 @@ struct TripleNineMessage
 {
 	union TripleNineEventID
 	{
-		TripleNineClientToServerMessages clientEvent;
+		TripleNineClientToServerMessages clientEvent = TripleNineClientToServerMessages::WantsToConnect;
 		TripleNineServerToClientMessages serverEvent;
 	};
 
@@ -249,27 +249,25 @@ struct TripleNineClientInfo
 
 struct TripleNineServer
 {
-	void processEvents();
-
-	void broadcastPlayerData();
-
-	void clientWantsToConnect();
-
 	~TripleNineServer();
 
 	void        run();
 	void        stop();
 	void        start();
+	void        processEvents();
 	void        sendMessage();
 	void        broadcastMessage();
 	void        waitTillReady() const;
 	static void serverThread(TripleNineServer& server);
+
 	// request
 	void clientIsAlive();
 	void disconnectClient();
+	void clientWantsToConnect();
 
 	// response
 	void disconnectClients();
+	void broadcastPlayerData();
 
 protected:
 	Thread                       thread;
@@ -285,7 +283,7 @@ protected:
 	UShort    port               = 42069;
 	TimePoint lastPingSent       = now();
 	Duration  pingInterval       = Milliseconds(1000);
-	Duration  deadClientTimeout  = Milliseconds(5000);
+	Duration  deadClientTimeout  = Milliseconds(15000);
 	UDPSocket socket             = UDPSocket(context, UDPEndpoint(asio::ip::udp::v4(), port));
 };
 
@@ -319,97 +317,38 @@ private:
 
 struct TripleNineClient
 {
-	void processEvents()
-	{
-		if (!connected) connectToServer();
-
-		if (socket.available())
-		{
-			Array<Char, sizeof(T)> inMessageBuffer;
-
-			socket.receive_from(asio::buffer(inMessageBuffer, sizeof(T)), serverEndpoint);
-			inMessage = *reinterpret_cast<TripleNineMessage*>(&inMessageBuffer);
-
-			switch (inMessage.event.serverEvent)
-			{
-			case TripleNineServerToClientMessages::DeclineConnection: connectionDeclined();
-				break;
-			case TripleNineServerToClientMessages::ConfirmConnection: connectionConfirmed();
-				break;
-			case TripleNineServerToClientMessages::BroadcastPlayerData: playerDataReceived();
-				break;
-			case TripleNineServerToClientMessages::BroadcastDisconnectClient: playerDisconnected();
-				break;
-			case TripleNineServerToClientMessages::CheckIsAlive: respondToPing();
-				break;
-			default: logWarning("Unknown event!");
-				break;
-			}
-		}
-	}
-
-	void respondToPing()
-	{
-		logDebug("Client (" + toString(clientID) + "): I am alive");
-		outMessage.event.clientEvent = TripleNineClientToServerMessages::IsAlive;
-		outMessage.clientID          = clientID;
-		sendMessage();
-	}
-
-	void disconnectFromServer()
-	{
-		logDebug("Client (" + toString(clientID) + "): Disconnecting...");
-		outMessage.event.clientEvent = TripleNineClientToServerMessages::WantsToDisconnect;
-		outMessage.clientID          = clientID;
-		sendMessage();
-		connected = false;
-	}
-
-	void connectToServer()
-	{
-		logDebug("Client (" + toString(clientID) + "): Client trying to connect...");
-		outMessage.event.clientEvent = TripleNineClientToServerMessages::WantsToConnect;
-		outMessage.clientID          = 0;
-		sendMessage();
-		Sleep(1000);
-	}
-
-	Vector<TripleNinePlayerData> playerData;
-
-	~TripleNineClient();
-
-	void        run();
-	void        stop();
-	void        start();
-	void        sendMessage();
-	void        waitTillConnected() const;
-	static void clientThread(TripleNineClient& client);
+	void create();
+	void destroy();
+	void sendMessage();
+	void connectToServer();
+	void disconnectFromServer();
+	void waitTillConnected() const;
 
 	//events
+	void respondToPing();
 	void connectionDeclined();
 	void playerDataReceived();
 	void playerDisconnected();
 	void connectionConfirmed();
 
 	[[nodiscard]] Byte getClientID() const;
+	void               processEvents();
 
 protected:
-	Thread            thread;
-	NetworkingContext context;
-	TripleNineMessage inMessage;
-	TripleNineMessage outMessage;
-	UDPEndpoint       serverEndpoint;
-
+	NetworkingContext            context;
+	TripleNineMessage            inMessage;
+	TripleNineMessage            outMessage;
+	UDPEndpoint                  serverEndpoint;
+	Vector<TripleNinePlayerData> playerData;
 	Vector<TripleNineClientInfo> clients;
 
 	Byte      clientID          = 0;
-	Bool      keepRunning       = true;
 	UShort    port              = 42069;
 	TimePoint lastSent          = now();
 	TimePoint lastReceived      = now();
 	Bool      connected         = false;
 	String    host              = "localhost";
-	Duration  keepAliveInterval = Milliseconds(5000);
+	Duration  keepAliveInterval = Milliseconds(10000);
 	UDPSocket socket            = UDPSocket(context);
 };
 
