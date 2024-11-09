@@ -71,3 +71,7 @@ Float randomFloatSlow(T min, T max)
 {
 	return randomFloatSlow(toDouble(min), toDouble(max));
 }
+
+using Token = ULL;
+
+Token generateRandomToken();

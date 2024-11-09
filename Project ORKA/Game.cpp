@@ -16,6 +16,22 @@ void GameSimulation::stop()
 	}
 }
 
+void GameSimulation::start()
+{
+	if (!loaded)
+	{
+		create();
+		loaded      = true;
+		keepRunning = true;
+		logDebug("Starting game simulation thread!");
+		thread = Thread(gameSimulationThread, std::ref(*this));
+	}
+	else
+	{
+		logError("Simulation already initialized!");
+	}
+}
+
 Bool GameSimulation::isLoaded() const
 {
 	return loaded;
@@ -47,21 +63,5 @@ void gameSimulationThread(GameSimulation& sim)
 	else
 	{
 		logError("Simulation not initialized!");
-	}
-}
-
-void GameSimulation::start()
-{
-	if (!loaded)
-	{
-		create();
-		loaded      = true;
-		keepRunning = true;
-		logDebug("Starting game simulation thread!");
-		thread = Thread(gameSimulationThread, std::ref(*this));
-	}
-	else
-	{
-		logError("Simulation already initialized!");
 	}
 }

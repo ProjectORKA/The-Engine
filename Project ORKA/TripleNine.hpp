@@ -179,13 +179,16 @@ struct TripleNinePlayer final : Player
 
 struct TripleNinePlayerProxy
 {
-	Byte playerId = 0;
-	Vec3 position = Vec3(0.0f);
+	Token playerToken = 0;
+	Vec3  position    = Vec3(0.0f);
 };
 
 struct TripleNineGameState
 {
-	void updatePlayer(Byte playerId, Vec3 position);
+	[[nodiscard]] ULL  getTick() const;
+	[[nodiscard]] Vec3 getPlayerPosition(Token playerToken) const;
+
+	void               updatePlayer(Token playerToken, Vec3 position);
 
 	#ifdef TRIPLE_NINE_ENEMY
 	[[nodiscard]] TripleNineEnemy& createEnemy();
@@ -196,6 +199,7 @@ private:
 	#ifdef TRIPLE_NINE_ENEMY
 	Vector<TripleNineEnemy>       enemies;
 	#endif
+	ULL                           gameTick = 0;
 	Vector<TripleNinePlayerProxy> players;
 };
 
@@ -225,11 +229,11 @@ struct TripleNineMessage
 	};
 
 	TripleNineEventID event;
-	ULL               tick      = 0;
-	Byte              clientID  = 0;
-	TimePoint         timeStamp = now();
-	Vec3              position  = Vec3(0);
-	Vec3              rotation  = Vec3(0);
+	ULL               tick        = 0;
+	Token             clientToken = 0;
+	TimePoint         timeStamp   = now();
+	Vec3              position    = Vec3(0);
+	Vec3              rotation    = Vec3(0);
 };
 
 struct TripleNinePlayerData
@@ -242,23 +246,19 @@ struct TripleNineClientInfo
 {
 	UDPEndpoint          endpoint;
 	TripleNinePlayerData playerData;
-	Short                clientID     = 0;
+	Token                clientToken  = 0;
 	TimePoint            lastSent     = now();
 	TimePoint            lastReceived = now();
 };
 
 struct TripleNineServer
 {
-	~TripleNineServer();
+	void destroy();
+	void create() const;
+	void processEvents();
 
-	void        run();
-	void        stop();
-	void        start();
-	void        processEvents();
-	void        sendMessage();
-	void        broadcastMessage();
-	void        waitTillReady() const;
-	static void serverThread(TripleNineServer& server);
+	void sendMessage();
+	void broadcastMessage();
 
 	// request
 	void clientIsAlive();
@@ -270,21 +270,17 @@ struct TripleNineServer
 	void broadcastPlayerData();
 
 protected:
-	Thread                       thread;
 	NetworkingContext            context;
 	Vector<TripleNineClientInfo> clients;
 	TripleNineMessage            inMessage;
 	TripleNineMessage            outMessage;
 	UDPEndpoint                  senderEndpoint;
 
-	UShort    runningNewClientId = 0;
-	Bool      running            = true;
-	Bool      keepRunning        = true;
-	UShort    port               = 42069;
-	TimePoint lastPingSent       = now();
-	Duration  pingInterval       = Milliseconds(1000);
-	Duration  deadClientTimeout  = Milliseconds(15000);
-	UDPSocket socket             = UDPSocket(context, UDPEndpoint(asio::ip::udp::v4(), port));
+	UShort    port              = 42069;
+	TimePoint lastPingSent      = now();
+	Duration  pingInterval      = Milliseconds(1000);
+	Duration  deadClientTimeout = Milliseconds(15000);
+	UDPSocket socket            = UDPSocket(context, UDPEndpoint(asio::ip::udp::v4(), port));
 };
 
 struct TripleNineSimulation final : GameSimulation
@@ -331,8 +327,10 @@ struct TripleNineClient
 	void playerDisconnected();
 	void connectionConfirmed();
 
-	[[nodiscard]] Byte getClientID() const;
-	void               processEvents();
+	[[nodiscard]] Token getClientToken() const;
+	void                processEvents();
+
+	void sendPlayerData(const Vec3 position, const Vec3 rotation, const ULL gameTick);
 
 protected:
 	NetworkingContext            context;
@@ -342,7 +340,7 @@ protected:
 	Vector<TripleNinePlayerData> playerData;
 	Vector<TripleNineClientInfo> clients;
 
-	Byte      clientID          = 0;
+	Token     myToken           = 0;
 	UShort    port              = 42069;
 	TimePoint lastSent          = now();
 	TimePoint lastReceived      = now();
