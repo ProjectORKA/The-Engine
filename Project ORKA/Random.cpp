@@ -281,3 +281,11 @@ Double randomDoubleSlow(const Double min, const Double max)
 {
 	return toDouble(min) + toDouble(randomULLSlow()) / toDouble(ULLONG_MAX) * (max - min);
 }
+
+Token generateRandomToken()
+{
+	std::random_device rd;
+	std::mt19937_64 gen(rd());
+	std::uniform_int_distribution<uint64_t> dist(0, UINT64_MAX);
+	return dist(gen);
+}
