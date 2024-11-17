@@ -1,6 +1,7 @@
+curl
+minizip-ng
 asio
 assimp
-curl
 glm
 glew
 glfw3
