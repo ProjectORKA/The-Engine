@@ -1,5 +1,4 @@
 curl
-minizip-ng
 asio
 assimp
 glm
@@ -18,3 +17,4 @@ fftwpp
 libsndfile
 ffmpeg
 nlohmann-json
+libzippp
