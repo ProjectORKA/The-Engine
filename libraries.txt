@@ -1,4 +1,5 @@
 curl
+libzippp
 asio
 assimp
 glm
@@ -17,4 +18,4 @@ fftwpp
 libsndfile
 ffmpeg
 nlohmann-json
-libzippp
+raylib
