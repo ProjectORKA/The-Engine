@@ -59,6 +59,8 @@
     <ClCompile Include="ParallelizedConvexHullPrototype.cpp" />
     <ClCompile Include="PerformanceGraph.cpp" />
     <ClCompile Include="Standalone Music Visualizer.cpp" />
+    <ClCompile Include="TripleNineMessage.cpp" />
+    <ClCompile Include="TripleNinePlayer.cpp" />
     <ClCompile Include="Voxels.cpp" />
     <ClCompile Include="Platform.cpp" />
     <ClCompile Include="PointRenderer.cpp" />
@@ -186,6 +188,8 @@
     <ClInclude Include="LockFreeQueue.hpp" />
     <ClInclude Include="Music Visualizer.hpp" />
     <ClInclude Include="PerformanceGraph.hpp" />
+    <ClInclude Include="TripleNineMessage.hpp" />
+    <ClInclude Include="TripleNinePlayer.hpp" />
     <ClInclude Include="Voxels.hpp" />
     <ClInclude Include="PersistentInfoPrototype.hpp" />
     <ClInclude Include="PrimitivesRenderer.hpp" />

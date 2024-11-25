@@ -440,6 +440,12 @@
     <ClCompile Include="Networking.cpp">
       <Filter>Systems\Networking</Filter>
     </ClCompile>
+    <ClCompile Include="TripleNinePlayer.cpp">
+      <Filter>Apps\3D Apps\TripleNine\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="TripleNineMessage.cpp">
+      <Filter>Apps\3D Apps\TripleNine\Message</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Basics.hpp">
@@ -999,6 +1005,12 @@
     </ClInclude>
     <ClInclude Include="Networking.hpp">
       <Filter>Systems\Networking</Filter>
+    </ClInclude>
+    <ClInclude Include="TripleNinePlayer.hpp">
+      <Filter>Apps\3D Apps\TripleNine\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="TripleNineMessage.hpp">
+      <Filter>Apps\3D Apps\TripleNine\Message</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1816,6 +1828,12 @@
     </Filter>
     <Filter Include="Apps\3D Apps\PerformantVoxelRenderer">
       <UniqueIdentifier>{bab7a4d7-0f5b-411f-bdc3-efa042181272}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Apps\3D Apps\TripleNine\Player">
+      <UniqueIdentifier>{74971192-aad2-44b9-86c7-00aa0743d541}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Apps\3D Apps\TripleNine\Message">
+      <UniqueIdentifier>{cb5c2a08-af6c-4894-a00b-f01b98276222}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

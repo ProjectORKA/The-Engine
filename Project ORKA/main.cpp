@@ -103,6 +103,8 @@ int main(const int argc, char* argv[])
 	TripleNine game;
 	game.run();
 
+	//test();
+
 	//Server server;
 	//server.start();
 	//server.waitTillReady();
