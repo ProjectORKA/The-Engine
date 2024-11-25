@@ -35,24 +35,24 @@ void TripleNineEnemy::setPosition(const Vec3 position) {
 
 // GameState
 
-void TripleNineGameState::updatePlayer(const Token playerToken, const Vec3 position)
+void TripleNineGameState::updatePlayer(const PlayerID playerID, const Vec3 position)
 {
-	for (TripleNinePlayerProxy& player : players)
+	for (TripleNinePlayerData& player : players)
 	{
-		if (player.playerToken == playerToken)
+		if (player.playerID == playerID)
 		{
 			player.position = position;
 			return;
 		}
 	}
-	players.push_back({playerToken, position});
+	players.push_back({playerID, position});
 }
 
-Vec3 TripleNineGameState::getPlayerPosition(const Token playerToken) const
+Vec3 TripleNineGameState::getPlayerPosition(const PlayerID playerID) const
 {
 	for (auto& player : players)
 	{
-		if (player.playerToken == playerToken)
+		if (player.playerID == playerID)
 		{
 			return player.position;
 		}
@@ -83,306 +83,23 @@ void TripleNineSimulation::destroy()
 
 void TripleNineSimulation::update(Float delta)
 {
-	server.processEvents();
+	if (isOnline)
+	{
+		if (isServer)
+		{
+			server.processEvents();
+		}
+		else
+		{
+			client.processEvents();
+		}
+	}
+	else {}
 }
 
 void TripleNineSimulation::updatePlayer(const Byte playerId, const Vec3 position)
 {
 	gameState.updatePlayer(playerId, position);
-}
-
-// Player
-
-void TripleNinePlayer::jump()
-{
-	if (isMoving)
-	{
-		velocity.z = 0;
-		velocity += Vec3(0, 0, minJumpVelocity);
-	}
-	else
-	{
-		velocity.z = 0;
-		velocity += Vec3(0, 0, lerp(minJumpVelocity, maxJumpVelocity, jumpCharge));
-		jumpCharge = 0;
-	}
-	// queueJump = false;
-	onGround = false;
-	state    = State::Jumping;
-}
-
-void TripleNinePlayer::collisionResponse()
-{
-	if (velocity.z < 0) velocity.z = 0;
-	if (position.z < 0) position.z = 0;
-}
-
-void TripleNinePlayer::update(Window& window)
-{
-	// set up temporary data
-	const Renderer& renderer = window.renderer;
-	const Float     delta    = renderer.deltaTime();
-	// calculate player vectors
-	forwardVector = normalize(Vec3(sin(camera.getRotationZ()), cos(camera.getRotationZ()), 0));
-	rightVector   = Vec3(forwardVector.y, -forwardVector.x, 0);
-	// process input
-	if (window.pressed(aim))
-	{
-		approach(fov, fovScoped, delta * scopeSpeed);
-		approach(mouseSensitivity, mouseSensitivityScoped, delta * scopeSpeed);
-	}
-	else
-	{
-		approach(fov, fovDefault, delta * scopeSpeed);
-		approach(mouseSensitivity, mouseSensitivityDefault, delta * scopeSpeed);
-	}
-	camera.setFieldOfView(fov);
-	if (window.capturing) targetCameraRotation += window.mouseDelta * DVec2(mouseSensitivity);
-	movementControl = Vec3(0);
-	if (window.pressed(forward)) movementControl += forwardVector;
-	if (window.pressed(backward)) movementControl -= forwardVector;
-	if (window.pressed(right)) movementControl += rightVector;
-	if (window.pressed(left)) movementControl -= rightVector;
-	upperBodyLeanControl = 0;
-	if (window.pressed(leanRight) && onGround) upperBodyLeanControl += 1;
-	if (window.pressed(leanLeft) && onGround) upperBodyLeanControl -= 1;
-	movementInput = movementControl != Vec3(0);
-	if (onGround)
-	{
-		if (window.pressed(crouch))
-		{
-			if (window.pressed(holdJump))
-			{
-				if (movementInput)
-				{
-					state = State::Crawling;
-				}
-				else
-				{
-					state = State::Proning;
-				}
-			}
-			else
-			{
-				if (movementInput)
-				{
-					state = State::Sneaking;
-				}
-				else
-				{
-					state = State::Crouching;
-				}
-			}
-		}
-		else
-		{
-			if (movementInput)
-			{
-				if (window.pressed(run))
-				{
-					state = State::Sprinting;
-				}
-				else
-				{
-					state = State::Walking;
-				}
-			}
-			else
-			{
-				state = State::Standing;
-			}
-		}
-	}
-	else
-	{
-		if (velocity.z >= 0)
-		{
-			state = State::Jumping;
-		}
-		else
-		{
-			state = State::Falling;
-		}
-	}
-	// update values
-	// running
-	if (state == State::Sprinting)
-	{
-		speedControl += delta * speedControlAcceleration;
-	}
-	else
-	{
-		speedControl -= delta * speedControlDeceleration;
-	}
-	speedControl = clamp(speedControl, 0.0f, 1.0f);
-	camera.rotate(targetCameraRotation);
-	calculatePhysics(window);
-	if (isCollidingWithGround())
-	{
-		onGround         = true;
-		doubleJumpCharge = true;
-		if (window.pressed(holdJump)) jump();
-		// if (queueJump) {
-		//	queueJump = false;
-		// }
-		collisionResponse();
-		if (movementInput)
-		{
-			actualFriction = movementFriction;
-		}
-		else
-		{
-			actualFriction = stopFriction;
-		}
-		actualFriction *= normalFrictionFactor;
-		velocity /= 1 + delta * actualFriction;
-	}
-	else
-	{
-		onGround = false;
-	}
-	if (state == State::Jumping) debugCurrentMaxJumpHeight = position.z;
-	isMoving = movementControl != Vec3(0);
-	// air strafing
-	if (movementInput && !onGround)
-	{
-		const Vec3  strafeVector     = movementControl * Vec3(maxStrafeSpeed);
-		const Vec3  projectionVector = proj(velocity, movementControl);
-		const Vec3  deltaVec         = strafeVector - projectionVector;
-		const Float velocityAddMax   = length(deltaVec);
-		if (length(projectionVector) < velocityAddMax) velocity += movementControl * min(delta * maxStrafeAcceleration, velocityAddMax);
-	}
-	// movement speed
-	targetSpeed = lerp(walkingSpeed, runningSpeed, speedControl);
-	if (movementInput && onGround)
-	{
-		// add speed to direction
-		approach(actualInputSpeed, targetSpeed, delta * 2);
-		movementControl = normalize(movementControl);
-		movementControl *= actualInputSpeed;
-		approach(velocity.x, movementControl.x, 10 * delta);
-		approach(velocity.y, movementControl.y, 10 * delta);
-		movementControl = {0, 0, 0};
-	}
-	actualSpeed = length(velocity);
-	// head position
-	calculateHeadPosition(window, delta);
-	// reset delta
-	targetCameraRotation = DVec2(0);
-}
-
-Bool TripleNinePlayer::isCollidingWithGround() const
-{
-	return position.z <= 0;
-}
-
-void TripleNinePlayer::calculatePhysics(const Window& window)
-{
-	// step 1
-	const Vec3 velocity1 = velocity + acceleration * window.renderer.deltaTime() / Vec3(2);
-	// step 2
-	position += velocity1 * window.renderer.deltaTime();
-	// step 3 calculate forces
-	// player keeps jumping higher when holding space but falls faster when releasing it
-	if (!onGround && window.pressed(holdJump))
-	{
-		acceleration = Vec3(0, 0, -airTimeGravity);
-	}
-	else
-	{
-		acceleration = Vec3(0, 0, -gravity);
-	}
-	// step4
-	const Vec3 velocity2 = velocity1 + acceleration * window.renderer.deltaTime() / Vec3(2);
-	velocity             = velocity2 * pow(airResistance, window.renderer.deltaTime());
-}
-
-void TripleNinePlayer::inputEvent(Window& window, const InputEvent input)
-{
-	if (input == jumpTrigger)
-	{
-		if (onGround)
-		{
-			jump();
-		}
-		else
-		{
-			if (doubleJumpCharge)
-			{
-				doubleJumpCharge = false;
-				jump();
-			}
-			// else {
-			//	if(state == State::falling) queueJump = true;
-			// }
-		}
-	}
-}
-
-void TripleNinePlayer::calculateHeadPosition(Window& window, const Float delta)
-{
-	Float eyeHeightTarget = eyeHeightNormal;
-	// advance walk cycle
-	walkCycle += actualSpeed * delta / unit;
-	// height
-	switch (state)
-	{
-	case State::Standing: eyeHeightTarget = eyeHeightNormal;
-		break;
-	case State::Walking: eyeHeightTarget = eyeHeightWalking;
-		break;
-	case State::Sprinting: eyeHeightTarget = eyeHeightRunning;
-		break;
-	case State::Falling: eyeHeightTarget = eyeHeightFlying;
-		break;
-	case State::Jumping: eyeHeightTarget = eyeHeightNormal;
-		break;
-	case State::Crouching: eyeHeightTarget = eyeHeightCrouching;
-		break;
-	case State::Proning: eyeHeightTarget = eyeHeightProning;
-		break;
-	case State::Sliding: eyeHeightTarget = eyeHeightSliding;
-		break;
-	case State::Sneaking: eyeHeightTarget = eyeHeightCrouching;
-		break;
-	case State::Crawling: eyeHeightTarget = eyeHeightSliding;
-		break;
-	}
-	// bob
-	Float bobTarget = 0;
-	if (isMoving && onGround) bobTarget = sin(lerp(1, headBobSpeed, 0.5) * 2 * walkCycle) * actualSpeed * headBobIntensity;
-	// sway
-	// Float swayTarget = 0;
-	// if(onGround) swayTarget = sin(lerp(1, headBobSpeed, 0.5) * walkCycle) * actualSpeed * headSwayImpact;
-	// lean
-	if (onGround)
-	{
-		fullBodyLeanControl = approach(2.0f * actualSpeed / unit * targetCameraRotation.x, 1.0f);
-	}
-	else
-	{
-		fullBodyLeanControl = 0;
-	}
-	// smooth motion
-	approach(upperBodyLean, upperBodyLeanControl, delta * upperBodyLeanSpeed);
-	approach(fullBodyLean, fullBodyLeanControl, delta * fullBodyLeanSpeed);
-	approach(eyeHeight, eyeHeightTarget, delta * eyeMovementSpeed);
-	// leanOffset based on lean angle
-	upperBodyLeanAngle = upperBodyLean * upperBodyMaxLeanAngle;
-	fullBodyLeanAngle  = fullBodyLean * fullBodyMaxLeanAngle;
-	// full body lean offset up to chest height
-	auto leanOffset = Vec2(lowerChestHeight * sin(fullBodyLeanAngle), lowerChestHeight * cos(fullBodyLeanAngle) - lowerChestHeight);
-	// full body and upper body offset from chest to eye height
-	const Float lowerChestToEyeDistance = eyeHeightNormal - lowerChestHeight;
-	const Float fullLeanAngle           = fullBodyLeanAngle + upperBodyLeanAngle;
-	leanOffset += Vec2(lowerChestToEyeDistance * sin(fullLeanAngle), lowerChestToEyeDistance * cos(fullLeanAngle) - lowerChestToEyeDistance);
-	// apply changes to camera
-	camera.setRotation(DVec3(camera.getRotationX(), -(fullBodyLeanAngle + upperBodyLean * upperBodyLeanHeadTiltFactor), camera.getRotationZ()));
-	// calculate 3d position of all offsets
-	const Vec3 sway3D       = -sway * normalize(camera.getRightVector() * Vec3(1, 1, 0));
-	const Vec3 lean3D       = leanOffset.x * camera.getRightVector() + Vec3(0, 0, leanOffset.y);
-	const auto headHeight3D = Vec3(0, 0, eyeHeight + bobTarget);
-	camera.setPosition(position + sway3D + headHeight3D + lean3D);
 }
 
 // Renderer
@@ -391,11 +108,11 @@ void TripleNineRenderer::update(Window& window)
 {
 	client.processEvents();
 	player.update(window);
-	if (gameState.getPlayerPosition(client.getClientToken()) != player.position)
-	{
-		client.sendPlayerData(player.position, player.camera.getRotation(), gameState.getTick());
-	}
-	gameState.updatePlayer(client.getClientToken(), player.position);
+	//if (gameState.getPlayerPosition(client.getClientToken()) != player.position)
+	//{
+	//	client.sendPlayerData(player.playerID, player.authToken, player.position, player.camera.getRotation(), gameState.getTick());
+	//}
+	//gameState.updatePlayer(client.getClientToken(), player.position);
 }
 
 void TripleNineRenderer::create(Window& window)
@@ -783,20 +500,39 @@ void TripleNineRenderer::renderInteractive(Window& window, const TiledRectangle 
 void TripleNineServer::destroy()
 {
 	logDebug("Server: Shutting down...");
-	disconnectClients();
+	disconnectAllClients();
 	logDebug("Server: Shut down complete");
 }
 
-void TripleNineServer::sendMessage()
+void TripleNineServer::sendMessageToClient(const ClientID clientID, TripleNineMessage& message)
 {
-	outMessage.timeStamp = now();
+	if (message.getServerEvent() == TripleNineServerToClientMessages::Unknown) logError("Message Event set up incorrectly!");
+
+	message.timeStamp = now();
 	for (TripleNineClientInfo& client : clients)
 	{
-		if (client.clientToken == outMessage.clientToken)
+		if (client.clientID == clientID)
 		{
 			client.lastSent                                         = now();
-			Array<Char, sizeof(TripleNineMessage)> outMessageBuffer = *reinterpret_cast<Array<Char, sizeof(TripleNineMessage)>*>(&outMessage);
+			Array<Char, sizeof(TripleNineMessage)> outMessageBuffer = *reinterpret_cast<Array<Char, sizeof(TripleNineMessage)>*>(&message);
 			socket.send_to(asio::buffer(outMessageBuffer), client.endpoint);
+			return;
+		}
+	}
+}
+
+void TripleNineServer::sendBackMessage(TripleNineMessage& message)
+{
+	if (message.getServerEvent() == TripleNineServerToClientMessages::Unknown) logError("Message Event set up incorrectly!");
+
+	message.timeStamp = now();
+	for (TripleNineClientInfo& client : clients)
+	{
+		if (client.endpoint == senderEndpoint)
+		{
+			client.lastSent                                         = now();
+			Array<Char, sizeof(TripleNineMessage)> outMessageBuffer = *reinterpret_cast<Array<Char, sizeof(TripleNineMessage)>*>(&message);
+			socket.send_to(asio::buffer(outMessageBuffer), senderEndpoint);
 			return;
 		}
 	}
@@ -808,16 +544,13 @@ void TripleNineServer::processEvents()
 	while (socket.available())
 	{
 		socket.receive_from(asio::buffer(inMessageBuffer, sizeof(TripleNineMessage)), senderEndpoint);
-		inMessage = *reinterpret_cast<TripleNineMessage*>(&inMessageBuffer);
-		switch (inMessage.event.clientEvent)
+		switch (const TripleNineMessage message = *reinterpret_cast<TripleNineMessage*>(&inMessageBuffer); message.getClientEvent())
 		{
 		case TripleNineClientToServerMessages::WantsToConnect: clientWantsToConnect();
 			break;
-		case TripleNineClientToServerMessages::SendPlayerData: broadcastPlayerData();
+		case TripleNineClientToServerMessages::WantsToDisconnect: disconnectClient(message.data.disconnectClientData);
 			break;
-		case TripleNineClientToServerMessages::WantsToDisconnect: disconnectClient();
-			break;
-		case TripleNineClientToServerMessages::IsAlive: clientIsAlive();
+		case TripleNineClientToServerMessages::ReturnPing: receivedPing(message.timeStamp);
 			break;
 		default: logWarning("Unknown event!");
 			break;
@@ -838,78 +571,81 @@ void TripleNineServer::processEvents()
 	//send keep-alive message
 	if (now() - lastPingSent > pingInterval)
 	{
-		lastPingSent                 = now();
-		outMessage.clientToken       = 0;
-		outMessage.event.serverEvent = TripleNineServerToClientMessages::CheckIsAlive;
-		broadcastMessage();
+		TripleNineMessage message;
+		lastPingSent = now();
+		message.setServerEvent(TripleNineServerToClientMessages::RequestPing);
+		broadcastMessage(message);
 	}
 }
 
-void TripleNineServer::broadcastPlayerData()
-{
-	UShort currentClient = inMessage.clientToken;
+//void TripleNineServer::broadcastPlayerData(ClientID currentClientID, TripleNinePlayerData& data)
+//{
+//	for (TripleNineClientInfo& client : clients)
+//	{
+//		if (client.clientID == currentClientID)
+//		{
+//			client.playerData.position = inMessage.playerData.position;
+//			client.playerData.rotation = inMessage.playerData.rotation;
+//			continue;
+//		}
+//		outMessage.event.serverEvent = TripleNineServerToClientMessages::BroadcastPlayerData;
+//		outMessage.clientToken       = client.clientToken;
+//		outMessage.playerData        = inMessage.playerData;
+//		sendMessage();
+//	}
+//}
 
-	for (TripleNineClientInfo& client : clients)
-	{
-		if (client.clientToken == currentClient)
-		{
-			client.playerData.position = inMessage.position;
-			client.playerData.rotation = inMessage.rotation;
-			continue;
-		}
-		outMessage.event.serverEvent = TripleNineServerToClientMessages::BroadcastPlayerData;
-		outMessage.clientToken       = client.clientToken;
-		outMessage.position          = inMessage.position;
-		outMessage.rotation          = inMessage.rotation;
-		sendMessage();
-	}
-}
-
-void TripleNineServer::disconnectClients()
+void TripleNineServer::disconnectAllClients()
 {
+	TripleNineMessage message;
 	logDebug("Server: Disconnecting clients...");
-	for (TripleNineClientInfo& client : clients)
+	for (const TripleNineClientInfo& client : clients)
 	{
 		logDebug("Server: Disconnecting client (" + toString(client.clientToken) + ")");
-		outMessage.clientToken       = client.clientToken;
-		outMessage.event.serverEvent = TripleNineServerToClientMessages::BroadcastDisconnectClient;
-		broadcastMessage();
+		message.setServerEvent(TripleNineServerToClientMessages::BroadcastDisconnectClient);
+		message.data.disconnectClientData.clientID = client.clientToken;
+		broadcastMessage(message);
 	}
 	clients.clear();
 }
 
-void TripleNineServer::broadcastMessage()
+void TripleNineServer::broadcastMessage(TripleNineMessage& message)
 {
-	outMessage.timeStamp = now();
+	if (message.getServerEvent() == TripleNineServerToClientMessages::Unknown) logError("Message Event set up incorrectly!");
+
+	message.timeStamp = now();
 	for (TripleNineClientInfo& client : clients)
 	{
 		client.lastSent                                         = now();
-		Array<Char, sizeof(TripleNineMessage)> outMessageBuffer = *reinterpret_cast<Array<Char, sizeof(TripleNineMessage)>*>(&outMessage);
+		Array<Char, sizeof(TripleNineMessage)> outMessageBuffer = *reinterpret_cast<Array<Char, sizeof(TripleNineMessage)>*>(&message);
 		socket.send_to(asio::buffer(outMessageBuffer), client.endpoint);
 	}
 }
 
-void TripleNineServer::disconnectClient()
+void TripleNineServer::disconnectClient(const DisconnectClientData& disconnectClientData)
 {
-	logDebug("Server: Client (" + toString(inMessage.clientToken) + ") disconnecting");
+	logDebug("Server: Client (" + toString(disconnectClientData.clientID) + ") disconnecting");
 	for (Int i = 0; i < clients.size(); i++)
 	{
-		if (clients[i].clientToken == inMessage.clientToken)
+		if (clients[i].clientID == disconnectClientData.clientID && clients[i].clientToken == disconnectClientData.clientToken)
 		{
 			clients.erase(clients.begin() + i);
+			return;
 		}
 	}
+	logWarning("Server: Client (" + toString(disconnectClientData.clientID) + ") that was not connected wanted to disconnect with token (" + toString(disconnectClientData.clientToken) + ")!");
 }
 
-void TripleNineServer::clientIsAlive()
+void TripleNineServer::receivedPing(const TimePoint timeStamp)
 {
-	//calculate ping
+	const Duration ping = now() - timeStamp;
 
 	for (TripleNineClientInfo& client : clients)
 	{
 		if (client.endpoint == senderEndpoint)
 		{
 			client.lastReceived = now();
+			client.ping         = static_cast<Float>(ping.count());
 		}
 	}
 }
@@ -921,50 +657,72 @@ void TripleNineServer::create() const
 
 void TripleNineServer::clientWantsToConnect()
 {
-	logDebug("Server: Registering new client...");
+	logDebug("Server: Registering new client from (" + senderEndpoint.address().to_string() + ":" + toString(senderEndpoint.port()) + ")");
 
-	if (inMessage.clientToken != 0) logDebug("Server: Warning: Client already has id");
-
-	logDebug(senderEndpoint.address().to_string() + ":" + toString(senderEndpoint.port()));
+	TripleNineMessage message;
 
 	for (TripleNineClientInfo& client : clients)
 	{
 		if (client.endpoint == senderEndpoint)
 		{
 			//send him his already existing id
-			outMessage.event.serverEvent = TripleNineServerToClientMessages::ConfirmConnection;
-			outMessage.clientToken       = client.clientToken;
-			logDebug("Server: Client (" + toString(outMessage.clientToken) + ") already exists, sending again");
-			sendMessage();
+			message.setServerEvent(TripleNineServerToClientMessages::ConfirmConnection);
+			message.data.connectionConfirmedData.clientID  = client.clientID;
+			message.data.connectionConfirmedData.authToken = client.clientToken;
+			logDebug("Server: Client (" + toString(client.clientID) + ") already exists, sending again");
+			sendBackMessage(message);
 			return;
 		}
 	}
 
-	const Token newToken = generateRandomToken();
+	const Token newClientToken = generateRandomToken();
+	ClientID    newClientID    = 0;
+	Bool        duplicate      = false;
+	do
+	{
+		newClientID++;
+		duplicate = false;
+		for (const TripleNineClientInfo& client : clients)
+		{
+			if (client.clientID == newClientID) duplicate = true;
+			break;
+		}
+	}
+	while (duplicate);
 
 	// store info
 	TripleNineClientInfo info;
-	info.clientToken = newToken;
+	info.clientID    = newClientID;
+	info.clientToken = newClientToken;
 	info.endpoint    = senderEndpoint;
 	clients.push_back(info);
 
 	// give client its new id
-	outMessage.event.serverEvent = TripleNineServerToClientMessages::ConfirmConnection;
-	outMessage.clientToken       = newToken;
-	logDebug("Server: New client registered");
+	message.setServerEvent(TripleNineServerToClientMessages::ConfirmConnection);
+	message.data.connectionConfirmedData.clientID  = newClientID;
+	message.data.connectionConfirmedData.authToken = newClientToken;
+	logDebug("Server: New client registered with id (" + toString(newClientID) + ") and token (" + toString(newClientToken) + ")");
+	sendBackMessage(message);
+}
 
-	logDebug("Server: Client assigned id: " + toString(outMessage.clientToken));
-	sendMessage();
+void TripleNineServer::getServerInfo()
+{
+	//[TODO] send back info
+	// players
+	// ping
+	// host name
 }
 
 // Client
 
 void TripleNineClient::disconnectFromServer()
 {
-	logDebug("Client (" + toString(myToken) + "): Disconnecting...");
-	outMessage.event.clientEvent = TripleNineClientToServerMessages::WantsToDisconnect;
-	outMessage.clientToken       = myToken;
-	sendMessage();
+	logDebug("Client (" + toString(clientID) + "): Disconnecting...");
+	TripleNineMessage message;
+	message.setClientEvent(TripleNineClientToServerMessages::WantsToDisconnect);
+	message.data.disconnectClientData.clientToken = authToken;
+	message.data.disconnectClientData.clientID    = clientID;
+	sendMessage(message);
 	connected = false;
 }
 
@@ -983,80 +741,90 @@ void TripleNineClient::destroy()
 
 void TripleNineClient::connectToServer()
 {
-	logDebug("Client (" + toString(myToken) + "): Client trying to connect...");
-	outMessage.event.clientEvent = TripleNineClientToServerMessages::WantsToConnect;
-	outMessage.clientToken       = myToken;
-	sendMessage();
+	logDebug("Client (?): Client trying to connect...");
+	TripleNineMessage message;
+	message.setClientEvent(TripleNineClientToServerMessages::WantsToConnect);
+	sendMessage(message);
 	Sleep(1000);
 }
 
 void TripleNineClient::connectionDeclined()
 {
-	logDebug("Client (" + toString(myToken) + "): Server refused connection");
+	logDebug("Client (" + toString(clientID) + "): Server refused connection");
 	connected = false;
 }
 
-void TripleNineClient::playerDataReceived()
+//void TripleNineClient::playerDataReceived(PlayerID playerID, const TripleNinePlayerData& playerData)
+//{
+//	// update player data
+//	for (TripleNineClientInfo& client : clients)
+//	{
+//		if (client.clientToken == clientToken)
+//		{
+//			client.playerData = playerData;
+//			return;
+//		}
+//	}
+//
+//	// must be new client
+//	TripleNineClientInfo newClient;
+//	newClient.clientToken = inMessage.clientToken;
+//	newClient.playerData  = inMessage.playerData;
+//	clients.push_back(newClient);
+//}
+
+void TripleNineClient::disconnect(const DisconnectClientData& disconnectClientData)
 {
-	// update player data
-	for (TripleNineClientInfo& client : clients)
+	if (this->clientID == disconnectClientData.clientID)
 	{
-		if (client.clientToken == inMessage.clientToken)
+		connected = false;
+		logDebug("Client (" + toString(clientID) + "): Server requested disconnect!");
+	}
+}
+
+void TripleNineClient::receiveServerInfo(const ServerInfoData& serverInfoData)
+{
+	//[TODO] receive server info
+}
+
+void TripleNineClient::requestServerInfo()
+{
+	//[TODO] request server info event
+}
+
+void TripleNineClient::disconnectPlayer(const PlayerID playerID)
+{
+	for (Int i = 0; i < playerData.size(); i++)
+	{
+		if (playerData[i].playerID == playerID)
 		{
-			client.playerData.position = inMessage.position;
-			client.playerData.rotation = inMessage.rotation;
+			playerData.erase(playerData.begin() + i);
+			logDebug("Client (" + toString(clientID) + "): Player (" + toString(playerID) + ") disconnected");
 			return;
 		}
 	}
-
-	// must be new client
-	TripleNineClientInfo newClient;
-	newClient.clientToken         = inMessage.clientToken;
-	newClient.playerData.position = inMessage.position;
-	newClient.playerData.rotation = inMessage.rotation;
-	clients.push_back(newClient);
 }
 
-void TripleNineClient::playerDisconnected()
+void TripleNineClient::connectionConfirmed(const ConnectionConfirmedData& connectionConfirmedData)
 {
-	if (inMessage.clientToken == myToken)
-	{
-		// disconnect
-		connected = false;
-		logDebug("Client (" + toString(myToken) + "): Server requested disconnect!");
-	}
-	else
-	{
-		for (Int i = 0; i < clients.size(); i++)
-		{
-			// [TODO] remove player
-			if (clients[i].clientToken == inMessage.clientToken)
-			{
-				clients.erase(clients.begin() + i);
-				logDebug("Client (" + toString(myToken) + "): Player (" + toString(inMessage.clientToken) + ") disconnected");
-				return;
-			}
-		}
-	}
-}
+	logDebug("Client (?): Server confirmed connection");
+	logDebug("Client (?): Server requested ID change");
+	clientID  = connectionConfirmedData.clientID;
+	authToken = connectionConfirmedData.authToken;
 
-void TripleNineClient::connectionConfirmed()
-{
-	logDebug("Client (" + toString(myToken) + "): Server confirmed connection");
-	logDebug("Client (" + toString(myToken) + "): Server requested ID change");
-	this->myToken = inMessage.clientToken;
-	logDebug("Client (" + toString(myToken) + "): Client was assigned ID:" + toString(myToken));
+	logDebug("Client (?): Client was assigned ID:" + toString(clientID));
+	logDebug("Client (" + toString(clientID) + "): Client was assigned token:" + toString(authToken));
 	if (!connected)
 	{
-		logDebug("Client (" + toString(myToken) + "): Connected...");
+		logDebug("Client (" + toString(clientID) + "): Connected...");
 		connected = true;
 	}
 }
 
-Token TripleNineClient::getClientToken() const
-{
-	return myToken;
-}
+//Token TripleNineClient::getClientToken() const
+//{
+//	return authToken;
+//}
 
 void TripleNineClient::processEvents()
 {
@@ -1067,19 +835,19 @@ void TripleNineClient::processEvents()
 		Array<Char, sizeof(TripleNineMessage)> inMessageBuffer;
 
 		socket.receive_from(asio::buffer(inMessageBuffer, sizeof(TripleNineMessage)), serverEndpoint);
-		inMessage = *reinterpret_cast<TripleNineMessage*>(&inMessageBuffer);
+		TripleNineMessage message = *reinterpret_cast<TripleNineMessage*>(&inMessageBuffer);
 
-		switch (inMessage.event.serverEvent)
+		switch (message.getServerEvent())
 		{
 		case TripleNineServerToClientMessages::DeclineConnection: connectionDeclined();
 			break;
-		case TripleNineServerToClientMessages::ConfirmConnection: connectionConfirmed();
+		case TripleNineServerToClientMessages::ConfirmConnection: connectionConfirmed(message.data.connectionConfirmedData);
 			break;
-		case TripleNineServerToClientMessages::BroadcastPlayerData: playerDataReceived();
+		//case TripleNineServerToClientMessages::BroadcastPlayerData: playerDataReceived();
+		//	break;
+		case TripleNineServerToClientMessages::BroadcastDisconnectClient: disconnect(message.data.disconnectClientData);
 			break;
-		case TripleNineServerToClientMessages::BroadcastDisconnectClient: playerDisconnected();
-			break;
-		case TripleNineServerToClientMessages::CheckIsAlive: respondToPing();
+		case TripleNineServerToClientMessages::RequestPing: respondToPing();
 			break;
 		default: logWarning("Unknown event!");
 			break;
@@ -1087,15 +855,23 @@ void TripleNineClient::processEvents()
 	}
 }
 
-void TripleNineClient::sendPlayerData(const Vec3 position, const Vec3 rotation, const ULL gameTick)
+void TripleNineClient::sendMessage(TripleNineMessage& message)
 {
-	outMessage.timeStamp         = now();
-	outMessage.clientToken       = myToken;
-	outMessage.position          = position;
-	outMessage.rotation          = rotation;
-	outMessage.tick              = gameTick;
-	outMessage.event.clientEvent = TripleNineClientToServerMessages::SendPlayerData;
-	sendMessage();
+	if (message.getClientEvent() == TripleNineClientToServerMessages::Unknown) logError("Message Event set up incorrectly!");
+
+	lastSent                                                = now();
+	message.timeStamp                                       = lastSent;
+	Array<Char, sizeof(TripleNineMessage)> outMessageBuffer = *reinterpret_cast<Array<Char, sizeof(TripleNineMessage)>*>(&message);
+	socket.send_to(asio::buffer(outMessageBuffer), serverEndpoint);
+}
+
+void TripleNineClient::respondToPing()
+{
+	logDebug("Client (" + toString(clientID) + "): I am alive");
+	TripleNineMessage message;
+	message.setClientEvent(TripleNineClientToServerMessages::ReturnPing);
+	message.data.pingEventData.clientID = clientID;
+	sendMessage(message);
 }
 
 void TripleNineClient::waitTillConnected() const
@@ -1103,21 +879,18 @@ void TripleNineClient::waitTillConnected() const
 	while (!connected) {}
 }
 
-void TripleNineClient::sendMessage()
-{
-	outMessage.timeStamp                                    = now();
-	lastSent                                                = now();
-	Array<Char, sizeof(TripleNineMessage)> outMessageBuffer = *reinterpret_cast<Array<Char, sizeof(TripleNineMessage)>*>(&outMessage);
-	socket.send_to(asio::buffer(outMessageBuffer), serverEndpoint);
-}
-
-void TripleNineClient::respondToPing()
-{
-	logDebug("Client (" + toString(myToken) + "): I am alive");
-	outMessage.event.clientEvent = TripleNineClientToServerMessages::IsAlive;
-	outMessage.clientToken       = myToken;
-	sendMessage();
-}
+//void TripleNineClient::sendPlayerData(const PlayerID playerID, const Token playerToken, const Vec3 position, const Vec3 rotation, const ULL gameTick)
+//{
+//	TripleNineMessage message;
+//	message.timeStamp           = now();
+//	message.clientToken         = authToken;
+//	message.playerData.playerID = playerID;
+//	message.playerData.position = position;
+//	message.playerData.rotation = rotation;
+//	message.tick                = gameTick;
+//	message.event.clientEvent   = TripleNineClientToServerMessages::SendPlayerData;
+//	sendMessage(message);
+//}
 
 // Game
 
