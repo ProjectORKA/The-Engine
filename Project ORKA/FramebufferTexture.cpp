@@ -16,7 +16,7 @@ TextureID FramebufferTexture::getGLID() const
 	return texture.getOpenGLID();
 }
 
-void FramebufferTexture::resize(Renderer& renderer, const Area area)
+void FramebufferTexture::resize(Renderer& renderer, const IVec2 area)
 {
 	texture.resize(renderer, area);
 }
@@ -26,12 +26,12 @@ FramebufferAttachment FramebufferTexture::getAttachmentSlot() const
 	return framebufferAttachmentSlot;
 }
 
-void FramebufferTexture::useTextureInSlot(const TextureSlot textureSlot) const
+void FramebufferTexture::useTextureInSlot(Renderer& renderer, const TextureSlot textureSlot) const
 {
-	texture.useTextureInSlot(textureSlot);
+	texture.useTextureInSlot(renderer, textureSlot);
 }
 
-void FramebufferTexture::create(Renderer& renderer, const Area size, const WritePixelsFormat format, const DataType type, const FramebufferAttachment framebufferAttachmentSlot, const Wrapping wrapping)
+void FramebufferTexture::create(Renderer& renderer, const IVec2 size, const WritePixelsFormat format, const DataType type, const FramebufferAttachment framebufferAttachmentSlot, const Wrapping wrapping)
 {
 	texture.load(renderer, size, format, type, wrapping);
 	this->format                    = format;

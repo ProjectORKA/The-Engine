@@ -1,14 +1,14 @@
 #include "IndexBufferObject.hpp"
 #include "GraphicsAPI.hpp"
 
-void IndexBuffer::update(const Vector<UInt>& indices)
+void IndexBuffer::update(OpenGlContext& openGlContext, const Vector<UInt>& indices)
 {
 	indexCount = static_cast<Int>(indices.size());
-	OpenGLIndexBuffer::update(indices);
+	OpenGLIndexBuffer::update(openGlContext, indices);
 }
 
-void IndexBuffer::create(const Vector<UInt>& indices, const BufferUsage usage, const String& name)
+void IndexBuffer::create(OpenGlContext& openGlContext, const Vector<UInt>& indices, const BufferUsage usage, const String& name)
 {
 	indexCount = static_cast<Int>(indices.size());
-	OpenGLIndexBuffer::create(indices, usage, name);
+	OpenGLIndexBuffer::create(openGlContext, indices, usage, name);
 }

@@ -2,16 +2,16 @@
 #include "Debug.hpp"
 #include "FileSystem.hpp"
 
-#include "lodepng.h"
+#include <lodepng.h>
 
 namespace External {
-	#include "webp/decode.h"
-	#include "jpeglib.h"
-	#include "gif_lib.h"
+	#include <webp/decode.h>
+	#include <jpeglib.h>
+	#include <gif_lib.h>
 	#define STBI_WINDOWS_UTF8
 	#define STBI_FAILURE_USERMSG
 	#define STB_IMAGE_IMPLEMENTATION
-	#include "stb_image.h"
+	#include <stb_image.h>
 }
 
 using ImageHeader       = Vector<Byte>;
@@ -164,15 +164,14 @@ void Image::loadWebP(const Path& path)
 
 	// determine the file size
 	fseek(file, 0, SEEK_END);
-	const size_t fileSize = ftell(file);
+	const SizeT fileSize = ftell(file);
 	rewind(file);
 
 	// allocate memory for the file data
 	const auto fileData = new Byte[fileSize];
 
 	// Read the file data into memory
-	const size_t bytesRead = fread(fileData, 1, fileSize, file);
-	if (bytesRead != fileSize)
+	if (const SizeT bytesRead = fread(fileData, 1, fileSize, file); bytesRead != fileSize)
 	{
 		logError("Could not open file: " + path.string());
 		delete[] fileData;
@@ -215,14 +214,8 @@ void Image::loadWebP(const Path& path)
 	}
 
 	// handle alpha
-	if (config.input.has_alpha)
-	{
-		config.output.colorspace = External::MODE_RGBA;
-	}
-	else
-	{
-		config.output.colorspace = External::MODE_RGB;
-	}
+	if (config.input.has_alpha) config.output.colorspace = External::MODE_RGBA;
+	else config.output.colorspace                        = External::MODE_RGB;
 
 	// decode
 	if (const auto result = WebPDecode(fileData, fileSize, &config); result == External::VP8_STATUS_OK)
@@ -390,7 +383,7 @@ void Image::loadJPEG(const Path& path)
 	//    return 1;
 	//}
 
-	jpeg_CreateDecompress((&info), 62, (size_t)sizeof(struct External::jpeg_decompress_struct));
+	jpeg_CreateDecompress((&info), 62, sizeof(External::jpeg_decompress_struct));
 	jpeg_stdio_src(&info, inFile);
 	jpeg_read_header(&info, 1);
 	jpeg_start_decompress(&info);
@@ -426,10 +419,7 @@ void Image::loadJPEG(const Path& path)
 	jpeg_finish_decompress(&info);
 	jpeg_destroy_decompress(&info);
 
-	if (Int error = fclose(inFile) != 0)
-	{
-		logWarning("Error closing JPEG!");
-	};
+	if (Int error = fclose(inFile) != 0) logWarning("Error closing JPEG!");;
 
 	delete[] buffer;
 
@@ -501,7 +491,7 @@ Channels Image::getChannels() const
 Byte* Image::getDataPointer() const
 {
 	if (!loaded) logError("Cant read property from unloaded image!");
-	return static_cast<Byte*>(pixelMemory.getData());
+	return pixelMemory.getData();
 }
 
 Int Image::getChannelCount() const

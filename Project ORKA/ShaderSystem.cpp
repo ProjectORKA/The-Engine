@@ -1,24 +1,25 @@
 #include "ShaderSystem.hpp"
 #include "Debug.hpp"
 #include "ResourceManager.hpp"
+#include "Renderer.hpp"
 
 String uniformName = "/uniforms.glsl";
 
-void ShaderSystem::rebuild()
+void ShaderSystem::rebuild(Renderer& renderer)
 {
-	for(const auto& val : shaderNames | std::views::values) shaderPrograms[val].destroy();
+	for(const auto& val : shaderNames | std::views::values) shaderPrograms[val].destroy(renderer.openGlContext);
 	shaderNames.clear();
 }
 
-void ShaderSystem::destroy()
+void ShaderSystem::destroy(Renderer& renderer)
 {
-	for(ShaderProgram& shaderProgram : shaderPrograms) shaderProgram.destroy();
+	for(ShaderProgram& shaderProgram : shaderPrograms) shaderProgram.destroy(renderer.openGlContext);
 	shaderPrograms.clear();
 	shaderNames.clear();
-	uniforms.destroy();
+	uniforms.destroy(renderer.openGlContext);
 }
 
-void ShaderSystem::loadDefaultShader()
+void ShaderSystem::loadDefaultShader(Renderer& renderer)
 {
 	String vertexShaderCode = uniforms.getUniformShaderCode();
 	vertexShaderCode.append("\n\nvoid main(){\ngl_Position = pMatrix * vMatrix * mMatrix * vec4(vertex, 1);\n}");
@@ -26,13 +27,13 @@ void ShaderSystem::loadDefaultShader()
 	String fragmentShaderCode = uniforms.getUniformShaderCode();
 	fragmentShaderCode.append("\n\nout vec4 color;\n\nvoid main(){\ncolor = vec4(1.0f,0.0f,1.0f,1.0f);\n}");
 
-	add("default", vertexShaderCode, fragmentShaderCode);
+	add(renderer, "default", vertexShaderCode, fragmentShaderCode);
 }
 
-Index ShaderSystem::use(const Index shaderId)
+Index ShaderSystem::use(Renderer& renderer, const Index shaderId)
 {
 	currentShaderProgramId = shaderId;
-	currentShaderProgram().use();
+	currentShaderProgram().use(renderer.openGlContext);
 	return currentShaderProgramId;
 }
 
@@ -41,13 +42,13 @@ ShaderProgram& ShaderSystem::currentShaderProgram()
 	return shaderPrograms[currentShaderProgramId];
 }
 
-void ShaderSystem::create()
+void ShaderSystem::create(Renderer& renderer)
 {
-	uniforms.create();
-	loadDefaultShader();
+	uniforms.create(renderer.openGlContext);
+	loadDefaultShader(renderer);
 }
 
-void ShaderSystem::add(const Name& name)
+void ShaderSystem::add(Renderer& renderer, const Name& name)
 {
 	const Path vertexShaderPath   = resourceManager.getVertexShaderResourcePath(name);
 	const Path fragmentShaderPath = resourceManager.getFragmentShaderResourcePath(name);
@@ -61,45 +62,36 @@ void ShaderSystem::add(const Name& name)
 	vertexShaderCode.append(loadString(vertexShaderPath));
 	fragmentShaderCode.append(loadString(fragmentShaderPath));
 
-	add(name, vertexShaderCode, fragmentShaderCode);
+	add(renderer, name, vertexShaderCode, fragmentShaderCode);
 }
 
-Index ShaderSystem::use(const Name& name)
+Index ShaderSystem::use(Renderer& renderer, const Name& name)
 {
 	auto it = shaderNames.find(name);
-	if(it != shaderNames.end())
-	{
-		use(it->second);
-	}
+	if(it != shaderNames.end()) use(renderer, it->second);
 	else
 	{
 		// try loading the shader
-		add(name);
+		add(renderer, name);
 		it = shaderNames.find(name);
-		if(it != shaderNames.end())
-		{
-			use(it->second);
-		}
-		else
-		{
-			logError("Shader could not be found!");
-		}
+		if(it != shaderNames.end()) use(renderer, it->second);
+		else logError("Shader could not be found!");
 	}
 	return currentShaderProgramId;
 }
 
-Index ShaderSystem::getShaderId(const Name& name)
+Index ShaderSystem::getShaderId(Renderer& renderer, const Name& name)
 {
-	use(name);
+	use(renderer, name);
 	return currentShaderProgramId;
 }
 
-void ShaderSystem::add(const Name& name, const String& vertexShaderCode, const String& fragmentShaderCode)
+void ShaderSystem::add(Renderer& renderer, const Name& name, const String& vertexShaderCode, const String& fragmentShaderCode)
 {
 	// reserve data for shader
 	shaderPrograms.emplace_back();
 	// create shader
-	shaderPrograms.back().create(name, vertexShaderCode, fragmentShaderCode);
+	shaderPrograms.back().create(renderer.openGlContext, name, vertexShaderCode, fragmentShaderCode);
 	// register the new shader
 	currentShaderProgramId = static_cast<UInt>(shaderPrograms.size()) - 1;
 	shaderNames[name]      = currentShaderProgramId;

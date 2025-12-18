@@ -8,7 +8,7 @@ Chunk::Chunk()
 	{
 		for (Int y = 0; y < voxelChunkSize; y++)
 		{
-			for (Int z = voxelChunkHeight - 1; z > 0; z--) voxels[x][y][z] = z / static_cast<Float>(voxelChunkHeight) * 2 < 1 + noise.octaveNoise0_1(x / static_cast<Float>(voxelChunkSize), y / static_cast<Float>(voxelChunkSize), 16);
+			for (Int z = voxelChunkHeight - 1; z > 0; z--) voxels[x][y][z] = z / static_cast<Float>(voxelChunkHeight) * 2 < 1 + octaveNoise01(x / static_cast<Float>(voxelChunkSize), y / static_cast<Float>(voxelChunkSize), 16);
 		}
 	}
 }
@@ -96,12 +96,6 @@ CpuMesh Chunk::generateMesh() const
 
 void VoxelRenderer::render(Renderer& renderer)
 {
-	if (!terrainMesh.isLoaded())
-	{
-		terrainMesh.upload(renderer, world.chunk.generateMesh());
-	}
-	else
-	{
-		terrainMesh.render(renderer.uniforms());
-	}
+	if (!terrainMesh.isLoaded()) terrainMesh.upload(renderer, world.chunk.generateMesh());
+	else terrainMesh.render(renderer);
 }

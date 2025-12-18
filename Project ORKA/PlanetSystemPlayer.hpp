@@ -1,8 +1,7 @@
 #pragma once
-
 #include "Player.hpp"
 
-struct Renderer;
+struct Window;
 
 struct PlanetSystemPlayer : DebugPlayer
 {

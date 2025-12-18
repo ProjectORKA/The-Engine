@@ -2,7 +2,7 @@
 
 #include "Basics.hpp"
 
-#define PI 3.14159265358979323846f
+#define PI 3.141592653589793238462643383279502884
 
 struct TiledRectangle;
 
@@ -60,6 +60,7 @@ struct Orientation
 
 //circles
 [[nodiscard]] Bool circleCollidingWithCircles(Vec2 pos, Float radius, const Vec2Vector& circles, Float pointsRadius);
+[[nodiscard]] Bool circleCollidingWithCircles(Vec2 pos, Float radius, const Vec3Vector& circles, Float pointsRadius);
 
 [[nodiscard]] UInt max(UInt a, UInt b);
 [[nodiscard]] UInt nextPowerOfTwo(UInt value);
@@ -70,13 +71,20 @@ struct Orientation
 [[nodiscard]] Index xyToIndex(Int x, Int y, Int width, Int height);
 [[nodiscard]] Index idOfClosestPoint(Vec2 origin, const Vec2Vector& positions);
 [[nodiscard]] Index idOfClosestPointInLoopingSpace(Vec2 origin, const Vec2Vector& positions, Float extend);
+[[nodiscard]] Index idOfClosestPointInLoopingSpace(Vec2 origin, const Vec3Vector& positions, Float extend);
 [[nodiscard]] Index idOfClosestPoint(Vec2 origin, const Vector<Index>& indices, const Vec2Vector& positions);
 
+[[nodiscard]] Int max(IVec2 vec);
+[[nodiscard]] Int min(IVec2 vec);
+[[nodiscard]] Int min(Int a, Int b);
 [[nodiscard]] Int max(Int a, Int b);
 [[nodiscard]] Int mod(Int a, Int b);
 
 [[nodiscard]] Float sq(Float a);
+[[nodiscard]] Float min(Vec2 vec);
+[[nodiscard]] Float max(Vec2 vec);
 [[nodiscard]] Float min(Float a, Float b);
+[[nodiscard]] Float max(Float a, Float b);
 [[nodiscard]] Float mod(Float a, Float b);
 [[nodiscard]] Float snap(Float a, Float b);
 [[nodiscard]] Float distance(Vec2 a, Vec2 b);
@@ -89,7 +97,12 @@ struct Orientation
 [[nodiscard]] Float distanceToPointInLoopingSpace(Vec2 a, Vec2 b, Float extend);
 [[nodiscard]] Float getDistanceToClosestPoint(Vec3 point, const Vec3Vector& points);
 
+[[nodiscard]] Double min(DVec2 vec);
+[[nodiscard]] Double max(DVec2 vec);
+[[nodiscard]] Double min(Double a, Double b);
+[[nodiscard]] Double max(Double a, Double b);
 [[nodiscard]] Double mod(Double a, Double b);
+[[nodiscard]] Double lerp(Double a, Double b, Double alpha);
 
 [[nodiscard]] LDouble dmod(LDouble x, LDouble y);
 [[nodiscard]] LDouble lerp(LDouble a, LDouble b, LDouble alpha);
@@ -124,7 +137,6 @@ struct Orientation
 [[nodiscard]] Matrix matrixFromOrientation(const Orientation& o);
 [[nodiscard]] Matrix screenSpaceMatrix(Float width, Float height);
 [[nodiscard]] Matrix matrixFromPosition(Float x, Float y, Float z);
-[[nodiscard]] Matrix matrixFromTiledRectangle(TiledRectangle area);
 [[nodiscard]] Matrix matrixFromRotation(Float x, Float y, Float z);
 [[nodiscard]] Matrix matrixFromPositionAndSize(Vec2 pos, Vec2 size);
 [[nodiscard]] Matrix matrixFromPositionAndDirection(Vec2 pos, Vec2 dir);
@@ -135,6 +147,7 @@ struct Orientation
 [[nodiscard]] Matrix matrixFromPositionAndSize(Float x, Float y, Float w, Float h);
 [[nodiscard]] Matrix matrixFromAxis(Vec3 x, Vec3 y, Vec3 z, Vec3 position, Float size);
 [[nodiscard]] Matrix matrixFromPositionDirectionAndSize(Vec2 pos, Vec2 dir, Float size);
+[[nodiscard]] Matrix matrixFromPositionDirectionAndSize(Vec3 pos, Vec2 dir, Float size);
 [[nodiscard]] Matrix matrixFromOrientation(const Orientation& o, Vec3 position, Float size);
 
 [[nodiscard]] Vector<Index> shuffledIndices(UInt size);
@@ -150,6 +163,7 @@ struct Orientation
 [[nodiscard]] Vector<Matrix> matrixArrayFromPositionsAndSize(const Vec3Vector& positions, Float size);
 [[nodiscard]] Vector<Matrix> matrixArrayFromPositionsAndDirections(const Vec2Vector& pos, const Vec2Vector& dir);
 [[nodiscard]] Vector<Matrix> matrixArrayFromPositionsDirectionsAndSizes(const Vec2Vector& position, const Vec2Vector& direction, const Vector<Float>& size);
+[[nodiscard]] Vector<Matrix> matrixArrayFromPositionsDirectionsAndSizes(const Vec3Vector& position, const Vec2Vector& direction, const Vector<Float>& size);
 
 void loopWithinCentered(Vec2& point, Float extend);
 void removePointsInRadius(Vec3 point, Vec3Vector& points, Float radius);
@@ -159,13 +173,13 @@ void spaceColonization(Vec3Vector& points, Vec3Vector& branches, Vector<Index>& 
 template <typename T>
 T max(T a, T b)
 {
-	return a < b ? b : a;
+	return a > b ? a : b;
 }
 
 template <typename T>
 T min(T a, T b)
 {
-	return !(b < a) ? a : b;
+	return a < b ? a : b;
 }
 
 template <typename T>
@@ -177,7 +191,7 @@ T clamp(T a, T min, T max)
 }
 
 template <typename T>
-void approach(T& a, T b, Float rateOfChange)
+void expDecay(T& a, T b, const Float decay, const Float deltaTime)
 {
-	a = clerp(a, b, rateOfChange);
+	a = b+(a-b)*exp(-decay*deltaTime);
 }

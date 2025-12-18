@@ -1,9 +1,9 @@
 #pragma once
+#include "OctreeNode.hpp"
 
-#include "OctreeSystem.hpp"
-
-struct Renderer;
 struct PlanetSystemPlayer;
+struct Renderer;
+struct PlanetRenderSystem;
 
 struct OctreeNodeRenderData
 {
@@ -29,11 +29,11 @@ struct OctreeNodeRenderData
 	void unsubdivide();
 	void create(OctreeNode& octreeNode);
 	void update(PlanetSystemPlayer& player);
-	void updateWithoutSubdivision(PlanetSystemPlayer& player);
-	void render(Renderer& renderer) const;
 	void renderWater(Renderer& renderer) const;
-	void renderLevel(UShort level, Renderer& renderer) const;
+	void updateWithoutSubdivision(PlanetSystemPlayer& player);
 	void renderWaterLevel(UShort level, Renderer& renderer) const;
+	void render(Renderer& renderer, const PlanetRenderSystem& planetRenderSystem) const;
+	void renderLevel(UShort level, Renderer& renderer, const PlanetRenderSystem& planetRenderSystem) const;
 };
 
 struct OctreeRenderSystem
@@ -45,5 +45,5 @@ struct OctreeRenderSystem
 	void count() const;
 	void create(Renderer& renderer) const;
 	void update(PlanetSystemPlayer& player);
-	void renderLevel(UShort level, Renderer& renderer) const;
+	void renderLevel(UShort level, Renderer& renderer, const PlanetRenderSystem& planetRenderSystem) const;
 };

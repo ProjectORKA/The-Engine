@@ -20,10 +20,7 @@ ParticleSystem::~ParticleSystem()
 		lifetime       = nullptr;
 		alive          = nullptr;
 	}
-	else
-	{
-		logError("ParticleSystem was not initialized before destruction, error must have happened!");
-	}
+	else logError("ParticleSystem was not initialized before destruction, error must have happened!");
 }
 
 ParticleSystem::ParticleSystem(const U16 particleCount)

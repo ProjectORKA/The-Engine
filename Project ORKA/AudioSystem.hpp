@@ -2,8 +2,8 @@
 
 namespace External
 {
-	#include "AL/al.h"
-	#include "AL/alc.h"
+	#include <AL/al.h>
+	#include <AL/alc.h>
 }
 
 #include "Math.hpp"
@@ -56,15 +56,15 @@ struct Sound
 	}
 
 private:
-	Int      numSamples = 0;
-	Double   duration   = 0.0;
-	Int      sampleRate = 48000;
+	Int                numSamples = 0;
+	Double             duration   = 0.0;
+	Int                sampleRate = 48000;
 	External::ALshort* samples    = nullptr;
 };
 
 struct AudioBuffer
 {
-	Bool   initialized = false;
+	Bool             initialized = false;
 	External::ALuint bufferID    = 0;
 
 	void setData(const Sound& sound) const
@@ -102,55 +102,31 @@ struct AudioBuffer
 
 struct AudioSource
 {
-	Bool   initialized = false;
+	Bool             initialized = false;
 	External::ALuint sourceID    = 0;
 
 	void setBuffer(const AudioBuffer& buffer) const
 	{
-		if (initialized)
-		{
-			External::alSourcei(sourceID, AL_BUFFER, buffer.bufferID);
-		}
-		else
-		{
-			logError("Audio Source not initialized!");
-		}
+		if (initialized) External::alSourcei(sourceID, AL_BUFFER, buffer.bufferID);
+		else logError("Audio Source not initialized!");
 	}
 
 	void play() const
 	{
-		if (initialized)
-		{
-			External::alSourcePlay(sourceID);
-		}
-		else
-		{
-			logError("Audio Source not initialized!");
-		}
+		if (initialized) External::alSourcePlay(sourceID);
+		else logError("Audio Source not initialized!");
 	}
 
 	void pause() const
 	{
-		if (initialized)
-		{
-			External::alSourcePause(sourceID);
-		}
-		else
-		{
-			logError("Audio Source not initialized!");
-		}
+		if (initialized) External::alSourcePause(sourceID);
+		else logError("Audio Source not initialized!");
 	}
 
 	void stop() const
 	{
-		if (initialized)
-		{
-			External::alSourceStop(sourceID);
-		}
-		else
-		{
-			logError("Audio Source not initialized!");
-		}
+		if (initialized) External::alSourceStop(sourceID);
+		else logError("Audio Source not initialized!");
 	}
 
 	Bool isPlaying() const
@@ -191,10 +167,10 @@ struct AudioSource
 
 struct AudioSystem
 {
-	Bool        initialized = false;
+	Bool                  initialized = false;
 	External::ALCdevice*  device      = nullptr;
 	External::ALCcontext* context     = nullptr;
-	Int         sampleCount = 44100;
+	Int                   sampleCount = 44100;
 
 	AudioSystem()
 	{

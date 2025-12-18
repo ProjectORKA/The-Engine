@@ -59,18 +59,9 @@ struct KDTree
 
 			// Calculate the axis-aligned distance from the query point to the current node
 			Float axisDistance = 0.0;
-			if(axis == 0)
-			{
-				axisDistance = queryPoint.x - nodePoint.x;
-			}
-			else if(axis == 1)
-			{
-				axisDistance = queryPoint.y - nodePoint.y;
-			}
-			else
-			{
-				axisDistance               = queryPoint.z - nodePoint.z;
-			}
+			if(axis == 0) axisDistance = queryPoint.x - nodePoint.x;
+			else if(axis == 1) axisDistance = queryPoint.y - nodePoint.y;
+			else axisDistance               = queryPoint.z - nodePoint.z;
 
 			// Choose the next child node to explore
 			const ULL  nextNodeId = axisDistance >= 0 ? node.b : node.a;
@@ -80,10 +71,7 @@ struct KDTree
 			searchNearest(nextNodeId, nextAxis);
 
 			// Check if we need to search the other subtree based on distance
-			if(axisDistance * axisDistance < closestDistance)
-			{
-				searchNearest(axisDistance >= 0 ? node.a : node.b, nextAxis);
-			}
+			if(axisDistance * axisDistance < closestDistance) searchNearest(axisDistance >= 0 ? node.a : node.b, nextAxis);
 		};
 
 		// Start the search from the root node

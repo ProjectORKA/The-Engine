@@ -3,8 +3,8 @@
 #include "Settings.hpp"
 #include "Basics.hpp"
 
-#include "fmt/core.h"
-#include "fmt/color.h"
+//#include <fmt/core.h>
+#include <fmt/color.h>
 
 inline void print(const String& text)
 {
@@ -83,10 +83,7 @@ void logError(T value)
 		__debugbreak();
 		pause();
 	}
-	else
-	{
-		messageBox(toString(value), "Error");
-	}
+	else messageBox(toString(value), "Error");
 }
 
 inline void logDebugLaunchParameters(const Int count, Char** params)

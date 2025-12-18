@@ -3,6 +3,8 @@
 #include "Time.hpp"
 #include <random>
 
+#include "Debug.hpp"
+
 using RandomDevice = std::random_device;
 
 // FAST:
@@ -65,7 +67,13 @@ Vec3 randomUnitVec3Fast()
 
 Vec2 randomUnitVec2Fast()
 {
-	return normalize(randomPointInCircleFast(1));
+	Vec2 vec;
+	do
+	{
+		vec = randomPointInCircleFast(1);
+	}
+	while (vec == Vec2(0));
+	return normalize(vec);
 }
 
 Int randomIntFast(const Int max)
@@ -125,6 +133,7 @@ Vec2 randomPointInCircleFast(const Float radius)
 {
 	Vec2 v;
 	do v = randomVec2Fast(-radius, radius); while (length(v) > radius);
+	if (v == Vec2(0)) logError("Yes");
 	return v;
 }
 

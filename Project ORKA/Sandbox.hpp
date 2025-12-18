@@ -1,37 +1,33 @@
 #pragma once
-
 #include "Game.hpp"
 #include "Player.hpp"
-#include "KeyMap.hpp"
 
 struct SandboxRenderer final : GameRenderer
 {
 	Mutex       mutex;
 	DebugPlayer player;
-	Framebuffer framebuffer;
 	Float       mouseSensitivity = 0.0015f;
 	InputEvent  enter            = InputEvent(InputType::Mouse, Lmb, true);
 	InputEvent  exit             = InputEvent(InputType::Mouse, Rmb, false);
 	InputEvent  wireframeToggle  = InputEvent(InputType::KeyBoard, F, true);
 
+	void create(Window& window) override;
 	void update(Window& window) override;
 	void destroy(Window& window) override;
+	void renderScene(Window& window) override;
+	void renderInteractive(Window& window) override;
 	void connect(GameSimulation& simulation) override;
 	void inputEvent(Window& window, InputEvent input) override;
-	void create(Window& window) override;
-	void render(Window& window, TiledRectangle area) override;
-	void renderInteractive(Window& window, TiledRectangle area) override;
 };
 
 struct Sandbox
 {
-	SandboxRenderer renderer1;
-	SandboxRenderer renderer2;
+	SandboxRenderer renderer;
 
 	void run()
 	{
-		Window& window = ui.window("ORKA Sandbox", Area(settings.defaultWindowWidth, settings.defaultWindowHeight), true, true, WindowState::Windowed, renderer1);
-		window.add(renderer2);
+		Window& window = ui.window("ORKA Sandbox", settings.defaultWindowWidth, settings.defaultWindowHeight, true, true, WindowState::Windowed);
+		window.addElement(renderer);
 		ui.run();
 	}
 };

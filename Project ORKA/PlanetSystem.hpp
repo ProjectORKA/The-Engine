@@ -1,8 +1,7 @@
 #pragma once
-
 #include "OctreeSystem.hpp"
-#include "QuadtreeSystem.hpp"
 #include "TerrainSystem.hpp"
+#include "QuadtreeSystem.hpp"
 
 struct PlanetSystem
 {
@@ -11,7 +10,7 @@ struct PlanetSystem
 	QuadtreeSystem quadtreeSystem;
 
 	void update();
+	void create();
 	void destroy();
 	void count() const;
-	void create();
 };

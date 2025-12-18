@@ -13,7 +13,7 @@ struct RenderRegion
 	[[nodiscard]] Float getAspectRatio() const;
 
 	RenderRegion();
-	explicit RenderRegion(Area area);
+	explicit RenderRegion(IVec2 area);
 	void     set(Renderer& renderer, const IVec2& area);
 	void     set(Renderer& renderer, const TiledRectangle& newRegion);
 

@@ -1,4 +1,5 @@
 #include "PerformanceGraph.hpp"
+#include "RenderingOverrides.hpp"
 
 void PerformanceGraph::addTime(const Float time)
 {
@@ -7,17 +8,17 @@ void PerformanceGraph::addTime(const Float time)
 	maxSample = *std::ranges::max_element(times);
 }
 
-void PerformanceGraph::render(Window& window, TiledRectangle area)
+void PerformanceGraph::render(Window& window)
 {
 	AlphaBlendOverride(window.renderer, true);
 
 	// [TODO] remove opengl calls
-	OpenGL::apiSetBlending(window.renderer.openGlContext,true);
-	OpenGL::apiBlendFunc(BlendFunction::SrcAlpha, BlendFunction::OneMinusSrcAlpha);
-	OpenGL::apiBlendEquation(BlendEquation::Add);
+	OpenGL::apiSetBlending(window.renderer.openGlContext, true);
+	OpenGL::apiBlendFunc(window.renderer.openGlContext, BlendFunction::SrcAlpha, BlendFunction::OneMinusSrcAlpha);
+	OpenGL::apiBlendEquation(window.renderer.openGlContext, BlendEquation::Add);
 	if (times.empty()) return;
 	window.renderer.useShader("color");
-	window.renderer.screenSpace();
+	window.renderer.screenSpaceFromBottomLeft();
 	window.renderer.fill(0, 0, 0, 0.5);
 	window.renderer.uniforms().setMMatrix(matrixFromPositionAndSize(100 + width / 2.0f, 100 + height / 2.0f, width, height));
 	window.renderer.plane();

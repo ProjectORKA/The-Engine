@@ -12,7 +12,7 @@ void BitmapTextRenderSystem::create(Renderer& renderer)
 	CpuTexture cpuTextTexture;
 	cpuTextTexture.load(Name("font"), Filter::Nearest, Filter::Linear, Wrapping::Repeat);
 	textTexture.load(renderer, cpuTextTexture);
-	renderer.shaderSystem.add("text");
+	renderer.shaderSystem.add(renderer, "text");
 }
 
 void BitmapTextRenderSystem::render(Renderer& renderer, const String& text, const Vec2 position, const Alignment x, const Alignment y, const Float absoluteSize, const Float letterSpacing)
@@ -24,7 +24,7 @@ void BitmapTextRenderSystem::render(Renderer& renderer, const String& text, cons
 	if(y == Alignment::top)
 	{
 		up   = 0.0;
-		down = -1;
+		down = 1.0;
 	}
 
 	if(y == Alignment::middle)
@@ -35,7 +35,7 @@ void BitmapTextRenderSystem::render(Renderer& renderer, const String& text, cons
 
 	if(y == Alignment::bottom)
 	{
-		up   = 1.0;
+		up   = -1.0;
 		down = 0.0;
 	}
 
@@ -56,20 +56,22 @@ void BitmapTextRenderSystem::render(Renderer& renderer, const String& text, cons
 
 		const Int character = static_cast<unsigned char>(text[i]);
 
-		const Float uvUp    = 1.0f - static_cast<Float>(character / 16) / 16.0f;
+		const Float row     = static_cast<Float>(character / 16);
+		const Float uvUp    = row / 16.0f;             // top of the glyph in the atlas (top row = 0)
+		const Float uvDown  = uvUp + 1.0f / 16.0f;     // one row lower
 		const Float uvLeft  = static_cast<Float>(character % 16) / 16.0f;
 		const Float uvRight = uvLeft + 1.0f / 16.0f;
-		const Float uvDown  = uvUp - 1.0f / 16.0f;
 
 		cpuText.positions.emplace_back(position.x + size * left, position.y + size * up, 0);
 		cpuText.positions.emplace_back(position.x + size * left, position.y + size * down, 0);
 		cpuText.positions.emplace_back(position.x + size * right, position.y + size * up, 0);
 		cpuText.positions.emplace_back(position.x + size * right, position.y + size * down, 0);
 
-		cpuText.textureCoordinates.emplace_back(uvLeft, uvUp);
-		cpuText.textureCoordinates.emplace_back(uvLeft, uvDown);
-		cpuText.textureCoordinates.emplace_back(uvRight, uvUp);
-		cpuText.textureCoordinates.emplace_back(uvRight, uvDown);
+		// Map V so glyphs stay upright while using top-origin row selection
+		cpuText.textureCoordinates.emplace_back(uvLeft,  uvDown); // top-left
+		cpuText.textureCoordinates.emplace_back(uvLeft,  uvUp);   // bottom-left
+		cpuText.textureCoordinates.emplace_back(uvRight, uvDown); // top-right
+		cpuText.textureCoordinates.emplace_back(uvRight, uvUp);   // bottom-right
 
 		cpuText.indices.emplace_back(i * 4);
 		cpuText.indices.emplace_back(i * 4 + 1);
@@ -85,9 +87,9 @@ void BitmapTextRenderSystem::render(Renderer& renderer, const String& text, cons
 	gpuText.upload(renderer, cpuText);
 
 	renderer.useShader("text");
-	textTexture.useTextureInSlot(0);
+	textTexture.useTextureInSlot(renderer, 0);
 
 	renderer.setAlphaBlending(true);
 
-	gpuText.render(renderer.uniforms());
+	gpuText.render(renderer);
 }

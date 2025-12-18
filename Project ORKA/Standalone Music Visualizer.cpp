@@ -4,11 +4,11 @@
 //
 //namespace External
 //{
-//	#include "raylib.h"
+//	#include <raylib.h>
 //	#include <cmath>
 //}
 //
-//class ORKAMusicVisualizer
+//struct ORKAMusicVisualizer
 //{
 //	static constexpr bool fakeData         = false;
 //	static constexpr int  sampleRate       = 48000;

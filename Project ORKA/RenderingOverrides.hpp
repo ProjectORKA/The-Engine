@@ -4,24 +4,22 @@
 
 struct Renderer;
 
-class DepthTestOverride
+struct DepthTestOverride
 {
-public:
 	~DepthTestOverride();
 	DepthTestOverride() = delete;
-	DepthTestOverride(Renderer& renderer, const Bool value);
+	DepthTestOverride(Renderer& renderer, Bool value);
 
 private:
 	Bool      stored;
 	Renderer* renderer;
 };
 
-class AlphaBlendOverride
+struct AlphaBlendOverride
 {
-public:
 	~AlphaBlendOverride();
 	AlphaBlendOverride() = delete;
-	AlphaBlendOverride(Renderer& renderer, const Bool value);
+	AlphaBlendOverride(Renderer& renderer, Bool value);
 
 private:
 	Bool      stored;

@@ -2,28 +2,29 @@
 #include "Uniforms.hpp"
 #include "Renderer.hpp"
 
-void GpuMesh::unload(Renderer& renderer)
+void GPUMesh::unload(Renderer& renderer)
 {
 	// make unavailable for rendering
 	if (loaded)
 	{
 		vao.destroy(renderer.openGlContext);
-		positionBuffer.destroy();
-		textureCoordinateBuffer.destroy();
-		normalBuffer.destroy();
-		transformBuffer.destroy();
-		indexBuffer.destroy();
+		positionBuffer.destroy(renderer.openGlContext);
+		textureCoordinateBuffer.destroy(renderer.openGlContext);
+		vertexNormalBuffer.destroy(renderer.openGlContext);
+		faceNormalBuffer.destroy(renderer.openGlContext);
+		transformBuffer.destroy(renderer.openGlContext);
+		indexBuffer.destroy(renderer.openGlContext);
 
 		loaded = false;
 	}
 }
 
-Bool GpuMesh::isLoaded() const
+Bool GPUMesh::isLoaded() const
 {
 	return loaded;
 }
 
-void GpuMesh::upload(Renderer& renderer, const CpuMesh& cpuMesh)
+void GPUMesh::upload(Renderer& renderer, const CpuMesh& cpuMesh)
 {
 	if (loaded)
 	{
@@ -43,108 +44,119 @@ void GpuMesh::upload(Renderer& renderer, const CpuMesh& cpuMesh)
 
 	if (cpuMesh.hasPositions())
 	{
-		positionBuffer.create(cpuMesh.positions, BufferUsage::StaticDraw, "Vertex Position Buffer");
-		vao.bindVertexBuffer(0, positionBuffer.getID(), 0, sizeof(Vec3), 0, 3, DataType::Float, false, 0);
+		positionBuffer.create(renderer.openGlContext, cpuMesh.positions, BufferUsage::StaticDraw, "Vertex Position Buffer");
+		vao.bindVertexBuffer(renderer.openGlContext, 0, positionBuffer.getID(), 0, sizeof(Vec3), 0, 3, DataType::Float, false, 0);
 	}
 
 	if (cpuMesh.hasTextureCoordinates())
 	{
-		textureCoordinateBuffer.create(cpuMesh.textureCoordinates, BufferUsage::StaticDraw, "Texture Coordinate Vertex Buffer");
-		vao.bindVertexBuffer(1, textureCoordinateBuffer.getID(), 0, sizeof(Vec2), 0, 2, DataType::Float, false, 0);
+		textureCoordinateBuffer.create(renderer.openGlContext, cpuMesh.textureCoordinates, BufferUsage::StaticDraw, "Texture Coordinate Vertex Buffer");
+		vao.bindVertexBuffer(renderer.openGlContext, 1, textureCoordinateBuffer.getID(), 0, sizeof(Vec2), 0, 2, DataType::Float, false, 0);
 	}
 
-	if (cpuMesh.hasNormals())
+	if (cpuMesh.hasVertexNormals())
 	{
-		normalBuffer.create(cpuMesh.normals, BufferUsage::StaticDraw, "Vertex Normals Buffer");
-		vao.bindVertexBuffer(2, normalBuffer.getID(), 0, sizeof(Vec3), 0, 3, DataType::Float, true, 0);
+		vertexNormalBuffer.create(renderer.openGlContext, cpuMesh.vertexNormals, BufferUsage::StaticDraw, "Vertex Normals Buffer");
+		vao.bindVertexBuffer(renderer.openGlContext, 2, vertexNormalBuffer.getID(), 0, sizeof(Vec3), 0, 3, DataType::Float, true, 0);
 	}
 
 	if (cpuMesh.hasTangents())
 	{
-		tangentBuffer.create(cpuMesh.tangents, BufferUsage::StaticDraw, "Vertex Tangent Buffer");
-		vao.bindVertexBuffer(3, tangentBuffer.getID(), 0, sizeof(Vec3), 0, 3, DataType::Float, true, 0);
+		tangentBuffer.create(renderer.openGlContext, cpuMesh.tangents, BufferUsage::StaticDraw, "Vertex Tangent Buffer");
+		vao.bindVertexBuffer(renderer.openGlContext, 3, tangentBuffer.getID(), 0, sizeof(Vec3), 0, 3, DataType::Float, true, 0);
 	}
 
 	if (cpuMesh.hasBiTangents())
 	{
-		biTangentBuffer.create(cpuMesh.biTangents, BufferUsage::StaticDraw, "Vertex Bitangent Buffer");
-		vao.bindVertexBuffer(4, biTangentBuffer.getID(), 0, sizeof(Vec3), 0, 3, DataType::Float, true, 0);
+		biTangentBuffer.create(renderer.openGlContext, cpuMesh.biTangents, BufferUsage::StaticDraw, "Vertex Bitangent Buffer");
+		vao.bindVertexBuffer(renderer.openGlContext, 4, biTangentBuffer.getID(), 0, sizeof(Vec3), 0, 3, DataType::Float, true, 0);
 	}
 
 	if (cpuMesh.hasVertexColors())
 	{
-		vertexColorBuffer.create(cpuMesh.vertexColors, BufferUsage::StaticDraw, "Vertex Color Buffer");
-		vao.bindVertexBuffer(5, vertexColorBuffer.getID(), 0, sizeof(Vec3), 0, 3, DataType::Float, false, 0);
+		vertexColorBuffer.create(renderer.openGlContext, cpuMesh.vertexColors, BufferUsage::StaticDraw, "Vertex Color Buffer");
+		vao.bindVertexBuffer(renderer.openGlContext, 5, vertexColorBuffer.getID(), 0, sizeof(Vec3), 0, 3, DataType::Float, false, 0);
+	}
+
+	if (cpuMesh.hasFaceNormals())
+	{
+		faceNormalBuffer.create(renderer.openGlContext, cpuMesh.faceNormals, BufferUsage::StaticDraw, "Face Normals Buffer");
+		vao.bindVertexBuffer(renderer.openGlContext, 6, faceNormalBuffer.getID(), 0, sizeof(Vec3), 0, 3, DataType::Float, true, 0);
 	}
 
 	const Vector<Matrix> transforms = {Matrix(1)};
-	transformBuffer.create(transforms, BufferUsage::DynamicDraw, "Transform Buffer");
+	transformBuffer.create(renderer.openGlContext, transforms, BufferUsage::DynamicDraw, "Transform Buffer");
 
-	vao.bindVertexBuffer(6, transformBuffer.getID(), 0, sizeof(Matrix), 1, 4, DataType::Float, false, 0);
-	vao.bindVertexBuffer(7, transformBuffer.getID(), 0, sizeof(Matrix), 1, 4, DataType::Float, false, 16);
-	vao.bindVertexBuffer(8, transformBuffer.getID(), 0, sizeof(Matrix), 1, 4, DataType::Float, false, 32);
-	vao.bindVertexBuffer(9, transformBuffer.getID(), 0, sizeof(Matrix), 1, 4, DataType::Float, false, 48);
+	vao.bindVertexBuffer(renderer.openGlContext, 7, transformBuffer.getID(), 0, sizeof(Matrix), 1, 4, DataType::Float, false, 0);
+	vao.bindVertexBuffer(renderer.openGlContext, 8, transformBuffer.getID(), 0, sizeof(Matrix), 1, 4, DataType::Float, false, 16);
+	vao.bindVertexBuffer(renderer.openGlContext, 9, transformBuffer.getID(), 0, sizeof(Matrix), 1, 4, DataType::Float, false, 32);
+	vao.bindVertexBuffer(renderer.openGlContext, 10, transformBuffer.getID(), 0, sizeof(Matrix), 1, 4, DataType::Float, false, 48);
 
-	indexBuffer.create(cpuMesh.indices, BufferUsage::StaticDraw, "Index Buffer");
-	vao.bindIndexBuffer(indexBuffer.getID());
+	indexBuffer.create(renderer.openGlContext, cpuMesh.indices, BufferUsage::StaticDraw, "Index Buffer");
+	vao.bindIndexBuffer(renderer.openGlContext, indexBuffer.getID());
 
 	loaded = true;
 }
 
-void GpuMesh::render(Uniforms& uniforms) const
+void GPUMesh::render(Renderer& renderer) const
 {
 	if (loaded)
 	{
-		uniforms.setInstanced(false);
-		uniforms.upload();
-		vao.bind();
-		vao.render(primitiveMode, indexBuffer.indexCount, nullptr);
+		renderer.uniforms().setInstanced(false);
+		renderer.uniforms().upload(renderer.openGlContext);
+		vao.bind(renderer.openGlContext);
+		vao.render(renderer.openGlContext, primitiveMode, indexBuffer.indexCount, nullptr);
 	}
 }
 
-void GpuMesh::updateNormalBuffer(const Vec3Vector& normals) const
+void GPUMesh::updateVertexNormalBuffer(Renderer& renderer, const Vec3Vector& normals)
 {
-	if (loaded) normalBuffer.update(normals);
+	if (loaded) vertexNormalBuffer.update(renderer.openGlContext, normals);
 }
 
-void GpuMesh::updateIndexBuffer(const Vector<unsigned int>& indices)
+void GPUMesh::updateFaceNormalBuffer(Renderer& renderer, const Vec3Vector& normals)
 {
-	if (loaded) indexBuffer.update(indices);
+	if (loaded) faceNormalBuffer.update(renderer.openGlContext, normals);
 }
 
-void GpuMesh::updateTangentBuffer(const Vec3Vector& tangents) const
+void GPUMesh::updateIndexBuffer(Renderer& renderer, const Vector<unsigned int>& indices)
 {
-	if (loaded) tangentBuffer.update(tangents);
+	if (loaded) indexBuffer.update(renderer.openGlContext, indices);
 }
 
-void GpuMesh::updatePositionBuffer(const Vec3Vector& positions) const
+void GPUMesh::updateTangentBuffer(Renderer& renderer, const Vec3Vector& tangents)
 {
-	if (loaded) positionBuffer.update(positions);
+	if (loaded) tangentBuffer.update(renderer.openGlContext, tangents);
 }
 
-void GpuMesh::updateBiTangentBuffer(const Vec3Vector& biTangents) const
+void GPUMesh::updatePositionBuffer(Renderer& renderer, const Vec3Vector& positions)
 {
-	if (loaded) biTangentBuffer.update(biTangents);
+	if (loaded) positionBuffer.update(renderer.openGlContext, positions);
 }
 
-void GpuMesh::updateVertexColorBuffer(const Vec3Vector& vertexColors) const
+void GPUMesh::updateBiTangentBuffer(Renderer& renderer, const Vec3Vector& biTangents)
 {
-	if (loaded) vertexColorBuffer.update(vertexColors);
+	if (loaded) biTangentBuffer.update(renderer.openGlContext, biTangents);
 }
 
-void GpuMesh::updateTextureCoordinateBuffer(const Vec2Vector& textureCoordinates) const
+void GPUMesh::updateVertexColorBuffer(Renderer& renderer, const Vec3Vector& vertexColors)
 {
-	if (loaded) textureCoordinateBuffer.update(textureCoordinates);
+	if (loaded) vertexColorBuffer.update(renderer.openGlContext, vertexColors);
 }
 
-void GpuMesh::renderInstances(Uniforms& uniforms, const Vector<Matrix>& transforms) const
+void GPUMesh::updateTextureCoordinateBuffer(Renderer& renderer, const Vec2Vector& textureCoordinates)
+{
+	if (loaded) textureCoordinateBuffer.update(renderer.openGlContext, textureCoordinates);
+}
+
+void GPUMesh::renderInstances(Renderer& renderer, const Vector<Matrix>& transforms)
 {
 	if (loaded)
 	{
-		transformBuffer.update(transforms);
-		uniforms.setInstanced(true);
-		uniforms.upload();
-		vao.bind();
-		vao.renderInstanced(primitiveMode, indexBuffer.indexCount, nullptr, toIntSafe(transforms.size()));
+		transformBuffer.update(renderer.openGlContext, transforms);
+		renderer.uniforms().setInstanced(true);
+		renderer.uniforms().upload(renderer.openGlContext);
+		vao.bind(renderer.openGlContext);
+		vao.renderInstanced(renderer.openGlContext, primitiveMode, indexBuffer.indexCount, nullptr, toIntSafe(transforms.size()));
 	}
 }

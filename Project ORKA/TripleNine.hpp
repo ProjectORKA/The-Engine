@@ -1,9 +1,8 @@
 #pragma once
 #include "ASIONetworking.hpp"
+#include "Framebuffer.hpp"
 #include "Game.hpp"
 #include "ORKAIntroSequence.hpp"
-#include "Player.hpp"
-#include "Random.hpp"
 #include "TripleNineMessage.hpp"
 #include "TripleNinePlayer.hpp"
 
@@ -73,7 +72,7 @@ struct TripleNineServer
 	void sendMessageToClient(ClientID clientID, TripleNineMessage& message);
 
 	// request
-	void getServerInfo();
+	void getServerInfo() const;
 	void receivedPing(TimePoint timeStamp);
 	void clientWantsToConnect();
 	void disconnectClient(const DisconnectClientData& disconnectClientData);
@@ -138,10 +137,11 @@ protected:
 
 struct TripleNineSimulation final : GameSimulation
 {
-	Bool             isOnline = false;
-	Bool             isServer = true;
-	TripleNineServer server;
-	TripleNineClient client;
+	// multiplayer stuff
+	//TripleNineServer server;
+	//TripleNineClient client;
+	//Bool             isOnline = false;
+	//Bool             isServer = false;
 
 	#ifdef TRIPLE_NINE_ENEMY
 	void createEnemy();
@@ -169,11 +169,6 @@ private:
 
 struct TripleNineRenderer final : GameRenderer
 {
-	TripleNineGameState gameState;
-
-	TripleNineClient client;
-
-	Framebuffer mainFramebuffer;
 	Framebuffer bloom1Framebuffer;
 	Framebuffer bloom2Framebuffer;
 	Framebuffer bloom3Framebuffer;
@@ -190,7 +185,7 @@ struct TripleNineRenderer final : GameRenderer
 	Bool             renderText = true;
 	Bool             bloom      = false;
 
-	Area       frameSize     = Area(1, 1);
+	IVec2      frameSize     = IVec2(1, 1);
 	InputEvent enter         = InputEvent(InputType::Mouse, Lmb, true);
 	InputEvent toggleBloom   = InputEvent(InputType::KeyBoard, B, false);
 	InputEvent reloadShaders = InputEvent(InputType::KeyBoard, T, false);
@@ -201,7 +196,7 @@ struct TripleNineRenderer final : GameRenderer
 	void create(Window& window) override;
 	void destroy(Window& window) override;
 	void connect(GameSimulation& simulation) override;
-	void render(Window& window, TiledRectangle area) override;
+	void renderScene(Window& window) override;
 
 	#ifdef TRIPLE_NINE_ENEMY
 	void killEnemy(UInt uiId)
@@ -218,7 +213,7 @@ struct TripleNineRenderer final : GameRenderer
 	#endif
 
 	void inputEvent(Window& window, InputEvent input) override;
-	void renderInteractive(Window& window, TiledRectangle area) override;
+	void renderInteractive(Window& window) override;
 };
 
 struct TripleNine

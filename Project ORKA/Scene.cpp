@@ -81,7 +81,7 @@ void Scene::loadFBX(Path path)
 									normal.x = assimpScene->mMeshes[meshId]->mNormals[i].x;
 									normal.y = assimpScene->mMeshes[meshId]->mNormals[i].y;
 									normal.z = assimpScene->mMeshes[meshId]->mNormals[i].z;
-									mesh.normals.push_back(normal);
+									mesh.vertexNormals.push_back(normal);
 
 									mesh.vertexColors.push_back(color);
 								}
@@ -98,15 +98,9 @@ void Scene::loadFBX(Path path)
 										}
 									}
 								}
-								else
-								{
-									errorMessage = "Mesh does not have faces!";
-								}
+								else errorMessage = "Mesh does not have faces!";
 							}
-							else
-							{
-								errorMessage = "Mesh does not have positions stored!";
-							}
+							else errorMessage = "Mesh does not have positions stored!";
 
 							lastIndex += assimpScene->mMeshes[meshId]->mNumVertices;
 						}
@@ -118,16 +112,10 @@ void Scene::loadFBX(Path path)
 					}
 				}
 			}
-			else
-			{
-				errorMessage = "No meshes in fbx scene!";
-			}
+			else errorMessage = "No meshes in fbx scene!";
 		}
 	}
-	else
-	{
-		errorMessage = path.parent_path().string() + " does not exist!";
-	}
+	else errorMessage = path.parent_path().string() + " does not exist!";
 
 	if(!errorMessage.empty()) logError("The scene (" + path.stem().string() + ") could not be loaded! (" + path.string() + ") Error: " + errorMessage);
 }

@@ -11,14 +11,14 @@ struct GPUTexture
 	[[nodiscard]] UInt              getOpenGLID() const;
 	[[nodiscard]] Float             getAspectRatio() const;
 
-	void generateMipMaps() const;
 	void unload(Renderer & renderer);
-	void resize(Renderer & renderer, Area size);
-	void useTextureInSlot(UInt textureSlot) const;
+	void resize(Renderer & renderer, IVec2 size);
+	void generateMipMaps(Renderer& renderer) const;
 	void load(Renderer& renderer, const Name& name);
 	void load(Renderer& renderer, const CpuTexture& cpuTexture);
-	void setFilters(Filter nearFilterValue, Filter farFilterValue);
-	void generateMipMaps(Filter nearFilterValue, Filter farFilterValue);
+	void setFilters(Renderer& renderer, Filter nearFilterValue, Filter farFilterValue);
+	void useTextureInSlot(Renderer& renderer, UInt textureSlot) const;
+	void generateMipMaps(Renderer& renderer, Filter nearFilterValue, Filter farFilterValue);
 	void load(Renderer& renderer, IVec2 size, WritePixelsFormat format, DataType type, Wrapping wrapping);
 private:
 	Int               width  = 1;
@@ -32,5 +32,5 @@ private:
 	DataType          dataType   = DataType::Byte;
 	WritePixelsFormat format     = WritePixelsFormat::RGBA;
 
-	void setData(DataType dataType, WritePixelsFormat format, Int width, Int height, const Byte* data);
+	void setData(Renderer& renderer, DataType dataType, WritePixelsFormat format, Int width, Int height, const Byte* data);
 };

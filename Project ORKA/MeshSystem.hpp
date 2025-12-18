@@ -11,14 +11,16 @@ struct NameTable
 {
 	Vector<Name>  names;
 	Vector<Index> indices;
+	Vector<Bool>  failed;
 
-	void add(const Name& name, Index id);
-	Bool find(const Name& name, Index& id) const;
+	void add(const Name& name, Index id, Bool failedFlag = false);
+	Bool find(const Name& name, Index& id, Bool& failedFlag) const;
+	void markFailed(const Name& name);
 };
 
 struct BasicMeshes
 {
-	GpuMesh fullscreenMesh;
+	GPUMesh fullscreenMesh;
 
 	void create(Renderer& renderer);
 	void destroy(Renderer& renderer);
@@ -27,18 +29,18 @@ struct BasicMeshes
 struct MeshSystem
 {
 	NameTable       meshNames;
-	Vector<GpuMesh> gpuMeshes;
+	Vector<GPUMesh> gpuMeshes;
 	BasicMeshes     basicMeshes;
 	Index           currentMeshId = 0;
 
-	GpuMesh& currentMesh();
+	GPUMesh& currentMesh();
 	void     use(Index meshId);
 	void     create(Renderer& renderer);
 	void     destroy(Renderer& renderer);
-	void     render(Uniforms& uniforms, Index meshId);
-	void     use(Renderer& renderer, const Name& name);
-	void     renderFullscreen(Uniforms& uniforms) const;
+	void     render(Renderer& renderer, Index meshId);
+	Bool     use(Renderer& renderer, const Name& name);
+	void     renderFullscreen(Renderer& renderer) const;
 	void     addMesh(Renderer& renderer, const CpuMesh& cpuMesh);
-	void     render(Renderer& renderer, Uniforms& uniforms, const Name& meshName);
-	void     renderInstanced(Renderer& renderer, Uniforms& uniforms, const Name& meshName, const Vector<Matrix>& transforms);
+	void     render(Renderer& renderer, const Name& meshName);
+	void     renderInstanced(Renderer& renderer, const Name& meshName, const Vector<Matrix>& transforms);
 };

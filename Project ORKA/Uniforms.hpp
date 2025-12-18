@@ -6,11 +6,11 @@
 struct Uniforms
 {
 	void   reset();
-	void   upload();
-	void   destroy() const;
 	void   resetMatrices();
 	String getUniformShaderCode();
-	void   create();
+	void   create(OpenGlContext& openGlContext);
+	void   upload(OpenGlContext& openGlContext);
+	void   destroy(OpenGlContext& openGlContext);
 
 	[[nodiscard]] Float  getTime() const;
 	[[nodiscard]] UInt   getOpenGLID() const;

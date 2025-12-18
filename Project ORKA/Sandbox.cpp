@@ -8,68 +8,56 @@ void SandboxRenderer::update(Window& window)
 
 void SandboxRenderer::destroy(Window& window)
 {
-	framebuffer.destroy(window.renderer);
+	GameRenderer::destroy(window);
 }
 
 void SandboxRenderer::connect(GameSimulation& simulation) {}
 
 void SandboxRenderer::inputEvent(Window& window, const InputEvent input)
 {
-	if(input == enter) window.captureCursor();
-	if(input == exit) window.releaseCursor();
-	if(input == wireframeToggle) window.renderer.wireframeMode = !window.renderer.wireframeMode;
+	if (input == enter && isPointInside(window, window.mousePosBotLeft)) window.captureCursor();
+	if (input == exit) window.releaseCursor();
+	if (input == wireframeToggle) window.renderer.wireframeMode = !window.renderer.wireframeMode;
 
 	player.inputEvent(window, input);
 }
 
 void SandboxRenderer::create(Window& window)
 {
+	setDebugName("SandboxRenderer");
 	player.camera.setPosition(Vec3(0.0f, -5.0f, 0.0f));
-
-	framebuffer.create("MainFramebuffer", Area(1920, 1080));
-	framebuffer.add(window.renderer, WritePixelsFormat::RGBA, DataType::Float, FramebufferAttachment::Color0, true, Wrapping::Clamped);
-	framebuffer.add(window.renderer, WritePixelsFormat::Depth, DataType::Float, FramebufferAttachment::Depth, false, Wrapping::Clamped);
-	framebuffer.checkComplete();
+	GameRenderer::create(window);
 }
 
-void SandboxRenderer::render(Window& window, const TiledRectangle area)
+void SandboxRenderer::renderScene(Window& window)
 {
 	Renderer& r = window.renderer;
-
-	r.setRenderRegion(area);
-
-	r.setWireframeMode();
 	r.setCulling(true);
 	r.setDepthTest(true);
 
-	if(framebuffer.getSize() != area.size)
-	framebuffer.resize(r, area.size);
-	framebuffer.clear();
-	framebuffer.bindDraw(r);
+	framebuffer.clearColor(r, Color(0.1, 0.1, 0.1, 1));
+	framebuffer.clearDepth(r);
 
-	// render scene
-	player.render(window); // sets the position, rotation and projection
-	r.useShader("normals"); // sets the color / material for the rendered objects
+	//// render scene
+	player.render(window);                                                // sets the position, rotation and projection
+	r.useShader("normals");                                               // sets the color / material for the rendered objects
 	r.uniforms().setMMatrix(matrixFromRotation(0, 0, r.time.getTotal())); // sets the objects transformation within the world
-	r.renderMesh("suzanne"); // renders the objects 3D data to the screen
+	r.renderMesh("suzanne");                                              // renders the objects 3D data to the screen
 
 	// text rendering
-	r.setDepthTest(false); // disables depth to always draw on top
-	r.screenSpace(); // aligns coordinate system with screenspace
-	r.uniforms().setMMatrix(Matrix(1));
-	r.textRenderSystem.setSize(16.0f);
-	r.textRenderSystem.setLetterSpacing(0.6f);
-	r.textRenderSystem.alignText(Alignment::left, Alignment::bottom);
-	r.textRenderSystem.render(r, "W A S D Q E to move", Vec2(50, 250));
-	r.textRenderSystem.render(r, "F for wireframe mode", Vec2(50, 200));
-	r.textRenderSystem.render(r, "Scroll to change speed", Vec2(50, 150));
-	r.textRenderSystem.render(r, "FPS: " + toString(static_cast<Int>(1.0f / r.time.getDelta())), Vec2(50));
-
-	// render to window
+	r.screenSpaceFromBottomLeft();       // aligns coordinate system with screenspace
 	r.setDepthTest(false);
-	framebuffer.setAsTexture(0);
-	r.drawToWindow();
-	r.fullScreenShader("final");
+	r.setCulling(false);
+	r.uniforms().setMMatrix(Matrix(1));
+	r.fontSize(16.0f);
+	r.letterSpacing(0.6f);
+	r.textRenderSystem.alignText(Alignment::left, Alignment::bottom);
+	constexpr Float textSpacing = 20;
+	Int i = 1;
+	r.text("FPS: " + toString(static_cast<Int>(1.0f / r.time.getDelta())), Vec2(textSpacing, textSpacing * i++));
+	r.text("Scroll to change speed", Vec2(textSpacing, textSpacing * i++));
+	r.text("F for wireframe mode", Vec2(textSpacing, textSpacing * i++));
+	r.text("W A S D Q E to move", Vec2(textSpacing, textSpacing * i++));
 }
 
-void SandboxRenderer::renderInteractive(Window& window, TiledRectangle area) {}
+void SandboxRenderer::renderInteractive(Window& window) {}

@@ -1,4 +1,6 @@
 #include "MeshSystem.hpp"
+
+#include "Renderer.hpp"
 #include "Uniforms.hpp"
 
 void MeshSystem::create(Renderer& renderer)
@@ -30,7 +32,7 @@ void BasicMeshes::create(Renderer& renderer)
 
 void MeshSystem::destroy(Renderer& renderer)
 {
-	for(GpuMesh& gpuMesh : gpuMeshes) gpuMesh.unload(renderer);
+	for(GPUMesh& gpuMesh : gpuMeshes) gpuMesh.unload(renderer);
 	gpuMeshes.clear();
 	basicMeshes.destroy(renderer);
 }
@@ -40,7 +42,7 @@ void BasicMeshes::destroy(Renderer& renderer)
 	fullscreenMesh.unload(renderer);
 }
 
-GpuMesh& MeshSystem::currentMesh()
+GPUMesh& MeshSystem::currentMesh()
 {
 	return gpuMeshes[currentMeshId];
 }
@@ -59,74 +61,96 @@ void MeshSystem::addMesh(Renderer& renderer, const CpuMesh& cpuMesh)
 		use(toUIntSafe(gpuMeshes.size() - 1));
 		meshNames.add(cpuMesh.name, currentMeshId);
 	}
-	else
-	{
-		logWarning("Mesh could not be loaded! (" + toString(cpuMesh.name) + ")");
-	}
+	else logWarning("Mesh could not be loaded! (" + toString(cpuMesh.name) + ")");
 }
 
-void NameTable::add(const Name& name, const Index id)
+void NameTable::add(const Name& name, const Index id, const Bool failedFlag)
 {
 	names.push_back(name);
 	indices.push_back(id);
+	failed.push_back(failedFlag);
 }
 
-Bool NameTable::find(const Name& name, Index& id) const
+Bool NameTable::find(const Name& name, Index& id, Bool& failedFlag) const
 {
 	id = -1;
+	failedFlag = false;
 	for(Index i = 0; i < names.size(); i++)
 	{
 		if(names[i] == name)
 		{
 			id = indices[i];
+			failedFlag = failed[i];
 			return true;
 		}
 	}
 	return false;
 }
 
-void MeshSystem::renderFullscreen(Uniforms& uniforms) const
+void NameTable::markFailed(const Name& name)
 {
-	basicMeshes.fullscreenMesh.render(uniforms);
+	for(Index i = 0; i < names.size(); i++)
+	{
+		if(names[i] == name)
+		{
+			failed[i] = true;
+			return;
+		}
+	}
+	add(name, -1, true);
 }
 
-void MeshSystem::render(Uniforms& uniforms, const Index meshId)
+void MeshSystem::renderFullscreen(Renderer& renderer) const
+{
+	basicMeshes.fullscreenMesh.render(renderer);
+}
+
+void MeshSystem::render(Renderer& renderer, const Index meshId)
 {
 	use(meshId);
-	currentMesh().render(uniforms);
+	currentMesh().render(renderer);
 }
 
-void MeshSystem::use(Renderer& renderer, const Name& name)
+Bool MeshSystem::use(Renderer& renderer, const Name& name)
 {
 	Index id;
-	if(meshNames.find(name, id))
+	Bool  failed = false;
+	if(meshNames.find(name, id, failed))
+	{
+		if(failed) return false;
+		currentMeshId = id;
+		return true;
+	}
+
+	CpuMesh mesh;
+	mesh.load(name);
+	if(!mesh.isLoaded())
+	{
+		logWarning("Mesh could not be loaded! (" + toString(name) + "), skipping render.");
+		meshNames.markFailed(name);
+		return false;
+	}
+
+	addMesh(renderer, mesh);
+	if(meshNames.find(name, id, failed) && !failed)
 	{
 		currentMeshId = id;
+		return true;
 	}
-	else
-	{
-		CpuMesh mesh;
-		mesh.load(name);
-		addMesh(renderer, mesh);
-		if(meshNames.find(name, id))
-		{
-			currentMeshId = id;
-		}
-		else
-		{
-			logError("Mesh could not be loaded! (" + toString(name) + ")");
-		}
-	}
+
+	logWarning("Mesh could not be loaded! (" + toString(name) + "), skipping render.");
+	meshNames.markFailed(name);
+	return false;
 }
 
-void MeshSystem::render(Renderer& renderer, Uniforms& uniforms, const Name& meshName)
+void MeshSystem::render(Renderer& renderer, const Name& meshName)
 {
-	use(renderer, meshName);
-	currentMesh().render(uniforms);
+	if (!use(renderer, meshName)) return;
+	currentMesh().render(renderer);
 }
 
-void MeshSystem::renderInstanced(Renderer& renderer, Uniforms& uniforms, const Name& meshName, const Vector<Matrix>& transforms)
+void MeshSystem::renderInstanced(Renderer& renderer, const Name& meshName, const Vector<Matrix>& transforms)
 {
-	use(renderer, meshName);
-	currentMesh().renderInstances(uniforms, transforms);
+	if (!use(renderer, meshName)) return;
+	currentMesh().renderInstances(renderer, transforms);
 }

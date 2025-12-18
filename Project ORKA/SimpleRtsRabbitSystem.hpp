@@ -2,25 +2,41 @@
 #include "Basics.hpp"
 #include "SimpleRtsSystem.hpp"
 
-struct SimpleRtsSimulation;
-struct Renderer;
+enum RabbitState
+{
+	Standing,
+	Hopping,
+	Running
+};
 
 struct SimpleRtsRabbitSystem : SimpleRtsSystem
 {
-	const Float rabbitRadius = 0.2f;
+	const Float hopSpeed      = 0.5f;
+	const Float rabbitRadius  = 0.2f;
+	const Float rabbitMaxAge  = 20.0f * 60.0f;
+	const Float rabbitMinSize = 0.2f;
+	const Float rabbitMaxSize = 1.0f;
+	const Float minSpeed      = 0.1f;
+	const Float maxSpeed      = 8.0f;
+	const Float jitter        = 0.1f;
+	const Int   count         = 10000;
 
-	UInt        rabbitCount  = 0;
-	const Float rabbitSpeed  = 8;
-	const Float rabbitJitter = 10;
+	Vector<Float>       sizes;
+	Vector<Float>       ages;
+	Vec2Vector          positions;
+	Vec2Vector          directions;
+	Vector<Float>       speeds;
+	Vector<RabbitState> states;
+	Vector<Double>      waitTimes;
 
-	Vector<Float> age;
-	Vec2Vector  positions;
-	Vec2Vector  velocity;
+	void killRabbit(Int id);
+	void render(Renderer& renderer) override;
+	void update(SimpleRtsSimulation& sim) override;
+	void spawnEntity(const SimpleRtsSimulation& sim);
+	void create(const SimpleRtsSimulation& sim) override;
+	void destroy(const SimpleRtsSimulation& sim) override;
 
-	void render(Renderer& renderer) const override;
-	void spawnRabbit(const SimpleRtsSimulation& sim);
-	void create(const SimpleRtsSimulation& sim) override {}
-	void update(SimpleRtsSimulation& sim) override {}
-	void destroy(const SimpleRtsSimulation& sim) override {}
-	bool doesCollide(Vec2 position, Float radius) const;
+	[[nodiscard]] Float sizeFromAge(Float age) const;
+	[[nodiscard]] Float speedFromAge(Float age) const;
+	[[nodiscard]] Bool  doesCollide(Vec2 position, Float radius) const;
 };

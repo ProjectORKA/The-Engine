@@ -1,9 +1,14 @@
 #pragma once
 
 #include "Basics.hpp"
-#include "FileSystem.hpp"
 #include "Renderer.hpp"
 #include "SimpleRtsSystem.hpp"
+
+struct Food
+{
+	Float volume = 0;
+	Float kcal   = 0;
+};
 
 struct Renderer;
 struct SimpleRtsSimulation;
@@ -15,13 +20,22 @@ enum class SimpleRtsHumanState
 	Wandering,
 	SearchFood,
 	MoveToFood,
+	EatFood,
 };
 
 struct SimpleRtsHumanSystem : SimpleRtsSystem
 {
-	Timer timer;
+	void               render(Renderer& renderer) override;
+	void               update(SimpleRtsSimulation& sim) override;
+	void               spawnHuman(const SimpleRtsSimulation& sim);
+	[[nodiscard]] Bool doesCollide(Vec2 position, Float radius) const;
+	void               create(const SimpleRtsSimulation& sim) override;
+	void               destroy(const SimpleRtsSimulation& sim) override;
+
+private:
+	Timer       timer;
 	const Float humanRadius                     = 0.5f;
-	const UInt  count                           = 1000;
+	const UInt  count                           = 10000;
 	const Float minHumanSize                    = 0.8f;
 	const Float maxHumanSize                    = 1.2f;
 	const Float humanSpeedMin                   = 2.0;
@@ -36,22 +50,15 @@ struct SimpleRtsHumanSystem : SimpleRtsSystem
 
 	Vector<String>              names;
 	Vector<Float>               speed;
-	Vector<Float>               scales;
 	Vector<SimpleRtsHumanState> states;
-	Vector<Float>               hunger;
-	Vector<String>              surNames;
-	Vec2Vector                positions;
-	Vec2Vector                directions;
-	//targets
-	Vector<Index>				targetId;
-	Vec2Vector                targetPositions;
 
-	void render(Renderer& renderer) const override;
-	void spawnHuman(const SimpleRtsSimulation& sim);
-	bool doesCollide(Vec2 position, Float radius) const;
-	void create(const SimpleRtsSimulation& sim) override;
-	void update(SimpleRtsSimulation& sim) override;
-	void destroy(const SimpleRtsSimulation& sim) override;
+	Vector<Float> storedEnergy;
+	Vector<Float> dailyEnergyRequirement;
 
-	void die(Index i);
+	Vector<String> surNames;
+	Vector<Index>  targetId;
+	Vec2Vector     targetPositions;
+	Vector<Float>  scales;
+	Vec2Vector     positions;
+	Vec2Vector     directions;
 };

@@ -18,7 +18,7 @@ void Time::reset()
 	deltaDuration = Duration(0);
 	totalDuration = Duration(0);
 	delta         = 0.0f;
-	total         = 0.0f;
+	total         = 0.0;
 }
 
 void Time::pause()
@@ -43,12 +43,9 @@ void Time::update()
 		deltaDuration = currentTime - lastTime;
 		totalDuration += deltaDuration;
 		delta = static_cast<Float>(deltaDuration.count());
-		total = static_cast<Float>(totalDuration.count());
+		total = totalDuration.count();
 	}
-	else
-	{
-		deltaDuration = std::chrono::seconds::zero();
-	}
+	else deltaDuration = std::chrono::seconds::zero();
 }
 
 void Timer::start()
@@ -71,7 +68,7 @@ Float Time::getDelta() const
 	return delta;
 }
 
-Float Time::getTotal() const
+Double Time::getTotal() const
 {
 	return total;
 }

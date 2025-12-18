@@ -12,9 +12,9 @@ struct AxisNeighborNode2
 	Int  west  = -1;
 	Int  east  = -1;
 
-	void update(Vector<AxisNeighborNode2>& points, Float delta)
+	void update(const Vector<AxisNeighborNode2>& points, Float delta)
 	{
-		Float avgDist = distance(points[0].position, points[points[0].north].position);
+		const Float avgDist = distance(points[0].position, points[points[0].north].position);
 
 		Vec3 pos   = Vec3(0);
 		Int  count = 0;
@@ -41,10 +41,9 @@ struct AxisNeighborNode2
 		if(count) pos /= count;
 
 		position = lerp(position, pos, 0.1f * delta) * avgDist;
-		//position = 
 	}
 
-	AxisNeighborNode2(const Vec3 position)
+	explicit AxisNeighborNode2(const Vec3 position)
 	{
 		this->position = position;
 	}
@@ -56,10 +55,6 @@ struct AxisNeighborPrototype2 : Prototype
 	const Bool                renderArrows = false;
 	const Int                 numPoints    = 1000;
 	Vector<AxisNeighborNode2> points;
-	//Vector<ULL> north;
-	//Vector<ULL> south;
-	//Vector<ULL> west;
-	//Vector<ULL> east;
 
 	void addPoint()
 	{
@@ -80,10 +75,7 @@ struct AxisNeighborPrototype2 : Prototype
 		while(points[comparisonID].position.x < point.position.x)
 		{
 			// if we can, step east
-			if(points[comparisonID].east != -1)
-			{
-				comparisonID = points[comparisonID].east;
-			}
+			if(points[comparisonID].east != -1) comparisonID = points[comparisonID].east;
 
 			// if we cant, point is inserted on the east
 			else
@@ -123,10 +115,7 @@ struct AxisNeighborPrototype2 : Prototype
 		while(points[comparisonID].position.y < point.position.y)
 		{
 			// if we can, step north
-			if(points[comparisonID].north != -1)
-			{
-				comparisonID = points[comparisonID].north;
-			}
+			if(points[comparisonID].north != -1) comparisonID = points[comparisonID].north;
 
 			// if we cant, point is inserted on the north
 			else
@@ -160,7 +149,7 @@ struct AxisNeighborPrototype2 : Prototype
 		points.push_back(point);
 	}
 
-	void create() override
+	void create(Renderer & r) override
 	{
 		for(Int i = 0; i < numPoints; i++) addPoint();
 	}

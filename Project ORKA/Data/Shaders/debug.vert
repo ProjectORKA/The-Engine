@@ -4,7 +4,6 @@
 out vec3 normal;
 out vec4 vertexColor;
 out vec4 worldPosition;
-out vec2 textureCoordinate;
 
 void main() {
 	
@@ -18,7 +17,6 @@ void main() {
 
 	worldPosition = vec4(wPos,1);
 	normal = normals;
-	textureCoordinate = uvs;
 	gl_Position  = pMatrix * vMatrix * worldPosition;
 	vertexColor = vec4(vec3(vertex),1.0f);
 };

@@ -21,10 +21,10 @@ struct ImageViewerResource
 
 	void loadIntoRam();
 	void unloadFromRam();
-	void use(Int textureSlot) const;
 	void destroy(Renderer & renderer);
 	void loadOntoGpu(Renderer & renderer);
 	void unloadFromGpu(Renderer & renderer);
+	void use(Renderer& renderer, Int textureSlot) const;
 	void calculateRating(Index currentImageIndex, UInt resourceCount);
 
 private:

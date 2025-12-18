@@ -20,7 +20,10 @@ void ImageViewerRenderer::removeImage(Renderer& renderer)
 	imagesMutex.unlock();
 }
 
-void ImageViewerRenderer::destroy(Window& window) {}
+void ImageViewerRenderer::destroy(Window& window)
+{
+	GameRenderer::destroy(window);
+}
 
 void ImageViewerRenderer::updateLoadedImages(Renderer& renderer)
 {
@@ -68,6 +71,7 @@ void ImageViewerRenderer::calculatePriorities()
 
 void ImageViewerRenderer::create(Window& window)
 {
+	GameRenderer::create(window);
 	availableMemoryUponStartup = availablePhysicalMemoryInBytes();
 
 	for (const auto& tag : imageTags)
@@ -158,17 +162,11 @@ void ImageViewer::run(const Int argc, Char* argv[])
 
 		if (isExecutableFile(path)) continue;
 
-		if (isImageFile(path))
-		{
-			filePaths.push_back(path);
-		}
-		else
-		{
-			logWarning("Can't process input: " + path.string());
-		}
+		if (isImageFile(path)) filePaths.push_back(path);
+		else logWarning("Can't process input: " + path.string());
 	}
 
-	Window& window = ui.window("ORKA Image Viewer", Area(1920, 1080), true, true, WindowState::Windowed, renderer);
+	Window& window = ui.window("ORKA Image Viewer", settings.defaultWindowWidth, settings.defaultWindowHeight, true, true, WindowState::Windowed, renderer);
 
 	for (auto& path : filePaths) window.droppedFilePaths.push_back(path);
 
@@ -231,10 +229,7 @@ void loadImage(Renderer& renderer, ImageViewerRenderer& viewer, const Index imag
 			viewer.removeImage(renderer, imageId);
 		}
 	}
-	else
-	{
-		logWarning("Image could not be loaded! RAM is full!");
-	}
+	else logWarning("Image could not be loaded! RAM is full!");
 }
 
 void addImageToDatabase(ImageViewerRenderer& viewer, const Index imageId)
@@ -252,7 +247,7 @@ void addImageToDatabase(ImageViewerRenderer& viewer, const Index imageId)
 	}
 };
 
-void ImageViewerRenderer::renderInteractive(Window& window, TiledRectangle area) {}
+void ImageViewerRenderer::renderInteractive(Window& window) {}
 
 Vector<Index> ImageViewerRenderer::indicesOfImagesSortedByPriority() const
 {
@@ -265,34 +260,33 @@ Vector<Index> ImageViewerRenderer::indicesOfImagesSortedByPriority() const
 	return indices;
 }
 
-void ImageViewerRenderer::render(Window& window, const TiledRectangle area)
+void ImageViewerRenderer::renderScene(Window& window)
 {
-	Renderer& renderer = window.renderer;
+	Renderer& r = window.renderer;
 
 	// images need to be loaded onto gpu in this thread, so lets just do it before we render
-	for (Int i = 0; i < static_cast<Int>(images.size()); i++) if (images[i].inRam() && !images[i].onGpu()) images[i].loadOntoGpu(renderer);
+	for (Int i = 0; i < static_cast<Int>(images.size()); i++) if (images[i].inRam() && !images[i].onGpu()) images[i].loadOntoGpu(r);
 
-	renderer.uniforms().reset();
+	r.uniforms().reset();
 
-	renderer.clearBackground(Color(0.08, 0.08, 0.08, 1));
+	r.clearBackground(Color(0.08, 0.08, 0.08, 1));
 
-	renderer.setAlphaBlending(true, BlendFunction::One, BlendFunction::OneMinusSrcAlpha, BlendEquation::Add);
+	r.setAlphaBlending(true, BlendFunction::One, BlendFunction::OneMinusSrcAlpha, BlendEquation::Add);
 
-	renderer.normalizedScreenSpace();
+	r.normalizedScreenSpace(window);
 
 	Float imgX = 0;
 	Float imgY = 0;
 
 	if (!images.empty() && images[currentImageId].onGpu())
 	{
-		images[currentImageId].use(0);
+		images[currentImageId].use(r, 0);
 		imgX = static_cast<Float>(images[currentImageId].getWidth());
 		imgY = static_cast<Float>(images[currentImageId].getHeight());
 	}
 
-	const auto winX = static_cast<Float>(renderer.getWindowWidth());
-	const auto winY = static_cast<Float>(renderer.getWindowHeight());
-
+	const Float winX = static_cast<Float>(window.getWidth());
+	const Float winY = static_cast<Float>(window.getHeight());
 	const Float size = min(winX / imgX, winY / imgY);
 
 	auto finalMatrix = Matrix(1);
@@ -300,23 +294,15 @@ void ImageViewerRenderer::render(Window& window, const TiledRectangle area)
 	finalMatrix      = scale(finalMatrix, Vec3(size * imgX, size * imgY, 0));
 	finalMatrix      = scale(finalMatrix, Vec3(zoom));
 
-	if (smoothCameraTransition)
-	{
-		approach(actualMatrix, finalMatrix, renderer.deltaTime() * smoothCameraSpeed);
-	}
-	else
-	{
-		actualMatrix = finalMatrix;
-	}
+	if (smoothCameraTransition) expDecay(actualMatrix, finalMatrix, smoothCameraSpeed, r.deltaTime());
+	else actualMatrix = finalMatrix;
 
-	renderer.uniforms().setMMatrix(actualMatrix);
+	r.uniforms().setMMatrix(actualMatrix);
 
-	renderer.useShader("imageViewer");
-	renderer.plane();
+	r.useShader("imageViewer");
+	r.plane();
 
-	//renderer.renderMesh("centeredPlane");
-
-	if (images.size() > 10) renderAllImages(window, area);
+	if (images.size() > 10) renderAllImages(window, TiledRectangle(getSize()));
 }
 
 void ImageViewerRenderer::inputEvent(Window& window, const InputEvent input)
@@ -358,7 +344,7 @@ void ImageViewerRenderer::inputEvent(Window& window, const InputEvent input)
 
 void ImageViewerRenderer::renderAllImages(Window& window, const TiledRectangle area)
 {
-	window.renderer.screenSpace();
+	window.renderer.screenSpaceFromBottomLeft();
 
 	Float xOffset = 0;
 	Float yOffset;
@@ -367,18 +353,12 @@ void ImageViewerRenderer::renderAllImages(Window& window, const TiledRectangle a
 	{
 		if (ImageViewerResource& image = images[i]; image.onGpu())
 		{
-			if (currentImageId == i)
-			{
-				yOffset = desiredHeight / 2;
-			}
-			else
-			{
-				yOffset = 0;
-			}
+			if (currentImageId == i) yOffset = desiredHeight / 2;
+			else yOffset                     = 0;
 			Float       width  = static_cast<Float>(image.getWidth());
 			const Float height = static_cast<Float>(image.getHeight());
 			width              = width / height * desiredHeight;
-			image.use(0);
+			image.use(window.renderer, 0);
 			window.renderer.uniforms().setMMatrix(matrixFromPositionAndSize(Vec2(xOffset + width / 2, yOffset + desiredHeight / 2), Vec2(width, desiredHeight)));
 			window.renderer.plane();
 			xOffset += width;

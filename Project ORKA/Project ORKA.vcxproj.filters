@@ -8,17 +8,11 @@
     <ClCompile Include="Random.cpp">
       <Filter>Common\Math\Random</Filter>
     </ClCompile>
-    <ClCompile Include="PerlinNoise.cpp">
-      <Filter>Common\Math\Random\Noise</Filter>
-    </ClCompile>
     <ClCompile Include="BranchStructure.cpp">
       <Filter>Common\Math\Graphs\Branch Structure</Filter>
     </ClCompile>
     <ClCompile Include="Plot.cpp">
       <Filter>Common\Math\Graphs\Plot</Filter>
-    </ClCompile>
-    <ClCompile Include="NeuralNetwork.cpp">
-      <Filter>Systems\Neural Network</Filter>
     </ClCompile>
     <ClCompile Include="FileSystem.cpp">
       <Filter>Common\Platform\FileSystem</Filter>
@@ -90,31 +84,31 @@
       <Filter>Apps\2D Apps\UISandbox</Filter>
     </ClCompile>
     <ClCompile Include="optick\optick_capi.cpp">
-      <Filter>Systems\Profiler\Optick</Filter>
+      <Filter>Systems\Profiling\Optick</Filter>
     </ClCompile>
     <ClCompile Include="optick\optick_core.cpp">
-      <Filter>Systems\Profiler\Optick</Filter>
+      <Filter>Systems\Profiling\Optick</Filter>
     </ClCompile>
     <ClCompile Include="optick\optick_gpu.cpp">
-      <Filter>Systems\Profiler\Optick</Filter>
+      <Filter>Systems\Profiling\Optick</Filter>
     </ClCompile>
     <ClCompile Include="optick\optick_gpu.d3d12.cpp">
-      <Filter>Systems\Profiler\Optick</Filter>
+      <Filter>Systems\Profiling\Optick</Filter>
     </ClCompile>
     <ClCompile Include="optick\optick_gpu.vulkan.cpp">
-      <Filter>Systems\Profiler\Optick</Filter>
+      <Filter>Systems\Profiling\Optick</Filter>
     </ClCompile>
     <ClCompile Include="optick\optick_message.cpp">
-      <Filter>Systems\Profiler\Optick</Filter>
+      <Filter>Systems\Profiling\Optick</Filter>
     </ClCompile>
     <ClCompile Include="optick\optick_miniz.cpp">
-      <Filter>Systems\Profiler\Optick</Filter>
+      <Filter>Systems\Profiling\Optick</Filter>
     </ClCompile>
     <ClCompile Include="optick\optick_serialization.cpp">
-      <Filter>Systems\Profiler\Optick</Filter>
+      <Filter>Systems\Profiling\Optick</Filter>
     </ClCompile>
     <ClCompile Include="optick\optick_server.cpp">
-      <Filter>Systems\Profiler\Optick</Filter>
+      <Filter>Systems\Profiling\Optick</Filter>
     </ClCompile>
     <ClCompile Include="RedDotHack.cpp">
       <Filter>Apps\Console Apps\Red Dot Hack</Filter>
@@ -172,9 +166,6 @@
     </ClCompile>
     <ClCompile Include="MeshSystem.cpp">
       <Filter>Systems\UserInterface\Window\Renderer\MeshSystem</Filter>
-    </ClCompile>
-    <ClCompile Include="ProceduralMeshes.cpp">
-      <Filter>Systems\Meshing\Procedural Meshes</Filter>
     </ClCompile>
     <ClCompile Include="SDFRenderer.cpp">
       <Filter>Apps\3D Apps\SDFRenderer</Filter>
@@ -287,9 +278,6 @@
     <ClCompile Include="TerrainRendering.cpp">
       <Filter>Apps\3D Apps\Mooncrash\PlanetRenderSystem\TerrainRendering</Filter>
     </ClCompile>
-    <ClCompile Include="RelativeChunkOffset.cpp">
-      <Filter>Apps\3D Apps\Mooncrash\PlanetRenderSystem\OctreeSystemRenderer\RelativeChunkOffset</Filter>
-    </ClCompile>
     <ClCompile Include="OctreeSystem.cpp">
       <Filter>Apps\3D Apps\Mooncrash\PlanetSystem\OctreeSystem</Filter>
     </ClCompile>
@@ -313,9 +301,6 @@
     </ClCompile>
     <ClCompile Include="QuadtreeSystem.cpp">
       <Filter>Apps\3D Apps\Mooncrash\PlanetSystem\QuadtreeSystem</Filter>
-    </ClCompile>
-    <ClCompile Include="QuadtreeSystemRenderer.cpp">
-      <Filter>Apps\3D Apps\Mooncrash\PlanetRenderSystem\QuadtreeSystemRenderer</Filter>
     </ClCompile>
     <ClCompile Include="MelonPlayer.cpp">
       <Filter>Apps\3D Apps\Project Melon\MelonPlayer</Filter>
@@ -354,16 +339,16 @@
       <Filter>Apps\3D Apps\OrbitalOblivion</Filter>
     </ClCompile>
     <ClCompile Include="PrototypingSandbox.cpp">
-      <Filter>Apps\3D Apps\Prototyping</Filter>
+      <Filter>Apps\3D Apps\PrototypingSandbox</Filter>
     </ClCompile>
     <ClCompile Include="KDTreePrototype.cpp">
-      <Filter>Apps\3D Apps\Prototyping\Prototypes\KDTreePrototype</Filter>
+      <Filter>Apps\3D Apps\PrototypingSandbox\Prototypes\KDTreePrototype</Filter>
     </ClCompile>
     <ClCompile Include="PointRenderer.cpp">
       <Filter>Systems\UserInterface\Window\Renderer\PointRenderer</Filter>
     </ClCompile>
     <ClCompile Include="ParallelizedConvexHullPrototype.cpp">
-      <Filter>Apps\3D Apps\Prototyping\Prototypes\ParalellizedConvexHullPrototype</Filter>
+      <Filter>Apps\3D Apps\PrototypingSandbox\Prototypes\ParalellizedConvexHullPrototype</Filter>
     </ClCompile>
     <ClCompile Include="UIContainer.cpp">
       <Filter>Systems\UserInterface\UIContainer</Filter>
@@ -411,7 +396,7 @@
       <Filter>Common\Platform</Filter>
     </ClCompile>
     <ClCompile Include="PerformanceGraph.cpp">
-      <Filter>Systems\Profiler\PerformanceGraph</Filter>
+      <Filter>Systems\Profiling\PerformanceGraph</Filter>
     </ClCompile>
     <ClCompile Include="PrimitivesRenderer.cpp">
       <Filter>Systems\UserInterface\Window\Renderer\PrimitivesRenderer</Filter>
@@ -420,10 +405,10 @@
       <Filter>Apps\3D Apps\SimpleRts\SimpleRtsQuadtreeSystem</Filter>
     </ClCompile>
     <ClCompile Include="TriangulationPrototype.cpp">
-      <Filter>Apps\3D Apps\Prototyping\Prototypes\TriangulationPrototype</Filter>
+      <Filter>Apps\3D Apps\PrototypingSandbox\Prototypes\TriangulationPrototype</Filter>
     </ClCompile>
     <ClCompile Include="LabyrinthGeneratorPrototype.cpp">
-      <Filter>Apps\3D Apps\Prototyping\Prototypes\Labyrinth Generator</Filter>
+      <Filter>Apps\3D Apps\PrototypingSandbox\Prototypes\Labyrinth Generator</Filter>
     </ClCompile>
     <ClCompile Include="Engine.cpp">
       <Filter>Systems\Engine</Filter>
@@ -446,6 +431,27 @@
     <ClCompile Include="TripleNineMessage.cpp">
       <Filter>Apps\3D Apps\TripleNine\Message</Filter>
     </ClCompile>
+    <ClCompile Include="SortrResource.cpp">
+      <Filter>Apps\2D Apps\Sortr</Filter>
+    </ClCompile>
+    <ClCompile Include="Heightmap.cpp">
+      <Filter>Common\Data\Heightmap</Filter>
+    </ClCompile>
+    <ClCompile Include="LifetimeGuard.cpp">
+      <Filter>Common\Prototypes</Filter>
+    </ClCompile>
+    <ClCompile Include="SimpleRtsWolfSystem.cpp">
+      <Filter>Apps\3D Apps\SimpleRts\SimpleRtsWolfSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="PerlinNoise.cpp">
+      <Filter>Common\Math\Random\Noise\PerlinNoise</Filter>
+    </ClCompile>
+    <ClCompile Include="SimplexNoise.cpp">
+      <Filter>Common\Math\Random\Noise\SimplexNoise</Filter>
+    </ClCompile>
+    <ClCompile Include="SineWaveTerrainRegressor.cpp">
+      <Filter>Apps\3D Apps\PrototypingSandbox\Prototypes\SineWaveTerrainRegressor</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Basics.hpp">
@@ -463,9 +469,6 @@
     <ClInclude Include="Random.hpp">
       <Filter>Common\Math\Random</Filter>
     </ClInclude>
-    <ClInclude Include="PerlinNoise.hpp">
-      <Filter>Common\Math\Random\Noise</Filter>
-    </ClInclude>
     <ClInclude Include="Debug.hpp">
       <Filter>Common\Platform\Debug</Filter>
     </ClInclude>
@@ -480,9 +483,6 @@
     </ClInclude>
     <ClInclude Include="Queue.hpp">
       <Filter>Common\Datastructures\Queue</Filter>
-    </ClInclude>
-    <ClInclude Include="NeuralNetwork.hpp">
-      <Filter>Systems\Neural Network</Filter>
     </ClInclude>
     <ClInclude Include="FileSystem.hpp">
       <Filter>Common\Platform\FileSystem</Filter>
@@ -563,52 +563,52 @@
       <Filter>Apps\2D Apps\UISandbox</Filter>
     </ClInclude>
     <ClInclude Include="optick\optick.config.h">
-      <Filter>Systems\Profiler\Optick</Filter>
+      <Filter>Systems\Profiling\Optick</Filter>
     </ClInclude>
     <ClInclude Include="optick\optick.h">
-      <Filter>Systems\Profiler\Optick</Filter>
+      <Filter>Systems\Profiling\Optick</Filter>
     </ClInclude>
     <ClInclude Include="optick\optick_capi.h">
-      <Filter>Systems\Profiler\Optick</Filter>
+      <Filter>Systems\Profiling\Optick</Filter>
     </ClInclude>
     <ClInclude Include="optick\optick_common.h">
-      <Filter>Systems\Profiler\Optick</Filter>
+      <Filter>Systems\Profiling\Optick</Filter>
     </ClInclude>
     <ClInclude Include="optick\optick_core.freebsd.h">
-      <Filter>Systems\Profiler\Optick</Filter>
+      <Filter>Systems\Profiling\Optick</Filter>
     </ClInclude>
     <ClInclude Include="optick\optick_core.h">
-      <Filter>Systems\Profiler\Optick</Filter>
+      <Filter>Systems\Profiling\Optick</Filter>
     </ClInclude>
     <ClInclude Include="optick\optick_core.linux.h">
-      <Filter>Systems\Profiler\Optick</Filter>
+      <Filter>Systems\Profiling\Optick</Filter>
     </ClInclude>
     <ClInclude Include="optick\optick_core.macos.h">
-      <Filter>Systems\Profiler\Optick</Filter>
+      <Filter>Systems\Profiling\Optick</Filter>
     </ClInclude>
     <ClInclude Include="optick\optick_core.platform.h">
-      <Filter>Systems\Profiler\Optick</Filter>
+      <Filter>Systems\Profiling\Optick</Filter>
     </ClInclude>
     <ClInclude Include="optick\optick_core.win.h">
-      <Filter>Systems\Profiler\Optick</Filter>
+      <Filter>Systems\Profiling\Optick</Filter>
     </ClInclude>
     <ClInclude Include="optick\optick_gpu.h">
-      <Filter>Systems\Profiler\Optick</Filter>
+      <Filter>Systems\Profiling\Optick</Filter>
     </ClInclude>
     <ClInclude Include="optick\optick_memory.h">
-      <Filter>Systems\Profiler\Optick</Filter>
+      <Filter>Systems\Profiling\Optick</Filter>
     </ClInclude>
     <ClInclude Include="optick\optick_message.h">
-      <Filter>Systems\Profiler\Optick</Filter>
+      <Filter>Systems\Profiling\Optick</Filter>
     </ClInclude>
     <ClInclude Include="optick\optick_miniz.h">
-      <Filter>Systems\Profiler\Optick</Filter>
+      <Filter>Systems\Profiling\Optick</Filter>
     </ClInclude>
     <ClInclude Include="optick\optick_serialization.h">
-      <Filter>Systems\Profiler\Optick</Filter>
+      <Filter>Systems\Profiling\Optick</Filter>
     </ClInclude>
     <ClInclude Include="optick\optick_server.h">
-      <Filter>Systems\Profiler\Optick</Filter>
+      <Filter>Systems\Profiling\Optick</Filter>
     </ClInclude>
     <ClInclude Include="RedDotHack.hpp">
       <Filter>Apps\Console Apps\Red Dot Hack</Filter>
@@ -790,9 +790,6 @@
     <ClInclude Include="TerrainRendering.hpp">
       <Filter>Apps\3D Apps\Mooncrash\PlanetRenderSystem\TerrainRendering</Filter>
     </ClInclude>
-    <ClInclude Include="RelativeChunkOffset.hpp">
-      <Filter>Apps\3D Apps\Mooncrash\PlanetRenderSystem\OctreeSystemRenderer\RelativeChunkOffset</Filter>
-    </ClInclude>
     <ClInclude Include="OctreeSystem.hpp">
       <Filter>Apps\3D Apps\Mooncrash\PlanetSystem\OctreeSystem</Filter>
     </ClInclude>
@@ -820,9 +817,6 @@
     <ClInclude Include="QuadtreeSystem.hpp">
       <Filter>Apps\3D Apps\Mooncrash\PlanetSystem\QuadtreeSystem</Filter>
     </ClInclude>
-    <ClInclude Include="QuadtreeSystemRenderer.hpp">
-      <Filter>Apps\3D Apps\Mooncrash\PlanetRenderSystem\QuadtreeSystemRenderer</Filter>
-    </ClInclude>
     <ClInclude Include="MelonPlayer.hpp">
       <Filter>Apps\3D Apps\Project Melon\MelonPlayer</Filter>
     </ClInclude>
@@ -840,9 +834,6 @@
     </ClInclude>
     <ClInclude Include="Heightmap.hpp">
       <Filter>Common\Data\Heightmap</Filter>
-    </ClInclude>
-    <ClInclude Include="Profiler.hpp">
-      <Filter>Systems\Profiler</Filter>
     </ClInclude>
     <ClInclude Include="Platform.hpp">
       <Filter>Common\Platform</Filter>
@@ -869,31 +860,31 @@
       <Filter>Apps\3D Apps\OrbitalOblivion</Filter>
     </ClInclude>
     <ClInclude Include="PrototypingSandbox.hpp">
-      <Filter>Apps\3D Apps\Prototyping</Filter>
+      <Filter>Apps\3D Apps\PrototypingSandbox</Filter>
     </ClInclude>
     <ClInclude Include="Prototype.hpp">
-      <Filter>Apps\3D Apps\Prototyping</Filter>
+      <Filter>Apps\3D Apps\PrototypingSandbox</Filter>
     </ClInclude>
     <ClInclude Include="AxisNeighborPrototype.hpp">
-      <Filter>Apps\3D Apps\Prototyping\Prototypes</Filter>
+      <Filter>Apps\3D Apps\PrototypingSandbox\Prototypes</Filter>
     </ClInclude>
     <ClInclude Include="SquareNeighborPrototype.hpp">
-      <Filter>Apps\3D Apps\Prototyping\Prototypes</Filter>
+      <Filter>Apps\3D Apps\PrototypingSandbox\Prototypes</Filter>
     </ClInclude>
     <ClInclude Include="WeirdSphereAlgorithm.hpp">
-      <Filter>Apps\3D Apps\Prototyping\Prototypes</Filter>
+      <Filter>Apps\3D Apps\PrototypingSandbox\Prototypes</Filter>
     </ClInclude>
     <ClInclude Include="KDTreeImplementation.hpp">
-      <Filter>Apps\3D Apps\Prototyping\Prototypes\KDTreePrototype</Filter>
+      <Filter>Apps\3D Apps\PrototypingSandbox\Prototypes\KDTreePrototype</Filter>
     </ClInclude>
     <ClInclude Include="KDTreePrototype.hpp">
-      <Filter>Apps\3D Apps\Prototyping\Prototypes\KDTreePrototype</Filter>
+      <Filter>Apps\3D Apps\PrototypingSandbox\Prototypes\KDTreePrototype</Filter>
     </ClInclude>
     <ClInclude Include="KDTree.hpp">
       <Filter>Common\Datastructures\KDTree</Filter>
     </ClInclude>
     <ClInclude Include="ParallelizedConvexHullPrototype.hpp">
-      <Filter>Apps\3D Apps\Prototyping\Prototypes\ParalellizedConvexHullPrototype</Filter>
+      <Filter>Apps\3D Apps\PrototypingSandbox\Prototypes\ParalellizedConvexHullPrototype</Filter>
     </ClInclude>
     <ClInclude Include="PointRenderer.hpp">
       <Filter>Systems\UserInterface\Window\Renderer\PointRenderer</Filter>
@@ -908,7 +899,7 @@
       <Filter>Systems\Engine</Filter>
     </ClInclude>
     <ClInclude Include="AxisNeighborPrototype2.hpp">
-      <Filter>Apps\3D Apps\Prototyping\Prototypes</Filter>
+      <Filter>Apps\3D Apps\PrototypingSandbox\Prototypes</Filter>
     </ClInclude>
     <ClInclude Include="KDTree2.hpp">
       <Filter>Common\Datastructures\KDTree</Filter>
@@ -974,7 +965,7 @@
       <Filter>Common\Platform</Filter>
     </ClInclude>
     <ClInclude Include="PerformanceGraph.hpp">
-      <Filter>Systems\Profiler\PerformanceGraph</Filter>
+      <Filter>Systems\Profiling\PerformanceGraph</Filter>
     </ClInclude>
     <ClInclude Include="PrimitivesRenderer.hpp">
       <Filter>Systems\UserInterface\Window\Renderer\PrimitivesRenderer</Filter>
@@ -983,16 +974,16 @@
       <Filter>Apps\3D Apps\SimpleRts\SimpleRtsQuadtreeSystem</Filter>
     </ClInclude>
     <ClInclude Include="TriangulationPrototype.hpp">
-      <Filter>Apps\3D Apps\Prototyping\Prototypes\TriangulationPrototype</Filter>
+      <Filter>Apps\3D Apps\PrototypingSandbox\Prototypes\TriangulationPrototype</Filter>
     </ClInclude>
     <ClInclude Include="ClosestConnectionPrototype.hpp">
-      <Filter>Apps\3D Apps\Prototyping\Prototypes</Filter>
+      <Filter>Apps\3D Apps\PrototypingSandbox\Prototypes</Filter>
     </ClInclude>
     <ClInclude Include="PersistentInfoPrototype.hpp">
-      <Filter>Apps\3D Apps\Prototyping\Prototypes</Filter>
+      <Filter>Apps\3D Apps\PrototypingSandbox\Prototypes</Filter>
     </ClInclude>
     <ClInclude Include="LabyrinthGeneratorPrototype.hpp">
-      <Filter>Apps\3D Apps\Prototyping\Prototypes\Labyrinth Generator</Filter>
+      <Filter>Apps\3D Apps\PrototypingSandbox\Prototypes\Labyrinth Generator</Filter>
     </ClInclude>
     <ClInclude Include="GlobalUniformData.hpp">
       <Filter>Systems\UserInterface\Window\Renderer\ShaderSystem\Uniforms</Filter>
@@ -1011,6 +1002,30 @@
     </ClInclude>
     <ClInclude Include="TripleNineMessage.hpp">
       <Filter>Apps\3D Apps\TripleNine\Message</Filter>
+    </ClInclude>
+    <ClInclude Include="SortrResource.hpp">
+      <Filter>Apps\2D Apps\Sortr</Filter>
+    </ClInclude>
+    <ClInclude Include="ImageApproximationPrototype.hpp">
+      <Filter>Apps\3D Apps\PrototypingSandbox\Prototypes\ImageAproximationPrototype</Filter>
+    </ClInclude>
+    <ClInclude Include="SimpleRtsWolfSystem.hpp">
+      <Filter>Apps\3D Apps\SimpleRts\SimpleRtsWolfSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="HeuristicNetworkingPrototype.hpp">
+      <Filter>Apps\3D Apps\PrototypingSandbox\Prototypes\HeuristicNetworkingPrototype</Filter>
+    </ClInclude>
+    <ClInclude Include="PerlinNoise.hpp">
+      <Filter>Common\Math\Random\Noise\PerlinNoise</Filter>
+    </ClInclude>
+    <ClInclude Include="SimplexNoise.hpp">
+      <Filter>Common\Math\Random\Noise\SimplexNoise</Filter>
+    </ClInclude>
+    <ClInclude Include="SineWaveTerrainRegressor.hpp">
+      <Filter>Apps\3D Apps\PrototypingSandbox\Prototypes\SineWaveTerrainRegressor</Filter>
+    </ClInclude>
+    <ClInclude Include="OptickProfiling.hpp">
+      <Filter>Systems\Profiling</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1361,9 +1376,6 @@
     <Filter Include="Systems\Mind Map">
       <UniqueIdentifier>{955882f6-aa27-4771-bff9-a1ffaf2b277b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Systems\Neural Network">
-      <UniqueIdentifier>{4ccdf138-e2d7-467f-904e-d59bdaf5b7e1}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Common\Compiler">
       <UniqueIdentifier>{112d411e-1f4b-4885-9d2e-c9b135d9fb8d}</UniqueIdentifier>
     </Filter>
@@ -1601,9 +1613,6 @@
     <Filter Include="Apps\3D Apps\Mooncrash\PlanetRenderSystem\TerrainRendering">
       <UniqueIdentifier>{618a67fb-2f87-4362-b245-320690d4cf2e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Apps\3D Apps\Mooncrash\PlanetRenderSystem\OctreeSystemRenderer\RelativeChunkOffset">
-      <UniqueIdentifier>{1fcd3717-ec28-4c9e-8d72-e0bf4e410035}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Apps\3D Apps\Mooncrash\PlanetSystem\OctreeNode">
       <UniqueIdentifier>{994f8f30-2617-4477-b5e5-a446980a27ce}</UniqueIdentifier>
     </Filter>
@@ -1618,9 +1627,6 @@
     </Filter>
     <Filter Include="Apps\3D Apps\Mooncrash\PlanetSystem\QuadtreeSystem\QuadtreeNode\QuadtreeID">
       <UniqueIdentifier>{8ce3e763-a93a-41aa-890a-bdee183a80b4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Apps\3D Apps\Mooncrash\PlanetRenderSystem\QuadtreeSystemRenderer">
-      <UniqueIdentifier>{99d1c1ad-24e7-4638-bfc6-dfc4488ac8a9}</UniqueIdentifier>
     </Filter>
     <Filter Include="Apps\3D Apps\Project Melon\MelonPlayer">
       <UniqueIdentifier>{5cebf9ef-1eb6-4854-9523-54c813134397}</UniqueIdentifier>
@@ -1645,9 +1651,6 @@
     </Filter>
     <Filter Include="Common\Data\Heightmap">
       <UniqueIdentifier>{3fc8d2cc-7275-48de-8f5b-5f8d7398264a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Systems\Profiler">
-      <UniqueIdentifier>{7a42a044-f930-44cc-a36a-829609e636c6}</UniqueIdentifier>
     </Filter>
     <Filter Include="Common\Math\TiledMath">
       <UniqueIdentifier>{28b4f99c-55a4-4daa-801c-4fb281a8760f}</UniqueIdentifier>
@@ -1688,9 +1691,6 @@
     <Filter Include="Systems\PhysicsSystem\Collision">
       <UniqueIdentifier>{21d69522-0351-4388-9e96-d226f5437ee9}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Systems\Profiler\Optick">
-      <UniqueIdentifier>{840e4262-c80d-471b-b655-748d534cd7c8}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Systems\UserInterface\Window\Renderer\MeshSystem\GPUMesh\IndexBufferObject">
       <UniqueIdentifier>{76181c79-df9c-47bc-8ec7-52fe60890107}</UniqueIdentifier>
     </Filter>
@@ -1724,20 +1724,8 @@
     <Filter Include="Apps\3D Apps\OrbitalOblivion">
       <UniqueIdentifier>{ce54fd96-eda5-4f48-b8ed-613b0d9da0bd}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Apps\3D Apps\Prototyping">
-      <UniqueIdentifier>{82ce95f2-55d9-4b6d-a69c-3beba743d426}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Apps\3D Apps\Prototyping\Prototypes">
-      <UniqueIdentifier>{38bedf0a-6557-44cd-bfb3-cf948b1aae12}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Apps\3D Apps\Prototyping\Prototypes\KDTreePrototype">
-      <UniqueIdentifier>{b2f81e2c-5624-48bf-81d7-51cd8370fc33}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Common\Datastructures\KDTree">
       <UniqueIdentifier>{4a4533fe-dcee-4abe-80f9-5443760182c3}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Apps\3D Apps\Prototyping\Prototypes\ParalellizedConvexHullPrototype">
-      <UniqueIdentifier>{472fc267-66a8-4273-ba05-efd9dcdfe63d}</UniqueIdentifier>
     </Filter>
     <Filter Include="Systems\UserInterface\Window\Renderer\PointRenderer">
       <UniqueIdentifier>{629b9eb2-045b-44a0-8900-74c5f2e0994f}</UniqueIdentifier>
@@ -1808,20 +1796,11 @@
     <Filter Include="Common\Datastructures\LockFreeQueue">
       <UniqueIdentifier>{d84e759e-a9a5-40d9-a9d6-90932ad99691}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Systems\Profiler\PerformanceGraph">
-      <UniqueIdentifier>{0e763830-1202-4537-b356-0e3d7220cbfc}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Systems\UserInterface\Window\Renderer\PrimitivesRenderer">
       <UniqueIdentifier>{0b800092-8777-4e7d-a00d-b3f0fdfdd9a0}</UniqueIdentifier>
     </Filter>
     <Filter Include="Apps\3D Apps\SimpleRts\SimpleRtsQuadtreeSystem">
       <UniqueIdentifier>{114a064c-e1b5-4982-b19c-d064ef052cc4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Apps\3D Apps\Prototyping\Prototypes\TriangulationPrototype">
-      <UniqueIdentifier>{ae35deb2-ba69-4be2-8fe5-883c4c3eafcd}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Apps\3D Apps\Prototyping\Prototypes\Labyrinth Generator">
-      <UniqueIdentifier>{327acd63-0d65-4b89-bd22-4b069d14d03f}</UniqueIdentifier>
     </Filter>
     <Filter Include="Systems\UserInterface\Window\Renderer\RenderingOverrides">
       <UniqueIdentifier>{c0656f0c-f556-491f-bb9c-df54d8612c42}</UniqueIdentifier>
@@ -1834,6 +1813,51 @@
     </Filter>
     <Filter Include="Apps\3D Apps\TripleNine\Message">
       <UniqueIdentifier>{cb5c2a08-af6c-4894-a00b-f01b98276222}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Apps\3D Apps\SimpleRts\SimpleRtsWolfSystem">
+      <UniqueIdentifier>{4547e29b-8c2d-4a44-937d-ea5e801ca967}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Apps\3D Apps\PrototypingSandbox">
+      <UniqueIdentifier>{82ce95f2-55d9-4b6d-a69c-3beba743d426}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Apps\3D Apps\PrototypingSandbox\Prototypes">
+      <UniqueIdentifier>{38bedf0a-6557-44cd-bfb3-cf948b1aae12}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Apps\3D Apps\PrototypingSandbox\Prototypes\KDTreePrototype">
+      <UniqueIdentifier>{b2f81e2c-5624-48bf-81d7-51cd8370fc33}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Apps\3D Apps\PrototypingSandbox\Prototypes\ParalellizedConvexHullPrototype">
+      <UniqueIdentifier>{472fc267-66a8-4273-ba05-efd9dcdfe63d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Apps\3D Apps\PrototypingSandbox\Prototypes\TriangulationPrototype">
+      <UniqueIdentifier>{ae35deb2-ba69-4be2-8fe5-883c4c3eafcd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Apps\3D Apps\PrototypingSandbox\Prototypes\Labyrinth Generator">
+      <UniqueIdentifier>{327acd63-0d65-4b89-bd22-4b069d14d03f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Apps\3D Apps\PrototypingSandbox\Prototypes\ImageAproximationPrototype">
+      <UniqueIdentifier>{0850d939-43e4-4136-9434-0ff840eb7946}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Apps\3D Apps\PrototypingSandbox\Prototypes\HeuristicNetworkingPrototype">
+      <UniqueIdentifier>{4a037700-6c5a-4924-bb55-3835f29d4ae0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Common\Math\Random\Noise\PerlinNoise">
+      <UniqueIdentifier>{071150e6-e4b5-4736-84df-d4164ec70c1d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Common\Math\Random\Noise\SimplexNoise">
+      <UniqueIdentifier>{9d2da9f0-4ba1-45cf-b85c-44e98cfe3a10}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Apps\3D Apps\PrototypingSandbox\Prototypes\SineWaveTerrainRegressor">
+      <UniqueIdentifier>{8dad8e35-7939-46c9-b679-f078159daf07}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Systems\Profiling">
+      <UniqueIdentifier>{7a42a044-f930-44cc-a36a-829609e636c6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Systems\Profiling\Optick">
+      <UniqueIdentifier>{840e4262-c80d-471b-b655-748d534cd7c8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Systems\Profiling\PerformanceGraph">
+      <UniqueIdentifier>{0e763830-1202-4537-b356-0e3d7220cbfc}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

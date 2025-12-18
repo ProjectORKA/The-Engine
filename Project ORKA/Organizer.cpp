@@ -1,7 +1,10 @@
 #include "Organizer.hpp"
 #include "Random.hpp"
 
-void OrganizerRenderer::destroy(Window& window) {}
+void OrganizerRenderer::destroy(Window& window)
+{
+	GameRenderer::destroy(window);
+}
 
 void OrganizerRenderer::connect(GameSimulation& simulation) {}
 
@@ -26,6 +29,7 @@ void OrganizerRenderer::inputEvent(Window& window, const InputEvent input)
 
 void OrganizerRenderer::create(Window& window)
 {
+	GameRenderer::create(window);
 	// setup renderer
 	player.camera.setPosition(Vec3(0, 0, 10));
 
@@ -87,7 +91,7 @@ void OrganizerRenderer::renderConnections(Renderer& r) const
 	r.lines(lines);
 }
 
-void OrganizerRenderer::render(Window& window, TiledRectangle area)
+void OrganizerRenderer::renderScene(Window& window)
 {
 	Renderer& r = window.renderer;
 
@@ -113,7 +117,7 @@ void OrganizerRenderer::render(Window& window, TiledRectangle area)
 	const Matrix vMatrix = r.uniforms().getVMatrix();
 	const Matrix pMatrix = r.uniforms().getPMatrix();
 	r.setDepthTest(false); // disables depth to always draw on top
-	r.screenSpace(); // aligns coordinate system with screen space
+	r.screenSpaceFromBottomLeft(); // aligns coordinate system with screen space
 	r.textRenderSystem.alignText(Alignment::center, Alignment::top);
 
 	for(User& user : users)
@@ -133,14 +137,14 @@ void OrganizerRenderer::render(Window& window, TiledRectangle area)
 	// text rendering
 	r.uniforms().setMMatrix(Matrix(1));
 	r.setDepthTest(false); // disables depth to always draw on top
-	r.screenSpace(); // aligns coordinate system with screen space
+	r.screenSpaceFromBottomLeft(); // aligns coordinate system with screen space
 	r.textRenderSystem.alignText(Alignment::left, Alignment::top);
-	r.textRenderSystem.setSize(16.0f);
-	r.textRenderSystem.setLetterSpacing(0.6f);
-	r.textRenderSystem.render(r, "W A S D Q E to move"), Vec2(50, 250);
-	r.textRenderSystem.render(r, "F for wire frame mode"), Vec2(50, 200);
-	r.textRenderSystem.render(r, "Scroll to change speed"), Vec2(50, 150);
-	r.textRenderSystem.render(r, "FPS: " + toString(static_cast<Int>(1.0f / r.time.getDelta()))), Vec2(50);
+	r.fontSize(16.0f);
+	r.letterSpacing(0.6f);
+	r.text("W A S D Q E to move", Vec2(50, 250));
+	r.text("F for wire frame mode", Vec2(50, 200));
+	r.text("Scroll to change speed", Vec2(50, 150));
+	r.text("FPS: " + toString(static_cast<Int>(1.0f / r.time.getDelta())), Vec2(50));
 	// renders current frame rate to the screen
 }
 
@@ -153,7 +157,7 @@ void OrganizerRenderer::addCompany(const Index guid, const String& companyName, 
 	companies.push_back(company);
 }
 
-void OrganizerRenderer::renderInteractive(Window& window, TiledRectangle area) {}
+void OrganizerRenderer::renderInteractive(Window& window) {}
 
 void OrganizerRenderer::addUser(const Index userGuid, const Index companyGuid, const String& firstName, const String& lastName)
 {

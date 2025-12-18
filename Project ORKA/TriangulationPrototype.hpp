@@ -18,7 +18,7 @@ struct TriangulationPrototype final : Prototype
 	Vector<Connection> connections;
 	Int                pointCount = 1000;
 
-	void create() override;
+	void create(Renderer & r) override;
 	void action() override {}
 	void destroy() override {}
 	void addConnection(Index a, Index b);

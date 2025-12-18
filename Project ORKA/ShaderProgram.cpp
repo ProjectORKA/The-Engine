@@ -1,27 +1,15 @@
 #include "ShaderProgram.hpp"
 
-void ShaderProgram::destroy()
+void ShaderProgram::destroy(OpenGlContext& openGlContext)
 {
-	if(isLoaded())
-	{
-		openglShaderProgram.destroy();
-	}
-	else
-	{
-		logError("ShaderProgram already unloaded!");
-	}
+	if(isLoaded()) openglShaderProgram.destroy(openGlContext);
+	else logError("ShaderProgram already unloaded!");
 }
 
-void ShaderProgram::use() const
+void ShaderProgram::use(OpenGlContext& openGlContext) const
 {
-	if(loaded)
-	{
-		openglShaderProgram.use();
-	}
-	else
-	{
-		logError("ShaderProgram not loaded!");
-	}
+	if(loaded) openglShaderProgram.use(openGlContext);
+	else logError("ShaderProgram not loaded!");
 }
 
 Bool ShaderProgram::isLoaded() const
@@ -29,7 +17,7 @@ Bool ShaderProgram::isLoaded() const
 	return loaded;
 }
 
-void ShaderProgram::create(const Name& name, const String& vertexShaderCode, const String& fragmentShaderCode)
+void ShaderProgram::create(OpenGlContext& openGlContext, const Name& name, const String& vertexShaderCode, const String& fragmentShaderCode)
 {
 	if(loaded)
 	{
@@ -37,5 +25,5 @@ void ShaderProgram::create(const Name& name, const String& vertexShaderCode, con
 		return;
 	}
 
-	loaded = openglShaderProgram.create(toString(name), vertexShaderCode, fragmentShaderCode);
+	loaded = openglShaderProgram.create(openGlContext, toString(name), vertexShaderCode, fragmentShaderCode);
 }

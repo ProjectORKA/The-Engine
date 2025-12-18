@@ -81,7 +81,7 @@ void loadAssimpMesh(CpuMesh& destinationMesh, aiMesh& sourceMesh)
 		normal.x = sourceMesh.mNormals[vertexIndex].x;
 		normal.y = sourceMesh.mNormals[vertexIndex].y;
 		normal.z = sourceMesh.mNormals[vertexIndex].z;
-		destinationMesh.normals.push_back(normal);
+		destinationMesh.vertexNormals.push_back(normal);
 
 		// texture coordinates
 		Vec2 texCoord;
@@ -133,10 +133,7 @@ void Scene2::importFBX(Path path)
 
 		if (errorMessage.empty()) loadAssimpScene(*this, *assimpScene);
 	}
-	else
-	{
-		errorMessage = path.parent_path().string() + " does not exist!";
-	}
+	else errorMessage = path.parent_path().string() + " does not exist!";
 
 	if (!errorMessage.empty()) logError("The model (" + path.stem().string() + ") could not be loaded! (" + path.string() + ")" + " Error: " + errorMessage);
 }

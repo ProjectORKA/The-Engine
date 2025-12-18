@@ -1,5 +1,7 @@
 #include "LabyrinthGeneratorPrototype.hpp"
 
+#include "Window.hpp"
+
 void LabyrinthGeneratorPrototype::action()
 {
 	static Index cutIndex = 0;
@@ -21,7 +23,7 @@ void LabyrinthGeneratorPrototype::action()
 	cutIndex++;
 }
 
-void LabyrinthGeneratorPrototype::create()
+void LabyrinthGeneratorPrototype::create(Renderer & r)
 {
 	const int m = size - 1;
 
@@ -76,10 +78,7 @@ void LabyrinthGeneratorPrototype::createPath()
 			Vector<Node*> lowerCostNeighbors;
 			for (Node* neighbor : currentNodePtr->neighbors)
 			{
-				if (neighbor->cost < currentNodePtr->cost)
-				{
-					lowerCostNeighbors.push_back(neighbor);
-				}
+				if (neighbor->cost < currentNodePtr->cost) lowerCostNeighbors.push_back(neighbor);
 			}
 
 			// select a random neighbor node from the list
@@ -89,10 +88,7 @@ void LabyrinthGeneratorPrototype::createPath()
 				path.push_back(randomNeighbor);
 				currentNodePtr = randomNeighbor;
 			}
-			else
-			{
-				break;
-			}
+			else break;
 		}
 	}
 }
@@ -184,7 +180,7 @@ void LabyrinthGeneratorPrototype::render(Renderer& r, const Player& player)
 	mutex.lock();
 	r.uniforms().setMMatrix(matrixFromPosition(Vec3(0, 0, 0.5)));
 	r.textRenderSystem.alignText(Alignment::center, Alignment::center);
-	r.textRenderSystem.setSize(0.5);
+	r.fontSize(0.5f);
 
 	Vector<Matrix> positions;
 	Vec2Vector   lines;
@@ -227,10 +223,7 @@ void LabyrinthGeneratorPrototype::render(Renderer& r, const Player& player)
 		r.lines(lines);
 	}
 
-	if (renderNodes)
-	{
-		r.circles(positions);
-	}
+	if (renderNodes) r.circles(positions);
 	mutex.unlock();
 }
 
@@ -240,7 +233,7 @@ void LabyrinthGeneratorPrototype::inputEvent(Window& window, const InputEvent in
 	{
 		mutex.lock();
 		destroy();
-		create();
+		create(window.renderer);
 		mutex.unlock();
 	}
 }

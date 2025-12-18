@@ -1,75 +1,76 @@
 #include "TiledMath.hpp"
 #include "Math.hpp"
 
-#include <iostream>
+//#include <iostream>
 
-Area::Area(const Int a)
-{
-	x = a;
-	y = a;
-}
+//Area::Area(const Int a)
+//{
+//	x = a;
+//	y = a;
+//}
+//
+//Area Area::center() const
+//{
+//	return Area(x / 2, y / 2);
+//}
 
-Area Area::center() const
-{
-	return Area(x / 2, y / 2);
-}
-
-void logDebug(const Area t)
-{
-	std::cout << "(" << t.x << "|" << t.y << ")" << "\n";
-}
+//void logDebug(const Area t)
+//{
+//	std::cout << "(" << t.x << "|" << t.y << ")" << "\n";
+//}
 
 TiledRectangle::TiledRectangle() = default;
 
-Float Area::getAspectRatio() const
-{
-	return x / y;
-}
+//Float Area::getAspectRatio() const
+//{
+//	return x / y;
+//}
 
-Area::Area(const Int x, const Int y)
-{
-	this->x = x;
-	this->y = y;
-}
+//Area::Area(const Int x, const Int y)
+//{
+//	this->x = x;
+//	this->y = y;
+//}
 
 IVec2 TiledRectangle::center() const
 {
 	return position + size / 2;
 }
 
-void Area::setMinimum(const Int minimumSize)
-{
-	x = max(x, minimumSize);
-	y = max(y, minimumSize);
-}
+//void Area::setMinimum(const Int minimumSize)
+//{
+//	x = max(x, minimumSize);
+//	y = max(y, minimumSize);
+//}
+//
+//Area Area::operator*(const Float value) const
+//{
+//	return Area(static_cast<Int>(static_cast<Float>(x) * value), static_cast<Int>(static_cast<Float>(y) * value));
+//}
 
-Area Area::operator*(const Float value) const
-{
-	return Area(static_cast<Int>(static_cast<Float>(x) * value), static_cast<Int>(static_cast<Float>(y) * value));
-}
-
-void Area::setMinimum(const Area minimumSize)
-{
-	x = max<Int>(x, minimumSize.x);
-	y = max<Int>(y, minimumSize.y);
-}
+//void Area::setMinimum(const Area minimumSize)
+//{
+//	x = max<Int>(x, minimumSize.x);
+//	y = max<Int>(y, minimumSize.y);
+//}
 
 TiledRectangle::TiledRectangle(const Int size)
 {
-	this->size     = Area(size);
+	this->size     = IVec2(size);
 	this->position = IVec2(0);
 }
 
-TiledRectangle::TiledRectangle(const Area area)
+TiledRectangle::TiledRectangle(const IVec2 area)
 {
 	this->size     = area;
 	this->position = IVec2(0);
 }
 
-void TiledRectangle::operator=(const Area& other)
+TiledRectangle& TiledRectangle::operator=(const IVec2& other)
 {
 	this->size     = other;
 	this->position = IVec2(0);
+	return *this;
 }
 
 TiledRectangle::TiledRectangle(const Int x, const Int y)
@@ -102,4 +103,9 @@ TiledRectangle::TiledRectangle(const Int x, const Int y, const Int w, const Int 
 	position.y = y;
 	size.x     = w;
 	size.y     = h;
+}
+
+TiledRectangle::TiledRectangle(const IVec2 position, const IVec2 size) {
+	this->position = position;
+	this->size     = size;
 }

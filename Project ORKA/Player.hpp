@@ -1,5 +1,4 @@
 #pragma once
-
 #include "Camera.hpp"
 #include "Input.hpp"
 
@@ -44,6 +43,7 @@ struct DebugPlayer : Player
 
 	// overrides update and inputEvent to work
 	void update(Window& window) override;
+	void render(Window& window) override;
 	void inputEvent(Window& window, InputEvent input) override;
 
 	DebugPlayer() = default;

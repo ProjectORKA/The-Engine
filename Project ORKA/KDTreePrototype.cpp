@@ -12,9 +12,9 @@ void KDTreePrototype::action()
 	}
 }
 
-void KDTreePrototype::create()
+void KDTreePrototype::create(Renderer & r)
 {
-	auto* playerPtr = dynamic_cast<DebugPlayer*>(&player);
+	auto* playerPtr = &player;
 	playerPtr->camera.setPosition(0, -250, 0);
 	playerPtr->speedExponent = 35;
 
@@ -93,7 +93,7 @@ void KDTreePrototype::render(Renderer& r, const Player& player)
 			lines.push_back(otherPoint);
 		}
 		velocity[i] += Vec3(20.0f) * pushForce - Vec3(150) * normalize(pointCloud.points[i]) * time.getDelta();
-		approach(velocity[i], Vec3(0), time.getDelta() * 1.f);
+		expDecay(velocity[i], Vec3(0), 1, time.getDelta());
 	}
 
 	r.lines(lines);

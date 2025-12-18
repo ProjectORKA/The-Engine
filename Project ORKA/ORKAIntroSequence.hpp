@@ -4,7 +4,7 @@
 
 // this "game" plays and intro sequence and then replaces itself with any game you want
 
-struct ORKAIntroSequence : GameRenderer
+struct ORKAIntroSequence final : GameRenderer
 {
 	Bool          decorated              = true;
 	Bool          initializedRenderer    = false;
@@ -15,7 +15,7 @@ struct ORKAIntroSequence : GameRenderer
 	void create(Window& window) override;
 	void destroy(Window& window) override;
 	void connect(GameSimulation& simulation) override;
-	void render(Window& window, TiledRectangle area) override;
+	void renderScene(Window& window) override;
 	void inputEvent(Window& window, InputEvent input) override;
-	void renderInteractive(Window& window, TiledRectangle area) override;
+	void renderInteractive(Window& window) override;
 };

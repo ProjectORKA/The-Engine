@@ -3,10 +3,47 @@
 #include "Game.hpp"
 #include "Player.hpp"
 #include "KeyMap.hpp"
+#include "Random.hpp"
+
+struct FFInstance
+{
+	Vector<Double> params;
+	Double         result = 0;
+};
+
+struct FFSearchSpace
+{
+	Vector<String> pNames;
+	Vector<Double> pMax;
+	Vector<Double> pMin;
+
+	FFInstance best;
+	Double     lowestScore = 0;
+
+	void addParam(String name, Double min, Double max)
+	{
+		pNames.push_back(name);
+		pMin.push_back(min);
+		pMax.push_back(max);
+		pCount++;
+	}
+
+	FFInstance newInstance()
+	{
+		FFInstance inst;
+		for (Int i = 0; i < pCount; i++)
+		{
+			inst.params.push_back(randomDoubleFast(pMin[i], pMax[i]));
+		}
+		return inst;
+	}
+
+private:
+	Int pCount = 0;
+};
 
 struct FunctionFinderRenderer final : GameRenderer
 {
-	// math
 	Vec2Vector data;
 	Vec2Vector best;
 	Float      learnRate      = 10;
@@ -22,7 +59,6 @@ struct FunctionFinderRenderer final : GameRenderer
 
 	Mutex       mutex;
 	DebugPlayer player;
-	Framebuffer framebuffer;
 	Float       mouseSensitivity = 0.0015f;
 	InputEvent  enter            = InputEvent(InputType::Mouse, Lmb, true);
 	InputEvent  wireframeToggle  = InputEvent(InputType::KeyBoard, F, true);
@@ -69,9 +105,9 @@ struct FunctionFinderRenderer final : GameRenderer
 	void                 update(Window& window) override;
 	void                 destroy(Window& window) override;
 	void                 connect(GameSimulation& simulation) override;
-	void                 render(Window& window, TiledRectangle area) override;
+	void                 renderScene(Window& window) override;
 	void                 inputEvent(Window& window, InputEvent input) override;
-	void                 renderInteractive(Window& window, TiledRectangle area) override;
+	void                 renderInteractive(Window& window) override;
 };
 
 struct FunctionFinder
@@ -80,7 +116,7 @@ struct FunctionFinder
 
 	void run()
 	{
-		ui.window("FunctionFinder", Area(settings.defaultWindowWidth, settings.defaultWindowHeight), true, true, WindowState::Windowed, renderer);
+		ui.window("FunctionFinder", settings.defaultWindowWidth, settings.defaultWindowHeight, true, true, WindowState::Windowed, renderer);
 		ui.run();
 	}
 };

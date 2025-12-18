@@ -25,7 +25,7 @@ struct VoxelWorld
 struct VoxelRenderer
 {
 	VoxelWorld world;
-	GpuMesh    terrainMesh;
+	GPUMesh    terrainMesh;
 
 	void render(Renderer& renderer);
 };

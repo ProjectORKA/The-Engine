@@ -50,7 +50,7 @@ float fogFunction(in float range){
 void main(){
     // define the sky color so we can fake some sky light
     vec3 skyColor = vec3(0.207143f, 0.722031f, 1.0f);
-    vec3 sunColor = vec3(1.0f, 0.9f, 0.6f) * 3;
+    vec3 sunColor = vec3(1.0f, 0.9f, 0.6f) * 2;
 
     // calculate the correct view position
     // this needs to happen in the fragment shader

@@ -17,7 +17,7 @@ struct PongPlayer
 	Float difficulty = 7.0f;
 
 	void update(Window& window);
-	void mouseInput(Vec3 cursorWorldPosition);
+	void mouseInput(DVec2 cursorWorldPosition);
 	void ballPositionInput(Vector<Ball>& balls);
 	void aiInput(Vector<Ball>& balls, Float deltaTime);
 };
@@ -48,21 +48,48 @@ struct PongRenderer final : GameRenderer
 	InputId      shootButton1          = InputId(InputType::KeyBoard, Space);
 
 	void update(Window& window) override;
+	void create(Window& window) override;
+	void renderScene(Window& window) override;
 	void destroy(Window& window) override;
+	void renderInteractive(Window& window) override;
 	void connect(GameSimulation& simulation) override;
 	void inputEvent(Window& window, InputEvent input) override;
-	void create(Window& window) override;
-	void render(Window& window, TiledRectangle area) override;
-	void renderInteractive(Window& window, TiledRectangle area) override;
 };
 
 struct Pong
 {
-	PongRenderer  renderer;
-
 	void run()
 	{
-		ui.window("Pong", Area(1920, 1080), true, true, WindowState::Windowed, renderer);
+		PongRenderer renderer1;
+		renderer1.growX(true);
+		renderer1.growY(true);
+
+		UIElement renderer2;
+		renderer2.growX(true);
+		renderer2.growY(true);
+
+		UIElement renderer3;
+		renderer1.growX(true);
+		renderer1.growY(true);
+
+		UIElement renderer4;
+		renderer2.growX(true);
+		renderer2.growY(true);
+
+		UIElement top;
+		top.row();
+		top.addElement(renderer1);
+		top.addElement(renderer2);
+
+		UIElement bot;
+		bot.row();
+		bot.addElement(renderer3);
+		bot.addElement(renderer4);
+
+		Window & window = ui.window("Pong", settings.defaultWindowWidth, settings.defaultWindowHeight, true, true, WindowState::Windowed);
+		window.column();
+		window.addElement(top);
+		window.addElement(bot);
 		ui.run();
 	}
 };

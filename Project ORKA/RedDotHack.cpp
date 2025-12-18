@@ -42,10 +42,11 @@ void cheatTest()
 	// if the crosshair goes red it spams right and left click
 	// this can work for multiple games as long as you have pixels that change when looking at an enemy
 
-	//const LPCSTR gameName = "Grand Theft Auto V";
+	const LPCSTR gameName = "Grand Theft Auto V";
 	//const LPCSTR gameName = "Dishonored";
 	//const LPCSTR gameName = "Red Dead Redemption 2";
-	const LPCSTR gameName = "Control 0.0.344.1879 (FINAL|release)";
+	//const LPCSTR gameName = "Control 0.0.344.1879 (FINAL|release)";
+	//const LPCSTR gameName = "Tomb Raider";
 
 	HWND gameWindow = FindWindow(nullptr, gameName);
 
@@ -69,23 +70,21 @@ void cheatTest()
 
 			const COLORREF colorRef = GetPixel(device, x / 2, y / 2);
 			const auto     color    = Vec3(GetRValue(colorRef), GetGValue(colorRef), GetBValue(colorRef));
-			//constexpr auto target = Vec3(193, 79, 79);  //grand theft auto crosshair color
+			constexpr auto target = Vec3(193, 79, 79);  //grand theft auto crosshair color
 			//constexpr auto target = Vec3(203, 24, 41);  //dishonored crosshair color
 			//constexpr auto target = Vec3(255, 0, 0); // red dead redemption 2 color
-			constexpr auto target = Vec3(255, 89, 0); // red dead redemption 2 color
+			//constexpr auto target = Vec3(255, 89, 0); // red dead redemption 2 color
+			//constexpr auto target = Vec3(255, 2, 0); // tomb raider color
 
-			if(isNear(color, target, 90))
+			if(isNear(color, target, 30))
 			{
 				//simulateRightClick();
 				simulateLeftClick();
 				//beep();
-				Sleep(60);
+				Sleep(50);
 			}
 		}
-		else
-		{
-			break;
-		}
+		else break;
 	}
 
 	ReleaseDC(gameWindow, device);

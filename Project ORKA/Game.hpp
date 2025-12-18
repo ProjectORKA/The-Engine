@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Framebuffer.hpp"
 #include "UserInterface.hpp"
 
 struct GameSimulation
@@ -15,7 +16,7 @@ struct GameSimulation
 	[[nodiscard]] Float getTickRate() const;
 	[[nodiscard]] Bool  getKeepRunning() const;
 
-private:
+protected:
 	Thread thread;
 	Float  tickRate    = 60;
 	Bool   loaded      = false;
@@ -24,7 +25,15 @@ private:
 
 void gameSimulationThread(GameSimulation& sim);
 
-struct GameRenderer : UIContainer
+struct GameRenderer : UIElement
 {
+	Framebuffer framebuffer;
+	Bool        framebufferInitialized = false;
+
+	void create(Window& window) override;
+	void render(Window& window) override;
+	void destroy(Window& window) override;
+
+	virtual void renderScene(Window& window) = 0;
 	virtual void connect(GameSimulation& simulation) = 0;
 };

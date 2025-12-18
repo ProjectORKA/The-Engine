@@ -2,9 +2,8 @@
 #pragma once
 #include "Basics.hpp"
 
-class Memory
+struct Memory
 {
-public:
 	Memory();
 	~Memory();
 	explicit Memory(SizeT size);
@@ -18,6 +17,7 @@ public:
 	[[nodiscard]] Bool  isValid() const;
 	[[nodiscard]] Byte* getData() const;
 	[[nodiscard]] SizeT getSize() const;
+
 private:
 	Byte* data;
 	SizeT size;

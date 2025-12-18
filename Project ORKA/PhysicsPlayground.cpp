@@ -5,7 +5,10 @@ void PhysicsPlaygroundSimulation::destroy() {}
 
 void PhysicsPlayGroundRenderer::update(Window& window) {}
 
-void PhysicsPlayGroundRenderer::destroy(Window& window) {}
+void PhysicsPlayGroundRenderer::destroy(Window& window)
+{
+	GameRenderer::destroy(window);
+}
 
 
 void PhysicsPlaygroundSimulation::update(const Float delta)
@@ -50,7 +53,10 @@ void PhysicsPlaygroundSimulation::create()
 	while(particles.size() < nodeCount) particles.emplace_back();
 }
 
-void PhysicsPlayGroundRenderer::create(Window& window) {}
+void PhysicsPlayGroundRenderer::create(Window& window)
+{
+	GameRenderer::create(window);
+}
 
 void PhysicsPlayGroundRenderer::inputEvent(Window& window, const InputEvent input)
 {
@@ -62,7 +68,7 @@ Float PhysicsPlaygroundSimulation::distanceBetweenTwoNodes(const Index a, const 
 	return distance(particles[a].position, particles[b].position);
 }
 
-void PhysicsPlayGroundRenderer::render(Window& window, TiledRectangle area)
+void PhysicsPlayGroundRenderer::renderScene(Window& window)
 {
 	Renderer& renderer = window.renderer;
 	renderer.clearBackground(Color(0, 0, 0, 1));
@@ -72,11 +78,11 @@ void PhysicsPlayGroundRenderer::render(Window& window, TiledRectangle area)
 	renderer.fill(Color(1));
 	renderer.useShader("color");
 	Vector<Matrix> particleMatrices;
-	for(PhysicsParticle& p : sim->particles)
+	for(const PhysicsParticle& p : sim->particles)
 	{
 		particleMatrices.emplace_back(matrixFromPositionAndSize(p.position, Vec2(particleSize)));
 	}
 	renderer.circles(particleMatrices);
 }
 
-void PhysicsPlayGroundRenderer::renderInteractive(Window& window, TiledRectangle area) {}
+void PhysicsPlayGroundRenderer::renderInteractive(Window& window) {}

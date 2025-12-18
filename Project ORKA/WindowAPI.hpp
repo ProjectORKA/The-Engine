@@ -4,7 +4,7 @@
 
 namespace External
 {
-	#include "GLFW/glfw3.h"
+	#include <GLFW/glfw3.h>
 }
 
 using ApiWindow  = External::GLFWwindow*;
@@ -18,14 +18,14 @@ void           apiWindowUndecorate(ApiWindow apiWindow);
 Bool           apiWindowIsCapturing(ApiWindow apiWindow);
 Bool           apiWindowIsDecorated(ApiWindow apiWindow);
 void           apiWindowSwapBuffers(ApiWindow apiWindow);
+TiledRectangle apiWindowGetWorkArea(ApiWindow apiWindow);
 void           apiWindowEnableCursor(ApiWindow apiWindow);
 Bool           apiWindowIsFullscreen(ApiWindow apiWindow);
 void           apiWindowDisableCursor(ApiWindow apiWindow);
-TiledRectangle apiWindowGetWorkableArea(ApiWindow apiWindow);
 Bool           apiWindowCursorIsCaptured(ApiWindow apiWindow);
 DVec2          apiWindowGetCursorPosition(ApiWindow apiWindow);
-Area           apiWindowGetFramebufferSize(ApiWindow apiWindow);
-Area           apiWindowGetWindowFrameSize(ApiWindow apiWindow);
+IVec2          apiWindowGetFramebufferSize(ApiWindow apiWindow);
+IVec2          apiWindowGetWindowFrameSize(ApiWindow apiWindow);
 Int            apiWindowGetFramebufferWidth(ApiWindow apiWindow);
 Int            apiWindowGetFramebufferHeight(ApiWindow apiWindow);
 Bool           apiWindowKeyIsPressed(ApiWindow apiWindow, Int key);
@@ -35,5 +35,5 @@ void           apiWindowResize(ApiWindow apiWindow, Int width, Int height);
 void           whenWindowApiThrowsError(Int error, const Char* description);
 void           apiSetWindowShouldClose(ApiWindow apiWindow, Bool shouldClose);
 void           apiWindowSetCursorPosition(ApiWindow apiWindow, DVec2 position);
-ApiWindow      apiCreateWindow(Area size, const Char* title, ApiWindow shared);
+ApiWindow      apiCreateWindow(IVec2 size, const Char* title, ApiWindow shared);
 void           apiWindowSetWindowedMode(ApiWindow apiWindow, TiledRectangle monitorArea);

@@ -18,6 +18,6 @@ struct ParallelizedConvexHullPrototype final : Prototype
 	Bool         drawConnections  = true;
 
 	void action() override;
-	void create() override;
+	void create(Renderer & r) override;
 	void render(Renderer& r, const Player& player) override;
 };

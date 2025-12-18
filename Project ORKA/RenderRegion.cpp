@@ -29,7 +29,7 @@ Int RenderRegion::getHeight() const
 	return size.y;
 }
 
-RenderRegion::RenderRegion(const Area area)
+RenderRegion::RenderRegion(const IVec2 area)
 {
 	size = area;
 }

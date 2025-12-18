@@ -9,22 +9,17 @@ void Plot::add(const Vec2 value)
 CpuMesh Plot::createMesh() const
 {
 	CpuMesh mesh;
-
 	mesh.drawMode      = BufferUsage::DynamicDraw;
 	mesh.name          = "plot";
 	mesh.primitiveMode = PrimitiveMode::LineStrip;
-
-	for(UInt index = 0; index < points.size(); index++)
+	for (UInt index = 0; index < points.size(); index++)
 	{
 		Vec2 pointPos = points[index];
-
 		mesh.positions.emplace_back(pointPos, 0);
 		mesh.textureCoordinates.push_back(pointPos);
-		mesh.normals.emplace_back(0, 0, 1);
-
+		mesh.vertexNormals.emplace_back(0, 0, 1);
 		mesh.indices.push_back(index);
 	}
-
 	mesh.checkIntegrity();
 	return mesh;
 }

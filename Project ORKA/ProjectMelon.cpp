@@ -2,7 +2,10 @@
 #include "Window.hpp"
 #include "Random.hpp"
 
-void MelonRenderer::destroy(Window& window) {}
+void MelonRenderer::destroy(Window& window)
+{
+	GameRenderer::destroy(window);
+}
 
 void MelonRenderer::connect(GameSimulation& simulation) {}
 
@@ -12,7 +15,10 @@ void MelonRenderer::update(Window& window)
 	//world.update(player);
 }
 
-void MelonRenderer::create(Window& window) {}
+void MelonRenderer::create(Window& window)
+{
+	GameRenderer::create(window);
+}
 
 void MelonRenderer::inputEvent(Window& window, const InputEvent input)
 {
@@ -22,12 +28,11 @@ void MelonRenderer::inputEvent(Window& window, const InputEvent input)
 	player.inputEvent(window, input);
 }
 
-void MelonRenderer::render(Window& window, TiledRectangle area)
+void MelonRenderer::renderScene(Window& window)
 {
 	Renderer& r = window.renderer;
-	r.drawToWindow();
 
-	r.clearBackground(Color(0, 0, 0, 1));
+	framebuffer.clear(r);
 
 	r.uniforms().reset();
 
@@ -64,13 +69,13 @@ void MelonRenderer::render(Window& window, TiledRectangle area)
 	//ui
 	r.uniforms().setMMatrix(Matrix(1));
 	r.setDepthTest(false);
-	r.screenSpace();
-	r.textRenderSystem.setSize(20.0f);
-	r.textRenderSystem.setLetterSpacing(0.6f);
+	r.screenSpaceFromBottomLeft();
+	r.fontSize(20.0f);
+	r.letterSpacing(0.6f);
 	r.textRenderSystem.alignText(Alignment::left, Alignment::bottom);
-	r.textRenderSystem.render(r, "FPS: " + toString(1 / r.time.getDelta()), Vec2(30, 30));
-	r.textRenderSystem.render(r, "player Position: " + toString(player.position), Vec2(30, 60));
-	r.textRenderSystem.render(r, "Camera Position: " + toString(player.camera.getPosition()), Vec2(30, 90));
+	r.text("FPS: " + toString(1 / r.time.getDelta()), Vec2(30, 30));
+	r.text("player Position: " + toString(player.position), Vec2(30, 60));
+	r.text("Camera Position: " + toString(player.camera.getPosition()), Vec2(30, 90));
 }
 
-void MelonRenderer::renderInteractive(Window& window, TiledRectangle area) {}
+void MelonRenderer::renderInteractive(Window& window) {}

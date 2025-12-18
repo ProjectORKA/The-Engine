@@ -2,35 +2,44 @@
 #include "Random.hpp"
 #include "Camera.hpp" // remove
 #include "Player.hpp" // remove
-#include "Profiler.hpp"
+#include "RenderingOverrides.hpp"
+#include "Window.hpp"
+#include "OptickProfiling.hpp"
 
-void Renderer::end()
+void Renderer::end(Window& window)
 {
 	OPTICK_EVENT();
 	setWireframeMode(false);
 	setAlphaBlending(true);
-	setRenderRegion(TiledRectangle(windowSize));
+	setRenderRegion(TiledRectangle(window.getContentSize()));
 	drawToWindow();
 	pollGraphicsApiError();
-	OpenGL::apiFinish();
+	OpenGL::apiFinish(openGlContext);
+	
+	// Disable OpenGL logging if it was enabled for this frame
+	if (window.openGLLoggingEnabled)
+	{
+		window.openGLLoggingEnabled = false;
+		openGlContext.disableLogging();
+		logDebug("OpenGL logging disabled after frame capture");
+	}
+	
 	mutex.unlock();
 	frameCount++;
 }
 
 void Renderer::sync()
 {
-	mutex.lock();
-	mutex.unlock();
+	// Non-blocking sync so window callbacks (like resize) never stall the UI.
+	if (mutex.try_lock())
+	{
+		mutex.unlock();
+	}
 }
 
 void Renderer::plane()
 {
-	primitivesRenderer.plane(uniforms());
-}
-
-void Renderer::rectangle()
-{
-	primitivesRenderer.rectangle(uniforms());
+	primitivesRenderer.plane(*this);
 }
 
 void Renderer::create()
@@ -46,24 +55,24 @@ void Renderer::create()
 	time.reset();
 	textureSystem.create(*this);
 	meshSystem.create(*this);
-	shaderSystem.create();
+	shaderSystem.create(*this);
 	primitivesRenderer.create(*this);
 
 	// advanced systems
 	textRenderSystem.create(*this);
-	renderObjectSystem.create(*this);
+	//renderObjectSystem.create(*this);
 
-	idFramebuffer.create("IDFramebuffer", Area(1920, 1080));
+	idFramebuffer.create(*this, "IDFramebuffer", IVec2(settings.defaultWindowWidth, settings.defaultWindowHeight));
 	idFramebuffer.add(*this, WritePixelsFormat::RGBAInteger, DataType::UInt, FramebufferAttachment::Color0, true, Wrapping::Clamped);
 	idFramebuffer.add(*this, WritePixelsFormat::Depth, DataType::Float, FramebufferAttachment::Depth, false, Wrapping::Clamped);
-	idFramebuffer.checkComplete();
+	idFramebuffer.checkComplete(*this);
 
-	postProcessFramebuffer.create("PostProcessFramebuffer", Area(1920, 1080));
+	postProcessFramebuffer.create(*this, "PostProcessFramebuffer", IVec2(settings.defaultWindowWidth, settings.defaultWindowHeight));
 	postProcessFramebuffer.add(*this, WritePixelsFormat::RGBA, DataType::Float, FramebufferAttachment::Color0, true, Wrapping::Clamped);
 	postProcessFramebuffer.add(*this, WritePixelsFormat::Depth, DataType::Float, FramebufferAttachment::Depth, false, Wrapping::Clamped);
-	postProcessFramebuffer.checkComplete();
+	postProcessFramebuffer.checkComplete(*this);
 
-	OpenGL::apiClipControl(GL_LOWER_LEFT, GL_ZERO_TO_ONE);
+	OpenGL::apiClipControl(openGlContext, GL_LOWER_LEFT, GL_ZERO_TO_ONE);
 	OpenGL::apiSetScissorTest(openGlContext, true);
 }
 
@@ -75,22 +84,43 @@ void Renderer::destroy()
 	postProcessFramebuffer.destroy(*this);
 
 	textRenderSystem.destroy(*this);
-	renderObjectSystem.destroy();
+	//renderObjectSystem.destroy();
 
 	meshSystem.destroy(*this);
-	shaderSystem.destroy();
+	shaderSystem.destroy(*this);
 	textureSystem.destroy(*this);
 }
 
-void Renderer::screenSpace()
+void Renderer::uiSpace(const Window& window)
 {
-	uniforms().setVMatrix(getScreenSpaceMatrix());
+	uniforms().setVMatrix(getUISpaceMatrix(window));
 	uniforms().setPMatrix(Matrix(1));
 }
 
-Area Renderer::getArea() const
+void Renderer::rectangle()
 {
-	return windowSize;
+	primitivesRenderer.rectangle(*this);
+}
+
+void Renderer::rectangle(const IVec2 pos, const IVec2 size) {
+	uniforms().setMMatrix(matrixFromPositionAndSize(pos, size));
+	rectangle();
+}
+
+void Renderer::UIRectangle(const IVec2 pos, const IVec2 size)
+{
+	rectangle(pos, size);
+}
+
+void Renderer::renderUITexture(const IVec2 pos, const IVec2 size)
+{
+	rectangle(pos, size);
+}
+
+void Renderer::screenSpaceFromBottomLeft()
+{
+	uniforms().setVMatrix(getScreenSpaceMatrix());
+	uniforms().setPMatrix(Matrix(1));
 }
 
 Uniforms& Renderer::uniforms()
@@ -98,9 +128,19 @@ Uniforms& Renderer::uniforms()
 	return shaderSystem.uniforms;
 }
 
+void Renderer::enableScissor()
+{
+	OpenGL::apiSetScissorTest(openGlContext, true);
+}
+
 void Renderer::wireframeCube()
 {
-	primitivesRenderer.wireframeCube(uniforms());
+	primitivesRenderer.wireframeCube(*this);
+}
+
+void Renderer::disableScissor()
+{
+	OpenGL::apiSetScissorTest(openGlContext, false);
 }
 
 void Renderer::normalizedSpace()
@@ -119,29 +159,21 @@ Float Renderer::deltaTime() const
 	return time.getDelta();
 }
 
-void Renderer::drawToWindow() const
+void Renderer::blendModeAdditive()
 {
-	OpenGL::apiBindDrawFramebuffer(0);
+	OpenGL::apiSetBlending(openGlContext, true);
+	OpenGL::apiBlendFunc(openGlContext, BlendFunction::One, BlendFunction::One);
+	OpenGL::apiBlendEquation(openGlContext, BlendEquation::Add);
 }
 
-Area Renderer::getWindowSize() const
+void Renderer::drawToWindow()
 {
-	return windowSize;
-}
-
-Int Renderer::getWindowWidth() const
-{
-	return windowSize.x;
+	OpenGL::apiBindDrawFramebuffer(openGlContext, 0);
 }
 
 void Renderer::fill(const Int color)
 {
 	fill(Vec4(Vec3(static_cast<Float>(color)), 1));
-}
-
-Int Renderer::getWindowHeight() const
-{
-	return windowSize.y;
 }
 
 void Renderer::fill(const Vec3 color)
@@ -154,7 +186,7 @@ void Renderer::fill(const Vec4 color)
 	uniforms().setCustomColor(color);
 }
 
-void Renderer::begin(const Area size)
+void Renderer::begin(const IVec2 size)
 {
 	time.update(); // advances the time
 
@@ -173,18 +205,17 @@ void Renderer::fill(const Float color)
 	fill(Vec4(Vec3(color), 1.0f));
 }
 
-void Renderer::normalizedScreenSpace()
+void Renderer::normalizedScreenSpace(const Window & window)
 {
-	const auto width  = static_cast<Float>(getWindowWidth());
-	const auto height = static_cast<Float>(getWindowHeight());
-
+	const Float width  = static_cast<Float>(window.getWidth());
+	const Float height = static_cast<Float>(window.getHeight());
 	uniforms().setVMatrix(scale(Matrix(1), Vec3(2.0f / width, 2.0f / height, 0.0f)));
 	uniforms().setPMatrix(Matrix(1));
 }
 
 void Renderer::wireframeCubeCentered()
 {
-	primitivesRenderer.wireframeCubeCentered(uniforms());
+	primitivesRenderer.wireframeCubeCentered(*this);
 }
 
 Float Renderer::getAspectRatio() const
@@ -197,28 +228,20 @@ void Renderer::fill(const Double color)
 	fill(Vec4(Vec3(static_cast<Float>(color)), 1.0f));
 }
 
-void Renderer::setWireframeMode() const
+void Renderer::setWireframeMode()
 {
 	setWireframeMode(wireframeMode);
 }
 
-void Renderer::screenSpaceFromTopLeft()
+void Renderer::screenSpaceFromTopLeft(const Window & window)
 {
-	const auto width  = static_cast<Float>(getWindowWidth());
-	const auto height = static_cast<Float>(getWindowHeight());
+	const auto width  = static_cast<Float>(window.getWidth());
+	const auto height = static_cast<Float>(window.getHeight());
 	auto       matrix = Matrix(1);
 	matrix            = translate(matrix, Vec3(-1, 1, 0));
-	matrix            = scale(matrix, Vec3(2, 2, 0));
-	matrix            = scale(matrix, Vec3(1.0f / width, 1.0f / height, 0.0f));
-	uniforms().setVMatrix(Matrix(1));
-	uniforms().setPMatrix(matrix);
-}
-
-void Renderer::blendModeAdditive()
-{
-	OpenGL::apiSetBlending(openGlContext, true);
-	OpenGL::apiBlendFunc(BlendFunction::One, BlendFunction::One);
-	OpenGL::apiBlendEquation(BlendEquation::Add);
+	matrix            = scale(matrix, Vec3(2.0f / width, -2.0f / height, 1.0f));
+	uniforms().setVMatrix(matrix);
+	uniforms().setPMatrix(Matrix(1));
 }
 
 void Renderer::useMesh(const Name& name)
@@ -227,19 +250,31 @@ void Renderer::useMesh(const Name& name)
 	meshSystem.use(*this, name);
 }
 
+Matrix Renderer::getUISpaceMatrix(const Window & window) const
+{
+	// Maps clip space [-1, 1] into a 0..width / 0..height pixel grid
+	// with origin at the bottom-left and +Y pointing up.
+	Matrix m = Matrix(1);
+	m[0]     = Vec4(2.0f / window.getWidth(), 0.0f, 0.0f, 0.0f);
+	m[1]     = Vec4(0.0f, 2.0f / window.getHeight(), 0.0f, 0.0f);
+	m[2]     = Vec4(0.0f, 0.0f, 1.0f / 100000.0f, 0.0f);
+	m[3]     = Vec4(-1.0f, -1.0f, 0.0, 1.0);
+	return m;
+}
+
 void Renderer::setColor(const Color color)
 {
 	uniforms().setCustomColor(color);
 }
 
-void Renderer::pollGraphicsApiError() const
+void Renderer::pollGraphicsApiError()
 {
-	if (const UInt error = OpenGL::apiGetError()) logError("Opengl Error: " + toString(error));
+	if (const UInt error = OpenGL::apiGetError(openGlContext)) logError("Opengl Error: " + toString(error));
 }
 
 void Renderer::renderMesh(const Name& name)
 {
-	meshSystem.render(*this, uniforms(), name);
+	meshSystem.render(*this, name);
 }
 
 void Renderer::useTexture(const Name& name)
@@ -249,26 +284,30 @@ void Renderer::useTexture(const Name& name)
 
 Index Renderer::useShader(const Name& name)
 {
-	return shaderSystem.use(name);
+	return shaderSystem.use(*this, name);
+}
+
+void Renderer::line(const Vec2Vector& line)
+{
+	primitivesRenderer.line(*this, line);
+}
+
+void Renderer::line(const Vec3Vector& line)
+{
+	primitivesRenderer.line(*this, line);
 }
 
 void Renderer::renderMesh(const Index meshId)
 {
-	meshSystem.render(uniforms(), meshId);
+	meshSystem.render(*this, meshId);
 }
 
 void Renderer::aspectCorrectNormalizedSpace()
 {
 	const Float aspect = getAspectRatio();
 	uniforms().setVMatrix(Matrix(1));
-	if (aspect >= 1.0f)
-	{
-		uniforms().setPMatrix(glm::ortho(-aspect, aspect, -1.0f, 1.0f, 1.0f, -1.0f));
-	}
-	else
-	{
-		uniforms().setPMatrix(glm::ortho(-1.0f, 1.0f, -1 / aspect, 1 / aspect, 1.0f, -1.0f));
-	}
+	if (aspect >= 1.0f) uniforms().setPMatrix(glm::ortho(-aspect, aspect, -1.0f, 1.0f, 1.0f, -1.0f));
+	else uniforms().setPMatrix(glm::ortho(-1.0f, 1.0f, -1 / aspect, 1 / aspect, 1.0f, -1.0f));
 }
 
 Matrix Renderer::getScreenSpaceMatrix() const
@@ -278,14 +317,19 @@ Matrix Renderer::getScreenSpaceMatrix() const
 	return screenSpaceMatrix(width, height);
 }
 
-void Renderer::line(const Vec2Vector& line)
+void Renderer::lines(const Vec2Vector& lines)
 {
-	primitivesRenderer.line(line, uniforms());
+	primitivesRenderer.lines(*this, lines);
 }
 
-void Renderer::line(const Vec3Vector& line)
+void Renderer::lines(const Vec3Vector& lines)
 {
-	primitivesRenderer.line(line, uniforms());
+	primitivesRenderer.lines(*this, lines);
+}
+
+void Renderer::setCulling(const Bool culling)
+{
+	OpenGL::apiSetCulling(openGlContext, culling);
 }
 
 void Renderer::renderSky(const Camera& camera)
@@ -300,73 +344,75 @@ void Renderer::renderSky(const Camera& camera)
 	setDepthTest(true);
 }
 
-void Renderer::lines(const Vec2Vector& lines)
-{
-	primitivesRenderer.lines(lines, uniforms());
-}
-
-void Renderer::lines(const Vec3Vector& lines)
-{
-	primitivesRenderer.lines(lines, uniforms());
-}
-
 void Renderer::points(const Vec2Vector& points)
 {
-	primitivesRenderer.points(points, uniforms());
+	primitivesRenderer.points(*this, points);
 }
 
 void Renderer::points(const Vec3Vector& points)
 {
-	primitivesRenderer.points(points, uniforms());
+	primitivesRenderer.points(*this, points);
 }
 
 void Renderer::fullScreenShader(const Name& name)
 {
 	setWireframeMode(false);
 	useShader(name);
-	meshSystem.renderFullscreen(uniforms());
+	meshSystem.renderFullscreen(*this);
 	setWireframeMode(wireframeMode);
 }
 
-void Renderer::setFramebufferSize(Renderer& renderer, const Area area)
+void Renderer::clearBackground(const Color color)
 {
-	windowSize = area;
-	idFramebuffer.resize(renderer, area);
-	postProcessFramebuffer.resize(renderer, area);
+	OpenGL::apiSetClearColor(openGlContext, color);
+	OpenGL::apiClearColor(openGlContext);
+	OpenGL::apiClearDepth(openGlContext);
 }
 
-void Renderer::setCulling(const Bool culling)
+void Renderer::setAlphaBlending(const Bool blending)
 {
-	OpenGL::apiSetCulling(openGlContext, culling);
+	if (openGlContext.blending != blending)
+	{
+		if (blending)
+		{
+			OpenGL::apiSetBlending(openGlContext, true);
+			OpenGL::apiBlendFunc(openGlContext, BlendFunction::SrcAlpha, BlendFunction::OneMinusSrcAlpha);
+			OpenGL::apiBlendEquation(openGlContext, BlendEquation::Add);
+		}
+		else OpenGL::apiSetBlending(openGlContext, false);
+	}
+}
+
+void Renderer::setDepthTest(const Bool isUsingDepth)
+{
+	if (openGlContext.depthTest != isUsingDepth){
+		OpenGL::apiSetDepthTest(openGlContext, isUsingDepth);
+	}
 }
 
 void Renderer::line(const Vec3 start, const Vec3 end)
 {
 	const Vec3Vector line = {start, end};
-	primitivesRenderer.line(line, uniforms());
+	primitivesRenderer.line(*this, line);
 }
 
 void Renderer::line(const Vec2 start, const Vec2 end)
 {
 	const Vec3Vector line = {Vec3(start, 0.0f), Vec3(end, 0.0f)};
-	primitivesRenderer.line(line, uniforms());
+	primitivesRenderer.line(*this, line);
 }
 
 void Renderer::wireframeCubeCentered(const Float size)
 {
 	uniforms().setMMatrix(Matrix(size));
-	primitivesRenderer.wireframeCubeCentered(uniforms());
+	primitivesRenderer.wireframeCubeCentered(*this);
 }
 
-void Renderer::setWireframeMode(const Bool mode) const
+void Renderer::setWireframeMode(const Bool wireframeMode)
 {
-	if (mode)
-	{
-		OpenGL::apiPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	}
-	else
-	{
-		OpenGL::apiPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	if(openGlContext.wireframeMode != wireframeMode){
+		if (wireframeMode) OpenGL::apiPolygonMode(openGlContext, GL_FRONT_AND_BACK, GL_LINE);
+		else OpenGL::apiPolygonMode(openGlContext, GL_FRONT_AND_BACK, GL_FILL);
 	}
 }
 
@@ -386,42 +432,13 @@ void Renderer::arrow(const Vec3 start, const Vec3 end)
 
 void Renderer::circles(const Vector<Matrix>& matrices)
 {
-	primitivesRenderer.circles(matrices, uniforms());
-}
-
-void Renderer::clearBackground(const Color color)
-{
-	OpenGL::apiSetClearColor(openGlContext, color);
-	OpenGL::apiClearColor();
-	OpenGL::apiClearDepth();
+	primitivesRenderer.circles(*this, matrices);
 }
 
 void Renderer::circle(const Vec2 pos, const Float radius)
 {
 	uniforms().setMMatrix(matrixFromPositionAndSize(pos, radius));
 	renderMesh("circle");
-}
-
-void Renderer::setDepthTest(const Bool isUsingDepth)
-{
-	OpenGL::apiSetDepthTest(openGlContext, isUsingDepth);
-}
-
-void Renderer::setAlphaBlending(const Bool blending)
-{
-	if (openGlContext.blending != blending)
-	{
-		if (blending)
-		{
-			OpenGL::apiSetBlending(openGlContext, true);
-			OpenGL::apiBlendFunc(BlendFunction::SrcAlpha, BlendFunction::OneMinusSrcAlpha);
-			OpenGL::apiBlendEquation(BlendEquation::Add);
-		}
-		else
-		{
-			OpenGL::apiSetBlending(openGlContext, false);
-		}
-	}
 }
 
 void Renderer::setRenderRegion(const TiledRectangle region)
@@ -431,7 +448,7 @@ void Renderer::setRenderRegion(const TiledRectangle region)
 
 void Renderer::wireframeCubes(const Vector<Matrix>& matrices)
 {
-	primitivesRenderer.wireframeCubes(matrices, uniforms());
+	primitivesRenderer.wireframeCubes(*this, matrices);
 }
 
 void Renderer::fill(const Float r, const Float g, const Float b)
@@ -447,13 +464,24 @@ void Renderer::useTexture(const Name& name, const Index position)
 void Renderer::line(const Vec2Vector& line, const Matrix& matrix)
 {
 	uniforms().setMMatrix(matrix);
-	primitivesRenderer.line(line, uniforms());
+	primitivesRenderer.line(*this, line);
 }
 
 void Renderer::lines(const Vec2Vector& lines, const Matrix& matrix)
 {
 	uniforms().setMMatrix(matrix);
-	primitivesRenderer.lines(lines, uniforms());
+	primitivesRenderer.lines(*this, lines);
+}
+
+void Renderer::setScissorTest(const IVec2 position, const IVec2 size)
+{
+	OpenGL::apiSetScissorTest(openGlContext, true);
+	OpenGL::apiScissor(openGlContext, position.x, position.y, size.x, size.y);
+}
+
+void Renderer::setRenderRegion(const IVec2 position, const IVec2 size)
+{
+	renderRegion.set(*this, TiledRectangle(position, size));
 }
 
 void Renderer::normalizedSpaceWithAspectRatio(const Float aspectRatio)
@@ -494,10 +522,16 @@ void Renderer::normalizedSpaceWithAspectRatio(const Float aspectRatio)
 	uniforms().setPMatrix(scale(pMatrix, Vec3(Vec2(1.0f) / view, 1.0f)));
 }
 
-void Renderer::addRenderObject(const RenderObjectNames& renderObjectNames)
+void Renderer::setFramebufferSize(Renderer& renderer, const IVec2 area)
 {
-	renderObjectSystem.addRenderObject(renderObjectNames);
+	idFramebuffer.resize(renderer, area);
+	postProcessFramebuffer.resize(renderer, area);
 }
+
+//void Renderer::addRenderObject(const RenderObjectNames& renderObjectNames)
+//{
+//	renderObjectSystem.addRenderObject(renderObjectNames);
+//}
 
 void Renderer::renderAtmosphere(const Player& player, const Vec3 sunDirection)
 {
@@ -508,7 +542,6 @@ void Renderer::renderAtmosphere(const Player& player, const Vec3 sunDirection)
 	setCulling(false);
 	uniforms().setSunDir(Vec4(sunDirection, 1));
 	useShader("atmosphere");
-	/*framebufferSystem.current().colorTexture.use(0);*/
 	renderMesh("centeredCube");
 	setCulling(culling);
 	setDepthTest(true);
@@ -531,7 +564,7 @@ void Renderer::renderMeshInstanced(const Name& name, const Vec3Vector& positions
 
 void Renderer::renderMeshInstanced(const Name& name, const Vector<Matrix>& transforms)
 {
-	meshSystem.renderInstanced(*this, uniforms(), name, transforms);
+	meshSystem.renderInstanced(*this, name, transforms);
 }
 
 void Renderer::renderMeshInstanced(const Name& name, const Vec3Vector& positions, const Float size)
@@ -548,11 +581,11 @@ void Renderer::postProcess(const Name& name, const Framebuffer& source, const Fr
 
 	uniforms().resetMatrices();
 
-	source.bindRead();
-	source.setAsTexture(0);
+	source.bindRead(*this);
+	source.setAsTexture(*this, 0);
 
 	destination.bindDraw(*this);
-	destination.clear();
+	destination.clear(*this);
 
 	useShader(name);
 	renderMesh("fullScreenQuad");
@@ -561,11 +594,36 @@ void Renderer::postProcess(const Name& name, const Framebuffer& source, const Fr
 void Renderer::setAlphaBlending(const Bool enable, const BlendFunction src, const BlendFunction dst, const BlendEquation eq)
 {
 	OpenGL::apiSetBlending(openGlContext, enable);
-	OpenGL::apiBlendFunc(src, dst);
-	OpenGL::apiBlendEquation(eq);
+	OpenGL::apiBlendFunc(openGlContext, src, dst);
+	OpenGL::apiBlendEquation(openGlContext, eq);
 }
 
 void Renderer::renderMeshInstanced(const Name& name, const Vec2Vector& positions, const Vec2Vector& directions, const Vector<Float>& scales)
 {
 	renderMeshInstanced(name, matrixArrayFromPositionsDirectionsAndSizes(positions, directions, scales));
+}
+
+void Renderer::renderMeshInstanced(const Name& name, const Vec3Vector& positions, const Vec2Vector& directions, const Vector<Float>& scales)
+{
+	renderMeshInstanced(name, matrixArrayFromPositionsDirectionsAndSizes(positions, directions, scales));
+}
+
+void Renderer::text(const String& text)
+{
+	textRenderSystem.render(*this, text);
+}
+
+void Renderer::text(const String& text, const Vec2& position)	
+{
+	textRenderSystem.render(*this, text, position);
+}
+
+void Renderer::fontSize(const Float size)
+{
+	textRenderSystem.setSize(size);
+}
+
+void Renderer::letterSpacing(const Float spacing)
+{
+	textRenderSystem.setLetterSpacing(spacing);
 }

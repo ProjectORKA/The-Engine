@@ -12,7 +12,10 @@ void SnakeFood::update()
 	foodColor = randomVec4Fast(0.0f, 1.0f);
 }
 
-void SnakeRenderer::destroy(Window& window) {}
+void SnakeRenderer::destroy(Window& window)
+{
+	GameRenderer::destroy(window);
+}
 
 void SnakeRenderer::connect(GameSimulation& simulation) {}
 
@@ -54,31 +57,30 @@ void SnakeSnake::update(SnakeFood& snakeFood, const Float deltaTime)
 
 	for(Int i = 0; i < bodySegments.size(); i++)
 	{
-		if(i == 0)
-		{
-			bodySegments[i] = normalize(bodySegments[i] - headPosition) * Vec2(2 * segmentRadius) + headPosition;
-		}
-		else
-		{
-			bodySegments[i]       = normalize(bodySegments[i] - bodySegments[i - 1]) * Vec2(2 * segmentRadius) + bodySegments[i - 1];
-		}
+		if(i == 0) bodySegments[i] = normalize(bodySegments[i] - headPosition) * Vec2(2 * segmentRadius) + headPosition;
+		else bodySegments[i]       = normalize(bodySegments[i] - bodySegments[i - 1]) * Vec2(2 * segmentRadius) + bodySegments[i - 1];
 	}
 }
 
 void SnakeSnake::render(Window& window)
 {
-	window.renderer.fill(Color(snakeColor));
-	window.renderer.useShader("color");
-	window.renderer.uniforms().setMMatrix(matrixFromPositionAndSize(headPosition, segmentRadius));
-	window.renderer.renderMesh("circle");
+	Renderer& r = window.renderer;
+
+	r.fill(Color(snakeColor));
+	r.useShader("color");
+	r.uniforms().setMMatrix(matrixFromPositionAndSize(headPosition, segmentRadius));
+	r.renderMesh("circle");
 	for(const auto& bodySegment : bodySegments)
 	{
-		window.renderer.uniforms().setMMatrix(matrixFromPositionAndSize(bodySegment, segmentRadius));
-		window.renderer.renderMesh("circle");
+		r.uniforms().setMMatrix(matrixFromPositionAndSize(bodySegment, segmentRadius));
+		r.renderMesh("circle");
 	}
 }
 
-void SnakeRenderer::create(Window& window) {}
+void SnakeRenderer::create(Window& window)
+{
+	GameRenderer::create(window);
+}
 
 void SnakeRenderer::inputEvent(Window& window, const InputEvent input)
 {
@@ -87,21 +89,23 @@ void SnakeRenderer::inputEvent(Window& window, const InputEvent input)
 
 void SnakeFood::render(Window& window)
 {
-	window.renderer.fill(Color(foodColor));
-	window.renderer.useShader("color");
-	window.renderer.uniforms().setMMatrix(matrixFromPositionAndSize(foodPosition, 0.03f));
-	window.renderer.renderMesh("circle");
+	Renderer& r = window.renderer;
+
+	r.fill(Color(foodColor));
+	r.useShader("color");
+	r.uniforms().setMMatrix(matrixFromPositionAndSize(foodPosition, 0.03f));
+	r.renderMesh("circle");
 }
 
-void SnakeRenderer::render(Window& window, TiledRectangle area)
+void SnakeRenderer::renderScene(Window& window)
 {
-	Renderer& renderer = window.renderer;
+	Renderer& r = window.renderer;
 
-	renderer.clearBackground(Color(0.0f, 0.2f, 0.2f, 1.0f));
-	renderer.normalizedSpaceWithAspectRatio(16.0f / 9.0f);
+	r.clearBackground(Color(0.0f, 0.2f, 0.2f, 1.0f));
+	r.normalizedSpaceWithAspectRatio(16.0f / 9.0f);
 
 	snake.render(window);
 	snakefood.render(window);
 }
 
-void SnakeRenderer::renderInteractive(Window& window, TiledRectangle area) {}
+void SnakeRenderer::renderInteractive(Window& window) {}

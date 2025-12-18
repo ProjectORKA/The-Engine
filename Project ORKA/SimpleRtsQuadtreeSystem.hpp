@@ -27,6 +27,6 @@ struct SimpleRtsQuadtreeSystem
 	Vector<Matrix>                        quadtreeNodeMatrices;
 
 	void render(Renderer& r) const;
-	void create(SimpleRtsSimulation & sim);
+	void create(SimpleRtsSimulation& sim);
 	void update(SimpleRtsSimulation& sim, Float mapSize);
 };

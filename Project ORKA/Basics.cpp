@@ -10,14 +10,8 @@ Name::Name(const Char* name)
 	memset(&data[0], 0, nameSize);
 	for (Int i = 0; i < nameSize; i++)
 	{
-		if (name[i] != 0)
-		{
-			data[i] = name[i];
-		}
-		else
-		{
-			return;
-		}
+		if (name[i] != 0) data[i] = name[i];
+		else return;
 	}
 }
 
@@ -36,14 +30,8 @@ Name& Name::operator=(const Char* other)
 	memset(&data[0], 0, nameSize);
 	for (Int i = 0; i < nameSize; i++)
 	{
-		if (other[i] != 0)
-		{
-			data[i] = other[i];
-		}
-		else
-		{
-			return *this;
-		}
+		if (other[i] != 0) data[i] = other[i];
+		else return *this;
 	}
 	return *this;
 }
@@ -53,14 +41,8 @@ Name& Name::operator=(const String& other)
 	memset(&data[0], 0, nameSize);
 	for (Int i = 0; i < nameSize; i++)
 	{
-		if (other[i] != 0)
-		{
-			data[i] = other[i];
-		}
-		else
-		{
-			return *this;
-		}
+		if (other[i] != 0) data[i] = other[i];
+		else return *this;
 	}
 	return *this;
 }

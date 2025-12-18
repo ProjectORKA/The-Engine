@@ -13,10 +13,9 @@ layout(std140, binding = 0) uniform GlobalUniforms
 	vec4 customColor;
 	vec4 sunDir;
 
-	float time;
+	double time;
 	float f1;
 	float f2;
-	float f3;
 
 	uint windowWidth;
 	uint windowHeight;
@@ -52,4 +51,5 @@ layout(location = 2) in vec3 normals;
 layout(location = 3) in vec3 tangents;
 layout(location = 4) in vec3 bitangents;
 layout(location = 5) in vec3 colors;
-layout(location = 6) in mat4 transform;
+layout(location = 6) in vec3 faceNormals;
+layout(location = 7) in mat4 transform;

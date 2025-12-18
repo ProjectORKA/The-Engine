@@ -12,7 +12,7 @@ void UIButton::destroy(Window& window) {}
 
 void UIButton::update(Window& window)
 {
-	if(content) content->update(window);
+	if (content) content->update(window);
 }
 
 UIButton& UIButton::insert(UIElement& element)
@@ -25,59 +25,45 @@ void UIButton::create(Window& window) {}
 
 void UIButton::inputEvent(Window& window, const InputEvent input)
 {
-	if(input == InputEvent(InputType::Mouse, 0, true)) pressed = window.renderer.objectId == id;
-	if(input == InputEvent(InputType::Mouse, 0, false))
+	if (input == InputEvent(InputType::Mouse, 0, true)) pressed = window.renderer.objectId == getId();
+	if (input == InputEvent(InputType::Mouse, 0, false))
 	{
-		if(pressed)
+		if (pressed)
 		{
 			pressed = false;
 			doThis();
 		}
 	}
 
-	if(content) content->inputEvent(window, input);
+	if (content) content->inputEvent(window, input);
 }
 
-void UIButton::render(Window& window, TiledRectangle renderArea)
+void UIButton::render(Window& window)
 {
 	Renderer& renderer = window.renderer;
-
-	constraints.update(renderArea);
+	const IVec2 renderPos = getPosition() + IVec2(0, window.getHeight());
 
 	renderer.useShader("color");
-	if(pressed)
-	{
-		renderer.uniforms().setCustomColor(Color(1, 1, 0, 1));
-	}
+	if (pressed) renderer.uniforms().setCustomColor(Color(1, 1, 0, 1));
 	else
 	{
-		const UInt objectId = renderer.objectId;
-
-		if(objectId == id)
-		{
-			renderer.uniforms().setCustomColor(Color(1));
-		}
-		else
-		{
-			renderer.uniforms().setCustomColor(Color(0.1, 0.1, 0.1, 1));
-		}
+		if (const UInt objectId = renderer.objectId; objectId == getId()) renderer.uniforms().setCustomColor(Color(1));
+		else renderer.uniforms().setCustomColor(Color(0.1, 0.1, 0.1, 1));
 	}
 
-	renderer.screenSpace();
-	renderer.uniforms().setMMatrix(matrixFromTiledRectangle(renderArea));
-	renderer.renderMesh("plane");
+	renderer.screenSpaceFromBottomLeft();
+	renderer.uniforms().setMMatrix(matrixFromPositionAndSize(renderPos, getSize()));
+	renderer.rectangle();
 
-	if(content) content->render(window, renderArea);
+	if (content) content->render(window);
 }
 
-void UIButton::renderInteractive(Window& window, TiledRectangle renderArea)
+void UIButton::renderInteractive(Window& window)
 {
-	constraints.update(renderArea);
-
+	const IVec2 renderPos = getPosition() + IVec2(0, window.getHeight());
 	window.renderer.useShader("idShader");
-	window.renderer.screenSpace();
-	window.renderer.uniforms().setObjectId(id);
-	window.renderer.uniforms().setMMatrix(matrixFromTiledRectangle(renderArea));
-
+	window.renderer.screenSpaceFromBottomLeft();
+	window.renderer.uniforms().setObjectId(getId());
+	window.renderer.uniforms().setMMatrix(matrixFromPositionAndSize(renderPos, getSize()));
 	window.renderer.renderMesh("plane");
 }

@@ -26,6 +26,7 @@ struct OctreeNode
 	QuadtreeNode* quadTreeEquivalent = nullptr;
 
 	~OctreeNode();
+	OctreeNode() = delete;
 	explicit OctreeNode(QuadtreeNode& quadTreeRoot);
 	OctreeNode(OctreeNode& parent, Bool x, Bool y, Bool z);
 

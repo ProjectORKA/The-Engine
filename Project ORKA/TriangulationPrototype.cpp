@@ -24,7 +24,7 @@ void TriangulationPrototype::addConnection(Index a, Index b) {
 	connections.emplace_back(a, b, distance(positions[a], positions[b]));
 }
 
-void TriangulationPrototype::create() {
+void TriangulationPrototype::create(Renderer & r) {
 	Vector<Double> points;
 
 	for (int i = 0; i < pointCount; i++)

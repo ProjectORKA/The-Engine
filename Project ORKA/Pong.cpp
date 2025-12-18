@@ -5,7 +5,10 @@
 Float ballSpeedReduction = 1.5;
 Float paddleSpeed        = 2.5;
 
-void PongRenderer::destroy(Window& window) {}
+void PongRenderer::destroy(Window& window)
+{
+	GameRenderer::destroy(window);
+}
 
 void PongPlayer::update(Window& window)
 {
@@ -34,17 +37,15 @@ void PongPlayer::ballPositionInput(Vector<Ball>& balls)
 	if(ball)
 	{
 		position.y = ball->position.y;
-
 		position.y = clamp(position.y, -0.9f, 0.9f);
 	}
 }
 
 void PongRenderer::inputEvent(Window& window, InputEvent input) {}
 
-void PongPlayer::mouseInput(const Vec3 cursorWorldPosition)
+void PongPlayer::mouseInput(const DVec2 cursorWorldPosition)
 {
 	position.y = cursorWorldPosition.y;
-
 	position.y = clamp(position.y, -0.9f, 0.9f);
 }
 
@@ -80,7 +81,6 @@ void Ball::update(const Float deltaTime, PongPlayer players[2])
 	else
 	{
 		// ball is not stuck to paddle
-
 		desiredSpeed += deltaTime / 45.0f;
 
 		velocity = normalize(velocity) * desiredSpeed;
@@ -164,7 +164,6 @@ Ball* getClosestBall(const PongPlayer& player, Vector<Ball>& balls)
 void PongPlayer::aiInput(Vector<Ball>& balls, const Float deltaTime)
 {
 	shoot = randomIntFast(1000) < 1;
-	logDebug(shoot);
 	const Ball* ball = getClosestBall(*this, balls);
 	if(ball)
 	{
@@ -189,6 +188,8 @@ void PongPlayer::aiInput(Vector<Ball>& balls, const Float deltaTime)
 void PongRenderer::create(Window& window)
 {
 	while(balls.size() < ballCount) balls.emplace_back();
+
+	GameRenderer::create(window);
 }
 
 void Ball::render(Renderer& renderer) const
@@ -197,45 +198,41 @@ void Ball::render(Renderer& renderer) const
 	renderer.renderMesh("centeredCube");
 }
 
-void PongRenderer::render(Window& window, TiledRectangle area)
+void PongRenderer::renderScene(Window& window)
 {
 	Renderer& r = window.renderer;
-	r.drawToWindow();
+	r.setCulling(true);
+	r.setDepthTest(true);
 
-	// //input
-	// players[0].shoot = window.input.holding("player1shoot");
-	// players[0].moveUp = window.input.holding("player1up");
-	// players[0].moveDown = window.input.holding("player1down");
-
-	// players[1].shoot = window.input.holding("player2shoot");
-	// players[1].moveUp = window.input.holding("player2up");
-	// players[1].moveDown = window.input.holding("player2down");
-
-	// if(window.input.holding("spawnBall")) balls.emplace_back();
+	// Clear framebuffer
+	framebuffer.clearColor(r, Color(1,0,0,1));
+	framebuffer.clearDepth(r);
+	
+	// Bind framebuffer for rendering
+	r.disableScissor();
 
 	players[0].position.x = -0.9f;
 	players[1].position.x = +0.9f;
 
 	r.aspectCorrectNormalizedSpace();
-	const Vec2 normalizedCursorPosition = Vec2(2) * (Vec2(window.mousePosBotLeft) / Vec2(r.getWindowSize()) - Vec2(0.5));
-	const Vec3 cursorWorldPos           = inverse(r.uniforms().getPMatrix()) * Vec4(normalizedCursorPosition, 0, 1);
+	
+	// Adjust cursor position relative to UIElement
+	//const Vec2 elementPos = getPosition();
+	//const Vec2 elementSize = getSize();
 
-	// players[1].ballPositionInput(ball);
+	//const Vec2 relativeMousePos = Vec2(window.mousePos) - getPosition();
+	//const Vec2 normalizedCursorPosition = Vec2(2) * (relativeMousePos / elementSize - Vec2(0.5));
+	//const Vec3 cursorWorldPos = inverse(r.uniforms().getPMatrix()) * Vec4(normalizedCursorPosition, 0, 1);
+
+	const DVec2 cursorWorldPos = (window.mousePos - DVec2(getPosition())) / DVec2(min(getSize()));
 
 	for(Ball& ball : balls) ball.update(r.time.getDelta(), players);
 
-	// players[0].keyboardInput(renderer.renderTime.delta);
 	players[0].mouseInput(cursorWorldPos);
-	// players[0].aiInput(balls, renderer.renderTime.delta);
-	// players[0].ballPositionInput(balls);
-
-	// players[1].ballPositionInput(balls);
 	players[1].aiInput(balls, r.time.getDelta());
 
-	///////////////////////////////////////////////////////////////////////
-
-	r.clearBackground(Color(0, 0, 0, 1));
-
+	// Clear and render game
+	r.clearBackground(Color(1, 0, 0, 1));
 	r.aspectCorrectNormalizedSpace();
 	r.useShader("color");
 	r.uniforms().setCustomColor(Vec4(1));
@@ -262,21 +259,22 @@ void PongRenderer::render(Window& window, TiledRectangle area)
 	r.uniforms().setMMatrix(scale(translate(Matrix(1), Vec3(-1, 0, 0)), Vec3(0.01, 2, 0.5)));
 	r.renderMesh("centeredCube");
 
-	const Float height = r.getWindowHeight();
-	const Float width  = r.getWindowWidth();
+	// Render UI elements
+	const Float height = static_cast<Float>(window.getWidth());
+	const Float width  = static_cast<Float>(window.getHeight());
 
 	// text
 	r.uniforms().setMMatrix(Matrix(1));
-	r.screenSpace();
+	r.screenSpaceFromBottomLeft();
 	r.fill(Color(1));
-	r.textRenderSystem.setSize(50);
-	r.textRenderSystem.setLetterSpacing(0.6f);
+	r.fontSize(50.0f);
+	r.letterSpacing(0.6f);
 	r.textRenderSystem.alignText(Alignment::left, Alignment::top);
 
-	r.textRenderSystem.render(r, toString(players[0].score), Vec2(10, height - 100));
-	r.textRenderSystem.render(r, toString(players[1].difficulty), Vec2(10, height - 200));
+	r.text(toString(players[0].score), Vec2(10.0f, height - 100.0f));
+	r.text(toString(players[1].difficulty), Vec2(10.0f, height - 200.0f));
 	r.textRenderSystem.alignText(Alignment::right, Alignment::top);
-	r.textRenderSystem.render(r, toString(players[1].score), Vec2(width - 100, height - 100));
+	r.text(toString(players[1].score), Vec2(width - 100.0f, height - 100.0f));
 }
 
-void PongRenderer::renderInteractive(Window& window, TiledRectangle area) {}
+void PongRenderer::renderInteractive(Window& window) {}

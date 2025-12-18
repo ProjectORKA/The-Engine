@@ -97,7 +97,7 @@ void ParallelizedConvexHullPrototype::action()
 	convexHullIds = getConvexHullPointIDs(points);
 }
 
-void ParallelizedConvexHullPrototype::create()
+void ParallelizedConvexHullPrototype::create(Renderer & r)
 {
 	for(ULL i = 0; i < pointCount; i++) points.push_back(randomPointInCircleFast(extend));
 	player.camera.setPosition(0, 0, 150);

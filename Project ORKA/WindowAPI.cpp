@@ -80,16 +80,16 @@ DVec2 apiWindowGetCursorPosition(const ApiWindow apiWindow)
 	return cursorPosition;
 }
 
-Area apiWindowGetFramebufferSize(const ApiWindow apiWindow)
+IVec2 apiWindowGetFramebufferSize(const ApiWindow apiWindow)
 {
-	Area size;
+	IVec2 size;
 	glfwGetFramebufferSize(apiWindow, &size.x, &size.y);
 	return size;
 }
 
-Area apiWindowGetWindowFrameSize(const ApiWindow apiWindow)
+IVec2 apiWindowGetWindowFrameSize(const ApiWindow apiWindow)
 {
-	Area area;
+	IVec2 area;
 	glfwGetWindowSize(apiWindow, &area.x, &area.y);
 	return area;
 }
@@ -101,7 +101,7 @@ Int apiWindowGetFramebufferHeight(const ApiWindow apiWindow)
 	return height;
 }
 
-TiledRectangle apiWindowGetWorkableArea(ApiWindow apiWindow)
+TiledRectangle apiWindowGetWorkArea(ApiWindow apiWindow)
 {
 	TiledRectangle rect;
 	External::glfwGetMonitorWorkarea(External::glfwGetPrimaryMonitor(), &rect.position.x, &rect.position.y, &rect.size.x, &rect.size.y);
@@ -125,14 +125,8 @@ Bool apiWindowKeyIsPressed(const ApiWindow apiWindow, const Int key)
 
 void apiWindowSetVisibility(const ApiWindow apiWindow, const Bool visible)
 {
-	if(visible)
-	{
-		glfwShowWindow(apiWindow);
-	}
-	else
-	{
-		glfwHideWindow(apiWindow);
-	}
+	if(visible) glfwShowWindow(apiWindow);
+	else glfwHideWindow(apiWindow);
 }
 
 void apiSetWindowShouldClose(const ApiWindow apiWindow, const Bool shouldClose)
@@ -145,7 +139,7 @@ void apiWindowResize(const ApiWindow apiWindow, const Int width, const Int heigh
 	glfwSetWindowSize(apiWindow, width, height);
 }
 
-ApiWindow apiCreateWindow(const Area size, const Char* title, const ApiWindow shared)
+ApiWindow apiCreateWindow(const IVec2 size, const Char* title, const ApiWindow shared)
 {
 	return glfwCreateWindow(size.x, size.y, title, nullptr, shared);
 }

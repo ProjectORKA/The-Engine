@@ -31,9 +31,9 @@ struct LabyrinthGeneratorPrototype final : Prototype
 	void createPath();
 	void calculateCost();
 	void action() override;
-	void create() override;
 	void destroy() override;
 	void tryRemoveConnection(Index i);
+	void create(Renderer & r) override;
 	void render(Renderer& r, const Player& player) override;
 	void inputEvent(Window& window, InputEvent input) override;
 };

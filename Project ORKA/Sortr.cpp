@@ -2,6 +2,13 @@
 #include "FileSystem.hpp"
 #include "FileTypes.hpp"
 #include "Platform.hpp"
+#include "Windows.hpp"
+
+void SortrFolderElement::setPath(const Path& path)
+{
+	this->path       = path;
+	this->folderName = getFolderName(path);
+}
 
 void SortrFolderRing::add()
 {
@@ -10,27 +17,9 @@ void SortrFolderRing::add()
 	updatePosition();
 }
 
-void SortrResource::destroy(Renderer& renderer)
-{
-	cpuTexture.unload();
-	gpuTexture.unload(renderer);
-}
-
 void SortrFolderRing::create()
 {
 	add();
-	add();
-	add();
-	add();
-}
-
-void SortrRenderer::sortRight() const {}
-
-void SortrRenderer::updateZoom()
-{
-	const Float oldZoom = zoom;
-	zoom                = powf(zoomFactor, static_cast<Float>(zoomLevel));
-	offset *= zoom / oldZoom;
 }
 
 void SortrRenderer::showNextImage()
@@ -79,9 +68,9 @@ void SortrRenderer::preloadImages(Renderer& renderer)
 			if (order <= cpuMaxPreloadCount)
 			{
 				//load cpu image
-				if (!images[currentImageIndex].cpuTexture.isLoaded())
+				if (!images[currentImageIndex].inRam())
 				{
-					images[currentImageIndex].cpuTexture.load(images[currentImageIndex].path, "SortrImage", Filter::Nearest, Filter::Linear, Wrapping::Clamped);
+					images[currentImageIndex].loadIntoRam();
 					cpuLoadedCount++;
 					//logDebug(cpuLoadedCount);
 				}
@@ -89,9 +78,9 @@ void SortrRenderer::preloadImages(Renderer& renderer)
 				if (order < gpuMaxPreloadCount)
 				{
 					//load gpu image
-					if (!images[currentImageIndex].gpuTexture.isLoaded())
+					if (!images[currentImageIndex].onGpu())
 					{
-						images[currentImageIndex].gpuTexture.load(renderer, images[currentImageIndex].cpuTexture);
+						images[currentImageIndex].loadOntoGpu(renderer);
 						gpuLoadedCount++;
 						//logDebug(gpuLoadedCount);
 					}
@@ -99,9 +88,9 @@ void SortrRenderer::preloadImages(Renderer& renderer)
 				else
 				{
 					//unload gpu image
-					if (images[currentImageIndex].gpuTexture.isLoaded())
+					if (images[currentImageIndex].onGpu())
 					{
-						images[currentImageIndex].gpuTexture.unload(renderer);
+						images[currentImageIndex].unloadFromGpu(renderer);
 						gpuLoadedCount--;
 						//logDebug(gpuLoadedCount);
 					}
@@ -110,17 +99,17 @@ void SortrRenderer::preloadImages(Renderer& renderer)
 			else
 			{
 				//unload cpu image
-				if (images[currentImageIndex].cpuTexture.isLoaded())
+				if (images[currentImageIndex].inRam())
 				{
-					images[currentImageIndex].cpuTexture.unload();
+					images[currentImageIndex].unloadFromRam();
 					cpuLoadedCount--;
 					//logDebug(cpuLoadedCount);
 				}
 
 				//unload gpu image just to be safe
-				if (images[currentImageIndex].gpuTexture.isLoaded())
+				if (images[currentImageIndex].onGpu())
 				{
-					images[currentImageIndex].gpuTexture.unload(renderer);
+					images[currentImageIndex].unloadFromGpu(renderer);
 					gpuLoadedCount--;
 					//logDebug(gpuLoadedCount);
 				}
@@ -141,34 +130,7 @@ void SortrRenderer::preloadImages(Renderer& renderer)
 	}
 }
 
-void SortrRenderer::sortLeft() const
-{
-	//moveFile(images[currentImageId].path, "C:\\Users\\15739\\Downloads\\testfold\\testfold2\\");
-}
-
 void SortrRenderer::destroy(Window& window) {}
-
-void SortrRenderer::loadGpuResource(Renderer& renderer)
-{
-	if (!images.empty())
-	{
-		//if max loaded image count is reached
-		if (gpuLoadedCount >= gpuMaxPreloadCount) unloadGpuImageWithLowestPriority(renderer);
-		//if there are images available to load into ram and we still have space
-		if (gpuLoadedCount <= min(gpuMaxPreloadCount, images.size())) loadGpuImageWithHighestPriority(renderer);
-	}
-}
-
-void SortrRenderer::loadCpuResource()
-{
-	if (!images.empty())
-	{
-		//if max loaded image count is reached
-		if (cpuLoadedCount >= cpuMaxPreloadCount) unloadCpuImageWithLowestPriority();
-		//if there are images available to load into ram and we still have space
-		if (cpuLoadedCount <= min(cpuMaxPreloadCount, images.size())) loadCpuImageWithHighestPriority();
-	}
-}
 
 void SortrFolderRing::updatePosition()
 {
@@ -193,62 +155,71 @@ void SortrRenderer::calculatePriorities()
 
 void SortrRenderer::update(Window& window)
 {
-	//load new images if dropped
+	// If the user dropped new paths (files/folders)
 	if (!window.droppedFilePaths.empty())
 	{
-		//image path to load folder from
-		Path imagePath = "";
+		// We'll keep track of a single "targetPath"
+		// which could be an image file or a folder
+		Path targetPath = "";
 
-		//check for new paths
-		for (auto p : window.droppedFilePaths)
+		for (Path& path : window.droppedFilePaths)
 		{
-			//get last path that is actually an image
-			if (isImageFile(p)) imagePath = p;
+			// If it's an image or a directory, make it our target
+			if (isDirectory(path) || isImageFile(path)) targetPath = path;
 		}
 
-		//clear queue
+		// Clear the dropped paths so we don't reprocess them next frame
 		window.droppedFilePaths.clear();
 
-		//only if there is a valid image should we reload resources
-		if (imagePath != "")
+		// Only proceed if we found a valid path (either image or folder)
+		if (!targetPath.empty())
 		{
-			//delete currently loaded resource
-			for (auto i : images) i.destroy(window.renderer);
+			// Destroy currently loaded images
+			for (auto& img : images)
+			{
+				img.destroy(window.renderer);
+			}
 			images.clear();
 
-			//get folder
-			Path folderPath = getDirectory(imagePath);
+			// Determine folder path:
+			// - If user dropped a folder, use it directly
+			// - If user dropped an image, use the image's parent folder
+			Path folderPath = isDirectory(targetPath) ? targetPath : getDirectory(targetPath);
 
-			//get all images in folder
-			Vector<Path> paths = getFilesInDirectory(folderPath, imageExtensions);
+			// Get all image paths in that folder
+			Vector<Path> imagePaths = getFilesInDirectory(folderPath, imageExtensions);
 
-			//set current index to the originally loaded image
-			for (Int i = 0; i < static_cast<Int>(paths.size()); i++)
+			// If the target is an image, set the current image ID to that image.
+			// Otherwise, default to the first image in the folder (if any).
+			if (isImageFile(targetPath))
 			{
-				if (paths[i] == imagePath)
+				for (Index i = 0; i < imagePaths.size(); i++)
 				{
-					currentImageId = i;
-					break;
+					if (imagePaths[i] == targetPath)
+					{
+						currentImageId = i;
+						break;
+					}
 				}
 			}
-
-			//set images to new paths
-			for (Index i = 0; i < paths.size(); i++)
+			else
 			{
-				SortrResource image;
-				image.path  = paths[i];
-				image.index = i;
-				images.push_back(image);
+				// Dropped a folder; start at the first image.
+				currentImageId = 0;
+			}
+
+			// Now load the images from the folder paths
+			for (Index i = 0; i < imagePaths.size(); i++)
+			{
+				images.emplace_back(imagePaths[i], i);
 			}
 		}
 	}
-
-	//input
-	if (window.pressed(mouseDown)) offset += window.mouseDelta;
 }
 
 void SortrRenderer::create(Window& window)
 {
+	GameRenderer::create(window);
 	ring.create();
 }
 
@@ -259,6 +230,8 @@ void SortrRenderer::addSortrFolderElement()
 
 void Sortr::run(const Int argc, Char* argv[])
 {
+	logDebug(pickFolder());
+
 	//file management
 	// process parameters
 	for (Int i = 0; i < argc; i++)
@@ -270,18 +243,12 @@ void Sortr::run(const Int argc, Char* argv[])
 		}
 		else
 		{
-			if (isImageFile(path))
-			{
-				filePaths.push_back(path);
-			}
-			else
-			{
-				logWarning(String("Can't process input: ").append(path.string()));
-			}
+			if (isImageFile(path)) filePaths.push_back(path);
+			else logWarning(String("Can't process input: ").append(path.string()));
 		}
 	}
 
-	Window & window = ui.window("Sortr", Area(1920, 1080), true, true, WindowState::Windowed, renderer);
+	Window&       window          = ui.window("Sortr", settings.defaultWindowWidth, settings.defaultWindowHeight, true, true, WindowState::Windowed, renderer);
 	Vector<Path>& windowFilePaths = window.droppedFilePaths;
 	for (auto& path : filePaths) if (isImageFile(path)) windowFilePaths.push_back(path);
 	ui.run();
@@ -294,15 +261,9 @@ void SortrRenderer::loadGpuImageWithHighestPriority(Renderer& renderer)
 	if (!images.empty())
 	{
 		const Index imageId = indexOfGpuImageWithHighestPriority();
-		images[imageId].gpuTexture.load(renderer, images[imageId].cpuTexture);
-		if (images[imageId].gpuTexture.isLoaded())
-		{
-			gpuLoadedCount++;
-		}
-		else
-		{
-			logError("Image could not be loaded!");
-		}
+		images[imageId].loadOntoGpu(renderer);
+		if (images[imageId].onGpu()) gpuLoadedCount++;
+		else logError("Image could not be loaded!");
 	}
 }
 
@@ -311,15 +272,9 @@ void SortrRenderer::loadCpuImageWithHighestPriority()
 	if (!images.empty())
 	{
 		const Index imageId = indexOfCpuImageWithHighestPriority();
-		images[imageId].cpuTexture.load(images[imageId].path, "SortrImage", Filter::Nearest, Filter::Linear, Wrapping::Clamped);
-		if (images[imageId].cpuTexture.isLoaded())
-		{
-			cpuLoadedCount++;
-		}
-		else
-		{
-			logError("Image could not be loaded!");
-		}
+		images[imageId].loadIntoRam();
+		if (images[imageId].inRam()) cpuLoadedCount++;
+		else logError("Image could not be loaded!");
 	}
 }
 
@@ -328,15 +283,9 @@ void SortrRenderer::unloadGpuImageWithLowestPriority(Renderer& renderer)
 	if (!images.empty())
 	{
 		const Index imageId = indexOfGpuImageWithLowestPriority();
-		images[imageId].gpuTexture.unload(renderer);
-		if (!images[imageId].gpuTexture.isLoaded())
-		{
-			gpuLoadedCount--;
-		}
-		else
-		{
-			logError("Image could not be unloaded!");
-		}
+		images[imageId].unloadFromGpu(renderer);
+		if (!images[imageId].onGpu()) gpuLoadedCount--;
+		else logError("Image could not be unloaded!");
 	}
 }
 
@@ -345,15 +294,9 @@ void SortrRenderer::unloadCpuImageWithLowestPriority()
 	if (!images.empty())
 	{
 		const Index imageId = indexOfCpuImageWithLowestPriority();
-		images[imageId].cpuTexture.unload();
-		if (!images[imageId].cpuTexture.isLoaded())
-		{
-			cpuLoadedCount--;
-		}
-		else
-		{
-			logError("Image could not be unloaded!");
-		}
+		images[imageId].unloadFromRam();
+		if (!images[imageId].inRam()) cpuLoadedCount--;
+		else logError("Image could not be unloaded!");
 	}
 }
 
@@ -368,10 +311,21 @@ void SortrFolderRing::render(Renderer& renderer) const
 		renderer.renderMesh("centeredPlane");
 		renderer.fill(Color(0, 0.5, 0.5, 1));
 		renderer.textRenderSystem.alignText(Alignment::middle, Alignment::top);
-		renderer.textRenderSystem.setSize(0.3f);
+		renderer.fontSize(0.3f);
 		renderer.textRenderSystem.setLetterSpacing(0.6f);
-		renderer.textRenderSystem.render(renderer, String("image"), Vec2(0, 0));
+		renderer.textRenderSystem.render(renderer, element.folderName, Vec2(0, 0));
 	};
+}
+
+void SortrFolderRing::renderInteractive(Renderer& r) const
+{
+	for (int i = 0; i < elements.size(); i++)
+	{
+		r.aspectCorrectNormalizedSpace();
+		r.uniforms().setMMatrix(matrixFromPositionAndSize(elements[i].position, elements[i].size));
+		r.uniforms().setObjectId(i);
+		r.renderMesh("centeredPlane");
+	}
 }
 
 Index SortrRenderer::indexOfGpuImageWithLowestPriority() const
@@ -382,9 +336,9 @@ Index SortrRenderer::indexOfGpuImageWithLowestPriority() const
 	Index lowestPriorityIndex = 0;
 	for (Int i = 0; i < static_cast<Int>(images.size()); i++)
 	{
-		if (images[i].gpuTexture.isLoaded() && images[i].priority < lowestPriority)
+		if (images[i].onGpu() && images[i].getPriority() < lowestPriority)
 		{
-			lowestPriority      = images[i].priority;
+			lowestPriority      = images[i].getPriority();
 			lowestPriorityIndex = i;
 		}
 	}
@@ -400,9 +354,9 @@ Index SortrRenderer::indexOfCpuImageWithLowestPriority() const
 
 	for (Int i = 0; i < static_cast<Int>(images.size()); i++)
 	{
-		if (images[i].cpuTexture.isLoaded() && images[i].gpuTexture.isLoaded() != true && images[i].priority < lowestPriority)
+		if (images[i].inRam() && images[i].onGpu() != true && images[i].getPriority() < lowestPriority)
 		{
-			lowestPriority      = images[i].priority;
+			lowestPriority      = images[i].getPriority();
 			lowestPriorityIndex = i;
 		}
 	}
@@ -420,9 +374,9 @@ Index SortrRenderer::indexOfCpuImageWithHighestPriority() const
 	//find the first image that is not yet loaded
 	for (Int i = 0; i < static_cast<Int>(images.size()); i++)
 	{
-		if (images[i].cpuTexture.isLoaded() != true)
+		if (images[i].inRam() != true)
 		{
-			highestPriority      = images[i].priority;
+			highestPriority      = images[i].getPriority();
 			highestPriorityIndex = i;
 			break;
 		}
@@ -431,11 +385,11 @@ Index SortrRenderer::indexOfCpuImageWithHighestPriority() const
 	//get the image with the highest priority
 	for (Index i = highestPriorityIndex; i < images.size(); i++)
 	{
-		if (images[i].cpuTexture.isLoaded() != true)
+		if (images[i].inRam() != true)
 		{
-			if (images[i].priority > highestPriority)
+			if (images[i].getPriority() > highestPriority)
 			{
-				highestPriority      = images[i].priority;
+				highestPriority      = images[i].getPriority();
 				highestPriorityIndex = i;
 			}
 		}
@@ -453,9 +407,9 @@ Index SortrRenderer::indexOfGpuImageWithHighestPriority() const
 	//find the first image that is not yet loaded
 	for (Int i = 0; i < static_cast<Int>(images.size()); i++)
 	{
-		if (images[i].cpuTexture.isLoaded() && !images[i].gpuTexture.isLoaded())
+		if (images[i].inRam() && !images[i].onGpu())
 		{
-			highestPriority      = images[i].priority;
+			highestPriority      = images[i].getPriority();
 			highestPriorityIndex = i;
 			break;
 		}
@@ -464,11 +418,11 @@ Index SortrRenderer::indexOfGpuImageWithHighestPriority() const
 	//get the image with the highest priority
 	for (Index i = highestPriorityIndex; i < images.size(); i++)
 	{
-		if (images[i].cpuTexture.isLoaded() && !images[i].gpuTexture.isLoaded())
+		if (images[i].inRam() && !images[i].onGpu())
 		{
-			if (images[i].priority > highestPriority)
+			if (images[i].getPriority() > highestPriority)
 			{
-				highestPriority      = images[i].priority;
+				highestPriority      = images[i].getPriority();
 				highestPriorityIndex = i;
 			}
 		}
@@ -477,27 +431,27 @@ Index SortrRenderer::indexOfGpuImageWithHighestPriority() const
 	return highestPriorityIndex;
 }
 
-void SortrRenderer::render(Window& window, TiledRectangle area)
+void SortrRenderer::renderScene(Window& window)
 {
-	Renderer& renderer = window.renderer;
-	renderer.uniforms().reset();
-	renderer.setDepthTest(false);
-	renderer.clearBackground(Color(0.08, 0.08, 0.08, 1));
-	renderer.setAlphaBlending(true, BlendFunction::One, BlendFunction::OneMinusSrcAlpha, BlendEquation::Add);
-	renderer.normalizedScreenSpace();
+	Renderer& r = window.renderer;
+	r.uniforms().reset();
+	r.setDepthTest(false);
+	r.clearBackground(Color(0.08, 0.08, 0.08, 1));
+	r.setAlphaBlending(true, BlendFunction::One, BlendFunction::OneMinusSrcAlpha, BlendEquation::Add);
+	r.normalizedScreenSpace(window);
 
 	Float imgX = 0;
 	Float imgY = 0;
 
 	if (!images.empty())
 	{
-		images[currentImageId].gpuTexture.useTextureInSlot(0);
-		imgX = static_cast<Float>(images[currentImageId].cpuTexture.getWidth());
-		imgY = static_cast<Float>(images[currentImageId].cpuTexture.getHeight());
+		images[currentImageId].use(r, 0);
+		imgX = static_cast<Float>(images[currentImageId].getWidth());
+		imgY = static_cast<Float>(images[currentImageId].getHeight());
 	}
 
-	const auto winX = static_cast<Float>(renderer.getWindowWidth());
-	const auto winY = static_cast<Float>(renderer.getWindowHeight());
+	const auto winX = static_cast<Float>(window.getWidth());
+	const auto winY = static_cast<Float>(window.getHeight());
 
 	const Float size = min(winX / imgX, winY / imgY);
 
@@ -509,25 +463,50 @@ void SortrRenderer::render(Window& window, TiledRectangle area)
 	//approach(actualMatrix, finalMatrix, renderer.deltaTime() * 20);
 	actualMatrix = finalMatrix;
 
-	renderer.uniforms().setMMatrix(actualMatrix);
+	r.uniforms().setMMatrix(actualMatrix);
 
-	renderer.useShader("sortr");
-	renderer.renderMesh("centeredPlane");
-	ring.render(renderer);
+	r.useShader("sortr");
+	r.renderMesh("centeredPlane");
+	ring.render(r);
 
 	// on screen controls
-	renderer.uniforms().setMMatrix(Matrix(1));
-	renderer.fill(Color(1));
-	renderer.screenSpace();
-	renderer.textRenderSystem.setSize(16.0f);
-	renderer.textRenderSystem.setLetterSpacing(0.6f);
-	renderer.textRenderSystem.alignText(Alignment::left, Alignment::bottom);
-	renderer.textRenderSystem.render(renderer, "Left click to add nodes", Vec2(50));
+	r.uniforms().setMMatrix(Matrix(1));
+	r.fill(Color(1));
+	r.screenSpaceFromBottomLeft();
+	r.fontSize(16.0f);
+	r.textRenderSystem.setLetterSpacing(0.6f);
+	r.textRenderSystem.alignText(Alignment::left, Alignment::bottom);
+	r.textRenderSystem.render(r, "Left click to add nodes", Vec2(50));
+	r.textRenderSystem.render(r, toString(r.objectId), Vec2(50, 100));
 
-	preloadImages(renderer);
+	preloadImages(r);
 }
 
-void SortrRenderer::renderInteractive(Window& window, TiledRectangle area) {}
+void SortrRenderer::renderInteractive(Window& window)
+{
+	Renderer& r = window.renderer;
+
+	r.idFramebuffer.resize(r, getSize());
+	r.idFramebuffer.clearColor(r, IVec4(-1));
+	r.idFramebuffer.clearDepth(r);
+	r.idFramebuffer.bindDraw(r);
+	r.setWireframeMode(false);
+	r.setDepthTest(true);
+	r.setCulling(false);
+	r.setAlphaBlending(false);
+	r.normalizedScreenSpace(window);
+	r.useShader("idShader");
+
+	ring.renderInteractive(r);
+
+	r.idFramebuffer.bindRead(r);
+	IVec4 idData;
+	if (window.capturing) idData = r.idFramebuffer.readPixelsAtCenterUIntRGB(r, FramebufferMode::Color0);
+	else idData                  = r.idFramebuffer.readPixelsUIntRGB(r, static_cast<Int>(window.mousePosBotLeft.x), static_cast<Int>(window.mousePosBotLeft.y), FramebufferMode::Color0);
+	r.objectId    = idData.x;
+	r.instanceId  = idData.y;
+	r.primitiveId = idData.z;
+}
 
 Vector<Index> SortrRenderer::indicesOfImagesSortedByPriority() const
 {
@@ -535,7 +514,7 @@ Vector<Index> SortrRenderer::indicesOfImagesSortedByPriority() const
 	for (Index i = 0; i < images.size(); i++) indices.push_back(i);
 	std::ranges::sort(indices, [&](const Index a, const Index b)
 	{
-		return images[a].priority > images[b].priority;
+		return images[a].getPriority() > images[b].getPriority();
 	});
 	return indices;
 }
@@ -543,20 +522,6 @@ Vector<Index> SortrRenderer::indicesOfImagesSortedByPriority() const
 void SortrRenderer::inputEvent(Window& window, const InputEvent input)
 {
 	lastButtonInput = now();
-
-	if (input == zoomIn)
-	{
-		zoomLevel++;
-		updateZoom();
-	}
-
-	if (input == zoomOut)
-	{
-		zoomLevel--;
-		updateZoom();
-	}
-
-	if (input == left) sortLeft();
 
 	if (input == shapeToggler)
 	{
@@ -566,22 +531,29 @@ void SortrRenderer::inputEvent(Window& window, const InputEvent input)
 
 	if (input == deleteImage && !images.empty())
 	{
-		deleteFile(images[currentImageId].path);
+		deleteFile(images[currentImageId].getPath());
 		images[currentImageId].destroy(window.renderer);
 		images.erase(images.begin() + currentImageId);
 		if (currentImageId >= static_cast<Int>(images.size())) currentImageId--;
 	}
 
-	if (input == resetView)
-	{
-		offset    = Vec2(0);
-		zoomLevel = 0;
-		updateZoom();
-	}
+	UInt eId = window.renderer.objectId;
 
-	if (input == click)
+	if (input == click && eId != -1)
 	{
-		addSortrFolderElement();
+		//clicked button
+		if (eId == 0)
+		{
+			//add folder
+			addSortrFolderElement();
+		}
+		else
+		{
+			//set folder
+			ring.elements[eId].setPath(pickFolder());
+		}
+
+		beep();
 	}
 }
 
@@ -592,13 +564,4 @@ void SortrRenderer::preloadImage(Renderer& renderer, const Path& path, GPUTextur
 	cpuTexture.unload();
 	cpuTexture.load(path, "SortrImage", Filter::Nearest, Filter::Linear, Wrapping::Clamped);
 	texture.load(renderer, cpuTexture);
-}
-
-void SortrResource::calculateRating(const Index currentImageIndex, const UInt resourceCount)
-{
-	const auto  b    = static_cast<Float>(resourceCount);
-	const auto  a    = static_cast<Float>(currentImageIndex);
-	const auto  x    = static_cast<Float>(index);
-	const Float diff = abs(a - x);
-	priority         = b / 2.0f - min(abs(a - x - b), min(diff, abs(a - x + b)));
 }

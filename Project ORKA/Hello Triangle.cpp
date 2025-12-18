@@ -5,9 +5,9 @@ void HelloTriangleRenderer::update(Window& window) {}
 void HelloTriangleRenderer::destroy(Window& window)
 {
 	vao.destroy(window.renderer.openGlContext);
-	indVBO.destroy();
-	posVBO.destroy();
-	mainFramebuffer.destroy(window.renderer);
+	indVBO.destroy(window.renderer.openGlContext);
+	posVBO.destroy(window.renderer.openGlContext);
+	GameRenderer::destroy(window);
 }
 
 void HelloTriangleRenderer::connect(GameSimulation& simulation) {}
@@ -32,7 +32,7 @@ out vec4 color; void main()
 )";
 	glfwMakeContextCurrent(window.apiWindow); //[TODO] remove this
 
-	window.renderer.shaderSystem.add("HelloTriangle", vertexShaderSource, fragmentShaderSource);
+	window.renderer.shaderSystem.add(window.renderer, "HelloTriangle", vertexShaderSource, fragmentShaderSource);
 
 	const Vector<Float> vertices = {-0.5f, -0.5f, 0.0f, +0.0f, +0.5f, 0.0f, +0.5f, -0.5f, 0.0f};
 
@@ -40,35 +40,30 @@ out vec4 color; void main()
 
 	const Vector<UInt> indices = {0, 1, 2};
 
-	posVBO.create(vertices, BufferUsage::StaticDraw, "Positions");
-	colVBO.create(vertColors, BufferUsage::StaticDraw, "Colors");
-	indVBO.create(indices, BufferUsage::StaticDraw, "Indices");
+	posVBO.create(window.renderer.openGlContext, vertices, BufferUsage::StaticDraw, "Positions");
+	colVBO.create(window.renderer.openGlContext, vertColors, BufferUsage::StaticDraw, "Colors");
+	indVBO.create(window.renderer.openGlContext, indices, BufferUsage::StaticDraw, "Indices");
 
 	vao.create(window.renderer.openGlContext);
-	vao.bindVertexBuffer(0, posVBO.getID(), 0, sizeof(Vec3), 0, 3, DataType::Float, false, 0);
-	vao.bindVertexBuffer(5, colVBO.getID(), 0, sizeof(Vec3), 0, 3, DataType::Float, false, 0);
-	vao.bindIndexBuffer(indVBO.getID());
+	vao.bindVertexBuffer(window.renderer.openGlContext, 0, posVBO.getID(), 0, sizeof(Vec3), 0, 3, DataType::Float, false, 0);
+	vao.bindVertexBuffer(window.renderer.openGlContext, 5, colVBO.getID(), 0, sizeof(Vec3), 0, 3, DataType::Float, false, 0);
+	vao.bindIndexBuffer(window.renderer.openGlContext, indVBO.getID());
 
-	mainFramebuffer.create("Main Framebuffer", Area(1920, 1080));
-	mainFramebuffer.add(window.renderer, WritePixelsFormat::RGBA, DataType::Float, FramebufferAttachment::Color0, true, Wrapping::Clamped);
-	mainFramebuffer.add(window.renderer, WritePixelsFormat::Depth, DataType::Float, FramebufferAttachment::Depth, false, Wrapping::Clamped);
-	mainFramebuffer.checkComplete();
+	GameRenderer::create(window);
 }
 
-void HelloTriangleRenderer::render(Window& window, const TiledRectangle area)
+void HelloTriangleRenderer::renderScene(Window& window)
 {
 	Renderer& r = window.renderer;
 
-	r.drawToWindow();
+	framebuffer.clear(r);
 
-	r.setRenderRegion(area);
-
+	r.setRenderRegion(TiledRectangle(getPosition(), getSize()));
 	r.clearBackground(Color(0, 0, 0, 0));
-
 	r.useShader("HelloTriangle");
 
-	vao.bind();
-	vao.render(PrimitiveMode::Triangles, 3, nullptr);
+	vao.bind(window.renderer.openGlContext);
+	vao.render(window.renderer.openGlContext, PrimitiveMode::Triangles, 3, nullptr);
 }
 
-void HelloTriangleRenderer::renderInteractive(Window& window, TiledRectangle area) {}
+void HelloTriangleRenderer::renderInteractive(Window& window) {}

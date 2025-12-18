@@ -40,11 +40,11 @@
 #include <shared_mutex>
 #include <unordered_set>
 
-#include "glm/glm.hpp"
-#include "glm/gtc/quaternion.hpp"
-#include "glm/gtc/type_ptr.hpp"
-#include "glm/gtx/quaternion.hpp"
-#include "glm/gtx/rotate_vector.hpp"
+#include <glm/glm.hpp>
+#include <glm/gtc/quaternion.hpp>
+#include <glm/gtc/type_ptr.hpp>
+#include <glm/gtx/quaternion.hpp>
+#include <glm/gtx/rotate_vector.hpp>
 
 // standard
 using Bool = bool;
@@ -193,25 +193,25 @@ template <typename T>
 using Deque = std::deque<T>;
 template <typename T>
 using Vector = std::vector<T>;
-template <std::size_t T>
+template <SizeT T>
 using BitSet = std::bitset<T>;
 template <typename T, typename K>
 using Map = std::map<T, K>;
-template <typename T, size_t size>
-using Array = std::array<T, size>;
+template <typename T, SizeT S>
+using Array = std::array<T, S>;
 
 struct Vec2Vector;
 struct Vec3Vector;
 
-struct Vec2Vector : std::vector<Vec2>
+struct Vec2Vector : Vector<Vec2>
 {
 	explicit Vec2Vector(const Vec3Vector& other);
-	explicit Vec2Vector(const std::size_t size) : std::vector<Vec2>(size) {}
-	explicit Vec2Vector(const std::vector<Vec2>& other) : std::vector<Vec2>(other) {}
+	explicit Vec2Vector(const SizeT size) : Vector<Vec2>(size) {}
+	explicit Vec2Vector(const Vector<Vec2>& other) : Vector<Vec2>(other) {}
 
 	Vec2Vector() = default;
-	Vec2Vector(const std::size_t size, const Vec2& value) : std::vector<Vec2>(size, value) {}
-	Vec2Vector(const std::initializer_list<Vec2> initList) : std::vector<Vec2>(initList) {}
+	Vec2Vector(const SizeT size, const Vec2& value) : Vector<Vec2>(size, value) {}
+	Vec2Vector(const std::initializer_list<Vec2> initList) : Vector<Vec2>(initList) {}
 
 	[[nodiscard]] Vec3Vector toVec3() const;
 };
@@ -260,14 +260,8 @@ inline String toString(const Int v)
 
 inline String toString(const ULL v)
 {
-	if (printULLWithBits)
-	{
-		return "(" + BitSet<sizeof(ULL) * 8>(v).to_string() + ") = " + std::to_string(v);
-	}
-	else
-	{
-		return std::to_string(v);
-	}
+	if (printULLWithBits) return "(" + BitSet<sizeof(ULL) * 8>(v).to_string() + ") = " + std::to_string(v);
+	else return std::to_string(v);
 }
 
 inline String toString(const Bool v)
@@ -420,7 +414,7 @@ template <typename T>
 String toString(T v)
 {
 	__debugbreak(); // implement conversion
-	return "(ERROR: String conversion not implemented)";
+	return "(ERROR: String conversion for Type: " + toString(typeid(T).name()) + "not implemented)";
 }
 
 inline String toLowerCase(const String& str)

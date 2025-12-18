@@ -3,7 +3,7 @@
 #include "Renderer.hpp"
 #include "SimpleRTS.hpp"
 
-void SimpleRtsTreeSystem::render(Renderer& renderer) const
+void SimpleRtsTreeSystem::render(Renderer& renderer)
 {
 	renderer.useShader("simpleRTS");
 	renderer.renderMeshInstanced("Tree", positions, directions, scales);
@@ -33,40 +33,41 @@ void SimpleRtsTreeSystem::reset(const SimpleRtsSimulation& sim)
 
 void SimpleRtsTreeSystem::create(const SimpleRtsSimulation& sim)
 {
+	name = "TreeSystem";
+	if (debugSimpleRts) logDebug("Creating " + toString(count) + " trees.");
 	while (positions.size() < count) spawnTree(sim);
+	if (debugSimpleRts) logDebug("Created trees.");
 }
 
 void SimpleRtsTreeSystem::update(SimpleRtsSimulation& sim)
 {
-	timer.start();
 	for (UInt i = 0; i < treeCount; i++)
 	{
 		ages[i] += sim.timeStep();
 		scales[i] = calculateTreeSize(i);
 		if (ages[i] >= lifeExpectancies[i]) cutTree(sim, i);
 	}
-	timer.stop();
 }
 
 void SimpleRtsTreeSystem::spawnTree(const SimpleRtsSimulation& sim)
 {
-	positions.push_back(sim.getRandomSpawnPos(treeRadius));
-	lifeExpectancies.push_back(randomFloatFast(minTreeLifeExpectancy, maxTreeLifeExpectancy));
-	ages.push_back(randomFloatFast(0, minTreeLifeExpectancy));
-	directions.push_back(randomUnitVec2Fast());
-	maxHeights.push_back(randomFloatFast(minGrownTreeHeight, maxGrownTreeHeight));
-	scales.push_back(calculateTreeSize(treeCount));
+	positions.emplace_back(sim.getRandomSpawnPos(treeRadius));
+	lifeExpectancies.emplace_back(randomFloatFast(minTreeLifeExpectancy, maxTreeLifeExpectancy));
+	ages.emplace_back(randomFloatFast(0, minTreeLifeExpectancy));
+	directions.emplace_back(randomUnitVec2Fast());
+	maxHeights.emplace_back(randomFloatFast(minGrownTreeHeight, maxGrownTreeHeight));
+	scales.emplace_back(calculateTreeSize(treeCount));
 	treeCount++;
 }
 
 void SimpleRtsTreeSystem::forceSpawnTree(const SimpleRtsSimulation& sim, Vec2 position)
 {
-	positions.push_back(position);
-	lifeExpectancies.push_back(randomFloatFast(minTreeLifeExpectancy, maxTreeLifeExpectancy));
-	ages.push_back(randomFloatFast(0, minTreeLifeExpectancy));
-	directions.push_back(randomUnitVec2Fast());
-	maxHeights.push_back(randomFloatFast(minGrownTreeHeight, maxGrownTreeHeight));
-	scales.push_back(calculateTreeSize(treeCount));
+	positions.emplace_back(position, sim.getTerrainHeight(position));
+	lifeExpectancies.emplace_back(randomFloatFast(minTreeLifeExpectancy, maxTreeLifeExpectancy));
+	ages.emplace_back(randomFloatFast(0, minTreeLifeExpectancy));
+	directions.emplace_back(randomUnitVec2Fast());
+	maxHeights.emplace_back(randomFloatFast(minGrownTreeHeight, maxGrownTreeHeight));
+	scales.emplace_back(calculateTreeSize(treeCount));
 	treeCount++;
 }
 
@@ -84,17 +85,17 @@ void SimpleRtsTreeSystem::cutTree(const SimpleRtsSimulation& sim, const UInt id)
 	{
 		Vec2 newTreePosition = positions[randomIntFast(positions.size())];
 		loopWithinCentered(newTreePosition, sim.mapSize);
-		while (pointWithinDistanceOfOtherPoints(newTreePosition, positions, treeRadius))
+		while (pointWithinDistanceOfOtherPoints(newTreePosition, positions.toVec2(), treeRadius))
 		{
 			newTreePosition += randomPointInCircleFast(treeSpread);
 			loopWithinCentered(newTreePosition, sim.mapSize);
 		}
-		positions[id] = newTreePosition;
+		positions[id] = Vec3(newTreePosition, sim.getTerrainHeight(newTreePosition));
 	}
 	else
 	{
 		// [TODO] WIP
 		Vec2 newTreePosition = sim.getRandomSpawnPos(treeRadius);
-		positions[id]        = newTreePosition;
+		positions[id]        = Vec3(newTreePosition, sim.getTerrainHeight(newTreePosition));
 	}
 }

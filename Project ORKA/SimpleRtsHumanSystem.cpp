@@ -1,4 +1,6 @@
 #include "SimpleRtsHumanSystem.hpp"
+
+#include "FileSystem.hpp"
 #include "Random.hpp"
 #include "Renderer.hpp"
 #include "SimpleRts.hpp"
@@ -8,24 +10,39 @@ void SimpleRtsHumanSystem::spawnHuman(const SimpleRtsSimulation& sim)
 	scales.emplace_back(randomFloatFast(minHumanSize, maxHumanSize));
 	names.emplace_back(loadedNames[randomIntFast(loadedNames.size())]);
 	surNames.emplace_back(loadedSurNames[randomIntFast(loadedSurNames.size())]);
-	positions.emplace_back(sim.getRandomSpawnPos(humanRadius));
+	positions.emplace_back(sim.getRandomSpawnPos());
 	targetPositions.emplace_back(0, 0);
 	directions.emplace_back(randomUnitVec2Fast());
 	speed.emplace_back(randomFloatFast(humanSpeedMin, humanSpeedMax));
 	states.push_back(SimpleRtsHumanState::Wandering);
-	hunger.push_back(0.0);
+	const Float energyRequirement = randomFloatFast(2000,3000);
+	dailyEnergyRequirement.push_back(energyRequirement);
+	storedEnergy.push_back(randomFloatFast(0,energyRequirement));
 	targetId.push_back(0);
 	humanCount++;
 }
 
 void SimpleRtsHumanSystem::create(const SimpleRtsSimulation& sim)
 {
+	name           = "HumanSystem";
 	loadedNames    = loadStringVector("Data/Text/simpleRTSHumanMaleNames.txt");
 	loadedSurNames = loadStringVector("Data/Text/simpleRTSHumanSurnames.txt");
 
-	logDebug("Spawning Humans");
+	names.reserve(count);
+	speed.reserve(count);
+	scales.reserve(count);
+	states.reserve(count);
+	dailyEnergyRequirement.reserve(count);
+	storedEnergy.reserve(count);
+	surNames.reserve(count);
+	targetId.reserve(count);
+	positions.reserve(count);
+	directions.reserve(count);
+	targetPositions.reserve(count);
+
+	if (debugSimpleRts) logDebug("Spawning " + std::to_string(count) + " humans");
 	for (int i = 0; i < count; i++) spawnHuman(sim);
-	logDebug("Spawning Humans Done");
+	if (debugSimpleRts) logDebug("Spawned humans");
 }
 
 void SimpleRtsHumanSystem::update(SimpleRtsSimulation& sim)
@@ -35,16 +52,20 @@ void SimpleRtsHumanSystem::update(SimpleRtsSimulation& sim)
 	{
 		if (states[i] != SimpleRtsHumanState::Dead)
 		{
-			hunger[i] += sim.timeStep() * 5.0;
-			if (hunger[i] > 100.0) die(i);
+			storedEnergy[i] -= sim.timeStep() * dailyEnergyRequirement[i] / 86400.0f;
 
-			// Wandering
+			if (storedEnergy[i] <= 0.0f)
+			{
+				scales[i] = 0.0;
+				logDebug(names[i] + " is dead");
+				states[i] = SimpleRtsHumanState::Dead;
+			}
+
 			if (states[i] == SimpleRtsHumanState::Wandering)
 			{
 				positions[i] += directions[i] * speed[i] * wanderingWalkingSpeedMultiplier * sim.timeStep();
 				loopWithinCentered(positions[i], sim.mapSize);
-
-				if (hunger[i] > 50.0)
+				if (storedEnergy[i] < 0.5f * dailyEnergyRequirement[i])
 				{
 					states[i] = SimpleRtsHumanState::SearchFood;
 					continue;
@@ -55,7 +76,7 @@ void SimpleRtsHumanSystem::update(SimpleRtsSimulation& sim)
 			// Idle
 			if (states[i] == SimpleRtsHumanState::Idle)
 			{
-				if (hunger[i] > 50.0)
+				if (storedEnergy[i] < 0.5f * dailyEnergyRequirement[i])
 				{
 					states[i] = SimpleRtsHumanState::SearchFood;
 					continue;
@@ -67,28 +88,41 @@ void SimpleRtsHumanSystem::update(SimpleRtsSimulation& sim)
 
 			if (states[i] == SimpleRtsHumanState::SearchFood)
 			{
-				Index berryBushId  = idOfClosestPointInLoopingSpace(positions[i], sim.berryBushSystem.positions, sim.mapSize);
-				targetId[i]        = berryBushId;
-				targetPositions[i] = sim.berryBushSystem.positions[berryBushId];
-				directions[i]      = normalize(deltaInLoopingSpace(positions[i], targetPositions[i], sim.mapSize));
-				states[i]          = SimpleRtsHumanState::MoveToFood;
+				if (const Vec2 delta = deltaInLoopingSpace(positions[i], targetPositions[i], sim.mapSize); delta != Vec2(0)) directions[i] = normalize(delta);
+				const Index berryBushId = idOfClosestPointInLoopingSpace(positions[i], sim.berryBushSystem.positions, sim.mapSize);
+				targetId[i]             = berryBushId;
+				targetPositions[i]      = sim.berryBushSystem.positions[berryBushId];
+				states[i]               = SimpleRtsHumanState::MoveToFood;
 			}
 
 			if (states[i] == SimpleRtsHumanState::MoveToFood)
 			{
-				Vec2  delta        = deltaInLoopingSpace(positions[i], targetPositions[i], sim.mapSize);
-				Float moveDistance = speed[i] * hungerWalkingSpeedMultiplier * sim.timeStep();
-				Vec2  step         = normalize(delta) * moveDistance;
-				directions[i]      = normalize(delta);
-				if (length(step) >= length(delta))
+				// Calculate delta in looping space and its length
+				const Vec2  delta = deltaInLoopingSpace(positions[i], targetPositions[i], sim.mapSize);
+				const Float dist  = length(delta);
+
+				if (delta == Vec2(0) || dist == 0.0)
 				{
-					step = delta;
-					sim.berryBushSystem.eat(targetId[i], sim);
-					hunger[i] = 0.0;
-					states[i] = SimpleRtsHumanState::Idle;
+					states[i] = SimpleRtsHumanState::EatFood;
+					return;
 				}
-				positions[i] += step;
+				const Float moveDistance = speed[i] * hungerWalkingSpeedMultiplier * sim.timeStep();
+				directions[i] = delta / dist;
+
+				if (moveDistance >= dist)
+				{
+					positions[i] += delta;
+					states[i] = SimpleRtsHumanState::EatFood;
+				}
+				else positions[i] += directions[i] * moveDistance;
 				loopWithinCentered(positions[i], sim.mapSize);
+			}
+
+			if (states[i] == SimpleRtsHumanState::EatFood)
+			{
+				sim.berryBushSystem.eat(targetId[i], sim);
+				storedEnergy[i] += 1294.0f; // kcal of a berry bush
+				states[i] = SimpleRtsHumanState::Idle;
 			}
 		}
 	}
@@ -97,19 +131,12 @@ void SimpleRtsHumanSystem::update(SimpleRtsSimulation& sim)
 
 void SimpleRtsHumanSystem::destroy(const SimpleRtsSimulation& sim) {}
 
-void SimpleRtsHumanSystem::die(const Index i)
+Bool SimpleRtsHumanSystem::doesCollide(const Vec2 position, const Float radius) const
 {
-	scales[i] = 0.0;
-	println(names[i] + " is dead");
-	states[i] = SimpleRtsHumanState::Dead;
+	return false; //circleCollidingWithCircles(position, radius, positions, humanRadius);
 }
 
-bool SimpleRtsHumanSystem::doesCollide(const Vec2 position, const Float radius) const
-{
-	return circleCollidingWithCircles(position, radius, positions, humanRadius);
-}
-
-void SimpleRtsHumanSystem::render(Renderer& renderer) const
+void SimpleRtsHumanSystem::render(Renderer& renderer)
 {
 	renderer.renderMeshInstanced("Human", positions, directions, scales);
 }

@@ -84,7 +84,7 @@ void JobSystem::stop()
 {
 	canEnqueueNew  = false;
 	canEnqueueNext = false;
-	while(!jobQueue.empty()){}
+	while (!jobQueue.empty()) {}
 }
 
 void JobSystem::startWithThreads(const UInt numThreads)

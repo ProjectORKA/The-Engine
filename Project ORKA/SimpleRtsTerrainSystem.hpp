@@ -2,12 +2,21 @@
 #include "Renderer.hpp"
 #include "SimpleRtsSystem.hpp"
 
+struct SimpleRtsSimulation;
+
 struct SimpleRtsTerrainSystem : SimpleRtsSystem
 {
-	void update(SimpleRtsSimulation& sim) override {}
-	void render(Renderer& renderer) const override {}
-	void create(const SimpleRtsSimulation& sim) override {}
-	void destroy(const SimpleRtsSimulation& sim) override {}
+	Int count = 200000;
 
-	[[nodiscard]] static Float simpleRtsTerrainFunction(Vec2 position);
+	CpuMesh terrainMesh;
+	UInt    terrainResolution = 128;
+
+	Double terrainFunction(Double a, Double b, Double mapSize) const;
+
+	[[nodiscard]] Bool isWater(const SimpleRtsSimulation& sim, Vec2 position) const;
+
+	void update(SimpleRtsSimulation& sim) override {}
+	void render(Renderer& renderer) override {}
+	void create(const SimpleRtsSimulation& sim) override;
+	void destroy(const SimpleRtsSimulation& sim) override {}
 };

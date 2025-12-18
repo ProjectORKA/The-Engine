@@ -1,6 +1,4 @@
 #include "TripleNine.hpp"
-#include "JobSystem.hpp"
-#include "Window.hpp"
 
 #ifdef TRIPLE_NINE_ENEMY
 void TripleNineEnemy::update(Window& window) {}
@@ -52,10 +50,7 @@ Vec3 TripleNineGameState::getPlayerPosition(const PlayerID playerID) const
 {
 	for (auto& player : players)
 	{
-		if (player.playerID == playerID)
-		{
-			return player.position;
-		}
+		if (player.playerID == playerID) return player.position;
 	}
 	return Vec3(0);
 }
@@ -69,7 +64,7 @@ ULL TripleNineGameState::getTick() const
 
 void TripleNineSimulation::create()
 {
-	server.create();
+	loaded = true;
 
 	#ifdef TRIPLE_NINE_ENEMY
 	for (Int i = 0; i < 100; i++) createEnemy();
@@ -78,23 +73,10 @@ void TripleNineSimulation::create()
 
 void TripleNineSimulation::destroy()
 {
-	server.destroy();
 }
 
 void TripleNineSimulation::update(Float delta)
 {
-	if (isOnline)
-	{
-		if (isServer)
-		{
-			server.processEvents();
-		}
-		else
-		{
-			client.processEvents();
-		}
-	}
-	else {}
 }
 
 void TripleNineSimulation::updatePlayer(const Byte playerId, const Vec3 position)
@@ -106,8 +88,8 @@ void TripleNineSimulation::updatePlayer(const Byte playerId, const Vec3 position
 
 void TripleNineRenderer::update(Window& window)
 {
-	client.processEvents();
 	player.update(window);
+
 	//if (gameState.getPlayerPosition(client.getClientToken()) != player.position)
 	//{
 	//	client.sendPlayerData(player.playerID, player.authToken, player.position, player.camera.getRotation(), gameState.getTick());
@@ -117,46 +99,42 @@ void TripleNineRenderer::update(Window& window)
 
 void TripleNineRenderer::create(Window& window)
 {
-	client.create();
+	GameRenderer::create(window);
+	//client.create();
 
 	Renderer& r = window.renderer;
 
-	mainFramebuffer.create("MainFramebuffer", Area(1920, 1080));
-	mainFramebuffer.add(r, WritePixelsFormat::RGBA, DataType::Float, FramebufferAttachment::Color0, true, Wrapping::Clamped);
-	mainFramebuffer.add(r, WritePixelsFormat::Depth, DataType::Float, FramebufferAttachment::Depth, false, Wrapping::Clamped);
-	mainFramebuffer.checkComplete();
-
-	bloom1Framebuffer.create("Bloom1Framebuffer", Area(1920, 1080));
+	bloom1Framebuffer.create(r, "Bloom1Framebuffer", IVec2(1));
 	bloom1Framebuffer.add(r, WritePixelsFormat::RGBA, DataType::Float, FramebufferAttachment::Color0, true, Wrapping::Clamped);
-	bloom1Framebuffer.checkComplete();
+	bloom1Framebuffer.checkComplete(r);
 
-	bloom2Framebuffer.create("Bloom2Framebuffer", Area(1920, 1080));
+	bloom2Framebuffer.create(r, "Bloom2Framebuffer", IVec2(1));
 	bloom2Framebuffer.add(r, WritePixelsFormat::RGBA, DataType::Float, FramebufferAttachment::Color0, true, Wrapping::Clamped);
-	bloom2Framebuffer.checkComplete();
+	bloom2Framebuffer.checkComplete(r);
 
-	bloom3Framebuffer.create("Bloom3Framebuffer", Area(1920, 1080));
+	bloom3Framebuffer.create(r, "Bloom3Framebuffer", IVec2(1));
 	bloom3Framebuffer.add(r, WritePixelsFormat::RGBA, DataType::Float, FramebufferAttachment::Color0, true, Wrapping::Clamped);
-	bloom3Framebuffer.checkComplete();
+	bloom3Framebuffer.checkComplete(r);
 
-	bloom4Framebuffer.create("Bloom4Framebuffer", Area(1920, 1080));
+	bloom4Framebuffer.create(r, "Bloom4Framebuffer", IVec2(1));
 	bloom4Framebuffer.add(r, WritePixelsFormat::RGBA, DataType::Float, FramebufferAttachment::Color0, true, Wrapping::Clamped);
-	bloom4Framebuffer.checkComplete();
+	bloom4Framebuffer.checkComplete(r);
 
-	bloom5Framebuffer.create("Bloom5Framebuffer", Area(1920, 1080));
+	bloom5Framebuffer.create(r, "Bloom5Framebuffer", IVec2(1));
 	bloom5Framebuffer.add(r, WritePixelsFormat::RGBA, DataType::Float, FramebufferAttachment::Color0, true, Wrapping::Clamped);
-	bloom5Framebuffer.checkComplete();
+	bloom5Framebuffer.checkComplete(r);
 
-	bloom6Framebuffer.create("Bloom6Framebuffer", Area(1920, 1080));
+	bloom6Framebuffer.create(r, "Bloom6Framebuffer", IVec2(1));
 	bloom6Framebuffer.add(r, WritePixelsFormat::RGBA, DataType::Float, FramebufferAttachment::Color0, true, Wrapping::Clamped);
-	bloom6Framebuffer.checkComplete();
+	bloom6Framebuffer.checkComplete(r);
 
-	bloom7Framebuffer.create("Bloom7Framebuffer", Area(1920, 1080));
+	bloom7Framebuffer.create(r, "Bloom7Framebuffer", IVec2(1));
 	bloom7Framebuffer.add(r, WritePixelsFormat::RGBA, DataType::Float, FramebufferAttachment::Color0, true, Wrapping::Clamped);
-	bloom7Framebuffer.checkComplete();
+	bloom7Framebuffer.checkComplete(r);
 
-	bloom8Framebuffer.create("Bloom8Framebuffer", Area(1920, 1080));
+	bloom8Framebuffer.create(r, "Bloom8Framebuffer", IVec2(1));
 	bloom8Framebuffer.add(r, WritePixelsFormat::RGBA, DataType::Float, FramebufferAttachment::Color0, true, Wrapping::Clamped);
-	bloom8Framebuffer.checkComplete();
+	bloom8Framebuffer.checkComplete(r);
 
 	// set near and far clip distance for player
 	player.camera.setNearClipValue(0.01f);
@@ -173,9 +151,7 @@ void TripleNineRenderer::destroy(Window& window)
 	bloom3Framebuffer.destroy(window.renderer);
 	bloom2Framebuffer.destroy(window.renderer);
 	bloom1Framebuffer.destroy(window.renderer);
-	mainFramebuffer.destroy(window.renderer);
-
-	client.destroy();
+	GameRenderer::destroy(window);
 }
 
 void TripleNineRenderer::connect(GameSimulation& simulation) {}
@@ -189,122 +165,122 @@ void TripleNineRenderer::renderBloom(Renderer& r) const
 	r.setAlphaBlending(false);
 
 	// prefilter (remove fireflies)
-	mainFramebuffer.bindRead();
-	mainFramebuffer.setAsTexture();
+	framebuffer.bindRead(r);
+	framebuffer.setAsTexture(r);
 	bloom1Framebuffer.bindDraw(r);
 	r.fullScreenShader("bloomPrefilter");
 
-	bloom1Framebuffer.bindRead();
-	bloom1Framebuffer.setAsTexture();
+	bloom1Framebuffer.bindRead(r);
+	bloom1Framebuffer.setAsTexture(r);
 	bloom2Framebuffer.bindDraw(r);
 	r.fullScreenShader("bloomDownsample");
 
-	bloom2Framebuffer.bindRead();
-	bloom2Framebuffer.setAsTexture();
+	bloom2Framebuffer.bindRead(r);
+	bloom2Framebuffer.setAsTexture(r);
 	bloom3Framebuffer.bindDraw(r);
 	r.fullScreenShader("bloomDownsample");
 
-	bloom3Framebuffer.bindRead();
-	bloom3Framebuffer.setAsTexture();
+	bloom3Framebuffer.bindRead(r);
+	bloom3Framebuffer.setAsTexture(r);
 	bloom4Framebuffer.bindDraw(r);
 	r.fullScreenShader("bloomDownsample");
 
-	bloom4Framebuffer.bindRead();
-	bloom4Framebuffer.setAsTexture();
+	bloom4Framebuffer.bindRead(r);
+	bloom4Framebuffer.setAsTexture(r);
 	bloom5Framebuffer.bindDraw(r);
 	r.fullScreenShader("bloomDownsample");
 
-	bloom5Framebuffer.bindRead();
-	bloom5Framebuffer.setAsTexture();
+	bloom5Framebuffer.bindRead(r);
+	bloom5Framebuffer.setAsTexture(r);
 	bloom6Framebuffer.bindDraw(r);
 	r.fullScreenShader("bloomDownsample");
 
-	bloom6Framebuffer.bindRead();
-	bloom6Framebuffer.setAsTexture();
+	bloom6Framebuffer.bindRead(r);
+	bloom6Framebuffer.setAsTexture(r);
 	bloom7Framebuffer.bindDraw(r);
 	r.fullScreenShader("bloomDownsample");
 
-	bloom7Framebuffer.bindRead();
-	bloom7Framebuffer.setAsTexture();
+	bloom7Framebuffer.bindRead(r);
+	bloom7Framebuffer.setAsTexture(r);
 	bloom8Framebuffer.bindDraw(r);
 	r.fullScreenShader("bloomDownsample");
 
 	r.blendModeAdditive();
 
-	bloom8Framebuffer.bindRead();
-	bloom8Framebuffer.setAsTexture();
+	bloom8Framebuffer.bindRead(r);
+	bloom8Framebuffer.setAsTexture(r);
 	bloom7Framebuffer.bindDraw(r);
 	r.fullScreenShader("bloomUpsample");
 
-	bloom7Framebuffer.bindRead();
-	bloom7Framebuffer.setAsTexture();
+	bloom7Framebuffer.bindRead(r);
+	bloom7Framebuffer.setAsTexture(r);
 	bloom6Framebuffer.bindDraw(r);
 	r.fullScreenShader("bloomUpsample");
 
-	bloom6Framebuffer.bindRead();
-	bloom6Framebuffer.setAsTexture();
+	bloom6Framebuffer.bindRead(r);
+	bloom6Framebuffer.setAsTexture(r);
 	bloom5Framebuffer.bindDraw(r);
 	r.fullScreenShader("bloomUpsample");
 
-	bloom5Framebuffer.bindRead();
-	bloom5Framebuffer.setAsTexture();
+	bloom5Framebuffer.bindRead(r);
+	bloom5Framebuffer.setAsTexture(r);
 	bloom4Framebuffer.bindDraw(r);
 	r.fullScreenShader("bloomUpsample");
 
-	bloom4Framebuffer.bindRead();
-	bloom4Framebuffer.setAsTexture();
+	bloom4Framebuffer.bindRead(r);
+	bloom4Framebuffer.setAsTexture(r);
 	bloom3Framebuffer.bindDraw(r);
 	r.fullScreenShader("bloomUpsample");
 
-	bloom3Framebuffer.bindRead();
-	bloom3Framebuffer.setAsTexture();
+	bloom3Framebuffer.bindRead(r);
+	bloom3Framebuffer.setAsTexture(r);
 	bloom2Framebuffer.bindDraw(r);
 	r.fullScreenShader("bloomUpsample");
 
-	bloom2Framebuffer.bindRead();
-	bloom2Framebuffer.setAsTexture();
+	bloom2Framebuffer.bindRead(r);
+	bloom2Framebuffer.setAsTexture(r);
 	bloom1Framebuffer.bindDraw(r);
 	r.fullScreenShader("bloomUpsample");
 
-	bloom1Framebuffer.bindRead();
-	bloom1Framebuffer.setAsTexture();
-	mainFramebuffer.bindDraw(r);
+	bloom1Framebuffer.bindRead(r);
+	bloom1Framebuffer.setAsTexture(r);
+	framebuffer.bindDraw(r);
 	r.fullScreenShader("lastBloomUpsample");
 
 	r.setAlphaBlending(false);
 }
 
-void TripleNineRenderer::render(Window& window, const TiledRectangle area)
+void TripleNineRenderer::renderScene(Window& window)
 {
 	Renderer& r = window.renderer;
 
 	// resize if necessary
-	if (frameSize != area.size)
+	if (frameSize != getSize())
 	{
-		frameSize = area.size;
-		mainFramebuffer.resize(r, frameSize);
-		bloom1Framebuffer.resize(r, frameSize * pow(0.5f, 1.0f));
-		bloom2Framebuffer.resize(r, frameSize * pow(0.5f, 2.0f));
-		bloom3Framebuffer.resize(r, frameSize * pow(0.5f, 3.0f));
-		bloom4Framebuffer.resize(r, frameSize * pow(0.5f, 4.0f));
-		bloom5Framebuffer.resize(r, frameSize * pow(0.5f, 5.0f));
-		bloom6Framebuffer.resize(r, frameSize * pow(0.5f, 6.0f));
-		bloom7Framebuffer.resize(r, frameSize * pow(0.5f, 7.0f));
-		bloom8Framebuffer.resize(r, frameSize * pow(0.5f, 8.0f));
+		frameSize = getSize();
+		framebuffer.resize(r, frameSize);
+		bloom1Framebuffer.resize(r, IVec2(Vec2(frameSize) * Vec2(pow(0.5f, 1.0f))));
+		bloom2Framebuffer.resize(r, IVec2(Vec2(frameSize) * Vec2(pow(0.5f, 2.0f))));
+		bloom3Framebuffer.resize(r, IVec2(Vec2(frameSize) * Vec2(pow(0.5f, 3.0f))));
+		bloom4Framebuffer.resize(r, IVec2(Vec2(frameSize) * Vec2(pow(0.5f, 4.0f))));
+		bloom5Framebuffer.resize(r, IVec2(Vec2(frameSize) * Vec2(pow(0.5f, 5.0f))));
+		bloom6Framebuffer.resize(r, IVec2(Vec2(frameSize) * Vec2(pow(0.5f, 6.0f))));
+		bloom7Framebuffer.resize(r, IVec2(Vec2(frameSize) * Vec2(pow(0.5f, 7.0f))));
+		bloom8Framebuffer.resize(r, IVec2(Vec2(frameSize) * Vec2(pow(0.5f, 8.0f))));
 	}
 
 	// clear screen
-	mainFramebuffer.clear();
-	bloom1Framebuffer.clear();
-	bloom2Framebuffer.clear();
-	bloom3Framebuffer.clear();
-	bloom4Framebuffer.clear();
-	bloom5Framebuffer.clear();
-	bloom6Framebuffer.clear();
-	bloom7Framebuffer.clear();
-	bloom8Framebuffer.clear();
+	framebuffer.clear(r);
+	bloom1Framebuffer.clear(r);
+	bloom2Framebuffer.clear(r);
+	bloom3Framebuffer.clear(r);
+	bloom4Framebuffer.clear(r);
+	bloom5Framebuffer.clear(r);
+	bloom6Framebuffer.clear(r);
+	bloom7Framebuffer.clear(r);
+	bloom8Framebuffer.clear(r);
 
-	mainFramebuffer.bindDraw(r);
+	framebuffer.bindDraw(r);
 
 	// default everything
 	r.uniforms().reset();
@@ -371,22 +347,22 @@ void TripleNineRenderer::render(Window& window, const TiledRectangle area)
 
 	// crosshair
 	r.uniforms().reset();
-	r.screenSpace();
+	r.screenSpaceFromBottomLeft();
 	r.fill(0.1f, 0.1f, 0.1f);
 	r.useShader("color");
-	r.uniforms().setMMatrix(matrixFromPositionAndSize(Vec2(window.getFrameSize() / 2), 3));
+	r.uniforms().setMMatrix(matrixFromPositionAndSize(Vec2(window.getContentSize() / 2), 3));
 	r.renderMesh("circle");
 	r.fill(1, 1, 1);
-	r.uniforms().setMMatrix(matrixFromPositionAndSize(Vec2(window.getFrameSize() / 2), 2));
+	r.uniforms().setMMatrix(matrixFromPositionAndSize(Vec2(window.getContentSize() / 2), 2));
 	r.renderMesh("circle");
 
 	if (renderText)
 	{
-		r.screenSpace();
+		r.screenSpaceFromBottomLeft();
 		Int             i       = 1;
 		constexpr Float spacing = 30.0f;
 		r.uniforms().setMMatrix(Matrix(1));
-		r.textRenderSystem.setSize(16.0f);
+		r.fontSize(16.0f);
 		r.textRenderSystem.setLetterSpacing(0.6f);
 		r.textRenderSystem.alignText(Alignment::left, Alignment::bottom);
 		r.textRenderSystem.render(r, "on Ground: " + toString(player.onGround), Vec2(spacing, static_cast<Float>(i++) * spacing));
@@ -402,12 +378,6 @@ void TripleNineRenderer::render(Window& window, const TiledRectangle area)
 		r.textRenderSystem.render(r, "fps: " + toString(1.0f / r.time.getDelta()), Vec2(spacing, static_cast<Float>(i) * spacing));
 	}
 
-	// render to window
-	r.setDepthTest(false);
-	mainFramebuffer.setAsTexture(0);
-	r.drawToWindow();
-	r.fullScreenShader("tonemapping");
-
 	if (vsync) limitFramerate(60);
 }
 
@@ -415,10 +385,7 @@ void TripleNineRenderer::inputEvent(Window& window, const InputEvent input)
 {
 	if (input == enter)
 	{
-		if (!window.capturing)
-		{
-			window.captureCursor();
-		}
+		if (!window.capturing) window.captureCursor();
 		else
 		{
 			#ifdef TRIPLE_NINE_ENEMY
@@ -427,18 +394,18 @@ void TripleNineRenderer::inputEvent(Window& window, const InputEvent input)
 		}
 	}
 	// if (input == exit) window.releaseCursor();
-	if (input == reloadShaders) window.renderer.shaderSystem.rebuild();
+	if (input == reloadShaders) window.renderer.shaderSystem.rebuild(window.renderer);
 	if (input == toggleBloom) bloom = !bloom;
 	player.inputEvent(window, input);
 }
 
-void TripleNineRenderer::renderInteractive(Window& window, const TiledRectangle area)
+void TripleNineRenderer::renderInteractive(Window& window)
 {
 	Renderer& r = window.renderer;
 
-	r.idFramebuffer.resize(r, area.size);
-	r.idFramebuffer.clearColor(IVec4(0));
-	r.idFramebuffer.clearDepth();
+	r.idFramebuffer.resize(r, getSize());
+	r.idFramebuffer.clearColor(r, IVec4(0));
+	r.idFramebuffer.clearDepth(r);
 	r.idFramebuffer.bindDraw(r);
 	r.setWireframeMode(false);
 	r.setDepthTest(true);
@@ -473,26 +440,13 @@ void TripleNineRenderer::renderInteractive(Window& window, const TiledRectangle 
 	}
 	#endif
 
-	r.idFramebuffer.bindRead();
+	r.idFramebuffer.bindRead(r);
 	IVec4 idData;
-	if (window.capturing)
-	{
-		idData = r.idFramebuffer.readPixelsAtCenterUIntRGB(FramebufferMode::Color0);
-	}
-	else
-	{
-		idData = r.idFramebuffer.readPixelsUIntRGB(static_cast<Int>(window.mousePosBotLeft.x), static_cast<Int>(window.mousePosBotLeft.y), FramebufferMode::Color0);
-	}
+	if (window.capturing) idData = r.idFramebuffer.readPixelsAtCenterUIntRGB(r, FramebufferMode::Color0);
+	else idData                  = r.idFramebuffer.readPixelsUIntRGB(r, static_cast<Int>(window.mousePosBotLeft.x), static_cast<Int>(window.mousePosBotLeft.y), FramebufferMode::Color0);
 	r.objectId    = idData.x;
 	r.instanceId  = idData.y;
 	r.primitiveId = idData.z;
-
-	// render to window
-	r.setDepthTest(false);
-	r.idFramebuffer.bindRead();
-	r.idFramebuffer.setAsTexture(0);
-	r.drawToWindow();
-	r.fullScreenShader("debugID");
 }
 
 // Server
@@ -705,7 +659,7 @@ void TripleNineServer::clientWantsToConnect()
 	sendBackMessage(message);
 }
 
-void TripleNineServer::getServerInfo()
+void TripleNineServer::getServerInfo() const
 {
 	//[TODO] send back info
 	// players
@@ -858,11 +812,19 @@ void TripleNineClient::processEvents()
 void TripleNineClient::sendMessage(TripleNineMessage& message)
 {
 	if (message.getClientEvent() == TripleNineClientToServerMessages::Unknown) logError("Message Event set up incorrectly!");
+	if (!socket.is_open()) logError("Socket is not open!");
 
 	lastSent                                                = now();
 	message.timeStamp                                       = lastSent;
 	Array<Char, sizeof(TripleNineMessage)> outMessageBuffer = *reinterpret_cast<Array<Char, sizeof(TripleNineMessage)>*>(&message);
-	socket.send_to(asio::buffer(outMessageBuffer), serverEndpoint);
+	try
+	{
+		socket.send_to(asio::buffer(outMessageBuffer), serverEndpoint);
+	}
+	catch (std::exception& e)
+	{
+		logError(e.what());
+	}
 }
 
 void TripleNineClient::respondToPing()
@@ -901,15 +863,15 @@ void TripleNine::run()
 	if (useIntro)
 	{
 		intro.init(renderer1);
-		ui.window("Triple Nine", Area(1920, 1080), true, false, WindowState::Windowed, intro);
+		ui.window("Triple Nine", settings.defaultWindowWidth, settings.defaultWindowHeight, true, false, WindowState::Windowed, intro);
 	}
 	else
 	{
-		ui.window("Triple Nine", Area(1920, 1080), true, true, WindowState::Windowed, renderer1);
+		ui.window("Triple Nine", settings.defaultWindowWidth, settings.defaultWindowHeight, true, true, WindowState::Windowed, renderer1);
 
 		Sleep(3000);
 
-		ui.window("Triple Nine", Area(1920, 1080), true, true, WindowState::Windowed, renderer2);
+		ui.window("Triple Nine", settings.defaultWindowWidth, settings.defaultWindowHeight, true, true, WindowState::Windowed, renderer2);
 	}
 
 	ui.run();

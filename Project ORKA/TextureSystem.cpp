@@ -1,7 +1,10 @@
 #include "TextureSystem.hpp"
 
+bool debugTextureSystem = true;
+
 void TextureSystem::create(Renderer& renderer)
 {
+	if (debugTextureSystem) logDebug("Creating TextureSystem");
 	Vector<Byte> pixels;
 	pixels.resize(16);
 	pixels[0]  = 0;
@@ -21,11 +24,8 @@ void TextureSystem::create(Renderer& renderer)
 	pixels[14] = 0;
 	pixels[15] = 255;
 	const Image image(2, 2, Channels::RGBA, ImageDataType::Byte, Memory(pixels.data(), pixels.size()));
-
 	CpuTexture defaultTexture;
-
 	defaultTexture.load(image, Filter::Nearest, Filter::NearestMm, Wrapping::Repeat, "DefaultTexture");
-
 	add(renderer, defaultTexture);
 }
 
@@ -33,11 +33,11 @@ void TextureSystem::destroy(Renderer& renderer)
 {
 	for (GPUTexture& gpuTexture : gpuTextures) gpuTexture.unload(renderer);
 	gpuTextures.clear();
-
 	textureNames.clear();
+	if (debugTextureSystem) logDebug("Destroyed TextureSystem");
 }
 
-void TextureSystem::resize(Renderer& renderer, const Area size)
+void TextureSystem::resize(Renderer& renderer, const IVec2 size)
 {
 	currentTexture().resize(renderer, size);
 }
@@ -47,14 +47,15 @@ GPUTexture& TextureSystem::currentTexture()
 	return gpuTextures[currentTextureId];
 }
 
-void TextureSystem::use(const Index textureId)
+void TextureSystem::use(Renderer& renderer, const Index textureId)
 {
 	currentTextureId = textureId;
-	currentTexture().useTextureInSlot(0);
+	currentTexture().useTextureInSlot(renderer, 0);
 }
 
 void TextureSystem::add(Renderer& renderer, const CpuTexture& cpuTexture)
 {
+	if (debugTextureSystem) logDebug("Adding Texture: " + cpuTexture.getName().toString());
 	gpuTextures.emplace_back();
 	gpuTextures.back().load(renderer, cpuTexture);
 	currentTextureId                   = gpuTextures.size() - 1;
@@ -73,7 +74,7 @@ void TextureSystem::use(Renderer& renderer, const Name& name, const Index slot)
 	if (it != textureNames.end())
 	{
 		currentTextureId = it->second;
-		currentTexture().useTextureInSlot(slot);
+		currentTexture().useTextureInSlot(renderer, slot);
 	}
 	else
 	{
@@ -87,7 +88,7 @@ void TextureSystem::use(Renderer& renderer, const Name& name, const Index slot)
 		if (it != textureNames.end())
 		{
 			currentTextureId = it->second;
-			currentTexture().useTextureInSlot(slot);
+			currentTexture().useTextureInSlot(renderer, slot);
 		}
 		else
 		{

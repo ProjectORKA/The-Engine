@@ -7,7 +7,10 @@ void MindMapperSim::update(Float delta)
 	system.update();
 }
 
-void MindMapperRenderer::destroy(Window& window) {}
+void MindMapperRenderer::destroy(Window& window)
+{
+	GameRenderer::destroy(window);
+}
 
 void MindMapperRenderer::update(Window& window)
 {
@@ -36,11 +39,12 @@ void MindMapperRenderer::inputEvent(Window& window, const InputEvent input)
 
 void MindMapperRenderer::create(Window& window)
 {
+	GameRenderer::create(window);
 	player.camera.setPosition(0.0f, 0.0f, 150.0f);
 	player.camera.setRotation(DVec3(PI, 0, 0));
 }
 
-void MindMapperRenderer::render(Window& window, TiledRectangle area)
+void MindMapperRenderer::renderScene(Window& window)
 {
 	Renderer& r = window.renderer;
 
@@ -52,9 +56,9 @@ void MindMapperRenderer::render(Window& window, TiledRectangle area)
 
 	player.render(window);
 	r.uniforms().setMMatrix(Matrix(1));
-	r.shaderSystem.use("debug");
+	r.shaderSystem.use(r, "debug");
 
 	sim->system.render(r);
 }
 
-void MindMapperRenderer::renderInteractive(Window& window, TiledRectangle area) {}
+void MindMapperRenderer::renderInteractive(Window& window) {}

@@ -1,30 +1,30 @@
 #include "QuadtreeNode.hpp"
 #include "Debug.hpp"
-#include "QuadtreeSystem.hpp"
 
 void QuadtreeNode::destroy()
 {
+	delete data.terrain;
 	unsubdivide();
 }
 
 void QuadtreeNode::count() const
 {
 	static Int nodeCount = 0;
-	if(id.level == 0) nodeCount = 0;
+	if (id.level == 0) nodeCount = 0;
 	nodeCount++;
-	if(subdivided)
+	if (subdivided)
 	{
 		c00->count();
 		c01->count();
 		c10->count();
 		c11->count();
 	}
-	if(id.level == 0) logDebug("QuadTreeNodeCount  : " + std::to_string(nodeCount));
+	if (id.level == 0) logDebug("QuadTreeNodeCount: " + std::to_string(nodeCount));
 }
 
 void QuadtreeNode::unsubdivide()
 {
-	if(subdivided)
+	if (subdivided)
 	{
 		c00->destroy();
 		c01->destroy();
@@ -52,14 +52,8 @@ void QuadtreeNode::unsubdivide()
 
 void QuadtreeNode::decrementUsers()
 {
-	if(users)
-	{
-		users--;
-	}
-	else
-	{
-		logError("Cant have less than 0 users, error must have happened!");
-	}
+	if (users) users--;
+	else logError("Cant have less than 0 users, error must have happened!");
 }
 
 void QuadtreeNode::incrementUsers()
@@ -70,16 +64,10 @@ void QuadtreeNode::incrementUsers()
 QuadtreeNode& QuadtreeNode::nlr() const
 {
 	const QuadtreeNode* cur = this;
-	while(!cur->nl)
+	while (!cur->nl)
 	{
-		if(cur->parent)
-		{
-			cur = cur->parent;
-		}
-		else
-		{
-			logError("Quadtree Critical Failure!");
-		}
+		if (cur->parent) cur = cur->parent;
+		else logError("Quadtree Critical Failure!");
 	}
 	return *cur->nl;
 }
@@ -87,16 +75,10 @@ QuadtreeNode& QuadtreeNode::nlr() const
 QuadtreeNode& QuadtreeNode::nrr() const
 {
 	const QuadtreeNode* cur = this;
-	while(!cur->nr)
+	while (!cur->nr)
 	{
-		if(cur->parent)
-		{
-			cur = cur->parent;
-		}
-		else
-		{
-			logError("Quadtree Critical Failure!");
-		}
+		if (cur->parent) cur = cur->parent;
+		else logError("Quadtree Critical Failure!");
 	}
 	return *cur->nr;
 }
@@ -104,16 +86,10 @@ QuadtreeNode& QuadtreeNode::nrr() const
 QuadtreeNode& QuadtreeNode::nbr() const
 {
 	const QuadtreeNode* cur = this;
-	while(!cur->nb)
+	while (!cur->nb)
 	{
-		if(cur->parent)
-		{
-			cur = cur->parent;
-		}
-		else
-		{
-			logError("Quadtree Critical Failure!");
-		}
+		if (cur->parent) cur = cur->parent;
+		else logError("Quadtree Critical Failure!");
 	}
 	return *cur->nb;
 }
@@ -121,31 +97,25 @@ QuadtreeNode& QuadtreeNode::nbr() const
 QuadtreeNode& QuadtreeNode::nfr() const
 {
 	const QuadtreeNode* cur = this;
-	while(!cur->nf)
+	while (!cur->nf)
 	{
-		if(cur->parent)
-		{
-			cur = cur->parent;
-		}
-		else
-		{
-			logError("Quadtree Critical Failure!");
-		}
+		if (cur->parent) cur = cur->parent;
+		else logError("Quadtree Critical Failure!");
 	}
 	return *cur->nf;
 }
 
 void QuadtreeNode::removeSelfFromNeighbors() const
 {
-	if(nf) nf->nb = nullptr;
-	if(nb) nb->nf = nullptr;
-	if(nr) nr->nl = nullptr;
-	if(nl) nl->nr = nullptr;
+	if (nf) nf->nb = nullptr;
+	if (nb) nb->nf = nullptr;
+	if (nr) nr->nl = nullptr;
+	if (nl) nl->nr = nullptr;
 }
 
 void QuadtreeNode::subdivide(const TerrainSystem& terrainSystem)
 {
-	if(!subdivided && id.level < MAX_CHUNK_LEVEL - 1)
+	if (!subdivided && id.level < MAX_CHUNK_LEVEL - 1)
 	{
 		c00 = new QuadtreeNode();
 		c01 = new QuadtreeNode();
@@ -172,41 +142,35 @@ void QuadtreeNode::createRootNode(const TerrainSystem& terrainSystem)
 
 QuadtreeNode& QuadtreeNode::get(TerrainSystem& terrainSystem, const QuadtreeId& id)
 {
-	if(this->id.level == id.level) return *this;
+	if (this->id.level == id.level) return *this;
 	const Bool x = BitSet<64>(id.position.x)[this->id.level];
 	const Bool y = BitSet<64>(id.position.y)[this->id.level];
 
-	if(!subdivided) subdivide(terrainSystem);
+	if (!subdivided) subdivide(terrainSystem);
 
-	if(x)
+	if (x)
 	{
-		if(y) return c11->get(terrainSystem, id);
+		if (y) return c11->get(terrainSystem, id);
 		return c10->get(terrainSystem, id);
 	}
-	if(y) return c01->get(terrainSystem, id);
+	if (y) return c01->get(terrainSystem, id);
 	return c00->get(terrainSystem, id);
 }
 
 void QuadtreeNode::update(QuadtreeSystem& quadtreeSystem, TerrainSystem& terrainSystem)
 {
-	if(users)
+	if (users)
 	{
-		if(subdivided)
+		if (subdivided)
 		{
 			c00->update(quadtreeSystem, terrainSystem);
 			c01->update(quadtreeSystem, terrainSystem);
 			c10->update(quadtreeSystem, terrainSystem);
 			c11->update(quadtreeSystem, terrainSystem);
 		}
-		else
-		{
-			subdivide(terrainSystem);
-		}
+		else subdivide(terrainSystem);
 	}
-	else
-	{
-		unsubdivide();
-	}
+	else unsubdivide();
 }
 
 void QuadtreeNode::create(const TerrainSystem& terrainSystem, QuadtreeNode* parent, const Bool x, const Bool y)
@@ -219,39 +183,39 @@ void QuadtreeNode::create(const TerrainSystem& terrainSystem, QuadtreeNode* pare
 	id.position.x = parent->id.position.x | static_cast<ULL>(x) << static_cast<UShort>(64) - id.level;
 	id.position.y = parent->id.position.y | static_cast<ULL>(y) << static_cast<UShort>(64) - id.level;
 	// calculate neighbours
-	if(x && y)
+	if (x && y)
 	{
-		if(parent->nr && parent->nr->subdivided) nr = parent->nr->c01;
+		if (parent->nr && parent->nr->subdivided) nr = parent->nr->c01;
 		nl = parent->c01;
-		if(parent->nf && parent->nf->subdivided) nf = parent->nf->c10;
+		if (parent->nf && parent->nf->subdivided) nf = parent->nf->c10;
 		nb = parent->c10;
 	}
-	if(x && !y)
+	if (x && !y)
 	{
-		if(parent->nr && parent->nr->subdivided) nr = parent->nr->c00;
+		if (parent->nr && parent->nr->subdivided) nr = parent->nr->c00;
 		nl = parent->c00;
 		nf = parent->c11;
-		if(parent->nb && parent->nb->subdivided) nb = parent->nb->c11;
+		if (parent->nb && parent->nb->subdivided) nb = parent->nb->c11;
 	}
-	if(!x && !y)
+	if (!x && !y)
 	{
 		nr = parent->c10;
-		if(parent->nl && parent->nl->subdivided) nl = parent->nl->c10;
+		if (parent->nl && parent->nl->subdivided) nl = parent->nl->c10;
 		nf = parent->c01;
-		if(parent->nb && parent->nb->subdivided) nb = parent->nb->c01;
+		if (parent->nb && parent->nb->subdivided) nb = parent->nb->c01;
 	}
-	if(!x && y)
+	if (!x && y)
 	{
 		nr = parent->c11;
-		if(parent->nl && parent->nl->subdivided) nl = parent->nl->c11;
-		if(parent->nf && parent->nf->subdivided) nf = parent->nf->c00;
+		if (parent->nl && parent->nl->subdivided) nl = parent->nl->c11;
+		if (parent->nf && parent->nf->subdivided) nf = parent->nf->c00;
 		nb = parent->c00;
 	}
 	// make sure neighbours have connection
-	if(nf) nf->nb = this;
-	if(nb) nb->nf = this;
-	if(nr) nr->nl = this;
-	if(nl) nl->nr = this;
+	if (nf) nf->nb = this;
+	if (nb) nb->nf = this;
+	if (nr) nr->nl = this;
+	if (nl) nl->nr = this;
 	// generate terrain
 	data.terrain = new Terrain(terrainSystem, id, parent->data.terrain, x, y);
 }

@@ -27,9 +27,7 @@ void SimpleRtsQuadtreeSystem::update(SimpleRtsSimulation& sim, const Float mapSi
 
 void SimpleRtsQuadtreeNode::subdivide(SimpleRtsSimulation& sim)
 {
-	auto& system = sim.quadtreeSystem;
-
-	if (!subdivided && (level + 1) < system.levelCount)
+	if (auto& system = sim.quadtreeSystem; !subdivided && (level + 1) < system.levelCount)
 	{
 		Int newLevel = level + 1;
 		system.nodes[newLevel].emplace_back(sim, 2 * x + 0, 2 * y + 0, newLevel, id, system.nodes[newLevel].size() - 1);

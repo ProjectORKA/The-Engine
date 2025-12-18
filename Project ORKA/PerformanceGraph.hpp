@@ -3,7 +3,7 @@
 #include "Basics.hpp"
 #include "Window.hpp"
 
-struct PerformanceGraph : UIElement
+struct PerformanceGraph final : UIElement
 {
 	Int           width     = 500;
 	Int           height    = 200;
@@ -11,10 +11,10 @@ struct PerformanceGraph : UIElement
 	Vector<Float> times     = Vector<Float>(width);
 
 	void addTime(Float time);
+	void render(Window& window) override;
 	void update(Window& window) override {}
 	void create(Window& window) override {}
 	void destroy(Window& window) override {}
-	void render(Window& window, TiledRectangle area) override;
+	void renderInteractive(Window& window) override {}
 	void inputEvent(Window& window, InputEvent input) override {}
-	void renderInteractive(Window& window, TiledRectangle area) override {}
 };

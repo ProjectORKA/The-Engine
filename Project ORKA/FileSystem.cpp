@@ -47,10 +47,7 @@ void deleteFile(const Path& path)
 		const Int result = SHFileOperation(&fileOp);
 		if (result != 0) logError("Could not delete file!");
 	}
-	else
-	{
-		std::filesystem::remove(path);
-	}
+	else std::filesystem::remove(path);
 }
 
 ULL getFileSize(const Path& path)
@@ -109,10 +106,7 @@ String getFolderName(const Path& path)
 {
 	if (is_directory(path))
 	{
-		if (path.string().back() == '\\' || path.string().back() == '/')
-		{
-			return path.parent_path().filename().string();
-		}
+		if (path.string().back() == '\\' || path.string().back() == '/') return path.parent_path().filename().string();
 		return path.filename().string();
 	}
 	logError("Path is not folder!");
@@ -199,13 +193,20 @@ void moveFile(const Path& source, const Path& destination)
 	logDebug(destFileSize);
 
 	//comp sizes
-	if (const Bool fileValid = doesPathExist(destination); fileValid && sourceFileSize == destFileSize)
+	if (const Bool fileValid = doesPathExist(destination); fileValid && sourceFileSize == destFileSize) deleteFile(source);
+	else logError("File size corrupted during moving, doesn't match!");
+}
+
+Bool isDirectory(const Path& path)
+{
+	try
 	{
-		deleteFile(source);
+		return is_directory(path);
 	}
-	else
+	catch (const std::filesystem::filesystem_error& e)
 	{
-		logError("File size corrupted during moving, doesn't match!");
+		logError(e.what());
+		return false;
 	}
 }
 

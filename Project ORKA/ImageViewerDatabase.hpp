@@ -1,12 +1,9 @@
 #pragma once
 
-
 #include "Basics.hpp"
 
-
-	#define SQLITE_DEBUG
-	#include "sqlite_modern_cpp.h"
-
+#define SQLITE_DEBUG
+#include <sqlite_modern_cpp.h>
 
 extern Vector<String> imageTags;
 

@@ -19,10 +19,7 @@ extern JobSystem jobSystem;
 struct JobSystem
 {
 private:
-	//List<Job>      jobQueue;
 	JobSystemQueue jobQueue;
-
-	//Mutex          mutex;
 	Vector<Thread> workers;
 	Int            threadID       = 1;
 	Bool           running        = false; // if disabled prevents workers from pulling new work
@@ -47,31 +44,16 @@ public:
 	template <typename Func, typename... Args>
 	void enqueue(Func&& function, Args&&... args)
 	{
-		// adds a new job to be done
-
 		if (debugJobSystemIsEnabled) logDebug("Add new job to queue!");
-		if (canEnqueueNew)
-		{
-			//LockGuard lock(mutex);
-			//const Job job = ;
-			jobQueue.enqueue(std::bind(std::forward<Func>(function), std::forward<Args>(args)...));
-		}
+		if (canEnqueueNew) jobQueue.enqueue(std::bind(std::forward<Func>(function), std::forward<Args>(args)...));
 		else if (debugJobSystemIsEnabled) logWarning("Could not enqueue new job!");
 	}
 
 	template <typename Func, typename... Args>
 	void enqueueNext(Func&& function, Args&&... args)
 	{
-		// only used by active jobs that need other jobs to finish aswell
-		// WARNING: do not create infinite loops using this!!!
-
 		if (debugJobSystemIsEnabled) logDebug("Add subsequent job!");
-		if (canEnqueueNext)
-		{
-			//LockGuard lock(mutex);
-			//const Job job = std::bind(std::forward<Func>(function), std::forward<Args>(args)...);
-			jobQueue.enqueue(std::bind(std::forward<Func>(function), std::forward<Args>(args)...));
-		}
+		if (canEnqueueNext) jobQueue.enqueue(std::bind(std::forward<Func>(function), std::forward<Args>(args)...));
 		else if (debugJobSystemIsEnabled) logWarning("Could not enqueue next job!");
 	}
 };

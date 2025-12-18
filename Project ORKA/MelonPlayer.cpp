@@ -20,10 +20,7 @@ void MelonPlayer::update(Window& window)
 		velocity = Vec3(0);
 		targetPosition += delta;
 	}
-	else
-	{
-		targetPosition = Vec3(window.mousePosBotLeft, 0);
-	}
+	else targetPosition = Vec3(window.mousePosBotLeft, 0);
 
 	// get frequently used info
 	const Float delta = window.renderer.deltaTime();
@@ -31,7 +28,7 @@ void MelonPlayer::update(Window& window)
 	// update target position
 	targetPosition += velocity * delta;
 
-	approach(position, targetPosition, delta * 300);
+	expDecay(position, targetPosition, 300, delta);
 
 	// player position (smoothed)
 	deltaPosition                            = position - lastPosition;
@@ -39,14 +36,14 @@ void MelonPlayer::update(Window& window)
 	const Vec3 deltaToLastPositionAtDistance = position - lastPositionAtDistance;
 	distanceTraveled                         = length(deltaPosition);
 	distanceInRadians += distanceTraveled;
-	distanceInRadians = mod(distanceInRadians, PI);
+	distanceInRadians = mod(distanceInRadians, static_cast<Float>(PI));
 	if(distanceTraveled != 0.0f) direction = normalize(deltaToLastPositionAtDistance);
 
 	// update smoke
 	smoke.update(position, window.renderer);
 
 	// player rotation
-	approach(currentVisibleDirection, direction, delta * 8);
+	expDecay(currentVisibleDirection, direction, 8, delta);
 	orientation  = Orientation(currentVisibleDirection);
 	lastPosition = position;
 

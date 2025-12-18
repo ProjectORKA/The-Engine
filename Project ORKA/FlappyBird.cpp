@@ -21,7 +21,10 @@ void FlappyBirdPipes::randomize()
 	posY = randomFloatFast(-0.9f + gap / 2.0f, 0.9f - gap / 2.0f);
 }
 
-void FlappyBirdRenderer::destroy(Window& window) {}
+void FlappyBirdRenderer::destroy(Window& window)
+{
+	GameRenderer::destroy(window);
+}
 
 FlappyBirdPipes::FlappyBirdPipes(const Int id)
 {
@@ -72,14 +75,8 @@ void FlappyBirdRenderer::connect(GameSimulation& simulation) {}
 
 void FlappyBirdBird::render(Renderer& r) const
 {
-	if (alive)
-	{
-		r.fill(Color(1));
-	}
-	else
-	{
-		r.fill(Color(1, 0, 0, 1));
-	}
+	if (alive) r.fill(Color(1));
+	else r.fill(Color(1, 0, 0, 1));
 
 	transform.render(r);
 	r.renderMesh("flappyBirdBird");
@@ -96,7 +93,7 @@ void FlappyBirdPipes::render(Renderer& r) const
 
 void FlappyBirdRenderer::inputEvent(Window& window, const InputEvent input)
 {
-	if (input == reloadShaders) window.renderer.shaderSystem.rebuild();
+	if (input == reloadShaders) window.renderer.shaderSystem.rebuild(window.renderer);
 	if (input == toggleWireFrame) window.renderer.wireframeMode = !window.renderer.wireframeMode;
 	if (input == jumpButton) {
 		paused = false;
@@ -106,6 +103,7 @@ void FlappyBirdRenderer::inputEvent(Window& window, const InputEvent input)
 
 void FlappyBirdRenderer::create(Window& window)
 {
+	GameRenderer::create(window);
 	// setup camera
 	camera.setPosition(Vec3(0, 0, 5));
 	camera.setRotation(DVec3(PI, 0, 0));
@@ -138,7 +136,7 @@ void FlappyBirdRenderer::create(Window& window)
 	for (Int i = 0; static_cast<Float>(i) < 10.0f / p.spacing; i++) pipeColumns.emplace_back(i);
 }
 
-void FlappyBirdRenderer::render(Window& window, TiledRectangle area)
+void FlappyBirdRenderer::renderScene(Window& window)
 {
 	Renderer& r = window.renderer;
 
@@ -174,7 +172,7 @@ void FlappyBirdBird::update(FlappyBirdRenderer& game, const Float delta)
 	// rotation based on up/down speed
 	transform.setSize(size);
 	transform.setRotation(Vec3(-90, 90, 0));
-	transform.rotate(Vec3(0, 0, 1), tan(clamp(velocity.y * 0.7f, -PI / 4.0f,PI / 4.0f)) * 75.0f);
+	transform.rotate(Vec3(0, 0, 1), tan(clamp(velocity.y * 0.7, -PI / 4.0,PI / 4.0)) * 75.0f);
 
 	if (!heldInPlace)
 	{
@@ -202,10 +200,7 @@ void FlappyBirdBird::update(FlappyBirdRenderer& game, const Float delta)
 		// move the bird
 		velocity += delta * Vec3(0, -5, 0);
 		transform.move(velocity * delta);
-	} else
-	{
-		game.paused = true;
-	}
+	} else game.paused = true;
 }
 
 void FlappyBirdBird::updateAi(const Vector<FlappyBirdPipes>& pipeColumns, const Float delta)
@@ -244,4 +239,4 @@ FlappyBirdPipes FlappyBirdBird::getClosestPipeColumn(const Vector<FlappyBirdPipe
 	return closest;
 }
 
-void FlappyBirdRenderer::renderInteractive(Window& window, TiledRectangle area) {}
+void FlappyBirdRenderer::renderInteractive(Window& window) {}

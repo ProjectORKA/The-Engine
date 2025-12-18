@@ -12,15 +12,15 @@ constexpr Vec2  gravity            = Vec2(0, -1.0f);
 
 struct PhysicsParticle
 {
-	Bool          isColliding = false;
-	Vec2          position    = randomVec2Fast(-1, 1);
-	Vec2          velocity    = randomVec2Fast(-startingVelocity, startingVelocity);
+	Bool isColliding = false;
+	Vec2 position    = randomVec2Fast(-1, 1);
+	Vec2 velocity    = randomVec2Fast(-startingVelocity, startingVelocity);
 };
 
 struct PhysicsPlaygroundSimulation : GameSimulation
 {
-	Vector<PhysicsParticle>             particles;
-	Bool                                paused = true;
+	Vector<PhysicsParticle> particles;
+	Bool                    paused = true;
 
 	void create() override;
 	void destroy() override;
@@ -29,18 +29,18 @@ struct PhysicsPlaygroundSimulation : GameSimulation
 	[[nodiscard]] Float distanceBetweenTwoNodes(Index a, Index b) const;
 };
 
-struct PhysicsPlayGroundRenderer : GameRenderer
+struct PhysicsPlayGroundRenderer final : GameRenderer
 {
-	PhysicsPlaygroundSimulation* sim         = nullptr;
-	InputEvent                   pause       = InputEvent(InputType::KeyBoard, Space, false);
+	PhysicsPlaygroundSimulation* sim   = nullptr;
+	InputEvent                   pause = InputEvent(InputType::KeyBoard, Space, false);
 
 	void update(Window& window) override;
 	void create(Window& window) override;
 	void destroy(Window& window) override;
 	void connect(GameSimulation& simulation) override;
-	void render(Window& window, TiledRectangle area) override;
+	void renderScene(Window& window) override;
 	void inputEvent(Window& window, InputEvent input) override;
-	void renderInteractive(Window& window, TiledRectangle area) override;
+	void renderInteractive(Window& window) override;
 };
 
 struct PhysicsPlayground
@@ -52,7 +52,7 @@ struct PhysicsPlayground
 	{
 		sim.start();
 		renderer.connect(sim);
-		ui.window("Physics Playground", Area(1024, 1024), true, true, WindowState::Windowed, renderer);
+		ui.window("Physics Playground", 1024, 1024, true, true, WindowState::Windowed, renderer);
 		ui.run();
 		sim.stop();
 	}

@@ -148,7 +148,7 @@ struct TripleNinePlayer final : Player
 	Float        fov                     = fovDefault;
 	const Double mouseSensitivityDefault = 0.0015;
 	const Double mouseSensitivityScoped  = 0.00075;
-	const float  scopeSpeed              = 30.0f;
+	const Float  scopeSpeed              = 30.0f;
 
 	//networking
 	PlayerID playerID = 0;

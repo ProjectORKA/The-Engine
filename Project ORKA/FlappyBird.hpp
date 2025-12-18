@@ -65,11 +65,11 @@ struct FlappyBirdRenderer final : GameRenderer
 
 	void update(Window& window) override;
 	void create(Window& window) override;
+	void renderScene(Window& window) override;
 	void destroy(Window& window) override;
+	void renderInteractive(Window& window) override;
 	void connect(GameSimulation& simulation) override;
-	void render(Window& window, TiledRectangle area) override;
 	void inputEvent(Window& window, InputEvent input) override;
-	void renderInteractive(Window& window, TiledRectangle area) override;
 };
 
 struct FlappyBird
@@ -78,7 +78,7 @@ struct FlappyBird
 
 	void run()
 	{
-		ui.window("ORKA Flappy Bird", Area(settings.defaultWindowWidth, settings.defaultWindowHeight), true, true, WindowState::Windowed, renderer);
+		ui.window("ORKA Flappy Bird", settings.defaultWindowWidth, settings.defaultWindowHeight, true, true, WindowState::Windowed, renderer);
 		ui.run();
 	}
 };

@@ -6,7 +6,7 @@
 
 struct Window;
 
-struct MelonPlayer : Player
+struct MelonPlayer final : Player
 {
 	Float          distanceTraveled        = 0;
 	Float          distanceInRadians       = 0;

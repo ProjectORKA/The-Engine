@@ -5,14 +5,18 @@
 
 struct SimpleRtsBushSystem : SimpleRtsSystem
 {
-	Int          count  = 5000;
-	Float        radius = 1.0f;
-	Vec2Vector positions;
+	[[nodiscard]] Int  getCount() const;
+	[[nodiscard]] Vec3 getPosition(Index index) const;
+	void               update(SimpleRtsSimulation& sim) override;
+	void               render(Renderer& renderer) override;
+	void               spawnEntity(const SimpleRtsSimulation& sim);
+	[[nodiscard]] Bool doesCollide(Vec2 position, Float radius) const;
+	void               create(const SimpleRtsSimulation& sim) override;
+	void               destroy(const SimpleRtsSimulation& sim) override;
+	void               setPosition(const SimpleRtsSimulation& sim, Index index, Vec2 position);
 
-	void update(SimpleRtsSimulation& sim) override;
-	void render(Renderer& renderer) const override;
-	void spawnEntity(const SimpleRtsSimulation& sim);
-	void create(const SimpleRtsSimulation& sim) override;
-	void destroy(const SimpleRtsSimulation& sim) override;
-	Bool doesCollide(const Vec2 position, const Float radius) const;
+private:
+	Int        count  = 10000;
+	Float      radius = 0.5f;
+	Vec3Vector positions;
 };

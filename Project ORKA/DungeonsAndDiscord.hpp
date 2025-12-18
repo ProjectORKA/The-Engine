@@ -45,7 +45,6 @@ struct DNDSimulation final : GameSimulation
 struct DNDRenderer final : GameRenderer
 {
 	DebugPlayer    player;
-	Framebuffer    framebuffer;
 	Vector<Index>  selectedObjects;
 	Index          lastSelectedObject  = -1;
 	Float          mouseSensitivity    = 0.0015f;
@@ -61,8 +60,8 @@ struct DNDRenderer final : GameRenderer
 	void connect(GameSimulation& simulation) override;
 	void inputEvent(Window& window, InputEvent input) override;
 	void create(Window& window) override;
-	void render(Window& window, TiledRectangle area) override;
-	void renderInteractive(Window& window, TiledRectangle area) override;
+	void renderScene(Window& window) override;
+	void renderInteractive(Window& window) override;
 };
 
 struct DungeonsAndDiscord
@@ -74,7 +73,7 @@ struct DungeonsAndDiscord
 	{
 		sim.start();
 		renderer.connect(sim);
-		ui.window("Dungeons and Discord", Area(1920, 1080), true, true, WindowState::Windowed, renderer);
+		ui.window("Dungeons and Discord", settings.defaultWindowWidth, settings.defaultWindowHeight, true, true, WindowState::Windowed, renderer);
 		ui.run();
 		sim.stop();
 	}

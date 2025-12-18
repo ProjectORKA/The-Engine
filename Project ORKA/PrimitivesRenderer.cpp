@@ -47,7 +47,7 @@ void PrimitivesRenderer::create(Renderer & renderer)
 	genMesh.drawMode           = BufferUsage::StaticDraw;
 	genMesh.name               = "Rectangle";
 	genMesh.primitiveMode      = PrimitiveMode::Triangles;
-	genMesh.positions          = {Vec3(0.0f, 0.0f, 0), Vec3(1.0f, 0.0f, 0), Vec3(0.0f, 1.0f, 0), Vec3(1.0f, 1.0f, 0)};
+	genMesh.positions          = {Vec3(0.0f, 0.0f, 0), Vec3(1.0f, 0.0f, 0), Vec3(0.0f, -1.0f, 0), Vec3(1.0f, -1.0f, 0)};
 	genMesh.textureCoordinates = {Vec2(0, 0), Vec2(1, 0), Vec2(0, 1), Vec2(1, 1)};
 	genMesh.indices            = {0, 1, 2, 2, 1, 3};
 	genMesh.checkIntegrity();
@@ -105,79 +105,79 @@ void PrimitivesRenderer::destroy(Renderer & renderer)
 	wireframeCubeCenteredMesh.unload(renderer);
 }
 
-void PrimitivesRenderer::rectangle(Uniforms& uniforms) const
+void PrimitivesRenderer::rectangle(Renderer& renderer) const
 {
-	rectangleMesh.render(uniforms);
+	rectangleMesh.render(renderer);
 }
 
-void PrimitivesRenderer::plane(Uniforms& uniforms) const
+void PrimitivesRenderer::plane(Renderer& renderer) const
 {
-	planeMesh.render(uniforms);
+	planeMesh.render(renderer);
 }
 
-void PrimitivesRenderer::wireframeCube(Uniforms& uniforms) const
+void PrimitivesRenderer::wireframeCube(Renderer& renderer) const
 {
-	wireframeCubeMesh.render(uniforms);
+	wireframeCubeMesh.render(renderer);
 }
 
-void PrimitivesRenderer::wireframeCubeCentered(Uniforms& uniforms) const
+void PrimitivesRenderer::wireframeCubeCentered(Renderer& renderer) const
 {
-	wireframeCubeCenteredMesh.render(uniforms);
+	wireframeCubeCenteredMesh.render(renderer);
 }
 
-void PrimitivesRenderer::points(const Vec3Vector& pos, Uniforms& uniforms)
+void PrimitivesRenderer::points(Renderer& renderer, const Vec3Vector& pos)
 {
 	Vector<Index> indices;
 	for (int i = 0; i < pos.size(); i++) indices.emplace_back(i);
-	pointsMesh.updatePositionBuffer(pos);
-	pointsMesh.updateIndexBuffer(indices);
-	pointsMesh.render(uniforms);
+	pointsMesh.updatePositionBuffer(renderer, pos);
+	pointsMesh.updateIndexBuffer(renderer, indices);
+	pointsMesh.render(renderer);
 }
 
-void PrimitivesRenderer::points(const Vec2Vector& pos, Uniforms& uniforms)
+void PrimitivesRenderer::points(Renderer& renderer, const Vec2Vector& pos)
 {
-	points(vec2VectorToVec3Vector(pos), uniforms);
+	points(renderer, vec2VectorToVec3Vector(pos));
 }
 
-void PrimitivesRenderer::line(const Vec2Vector& positions, Uniforms& uniforms)
+void PrimitivesRenderer::line(Renderer& renderer, const Vec2Vector& positions)
 {
-	line(vec2VectorToVec3Vector(positions), uniforms);
+	line(renderer, vec2VectorToVec3Vector(positions));
 }
 
-void PrimitivesRenderer::line(const Vec3Vector& positions, Uniforms& uniforms)
-{
-	Vector<Index> indices;
-	for (int i = 0; i < positions.size(); i++) indices.emplace_back(i);
-	lineMesh.updatePositionBuffer(positions);
-	lineMesh.updateIndexBuffer(indices);
-	lineMesh.render(uniforms);
-}
-
-void PrimitivesRenderer::lines(const Vec2Vector& positions, Uniforms& uniforms)
-{
-	lines(vec2VectorToVec3Vector(positions), uniforms);
-}
-
-void PrimitivesRenderer::lines(const Vec3Vector& positions, Uniforms& uniforms)
+void PrimitivesRenderer::line(Renderer& renderer, const Vec3Vector& positions)
 {
 	Vector<Index> indices;
 	for (int i = 0; i < positions.size(); i++) indices.emplace_back(i);
-	lines(positions, indices, uniforms);
+	lineMesh.updatePositionBuffer(renderer, positions);
+	lineMesh.updateIndexBuffer(renderer, indices);
+	lineMesh.render(renderer);
 }
 
-void PrimitivesRenderer::circles(const Vector<Matrix>& matrices, Uniforms& uniforms) const
+void PrimitivesRenderer::lines(Renderer& renderer, const Vec2Vector& positions)
 {
-	circleMesh.renderInstances(uniforms, matrices);
+	lines(renderer, vec2VectorToVec3Vector(positions));
 }
 
-void PrimitivesRenderer::wireframeCubes(const Vector<Matrix>& matrices, Uniforms& uniforms) const
+void PrimitivesRenderer::lines(Renderer& renderer, const Vec3Vector& positions)
 {
-	wireframeCubeMesh.renderInstances(uniforms, matrices);
+	Vector<Index> indices;
+	for (int i = 0; i < positions.size(); i++) indices.emplace_back(i);
+	lines(renderer, positions, indices);
 }
 
-void PrimitivesRenderer::lines(const Vec3Vector& positions, const Vector<Index>& indices, Uniforms& uniforms)
+void PrimitivesRenderer::circles(Renderer& renderer, const Vector<Matrix>& matrices)
 {
-	linesMesh.updatePositionBuffer(positions);
-	linesMesh.updateIndexBuffer(indices);
-	linesMesh.render(uniforms);
+	circleMesh.renderInstances(renderer, matrices);
+}
+
+void PrimitivesRenderer::wireframeCubes(Renderer& renderer, const Vector<Matrix>& matrices)
+{
+	wireframeCubeMesh.renderInstances(renderer, matrices);
+}
+
+void PrimitivesRenderer::lines(Renderer& renderer, const Vec3Vector& positions, const Vector<Index>& indices)
+{
+	linesMesh.updatePositionBuffer(renderer, positions);
+	linesMesh.updateIndexBuffer(renderer, indices);
+	linesMesh.render(renderer);
 }

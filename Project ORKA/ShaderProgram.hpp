@@ -4,10 +4,10 @@
 
 struct ShaderProgram
 {
-	void               destroy();
-	void               use() const;
 	[[nodiscard]] Bool isLoaded() const;
-	void               create(const Name& name, const String& vertexShaderCode, const String& fragmentShaderCode);
+	void               destroy(OpenGlContext& openGlContext);
+	void               use(OpenGlContext& openGlContext) const;
+	void               create(OpenGlContext& openGlContext, const Name& name, const String& vertexShaderCode, const String& fragmentShaderCode);
 
 private:
 	Bool                loaded = false;

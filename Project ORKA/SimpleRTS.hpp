@@ -6,22 +6,24 @@
 #include "SimpleRtsBushSystem.hpp"
 #include "SimpleRtsBodySystem.hpp"
 #include "SimpleRTSTreeSystem.hpp"
+#include "SimpleRtsWolfSystem.hpp"
 #include "SimpleRtsHumanSystem.hpp"
 #include "SimpleRtsRabbitSystem.hpp"
 #include "SimpleRtsTerrainSystem.hpp"
 #include "SimpleRtsQuadtreeSystem.hpp"
 #include "SimpleRtsBerryBushSystem.hpp"
 
+extern Bool debugSimpleRts;
+
 struct SimpleRtsSimulation final : GameSimulation
 {
-	const Float mapSize = 1000.0f;
+	const Float mapSize = 2000.0f;
 
-	Float time      = 0.0f;
-	Float frameRate = 60.0f;
-	Bool  paused    = false;
-	Float timeScale = 1.0f;
-
-	SimpleRtsQuadtreeSystem quadtreeSystem;
+	ULL    frame     = 0;
+	Double totalTime = 0.0f;
+	Float  timeScale = 1.0f;
+	Float  frameRate = 60.0f;
+	Bool   paused    = false;
 
 	SimpleRtsBodySystem      bodySystem;
 	SimpleRtsBushSystem      bushSystem;
@@ -29,19 +31,24 @@ struct SimpleRtsSimulation final : GameSimulation
 	SimpleRtsHumanSystem     humanSystem;
 	SimpleRtsRabbitSystem    rabbitSystem;
 	SimpleRtsTerrainSystem   terrainSystem;
+	SimpleRtsQuadtreeSystem  quadtreeSystem;
 	SimpleRtsBerryBushSystem berryBushSystem;
+	SimpleRtsWolfSystem      wolfSystem;
 
 	Vector<SimpleRtsSystem*> systems;
 
 	[[nodiscard]] Float timeStep() const;
-	[[nodiscard]] Vec2  getRandomSpawnPos(Float radius) const;
-	[[nodiscard]] Bool  doesCollide(Vec2 pos, Float radius) const;
+	[[nodiscard]] Vec3 getRandomSpawnPos() const;
+	[[nodiscard]] Vec3 getRandomSpawnPos(Float radius) const;
+	[[nodiscard]] Bool doesCollide(Vec2 pos, Float radius) const;
 
 	void reset();
 	void create() override;
 	void destroy() override;
+	void waitUntilLoaded() const;
+	void render(Renderer& r) const;
 	void update(Float delta) override;
-	void render(Renderer& renderer) const;
+	Float getTerrainHeight(const Vec2 vec) const;
 };
 
 struct SimpleRtsRenderer final : GameRenderer
@@ -51,6 +58,7 @@ struct SimpleRtsRenderer final : GameRenderer
 	PerformanceGraph     performanceGraph;
 	Bool                 wireframeMode = false;
 	SimpleRtsSimulation* sim           = nullptr;
+	GPUMesh terrainMesh;
 
 	//input
 	InputEvent enter           = InputEvent(InputType::Mouse, Lmb, true);
@@ -63,9 +71,9 @@ struct SimpleRtsRenderer final : GameRenderer
 	void create(Window& window) override;
 	void destroy(Window& window) override;
 	void connect(GameSimulation& simulation) override;
-	void render(Window& window, TiledRectangle area) override;
+	void renderScene(Window& window) override;
 	void inputEvent(Window& window, InputEvent input) override;
-	void renderInteractive(Window& window, TiledRectangle area) override;
+	void renderInteractive(Window& window) override;
 };
 
 struct SimpleRts

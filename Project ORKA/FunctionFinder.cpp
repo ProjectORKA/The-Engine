@@ -1,5 +1,4 @@
 #include "FunctionFinder.hpp"
-
 #include "JobSystem.hpp"
 #include "Random.hpp"
 #include "UserInterface.hpp"
@@ -8,7 +7,7 @@ void testParameters(FunctionFinderRenderer& ff)
 {
 	Float fitness = 0;
 
-	Vec2Vector  estimate;
+	Vec2Vector estimate;
 	estimate.resize(ff.data.size());
 	Vector<Float> difference;
 	difference.resize(ff.data.size());
@@ -20,10 +19,10 @@ void testParameters(FunctionFinderRenderer& ff)
 
 	for (Int i = 0; i < ff.data.size(); i++)
 	{
-		estimate[i].x = ff.data[i].x;
-		estimate[i].y = FunctionFinderRenderer::function3(ff.data[i].x, a, b, c);
+		estimate[i].x    = ff.data[i].x;
+		estimate[i].y    = FunctionFinderRenderer::function3(ff.data[i].x, a, b, c);
 		const Float diff = abs(ff.data[i].y - estimate[i].y);
-		difference[i] = diff;
+		difference[i]    = diff;
 		fitness -= diff;
 	}
 
@@ -38,7 +37,7 @@ void testParameters(FunctionFinderRenderer& ff)
 
 	ff.learnRate *= 0.9999999;
 
-	if(ff. threading) jobSystem.enqueue(testParameters, std::ref(ff));
+	if (ff.threading) jobSystem.enqueue(testParameters, std::ref(ff));
 }
 
 void FunctionFinderRenderer::create(Window& window)
@@ -54,7 +53,7 @@ void FunctionFinderRenderer::create(Window& window)
 
 	for (int i = 0; i < samples; i++)
 	{
-		data.push_back(Vec2(50 + 50 * i/samples, 5));
+		data.push_back(Vec2(50 + 50 * i / samples, 5));
 	}
 
 	for (const Vec2 point : data)
@@ -71,12 +70,9 @@ void FunctionFinderRenderer::create(Window& window)
 
 	player.camera.setPosition(Vec3(0.0f, -5.0f, 0.0f));
 
-	framebuffer.create("MainFramebuffer", Area(1920, 1080));
-	framebuffer.add(window.renderer, WritePixelsFormat::RGBA, DataType::Float, FramebufferAttachment::Color0, true, Wrapping::Clamped);
-	framebuffer.add(window.renderer, WritePixelsFormat::Depth, DataType::Float, FramebufferAttachment::Depth, false, Wrapping::Clamped);
-	framebuffer.checkComplete();
+	GameRenderer::create(window);
 
-	for(int i = 0; i < jobSystem.numThreads(); i++)
+	for (int i = 0; i < jobSystem.numThreads(); i++)
 	{
 		jobSystem.enqueue(testParameters, std::ref(*this));
 	}
@@ -91,12 +87,12 @@ void FunctionFinderRenderer::destroy(Window& window)
 {
 	threading = false;
 	jobSystem.stop();
-	framebuffer.destroy(window.renderer);
+	GameRenderer::destroy(window);
 }
 
 void FunctionFinderRenderer::connect(GameSimulation& simulation) {}
 
-void FunctionFinderRenderer::renderInteractive(Window& window, TiledRectangle area) {}
+void FunctionFinderRenderer::renderInteractive(Window& window) {}
 
 Matrix FunctionFinderRenderer::plotMatrix() const
 {
@@ -107,7 +103,7 @@ Matrix FunctionFinderRenderer::plotMatrix() const
 	return scale(Matrix(0.95f), Vec3(scaleX, scaleY, 1.0f)) * translate(Matrix(1.0f), Vec3(-centerX, -centerY, 0.0f));
 }
 
-void FunctionFinderRenderer::render(Window& window, const TiledRectangle area)
+void FunctionFinderRenderer::renderScene(Window& window)
 {
 	Renderer& r = window.renderer;
 
@@ -115,9 +111,7 @@ void FunctionFinderRenderer::render(Window& window, const TiledRectangle area)
 	r.setCulling(true);
 	r.setDepthTest(true);
 
-	framebuffer.resize(window.renderer, area.size);
-	framebuffer.clear();
-	framebuffer.bindDraw(r);
+	framebuffer.clear(window.renderer);
 
 	// render scene
 	player.render(window); // sets the position, rotation and projection
@@ -131,22 +125,19 @@ void FunctionFinderRenderer::render(Window& window, const TiledRectangle area)
 		r.fill(0, 0, 1);
 		r.line(best, plotMatrix());
 	}
-	else
-	{
-		r.line(data, matrixFromPositionAndSize(Vec2(100, 100), Vec2(1.0f, 0.01f)));
-	}
+	else r.line(data, matrixFromPositionAndSize(Vec2(100, 100), Vec2(1.0f, 0.01f)));
 
 	// text rendering
 	if (!disableUi)
 	{
 		r.setDepthTest(false); // disables depth to always draw on top
-		r.screenSpace();       // aligns coordinate system with screenspace
+		r.screenSpaceFromBottomLeft();       // aligns coordinate system with screenspace
 		r.uniforms().setMMatrix(Matrix(1));
-		r.textRenderSystem.setSize(16.0f);
+		r.fontSize(16.0f);
 		r.textRenderSystem.setLetterSpacing(0.6f);
 		r.textRenderSystem.alignText(Alignment::left, Alignment::bottom);
 		Float spacing = 30;
-		Int i = 0;
+		Int   i       = 0;
 		r.textRenderSystem.render(r, "FPS: " + toString(static_cast<Int>(1.0f / r.time.getDelta())), Vec2(50, spacing * i++));
 		r.textRenderSystem.render(r, "Scroll to change speed", Vec2(50, spacing * i++));
 		r.textRenderSystem.render(r, "F for wireframe mode", Vec2(50, spacing * i++));
@@ -158,12 +149,6 @@ void FunctionFinderRenderer::render(Window& window, const TiledRectangle area)
 		r.textRenderSystem.render(r, "Best Score: " + toString(bestScore), Vec2(50, spacing * i++));
 		r.textRenderSystem.render(r, "Learn Rate: " + toString(learnRate), Vec2(50, spacing * i++));
 	}
-
-	// render to window
-	r.setDepthTest(false);
-	framebuffer.setAsTexture(0);
-	r.drawToWindow();
-	r.fullScreenShader("final");
 }
 
 void FunctionFinderRenderer::inputEvent(Window& window, const InputEvent input)

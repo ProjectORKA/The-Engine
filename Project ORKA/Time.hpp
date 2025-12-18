@@ -5,10 +5,12 @@
 
 // we just override some names to make them look nicer
 using Clock        = std::chrono::system_clock;
+using Seconds      = std::chrono::seconds;
+using Minutes      = std::chrono::minutes;
+using Days         = std::chrono::days;
 using Milliseconds = std::chrono::milliseconds;
 using TimePoint    = Clock::time_point;
-using Duration     = std::chrono::duration<Double, std::ratio<1 / 1>>;
-using FHours       = std::chrono::duration<float, std::chrono::hours::period>;
+using Duration     = std::chrono::duration<Double>;
 
 // a simple function that returns the current time point
 TimePoint now();
@@ -22,14 +24,14 @@ struct Time
 	void                unpause();
 	[[nodiscard]] Float getDelta() const;
 	[[nodiscard]] Bool  isPaused() const;
-	[[nodiscard]] Float getTotal() const;
+	[[nodiscard]] Double getTotal() const;
 
 private:
 	TimePoint lastTime;
 	TimePoint currentTime;
 	Bool      paused        = false;
 	Float     delta         = 0.0f;
-	Float     total         = 0.0f;
+	Double     total         = 0.0;
 	Duration  deltaDuration = Duration(0);
 	Duration  totalDuration = Duration(0);
 };

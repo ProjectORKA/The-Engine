@@ -6,28 +6,30 @@
 struct Uniforms;
 struct Renderer;
 
-struct GpuMesh
+struct GPUMesh
 {
 	[[nodiscard]] Bool isLoaded() const;
 
-	void unload(Renderer & renderer);
-	void upload(Renderer & renderer, const CpuMesh& cpuMesh);
-	void render(Uniforms& uniforms) const;
-	void renderInstances(Uniforms& uniforms, const Vector<Matrix>& transforms) const;
+	void unload(Renderer& renderer);
+	void render(Renderer& renderer) const;
+	void upload(Renderer& renderer, const CpuMesh& cpuMesh);
+	void renderInstances(Renderer& renderer, const Vector<Matrix>& transforms);
 
 	// update buffers manually
-	void updateIndexBuffer(const Vector<UInt>& indices);
-	void updateNormalBuffer(const Vec3Vector& normals) const;
-	void updateTangentBuffer(const Vec3Vector& tangents) const;
-	void updatePositionBuffer(const Vec3Vector& positions) const;
-	void updateBiTangentBuffer(const Vec3Vector& biTangents) const;
-	void updateVertexColorBuffer(const Vec3Vector& vertexColors) const;
-	void updateTextureCoordinateBuffer(const Vec2Vector& textureCoordinates) const;
+	void updateIndexBuffer(Renderer& renderer, const Vector<UInt>& indices);
+	void updateTangentBuffer(Renderer& renderer, const Vec3Vector& tangents);
+	void updateFaceNormalBuffer(Renderer& renderer, const Vec3Vector& normals);
+	void updatePositionBuffer(Renderer& renderer, const Vec3Vector& positions);
+	void updateVertexNormalBuffer(Renderer& renderer, const Vec3Vector& normals);
+	void updateBiTangentBuffer(Renderer& renderer, const Vec3Vector& biTangents);
+	void updateVertexColorBuffer(Renderer& renderer, const Vec3Vector& vertexColors);
+	void updateTextureCoordinateBuffer(Renderer& renderer, const Vec2Vector& textureCoordinates);
 
 private:
 	OpenGLVertexArrayObject vao;
 	IndexBuffer             indexBuffer;
-	OpenGLVertexBuffer      normalBuffer;
+	OpenGLVertexBuffer      vertexNormalBuffer;
+	OpenGLVertexBuffer      faceNormalBuffer;
 	OpenGLVertexBuffer      tangentBuffer;
 	Bool                    loaded = false;
 	OpenGLVertexBuffer      positionBuffer;

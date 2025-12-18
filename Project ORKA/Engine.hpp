@@ -4,6 +4,8 @@
 
 struct Engine
 {
+	Bool useJobSystem = true;
+
 	~Engine();
-	void create(const Int argc, Char* argv[]) const;
+	void create(Int argc, Char* argv[], Bool useJobSystem);
 };

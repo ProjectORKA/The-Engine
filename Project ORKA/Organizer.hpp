@@ -31,14 +31,9 @@ struct User
 struct Task
 {
 	Name name = "empty";
-	// UInt priority = -1;
-	// Float severity = 0.0;
-	// TimePoint lastExecution = now();
-	// TimePoint creationDate = now();
-	// Duration preferredTimeBetweenExecutions = FHours(24);
 };
 
-struct OrganizerRenderer : GameRenderer
+struct OrganizerRenderer final : GameRenderer
 {
 	Vector<User>    users;
 	Vector<Task>    tasks;
@@ -56,9 +51,9 @@ struct OrganizerRenderer : GameRenderer
 	void destroy(Window& window) override;
 	void renderConnections(Renderer& r) const;
 	void connect(GameSimulation& simulation) override;
-	void render(Window& window, TiledRectangle area) override;
+	void renderScene(Window& window) override;
 	void inputEvent(Window& window, InputEvent input) override;
-	void renderInteractive(Window& window, TiledRectangle area) override;
+	void renderInteractive(Window& window) override;
 	void addCompany(Index guid, const String& companyName, const String& domain);
 	void addUser(Index userGuid, Index companyGuid, const String& firstName, const String& lastName);
 };
@@ -71,7 +66,7 @@ struct Organizer
 	void run()
 	{
 		intro.init(renderer);
-		ui.window("Organizer", Area(1920, 1080), true, true, WindowState::Windowed, intro);
+		ui.window("Organizer", settings.defaultWindowWidth, settings.defaultWindowHeight, true, true, WindowState::Windowed, intro);
 		ui.run();
 	}
 };

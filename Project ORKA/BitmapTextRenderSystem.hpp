@@ -19,7 +19,7 @@ enum class Alignment
 
 struct BitmapTextRenderSystem
 {
-	GpuMesh    gpuText;
+	GPUMesh    gpuText;
 	CpuMesh    cpuText;
 	GPUTexture textTexture;
 

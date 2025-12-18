@@ -85,10 +85,7 @@ struct SquareNeighborPrototype : Prototype
 					point.south      = i;
 				}
 			}
-			else
-			{
-				logError("The following vector should have been square normalized: " + toString(delta));
-			}
+			else logError("The following vector should have been square normalized: " + toString(delta));
 		}
 	}
 
@@ -118,7 +115,7 @@ struct SquareNeighborPrototype : Prototype
 		calculateGrid();
 	}
 
-	void create() override
+	void create(Renderer & r) override
 	{
 		for(ULL i = 0; i < numPoints; i++) addPoint();
 	}

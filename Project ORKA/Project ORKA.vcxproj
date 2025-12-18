@@ -31,6 +31,7 @@
     <ClCompile Include="Fonts.cpp" />
     <ClCompile Include="FunctionFinder.cpp" />
     <ClCompile Include="Hash.cpp" />
+    <ClCompile Include="Heightmap.cpp" />
     <ClCompile Include="Hello Triangle.cpp" />
     <ClCompile Include="ImageViewerDatabase.cpp" />
     <ClCompile Include="ImageViewerResource.cpp" />
@@ -44,6 +45,8 @@
     <ClInclude Include="FunctionFinder.hpp" />
     <ClInclude Include="GlobalUniformData.hpp" />
     <ClInclude Include="Hash.hpp" />
+    <ClInclude Include="HeuristicNetworkingPrototype.hpp" />
+    <ClInclude Include="ImageApproximationPrototype.hpp" />
     <ClInclude Include="ImageViewerDatabase.hpp" />
     <ClInclude Include="ImageViewerResource.hpp" />
     <ClInclude Include="KDTree.hpp" />
@@ -51,6 +54,7 @@
     <ClInclude Include="KDTreePrototype.hpp" />
     <ClCompile Include="Keva.cpp" />
     <ClCompile Include="LabyrinthGeneratorPrototype.cpp" />
+    <ClCompile Include="LifetimeGuard.cpp" />
     <ClCompile Include="Logger.cpp" />
     <ClCompile Include="MSDFText.cpp" />
     <ClCompile Include="NameGenerator.cpp" />
@@ -58,6 +62,10 @@
     <ClCompile Include="Orbital Oblivion.cpp" />
     <ClCompile Include="ParallelizedConvexHullPrototype.cpp" />
     <ClCompile Include="PerformanceGraph.cpp" />
+    <ClCompile Include="SimpleRtsWolfSystem.cpp" />
+    <ClCompile Include="SimplexNoise.cpp" />
+    <ClCompile Include="SineWaveTerrainRegressor.cpp" />
+    <ClCompile Include="SortrResource.cpp" />
     <ClCompile Include="Standalone Music Visualizer.cpp" />
     <ClCompile Include="TripleNineMessage.cpp" />
     <ClCompile Include="TripleNinePlayer.cpp" />
@@ -125,12 +133,10 @@
     <ClCompile Include="PlanetSystemPlayer.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Pong.cpp" />
-    <ClCompile Include="ProceduralMeshes.cpp" />
     <ClCompile Include="ProjectMelon.cpp" />
     <ClCompile Include="QuadtreeID.cpp" />
     <ClCompile Include="QuadtreeNode.cpp" />
     <ClCompile Include="QuadtreeSystem.cpp" />
-    <ClCompile Include="QuadtreeSystemRenderer.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="RenderObjectSystem.cpp" />
     <ClCompile Include="RenderRegion.cpp" />
@@ -157,10 +163,8 @@
     <ClCompile Include="TripleNine.cpp" />
     <ClCompile Include="Random.cpp" />
     <ClCompile Include="RedDotHack.cpp" />
-    <ClCompile Include="RelativeChunkOffset.cpp" />
     <ClCompile Include="Sandbox.cpp" />
     <ClCompile Include="BranchStructure.cpp" />
-    <ClCompile Include="NeuralNetwork.cpp" />
     <ClCompile Include="PerlinNoise.cpp" />
     <ClCompile Include="Plot.cpp" />
     <ClCompile Include="SimpleRts.cpp" />
@@ -187,7 +191,12 @@
     <ClInclude Include="LabyrinthGeneratorPrototype.hpp" />
     <ClInclude Include="LockFreeQueue.hpp" />
     <ClInclude Include="Music Visualizer.hpp" />
+    <ClInclude Include="OptickProfiling.hpp" />
     <ClInclude Include="PerformanceGraph.hpp" />
+    <ClInclude Include="SimpleRtsWolfSystem.hpp" />
+    <ClInclude Include="SimplexNoise.hpp" />
+    <ClInclude Include="SineWaveTerrainRegressor.hpp" />
+    <ClInclude Include="SortrResource.hpp" />
     <ClInclude Include="TripleNineMessage.hpp" />
     <ClInclude Include="TripleNinePlayer.hpp" />
     <ClInclude Include="Voxels.hpp" />
@@ -290,7 +299,6 @@
     <ClInclude Include="Player.hpp" />
     <ClInclude Include="Pong.hpp" />
     <ClInclude Include="ProceduralMeshes.hpp" />
-    <ClInclude Include="Profiler.hpp" />
     <ClInclude Include="ProjectMelon.hpp" />
     <ClInclude Include="Prototype.hpp" />
     <ClInclude Include="PrototypingSandbox.hpp" />
@@ -298,7 +306,6 @@
     <ClInclude Include="QuadtreeID.hpp" />
     <ClInclude Include="QuadtreeNode.hpp" />
     <ClInclude Include="QuadtreeSystem.hpp" />
-    <ClInclude Include="QuadtreeSystemRenderer.hpp" />
     <ClInclude Include="Renderable.hpp" />
     <ClInclude Include="Renderer.hpp" />
     <ClInclude Include="RenderObjectSystem.hpp" />
@@ -323,11 +330,9 @@
     <ClInclude Include="NameGenerator.hpp" />
     <ClInclude Include="File.hpp" />
     <ClInclude Include="ORKAIntroSequence.hpp" />
-    <ClInclude Include="RelativeChunkOffset.hpp" />
     <ClInclude Include="Sandbox.hpp" />
     <ClInclude Include="BranchStructure.hpp" />
     <ClInclude Include="Image.hpp" />
-    <ClInclude Include="NeuralNetwork.hpp" />
     <ClInclude Include="PerlinNoise.hpp" />
     <ClInclude Include="Plot.hpp" />
     <ClInclude Include="SDFRenderer.hpp" />
@@ -470,33 +475,33 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{AD44ABC9-E10E-485B-A111-65EE96C2FFC1}</ProjectGuid>
-    <RootNamespace>ProjectORKA</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <RootNamespace>ProjectORKA</RootNamespace>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
@@ -540,7 +545,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
+      <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
@@ -574,7 +579,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
+      <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
@@ -611,7 +616,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
+      <WarningLevel>Level4</WarningLevel>
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -639,7 +644,7 @@
       </IgnoreSpecificDefaultLibraries>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <SubSystem>Console</SubSystem>
-      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
       <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
     </Link>
     <PostBuildEvent>
@@ -650,7 +655,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
+      <WarningLevel>Level4</WarningLevel>
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -676,9 +681,9 @@
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <IgnoreSpecificDefaultLibraries>
       </IgnoreSpecificDefaultLibraries>
-      <SubSystem>Windows</SubSystem>
+      <SubSystem>Console</SubSystem>
       <StackReserveSize>4194304</StackReserveSize>
-      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
       <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
     </Link>
     <PostBuildEvent>

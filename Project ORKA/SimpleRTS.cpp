@@ -3,17 +3,35 @@
 #include "Random.hpp"
 #include "UserInterface.hpp"
 
+Bool debugSimpleRts = true;
+
+// wolves howl, stretch, kiss, sit, lay and play when idle
+// wolves avoid walking in water in cold temperatures
+// wolves play before assembling into a pack to hunt
+// wolves howl to gather their own pack and keep other packs away
+// wolf pack territory looks like voronoi cells
+// a wolfs howl can reach max 10 km
+// wolves have a hierarchy within the pack
+// wolf cubs live in a den
+// wolves eat deer, ducks, rabbits
+// wolves usually run when seeing a human
+// wolves get more agressive the closer you get to their den
+// wolves are scared of dogs -> herds should be protected by dogs
 
 void SimpleRts::run()
 {
 	sim.start();
+	sim.waitUntilLoaded();
 	renderer.connect(sim);
-	ui.window("Simple RTS", Area(1920, 1080), true, true, WindowState::Windowed, renderer);
+	ui.window("Simple RTS", settings.defaultWindowWidth, settings.defaultWindowHeight, true, true, WindowState::Windowed, renderer);
 	ui.run();
 	sim.stop();
 }
 
-void SimpleRtsSimulation::destroy() {}
+void SimpleRtsSimulation::destroy()
+{
+	loaded = false;
+}
 
 void SimpleRtsSimulation::reset()
 {
@@ -23,22 +41,32 @@ void SimpleRtsSimulation::reset()
 
 void SimpleRtsSimulation::create()
 {
+	systems.push_back(&terrainSystem);
+
 	systems.push_back(&bodySystem);
 	systems.push_back(&bushSystem);
 	systems.push_back(&treeSystem);
+	systems.push_back(&wolfSystem);
 	systems.push_back(&humanSystem);
 	systems.push_back(&rabbitSystem);
-	systems.push_back(&terrainSystem);
 	systems.push_back(&berryBushSystem);
 	for (const auto s : systems) s->create(*this);
 
 	quadtreeSystem.create(*this);
 	quadtreeSystem.update(*this, mapSize);
+
+	loaded = true;
 }
 
-void SimpleRtsRenderer::create(Window& window) {}
+void SimpleRtsRenderer::create(Window& window)
+{
+	GameRenderer::create(window);
+}
 
-void SimpleRtsRenderer::destroy(Window& window) {}
+void SimpleRtsRenderer::destroy(Window& window)
+{
+	GameRenderer::destroy(window);
+}
 
 Float SimpleRtsSimulation::timeStep() const
 {
@@ -48,35 +76,26 @@ Float SimpleRtsSimulation::timeStep() const
 
 void SimpleRtsSimulation::update(Float delta)
 {
-	time += timeStep();
+	totalTime += timeStep();
+	//logDebug("Frame: " + toString(frame++));
 
-	Vector<Thread> threads;
-	for (auto s : systems)
+	//Vector<Thread> threads;
+	for (const auto s : systems)
 	{
-		threads.emplace_back([this,s]()
-		{
-			s->update(*this);
-		});
+		//threads.emplace_back([this,s]()
+		//{
+		s->update(*this);
+		//});
 	}
-
-	//threads.emplace_back([this]()
-	//{
-	//	treeSystem.update(*this);
-	//});
-	//threads.emplace_back([this]()
-	//{
-	//	humanSystem.update(*this);
-	//});
-	//threads.emplace_back([this]()
-	//{
-	//	bushSystem.update(*this);
-	//});
-	//threads.emplace_back([this]()
-	//{
-	//	berryBushSystem.update(*this);
-	//});
-	for (auto& thread : threads) if (thread.joinable()) thread.join();
+	//for (auto& thread : threads){
+	//	thread.join();
+	//}
 	limitFramerate(frameRate);
+}
+
+Float SimpleRtsSimulation::getTerrainHeight(const Vec2 vec) const
+{
+	return terrainSystem.terrainFunction(vec.x/mapSize, vec.y/mapSize, mapSize);
 }
 
 void SimpleRtsRenderer::update(Window& window)
@@ -87,42 +106,65 @@ void SimpleRtsRenderer::update(Window& window)
 	player.camera.setPosition(pos);
 }
 
-void SimpleRtsSimulation::render(Renderer& renderer) const
+void SimpleRtsSimulation::render(Renderer& r) const
 {
-	for (const auto s : systems) s->render(renderer);
+	for (const auto s : systems) s->render(r);
 
-	renderer.useShader("color");
+	//r.uniforms().setMMatrix(Matrix(mapSize * 2));
+	//r.renderMesh("SRTSGround");
 
-	renderer.fill(0, 0, 0);
-	quadtreeSystem.render(renderer);
+	//r.useShader("color");
 
-	renderer.fill(1, 0, 0);
-	renderer.uniforms().setMMatrix(Matrix(mapSize*2));
-	renderer.plane();
-	//renderer.wireframeCube();
+	//r.fill(0, 0, 0);
+	//quadtreeSystem.render(r);
+
+	//r.fill(1, 0, 0);
+
+	//r.plane();
+	//r.wireframeCube();
+}
+
+void SimpleRtsSimulation::waitUntilLoaded() const
+{
+	while (!loaded) {}
 }
 
 void SimpleRtsRenderer::connect(GameSimulation& simulation)
 {
-	this->sim = static_cast<SimpleRtsSimulation*>(&simulation);
+	this->sim = dynamic_cast<SimpleRtsSimulation*>(&simulation);
 }
 
-Vec2 SimpleRtsSimulation::getRandomSpawnPos(const Float radius) const
+Vec3 SimpleRtsSimulation::getRandomSpawnPos(const Float radius) const
+{
+	Vec2 pos;
+	Int  tries = 0;
+	Bool doesSpawnCollide;
+	do
+	{
+		pos              = randomVec2Fast(-mapSize, mapSize);
+		doesSpawnCollide = doesCollide(pos, radius);
+		tries++;
+	}
+	while (terrainSystem.isWater(*this, pos) || doesSpawnCollide);
+	return {pos, getTerrainHeight(pos)};
+}
+
+Vec3 SimpleRtsSimulation::getRandomSpawnPos() const
 {
 	Vec2 pos;
 	Int  tries = 0;
 	do
 	{
-		pos = randomVec2Fast(-mapSize, mapSize);
+		pos              = randomVec2Fast(-mapSize, mapSize);
 		tries++;
 	}
-	while (doesCollide(pos, radius) && tries < 100);
-	return pos;
+	while (terrainSystem.isWater(*this, pos));
+	return {pos, getTerrainHeight(pos)};
 }
 
-void SimpleRtsRenderer::renderInteractive(Window& window, TiledRectangle area) {}
+void SimpleRtsRenderer::renderInteractive(Window& window) {}
 
-void SimpleRtsRenderer::render(Window& window, const TiledRectangle area)
+void SimpleRtsRenderer::renderScene(Window& window)
 {
 	Renderer& r = window.renderer;
 
@@ -151,20 +193,23 @@ void SimpleRtsRenderer::render(Window& window, const TiledRectangle area)
 	r.useTexture("simpleRTSTexture");
 	r.useShader("simpleRTS");
 	sim->render(r);
+	if (!terrainMesh.isLoaded()) terrainMesh.upload(r, sim->terrainSystem.terrainMesh);
+	terrainMesh.render(r);
 
 	//ui
 	r.setDepthTest(false);
-	r.screenSpace();
+	r.screenSpaceFromBottomLeft();
 	r.fill(Color(1));
 	r.uniforms().setMMatrix(Matrix(1));
-	r.textRenderSystem.setSize(16.0f);
-	r.textRenderSystem.setLetterSpacing(0.6f);
-	r.textRenderSystem.render(r, toString(1.0f / r.time.getDelta()), Vec2(50));
+	r.fontSize(16.0f);
+	r.letterSpacing(0.6f);
+	r.textRenderSystem.alignText(Alignment::left, Alignment::bottom);
+	r.text(toString(1.0f / r.time.getDelta()), Vec2(50));
+	r.text(toString(sim->totalTime), Vec2(50,100));
 
 	performanceGraph.addTime(r.time.getDelta());
-	performanceGraph.render(window, area);
+	performanceGraph.render(window);
 	////////////////////////
-
 	mutex.unlock();
 }
 
@@ -182,7 +227,9 @@ Bool SimpleRtsSimulation::doesCollide(const Vec2 pos, const Float radius) const
 {
 	if (treeSystem.doesCollide(pos, radius)) return true;
 	if (bushSystem.doesCollide(pos, radius)) return true;
-	if (humanSystem.doesCollide(pos, radius)) return true;
-	if (rabbitSystem.doesCollide(pos, radius)) return true;
+	if (berryBushSystem.doesCollide(pos, radius)) return true;
+	//if (humanSystem.doesCollide(pos, radius)) return true;
+	//if (rabbitSystem.doesCollide(pos, radius)) return true;
+	//if (wolfSystem.doesCollide(pos, radius)) return true;
 	return false;
 }

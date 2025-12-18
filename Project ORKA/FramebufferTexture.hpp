@@ -10,9 +10,9 @@ struct FramebufferTexture
 	[[nodiscard]] FramebufferAttachment getAttachmentSlot() const;
 
 	void destroy(Renderer& renderer);
-	void resize(Renderer& renderer, Area area);
-	void useTextureInSlot(TextureSlot textureSlot) const;
-	void create(Renderer& renderer, Area size, WritePixelsFormat format, DataType type, FramebufferAttachment framebufferAttachmentSlot, Wrapping wrapping);
+	void resize(Renderer& renderer, IVec2 area);
+	void useTextureInSlot(Renderer& renderer, TextureSlot textureSlot) const;
+	void create(Renderer& renderer, IVec2 size, WritePixelsFormat format, DataType type, FramebufferAttachment framebufferAttachmentSlot, Wrapping wrapping);
 
 private:
 	GPUTexture            texture;

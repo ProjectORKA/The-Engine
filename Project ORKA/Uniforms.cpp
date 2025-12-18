@@ -17,7 +17,7 @@ void Uniforms::reset()
 	// data.time = 0.0f;
 	data.custom1    = 0.0f;
 	data.custom2    = 0.0f;
-	data.custom3    = 0.0f;
+	//data.custom3    = 0.0f;
 	data.customInt1 = 0;
 	// data.width = 1;
 	// data.height = 1;
@@ -28,18 +28,18 @@ void Uniforms::reset()
 	needsUpdate            = true;
 }
 
-void Uniforms::upload()
+void Uniforms::upload(OpenGlContext& openGlContext)
 {
 	if(needsUpdate)
 	{
-		openGlUniformBuffer.update(data);
+		openGlUniformBuffer.update(openGlContext, data);
 		needsUpdate = false;
 	}
 }
 
-void Uniforms::destroy() const
+void Uniforms::destroy(OpenGlContext& openGlContext)
 {
-	openGlUniformBuffer.destroy();
+	openGlUniformBuffer.destroy(openGlContext);
 }
 
 void Uniforms::resetMatrices()
@@ -299,11 +299,11 @@ void Uniforms::setFramebufferHeight(const Int value)
 	}
 }
 
-void Uniforms::create()
+void Uniforms::create(OpenGlContext& openGlContext)
 {
 	reset();
 	const Path uniformShaderCodePath = resourceManager.getOrkaDataPath().append("shaders").append("uniforms.glsl");
 	uniformBlockShaderCode           = loadString(uniformShaderCodePath);
-	openGlUniformBuffer.create(data, 0);
+	openGlUniformBuffer.create(openGlContext, data, 0);
 	needsUpdate = true;
 }

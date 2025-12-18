@@ -3,25 +3,19 @@
 #include "Camera.hpp"
 
 void ORKAIntroSequence::update(Window& window) {}
-
-void ORKAIntroSequence::destroy(Window& window) {}
-
-void ORKAIntroSequence::connect(GameSimulation& simulation) {}
-
-void ORKAIntroSequence::init(GameRenderer& game)
+void ORKAIntroSequence::destroy(Window& window)
 {
-	gameStartingAfterIntro = &game;
+	GameRenderer::destroy(window);
 }
-
-void ORKAIntroSequence::inputEvent(Window& window, InputEvent input) {}
 
 void ORKAIntroSequence::create(Window& window)
 {
+	GameRenderer::create(window);
 	window.unDecorateWindow();
 	window.setVisible(true);
 }
 
-void ORKAIntroSequence::render(Window& window, TiledRectangle area)
+void ORKAIntroSequence::renderScene(Window& window)
 {
 	Renderer& renderer = window.renderer;
 
@@ -39,11 +33,11 @@ void ORKAIntroSequence::render(Window& window, TiledRectangle area)
 
 	// logo stuff
 	constexpr Float animationLength = 1.1f;
-	const Float size            = min(pow(1.0f + 1.0f / pow(animationLength, 5.0f), pow(renderer.time.getTotal() - 2.0f * animationLength, 5.0f)), 100.0f);
-	const Float tint            = max(2.0f - size, 0.0f);
+	const Float     size            = min(pow(1.0f + 1.0f / pow(animationLength, 5.0f), pow(static_cast<Float>(renderer.time.getTotal()) - 2.0f * animationLength, 5.0f)), 100.0f);
+	const Float     tint            = max(2.0f - size, 0.0f);
 	renderer.uniforms().setCustomColor(Color(tint, tint, tint, 1.0f));
 	Matrix modelMatrix = scale(Matrix(1.0f), Vec3(size, 1.0f, size));
-	modelMatrix        = rotate(modelMatrix, 20.0f / (pow(renderer.time.getTotal(), 4.0f) + 1.0f), Vec3(0.0f, 0.0f, 1.0f));
+	modelMatrix        = rotate(modelMatrix, 20.0f / (pow(static_cast<Float>(renderer.time.getTotal()), 4.0f) + 1.0f), Vec3(0.0f, 0.0f, 1.0f));
 	renderer.uniforms().setMMatrix(modelMatrix);
 
 	renderer.useShader("orkaIntroSequence");
@@ -52,23 +46,30 @@ void ORKAIntroSequence::render(Window& window, TiledRectangle area)
 
 	// start the time when we actually start rendering
 	static Bool f = true;
-	if(f)
+	if (f)
 	{
 		renderer.time.reset();
 		f = false;
 	}
 
 	// swap the intro scene with the followup
-	if(renderer.time.getTotal() > 5)
+	if (renderer.time.getTotal() > 5)
 	{
 		window.decorateWindow();
-		
-		window.content.add(*gameStartingAfterIntro);
 
-		window.content.drop(this);
+		window.addElement(*gameStartingAfterIntro);
+
+		window.dropElement(this);
 
 		gameStartingAfterIntro->create(window);
 	}
 }
 
-void ORKAIntroSequence::renderInteractive(Window& window, TiledRectangle area) {}
+void ORKAIntroSequence::init(GameRenderer& game)
+{
+	gameStartingAfterIntro = &game;
+}
+
+void ORKAIntroSequence::renderInteractive(Window& window) {}
+void ORKAIntroSequence::connect(GameSimulation& simulation) {}
+void ORKAIntroSequence::inputEvent(Window& window, InputEvent input) {}

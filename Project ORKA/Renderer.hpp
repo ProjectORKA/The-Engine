@@ -1,21 +1,18 @@
 #pragma once
-
-#include "Time.hpp"
-#include "Basics.hpp"
-#include "Settings.hpp"
+#include "Framebuffer.hpp"
+#include "MatrixSystem.hpp"
 #include "MeshSystem.hpp"
+#include "PrimitivesRenderer.hpp"
+#include "RenderObjectSystem.hpp"
 #include "RenderRegion.hpp"
 #include "ShaderSystem.hpp"
-#include "MatrixSystem.hpp"
-#include "TextureSystem.hpp"
 #include "TextRenderSystem.hpp"
-#include "RenderObjectSystem.hpp"
-#include "PlanetRenderSystem.hpp"
-#include "PrimitivesRenderer.hpp"
-#include "RenderingOverrides.hpp"
+#include "TextureSystem.hpp"
+#include "Time.hpp"
 
 struct Camera;
 struct Player;
+struct Window;
 
 struct Renderer
 {
@@ -37,39 +34,41 @@ struct Renderer
 	TextureSystem      textureSystem;
 	TextRenderSystem   textRenderSystem;
 	PrimitivesRenderer primitivesRenderer;
-	RenderObjectSystem renderObjectSystem;
-	PlanetRenderSystem planetRenderSystem;
+	//RenderObjectSystem renderObjectSystem;
 
 	OpenGlContext openGlContext;
 
 	//general usage
-	void end();
 	void sync();
 	void create();
 	void destroy();
-	void begin(Area size);
-
+	void begin(IVec2 size);
 	//render state
+	void drawToWindow();
+	void enableScissor();
+	void disableScissor();
+	void setWireframeMode();
 	void blendModeAdditive();
-	void drawToWindow() const;
+	void end(Window & window);
+	void pollGraphicsApiError();
 	void setCulling(Bool culling);
-	void setWireframeMode() const;
-	void pollGraphicsApiError() const;
+	void setWireframeMode(Bool mode);
 	void setAlphaBlending(Bool blending);
 	void setDepthTest(Bool isUsingDepth);
-	void setWireframeMode(Bool mode) const;
 	void setRenderRegion(TiledRectangle region);
-	void setFramebufferSize(Renderer& renderer, Area area);
-	void addRenderObject(const RenderObjectNames& renderObjectNames); // [TODO] remove?
+	void setScissorTest(IVec2 position, IVec2 size);
+	void setRenderRegion(IVec2 position, IVec2 size);
+	void setFramebufferSize(Renderer& renderer, IVec2 area);
 	void setAlphaBlending(Bool enable, BlendFunction src, BlendFunction dst, BlendEquation eq);
 
 	//spaces
-	void screenSpace();
-	void normalizedSpace();
-	void normalizedScreenSpace();
-	void screenSpaceFromTopLeft();
-	void aspectCorrectNormalizedSpace();
-	void normalizedSpaceWithAspectRatio(Float aspectRatio);
+	void normalizedSpace();									// stretched -1 and 1 to window
+	void screenSpaceFromBottomLeft();						// pixel perfect coordinates in positive x and y
+	void uiSpace(const Window& window);						// similar to how browsers work
+	void aspectCorrectNormalizedSpace();					// fits -1 and 1 into window
+	void screenSpaceFromTopLeft(const Window & window);		// pixel perfect coordinates in positive x and negative y
+	void normalizedScreenSpace(const Window & window);		//
+	void normalizedSpaceWithAspectRatio(Float aspectRatio);	//
 
 	//textures
 	void useTexture(const Name& name);
@@ -85,6 +84,7 @@ struct Renderer
 	void renderMeshInstanced(const Name& name, const Vector<Matrix>& transforms);
 	void renderMeshInstanced(const Name& name, const Vec3Vector& positions, Float size);
 	void renderMeshInstanced(const Name& name, const Vec2Vector& positions, const Vec2Vector& directions, const Vector<Float>& scales);
+	void renderMeshInstanced(const Name& name, const Vec3Vector& positions, const Vec2Vector& directions, const Vector<Float>& scales);
 
 	//shaders
 	void  fill(Int color);
@@ -112,30 +112,36 @@ struct Renderer
 	void line(const Vec2Vector& line);
 	void line(const Vec3Vector& line);
 	void circle(Vec2 pos, Float radius);
-	void renderSky(const Camera& camera);
 	void lines(const Vec3Vector& lines);
 	void lines(const Vec2Vector& lines);
-	void wireframeCubeCentered(Float size);
+	void renderSky(const Camera& camera);
+	void rectangle(IVec2 pos, IVec2 size);
 	void points(const Vec2Vector& points);
 	void points(const Vec3Vector& points);
+	void wireframeCubeCentered(Float size);
 	void circles(const Vector<Matrix>& matrices);
 	void wireframeCubes(const Vector<Matrix>& matrices);
 	void line(const Vec2Vector& line, const Matrix& matrix);
 	void lines(const Vec2Vector& lines, const Matrix& matrix);
 	void renderAtmosphere(const Player& player, Vec3 sunDirection);
+	void renderUITexture(IVec2 position, IVec2 size);
+	void UIRectangle(IVec2 pos, IVec2 size);
 
-	[[nodiscard]] Bool   getCulling() const;
-	[[nodiscard]] Area   getArea() const;
+	//text
+	void text(const String& text);
+	void fontSize(const Float size);
+	void letterSpacing(const Float spacing);
+	void text(const String& text, const Vec2& position);
+
 	[[nodiscard]] Float  deltaTime() const;
-	[[nodiscard]] Area   getWindowSize() const;
+	[[nodiscard]] Bool   getCulling() const;
 	[[nodiscard]] Float  getAspectRatio() const;
-	[[nodiscard]] Int    getWindowWidth() const;
-	[[nodiscard]] Int    getWindowHeight() const;
 	[[nodiscard]] Matrix getScreenSpaceMatrix() const;
+	[[nodiscard]] Matrix getUISpaceMatrix(const Window & window) const;
 
 	Uniforms& uniforms();
 
 private:
 	RenderRegion renderRegion;
-	Area         windowSize = Area(0);
+	//IVec2        windowSize = IVec2(0);
 };

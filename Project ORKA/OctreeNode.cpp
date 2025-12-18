@@ -22,15 +22,9 @@ void OctreeNode::update()
 			c110->update();
 			c111->update();
 		}
-		else
-		{
-			subdivide();
-		}
+		else subdivide();
 	}
-	else
-	{
-		unSubdivide();
-	}
+	else unSubdivide();
 }
 
 void OctreeNode::subdivide()
@@ -116,14 +110,8 @@ void OctreeNode::incrementUser()
 
 void OctreeNode::decrementUser()
 {
-	if(users)
-	{
-		users--;
-	}
-	else
-	{
-		logError("User mismatch found!");
-	}
+	if(users) users--;
+	else logError("User mismatch found!");
 }
 
 UllVec3 OctreeNode::getPosition() const
@@ -160,25 +148,13 @@ OctreeNode::OctreeNode(OctreeNode& parent, const Bool x, const Bool y, const Boo
 
 	if(x)
 	{
-		if(y)
-		{
-			quadTreeEquivalent = parent.quadTreeEquivalent->c11;
-		}
-		else
-		{
-			quadTreeEquivalent  = parent.quadTreeEquivalent->c10;
-		}
+		if(y) quadTreeEquivalent = parent.quadTreeEquivalent->c11;
+		else quadTreeEquivalent  = parent.quadTreeEquivalent->c10;
 	}
 	else
 	{
-		if(y)
-		{
-			quadTreeEquivalent = parent.quadTreeEquivalent->c01;
-		}
-		else
-		{
-			quadTreeEquivalent  = parent.quadTreeEquivalent->c00;
-		}
+		if(y) quadTreeEquivalent = parent.quadTreeEquivalent->c01;
+		else quadTreeEquivalent  = parent.quadTreeEquivalent->c00;
 	}
 
 	ULL chunkHeight = getPosition().z;

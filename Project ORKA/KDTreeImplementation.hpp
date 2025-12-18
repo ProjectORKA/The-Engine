@@ -55,24 +55,32 @@ template <typename T, typename = Int> struct has_assign : std::false_type {};
 
 template <typename T> struct has_assign<T, decltype((void)std::declval<T>().assign(1, 0), 0)> : std::true_type {};
 
-template <typename Container> std::enable_if_t<has_resize<Container>::value, void> resize(Container& c, const SizeT nElements)
+template <typename Container>
+void resize(Container& c, const SizeT nElements)
+requires has_resize<Container>::value
 {
 	c.resize(nElements);
 }
 
-template <typename Container> std::enable_if_t<!has_resize<Container>::value, void> resize(Container& c, const SizeT nElements)
+template <typename Container>
+void resize(Container& c, const SizeT nElements)
+requires (!has_resize<Container>::value)
 {
-	if(nElements != c.size()) throw std::logic_error("Try to change the size of a std::array.");
+	if (nElements != c.size()) throw std::logic_error("Try to change the size of a std::array.");
 }
 
-template <typename Container, typename T> std::enable_if_t<has_assign<Container>::value, void> assign(Container& c, const SizeT nElements, const T& value)
+template <typename Container, typename T>
+void assign(Container& c, const SizeT nElements, const T& value)
+requires has_assign<Container>::value
 {
 	c.assign(nElements, value);
 }
 
-template <typename Container, typename T> std::enable_if_t<!has_assign<Container>::value, void> assign(Container& c, const SizeT nElements, const T& value)
+template <typename Container, typename T>
+void assign(Container& c, const SizeT nElements, const T& value)
+requires (!has_assign<Container>::value)
 {
-	for(SizeT i = 0; i < nElements; i++) c[i] = value;
+	for (SizeT i = 0; i < nElements; i++) c[i] = value;
 }
 
 template <typename _DistanceType, typename _IndexType = SizeT, typename _CountType = SizeT> class KNNResultSet
@@ -122,10 +130,7 @@ public:
 					indices[i] = indices[i - 1];
 				}
 			}
-			else
-			{
-				break;
-			}
+			else break;
 		}
 		if(i < capacity)
 		{
@@ -237,10 +242,7 @@ public:
 	 */
 	[[nodiscard]] ResultItem<IndexType, DistanceType> worst_item() const
 	{
-		if(m_indices_dists.empty())
-		{
-			throw std::runtime_error("Cannot invoke RadiusResultSet::worst_item() on " "an empty list of results.");
-		}
+		if(m_indices_dists.empty()) throw std::runtime_error("Cannot invoke RadiusResultSet::worst_item() on " "an empty list of results.");
 		auto it = std::max_element(m_indices_dists.begin(), m_indices_dists.end(), IndexDist_Sorter());
 		return *it;
 	}
@@ -257,7 +259,7 @@ template <typename T> void save_value(std::ostream& stream, const T& value)
 
 template <typename T> void save_value(std::ostream& stream, const Vector<T>& value)
 {
-	SizeT size = value.size();
+	const SizeT size = value.size();
 	stream.write(reinterpret_cast<const char*>(&size), sizeof(SizeT));
 	stream.write(reinterpret_cast<const char*>(value.data()), sizeof(T) * size);
 }
@@ -451,10 +453,7 @@ template <class T, class DataSource, typename _DistanceType = T, typename IndexT
 		DistanceType result = DistanceType();
 		DistanceType pi     = 3.14159265358979323846;//pi_const<DistanceType>();
 		result              = b - a;
-		if(result > pi)
-		{
-			result -= 2 * pi;
-		}
+		if(result > pi) result -= 2 * pi;
 		else if(result < -pi) result += 2 * pi;
 		return result;
 	}
@@ -593,7 +592,7 @@ struct SearchParameters
  * is no need to track down all the objects to free them.
  *
  */
-class PooledAllocator
+struct PooledAllocator
 {
 	static constexpr SizeT WORDSIZE  = 16;
 	static constexpr SizeT BLOCKSIZE = 8192;
@@ -620,7 +619,6 @@ class PooledAllocator
 		wastedMemory = 0;
 	}
 
-public:
 	Size usedMemory   = 0;
 	Size wastedMemory = 0;
 
@@ -687,7 +685,7 @@ public:
 			static_cast<void**>(m)[0] = base_;
 			base_                     = m;
 
-			Size shift = 0;
+			const Size shift = 0;
 			// int size_t = (WORDSIZE - ( (((size_t)m) + sizeof(void*)) &
 			// (WORDSIZE-1))) & (WORDSIZE-1);
 
@@ -993,10 +991,7 @@ public:
 
 			BoundingBox left_bbox(bbox);
 			left_bbox[cutfeat].high = cutval;
-			if(++thread_count < n_thread_build_)
-			{
-				left_future = std::async(std::launch::async, &KDTreeBaseClass::divideTreeConcurrent, this, std::ref(obj), left, left + idx, std::ref(left_bbox), std::ref(thread_count), std::ref(mutex));
-			}
+			if(++thread_count < n_thread_build_) left_future = std::async(std::launch::async, &KDTreeBaseClass::divideTreeConcurrent, this, std::ref(obj), left, left + idx, std::ref(left_bbox), std::ref(thread_count), std::ref(mutex));
 			else
 			{
 				--thread_count;
@@ -1005,10 +1000,7 @@ public:
 
 			BoundingBox right_bbox(bbox);
 			right_bbox[cutfeat].low = cutval;
-			if(++thread_count < n_thread_build_)
-			{
-				right_future = std::async(std::launch::async, &KDTreeBaseClass::divideTreeConcurrent, this, std::ref(obj), left + idx, right, std::ref(right_bbox), std::ref(thread_count), std::ref(mutex));
-			}
+			if(++thread_count < n_thread_build_) right_future = std::async(std::launch::async, &KDTreeBaseClass::divideTreeConcurrent, this, std::ref(obj), left + idx, right, std::ref(right_bbox), std::ref(thread_count), std::ref(mutex));
 			else
 			{
 				--thread_count;
@@ -1071,34 +1063,16 @@ public:
 		ElementType  min_elem, max_elem;
 		computeMinMax(obj, ind, count, cutfeat, min_elem, max_elem);
 
-		if(split_val < min_elem)
-		{
-			cutval = min_elem;
-		}
-		else if(split_val > max_elem)
-		{
-			cutval = max_elem;
-		}
-		else
-		{
-			cutval                          = split_val;
-		}
+		if(split_val < min_elem) cutval = min_elem;
+		else if(split_val > max_elem) cutval = max_elem;
+		else cutval                          = split_val;
 
 		Offset lim1, lim2;
 		planeSplit(obj, ind, count, cutfeat, cutval, lim1, lim2);
 
-		if(lim1 > count / 2)
-		{
-			index = lim1;
-		}
-		else if(lim2 < count / 2)
-		{
-			index = lim2;
-		}
-		else
-		{
-			index                      = count / 2;
-		}
+		if(lim1 > count / 2) index = lim1;
+		else if(lim2 < count / 2) index = lim2;
+		else index                      = count / 2;
 	}
 
 	/**
@@ -1322,14 +1296,8 @@ private:
 		Base::dim_                 = dimensionality;
 		if(DIM > 0) Base::dim_ = DIM;
 		Base::leaf_max_size_ = params.leaf_max_size;
-		if(params.n_thread_build > 0)
-		{
-			Base::n_thread_build_ = params.n_thread_build;
-		}
-		else
-		{
-			Base::n_thread_build_ = std::max(std::thread::hardware_concurrency(), 1u);
-		}
+		if(params.n_thread_build > 0) Base::n_thread_build_ = params.n_thread_build;
+		else Base::n_thread_build_                          = std::max(std::thread::hardware_concurrency(), 1u);
 
 		if(!(params.flags & KDTreeSingleIndexAdaptorFlags::SkipInitialBuildIndex))
 		{
@@ -1352,10 +1320,7 @@ public:
 		if(Base::size_ == 0) return;
 		computeBoundingBox(Base::root_bbox_);
 		// construct the tree
-		if(Base::n_thread_build_ == 1)
-		{
-			Base::root_node_ = this->divideTree(*this, 0, Base::size_, Base::root_bbox_);
-		}
+		if(Base::n_thread_build_ == 1) Base::root_node_ = this->divideTree(*this, 0, Base::size_, Base::root_bbox_);
 		else
 		{
 			std::atomic<unsigned int> thread_count(0u);
@@ -1387,10 +1352,7 @@ public:
 	{
 		assert(vec);
 		if(this->size(*this) == 0) return false;
-		if(!Base::root_node_)
-		{
-			throw std::runtime_error("[nanoflann] findNeighbors() called before building the " "index.");
-		}
+		if(!Base::root_node_) throw std::runtime_error("[nanoflann] findNeighbors() called before building the " "index.");
 		Float epsError = 1 + searchParams.eps;
 
 		// fixed or variable-sized container (depending on DIM)
@@ -1449,10 +1411,7 @@ public:
 	{
 		RadiusResultSet<DistanceType, IndexType> resultSet(radius, IndicesDists);
 		const Size                               nFound = radiusSearchCustomCallback(query_point, resultSet, searchParams);
-		if(searchParams.sorted)
-		{
-			std::sort(IndicesDists.begin(), IndicesDists.end(), IndexDist_Sorter());
-		}
+		if(searchParams.sorted) std::sort(IndicesDists.begin(), IndicesDists.end(), IndexDist_Sorter());
 		return nFound;
 	}
 
@@ -1469,7 +1428,6 @@ public:
 
 	/** @} */
 
-public:
 	/** Make sure the auxiliary list \a vind has the same size than the current
 	 * dataset, and re-generate if size has changed. */
 	void init_vind()
@@ -1491,10 +1449,7 @@ public:
 		else
 		{
 			const Size N = dataset_.pointCount();
-			if(!N)
-			{
-				throw std::runtime_error("[nanoflann] computeBoundingBox() called but " "no data points found.");
-			}
+			if(!N) throw std::runtime_error("[nanoflann] computeBoundingBox() called but " "no data points found.");
 			for(Dimension i = 0; i < dims; ++i)
 			{
 				bbox[i].low = bbox[i].high = this->dataset_get(*this, Base::vAcc_[0], i);
@@ -1586,7 +1541,6 @@ public:
 		return true;
 	}
 
-public:
 	/**  Stores the index in a binary file.
 	 *   IMPORTANT NOTE: The set of data points is NOT stored in the file, so
 	 * when loading the index object it must be constructed associated to the
@@ -1703,14 +1657,8 @@ public:
 		Base::dim_ = dimensionality;
 		if(DIM > 0) Base::dim_ = DIM;
 		Base::leaf_max_size_ = params.leaf_max_size;
-		if(params.n_thread_build > 0)
-		{
-			Base::n_thread_build_ = params.n_thread_build;
-		}
-		else
-		{
-			Base::n_thread_build_ = std::max(std::thread::hardware_concurrency(), 1u);
-		}
+		if(params.n_thread_build > 0) Base::n_thread_build_ = params.n_thread_build;
+		else Base::n_thread_build_                          = std::max(std::thread::hardware_concurrency(), 1u);
 	}
 
 	/** Explicitly default the copy constructor */
@@ -1743,10 +1691,7 @@ public:
 		if(Base::size_ == 0) return;
 		computeBoundingBox(Base::root_bbox_);
 		// construct the tree
-		if(Base::n_thread_build_ == 1)
-		{
-			Base::root_node_ = this->divideTree(*this, 0, Base::size_, Base::root_bbox_);
-		}
+		if(Base::n_thread_build_ == 1) Base::root_node_ = this->divideTree(*this, 0, Base::size_, Base::root_bbox_);
 		else
 		{
 			std::atomic<unsigned int> thread_count(0u);
@@ -1839,10 +1784,7 @@ public:
 	{
 		RadiusResultSet<DistanceType, IndexType> resultSet(radius, IndicesDists);
 		const SizeT                             nFound = radiusSearchCustomCallback(query_point, resultSet, searchParams);
-		if(searchParams.sorted)
-		{
-			std::sort(IndicesDists.begin(), IndicesDists.end(), IndexDist_Sorter());
-		}
+		if(searchParams.sorted) std::sort(IndicesDists.begin(), IndicesDists.end(), IndexDist_Sorter());
 		return nFound;
 	}
 
@@ -1859,7 +1801,6 @@ public:
 
 	/** @} */
 
-public:
 	void computeBoundingBox(BoundingBox& bbox)
 	{
 		const auto dims = DIM > 0 ? DIM : Base::dim_;
@@ -1872,10 +1813,7 @@ public:
 		else
 		{
 			const Size N = Base::size_;
-			if(!N)
-			{
-				throw std::runtime_error("[nanoflann] computeBoundingBox() called but " "no data points found.");
-			}
+			if(!N) throw std::runtime_error("[nanoflann] computeBoundingBox() called but " "no data points found.");
 			for(Dimension i = 0; i < dims; ++i)
 			{
 				bbox[i].low = bbox[i].high = this->dataset_get(*this, Base::vAcc_[0], i);
@@ -1952,7 +1890,6 @@ public:
 		dists[idx] = dst;
 	}
 
-public:
 	/**  Stores the index in a binary file.
 	 *   IMPORTANT NOTE: The set of data points is NOT stored in the file, so
 	 * when loading the index object it must be constructed associated to the
@@ -2198,18 +2135,11 @@ template <class MatrixType, int32_t DIM = -1, class Distance = metric_L2, Bool r
 	explicit KDTreeEigenMatrixAdaptor(const Dimension dimensionality, const std::reference_wrapper<const MatrixType>& mat, const int leaf_max_size = 10) : m_data_matrix(mat)
 	{
 		const auto dims = row_major ? mat.get().cols() : mat.get().rows();
-		if(static_cast<Dimension>(dims) != dimensionality)
-		{
-			throw std::runtime_error("Error: 'dimensionality' must match column count in data " "matrix");
-		}
-		if(DIM > 0 && static_cast<int32_t>(dims) != DIM)
-		{
-			throw std::runtime_error("Data set dimensionality does not match the 'DIM' template " "argument");
-		}
+		if(static_cast<Dimension>(dims) != dimensionality) throw std::runtime_error("Error: 'dimensionality' must match column count in data " "matrix");
+		if(DIM > 0 && static_cast<int32_t>(dims) != DIM) throw std::runtime_error("Data set dimensionality does not match the 'DIM' template " "argument");
 		index_ = new index_t(dims, *this /* adaptor */, KDTreeSingleIndexAdaptorParams(leaf_max_size));
 	}
 
-public:
 	/** Deleted copy constructor */
 	KDTreeEigenMatrixAdaptor(const self_t&) = delete;
 

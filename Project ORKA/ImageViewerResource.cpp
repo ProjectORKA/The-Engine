@@ -31,10 +31,7 @@ void ImageViewerResource::loadIntoRam()
 	{
 		isBeingLoadedIntoRam = true;
 		cpuTexture.load(getPath(), getFileName(getPath()), Filter::Nearest, Filter::Linear, Wrapping::Clamped);
-		if (!cpuTexture.isLoaded())
-		{
-			loadAttemptFailed = true;
-		}
+		if (!cpuTexture.isLoaded()) loadAttemptFailed = true;
 		else
 		{
 			width  = cpuTexture.getWidth();
@@ -99,9 +96,9 @@ Bool ImageViewerResource::hasLoadAttemptFailed() const
 	return loadAttemptFailed;
 }
 
-void ImageViewerResource::use(const Int textureSlot) const
+void ImageViewerResource::use(Renderer& renderer, const Int textureSlot) const
 {
-	gpuTexture.useTextureInSlot(textureSlot);
+	gpuTexture.useTextureInSlot(renderer, textureSlot);
 }
 
 ImageViewerResource::ImageViewerResource(const Path& path, const Index index)

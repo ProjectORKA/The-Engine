@@ -14,6 +14,7 @@ struct ImageViewerRenderer final : GameRenderer
 {
 	Vector<ImageViewerResource> images;
 	ImageViewerDatabase         database;
+
 	SharedMutex                 imagesMutex;
 	TimePoint                   lastButtonInput;
 	TimePoint                   lastImageRefresh;
@@ -65,9 +66,9 @@ struct ImageViewerRenderer final : GameRenderer
 	void updateLoadedImages(Renderer& renderer);
 	void connect(GameSimulation& simulation) override;
 	void renderAllImages(Window& window, TiledRectangle area);
-	void render(Window& window, TiledRectangle area) override;
+	void renderScene(Window& window) override;
 	void inputEvent(Window& window, InputEvent input) override;
-	void renderInteractive(Window& window, TiledRectangle area) override;
+	void renderInteractive(Window& window) override;
 };
 
 struct ImageViewer

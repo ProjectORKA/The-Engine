@@ -10,7 +10,7 @@ void setCurrentPath(const Path& path);
 void copyFile(const Path& source, const Path& destination);
 void moveFile(const Path& source, const Path& destination);
 
-[[nodiscard]] ULL getFileSize(const Path& path);
+[[nodiscard]] ULL  getFileSize(const Path& path);
 
 [[nodiscard]] String loadString(const Path& path);
 [[nodiscard]] String getFileName(const Path& path);
@@ -22,6 +22,7 @@ void moveFile(const Path& source, const Path& destination);
 [[nodiscard]] Path makeAbsolute(const Path& path);
 [[nodiscard]] Path getParentFolder(const Path& path);
 
+[[nodiscard]] Bool isDirectory(const Path& path);
 [[nodiscard]] Bool hasExtension(const Path& path);
 [[nodiscard]] Bool doesPathExist(const Path& path);
 [[nodiscard]] Bool doesFileExist(const Path& path);

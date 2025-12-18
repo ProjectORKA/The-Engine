@@ -30,7 +30,7 @@ void DNDRenderer::update(Window& window)
 {
 	player.update(window);
 
-	for(Path& path : window.droppedFilePaths)
+	for (Path& path : window.droppedFilePaths)
 	{
 		const Name name = path.stem().string();
 		DNDEntity  e;
@@ -44,7 +44,7 @@ void DNDRenderer::update(Window& window)
 
 void DNDRenderer::destroy(Window& window)
 {
-	framebuffer.destroy(window.renderer);
+	GameRenderer::destroy(window);
 }
 
 void DNDRenderer::connect(GameSimulation& simulation)
@@ -56,7 +56,7 @@ void DNDSimulation::create()
 {
 	InFile save("Saves/dnd.save");
 
-	if(save.isOpen)
+	if (save.isOpen)
 	{
 		save.read(reinterpret_cast<Char*>(&fieldOfView), sizeof(Float));
 		save.read(reinterpret_cast<Char*>(&nearClipValue), sizeof(Float));
@@ -74,30 +74,30 @@ void DNDSimulation::create()
 
 void DNDRenderer::inputEvent(Window& window, const InputEvent input)
 {
-	if(input == enter) window.captureCursor();
-	if(input == exit) window.releaseCursor();
-	if(input == select && window.capturing)
+	if (input == enter) window.captureCursor();
+	if (input == exit) window.releaseCursor();
+	if (input == select && window.capturing)
 	{
 		const Index objectId = window.renderer.objectId;
 
 		logDebug(objectId);
 
-		if(objectId != static_cast<UInt>(-1))
+		if (objectId != static_cast<UInt>(-1))
 		{
-			if(!window.pressed(selectMultiple)) selectedObjects.clear();
+			if (!window.pressed(selectMultiple)) selectedObjects.clear();
 			selectedObjects.push_back(objectId);
 			lastSelectedObject = objectId;
 		}
 		else
 		{
-			if(!window.pressed(selectMultiple))
+			if (!window.pressed(selectMultiple))
 			{
 				lastSelectedObject = -1;
 				selectedObjects.clear();
 			}
 		}
 	}
-	if(input == toggleWireframeMode) window.renderer.wireframeMode = !window.renderer.wireframeMode;
+	if (input == toggleWireframeMode) window.renderer.wireframeMode = !window.renderer.wireframeMode;
 
 	player.inputEvent(window, input);
 }
@@ -111,10 +111,7 @@ void DNDRenderer::create(Window& window)
 	player.camera.setRotation(world->rotation);
 	player.camera.setPosition(world->position);
 
-	framebuffer.create("MainFramebuffer", Area(1920, 1080));
-	framebuffer.add(window.renderer, WritePixelsFormat::RGBA, DataType::Float, FramebufferAttachment::Color0, true, Wrapping::Clamped);
-	framebuffer.add( window.renderer, WritePixelsFormat::Depth, DataType::Float, FramebufferAttachment::Depth, false, Wrapping::Clamped);
-	framebuffer.checkComplete();
+	GameRenderer::create(window);
 }
 
 void DNDEntity::render(Renderer& renderer) const
@@ -123,13 +120,11 @@ void DNDEntity::render(Renderer& renderer) const
 	renderer.renderMesh(meshName);
 }
 
-void DNDRenderer::render(Window& window, const TiledRectangle area)
+void DNDRenderer::renderScene(Window& window)
 {
 	Renderer& r = window.renderer;
 
-	framebuffer.resize(r, area.size);
-	framebuffer.clear();
-	framebuffer.bindDraw(r);
+	framebuffer.clear(r);
 
 	// preprocess
 	r.setWireframeMode();
@@ -160,32 +155,21 @@ void DNDRenderer::render(Window& window, const TiledRectangle area)
 	r.renderMesh("centeredDetailedGrid");
 
 	// objects
-	framebuffer.clearDepth();
+	framebuffer.clearDepth(r);
 	r.setDepthTest(true);
 	r.setCulling(true);
 
-	for(Int i = 0; i < world->entities.size(); i++)
+	for (Int i = 0; i < world->entities.size(); i++)
 	{
 		// render selected objects with an orange highlight
-		if(std::find(selectedObjects.begin(), selectedObjects.end(), i) != selectedObjects.end())
-		{
-			r.setColor(Color(0.4, 0.25, 0.1, 0));
-		}
-		else
-		{
-			r.setColor(Color(0, 0, 0, 0));
-		}
+		if (std::ranges::find(selectedObjects, i) != selectedObjects.end()) r.setColor(Color(0.4, 0.25, 0.1, 0));
+		else r.setColor(Color(0, 0, 0, 0));
 
 		// render last object with brighter highlight
-		if(lastSelectedObject == i) r.setColor(Color(0.5, 0.4, 0.15, 0));
+		if (lastSelectedObject == i) r.setColor(Color(0.5, 0.4, 0.15, 0));
 
 		world->entities[i].render(r);
 	}
-
-	r.setDepthTest(false);
-	framebuffer.setAsTexture(0);
-	r.drawToWindow();
-	r.fullScreenShader("tonemapping");
 
 	world->speedExponent = player.speedExponent;
 	world->fieldOfView   = player.camera.getFieldOfView();
@@ -195,7 +179,7 @@ void DNDRenderer::render(Window& window, const TiledRectangle area)
 	world->rotation      = player.camera.getRotation();
 }
 
-void DNDRenderer::renderInteractive(Window& window, TiledRectangle area)
+void DNDRenderer::renderInteractive(Window& window)
 {
 	// player.render(window);
 

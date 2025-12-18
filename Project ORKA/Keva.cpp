@@ -45,14 +45,8 @@ void KevaSimulation::update(Float delta)
 			sleep(3000);
 			clearConsole();
 
-			if (randomFloatSlow() > 0.5)
-			{
-				println("Player has won!");
-			}
-			else
-			{
-				println("Player has lost!");
-			}
+			if (randomFloatSlow() > 0.5) println("Player has won!");
+			else println("Player has lost!");
 			inBattle = false;
 		}
 	}

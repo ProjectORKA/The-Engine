@@ -23,7 +23,7 @@ void CpuTexture::unload()
 
 Int CpuTexture::getWidth() const
 {
-	if(width <= 0) logError("Width is 0");
+	if(width < 0) logError("Width is negative");
 	return width;
 }
 
@@ -39,7 +39,7 @@ Bool CpuTexture::isLoaded() const
 
 Int CpuTexture::getHeight() const
 {
-	if(width <= 0) logError("Height is 0");
+	if(width < 0) logError("Height is negative");
 	return height;
 }
 
@@ -65,14 +65,14 @@ Wrapping CpuTexture::getWrapping() const
 
 inline void CpuTexture::checkIntegrity()
 {
-	if(width < 1)
+	if(width < 0)
 	{
 		loaded = false;
 		logError("Image width invalid.");
 		return;
 	}
 
-	if(height < 1)
+	if(height < 0)
 	{
 		loaded = false;
 		logError("Image height invalid.");
@@ -435,22 +435,13 @@ void CpuTexture::load(const Image& image, const Filter nearFilter, const Filter 
 				break;
 		}
 	}
-	else
-	{
-		logError("Image could not be loaded into texture!");
-	}
+	else logError("Image could not be loaded into texture!");
 }
 
 void CpuTexture::load(const Name& name, const Filter nearFilter, const Filter farFilter, const Wrapping wrapping)
 {
-	if(!loaded)
-	{
-		load(resourceManager.getTextureResourcePath(name), name, nearFilter, farFilter, wrapping);
-	}
-	else
-	{
-		logWarning("Texture already loaded, you are trying to load it again, something must be wrong!");
-	}
+	if(!loaded) load(resourceManager.getTextureResourcePath(name), name, nearFilter, farFilter, wrapping);
+	else logWarning("Texture already loaded, you are trying to load it again, something must be wrong!");
 }
 
 CpuTexture::CpuTexture(const Int width, const Int height, const Name& name, const Filter farFilter, const Filter nearFilter, const DataType dataType, const Wrapping wrapping, const WritePixelsFormat format)

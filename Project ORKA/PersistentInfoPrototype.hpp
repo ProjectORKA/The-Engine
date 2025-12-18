@@ -216,7 +216,7 @@ struct PersistentInfoPrototype : Prototype
 		for (Int i = 0; i < points.size() - 1; i++) tryAddConnection(points.size() - 1, i);
 	}
 
-	void create() override
+	void create(Renderer & r) override
 	{
 		for (int i = 0; i < 23; i++) action();
 	}

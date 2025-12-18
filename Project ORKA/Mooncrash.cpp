@@ -1,7 +1,4 @@
 #include "MoonCrash.hpp"
-#include "Window.hpp"
-
-
 
 MoonCrashPlayer::MoonCrashPlayer()
 {
@@ -15,12 +12,12 @@ void MoonCrashSimulation::destroy()
 
 void MoonCrashRenderer::destroy(Window& window)
 {
-	mainFramebuffer.destroy(window.renderer);
+	framebuffer.destroy(window.renderer);
 }
 
 void MoonCrashRenderer::connect(GameSimulation& simulation)
 {
-	this->simulation = static_cast<MoonCrashSimulation*>(&simulation);
+	this->simulation = dynamic_cast<MoonCrashSimulation*>(&simulation);
 }
 
 void MoonCrashPlayer::update(Window& window)
@@ -29,26 +26,26 @@ void MoonCrashPlayer::update(Window& window)
 	Float delta = window.renderer.deltaTime();
 
 	// set up temporary data
-	auto  movementVector = Vec3(0);
-	Float desiredSpeed   = 0;
+	auto movementVector = Vec3(0);
 
 	// process input
-	if(window.capturing) camera.rotate(window.mouseDelta * DVec2(mouseSensitivity));
-	if(window.pressed(forward)) movementVector += camera.getForwardVector();
-	if(window.pressed(backward)) movementVector -= camera.getForwardVector();
-	if(window.pressed(right)) movementVector += camera.getRightVector();
-	if(window.pressed(left)) movementVector -= camera.getRightVector();
-	if(window.pressed(up)) movementVector += camera.getUpVector();
-	if(window.pressed(down)) movementVector -= camera.getUpVector();
+	if (window.capturing) camera.rotate(window.mouseDelta * DVec2(mouseSensitivity));
+	if (window.pressed(forward)) movementVector += camera.getForwardVector();
+	if (window.pressed(backward)) movementVector -= camera.getForwardVector();
+	if (window.pressed(right)) movementVector += camera.getRightVector();
+	if (window.pressed(left)) movementVector -= camera.getRightVector();
+	if (window.pressed(up)) movementVector += camera.getUpVector();
+	if (window.pressed(down)) movementVector -= camera.getUpVector();
 
 	// calculate movement
-	if(length(movementVector) > 0)
+	if (length(movementVector) > 0)
 	{
+		Float desiredSpeed = 0;
 		// if there is movement input
-		desiredSpeed   = powf(baseNumber, speedExponent);			// calculate speed
-		movementVector = normalize(movementVector);					// get direction of movement (just direction)
-		movementVector *= desiredSpeed * delta;						// add speed to direction
-		camera.setPosition(camera.getPosition() + movementVector);	// add it to cameras position
+		desiredSpeed   = powf(baseNumber, speedExponent);          // calculate speed
+		movementVector = normalize(movementVector);                // get direction of movement (just direction)
+		movementVector *= desiredSpeed * delta;                    // add speed to direction
+		camera.setPosition(camera.getPosition() + movementVector); // add it to cameras position
 	}
 
 	Float planetRadius = 4;
@@ -62,9 +59,9 @@ void MoonCrashPlayer::update(Window& window)
 	skyRotation[3]     = Vec4(0, 0, 0, 1);
 
 	// apply sub chunk position
-	if(floor(camera.getPosition().x) != 0.0f)
+	if (floor(camera.getPosition().x) != 0.0f)
 	{
-		if(floor(camera.getPosition().x) > 0.0f)
+		if (floor(camera.getPosition().x) > 0.0f)
 		{
 			ULL chunkDelta = floor(camera.getPosition().x);
 			camera.setPosition(camera.getPosition() - Vec3(chunkDelta, 0, 0));
@@ -77,9 +74,9 @@ void MoonCrashPlayer::update(Window& window)
 			chunkPosition.x -= chunkDelta;
 		}
 	}
-	if(floor(camera.getPosition().y) != 0)
+	if (floor(camera.getPosition().y) != 0)
 	{
-		if(floor(camera.getPosition().y) > 0)
+		if (floor(camera.getPosition().y) > 0)
 		{
 			ULL chunkDelta = floor(camera.getPosition().y);
 			camera.setPosition(camera.getPosition() - Vec3(0, chunkDelta, 0));
@@ -92,12 +89,11 @@ void MoonCrashPlayer::update(Window& window)
 			chunkPosition.y -= chunkDelta;
 		}
 	}
-	if(floor(camera.getPosition().z) != 0)
+	if (floor(camera.getPosition().z) != 0)
 	{
-		if(floor(camera.getPosition().z) > 0)
+		if (floor(camera.getPosition().z) > 0)
 		{
-			ULL chunkDelta = floor(camera.getPosition().z);
-			if(chunkPosition.z + chunkDelta > chunkPosition.z)
+			if (ULL chunkDelta = floor(camera.getPosition().z); chunkPosition.z + chunkDelta > chunkPosition.z)
 			{
 				camera.setPosition(camera.getPosition() - Vec3(0, 0, chunkDelta));
 				chunkPosition.z += chunkDelta;
@@ -112,8 +108,7 @@ void MoonCrashPlayer::update(Window& window)
 		}
 		else
 		{
-			ULL chunkDelta = -floor(camera.getPosition().z);
-			if(chunkDelta > chunkPosition.z)
+			if (ULL chunkDelta = -floor(camera.getPosition().z); chunkDelta > chunkPosition.z)
 			{
 				chunkPosition.z = 0;
 				camera.setPosition(camera.getPosition() * Vec3(1, 1, 0));
@@ -135,28 +130,29 @@ void MoonCrashSimulation::update(Float delta)
 void MoonCrashRenderer::update(Window& window)
 {
 	player.update(window);
-	window.renderer.planetRenderSystem.update(window.renderer, simulation->planetSystem, player);
+	planetRenderSystem.update(window.renderer, player);
 }
 
 void MoonCrashSimulation::create()
 {
 	planetSystem.create();
+	loaded = true;
 }
 
 void MoonCrashRenderer::inputEvent(Window& window, const InputEvent input)
 {
-	if(input == wireFrameToggle) window.renderer.wireframeMode = !window.renderer.wireframeMode;
-	if(input == countNodesButton) window.renderer.planetRenderSystem.quadtreeRenderSystem.count();
-	if(input == worldDistortion) window.renderer.planetRenderSystem.worldDistortion = !window.renderer.planetRenderSystem.worldDistortion;
-	if(input == vertexColorToggle) window.renderer.planetRenderSystem.vertexColors = !window.renderer.planetRenderSystem.vertexColors;
-	if(input == rebuildShaders)
+	if (input == wireFrameToggle) window.renderer.wireframeMode = !window.renderer.wireframeMode;
+	if (input == countNodesButton) planetRenderSystem.count();
+	if (input == worldDistortion) planetRenderSystem.worldDistortion = !planetRenderSystem.worldDistortion;
+	if (input == vertexColorToggle) planetRenderSystem.vertexColors = !planetRenderSystem.vertexColors;
+	if (input == rebuildShaders)
 	{
 		window.renderer.mutex.lock();
-		window.renderer.shaderSystem.rebuild();
+		window.renderer.shaderSystem.rebuild(window.renderer);
 		window.renderer.mutex.unlock();
 	}
-	if(input == enter) window.captureCursor();
-	if(input == exit) window.releaseCursor();
+	if (input == enter) window.captureCursor();
+	if (input == exit) window.releaseCursor();
 
 	player.inputEvent(window, input);
 }
@@ -173,19 +169,21 @@ void MoonCrashRenderer::create(Window& window)
 	player.speedExponent   = 200;
 	player.chunkPosition.z = 16000000000000000000;
 
-	mainFramebuffer.create("MainFramebuffer", Area(1920, 1080));
-	mainFramebuffer.add(window.renderer, WritePixelsFormat::RGBA, DataType::Float, FramebufferAttachment::Color0, true, Wrapping::Clamped);
-	mainFramebuffer.add(window.renderer, WritePixelsFormat::Depth, DataType::Float, FramebufferAttachment::Depth, false, Wrapping::Clamped);
-	mainFramebuffer.checkComplete();
+	framebuffer.create(window.renderer, "MooncrashFramebuffer", getSize());
+	framebuffer.add(window.renderer, WritePixelsFormat::RGBA, DataType::Float, FramebufferAttachment::Color0, true, Wrapping::Clamped);
+	framebuffer.add(window.renderer, WritePixelsFormat::Depth, DataType::Float, FramebufferAttachment::Depth, false, Wrapping::Clamped);
+	framebuffer.checkComplete(window.renderer);
+
+	planetRenderSystem.create(simulation->planetSystem);
 }
 
-void MoonCrashRenderer::render(Window& window, TiledRectangle area)
+void MoonCrashRenderer::renderScene(Window& window)
 {
 	Renderer& r = window.renderer;
 
-	mainFramebuffer.resize(r, area.size);
-	mainFramebuffer.bindDraw(r);
-	mainFramebuffer.clear();
+	framebuffer.resize(r, getSize());
+	framebuffer.bindDraw(r);
+	framebuffer.clear(r);
 
 	player.render(window);
 
@@ -198,60 +196,56 @@ void MoonCrashRenderer::render(Window& window, TiledRectangle area)
 
 	// renderMoonCrashAtmosphere(rm, r, player, mainFramebuffer);
 
-	renderPlanet(r, simulation->planetSystem, player, mainFramebuffer);
+	renderPlanet(r);
 
 	// render UI
 	r.setWireframeMode(false);
 	r.setDepthTest(false);
-	r.screenSpace();
-	r.textRenderSystem.setSize(16.0f);
-	r.textRenderSystem.setLetterSpacing(0.6f);
+	r.screenSpaceFromBottomLeft();
+	r.fontSize(16.0f);
+	r.letterSpacing(0.6f);
 	constexpr Float textSpacing = 20;
 	r.textRenderSystem.alignText(Alignment::left, Alignment::bottom);
-
-	r.textRenderSystem.render(r, "Speed: " + toString(player.speedExponent), Vec2(textSpacing, 6 * textSpacing));
-	r.textRenderSystem.render(r, "FPS: " + toString(1.0f / r.time.getDelta()), Vec2(textSpacing, 5 * textSpacing));
-	r.textRenderSystem.render(r, "FrameTime: " + toString(r.time.getDelta()), Vec2(textSpacing, 4 * textSpacing));
-	r.textRenderSystem.render(r, "Camera height float: " + toString(player.camera.getPosition().z), Vec2(textSpacing, 3 * textSpacing));
-	r.textRenderSystem.render(r, "Camera height ULL: " + toString(player.chunkPosition.z), Vec2(textSpacing, 2 * textSpacing));
-	r.textRenderSystem.render(r, "SunDir: " + toString(r.uniforms().getSunDir()), Vec2(textSpacing, 1 * textSpacing));
-
-	mainFramebuffer.setAsTexture(0);
-	r.drawToWindow();
-	r.fullScreenShader("final");
+	r.text("Active chunks: " + toString(lifeTimerCounter), Vec2(textSpacing, 7 * textSpacing));
+	r.text("Speed: " + toString(player.speedExponent), Vec2(textSpacing, 6 * textSpacing));
+	r.text("FPS: " + toString(1.0f / r.time.getDelta()), Vec2(textSpacing, 5 * textSpacing));
+	r.text("FrameTime: " + toString(r.time.getDelta()), Vec2(textSpacing, 4 * textSpacing));
+	r.text("Camera height float: " + toString(player.camera.getPosition().z), Vec2(textSpacing, 3 * textSpacing));
+	r.text("Camera height ULL: " + toString(player.chunkPosition.z), Vec2(textSpacing, 2 * textSpacing));
+	r.text("SunDir: " + toString(r.uniforms().getSunDir()), Vec2(textSpacing, 1 * textSpacing));
 }
 
-void renderMoonCrashAtmosphere(Renderer& renderer, const MoonCrashPlayer& player, const Framebuffer& framebuffer)
+void MoonCrashRenderer::renderMoonCrashAtmosphere(Renderer& r) const
 {
-	const Bool culling = renderer.getCulling();
-	player.camera.renderOnlyRot(renderer);
-	renderer.uniforms().setCameraPos(Vec4(Vec3(0, 0, (static_cast<Float>(player.chunkPosition.z) + player.camera.getPosition().z) / static_cast<Float>(ULLONG_MAX)), 1));
-	renderer.setCulling(false);
-	renderer.useShader("atmosphere");
-	framebuffer.setAsTexture(0); // [TODO]might not work if draw doesn't bind; check
+	const Bool culling = r.getCulling();
+	player.camera.renderOnlyRot(r);
+	r.uniforms().setCameraPos(Vec4(Vec3(0, 0, (static_cast<Float>(player.chunkPosition.z) + player.camera.getPosition().z) / static_cast<Float>(ULLONG_MAX)), 1));
+	r.setCulling(false);
+	r.useShader("atmosphere");
+	framebuffer.setAsTexture(r, 0); // [TODO]might not work if draw doesn't bind; check
 
 	// renderer.setAlphaBlending(true);
 	// glBlendFunc(GL_ONE, GL_ONE);
-	renderer.setDepthTest(false);
+	r.setDepthTest(false);
 
-	renderer.renderMesh("centeredCube");
-	renderer.setCulling(culling);
+	r.renderMesh("centeredCube");
+	r.setCulling(culling);
 
 	// renderer.setAlphaBlending(false);
-	renderer.setDepthTest(true);
+	r.setDepthTest(true);
 }
 
-void renderPlanet(Renderer& r, PlanetSystem& planetSystem, const PlanetSystemPlayer& player, const Framebuffer& framebuffer)
+void MoonCrashRenderer::renderPlanet(Renderer& r)
 {
 	// set modes
 	r.setAlphaBlending(false);
 	r.setDepthTest(false);
 
 	// set uniforms
-	r.uniforms().setCustomInt1(r.planetRenderSystem.worldDistortion);
+	r.uniforms().setCustomInt1(planetRenderSystem.worldDistortion);
 	r.uniforms().setMMatrix(Matrix(1));
 	player.camera.renderOnlyRot(r);
 
 	// render meshes
-	for(UShort level = 0; level < MAX_CHUNK_LEVEL; level++) r.planetRenderSystem.renderLevel(planetSystem, r, player, level, framebuffer);
+	for (UShort level = 0; level < MAX_CHUNK_LEVEL; level++) planetRenderSystem.renderLevel(r, player, level, framebuffer);
 }

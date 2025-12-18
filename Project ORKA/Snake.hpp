@@ -40,7 +40,7 @@ struct SnakeFood
 	void render(Window& window);
 };
 
-struct SnakeRenderer : GameRenderer
+struct SnakeRenderer final : GameRenderer
 {
 	SnakeSnake snake;
 	SnakeFood  snakefood;
@@ -51,8 +51,8 @@ struct SnakeRenderer : GameRenderer
 	void connect(GameSimulation& simulation) override;
 	void inputEvent(Window& window, InputEvent input) override;
 	void create(Window& window) override;
-	void render(Window& window, TiledRectangle area) override;
-	void renderInteractive(Window& window, TiledRectangle area) override;
+	void renderScene(Window& window) override;
+	void renderInteractive(Window& window) override;
 };
 
 struct Snake
@@ -61,7 +61,7 @@ struct Snake
 
 	void run()
 	{
-		ui.window("ORKA Sandbox", Area(settings.defaultWindowWidth, settings.defaultWindowHeight), true, true, WindowState::Windowed, renderer);
+		ui.window("ORKA Sandbox", settings.defaultWindowWidth, settings.defaultWindowHeight, true, true, WindowState::Windowed, renderer);
 		ui.run();
 	}
 };

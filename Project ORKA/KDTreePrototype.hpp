@@ -29,7 +29,7 @@ struct KDTreePrototype final : Prototype
 	SizeT        pointCount = 1000;
 
 	void action() override;
-	void create() override;
+	void create(Renderer & r) override;
 	void render(Renderer& r, const Player& player) override;
 };
 

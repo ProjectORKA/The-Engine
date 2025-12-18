@@ -30,9 +30,9 @@ struct MindMapperRenderer final : GameRenderer
 	void create(Window& window) override;
 	void destroy(Window& window) override;
 	void connect(GameSimulation& simulation) override;
-	void render(Window& window, TiledRectangle area) override;
+	void renderScene(Window& window) override;
 	void inputEvent(Window& window, InputEvent input) override;
-	void renderInteractive(Window& window, TiledRectangle area) override;
+	void renderInteractive(Window& window) override;
 };
 
 struct MindMapper
@@ -44,7 +44,7 @@ struct MindMapper
 	{
 		sim.start();
 		renderer.connect(sim);
-		ui.window("ORKA MindMapper", Area(1920, 1080), true, true, WindowState::Windowed, renderer);
+		ui.window("ORKA MindMapper", settings.defaultWindowWidth, settings.defaultWindowHeight, true, true, WindowState::Windowed, renderer);
 		ui.run();
 		sim.stop();
 	}

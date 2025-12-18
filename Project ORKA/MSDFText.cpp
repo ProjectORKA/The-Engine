@@ -1,18 +1,22 @@
 #include "MSDFText.hpp"
 
-
-
 void MSDFTextRenderer::update(Window& window) {}
 
-void MSDFTextRenderer::destroy(Window& window) {}
+void MSDFTextRenderer::destroy(Window& window)
+{
+	GameRenderer::destroy(window);
+}
 
 void MSDFTextRenderer::connect(GameSimulation& simulation) {}
 
 void MSDFTextRenderer::inputEvent(Window& window, InputEvent input) {}
 
-void MSDFTextRenderer::create(Window& window) {}
+void MSDFTextRenderer::create(Window& window)
+{
+	GameRenderer::create(window);
+}
 
-void MSDFTextRenderer::render(Window& window, TiledRectangle area)
+void MSDFTextRenderer::renderScene(Window& window)
 {
 	Renderer& renderer = window.renderer;
 
@@ -26,4 +30,4 @@ void MSDFTextRenderer::render(Window& window, TiledRectangle area)
 	renderer.renderMesh("centeredPlane");
 }
 
-void MSDFTextRenderer::renderInteractive(Window& window, TiledRectangle area) {}
+void MSDFTextRenderer::renderInteractive(Window& window) {}

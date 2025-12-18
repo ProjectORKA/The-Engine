@@ -10,22 +10,16 @@ void terrainDistributionFunction(LDouble& height)
 
 void TerrainSystem::create()
 {
-	for(Int i = 0; i < MAX_CHUNK_LEVEL; i++)
+	for (Int i = 0; i < MAX_CHUNK_LEVEL; i++)
 	{
 		CpuTexture h;
 
-		if(i == 0)
-		{
-			h.load(Name("blah"), Filter::Linear, Filter::Linear, Wrapping::Repeat);
-		}
-		else
-		{
-			h.load(Name("terrainNoise"), Filter::Linear, Filter::Linear, Wrapping::Repeat);
-		}
+		if (i == 0) h.load(Name("blah"), Filter::Linear, Filter::Linear, Wrapping::Repeat);
+		else h.load(Name("terrainNoise"), Filter::Linear, Filter::Linear, Wrapping::Repeat);
 
-		for(UInt x = 0; x < TERRAIN_TEXTURE_SIZE; x++)
+		for (UInt x = 0; x < TERRAIN_TEXTURE_SIZE; x++)
 		{
-			for(UInt y = 0; y < TERRAIN_TEXTURE_SIZE; y++)
+			for (UInt y = 0; y < TERRAIN_TEXTURE_SIZE; y++)
 			{
 				const Float xPos = static_cast<Float>(x) / static_cast<Float>(TERRAIN_TEXTURE_SIZE);
 				const Float yPos = static_cast<Float>(y) / static_cast<Float>(TERRAIN_TEXTURE_SIZE);
@@ -71,6 +65,26 @@ void TerrainSystem::create()
 	logDebug("Created TerrainSystem!");
 }
 
+AdvancedHeightMap& Terrain::getHeightmap()
+{
+	return heightmap;
+}
+
+const LDouble (& Terrain::getHeights() const)[TERRAIN_MAP_SIZE][TERRAIN_MAP_SIZE]
+{
+	return heightmap.getHeights();
+}
+
+LDouble Terrain::getLowerLimit() const
+{
+	return heightmap.getLowerLimit();
+}
+
+LDouble Terrain::getUpperLimit() const
+{
+	return heightmap.getUpperLimit();
+}
+
 Float HeightTexture::getHeight(const Int x, const Int y) const
 {
 	return data[x][y];
@@ -83,55 +97,48 @@ void HeightTexture::setHeight(const UInt x, const UInt y, const Float value)
 
 Terrain::Terrain(const TerrainSystem& terrainSystem, const QuadtreeId& id, const Terrain* parentTerrain, const Bool cx, const Bool cy)
 {
-	heightmap.upperLimit = 0;
-	heightmap.lowerLimit = static_cast<LDouble>(ULLONG_MAX);
-
-	for(UInt x = 0; x < TERRAIN_MAP_SIZE; x++)
+	LDouble       localUpperLimit = 0;
+	LDouble       localLowerLimit = static_cast<LDouble>(ULLONG_MAX);
+	const LDouble impact          = 3.0 / std::pow(2.2, id.level + 6);
+	LDouble       heightArray[TERRAIN_MAP_SIZE][TERRAIN_MAP_SIZE];
+	for (UInt x = 0; x < TERRAIN_MAP_SIZE; ++x)
 	{
-		for(UInt y = 0; y < TERRAIN_MAP_SIZE; y++)
+		const UInt xl = x / 2 + (cx * (TERRAIN_MAP_SIZE / 2));
+		const UInt xh = xl + (x % 2);
+		for (UInt y = 0; y < TERRAIN_MAP_SIZE; ++y)
 		{
-			if(parentTerrain)
+			LDouble baseHeight;
+			if (parentTerrain)
 			{
-				UInt xl = x / 2 + TERRAIN_MAP_SIZE / 2 * cx;
-				UInt xh = xl;
-				if(isOdd(x)) xh++;
-				UInt yl = y / 2 + TERRAIN_MAP_SIZE / 2 * cy;
-				UInt yh = yl;
-				if(isOdd(y)) yh++;
-
-				const LDouble ah = parentTerrain->heightmap.height[xl][yl];
-				const LDouble bh = parentTerrain->heightmap.height[xh][yl];
-				const LDouble ch = parentTerrain->heightmap.height[xl][yh];
-				const LDouble dh = parentTerrain->heightmap.height[xh][yh];
-
-				heightmap.height[x][y] = (ah + bh + ch + dh) / 4.0;
+				const UInt    yl      = y / 2 + (cy * (TERRAIN_MAP_SIZE / 2));
+				const UInt    yh      = yl + (y % 2);
+				const auto&   pHeight = parentTerrain->getHeights();
+				const LDouble ah      = pHeight[xl][yl];
+				const LDouble bh      = pHeight[xh][yl];
+				const LDouble ch      = pHeight[xl][yh];
+				const LDouble dh      = pHeight[xh][yh];
+				baseHeight            = (ah + bh + ch + dh) * 0.25;
 			}
-			else
-			{
-				heightmap.height[x][y] = ULLONG_MAX / 2;
-			}
+			else baseHeight = static_cast<LDouble>(ULLONG_MAX) * 0.5;
+			const UInt sampleX   = x % TERRAIN_TEXTURE_SIZE;
+			const UInt sampleY   = y % TERRAIN_TEXTURE_SIZE;
+			LDouble    texHeight = terrainSystem.heightTextures[id.level].getHeight(sampleX, sampleY);
+			terrainDistributionFunction(texHeight);
+			texHeight                 = (texHeight - 0.5L) * static_cast<LDouble>(ULLONG_MAX);
+			const LDouble finalHeight = baseHeight + texHeight * impact;
+			if (finalHeight > localUpperLimit) localUpperLimit = finalHeight;
+			if (finalHeight < localLowerLimit) localLowerLimit = finalHeight;
+			heightArray[x][y] = finalHeight;
 		}
 	}
-	for(UInt x = 0; x < TERRAIN_MAP_SIZE; x++)
-	{
-		for(UInt y = 0; y < TERRAIN_MAP_SIZE; y++)
-		{
-			UInt sampleX = x;
-			UInt sampleY = y;
-			if(sampleX == TERRAIN_TEXTURE_SIZE) sampleX = 0;
-			if(sampleY == TERRAIN_TEXTURE_SIZE) sampleY = 0;
+	heightmap.setHeights(heightArray);
 
-			LDouble height = terrainSystem.heightTextures[id.level].getHeight(sampleX, sampleY);
-			terrainDistributionFunction(height);
-			height                    = (height - static_cast<LDouble>(0.5)) * static_cast<LDouble>(ULLONG_MAX);
-			const LDouble impact      = 3 / pow(2.2, id.level + 6);
-			const LDouble finalHeight = heightmap.height[x][y] + height * impact;
+	// Store final min/max into the heightmap once
+	heightmap.setUpperLimit(localUpperLimit);
+	heightmap.setLowerLimit(localLowerLimit);
+	heightmap.setLoaded(true);
+}
 
-			heightmap.height[x][y] = finalHeight;
-
-			if(heightmap.height[x][y] > heightmap.upperLimit) heightmap.upperLimit = heightmap.height[x][y];
-			if(heightmap.height[x][y] < heightmap.lowerLimit) heightmap.lowerLimit = heightmap.height[x][y];
-		}
-	}
-	heightmap.loaded = true;
+Terrain::~Terrain()
+{
 }

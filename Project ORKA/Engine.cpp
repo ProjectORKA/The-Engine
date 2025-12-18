@@ -5,8 +5,10 @@
 #include "JobSystem.hpp"
 #include "ResourceManager.hpp"
 
-void Engine::create(const Int argc, Char* argv[]) const
+void Engine::create(const Int argc, Char* argv[], const Bool useJobSystem)
 {
+	this->useJobSystem = useJobSystem;
+
 	//print debug launch parameters if required
 	if (debugLaunchParameters) logDebugLaunchParameters(argc, argv);
 
@@ -14,8 +16,7 @@ void Engine::create(const Int argc, Char* argv[]) const
 	// this is important for things like file viewers which are executed on a file somewhere else
 	for (Int i = 0; i < argc; i++)
 	{
-		Path path = argv[i];
-		if (isExecutableFile(path))
+		if (Path path = argv[i]; isExecutableFile(path))
 		{
 			executablePath = getDirectory(path);
 			setCurrentPath(executablePath);
@@ -24,10 +25,10 @@ void Engine::create(const Int argc, Char* argv[]) const
 	}
 
 	resourceManager.create();
-	jobSystem.start();
+	if (useJobSystem) jobSystem.start();
 }
 
 Engine::~Engine()
 {
-	jobSystem.waitStopAndJoin();
+	if (useJobSystem) jobSystem.waitStopAndJoin();
 }

@@ -36,13 +36,13 @@ void TripleNinePlayer::update(Window& window)
 	// process input
 	if (window.pressed(aim))
 	{
-		approach(fov, fovScoped, delta * scopeSpeed);
-		approach(mouseSensitivity, mouseSensitivityScoped, delta * scopeSpeed);
+		expDecay(fov, fovScoped, scopeSpeed, delta);
+		expDecay(mouseSensitivity, mouseSensitivityScoped, scopeSpeed, delta);
 	}
 	else
 	{
-		approach(fov, fovDefault, delta * scopeSpeed);
-		approach(mouseSensitivity, mouseSensitivityDefault, delta * scopeSpeed);
+		expDecay(fov, fovDefault, scopeSpeed, delta);
+		expDecay(mouseSensitivity, mouseSensitivityDefault, scopeSpeed, delta);
 	}
 	camera.setFieldOfView(fov);
 	if (window.capturing) targetCameraRotation += window.mouseDelta * DVec2(mouseSensitivity);
@@ -61,67 +61,34 @@ void TripleNinePlayer::update(Window& window)
 		{
 			if (window.pressed(holdJump))
 			{
-				if (movementInput)
-				{
-					state = State::Crawling;
-				}
-				else
-				{
-					state = State::Proning;
-				}
+				if (movementInput) state = State::Crawling;
+				else state               = State::Proning;
 			}
 			else
 			{
-				if (movementInput)
-				{
-					state = State::Sneaking;
-				}
-				else
-				{
-					state = State::Crouching;
-				}
+				if (movementInput) state = State::Sneaking;
+				else state               = State::Crouching;
 			}
 		}
 		else
 		{
 			if (movementInput)
 			{
-				if (window.pressed(run))
-				{
-					state = State::Sprinting;
-				}
-				else
-				{
-					state = State::Walking;
-				}
+				if (window.pressed(run)) state = State::Sprinting;
+				else state                     = State::Walking;
 			}
-			else
-			{
-				state = State::Standing;
-			}
+			else state = State::Standing;
 		}
 	}
 	else
 	{
-		if (velocity.z >= 0)
-		{
-			state = State::Jumping;
-		}
-		else
-		{
-			state = State::Falling;
-		}
+		if (velocity.z >= 0) state = State::Jumping;
+		else state                 = State::Falling;
 	}
 	// update values
 	// running
-	if (state == State::Sprinting)
-	{
-		speedControl += delta * speedControlAcceleration;
-	}
-	else
-	{
-		speedControl -= delta * speedControlDeceleration;
-	}
+	if (state == State::Sprinting) speedControl += delta * speedControlAcceleration;
+	else speedControl -= delta * speedControlDeceleration;
 	speedControl = clamp(speedControl, 0.0f, 1.0f);
 	camera.rotate(targetCameraRotation);
 	calculatePhysics(window);
@@ -134,21 +101,12 @@ void TripleNinePlayer::update(Window& window)
 		//	queueJump = false;
 		// }
 		collisionResponse();
-		if (movementInput)
-		{
-			actualFriction = movementFriction;
-		}
-		else
-		{
-			actualFriction = stopFriction;
-		}
+		if (movementInput) actualFriction = movementFriction;
+		else actualFriction               = stopFriction;
 		actualFriction *= normalFrictionFactor;
 		velocity /= 1 + delta * actualFriction;
 	}
-	else
-	{
-		onGround = false;
-	}
+	else onGround = false;
 	if (state == State::Jumping) debugCurrentMaxJumpHeight = position.z;
 	isMoving = movementControl != Vec3(0);
 	// air strafing
@@ -165,11 +123,11 @@ void TripleNinePlayer::update(Window& window)
 	if (movementInput && onGround)
 	{
 		// add speed to direction
-		approach(actualInputSpeed, targetSpeed, delta * 2);
+		expDecay(actualInputSpeed, targetSpeed, 2, delta);
 		movementControl = normalize(movementControl);
 		movementControl *= actualInputSpeed;
-		approach(velocity.x, movementControl.x, 10 * delta);
-		approach(velocity.y, movementControl.y, 10 * delta);
+		expDecay(velocity.x, movementControl.x, 10, delta);
+		expDecay(velocity.y, movementControl.y, 10, delta);
 		movementControl = {0, 0, 0};
 	}
 	actualSpeed = length(velocity);
@@ -192,14 +150,8 @@ void TripleNinePlayer::calculatePhysics(const Window& window)
 	position += velocity1 * window.renderer.deltaTime();
 	// step 3 calculate forces
 	// player keeps jumping higher when holding space but falls faster when releasing it
-	if (!onGround && window.pressed(holdJump))
-	{
-		acceleration = Vec3(0, 0, -airTimeGravity);
-	}
-	else
-	{
-		acceleration = Vec3(0, 0, -gravity);
-	}
+	if (!onGround && window.pressed(holdJump)) acceleration = Vec3(0, 0, -airTimeGravity);
+	else acceleration                                       = Vec3(0, 0, -gravity);
 	// step4
 	const Vec3 velocity2 = velocity1 + acceleration * window.renderer.deltaTime() / Vec3(2);
 	velocity             = velocity2 * pow(airResistance, window.renderer.deltaTime());
@@ -209,10 +161,7 @@ void TripleNinePlayer::inputEvent(Window& window, const InputEvent input)
 {
 	if (input == jumpTrigger)
 	{
-		if (onGround)
-		{
-			jump();
-		}
+		if (onGround) jump();
 		else
 		{
 			if (doubleJumpCharge)
@@ -258,23 +207,17 @@ void TripleNinePlayer::calculateHeadPosition(Window& window, const Float delta)
 	}
 	// bob
 	Float bobTarget = 0;
-	if (isMoving && onGround) bobTarget = sin(lerp(1, headBobSpeed, 0.5) * 2 * walkCycle) * actualSpeed * headBobIntensity;
+	if (isMoving && onGround) bobTarget = sin(lerp(1.0f, headBobSpeed, 0.5f) * 2 * walkCycle) * actualSpeed * headBobIntensity;
 	// sway
 	// Float swayTarget = 0;
 	// if(onGround) swayTarget = sin(lerp(1, headBobSpeed, 0.5) * walkCycle) * actualSpeed * headSwayImpact;
 	// lean
-	if (onGround)
-	{
-		fullBodyLeanControl = approach(2.0f * actualSpeed / unit * targetCameraRotation.x, 1.0f);
-	}
-	else
-	{
-		fullBodyLeanControl = 0;
-	}
+	if (onGround) fullBodyLeanControl = approach(2.0f * actualSpeed / unit * targetCameraRotation.x, 1.0f);
+	else fullBodyLeanControl          = 0;
 	// smooth motion
-	approach(upperBodyLean, upperBodyLeanControl, delta * upperBodyLeanSpeed);
-	approach(fullBodyLean, fullBodyLeanControl, delta * fullBodyLeanSpeed);
-	approach(eyeHeight, eyeHeightTarget, delta * eyeMovementSpeed);
+	expDecay(upperBodyLean, upperBodyLeanControl, upperBodyLeanSpeed, delta);
+	expDecay(fullBodyLean, fullBodyLeanControl, fullBodyLeanSpeed, delta);
+	expDecay(eyeHeight, eyeHeightTarget, eyeMovementSpeed, delta);
 	// leanOffset based on lean angle
 	upperBodyLeanAngle = upperBodyLean * upperBodyMaxLeanAngle;
 	fullBodyLeanAngle  = fullBodyLean * fullBodyMaxLeanAngle;

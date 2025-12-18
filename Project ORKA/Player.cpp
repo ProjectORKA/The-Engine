@@ -1,5 +1,4 @@
 #include "Player.hpp"
-#include "Renderer.hpp"
 #include "Window.hpp"
 
 void Player::update(Window& window)
@@ -64,6 +63,11 @@ void DebugPlayer::inputEvent(Window& window, const InputEvent input)
 {
 	if(input == faster) speedExponent++;
 	if(input == slower) speedExponent--;
+}
+
+void DebugPlayer::render(Window& window)
+{
+	Player::render(window);
 }
 
 void Player::render(Window& window)
