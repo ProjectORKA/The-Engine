@@ -26,15 +26,41 @@
 
 #include "Engine.hpp"
 
-#include "Sandbox.hpp"
-#include "UISandbox.hpp"
-#include "SimpleRts.hpp"
+#include "Pong.hpp"
+//#include "MoonCrash.hpp"
+//#include "FlappyBird.hpp"
+//#include "TripleNine.hpp"
+//#include "ImageViewer.hpp"
+//#include "ProjectMelon.hpp"
+//#include "Orbital Oblivion.hpp"
+//
+//#include "Keva.hpp"
+//#include "Snake.hpp"
+//#include "Sortr.hpp"
+//#include "GPUSim.hpp"
+//#include "Sandbox.hpp"
+//#include "MSDFText.hpp"
+//#include "Organizer.hpp"
+//#include "SimpleRTS.hpp"
+//#include "SoundBars.hpp"
+//#include "UISandbox.hpp"
+//#include "MindMapper.hpp"
+//#include "RedDotHack.hpp"
+//#include "AudioSystem.hpp"
+//#include "SDFRenderer.hpp"
+//#include "AIPlayground.hpp"
+//#include "GuessingGame.hpp"
+//#include "FunctionFinder.hpp"
+//#include "Hello Triangle.hpp"
+//#include "Music Visualizer.hpp"
+//#include "PrototypingSandbox.hpp"
+//#include "PhysicsPlayground.hpp"
+//#include "DungeonsAndDiscord.hpp"
 
 int main(const int argc, char* argv[])
 {
 	Engine engine;
 	engine.create(argc, argv, false);
-
-	SimpleRts game;
+	Pong game;
 	game.run();
 }

@@ -15,6 +15,7 @@ struct SimpleRtsWolfSystem : SimpleRtsSystem
 	Vector<Float> sizes;
 	Vector<Float> ages;
 	Vec2Vector    positions;
+	Vec3Vector    renderPositions;
 	Vec2Vector    directions;
 	Vector<Float> speeds;
 

@@ -688,6 +688,7 @@ void OpenGL::apiPolygonMode(OpenGlContext& openGlContext, const UInt face, const
 	openGlContext.write("glPolygonMode(" + toString(face) + ", " + toString(mode) + ");");
 	#endif // TRACE_OPENGL
 	External::glPolygonMode(face, mode);
+	openGlContext.wireframeMode = (mode == GL_LINE);
 }
 void OpenGL::Shaders::apiUseProgram(OpenGlContext& openGlContext, const ProgramID programId)
 {

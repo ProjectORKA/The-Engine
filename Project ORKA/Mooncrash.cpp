@@ -169,10 +169,17 @@ void MoonCrashRenderer::create(Window& window)
 	player.speedExponent   = 200;
 	player.chunkPosition.z = 16000000000000000000;
 
-	framebuffer.create(window.renderer, "MooncrashFramebuffer", getSize());
+	// Make sure we only create the framebuffer once and with a valid size.
+	if (framebufferInitialized) framebuffer.destroy(window.renderer);
+
+	IVec2 fbSize = getSize();
+	if (fbSize.x <= 0 || fbSize.y <= 0) fbSize = window.getContentSize();
+
+	framebuffer.create(window.renderer, "MooncrashFramebuffer", fbSize);
 	framebuffer.add(window.renderer, WritePixelsFormat::RGBA, DataType::Float, FramebufferAttachment::Color0, true, Wrapping::Clamped);
 	framebuffer.add(window.renderer, WritePixelsFormat::Depth, DataType::Float, FramebufferAttachment::Depth, false, Wrapping::Clamped);
 	framebuffer.checkComplete(window.renderer);
+	framebufferInitialized = true;
 
 	planetRenderSystem.create(simulation->planetSystem);
 }

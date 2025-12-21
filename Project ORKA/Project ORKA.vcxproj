@@ -23,6 +23,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AIPlayground.cpp" />
+    <ClCompile Include="AudioEngine.cpp" />
     <ClCompile Include="BitmapTextRenderSystem.cpp" />
     <ClCompile Include="Debug.cpp" />
     <ClCompile Include="Engine.cpp" />
@@ -220,6 +221,7 @@
     <ClInclude Include="AIPlayground.hpp" />
     <ClInclude Include="Array2D.hpp" />
     <ClInclude Include="ASIONetworking.hpp" />
+    <ClInclude Include="AudioEngine.hpp" />
     <ClInclude Include="AudioSystem.hpp" />
     <ClInclude Include="AxisNeighborPrototype.hpp" />
     <ClInclude Include="ParallelizedConvexHullPrototype.hpp" />

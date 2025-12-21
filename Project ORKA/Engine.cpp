@@ -2,6 +2,7 @@
 #include "Debug.hpp"
 #include "FileSystem.hpp"
 #include "FileTypes.hpp"
+#include "AudioEngine.hpp"
 #include "JobSystem.hpp"
 #include "ResourceManager.hpp"
 
@@ -24,11 +25,13 @@ void Engine::create(const Int argc, Char* argv[], const Bool useJobSystem)
 		}
 	}
 
+	audioEngine.create();
 	resourceManager.create();
 	if (useJobSystem) jobSystem.start();
 }
 
 Engine::~Engine()
 {
+	audioEngine.destroy();
 	if (useJobSystem) jobSystem.waitStopAndJoin();
 }

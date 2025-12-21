@@ -10,7 +10,9 @@ void SimpleRtsRabbitSystem::spawnEntity(const SimpleRtsSimulation& sim)
 	sizes.emplace_back(sizeFromAge(age));
 	speeds.emplace_back(speedFromAge(age));
 	directions.emplace_back(randomUnitVec2Fast());
-	positions.emplace_back(sim.getRandomSpawnPos());
+	const Vec3 spawnPos = sim.getRandomSpawnPos();
+	positions.emplace_back(spawnPos.x, spawnPos.y);
+	renderPositions.emplace_back(spawnPos);
 	waitTimes.emplace_back(sim.totalTime);
 }
 
@@ -49,6 +51,7 @@ void SimpleRtsRabbitSystem::update(SimpleRtsSimulation& sim)
 				Vec2 pos      = positions[i] + directions[i] * sim.timeStep() * speeds[i] * hopSpeed;
 				loopWithinCentered(pos, sim.mapSize);
 				positions[i] = pos;
+				renderPositions[i] = Vec3(pos, sim.getTerrainHeight(pos));
 
 				if (waitTimes[i] < sim.totalTime)
 				{
@@ -63,6 +66,7 @@ void SimpleRtsRabbitSystem::update(SimpleRtsSimulation& sim)
 				Vec2 pos      = positions[i] + directions[i] * sim.timeStep() * speeds[i];
 				loopWithinCentered(pos, sim.mapSize);
 				positions[i] = pos;
+				renderPositions[i] = Vec3(pos, sim.getTerrainHeight(pos));
 			}
 			break;
 		}
@@ -101,10 +105,11 @@ void SimpleRtsRabbitSystem::killRabbit(const Int id)
 	speeds[id]     = minSpeed;
 	sizes[id]      = rabbitMinSize;
 	positions[id]  = positions[parentID];
+	renderPositions[id] = renderPositions[parentID];
 	directions[id] = randomUnitVec2Fast();
 }
 
 void SimpleRtsRabbitSystem::render(Renderer& renderer)
 {
-	renderer.renderMeshInstanced("Rabbit", positions, directions, sizes);
+	renderer.renderMeshInstanced("Rabbit", renderPositions, directions, sizes);
 }

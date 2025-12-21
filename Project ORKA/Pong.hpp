@@ -61,35 +61,9 @@ struct Pong
 	void run()
 	{
 		PongRenderer renderer1;
-		renderer1.growX(true);
-		renderer1.growY(true);
-
-		UIElement renderer2;
-		renderer2.growX(true);
-		renderer2.growY(true);
-
-		UIElement renderer3;
-		renderer1.growX(true);
-		renderer1.growY(true);
-
-		UIElement renderer4;
-		renderer2.growX(true);
-		renderer2.growY(true);
-
-		UIElement top;
-		top.row();
-		top.addElement(renderer1);
-		top.addElement(renderer2);
-
-		UIElement bot;
-		bot.row();
-		bot.addElement(renderer3);
-		bot.addElement(renderer4);
-
 		Window & window = ui.window("Pong", settings.defaultWindowWidth, settings.defaultWindowHeight, true, true, WindowState::Windowed);
-		window.column();
-		window.addElement(top);
-		window.addElement(bot);
+		window.row();
+		window.addElement(renderer1);
 		ui.run();
 	}
 };

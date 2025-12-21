@@ -48,6 +48,8 @@ struct UIElement
 	[[nodiscard]] Int   getHeight() const;
 	[[nodiscard]] IVec2 getPosition() const;
 	[[nodiscard]] Bool  isPointInside(const Window& window, const DVec2& point) const;
+	[[nodiscard]] DVec2 getMousePosTopLeft(const Window& window) const;
+	[[nodiscard]] DVec2 getMousePosBottomLeft(const Window& window) const;
 
 private:
 	String text;

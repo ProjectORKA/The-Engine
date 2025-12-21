@@ -58,6 +58,22 @@ Bool UIElement::isPointInside(const Window& window, const DVec2& point) const
 	return point.x >= left && point.x <= right && point.y <= top && point.y >= bottom;
 }
 
+DVec2 UIElement::getMousePosTopLeft(const Window& window) const
+{
+	const DVec2 topLeft(positionX, positionY + window.getHeight());
+	const DVec2 mouse = window.mousePosBotLeft;
+
+	return {mouse.x - topLeft.x, topLeft.y - mouse.y};
+}
+
+DVec2 UIElement::getMousePosBottomLeft(const Window& window) const
+{
+	const DVec2 bottomLeft(positionX, positionY + window.getHeight() - height);
+	const DVec2 mouse = window.mousePosBotLeft;
+
+	return {mouse.x - bottomLeft.x, mouse.y - bottomLeft.y};
+}
+
 void UIElement::update(Window& window)
 {
 	for (UIElement* c : children) c->update(window);
@@ -72,6 +88,7 @@ void UIElement::render(Window& window)
 {
 	Renderer & r = window.renderer;
 
+	WireframeOverride wireframeGuard(r, false);
 	r.uiSpace(window);
 	r.setRenderRegion(IVec2(0), window.getSize());
 	
@@ -214,86 +231,66 @@ void UIElement::growSizes()
 {
 	if (children.empty()) return;
 
-	// does it have children that grow in x
 	Vector<UIElement*> growChildrenX;
-	for (const auto i : children)
-	{
-		if (i->growsInX) growChildrenX.push_back(i);
-	}
-
-	if (!growChildrenX.empty())
-	{
-		//calculate free width
-		Int freeSpace = width - contentWidth;
-
-		while (freeSpace != 0)
-		{
-			if (freeSpace > 0)
-			{
-				UIElement* smallestChild = growChildrenX[0];
-				for (const auto i : growChildrenX)
-				{
-					if (i->getWidth() < smallestChild->getWidth()) smallestChild = i;
-				}
-				smallestChild->width += 1;
-				contentWidth += 1;
-				freeSpace -= 1;
-			}
-			else
-			{
-				UIElement* largestChild = growChildrenX[0];
-				for (const auto i : growChildrenX)
-				{
-					if (i->getWidth() > largestChild->getWidth()) largestChild = i;
-				}
-				if (largestChild->width)
-				{
-					largestChild->width -= 1;
-					contentWidth -= 1;
-				}
-				freeSpace += 1;
-			}
-		}
-	}
-
-	// does it have children that grow in y
 	Vector<UIElement*> growChildrenY;
 	for (const auto i : children)
 	{
+		if (i->growsInX) growChildrenX.push_back(i);
 		if (i->growsInY) growChildrenY.push_back(i);
 	}
 
-	if (!growChildrenY.empty())
+	const auto distribute = [](Vector<UIElement*>& growChildren, Int freeSpace, const Bool useWidth)
 	{
-		//calculate free height
-		Int freeSpace = height - contentHeight;
-		while (freeSpace != 0)
+		while (freeSpace != 0 && !growChildren.empty())
 		{
 			if (freeSpace > 0)
 			{
-				UIElement* smallestChild = growChildrenY[0];
-				for (const auto i : growChildrenY)
+				UIElement* smallestChild = growChildren[0];
+				for (const auto i : growChildren)
 				{
-					if (i->getHeight() < smallestChild->getHeight()) smallestChild = i;
+					if ((useWidth ? i->getWidth() : i->getHeight()) < (useWidth ? smallestChild->getWidth() : smallestChild->getHeight())) smallestChild = i;
 				}
-				smallestChild->height += 1;
-				contentHeight += 1;
+				if (useWidth) smallestChild->width += 1;
+				else smallestChild->height += 1;
 				freeSpace -= 1;
 			}
 			else
 			{
-				UIElement* largestChild = growChildrenY[0];
-				for (const auto i : growChildrenY)
+				UIElement* largestChild = growChildren[0];
+				for (const auto i : growChildren)
 				{
-					if (i->getHeight() > largestChild->getHeight()) largestChild = i;
+					if ((useWidth ? i->getWidth() : i->getHeight()) > (useWidth ? largestChild->getWidth() : largestChild->getHeight())) largestChild = i;
 				}
-				if (largestChild->height > 0){
-					largestChild->height -= 1;
-					contentHeight -= 1;
+				Int& dimension = useWidth ? largestChild->width : largestChild->height;
+				if (dimension > 0)
+				{
+					dimension -= 1;
+					freeSpace += 1;
 				}
-				freeSpace += 1;
+				else break;
 			}
 		}
+	};
+
+	if (!isVertical)
+	{
+		// main axis: X (row layout) -> distribute width across children that grow
+		if (!growChildrenX.empty()) distribute(growChildrenX, width - contentWidth, true);
+
+		// cross axis: Y should not be split, let growing children fill the available height
+		const Int targetHeight = max(0, height - paddingY * 2);
+		for (auto* child : growChildrenY) child->height = targetHeight;
+		contentHeight = max(contentHeight, targetHeight + paddingY * 2);
+	}
+	else
+	{
+		// main axis: Y (column layout) -> distribute height across children that grow
+		if (!growChildrenY.empty()) distribute(growChildrenY, height - contentHeight, false);
+
+		// cross axis: X should not be split, let growing children fill the available width
+		const Int targetWidth = max(0, width - paddingX * 2);
+		for (auto* child : growChildrenX) child->width = targetWidth;
+		contentWidth = max(contentWidth, targetWidth + paddingX * 2);
 	}
 
 	for (const auto i : children) i->growSizes();

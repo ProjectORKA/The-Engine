@@ -1,5 +1,6 @@
 #include "BitmapTextRenderSystem.hpp"
 #include "Renderer.hpp"
+#include "RenderingOverrides.hpp"
 
 void BitmapTextRenderSystem::destroy(Renderer & renderer)
 {
@@ -20,6 +21,9 @@ void BitmapTextRenderSystem::render(Renderer& renderer, const String& text, cons
 	const UInt  length = static_cast<UInt>(text.size());
 	const Float size   = absoluteSize;
 	Float       up     = 0, down = 0, start = 0;
+
+	// Ensure text draws filled even when the scene is in wireframe mode.
+	WireframeOverride wireframeGuard(renderer, false);
 
 	if(y == Alignment::top)
 	{

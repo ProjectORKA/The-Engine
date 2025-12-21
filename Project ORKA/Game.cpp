@@ -1,6 +1,7 @@
 #include "Game.hpp"
 #include "Window.hpp"
 #include "Debug.hpp"
+#include "RenderingOverrides.hpp"
 
 namespace
 {
@@ -153,6 +154,7 @@ void GameRenderer::render(Window& window)
 		r.uiSpace(window);
 		r.setDepthTest(false);
 		r.setCulling(false);
+		WireframeOverride wireframeGuard(r, false);
 		r.uniforms().setCustomInt1(1); // flip framebuffer vertically for UI blit
 		framebuffer.setAsTexture(r);
 		r.useShader("texture");

@@ -10,7 +10,9 @@ void SimpleRtsHumanSystem::spawnHuman(const SimpleRtsSimulation& sim)
 	scales.emplace_back(randomFloatFast(minHumanSize, maxHumanSize));
 	names.emplace_back(loadedNames[randomIntFast(loadedNames.size())]);
 	surNames.emplace_back(loadedSurNames[randomIntFast(loadedSurNames.size())]);
-	positions.emplace_back(sim.getRandomSpawnPos());
+	const Vec3 spawnPos = sim.getRandomSpawnPos();
+	positions.emplace_back(spawnPos.x, spawnPos.y);
+	renderPositions.emplace_back(spawnPos);
 	targetPositions.emplace_back(0, 0);
 	directions.emplace_back(randomUnitVec2Fast());
 	speed.emplace_back(randomFloatFast(humanSpeedMin, humanSpeedMax));
@@ -37,6 +39,7 @@ void SimpleRtsHumanSystem::create(const SimpleRtsSimulation& sim)
 	surNames.reserve(count);
 	targetId.reserve(count);
 	positions.reserve(count);
+	renderPositions.reserve(count);
 	directions.reserve(count);
 	targetPositions.reserve(count);
 
@@ -65,6 +68,7 @@ void SimpleRtsHumanSystem::update(SimpleRtsSimulation& sim)
 			{
 				positions[i] += directions[i] * speed[i] * wanderingWalkingSpeedMultiplier * sim.timeStep();
 				loopWithinCentered(positions[i], sim.mapSize);
+				renderPositions[i] = Vec3(positions[i], sim.getTerrainHeight(positions[i]));
 				if (storedEnergy[i] < 0.5f * dailyEnergyRequirement[i])
 				{
 					states[i] = SimpleRtsHumanState::SearchFood;
@@ -116,6 +120,7 @@ void SimpleRtsHumanSystem::update(SimpleRtsSimulation& sim)
 				}
 				else positions[i] += directions[i] * moveDistance;
 				loopWithinCentered(positions[i], sim.mapSize);
+				renderPositions[i] = Vec3(positions[i], sim.getTerrainHeight(positions[i]));
 			}
 
 			if (states[i] == SimpleRtsHumanState::EatFood)
@@ -138,5 +143,5 @@ Bool SimpleRtsHumanSystem::doesCollide(const Vec2 position, const Float radius) 
 
 void SimpleRtsHumanSystem::render(Renderer& renderer)
 {
-	renderer.renderMeshInstanced("Human", positions, directions, scales);
+	renderer.renderMeshInstanced("Human", renderPositions, directions, scales);
 }

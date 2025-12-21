@@ -1,9 +1,56 @@
 #include "Pong.hpp"
 #include "Window.hpp"
 #include "Random.hpp"
+#include "AudioEngine.hpp"
+#include "ResourceManager.hpp"
+#include "Debug.hpp"
 
 Float ballSpeedReduction = 1.5;
 Float paddleSpeed        = 2.5;
+
+namespace
+{
+	constexpr const Char* pongScoreSoundId = "pong_score";
+	constexpr const Char* pongScoreWav      = "score.wav";
+
+	constexpr const Char* pongBounceSoundId = "pong_bounce";
+	constexpr const Char* pongBounceWav     = "bounce.wav";
+	
+	constexpr const Char* pongShootSoundId  = "pong_shoot";
+	constexpr const Char* pongShootWav      = "shoot.wav";
+
+	inline void playPongScoreSound()
+	{
+		if (audioEngine.has(pongScoreSoundId)) audioEngine.play(pongScoreSoundId);
+		else beep();
+	}
+
+	inline void playPongBounceSound()
+	{
+		if (audioEngine.has(pongBounceSoundId)) audioEngine.play(pongBounceSoundId);
+		else beep();
+	}
+
+	inline void playPongShootSound()
+	{
+		if (audioEngine.has(pongShootSoundId)) audioEngine.play(pongShootSoundId);
+		else beep();
+	}
+
+	inline void loadPongSounds()
+	{
+		const Path dataSounds = resourceManager.getOrkaDataPath() / "Sounds";
+
+		const Path wavPath = dataSounds / pongScoreWav;
+		audioEngine.load(pongScoreSoundId, wavPath, false);
+
+		const Path bouncePath = dataSounds / pongBounceWav;
+		audioEngine.load(pongBounceSoundId, bouncePath, false);
+
+		const Path shootPath = dataSounds / pongShootWav;
+		audioEngine.load(pongShootSoundId, shootPath, false);
+	}
+}
 
 void PongRenderer::destroy(Window& window)
 {
@@ -45,7 +92,7 @@ void PongRenderer::inputEvent(Window& window, InputEvent input) {}
 
 void PongPlayer::mouseInput(const DVec2 cursorWorldPosition)
 {
-	position.y = cursorWorldPosition.y;
+	position.y = cursorWorldPosition.y * 2 - 1;
 	position.y = clamp(position.y, -0.9f, 0.9f);
 }
 
@@ -63,6 +110,7 @@ void Ball::update(const Float deltaTime, PongPlayer players[2])
 				velocity.x    = 1;
 				velocity.y    = randomFloatFast(-1.0f, 1.0f);
 				desiredSpeed  = 2;
+				playPongShootSound();
 			}
 		}
 		else
@@ -75,6 +123,7 @@ void Ball::update(const Float deltaTime, PongPlayer players[2])
 				velocity.x    = -1;
 				velocity.y    = randomFloatFast(-1.0f, 1.0f);
 				desiredSpeed  = 2;
+				playPongShootSound();
 			}
 		}
 	}
@@ -92,7 +141,7 @@ void Ball::update(const Float deltaTime, PongPlayer players[2])
 			{
 				// ball is in goal
 				players[0].score++;
-				beep();
+				playPongScoreSound();
 				// player score increased
 				stuckToPaddle  = true;
 				stuckToPaddle1 = true;
@@ -106,6 +155,7 @@ void Ball::update(const Float deltaTime, PongPlayer players[2])
 					// ball did collide
 					velocity.x = -1;
 					velocity.y = randomFloatFast(-1.0f, 1.0f);
+					playPongBounceSound();
 				}
 			}
 		}
@@ -116,7 +166,7 @@ void Ball::update(const Float deltaTime, PongPlayer players[2])
 			{
 				// ball is in goal
 				players[1].score++;
-				beep();
+				playPongScoreSound();
 				// player score increased
 				stuckToPaddle  = true;
 				stuckToPaddle1 = false;
@@ -130,13 +180,22 @@ void Ball::update(const Float deltaTime, PongPlayer players[2])
 					// ball did collide
 					velocity.x = 1;
 					velocity.y = randomFloatFast(-1.0f, 1.0f);
+					playPongBounceSound();
 				}
 			}
 		}
 	}
 
-	if(position.y > +1 & velocity.y > 0) velocity.y = -velocity.y;
-	if(position.y < -1 & velocity.y < 0) velocity.y = -velocity.y;
+	if(position.y > +1 & velocity.y > 0)
+	{
+		velocity.y = -velocity.y;
+		playPongBounceSound();
+	}
+	if(position.y < -1 & velocity.y < 0)
+	{
+		velocity.y = -velocity.y;
+		playPongBounceSound();
+	}
 }
 
 Ball* getClosestBall(const PongPlayer& player, Vector<Ball>& balls)
@@ -189,6 +248,8 @@ void PongRenderer::create(Window& window)
 {
 	while(balls.size() < ballCount) balls.emplace_back();
 
+	loadPongSounds();
+
 	GameRenderer::create(window);
 }
 
@@ -205,7 +266,8 @@ void PongRenderer::renderScene(Window& window)
 	r.setDepthTest(true);
 
 	// Clear framebuffer
-	framebuffer.clearColor(r, Color(1,0,0,1));
+	const Color backgroundColor = Color(0.05, 0.05, 0.05, 1.0);
+	framebuffer.clearColor(r, backgroundColor);
 	framebuffer.clearDepth(r);
 	
 	// Bind framebuffer for rendering
@@ -216,15 +278,7 @@ void PongRenderer::renderScene(Window& window)
 
 	r.aspectCorrectNormalizedSpace();
 	
-	// Adjust cursor position relative to UIElement
-	//const Vec2 elementPos = getPosition();
-	//const Vec2 elementSize = getSize();
-
-	//const Vec2 relativeMousePos = Vec2(window.mousePos) - getPosition();
-	//const Vec2 normalizedCursorPosition = Vec2(2) * (relativeMousePos / elementSize - Vec2(0.5));
-	//const Vec3 cursorWorldPos = inverse(r.uniforms().getPMatrix()) * Vec4(normalizedCursorPosition, 0, 1);
-
-	const DVec2 cursorWorldPos = (window.mousePos - DVec2(getPosition())) / DVec2(min(getSize()));
+	const DVec2 cursorWorldPos = getMousePosBottomLeft(window) / DVec2(getSize());
 
 	for(Ball& ball : balls) ball.update(r.time.getDelta(), players);
 
@@ -232,7 +286,7 @@ void PongRenderer::renderScene(Window& window)
 	players[1].aiInput(balls, r.time.getDelta());
 
 	// Clear and render game
-	r.clearBackground(Color(1, 0, 0, 1));
+	r.clearBackground(backgroundColor);
 	r.aspectCorrectNormalizedSpace();
 	r.useShader("color");
 	r.uniforms().setCustomColor(Vec4(1));
@@ -260,10 +314,13 @@ void PongRenderer::renderScene(Window& window)
 	r.renderMesh("centeredCube");
 
 	// Render UI elements
-	const Float height = static_cast<Float>(window.getWidth());
-	const Float width  = static_cast<Float>(window.getHeight());
+	const IVec2 renderSize = getSize();
+	const Float width      = static_cast<Float>(renderSize.x);
+	const Float height     = static_cast<Float>(renderSize.y);
 
 	// text
+	r.setDepthTest(false);
+	r.setCulling(false);
 	r.uniforms().setMMatrix(Matrix(1));
 	r.screenSpaceFromBottomLeft();
 	r.fill(Color(1));

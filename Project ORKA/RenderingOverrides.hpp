@@ -15,6 +15,17 @@ private:
 	Renderer* renderer;
 };
 
+struct WireframeOverride
+{
+	~WireframeOverride();
+	WireframeOverride() = delete;
+	WireframeOverride(Renderer& renderer, Bool value);
+
+private:
+	Bool      stored;
+	Renderer* renderer;
+};
+
 struct AlphaBlendOverride
 {
 	~AlphaBlendOverride();

@@ -58,6 +58,7 @@ private:
 	Vector<String> surNames;
 	Vector<Index>  targetId;
 	Vec2Vector     targetPositions;
+	Vec3Vector     renderPositions;
 	Vector<Float>  scales;
 	Vec2Vector     positions;
 	Vec2Vector     directions;

@@ -112,6 +112,14 @@ void Framebuffer::create(Renderer& renderer, const String& name, const IVec2 dim
 {
 	if (debugFramebuffersIsEnabled) logDebug("Creating Framebuffer: " + name);
 
+	// If we are recreating, clean up any existing GL objects and cached state first.
+	for (auto& framebufferTexture : framebufferTextures) framebufferTexture.destroy(renderer);
+	framebufferTextures.clear();
+	drawBuffers.clear();
+
+	// Avoid deleting an uninitialized framebuffer id (default -1).
+	if (openglFramebuffer.getID() != static_cast<UInt>(-1)) openglFramebuffer.destroy(renderer.openGlContext);
+
 	this->complete = false;
 	this->name     = name;
 	this->size     = dimensions;
@@ -133,7 +141,7 @@ void Framebuffer::resize(Renderer& renderer, const IVec2 resolution)
 
 			// framebuffer textures will be invalidated and have to be reattached
 			drawBuffers.clear(); // TODO: check if this is needed
-			for (auto t : framebufferTextures)
+			for (auto& t : framebufferTextures)
 			{
 				t.resize(renderer, resolution);
 				attachTexture(renderer, t);

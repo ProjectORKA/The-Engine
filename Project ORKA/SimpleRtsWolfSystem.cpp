@@ -5,7 +5,9 @@
 void SimpleRtsWolfSystem::spawnEntity(const SimpleRtsSimulation& sim)
 {
 	ages.push_back(randomFloatFast(0.0f, rabbitMaxAge));
-	positions.push_back(sim.getRandomSpawnPos());
+	const Vec3 spawnPos = sim.getRandomSpawnPos();
+	positions.push_back(Vec2(spawnPos.x, spawnPos.y));
+	renderPositions.push_back(spawnPos);
 	directions.push_back(randomUnitVec2Fast());
 	sizes.push_back(sizeFromAge(ages.back()));
 	speeds.push_back(speedFromAge(ages.back()));
@@ -35,6 +37,7 @@ void SimpleRtsWolfSystem::update(SimpleRtsSimulation& sim)
 		Vec2 pos = positions[i] + directions[i] * sim.timeStep() * speeds[i];
 		loopWithinCentered(pos, sim.mapSize);
 		positions[i] = pos;
+		renderPositions[i] = Vec3(pos, sim.getTerrainHeight(pos));
 	}
 }
 
@@ -70,10 +73,11 @@ void SimpleRtsWolfSystem::killWolf(const Int id)
 	speeds[id]     = minSpeed;
 	sizes[id]      = rabbitMinSize;
 	positions[id]  = positions[parentID];
+	renderPositions[id] = renderPositions[parentID];
 	directions[id] = randomUnitVec2Fast();
 }
 
 void SimpleRtsWolfSystem::render(Renderer& renderer)
 {
-	renderer.renderMeshInstanced("Wolf", positions, directions, sizes);
+	renderer.renderMeshInstanced("Wolf", renderPositions, directions, sizes);
 }

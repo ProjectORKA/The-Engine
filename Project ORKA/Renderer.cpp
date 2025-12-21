@@ -575,6 +575,7 @@ void Renderer::renderMeshInstanced(const Name& name, const Vec3Vector& positions
 void Renderer::postProcess(const Name& name, const Framebuffer& source, const Framebuffer& destination)
 {
 	// draw to second buffer
+	WireframeOverride wireframeGuard(*this, false);
 	DepthTestOverride depthOverride(*this, false);
 
 	setRenderRegion(TiledRectangle(destination.getWidth(), destination.getHeight()));
