@@ -96,8 +96,16 @@ void PongPlayer::mouseInput(const DVec2 cursorWorldPosition)
 	position.y = clamp(position.y, -0.9f, 0.9f);
 }
 
-void Ball::update(const Float deltaTime, PongPlayer players[2])
+void Ball::update(const Float deltaTime, PongPlayer players[2], PongParticleSystem* collisionParticles)
 {
+	auto spawnImpactParticles = [&](const Vec2& impactPosition, const Vec2& incomingVelocity)
+	{
+		if(!collisionParticles) return;
+
+		constexpr Int particlesPerImpact = 18;
+		for(Int i = 0; i < particlesPerImpact; i++) collisionParticles->spawn(impactPosition, incomingVelocity);
+	};
+
 	if(stuckToPaddle)
 	{
 		if(stuckToPaddle1)
@@ -153,6 +161,7 @@ void Ball::update(const Float deltaTime, PongPlayer players[2])
 				if(position.x > 0.895 && position.x < 0.95 && abs(position.y - players[1].position.y) < 0.1)
 				{
 					// ball did collide
+					spawnImpactParticles(position, velocity);
 					velocity.x = -1;
 					velocity.y = randomFloatFast(-1.0f, 1.0f);
 					playPongBounceSound();
@@ -178,6 +187,7 @@ void Ball::update(const Float deltaTime, PongPlayer players[2])
 				if(position.x < -0.895 && position.x > -0.95 && abs(position.y - players[0].position.y) < 0.1)
 				{
 					// ball did collide
+					spawnImpactParticles(position, velocity);
 					velocity.x = 1;
 					velocity.y = randomFloatFast(-1.0f, 1.0f);
 					playPongBounceSound();
@@ -186,13 +196,15 @@ void Ball::update(const Float deltaTime, PongPlayer players[2])
 		}
 	}
 
-	if(position.y > +1 & velocity.y > 0)
+	if(position.y > +1 && velocity.y > 0)
 	{
+		spawnImpactParticles(position, velocity);
 		velocity.y = -velocity.y;
 		playPongBounceSound();
 	}
-	if(position.y < -1 & velocity.y < 0)
+	if(position.y < -1 && velocity.y < 0)
 	{
+		spawnImpactParticles(position, velocity);
 		velocity.y = -velocity.y;
 		playPongBounceSound();
 	}
@@ -280,10 +292,11 @@ void PongRenderer::renderScene(Window& window)
 	
 	const DVec2 cursorWorldPos = getMousePosBottomLeft(window) / DVec2(getSize());
 
-	for(Ball& ball : balls) ball.update(r.time.getDelta(), players);
+	for(Ball& ball : balls) ball.update(r.time.getDelta(), players, &collisionParticles);
 
 	players[0].mouseInput(cursorWorldPos);
 	players[1].aiInput(balls, r.time.getDelta());
+	collisionParticles.update(r.time.getDelta());
 
 	// Clear and render game
 	r.clearBackground(backgroundColor);
@@ -299,6 +312,9 @@ void PongRenderer::renderScene(Window& window)
 	r.renderMesh("centeredCube");
 	// ball
 	for(Ball& ball : balls) ball.render(r);
+	r.setAlphaBlending(true);
+	collisionParticles.render(r);
+	r.setAlphaBlending(false);
 
 	// walls
 	r.uniforms().setMMatrix(scale(translate(Matrix(1), Vec3(0, 1, 0)), Vec3(2, 0.01, 0.5)));

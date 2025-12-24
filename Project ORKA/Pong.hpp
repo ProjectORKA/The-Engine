@@ -1,5 +1,6 @@
 #pragma once
 #include "Game.hpp"
+#include "PongParticleSystem.hpp"
 struct Ball;
 struct Renderer;
 struct Window;
@@ -30,15 +31,16 @@ struct Ball
 	Vec2  position       = Vec2(0);
 	Vec2  velocity       = Vec2(1, 0);
 
-	void update(Float deltaTime, PongPlayer players[2]);
+	void update(Float deltaTime, PongPlayer players[2], PongParticleSystem* collisionParticles = nullptr);
 	void render(Renderer& renderer) const;
 };
 
 struct PongRenderer final : GameRenderer
 {
-	Vector<Ball> balls;
-	PongPlayer   players[2];
-	UInt         ballCount             = 1;
+	Vector<Ball>       balls;
+	PongPlayer         players[2];
+	PongParticleSystem collisionParticles = PongParticleSystem(256);
+	UInt               ballCount          = 1;
 	InputId      shootButton1secondary = InputId(InputType::Mouse, 0);
 	InputId      moveUpButton1         = InputId(InputType::KeyBoard, W);
 	InputId      moveDownButton1       = InputId(InputType::KeyBoard, S);

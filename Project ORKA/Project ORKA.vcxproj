@@ -134,6 +134,7 @@
     <ClCompile Include="PlanetSystemPlayer.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Pong.cpp" />
+    <ClCompile Include="PongParticleSystem.cpp" />
     <ClCompile Include="ProjectMelon.cpp" />
     <ClCompile Include="QuadtreeID.cpp" />
     <ClCompile Include="QuadtreeNode.cpp" />
@@ -165,6 +166,8 @@
     <ClCompile Include="Random.cpp" />
     <ClCompile Include="RedDotHack.cpp" />
     <ClCompile Include="Sandbox.cpp" />
+    <ClCompile Include="ShadertoyRenderer.cpp" />
+    <ClCompile Include="SoftwareRendererGame.cpp" />
     <ClCompile Include="BranchStructure.cpp" />
     <ClCompile Include="PerlinNoise.cpp" />
     <ClCompile Include="Plot.cpp" />
@@ -214,6 +217,7 @@
     <ClInclude Include="SoundBars.hpp" />
     <ClInclude Include="SoundGenerators.hpp" />
     <ClInclude Include="Keva.hpp" />
+    <ClInclude Include="ShadertoyRenderer.hpp" />
     <ClInclude Include="TriangulationPrototype.hpp" />
     <ClInclude Include="Windows.hpp" />
   </ItemGroup>
@@ -300,6 +304,7 @@
     <ClInclude Include="PlanetSystemPlayer.hpp" />
     <ClInclude Include="Player.hpp" />
     <ClInclude Include="Pong.hpp" />
+    <ClInclude Include="PongParticleSystem.hpp" />
     <ClInclude Include="ProceduralMeshes.hpp" />
     <ClInclude Include="ProjectMelon.hpp" />
     <ClInclude Include="Prototype.hpp" />
@@ -338,6 +343,7 @@
     <ClInclude Include="PerlinNoise.hpp" />
     <ClInclude Include="Plot.hpp" />
     <ClInclude Include="SDFRenderer.hpp" />
+    <ClInclude Include="SoftwareRendererGame.hpp" />
     <ClInclude Include="SimpleRts.hpp" />
     <ClInclude Include="Snake.hpp" />
     <ClInclude Include="SphereMeshing.hpp" />

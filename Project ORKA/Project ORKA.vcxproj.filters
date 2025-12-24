@@ -68,6 +68,15 @@
     <ClCompile Include="Pong.cpp">
       <Filter>Apps\2D Apps\Pong</Filter>
     </ClCompile>
+    <ClCompile Include="PongParticleSystem.cpp">
+      <Filter>Apps\2D Apps\Pong</Filter>
+    </ClCompile>
+    <ClCompile Include="SoftwareRendererGame.cpp">
+      <Filter>Apps\2D Apps\SoftwareRenderer</Filter>
+    </ClCompile>
+    <ClCompile Include="ShadertoyRenderer.cpp">
+      <Filter>Apps\2D Apps\SoftwareRenderer</Filter>
+    </ClCompile>
     <ClCompile Include="ProjectMelon.cpp">
       <Filter>Apps\3D Apps\Project Melon</Filter>
     </ClCompile>
@@ -538,6 +547,12 @@
     <ClInclude Include="Sandbox.hpp">
       <Filter>Apps\3D Apps\Sandbox</Filter>
     </ClInclude>
+    <ClInclude Include="SoftwareRendererGame.hpp">
+      <Filter>Apps\2D Apps\SoftwareRenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="ShadertoyRenderer.hpp">
+      <Filter>Apps\2D Apps\SoftwareRenderer</Filter>
+    </ClInclude>
     <ClInclude Include="AIPlayground.hpp">
       <Filter>Apps\2D Apps\AIPlayground</Filter>
     </ClInclude>
@@ -545,6 +560,9 @@
       <Filter>Apps\2D Apps\Physics Playground</Filter>
     </ClInclude>
     <ClInclude Include="Pong.hpp">
+      <Filter>Apps\2D Apps\Pong</Filter>
+    </ClInclude>
+    <ClInclude Include="PongParticleSystem.hpp">
       <Filter>Apps\2D Apps\Pong</Filter>
     </ClInclude>
     <ClInclude Include="ProjectMelon.hpp">
@@ -1717,6 +1735,9 @@
     </Filter>
     <Filter Include="Apps\2D Apps\Sortr">
       <UniqueIdentifier>{e619be1b-9cc6-4c11-bf34-1d6112e20c11}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Apps\2D Apps\SoftwareRenderer">
+      <UniqueIdentifier>{c9d6a7b3-b223-4b3b-92cc-b4f0907f9a60}</UniqueIdentifier>
     </Filter>
     <Filter Include="Apps\2D Apps\Sortr\Shaders">
       <UniqueIdentifier>{be219d48-db7a-4136-95c2-23b31f4dcb33}</UniqueIdentifier>
