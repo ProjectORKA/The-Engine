@@ -3,15 +3,13 @@
 
 layout(location = 0) out vec4 fragmentColor;
 
-#define iTime float(time)
 #define iResolution vec3(float(framebufferWidth), float(framebufferHeight), 1.0)
 #define iMouse customColor
 #define iChannel0 texture0
 #define iChannel1 texture1
 #define iChannel2 texture2
 
-#define BUFFER_SIZE vec2(min(min(iResolution.x, iResolution.y), 768.0))
-#define TIME_SCROLL_OFFSET (cos(iTime * 0.2371) * 0.5)
+#define BUFFER_SIZE iResolution.xy
 
 vec2 hash(in vec2 x)
 {
@@ -49,7 +47,6 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord)
 	if (fragCoord.x >= BUFFER_SIZE.x || fragCoord.y >= BUFFER_SIZE.y) return;
 
 	vec2 uv = fragCoord / BUFFER_SIZE;
-	uv.x += TIME_SCROLL_OFFSET;
 
 	vec3 color = vec3(0.0);
 

@@ -165,11 +165,23 @@ IVec4 Framebuffer::readPixelsAtCenterUIntRGB(Renderer& renderer, const Framebuff
 
 	return readPixelsUIntRGB(renderer, size.x / 2, size.y / 2, attachment);
 }
+Vec4 Framebuffer::readPixelsAtCenterVec4(Renderer& renderer, const FramebufferMode attachment) const
+{
+	if (debugFramebuffersIsEnabled) if (!complete) logError("Framebuffer not complete!");
+
+	return readPixelsVec4(renderer, size.x / 2, size.y / 2, attachment);
+}
 IVec4 Framebuffer::readPixelsUIntRGB(Renderer& renderer, const Int x, const Int y, const FramebufferMode attachment) const
 {
 	if (debugFramebuffersIsEnabled) if (!complete) logError("Framebuffer not complete!");
 
 	return openglFramebuffer.readPixelIVec4(renderer.openGlContext, x, y, attachment);
+}
+Vec4 Framebuffer::readPixelsVec4(Renderer& renderer, const Int x, const Int y, const FramebufferMode attachment) const
+{
+	if (debugFramebuffersIsEnabled) if (!complete) logError("Framebuffer not complete!");
+
+	return openglFramebuffer.readPixelVec4(renderer.openGlContext, x, y, attachment);
 }
 void Framebuffer::add(Renderer& renderer, const WritePixelsFormat format, const DataType type, const FramebufferAttachment slot, const Bool isDrawnTo, const Wrapping wrapping)
 {

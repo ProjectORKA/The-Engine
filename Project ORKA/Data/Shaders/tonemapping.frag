@@ -35,11 +35,9 @@ void main(){
     vec3 orig = vec4(texture(texture0,textureCoordinate)).xyz;
 
 	// color correction
-	float exposure = 1;
-	float brightness = 0.0;
 	float contrast = 1.05;
 	float saturation = 1.4;
-	vec3 colorCorrected = max(contrast * (exposure * orig - 0.5) + 0.5 + brightness,vec3(0));
+	vec3 colorCorrected = max(contrast * (orig - 0.5) + 0.5,vec3(0));
 	
 	colorCorrected = mix(
 						vec3(

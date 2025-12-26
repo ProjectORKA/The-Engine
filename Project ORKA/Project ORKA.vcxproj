@@ -189,7 +189,6 @@
     <ClCompile Include="ULLUtil.cpp" />
     <ClCompile Include="Uniforms.cpp" />
     <ClCompile Include="UserInterface.cpp" />
-    <ClCompile Include="VoxelRenderer.cpp" />
     <ClCompile Include="Window.cpp" />
     <ClCompile Include="WindowAPI.cpp" />
     <ClInclude Include="LabyrinthGeneratorPrototype.hpp" />
@@ -370,7 +369,6 @@
     <ClInclude Include="Uniforms.hpp" />
     <ClInclude Include="UserInterface.hpp" />
     <ClInclude Include="Platform.hpp" />
-    <ClInclude Include="VoxelRenderer.hpp" />
     <ClInclude Include="JobQueue.hpp" />
     <ClInclude Include="Window.hpp" />
     <ClInclude Include="WindowAPI.hpp" />

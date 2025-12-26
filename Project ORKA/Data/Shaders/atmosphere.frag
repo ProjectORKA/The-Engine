@@ -322,12 +322,6 @@ void main() {
         LIGHT_STEPS 					// steps in the light direction
     );
         
-    // apply exposure, removing this makes the brighter colors look ugly
-    // you can play around with removing this
-    col = 1.0 - exp(-col);
-
-    // col = texture(texture1,gl_FragCoord.xy / vec2(width,height)).xyz;
-
     gBufferColor = vec4(col, 1);
     gBufferPosition = position;
     gBufferNormal = position;

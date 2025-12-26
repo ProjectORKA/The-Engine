@@ -27,8 +27,10 @@
 #include "Engine.hpp"
 
 #include "Pong.hpp"
-#include "SoftwareRendererGame.hpp"
+#include "Sandbox.hpp"
 #include "ShadertoyRenderer.hpp"
+#include "SoftwareRendererGame.hpp"
+#include "Voxels.hpp"
 //#include "MoonCrash.hpp"
 //#include "FlappyBird.hpp"
 //#include "TripleNine.hpp"
@@ -63,6 +65,6 @@ int main(const int argc, char* argv[])
 {
 	Engine engine;
 	engine.create(argc, argv, false);
-	ShadertoyGame game;
+	Sandbox game;
 	game.run();
 }

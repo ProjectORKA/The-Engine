@@ -332,9 +332,6 @@
     <ClCompile Include="Collision.cpp">
       <Filter>Systems\PhysicsSystem\Collision</Filter>
     </ClCompile>
-    <ClCompile Include="VoxelRenderer.cpp">
-      <Filter>Systems\Meshing\VoxelMeshing</Filter>
-    </ClCompile>
     <ClCompile Include="BitmapTextRenderSystem.cpp">
       <Filter>Systems\UserInterface\Window\Renderer\TextRenderSystem\BitmapTextRenderSystem</Filter>
     </ClCompile>
@@ -861,9 +858,6 @@
     </ClInclude>
     <ClInclude Include="Collision.hpp">
       <Filter>Systems\PhysicsSystem\Collision</Filter>
-    </ClInclude>
-    <ClInclude Include="VoxelRenderer.hpp">
-      <Filter>Systems\Meshing\VoxelMeshing</Filter>
     </ClInclude>
     <ClInclude Include="BitmapTextRenderSystem.hpp">
       <Filter>Systems\UserInterface\Window\Renderer\TextRenderSystem\BitmapTextRenderSystem</Filter>

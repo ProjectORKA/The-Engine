@@ -4,7 +4,6 @@
 layout(location = 0) out vec4 fragmentColor;
 
 // Shadertoy compatibility ----------------------------------------------------
-#define iTime float(time)
 #define iResolution vec3(float(framebufferWidth), float(framebufferHeight), 1.0)
 #define iMouse customColor
 #define iChannel0 texture0
@@ -13,26 +12,24 @@ layout(location = 0) out vec4 fragmentColor;
 
 // ----------------------------------------------------------------------------
 #define EROSION_TILES 4.0
-#define EROSION_OCTAVES 5
+#define EROSION_OCTAVES 8
 #define EROSION_GAIN 0.5
 #define EROSION_LACUNARITY 2.0
 #define EROSION_SLOPE_STRENGTH 3.0
 #define EROSION_SLOPE_SENSITIVITY 0.3
 #define EROSION_BRANCH_STRENGTH 3.0
 #define EROSION_STRENGTH 0.04
-#define COMPARISON_SLIDER
 
 #define PI 3.14159265358979
 #define saturate(x) clamp(x, 0.0, 1.0)
 #define sq(x) (x*x)
-#define BUFFER_SIZE vec2(min(min(iResolution.x, iResolution.y), 768.0))
+#define BUFFER_SIZE iResolution.xy
 #define HEIGHT_TILES 3.0
-#define HEIGHT_OCTAVES 3
+#define HEIGHT_OCTAVES 8
 #define HEIGHT_AMP 0.25
 #define HEIGHT_GAIN 0.1
 #define HEIGHT_LACUNARITY 2.0
 #define WATER_HEIGHT 0.45
-#define TIME_SCROLL_OFFSET (cos(iTime * 0.2371) * 0.5)
 
 vec2 hash(in vec2 x)
 {
@@ -135,14 +132,6 @@ vec2 Heightmap(vec2 uv)
 
 	int octaves = EROSION_OCTAVES;
 
-#ifdef COMPARISON_SLIDER
-	if (iMouse.z > 0.5 && (iMouse.x / iResolution.x - 0.5) * 1.5 < (0.5 - uv.y) || iMouse.z < 0.5 && 1.0 - uv.y > (-cos(iTime) * 1.0 + 0.5))
-	{
-		octaves = 0;
-		h.x += 0.5;
-	}
-#endif
-
 	h = Erosion(p, h, a, octaves);
 
 	return vec2(n.x + (h.x - n.x - 0.5) * EROSION_STRENGTH, h.x - n.x);
@@ -153,7 +142,6 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord)
 	if (fragCoord.x >= BUFFER_SIZE.x || fragCoord.y >= BUFFER_SIZE.y) return;
 
 	vec2 uv = fragCoord / BUFFER_SIZE;
-	uv.x += TIME_SCROLL_OFFSET;
 
 	vec2 h = Heightmap(uv);
 

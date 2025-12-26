@@ -11,7 +11,9 @@ struct Framebuffer
 	[[nodiscard]] Int   getHeight() const;
 	[[nodiscard]] Float aspectRatio() const;
 	[[nodiscard]] IVec4 readPixelsAtCenterUIntRGB(Renderer& renderer, FramebufferMode attachment) const;
+	[[nodiscard]] Vec4  readPixelsAtCenterVec4(Renderer& renderer, FramebufferMode attachment) const;
 	[[nodiscard]] IVec4 readPixelsUIntRGB(Renderer& renderer, Int x, Int y, FramebufferMode attachment) const;
+	[[nodiscard]] Vec4  readPixelsVec4(Renderer& renderer, Int x, Int y, FramebufferMode attachment) const;
 	[[nodiscard]] Bool  isComplete() const;
 
 	void destroy(Renderer& renderer);
