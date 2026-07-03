@@ -130,9 +130,18 @@ void OpenGlContext::print() const
 	logDebug("Scissor Test: " + toString(scissorTest));
 	logDebug("Current Scissor: " + toString(scissorX) + " " + toString(scissorY) + " " + toString(scissorW) + " " + toString(scissorH));
 }
+
+OpenGlContext::OpenGlContext() {
+	maxVertexAttributes = OpenGL::apiGetIntegerv(*this, GetParameters::MaxVertexAttributes);
+}
+
 void OpenGlContext::enableLogging()
 {
 	loggingEnabled = true;
+#ifdef TRACE_OPENGL
+	log.openNewFile();
+	logDebug("OpenGL trace log file: " + log.getPath().string());
+#endif
 }
 void OpenGlContext::disableLogging()
 {
@@ -281,6 +290,26 @@ void OpenGlContext::removeVAO(const VertexArrayID vertexArrayID)
 	}
 }
 
+Bool OpenGlContext::getCulling() const
+{
+	return culling;
+}
+
+Bool OpenGlContext::getBlending() const
+{
+	return blending;
+}
+
+Bool OpenGlContext::getDepthTest() const
+{
+	return depthTest;
+}
+
+Bool OpenGlContext::getWireframeMode() const
+{
+	return wireframeMode;
+}
+
 void OpenGLShaderProgram::destroy(OpenGlContext& openGlContext)
 {
 	OpenGL::Shaders::apiDeleteProgram(openGlContext, programId);
@@ -361,6 +390,9 @@ UInt OpenGLFramebuffer::getID() const
 void OpenGLFramebuffer::destroy(OpenGlContext& openGlContext) const
 {
 	OpenGL::Framebuffer::apiDeleteFramebuffer(openGlContext, framebufferId);
+	// The framebuffer object is gone; mark the id as invalid to avoid
+	// accidental use-after-free when debugging is disabled.
+	const_cast<UInt&>(framebufferId) = static_cast<UInt>(-1);
 }
 void OpenGLFramebuffer::bindDraw(OpenGlContext& openGlContext) const
 {
@@ -381,6 +413,7 @@ void OpenGLFramebuffer::create(OpenGlContext& openGlContext, const String& name)
 }
 void OpenGLFramebuffer::clearDepth(OpenGlContext& openGlContext, const Float clearDepth) const
 {
+	if (framebufferId == static_cast<UInt>(-1)) return;
 	OpenGL::Framebuffer::apiClearNamedFramebufferfv(openGlContext, framebufferId, ClearBufferType::Depth, FramebufferAttachment::Depth, &clearDepth);
 }
 void OpenGLFramebuffer::drawBuffers(OpenGlContext& openGlContext, const Vector<UInt>& attachments) const
@@ -411,10 +444,12 @@ IVec4 OpenGLFramebuffer::readPixelIVec4(OpenGlContext& openGlContext, const Int 
 }
 void OpenGLFramebuffer::clearColor(OpenGlContext& openGlContext, const FramebufferAttachment attachmentSlot, const Vec4 color) const
 {
+	if (framebufferId == static_cast<UInt>(-1)) return;
 	OpenGL::Framebuffer::apiClearNamedFramebufferfv(openGlContext, framebufferId, ClearBufferType::Color, attachmentSlot, glm::value_ptr(color));
 }
 void OpenGLFramebuffer::clearColor(OpenGlContext& openGlContext, const FramebufferAttachment attachmentSlot, const IVec4 color) const
 {
+	if (framebufferId == static_cast<UInt>(-1)) return;
 	OpenGL::Framebuffer::apiClearNamedFramebufferiv(openGlContext, framebufferId, ClearBufferType::Color, attachmentSlot, glm::value_ptr(color));
 }
 void OpenGLFramebuffer::attachTexture(OpenGlContext& openGlContext, const FramebufferAttachment attachment, const TextureID textureId) const
@@ -493,16 +528,17 @@ void OpenGL::apiInit(OpenGlContext& openGlContext)
 	#endif // TRACE_OPENGL
 
 	External::glewExperimental = GL_TRUE;
-	if (const auto glewInitResult = External::glewInit(); External::glewInit() != GLEW_OK)
+	const auto glewInitResult = External::glewInit();
+	if (glewInitResult != GLEW_OK)
 	{
 		std::cerr << "Failed to initialize GLEW: " << External::glewGetErrorString(glewInitResult) << '\n';
 		return;
 	}
+	// GLEW can leave a benign GL_INVALID_ENUM on some drivers.
+	while (External::glGetError() != GL_NO_ERROR) {}
 
 	if (External::glewIsSupported("GL_ARB_direct_state_access")) logDebug("DSA is supported!");
 	else logError("DSA is not supported!");
-
-	openGlContext.maxVertexAttributes = OpenGL::apiGetIntegerv(openGlContext, GetParameters::MaxVertexAttributes);
 }
 void OpenGL::apiFinish(OpenGlContext& openGlContext)
 {

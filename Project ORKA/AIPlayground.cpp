@@ -45,10 +45,10 @@ void AIPlaygroundRenderer::renderScene(Window& window)
 	r.textRenderSystem.render(r, String(toString(1.0f / r.time.getDelta())), Vec2(50));
 }
 
-void AIPlaygroundRenderer::inputEvent(Window& window, const InputEvent input)
+void AIPlaygroundRenderer::inputEvent(Window& window, InputEvent& input)
 {
-	if (input == enter) window.captureCursor();
-	if (input == exit) window.releaseCursor();
+	if (input == enter) ui.capture(*this);
+	if (input == exit) ui.releaseCapture();
 	if (input == wireframeToggle) window.renderer.wireframeMode = !window.renderer.wireframeMode;
 
 	player.inputEvent(window, input);

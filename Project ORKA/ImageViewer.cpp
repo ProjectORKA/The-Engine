@@ -305,7 +305,7 @@ void ImageViewerRenderer::renderScene(Window& window)
 	if (images.size() > 10) renderAllImages(window, TiledRectangle(getSize()));
 }
 
-void ImageViewerRenderer::inputEvent(Window& window, const InputEvent input)
+void ImageViewerRenderer::inputEvent(Window& window, InputEvent& input)
 {
 	lastButtonInput = now();
 

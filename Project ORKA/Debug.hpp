@@ -68,7 +68,9 @@ void logWarning(T value)
 	if (warningLoggingIsEnabled)
 	{
 		printHighlighted("Warning: ", Color(1, 1, 0, 0), toString(value));
+		#ifdef _WIN32
 		if (debugBreakOnWarning) __debugbreak();
+		#endif
 		beep();
 	}
 }
@@ -80,8 +82,10 @@ void logError(T value)
 	{
 		printHighlighted("ERROR: ", Color(1, 0, 0, 0), toString(value));
 		beep();
-		__debugbreak();
-		pause();
+		#ifdef _WIN32
+		if (debugBreakOnError) __debugbreak();
+		#endif
+		if (debugBreakOnError) pause();
 	}
 	else messageBox(toString(value), "Error");
 }

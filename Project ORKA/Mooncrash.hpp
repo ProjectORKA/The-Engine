@@ -36,6 +36,7 @@ struct MoonCrashRenderer final : GameRenderer
 	InputEvent           worldDistortion   = InputEvent(InputType::KeyBoard, K, true);
 	InputEvent           exit              = InputEvent(InputType::Mouse, Rmb, false);
 	InputEvent           vertexColorToggle = InputEvent(InputType::KeyBoard, H, false);
+	InputEvent           chunkBoundsToggle = InputEvent(InputType::KeyBoard, B, false);
 	InputEvent           wireFrameToggle   = InputEvent(InputType::KeyBoard, F, false);
 	InputEvent           countNodesButton  = InputEvent(InputType::KeyBoard, G, false);
 	InputEvent           rebuildShaders    = InputEvent(InputType::KeyBoard, R, false);
@@ -45,7 +46,7 @@ struct MoonCrashRenderer final : GameRenderer
 	void update(Window& window) override;
 	void destroy(Window& window) override;
 	void connect(GameSimulation& simulation) override;
-	void inputEvent(Window& window, InputEvent input) override;
+	void inputEvent(Window& window, InputEvent& input) override;
 	void create(Window& window) override;
 	void renderScene(Window& window) override;
 

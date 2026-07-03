@@ -17,9 +17,9 @@ void GameSimulation::stop()
 	{
 		logDebug("Stopping game simulation thread!");
 		keepRunning = false;
+		if (thread.joinable()) thread.join();
 		destroy();
 		loaded = false;
-		thread.join();
 	}
 	else logError("Simulation not initialized!");
 }
@@ -130,52 +130,55 @@ void GameRenderer::render(Window& window)
 		return;
 	}
 
-	const IVec2 renderPos = getPosition() + IVec2(0, window.getHeight());
+ const IVec2 renderPos = getPosition() + IVec2(0, window.getHeight());
 
-	//if (renderToFramebuffer)
-	//{
-		if (!framebufferInitialized)
-		{
-			framebuffer.create(r, "GameFramebuffer", sz);
-			framebuffer.add(r, WritePixelsFormat::RGBA, DataType::Float, FramebufferAttachment::Color0, true, Wrapping::Clamped);
-			framebuffer.add(r, WritePixelsFormat::Depth, DataType::Float, FramebufferAttachment::Depth, false, Wrapping::Clamped);
-			framebuffer.checkComplete(r);
-			framebufferInitialized = true;
-		}
+ if (renderToFramebuffer)
+ {
+  if (!framebufferInitialized)
+  {
+   framebuffer.create(r, "GameFramebuffer", sz);
+   framebuffer.add(r, WritePixelsFormat::RGBA, DataType::Float, FramebufferAttachment::Color0, true, Wrapping::Clamped);
+   framebuffer.add(r, WritePixelsFormat::Depth, DataType::Float, FramebufferAttachment::Depth, false, Wrapping::Clamped);
+   framebuffer.checkComplete(r);
+   framebufferInitialized = true;
+  }
 
-		framebuffer.resize(r, sz);
-		framebuffer.bindDraw(r);
-		r.setRenderRegion(Vec2(0), sz);
+  framebuffer.resize(r, sz);
+  framebuffer.bindDraw(r);
+  r.setRenderRegion(Vec2(0), sz);
 
-		renderScene(window);
+  renderScene(window);
 
-		r.drawToWindow();
-		r.setRenderRegion({0, 0}, window.getSize());
-		r.uiSpace(window);
-		r.setDepthTest(false);
-		r.setCulling(false);
-		WireframeOverride wireframeGuard(r, false);
-		r.uniforms().setCustomInt1(1); // flip framebuffer vertically for UI blit
-		framebuffer.setAsTexture(r);
-		r.useShader("texture");
-		// Rectangle mesh goes from y=0 down to y=-1; uiSpace uses bottom-left origin,
-		// so anchor at the render-space top-left and let the mesh extend downward.
-		r.uniforms().setMMatrix(matrixFromPositionAndSize(static_cast<Float>(renderPos.x), static_cast<Float>(renderPos.y), static_cast<Float>(sz.x), static_cast<Float>(sz.y)));
-		r.rectangle();
-		r.uniforms().setCustomInt1(0); // reset
-	//}
-	//else
-	//{
-	//	// convert UI (top-left origin) to OpenGL viewport coords (bottom-left origin)
-	//	const IVec2 viewportPosition(getPosition().x, window.getHeight() - getPosition().y - sz.y);
-	//	r.setRenderRegion(viewportPosition, sz);
+  r.drawToWindow();
+  r.setRenderRegion({0, 0}, window.getSize());
+  r.uiSpace(window);
+  r.setDepthTest(false);
+  r.setCulling(false);
+  // Ensure the intro framebuffer respects alpha when composited onto the
+  // transparent window.
+  r.setAlphaBlending(true);
+  WireframeOverride wireframeGuard(r, false);
+  r.uniforms().setCustomInt1(1); // flip framebuffer vertically for UI blit
+  framebuffer.setAsTexture(r);
+  r.useShader("texture");
+  // Rectangle mesh goes from y=0 down to y=-1; uiSpace uses bottom-left origin,
+  // so anchor at the render-space top-left and let the mesh extend downward.
+  r.uniforms().setMMatrix(matrixFromPositionAndSize(static_cast<Float>(renderPos.x), static_cast<Float>(renderPos.y), static_cast<Float>(sz.x), static_cast<Float>(sz.y)));
+  r.rectangle();
+  r.uniforms().setCustomInt1(0); // reset
+ }
+ else
+ {
+  // convert UI (top-left origin) to OpenGL viewport coords (bottom-left origin)
+  const IVec2 viewportPosition(getPosition().x, window.getHeight() - getPosition().y - sz.y);
+  r.setRenderRegion(viewportPosition, sz);
 
-	//	renderScene(window);
+  renderScene(window);
 
-	//	// restore UI space for following UI elements
-	//	r.setRenderRegion({0, 0}, window.getSize());
-	//	r.uiSpace(window);
-	//	r.setDepthTest(false);
-	//	r.setCulling(false);
-	//}
+  // restore UI space for following UI elements
+  r.setRenderRegion({0, 0}, window.getSize());
+  r.uiSpace(window);
+  r.setDepthTest(false);
+  r.setCulling(false);
+ }
 }

@@ -9,7 +9,7 @@ void MSDFTextRenderer::destroy(Window& window)
 
 void MSDFTextRenderer::connect(GameSimulation& simulation) {}
 
-void MSDFTextRenderer::inputEvent(Window& window, InputEvent input) {}
+void MSDFTextRenderer::inputEvent(Window& window, InputEvent& input) {}
 
 void MSDFTextRenderer::create(Window& window)
 {

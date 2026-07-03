@@ -91,7 +91,7 @@ void FlappyBirdPipes::render(Renderer& r) const
 	r.renderMesh("flappyBirdPipe");
 }
 
-void FlappyBirdRenderer::inputEvent(Window& window, const InputEvent input)
+void FlappyBirdRenderer::inputEvent(Window& window, InputEvent& input)
 {
 	if (input == reloadShaders) window.renderer.shaderSystem.rebuild(window.renderer);
 	if (input == toggleWireFrame) window.renderer.wireframeMode = !window.renderer.wireframeMode;

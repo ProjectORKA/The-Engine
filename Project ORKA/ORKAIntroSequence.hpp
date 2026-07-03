@@ -8,14 +8,16 @@ struct ORKAIntroSequence final : GameRenderer
 {
 	Bool          decorated              = true;
 	Bool          initializedRenderer    = false;
-	GameRenderer* gameStartingAfterIntro = nullptr;
+	UIElement*    followUpElement        = nullptr;
+	Bool          handoffPending         = false;
+	Bool          introTimerStarted      = false;
 
-	void init(GameRenderer& game);
+	void init(UIElement& followUp);
 	void update(Window& window) override;
 	void create(Window& window) override;
 	void destroy(Window& window) override;
 	void connect(GameSimulation& simulation) override;
 	void renderScene(Window& window) override;
-	void inputEvent(Window& window, InputEvent input) override;
+	void inputEvent(Window& window, InputEvent& input) override;
 	void renderInteractive(Window& window) override;
 };

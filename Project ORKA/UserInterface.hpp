@@ -16,19 +16,31 @@ struct UITextBox final : UIElement
 	void     render(Window& window) override;
 	void     destroy(Window& window) override;
 	void     renderInteractive(Window& window) override;
-	void     inputEvent(Window& window, InputEvent input) override;
+	void     inputEvent(Window& window, InputEvent& input) override;
 };
 
 struct UserInterface
 {
 	List<Window> windows;
 	Bool         running = false;
+	Bool         glfwReady = false;
+	Bool         capturing = false;
+	Window*      focusedWindow = nullptr; //if capturing, this is the window that is capturing
+	UIElement*   focusedElement = nullptr; //if capturing, this is the element that is capturing
 
 	UserInterface();
 
-	void    run();
+	void    run(Bool terminateOnExit = true);
+	Bool    ensureInitialized();
+	void    terminate();
 	Window& window(const String& title, Int width, Int height, Bool decorated, Bool visible, WindowState state);
 	Window& window(const String& title, Int width, Int height, Bool decorated, Bool visible, WindowState state, UIElement& content);
+
+	void focus(Window& window, UIElement* element);
+	void focusWindow(Window& window);
+	void focusElement(Window& window, UIElement* element);
+	void capture(UIElement& element);
+	void releaseCapture();
 };
 
 extern UserInterface ui;

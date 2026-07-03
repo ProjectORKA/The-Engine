@@ -13,10 +13,10 @@ void SandboxRenderer::destroy(Window& window)
 
 void SandboxRenderer::connect(GameSimulation& simulation) {}
 
-void SandboxRenderer::inputEvent(Window& window, const InputEvent input)
+void SandboxRenderer::inputEvent(Window& window, InputEvent& input)
 {
-	if (input == enter && isPointInside(window, window.mousePosBotLeft)) window.captureCursor();
-	if (input == exit) window.releaseCursor();
+	if (input == enter) ui.capture(*this);
+	if (input == exit) ui.releaseCapture();
 	if (input == wireframeToggle) window.renderer.wireframeMode = !window.renderer.wireframeMode;
 
 	player.inputEvent(window, input);
@@ -24,7 +24,7 @@ void SandboxRenderer::inputEvent(Window& window, const InputEvent input)
 
 void SandboxRenderer::create(Window& window)
 {
-	setDebugName("SandboxRenderer");
+	setName("SandboxRenderer");
 	player.camera.setPosition(Vec3(0.0f, -5.0f, 0.0f));
 	GameRenderer::create(window);
 }
@@ -32,6 +32,7 @@ void SandboxRenderer::create(Window& window)
 void SandboxRenderer::renderScene(Window& window)
 {
 	Renderer& r = window.renderer;
+	r.setWireframeMode();
 	r.setCulling(true);
 	r.setDepthTest(true);
 

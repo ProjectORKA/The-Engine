@@ -327,7 +327,7 @@ void VoxelsRenderer::create(Window& window)
 {
 	Renderer & r = window.renderer;
 
-	setDebugName("VoxelsRenderer");
+	setName("VoxelsRenderer");
 	regenerateChunk(r);
 	const IVec3 dims = chunk.dims();
 	player.camera.setPosition(Vec3(0.0f, -static_cast<Float>(dims.y), static_cast<Float>(dims.z) * 0.4f));
@@ -350,10 +350,10 @@ void VoxelsRenderer::destroy(Window& window)
 	GameRenderer::destroy(window);
 }
 
-void VoxelsRenderer::inputEvent(Window& window, const InputEvent input)
+void VoxelsRenderer::inputEvent(Window& window, InputEvent& input)
 {
-	if (input == enter && isPointInside(window, window.mousePosBotLeft)) window.captureCursor();
-	if (input == exit) window.releaseCursor();
+	if (input == enter) ui.capture(*this);
+	if (input == exit) ui.releaseCapture();
 	if (input == switchToSlices) renderMode = VoxelRenderMode::Slices;
 	if (input == switchToRay)    renderMode = VoxelRenderMode::RayMarch;
 	if (input == wireframeToggle) { window.renderer.wireframeMode = !window.renderer.wireframeMode; }

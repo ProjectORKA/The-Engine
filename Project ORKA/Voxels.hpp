@@ -122,7 +122,7 @@ struct VoxelsRenderer final : GameRenderer
 	void renderScene(Window& window) override;
 	void renderInteractive(Window& window) override {}
 	void connect(GameSimulation& simulation) override {}
-	void inputEvent(Window& window, InputEvent input) override;
+	void inputEvent(Window& window, InputEvent& input) override;
 
 private:
 	void regenerateChunk(Renderer& renderer);

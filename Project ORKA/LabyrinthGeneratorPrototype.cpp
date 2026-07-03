@@ -227,7 +227,7 @@ void LabyrinthGeneratorPrototype::render(Renderer& r, const Player& player)
 	mutex.unlock();
 }
 
-void LabyrinthGeneratorPrototype::inputEvent(Window& window, const InputEvent input)
+void LabyrinthGeneratorPrototype::inputEvent(Window& window, InputEvent& input)
 {
 	if (input == reset)
 	{

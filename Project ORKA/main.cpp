@@ -25,46 +25,26 @@
 //  Base types (float, int, bool) have been overridden as a design choice and to clearly differentiate between data and functions
 
 #include "Engine.hpp"
-
-#include "Pong.hpp"
-#include "Sandbox.hpp"
-#include "ShadertoyRenderer.hpp"
-#include "SoftwareRendererGame.hpp"
-#include "Voxels.hpp"
-//#include "MoonCrash.hpp"
-//#include "FlappyBird.hpp"
-//#include "TripleNine.hpp"
-//#include "ImageViewer.hpp"
-//#include "ProjectMelon.hpp"
-//#include "Orbital Oblivion.hpp"
-//
-//#include "Keva.hpp"
-//#include "Snake.hpp"
-//#include "Sortr.hpp"
-//#include "GPUSim.hpp"
-//#include "Sandbox.hpp"
-//#include "MSDFText.hpp"
-//#include "Organizer.hpp"
-//#include "SimpleRTS.hpp"
-//#include "SoundBars.hpp"
-//#include "UISandbox.hpp"
-//#include "MindMapper.hpp"
-//#include "RedDotHack.hpp"
-//#include "AudioSystem.hpp"
-//#include "SDFRenderer.hpp"
-//#include "AIPlayground.hpp"
-//#include "GuessingGame.hpp"
-//#include "FunctionFinder.hpp"
-//#include "Hello Triangle.hpp"
-//#include "Music Visualizer.hpp"
-//#include "PrototypingSandbox.hpp"
-//#include "PhysicsPlayground.hpp"
-//#include "DungeonsAndDiscord.hpp"
+#include "GameLoader.hpp"
+#include "ORKAIntroSequence.hpp"
+#include "UserInterface.hpp"
 
 int main(const int argc, char* argv[])
 {
 	Engine engine;
 	engine.create(argc, argv, false);
-	Sandbox game;
-	game.run();
+
+	ORKAIntroSequence intro;
+	GameLoader       gameLoader;
+
+	intro.init(gameLoader);
+	ui.window("Project ORKA", settings.defaultWindowWidth, settings.defaultWindowHeight, true, true, WindowState::Windowed, intro);
+	ui.run();
+
+	if (Function<void()> launch = gameLoader.consumeSelectedGame())
+	{
+		launch();
+	}
+
+	return 0;
 }

@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -85,6 +85,7 @@
     <ClCompile Include="Framebuffer.cpp" />
     <ClCompile Include="FramebufferTexture.cpp" />
     <ClCompile Include="Game.cpp" />
+    <ClCompile Include="GameLoader.cpp" />
     <ClCompile Include="GlyphTextRenderSystem.cpp" />
     <ClCompile Include="GPUMesh.cpp" />
     <ClCompile Include="GPUSim.cpp" />
@@ -163,6 +164,7 @@
     <ClCompile Include="TransformationStack.cpp" />
     <ClCompile Include="TriangulationPrototype.cpp" />
     <ClCompile Include="TripleNine.cpp" />
+    <ClCompile Include="RayTracer.cpp" />
     <ClCompile Include="Random.cpp" />
     <ClCompile Include="RedDotHack.cpp" />
     <ClCompile Include="Sandbox.cpp" />
@@ -251,6 +253,7 @@
     <ClInclude Include="GPUTexture.hpp" />
     <ClInclude Include="GraphicsAPI.hpp" />
     <ClInclude Include="GuessingGame.hpp" />
+    <ClInclude Include="RayTracer.hpp" />
     <ClInclude Include="Heightmap.hpp" />
     <ClInclude Include="ImageViewer.hpp" />
     <ClInclude Include="IndexBufferObject.hpp" />
@@ -343,6 +346,7 @@
     <ClInclude Include="Plot.hpp" />
     <ClInclude Include="SDFRenderer.hpp" />
     <ClInclude Include="SoftwareRendererGame.hpp" />
+    <ClInclude Include="GameLoader.hpp" />
     <ClInclude Include="SimpleRts.hpp" />
     <ClInclude Include="Snake.hpp" />
     <ClInclude Include="SphereMeshing.hpp" />
@@ -694,6 +698,8 @@
     </Link>
     <PostBuildEvent>
       <Command>
+XCOPY "$(SolutionDir)Project ORKA\Data" "$(TargetDir)Data" /S /Y /I
+XCOPY "C:\vcpkg\installed\x64-windows\bin\*.dll" "$(TargetDir)" /Y /D
       </Command>
       <Message>XCOPY "$(SolutionDir)Project ORKA\Data" "$(TargetDir)Data" /S /Y /I</Message>
     </PostBuildEvent>

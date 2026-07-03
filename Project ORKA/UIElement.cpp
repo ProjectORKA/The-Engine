@@ -22,6 +22,11 @@ UInt UIElement::getId() const
 	return id;
 }
 
+const String& UIElement::getDebugName() const
+{
+	return debugName;
+}
+
 Int UIElement::getWidth() const
 {
 	return width;
@@ -39,23 +44,32 @@ Int UIElement::getHeight() const
 
 IVec2 UIElement::getSize() const
 {
-	return {width, height};
+	return { width, height };
 }
 
 IVec2 UIElement::getPosition() const
 {
-	return {positionX, positionY};
+	return { positionX, positionY };
+}
+
+Color UIElement::getHoverColor() const
+{
+	return hoveredBackgroundColor;
 }
 
 Bool UIElement::isPointInside(const Window& window, const DVec2& point) const
 {
-	const IVec2 renderPos(positionX, positionY + window.getHeight());
-	const Int   left   = renderPos.x;
-	const Int   right  = renderPos.x + width;
-	const Int   top    = renderPos.y;
+	const IVec2 renderPos = IVec2(positionX, positionY + window.getHeight());
+	const Int   left = renderPos.x;
+	const Int   right = renderPos.x + width;
+	const Int   top = renderPos.y;
 	const Int   bottom = renderPos.y - height;
 
 	return point.x >= left && point.x <= right && point.y <= top && point.y >= bottom;
+}
+
+void UIElement::setHovered(Bool newState) {
+	hovered = newState;
 }
 
 DVec2 UIElement::getMousePosTopLeft(const Window& window) const
@@ -63,7 +77,7 @@ DVec2 UIElement::getMousePosTopLeft(const Window& window) const
 	const DVec2 topLeft(positionX, positionY + window.getHeight());
 	const DVec2 mouse = window.mousePosBotLeft;
 
-	return {mouse.x - topLeft.x, topLeft.y - mouse.y};
+	return { mouse.x - topLeft.x, topLeft.y - mouse.y };
 }
 
 DVec2 UIElement::getMousePosBottomLeft(const Window& window) const
@@ -71,7 +85,18 @@ DVec2 UIElement::getMousePosBottomLeft(const Window& window) const
 	const DVec2 bottomLeft(positionX, positionY + window.getHeight() - height);
 	const DVec2 mouse = window.mousePosBotLeft;
 
-	return {mouse.x - bottomLeft.x, mouse.y - bottomLeft.y};
+	return { mouse.x - bottomLeft.x, mouse.y - bottomLeft.y };
+}
+
+UIElement* UIElement::findDeepestAt(Window& window, const DVec2& point)
+{
+	if (!isPointInside(window, point)) return nullptr;
+
+	for (auto it = children.rbegin(); it != children.rend(); ++it)
+	{
+		if (UIElement* found = (*it)->findDeepestAt(window, point)) return found;
+	}
+	return this;
 }
 
 void UIElement::update(Window& window)
@@ -86,33 +111,62 @@ void UIElement::create(Window& window)
 
 void UIElement::render(Window& window)
 {
-	Renderer & r = window.renderer;
+	Renderer& r = window.renderer;
+	WireframeOverride wireframeGuard(r, false); // ui should render normally, even in wireframe mode
+	DepthTestOverride depthGuard(r, false); //ui renders depth independent
+	r.uiSpace(window); // set coordinates system to pixel space
+	r.setRenderRegion(IVec2(0), window.getSize()); // only render in that region
+	const IVec2 backgroundPos = getPosition() + IVec2(0, window.getHeight()); // y is negative to avoid flipping, so height is added
+	const IVec2 backgroundSize = getSize();
 
-	WireframeOverride wireframeGuard(r, false);
-	r.uiSpace(window);
-	r.setRenderRegion(IVec2(0), window.getSize());
-	
-	if (hasBackground)
+	//render background
+	Color bg = backgroundColor;
+	if (hovered) bg = hoveredBackgroundColor;
+	if (active) bg = activeBackgroundColor;
+	if (bg.a > 0) // if background color is fully transparent, don't render it
 	{
-		const IVec2 renderPos = getPosition() + IVec2(0, window.getHeight());
-		DepthTestOverride override(r, false);
 		r.useShader("color");
-
-		const Bool hovered = isPointInside(window, window.mousePosBotLeft);
-		const Color bg = lerp(backgroundColor, Color(1, 1, 1, 1), static_cast<Float>(hovered) * 0.1f);
 		r.fill(bg);
-		r.UIRectangle(renderPos, getSize());
+		r.UIRectangle(backgroundPos, backgroundSize);
+	}
 
-		if (!text.empty())
+	//render border
+	Int bt = borderThickness;
+	if (focused) bt = borderThicknessFocused;
+	if (bt > 0)
+	{
+		if (backgroundSize.x <= 0 || backgroundSize.y <= 0) return;
+		const Int thickness = min(borderThickness, min(backgroundSize.x, backgroundSize.y));
+		if (thickness <= 0) return;
+
+		const Int sideHeight = max(backgroundSize.y - thickness * 2, 0);
+		const Int bottomOffset = max(backgroundSize.y - thickness, 0);
+		const Int rightOffset = max(backgroundSize.x - thickness, 0);
+
+		r.fill(borderCol);
+		r.uniforms().setCustomColor(borderCol);
+		r.UIRectangle(backgroundPos, IVec2(backgroundSize.x, thickness)); // top
+		r.UIRectangle(backgroundPos + IVec2(0, -bottomOffset), IVec2(backgroundSize.x, thickness)); // bottom
+
+		if (sideHeight > 0)
 		{
-			r.useShader("text");
-			r.uniforms().setMMatrix(1);
-			r.fill(textColor);
-			r.textRenderSystem.alignText(Alignment::left, Alignment::bottom);
-			const Vec2 textPosition = Vec2(renderPos + IVec2(paddingX, -paddingY));
-			r.textRenderSystem.render(r, text, textPosition);
+			r.UIRectangle(backgroundPos + IVec2(0, -thickness), IVec2(thickness, sideHeight)); // left
+			r.UIRectangle(backgroundPos + IVec2(rightOffset, -thickness), IVec2(thickness, sideHeight)); // right
 		}
 	}
+
+	//render text
+	if (!text.empty())
+	{
+		r.useShader("text");
+		r.uniforms().setMMatrix(1);
+		r.fill(textColor);
+		r.textRenderSystem.alignText(Alignment::left, Alignment::bottom);
+		const Vec2 textPosition = Vec2(backgroundPos + IVec2(paddingX, -paddingY));
+		r.textRenderSystem.render(r, text, textPosition);
+	}
+
+	//render children
 	for (const auto i : children) i->render(window);
 }
 
@@ -199,12 +253,40 @@ UIElement& UIElement::setText(const String& text)
 
 UIElement& UIElement::background(const Color color)
 {
-	hasBackground   = true;
 	backgroundColor = color;
 	return *this;
 }
 
-UIElement& UIElement::name(const String& debugName)
+UIElement& UIElement::hoveredBackground(const Color color)
+{
+	hoveredBackgroundColor = color;
+	return *this;
+}
+
+UIElement& UIElement::activeBackground(const Color color)
+{
+	activeBackgroundColor = color;
+	return *this;
+}
+
+UIElement& UIElement::borderWidth(const Int width)
+{
+	borderThickness = max(0, width);
+	return *this;
+}
+
+UIElement& UIElement::borderColor(const Color color)
+{
+	borderCol = color;
+	return *this;
+}
+
+UIElement& UIElement::border(const Int width, const Color color)
+{
+	return borderWidth(width).borderColor(color);
+}
+
+UIElement& UIElement::setName(const String& debugName)
 {
 	this->debugName = debugName;
 	return *this;
@@ -218,14 +300,11 @@ UIElement& UIElement::addElement(UIElement& element)
 	return *this;
 }
 
-void UIElement::inputEvent(Window& window, const InputEvent input)
-{
-	for (UIElement* c : children) c->inputEvent(window, input);
-}
+void UIElement::inputEvent(Window& window, InputEvent& input){}
 
-void UIElement::setDebugName(const String& name) {
-	debugName = name;
-}
+void UIElement::onMouseEnter(Window& window){}
+
+void UIElement::onMouseLeave(Window& window){}
 
 void UIElement::growSizes()
 {
@@ -240,37 +319,37 @@ void UIElement::growSizes()
 	}
 
 	const auto distribute = [](Vector<UIElement*>& growChildren, Int freeSpace, const Bool useWidth)
-	{
-		while (freeSpace != 0 && !growChildren.empty())
 		{
-			if (freeSpace > 0)
+			while (freeSpace != 0 && !growChildren.empty())
 			{
-				UIElement* smallestChild = growChildren[0];
-				for (const auto i : growChildren)
+				if (freeSpace > 0)
 				{
-					if ((useWidth ? i->getWidth() : i->getHeight()) < (useWidth ? smallestChild->getWidth() : smallestChild->getHeight())) smallestChild = i;
+					UIElement* smallestChild = growChildren[0];
+					for (const auto i : growChildren)
+					{
+						if ((useWidth ? i->getWidth() : i->getHeight()) < (useWidth ? smallestChild->getWidth() : smallestChild->getHeight())) smallestChild = i;
+					}
+					if (useWidth) smallestChild->width += 1;
+					else smallestChild->height += 1;
+					freeSpace -= 1;
 				}
-				if (useWidth) smallestChild->width += 1;
-				else smallestChild->height += 1;
-				freeSpace -= 1;
+				else
+				{
+					UIElement* largestChild = growChildren[0];
+					for (const auto i : growChildren)
+					{
+						if ((useWidth ? i->getWidth() : i->getHeight()) > (useWidth ? largestChild->getWidth() : largestChild->getHeight())) largestChild = i;
+					}
+					Int& dimension = useWidth ? largestChild->width : largestChild->height;
+					if (dimension > 0)
+					{
+						dimension -= 1;
+						freeSpace += 1;
+					}
+					else break;
+				}
 			}
-			else
-			{
-				UIElement* largestChild = growChildren[0];
-				for (const auto i : growChildren)
-				{
-					if ((useWidth ? i->getWidth() : i->getHeight()) > (useWidth ? largestChild->getWidth() : largestChild->getHeight())) largestChild = i;
-				}
-				Int& dimension = useWidth ? largestChild->width : largestChild->height;
-				if (dimension > 0)
-				{
-					dimension -= 1;
-					freeSpace += 1;
-				}
-				else break;
-			}
-		}
-	};
+		};
 
 	if (!isVertical)
 	{
@@ -300,17 +379,17 @@ void UIElement::updateSizes()
 {
 	if (children.empty())
 	{
-		contentWidth  = width;
+		contentWidth = width;
 		contentHeight = height;
 	}
 	else
 	{
 		if (parent)
 		{
-			width  = 0;
+			width = 0;
 			height = 0;
 		}
-		contentWidth  = paddingX * 2;
+		contentWidth = paddingX * 2;
 		contentHeight = paddingY * 2;
 	}
 
@@ -352,7 +431,9 @@ void UIElement::updatePositions()
 		{
 			i->setPositionX(xOffset);
 			i->setPositionY(yOffset);
-			yOffset -= i->getHeight() + i->paddingY * 2 + gapY;
+			// Child padding is already accounted for in its own size; do not
+			// compound it here or gaps will depend on sibling padding.
+			yOffset -= i->getHeight() + gapY;
 		}
 	}
 	else
@@ -361,7 +442,8 @@ void UIElement::updatePositions()
 		{
 			i->setPositionX(xOffset);
 			i->setPositionY(yOffset);
-			xOffset += i->getWidth() + i->paddingX * 2 + gapX;
+			// Avoid double-counting padding when spacing siblings in a row.
+			xOffset += i->getWidth() + gapX;
 		}
 	}
 

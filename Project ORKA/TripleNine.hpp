@@ -10,20 +10,15 @@
 // calculate ping
 // store ping in client info
 
-#ifdef TRIPLE_NINE_ENEMY
 struct TripleNineEnemy
 {
-	void update(Window& window);
-	void create(Window& window);
-	void destroy(Window& window);
-	void setPosition(Vec3 position);
-	void inputEvent(Window& window, InputEvent input);
+	[[nodiscard]] Index getId() const;
+	[[nodiscard]] Vec3  getPosition() const;
+	void                setPosition(Vec3 newPosition);
 
-private:
-	Index enemyID = 0;
-	Vec3 position = Vec3(0);
+	Index id       = 0;
+	Vec3  position = Vec3(0);
 };
-#endif
 
 struct TripleNinePlayerData
 {
@@ -38,16 +33,12 @@ struct TripleNineGameState
 	[[nodiscard]] Vec3 getPlayerPosition(PlayerID playerID) const;
 
 	void updatePlayer(PlayerID playerID, Vec3 position);
-
-	#ifdef TRIPLE_NINE_ENEMY
 	[[nodiscard]] TripleNineEnemy& createEnemy();
-	[[nodiscard]] const Vector<TripleNineEnemy>& getEnemies();
-	#endif
+	[[nodiscard]] Vector<TripleNineEnemy>&       getEnemies();
+	[[nodiscard]] const Vector<TripleNineEnemy>& getEnemies() const;
 
 private:
-	#ifdef TRIPLE_NINE_ENEMY
 	Vector<TripleNineEnemy>       enemies;
-	#endif
 	ULL                          gameTick = 0;
 	Vector<TripleNinePlayerData> players;
 };
@@ -57,6 +48,8 @@ struct TripleNineClientInfo
 	UDPEndpoint endpoint;
 	Token       clientToken  = 0;
 	ClientID    clientID     = 0;
+	Vec3        position     = Vec3(0);
+	Vec3        rotation     = Vec3(0);
 	Float       ping         = 0.0;
 	TimePoint   lastSent     = now();
 	TimePoint   lastReceived = now();
@@ -65,8 +58,9 @@ struct TripleNineClientInfo
 struct TripleNineServer
 {
 	void destroy();
-	void create() const;
+	void create();
 	void processEvents();
+	void receivePlayerData(const PlayerStateData& playerStateData);
 	void sendBackMessage(TripleNineMessage& message);
 	void broadcastMessage(TripleNineMessage& message);
 	void sendMessageToClient(ClientID clientID, TripleNineMessage& message);
@@ -90,7 +84,8 @@ protected:
 	TimePoint lastPingSent      = now();
 	Duration  pingInterval      = Milliseconds(1000);
 	Duration  deadClientTimeout = Milliseconds(15000);
-	UDPSocket socket            = UDPSocket(context, UDPEndpoint(asio::ip::udp::v4(), port));
+	Bool      active            = false;
+	UDPSocket socket            = UDPSocket(context);
 };
 
 struct TripleNineClient
@@ -107,12 +102,16 @@ struct TripleNineClient
 	void receiveServerInfo(const ServerInfoData& serverInfoData);
 	void disconnect(const DisconnectClientData& disconnectClientData);
 	void connectionConfirmed(const ConnectionConfirmedData& connectionConfirmedData);
+	void playerDataReceived(const PlayerStateData& playerStateData);
 
 	//send
 	void connectToServer();
 	void requestServerInfo();
 	void disconnectFromServer();
 	void disconnectPlayer(PlayerID playerID);
+	void sendPlayerData(const Vec3& position, const Vec3& rotation);
+	[[nodiscard]] ClientID getClientID() const;
+	[[nodiscard]] const Vector<TripleNinePlayerData>& getPlayerData() const;
 
 	//void sendPlayerData(PlayerID playerID, Token playerToken, Vec3 position, Vec3 rotation, ULL gameTick);
 	//[[nodiscard]] Token getClientToken() const;
@@ -138,12 +137,11 @@ protected:
 struct TripleNineSimulation final : GameSimulation
 {
 	// multiplayer stuff
-	//TripleNineServer server;
+	TripleNineServer server;
 	//TripleNineClient client;
 	//Bool             isOnline = false;
 	//Bool             isServer = false;
 
-	#ifdef TRIPLE_NINE_ENEMY
 	void createEnemy();
 	void killEnemy(const Index enemyId)
 	{
@@ -156,7 +154,6 @@ struct TripleNineSimulation final : GameSimulation
 			}
 		}
 	}
-	#endif
 
 	void create() override;
 	void destroy() override;
@@ -184,6 +181,7 @@ struct TripleNineRenderer final : GameRenderer
 	Bool             renderMap  = true;
 	Bool             renderText = true;
 	Bool             bloom      = false;
+	TripleNineClient client;
 
 	IVec2      frameSize     = IVec2(1, 1);
 	InputEvent enter         = InputEvent(InputType::Mouse, Lmb, true);
@@ -198,21 +196,24 @@ struct TripleNineRenderer final : GameRenderer
 	void connect(GameSimulation& simulation) override;
 	void renderScene(Window& window) override;
 
-	#ifdef TRIPLE_NINE_ENEMY
+	void createEnemy();
 	void killEnemy(UInt uiId)
 	{
-		for (auto& enemy : gameState.enemies)
+		for (auto& enemy : enemies)
 		{
-			if (enemy.id == uiId)
+			if (enemy.getId() == uiId)
 			{
-				enemy.position = Vec3(randomVec2Fast(-85.0f, 85.0f), 0.0f);
+				enemy.setPosition(Vec3(randomVec2Fast(-enemySpawnRadius, enemySpawnRadius), 0.0f));
 				break;
 			}
 		}
 	}
-	#endif
+	Vector<TripleNineEnemy> enemies;
+	const Float enemyRenderSize  = 1.0f;
+	const Float enemySpawnRadius = 85.0f;
+	const Int   enemyGridSize    = 10;
 
-	void inputEvent(Window& window, InputEvent input) override;
+	void inputEvent(Window& window, InputEvent& input) override;
 	void renderInteractive(Window& window) override;
 };
 

@@ -38,7 +38,7 @@ void SnakeRenderer::update(Window& window)
 	}
 }
 
-void SnakeSnake::inputEvent(Window& window, const InputEvent input)
+void SnakeSnake::inputEvent(Window& window, InputEvent& input)
 {
 	if(input == forward) direction = Vec2(0, speed);
 	if(input == left) direction = Vec2(-speed, 0);
@@ -82,7 +82,7 @@ void SnakeRenderer::create(Window& window)
 	GameRenderer::create(window);
 }
 
-void SnakeRenderer::inputEvent(Window& window, const InputEvent input)
+void SnakeRenderer::inputEvent(Window& window, InputEvent& input)
 {
 	snake.inputEvent(window, input);
 }

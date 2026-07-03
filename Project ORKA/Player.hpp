@@ -27,7 +27,7 @@ struct Player
 	// call render if you want to render from the players perspective
 	virtual void render(Window& window);
 	// this gets called for every input event
-	virtual void inputEvent(Window& window, InputEvent input);
+	virtual void inputEvent(Window& window, InputEvent& input);
 };
 
 struct DebugPlayer : Player
@@ -44,7 +44,7 @@ struct DebugPlayer : Player
 	// overrides update and inputEvent to work
 	void update(Window& window) override;
 	void render(Window& window) override;
-	void inputEvent(Window& window, InputEvent input) override;
+	void inputEvent(Window& window, InputEvent& input) override;
 
 	DebugPlayer() = default;
 };

@@ -161,5 +161,5 @@ struct TripleNinePlayer final : Player
 	void update(Window& window) override;
 	void calculatePhysics(const Window& window);
 	void calculateHeadPosition(Window& window, Float delta);
-	void inputEvent(Window& window, InputEvent input) override;
+	void inputEvent(Window& window, InputEvent& input) override;
 };

@@ -20,7 +20,12 @@ void Framebuffer::destroy(Renderer& renderer)
 }
 void Framebuffer::clear(Renderer& renderer) const
 {
-	if (debugFramebuffersIsEnabled) if (!complete) logError("Framebuffer not complete!");
+	// Avoid clearing an invalid or incomplete framebuffer to prevent driver crashes.
+	if (!complete || openglFramebuffer.getID() == static_cast<UInt>(-1))
+	{
+		if (debugFramebuffersIsEnabled) logError("Framebuffer not complete!");
+		return;
+	}
 	for (const FramebufferTexture& framebufferTexture : framebufferTextures)
 	{
 		if (framebufferTexture.isColor()) openglFramebuffer.clearColor(renderer.openGlContext, framebufferTexture.getAttachmentSlot(), Color(0, 0, 0, 1));
@@ -71,7 +76,11 @@ void Framebuffer::bindRead(Renderer& renderer) const
 }
 void Framebuffer::clearDepth(Renderer& renderer) const
 {
-	if (debugFramebuffersIsEnabled) if (!complete) logError("Framebuffer not complete!");
+	if (!complete || openglFramebuffer.getID() == static_cast<UInt>(-1))
+	{
+		if (debugFramebuffersIsEnabled) logError("Framebuffer not complete!");
+		return;
+	}
 
 	constexpr Float clearDepth = 1.0f;
 	openglFramebuffer.clearDepth(renderer.openGlContext, clearDepth);
@@ -82,13 +91,21 @@ Float Framebuffer::aspectRatio() const
 }
 void Framebuffer::clearColor(Renderer& renderer, const Vec4 clearColor) const
 {
-	if (debugFramebuffersIsEnabled) if (!complete) logError("Framebuffer not complete!");
+	if (!complete || openglFramebuffer.getID() == static_cast<UInt>(-1))
+	{
+		if (debugFramebuffersIsEnabled) logError("Framebuffer not complete!");
+		return;
+	}
 
 	for (const FramebufferTexture& framebufferTexture : framebufferTextures) if (framebufferTexture.isColor()) openglFramebuffer.clearColor(renderer.openGlContext, framebufferTexture.getAttachmentSlot(), clearColor);
 }
 void Framebuffer::clearColor(Renderer& renderer, const IVec4 clearColor) const
 {
-	if (debugFramebuffersIsEnabled) if (!complete) logError("Framebuffer not complete!");
+	if (!complete || openglFramebuffer.getID() == static_cast<UInt>(-1))
+	{
+		if (debugFramebuffersIsEnabled) logError("Framebuffer not complete!");
+		return;
+	}
 
 	for (const auto& framebufferTexture : framebufferTextures) if (framebufferTexture.isColor()) openglFramebuffer.clearColor(renderer.openGlContext, framebufferTexture.getAttachmentSlot(), clearColor);
 }

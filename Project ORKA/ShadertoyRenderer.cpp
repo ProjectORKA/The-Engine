@@ -87,7 +87,7 @@ void ShadertoyRenderer::ensureDitherTexture(Renderer& renderer)
 
 void ShadertoyRenderer::create(Window& window)
 {
-	setDebugName("ShadertoyRenderer");
+	setName("ShadertoyRenderer");
 	player.camera.setPosition(Vec3(0.0f, -5.0f, 0.5f));
 	GameRenderer::create(window);
 	ensureDitherTexture(window.renderer);
@@ -227,10 +227,10 @@ void ShadertoyRenderer::renderScene(Window& window)
 
 void ShadertoyRenderer::connect(GameSimulation& simulation) {}
 
-void ShadertoyRenderer::inputEvent(Window& window, InputEvent input)
+void ShadertoyRenderer::inputEvent(Window& window, InputEvent& input)
 {
-	if (input == enter && isPointInside(window, window.mousePosBotLeft)) window.captureCursor();
-	if (input == exit) window.releaseCursor();
+	if (input == enter) ui.capture(*this);
+	if (input == exit) ui.releaseCapture();
 	if (input == reloadShaders) window.renderer.shaderSystem.rebuild(window.renderer);
 	player.inputEvent(window, input);
 }

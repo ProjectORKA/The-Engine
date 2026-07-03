@@ -1,6 +1,8 @@
 #include "Window.hpp"
 #include "TripleNinePlayer.hpp"
 
+#include "UserInterface.hpp"
+
 void TripleNinePlayer::jump()
 {
 	if (isMoving)
@@ -45,7 +47,7 @@ void TripleNinePlayer::update(Window& window)
 		expDecay(mouseSensitivity, mouseSensitivityDefault, scopeSpeed, delta);
 	}
 	camera.setFieldOfView(fov);
-	if (window.capturing) targetCameraRotation += window.mouseDelta * DVec2(mouseSensitivity);
+	if (ui.capturing) targetCameraRotation += window.mouseDelta * DVec2(mouseSensitivity);
 	movementControl = Vec3(0);
 	if (window.pressed(forward)) movementControl += forwardVector;
 	if (window.pressed(backward)) movementControl -= forwardVector;
@@ -157,7 +159,7 @@ void TripleNinePlayer::calculatePhysics(const Window& window)
 	velocity             = velocity2 * pow(airResistance, window.renderer.deltaTime());
 }
 
-void TripleNinePlayer::inputEvent(Window& window, const InputEvent input)
+void TripleNinePlayer::inputEvent(Window& window, InputEvent& input)
 {
 	if (input == jumpTrigger)
 	{

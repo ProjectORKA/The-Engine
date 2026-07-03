@@ -52,7 +52,7 @@ struct OrganizerRenderer final : GameRenderer
 	void renderConnections(Renderer& r) const;
 	void connect(GameSimulation& simulation) override;
 	void renderScene(Window& window) override;
-	void inputEvent(Window& window, InputEvent input) override;
+	void inputEvent(Window& window, InputEvent& input) override;
 	void renderInteractive(Window& window) override;
 	void addCompany(Index guid, const String& companyName, const String& domain);
 	void addUser(Index userGuid, Index companyGuid, const String& firstName, const String& lastName);

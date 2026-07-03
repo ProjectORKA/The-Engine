@@ -35,5 +35,5 @@ struct LabyrinthGeneratorPrototype final : Prototype
 	void tryRemoveConnection(Index i);
 	void create(Renderer & r) override;
 	void render(Renderer& r, const Player& player) override;
-	void inputEvent(Window& window, InputEvent input) override;
+	void inputEvent(Window& window, InputEvent& input) override;
 };

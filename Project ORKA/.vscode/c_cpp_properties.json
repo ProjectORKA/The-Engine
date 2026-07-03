@@ -1,23 +1,30 @@
 {
   "configurations": [
     {
-      "name": "windows-gcc-x64",
+      "name": "Win64-MSVC",
       "includePath": [
-        "${workspaceFolder}/**",
+        "${workspaceFolder}/Project ORKA/**",
         "${env:VCPKG_ROOT}/installed/x64-windows/include",
         "C:/vcpkg/installed/x64-windows/include",
-        "C:/src/vcpkg/installed/x64-windows/include",
-        "${env:VCPKG_ROOT}/installed/x64-windows-static/include",
-        "C:/vcpkg/installed/x64-windows-static/include",
-        "C:/src/vcpkg/installed/x64-windows-static/include"
+        "C:/src/vcpkg/installed/x64-windows/include"
       ],
       "compilerPath": "G:/PROGRAMS/Visual Studio/VC/Tools/MSVC/14.50.35717/bin/Hostx64/x64/cl.exe",
       "cStandard": "${default}",
       "cppStandard": "${default}",
       "intelliSenseMode": "windows-msvc-x64",
-      "compilerArgs": [
-        ""
-      ]
+      "defines": [
+        "_DEBUG",
+        "UNICODE",
+        "_UNICODE"
+      ],
+      "browse": {
+        "path": [
+          "${workspaceFolder}/Project ORKA",
+          "${env:VCPKG_ROOT}/installed/x64-windows/include",
+          "C:/vcpkg/installed/x64-windows/include",
+          "C:/src/vcpkg/installed/x64-windows/include"
+        ]
+      }
     }
   ],
   "version": 4

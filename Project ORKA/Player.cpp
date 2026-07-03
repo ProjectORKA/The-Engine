@@ -1,4 +1,6 @@
 #include "Player.hpp"
+
+#include "UserInterface.hpp"
 #include "Window.hpp"
 
 void Player::update(Window& window)
@@ -38,7 +40,7 @@ void DebugPlayer::update(Window& window)
 	auto movementVector = Vec3(0);
 
 	// process input
-	if(window.capturing) camera.rotate(window.mouseDelta * DVec2(mouseSensitivity));
+	if(ui.capturing) camera.rotate(window.mouseDelta * DVec2(mouseSensitivity));
 	if(window.pressed(forward)) movementVector += camera.getForwardVector();
 	if(window.pressed(backward)) movementVector -= camera.getForwardVector();
 	if(window.pressed(right)) movementVector += camera.getRightVector();
@@ -57,9 +59,9 @@ void DebugPlayer::update(Window& window)
 	}
 }
 
-void Player::inputEvent(Window& window, InputEvent input) {}
+void Player::inputEvent(Window& window, InputEvent& input) {}
 
-void DebugPlayer::inputEvent(Window& window, const InputEvent input)
+void DebugPlayer::inputEvent(Window& window, InputEvent& input)
 {
 	if(input == faster) speedExponent++;
 	if(input == slower) speedExponent--;

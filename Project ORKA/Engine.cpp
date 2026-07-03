@@ -32,6 +32,7 @@ void Engine::create(const Int argc, Char* argv[], const Bool useJobSystem)
 
 Engine::~Engine()
 {
+	resourceManager.destroy();
 	audioEngine.destroy();
 	if (useJobSystem) jobSystem.waitStopAndJoin();
 }

@@ -22,7 +22,7 @@ struct ShadertoyRenderer final : GameRenderer
 	void destroy(Window& window) override;
 	void renderScene(Window& window) override;
 	void connect(GameSimulation& simulation) override;
-	void inputEvent(Window& window, InputEvent input) override;
+	void inputEvent(Window& window, InputEvent& input) override;
 
 private:
 	void ensureBuffers(Renderer& renderer, const IVec2& heightmapSize, const IVec2& windowSize);

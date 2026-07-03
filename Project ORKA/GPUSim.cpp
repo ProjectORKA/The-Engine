@@ -12,7 +12,7 @@ void GPUSimRenderer::destroy(Window& window)
 
 void GPUSimRenderer::connect(GameSimulation& simulation) {}
 
-void GPUSimRenderer::inputEvent(Window& window, InputEvent input) {}
+void GPUSimRenderer::inputEvent(Window& window, InputEvent& input) {}
 
 void GPUSimRenderer::create(Window& window)
 {

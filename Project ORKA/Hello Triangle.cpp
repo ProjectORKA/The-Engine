@@ -12,7 +12,7 @@ void HelloTriangleRenderer::destroy(Window& window)
 
 void HelloTriangleRenderer::connect(GameSimulation& simulation) {}
 
-void HelloTriangleRenderer::inputEvent(Window& window, InputEvent input) {}
+void HelloTriangleRenderer::inputEvent(Window& window, InputEvent& input) {}
 
 void HelloTriangleRenderer::create(Window& window)
 {

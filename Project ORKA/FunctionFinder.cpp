@@ -2,40 +2,66 @@
 #include "JobSystem.hpp"
 #include "Random.hpp"
 #include "UserInterface.hpp"
+#include <cmath>
+#include <mutex>
 
 void testParameters(FunctionFinderRenderer& ff)
 {
+	Float baseA = 0;
+	Float baseB = 0;
+	Float baseC = 0;
+	Float learn = 0;
+	{
+		std::lock_guard<Mutex> lock(ff.mutex);
+		baseA = ff.bestA;
+		baseB = ff.bestB;
+		baseC = ff.bestC;
+		learn = ff.learnRate;
+	}
+
+	Float a = abs(baseA + randomFloatSlow(-learn, learn));
+	if (a < 0.001f) a = 0.001f;
+	Float b = baseB + randomFloatSlow(-learn, learn);
+	Float c = abs(baseC + randomFloatSlow(-learn, learn));
+	if (c < 0.001f) c = 0.001f;
+
 	Float fitness = 0;
+	Bool  valid   = true;
 
 	Vec2Vector estimate;
 	estimate.resize(ff.data.size());
-	Vector<Float> difference;
-	difference.resize(ff.data.size());
-
-	const Float a = ff.bestA + randomFloatSlow(-ff.learnRate, ff.learnRate);
-	const Float b = ff.bestB + randomFloatSlow(-ff.learnRate, ff.learnRate);
-	const Float c = ff.bestC + randomFloatSlow(-ff.learnRate, ff.learnRate);
-	//const Float d = ff.bestD + randomFloatFast(-0.1, 0.1);
 
 	for (Int i = 0; i < ff.data.size(); i++)
 	{
 		estimate[i].x    = ff.data[i].x;
 		estimate[i].y    = FunctionFinderRenderer::function3(ff.data[i].x, a, b, c);
+		if (!std::isfinite(estimate[i].y))
+		{
+			valid = false;
+			break;
+		}
 		const Float diff = abs(ff.data[i].y - estimate[i].y);
-		difference[i]    = diff;
+		if (!std::isfinite(diff))
+		{
+			valid = false;
+			break;
+		}
 		fitness -= diff;
 	}
 
-	if (fitness > ff.bestScore)
+	if (valid)
 	{
-		ff.best      = estimate;
-		ff.bestScore = fitness;
-		ff.bestA     = a;
-		ff.bestB     = b;
-		ff.bestC     = c;
+		std::lock_guard<Mutex> lock(ff.mutex);
+		if (fitness > ff.bestScore)
+		{
+			ff.best      = estimate;
+			ff.bestScore = fitness;
+			ff.bestA     = a;
+			ff.bestB     = b;
+			ff.bestC     = c;
+		}
+		ff.learnRate *= 0.9999999f;
 	}
-
-	ff.learnRate *= 0.9999999;
 
 	if (ff.threading) jobSystem.enqueue(testParameters, std::ref(ff));
 }
@@ -67,12 +93,19 @@ void FunctionFinderRenderer::create(Window& window)
 	//estimate.resize(data.size());
 	//difference.resize(data.size());
 	best.resize(data.size());
+	for (Int i = 0; i < best.size(); i++)
+	{
+		best[i] = Vec2(data[i].x, 0.0f);
+	}
 
 	player.camera.setPosition(Vec3(0.0f, -5.0f, 0.0f));
 
 	GameRenderer::create(window);
 
-	for (int i = 0; i < jobSystem.numThreads(); i++)
+	Int workerCount = jobSystem.numThreads();
+	if (workerCount <= 0) workerCount = 1;
+
+	for (Int i = 0; i < workerCount; i++)
 	{
 		jobSystem.enqueue(testParameters, std::ref(*this));
 	}
@@ -151,7 +184,7 @@ void FunctionFinderRenderer::renderScene(Window& window)
 	}
 }
 
-void FunctionFinderRenderer::inputEvent(Window& window, const InputEvent input)
+void FunctionFinderRenderer::inputEvent(Window& window, InputEvent& input)
 {
 	if (input == wireframeToggle) window.renderer.wireframeMode = !window.renderer.wireframeMode;
 	player.inputEvent(window, input);

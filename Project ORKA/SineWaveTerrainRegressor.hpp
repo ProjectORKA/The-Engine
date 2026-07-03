@@ -195,5 +195,5 @@ struct SineWaveTerrainRegressor final : Prototype
 		r.text("FPS: " + toString(static_cast<Int>(1.0f / r.time.getDelta())), Vec2(50));
 	}
 
-	void inputEvent(Window& window, InputEvent input) override {}
+	void inputEvent(Window& window, InputEvent& input) override {}
 };

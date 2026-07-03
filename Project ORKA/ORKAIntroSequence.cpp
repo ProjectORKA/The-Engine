@@ -2,7 +2,28 @@
 #include "Window.hpp"
 #include "Camera.hpp"
 
-void ORKAIntroSequence::update(Window& window) {}
+void ORKAIntroSequence::update(Window& window)
+{
+	// Perform the handoff outside of render to avoid touching GL resources while
+	// the intro framebuffer is bound. This prevents incomplete framebuffer
+	// states in the following frame.
+	if (handoffPending && followUpElement)
+	{
+		handoffPending = false;
+
+		// Clean up intro resources before handing over to the next renderer to
+		// avoid leaked textures/framebuffers.
+		destroy(window);
+
+		window.decorateWindow();
+
+		window.addElement(*followUpElement);
+		window.dropElement(this);
+
+		followUpElement->create(window);
+		followUpElement = nullptr;
+	}
+}
 void ORKAIntroSequence::destroy(Window& window)
 {
 	GameRenderer::destroy(window);
@@ -11,6 +32,9 @@ void ORKAIntroSequence::destroy(Window& window)
 void ORKAIntroSequence::create(Window& window)
 {
 	GameRenderer::create(window);
+	introTimerStarted = false;
+	handoffPending    = false;
+	renderToFramebuffer = false;
 	window.unDecorateWindow();
 	window.setVisible(true);
 }
@@ -19,7 +43,8 @@ void ORKAIntroSequence::renderScene(Window& window)
 {
 	Renderer& renderer = window.renderer;
 
-	renderer.clearBackground(Color(0));
+	// Keep the intro framebuffer fully transparent except where the logo draws.
+	renderer.clearBackground(Color(0.0f, 0.0f, 0.0f, 0.0f));
 
 	renderer.setCulling(true);
 	renderer.setDepthTest(true);
@@ -45,31 +70,35 @@ void ORKAIntroSequence::renderScene(Window& window)
 	renderer.renderMesh("projectORKALogo");
 
 	// start the time when we actually start rendering
-	static Bool f = true;
-	if (f)
+	if (!introTimerStarted)
 	{
 		renderer.time.reset();
-		f = false;
+		introTimerStarted = true;
 	}
 
 	// swap the intro scene with the followup
 	if (renderer.time.getTotal() > 5)
 	{
-		window.decorateWindow();
-
-		window.addElement(*gameStartingAfterIntro);
-
-		window.dropElement(this);
-
-		gameStartingAfterIntro->create(window);
+		handoffPending = true;
 	}
 }
 
-void ORKAIntroSequence::init(GameRenderer& game)
+void ORKAIntroSequence::init(UIElement& followUp)
 {
-	gameStartingAfterIntro = &game;
+	followUpElement = &followUp;
 }
 
 void ORKAIntroSequence::renderInteractive(Window& window) {}
 void ORKAIntroSequence::connect(GameSimulation& simulation) {}
-void ORKAIntroSequence::inputEvent(Window& window, InputEvent input) {}
+void ORKAIntroSequence::inputEvent(Window& window, InputEvent& input)
+{
+	if (!introTimerStarted || handoffPending) return;
+
+	const Bool skippedByMouse = input.id.type == InputType::Mouse && input.state;
+	const Bool skippedByKey   = input.id.type == InputType::KeyBoard && input.state;
+	if (skippedByMouse || skippedByKey)
+	{
+		handoffPending = true;
+		input.consume();
+	}
+}

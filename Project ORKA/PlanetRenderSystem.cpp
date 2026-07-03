@@ -6,10 +6,38 @@
 #include "Renderer.hpp"
 #include "TerrainRendering.hpp"
 
+namespace
+{
+// Calculate distance from camera to the chunk's bounding box using terrain limits.
+Float distanceToChunkBounds(const Vec3& cameraPos, const QuadtreeNode& node)
+{
+	const Terrain* terrain = node.data.terrain;
+	if (!terrain) return length(cameraPos - Vec3(0.5f, 0.5f, 0.0f));
+
+	const Double heightRange = terrain->getUpperLimit() - terrain->getLowerLimit();
+	const Double chunkScale  = pow(2.0, 64 - node.id.level);
+	Float        heightScale = 0.0f;
+
+	if (chunkScale > 0.0) heightScale = static_cast<Float>(heightRange / chunkScale);
+	if (heightScale < 0.0f) heightScale = 0.0f;
+
+	const Vec3 minBounds(0.0f, 0.0f, 0.0f);
+	const Vec3 maxBounds(1.0f, 1.0f, heightScale);
+
+	const Vec3 closestPoint = glm::clamp(cameraPos, minBounds, maxBounds);
+
+	return length(cameraPos - closestPoint);
+}
+} // namespace
+
 void PlanetRenderSystem::create(const PlanetSystem& planetSystem)
 {
+	for (auto& level : nodes) level.clear();
+	for (auto& count : nodeCounts) count = 0;
+	needsSubDiv = nullptr;
+
+	nodes[0].emplace_back();
 	createNode(nodes[0][0], *planetSystem.quadtreeSystem.root);
-	nodeCounts[0] = 1;
 }
 
 void PlanetRenderSystem::destroy(Renderer& renderer)
@@ -26,29 +54,6 @@ void PlanetRenderSystem::update(Renderer& renderer, const PlanetSystemPlayer& pl
 	}
 	for (auto& level : nodes) for (auto& renderData : level) updateNode(renderData, renderer, player);
 }
-
-//void PlanetRenderSystem::renderAllLevels(PlanetSystem& planetSystem, Renderer& renderer, const PlanetSystemPlayer& player, const Framebuffer& framebuffer)
-//{
-//	renderer.uniforms().setMMatrix(Matrix(1));
-//	player.camera.renderOnlyRot(renderer);
-//	renderer.setDepthTest(true);
-//
-//	for (UShort level = 0; level < MAX_CHUNK_LEVEL; level++)
-//	{
-//		framebuffer.clearDepth();
-//		if (vertexColors)
-//		{
-//			renderer.shaderSystem.use("mooncrashVertexColor");
-//		}
-//		else
-//		{
-//			renderer.shaderSystem.use("terrain");
-//		}
-//		renderer.textureSystem.use(renderer, "terrainColor");
-//		// [TODO] probably needs checks for subdivision
-//		for (auto& node : nodes[level]) renderNode(node, renderer);
-//	}
-//}
 
 void PlanetRenderSystem::renderLevel(Renderer& renderer, const PlanetSystemPlayer& player, const UShort level, const Framebuffer& framebuffer)
 {
@@ -78,16 +83,20 @@ void PlanetRenderSystem::count() const
 Index PlanetRenderSystem::addNode(QuadtreeNode& node)
 {
 	const UShort level = node.id.level;
-	for (Int i = 0; i < MAX_RENDER_CHUNKS; i++)
+	auto& levelNodes = nodes[level];
+
+	for (Index i = 0; i < levelNodes.size(); i++)
 	{
-		if (!nodes[level][i].isValid)
+		if (!levelNodes[i].isValid)
 		{
-			createNode(nodes[level][i], node);
+			createNode(levelNodes[i], node);
 			return i;
 		}
 	}
-	logError("MAX_RENDER_CHUNKS too small!");
-	return -1;
+
+	levelNodes.emplace_back();
+	createNode(levelNodes.back(), node);
+	return static_cast<Index>(levelNodes.size() - 1);
 }
 
 void PlanetRenderSystem::subdivideNode(QuadtreeNodeRenderData& renderData)
@@ -129,7 +138,7 @@ void PlanetRenderSystem::updateNode(QuadtreeNodeRenderData& renderData, Renderer
 	// get camera relative position
 	renderData.cameraPosition = relativeCameraPosition(tmp, player.chunkPosition, player.camera.getPosition());
 
-	renderData.nodeDrawDistance = length(renderData.cameraPosition - Vec3(0.5, 0.5, 0));
+	renderData.nodeDrawDistance = distanceToChunkBounds(renderData.cameraPosition, eq);
 	const Bool inDrawDistance   = renderData.nodeDrawDistance < drawDistance;
 	//Bool       notCulled        = dot(normalize(Vec3(0.5, 0.5, 0) - renderData.cameraPosition), player.camera.getForwardVector()) > 0.1 || renderData.nodeDrawDistance < 1.5;
 
@@ -187,6 +196,27 @@ void PlanetRenderSystem::renderNode(QuadtreeNodeRenderData& renderData, Renderer
 	renderer.uniforms().setMMatrix(m);
 	renderer.uniforms().setWorldOffset(Vec4(node.id.position.x, node.id.position.y, node.data.terrain->getLowerLimit() / static_cast<LDouble>(ULLONG_MAX), level));
 
+	const Name terrainShaderName = vertexColors ? Name("mooncrashVertexColor") : Name("terrain");
+
+	const auto renderChunk = [&](const Vec3 cameraPosition)
+	{
+		renderer.uniforms().setCameraPos(Vec4(cameraPosition, 1));
+		renderData.terrainMesh.render(renderer);
+
+		if (chunkBoundingBoxes)
+		{
+			// Build a model matrix that keeps the box aligned to the chunk and offset relative to the camera.
+			Matrix boundingBoxMatrix = m;
+			boundingBoxMatrix[3]     = Vec4(-cameraPosition, 1);
+
+			renderer.uniforms().setMMatrix(boundingBoxMatrix);
+			renderer.shaderSystem.use(renderer, "debug");
+			renderer.primitivesRenderer.wireframeCube(renderer);
+			renderer.shaderSystem.use(renderer, terrainShaderName);
+			renderer.uniforms().setMMatrix(m);
+		}
+	};
+
 	if (level < 4)
 	{
 		// for the higher level chunks we duplicated them 
@@ -194,15 +224,14 @@ void PlanetRenderSystem::renderNode(QuadtreeNodeRenderData& renderData, Renderer
 		{
 			for (Int y = -1; y < 2; y++)
 			{
-				renderer.uniforms().setCameraPos(Vec4(renderData.cameraPosition - Vec3(x * pow(2, level), y * pow(2, level), 0), 1));
-				renderData.terrainMesh.render(renderer);
+				const Vec3 cameraPosition = renderData.cameraPosition - Vec3(x * pow(2, level), y * pow(2, level), 0);
+				renderChunk(cameraPosition);
 			}
 		}
 	}
 	else
 	{
-		renderer.uniforms().setCameraPos(Vec4(renderData.cameraPosition, 1));
-		renderData.terrainMesh.render(renderer);
+		renderChunk(renderData.cameraPosition);
 	}
 }
 

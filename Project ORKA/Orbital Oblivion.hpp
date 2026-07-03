@@ -35,7 +35,7 @@ struct OrbitalOblivionPlayer final : DebugPlayer
 		Vec3 movementVector = Vec3(0);
 
 		//process input
-		if (window.capturing) camera.rotate(window.mouseDelta * DVec2(mouseSensitivity));
+		if (ui.capturing) camera.rotate(window.mouseDelta * DVec2(mouseSensitivity));
 		if (window.pressed(forward)) movementVector += camera.getForwardVector();
 		if (window.pressed(backward)) movementVector -= camera.getForwardVector();
 		if (window.pressed(right)) movementVector += camera.getRightVector();
@@ -54,7 +54,7 @@ struct OrbitalOblivionPlayer final : DebugPlayer
 		}
 	}
 
-	void inputEvent(Window& window, InputEvent input)
+	void inputEvent(Window& window, InputEvent& input)
 	{
 		if (input == faster) speedExponent++;
 		if (input == slower) speedExponent--;
@@ -229,10 +229,10 @@ struct OrbitalOblivionRenderer final : GameRenderer
 		this->sim = dynamic_cast<OrbitalOblivionSimulation*>(&simulation);
 	}
 
-	void inputEvent(Window& window, InputEvent input) override
+	void inputEvent(Window& window, InputEvent& input) override
 	{
-		if (input == enter) window.captureCursor();
-		if (input == exit) window.releaseCursor();
+		if (input == enter) ui.capture(*this);
+		if (input == exit) ui.releaseCapture();
 		if (input == toggleWireframe) window.renderer.wireframeMode = !window.renderer.wireframeMode;
 		if (input == toggleBloom) bloom = !bloom;
 		if (input == pause)

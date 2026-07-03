@@ -58,7 +58,7 @@ struct DNDRenderer final : GameRenderer
 	void update(Window& window) override;
 	void destroy(Window& window) override;
 	void connect(GameSimulation& simulation) override;
-	void inputEvent(Window& window, InputEvent input) override;
+	void inputEvent(Window& window, InputEvent& input) override;
 	void create(Window& window) override;
 	void renderScene(Window& window) override;
 	void renderInteractive(Window& window) override;

@@ -4,59 +4,63 @@
 UIButton::UIButton() = default;
 
 void UIButton::doThis()
-{
-	beep();
-}
+{}
 
 void UIButton::destroy(Window& window) {}
-
-void UIButton::update(Window& window)
-{
-	if (content) content->update(window);
-}
 
 UIButton& UIButton::insert(UIElement& element)
 {
 	content = &element;
+	addElement(element);
 	return *this;
 }
 
 void UIButton::create(Window& window) {}
 
-void UIButton::inputEvent(Window& window, const InputEvent input)
+void UIButton::inputEvent(Window& window, InputEvent& input)
 {
-	if (input == InputEvent(InputType::Mouse, 0, true)) pressed = window.renderer.objectId == getId();
+	if (input == InputEvent(InputType::Mouse, 0, true))
+	{
+		const Bool inside = hovered || isPointInside(window, window.mousePosBotLeft);
+		pressed          = inside;
+		if (pressed) input.consume();
+	}
 	if (input == InputEvent(InputType::Mouse, 0, false))
 	{
-		if (pressed)
+		const Bool inside = hovered || isPointInside(window, window.mousePosBotLeft);
+		if (pressed && inside)
 		{
-			pressed = false;
 			doThis();
+			input.consume();
 		}
+		pressed = false;
 	}
-
-	if (content) content->inputEvent(window, input);
 }
 
-void UIButton::render(Window& window)
-{
-	Renderer& renderer = window.renderer;
-	const IVec2 renderPos = getPosition() + IVec2(0, window.getHeight());
-
-	renderer.useShader("color");
-	if (pressed) renderer.uniforms().setCustomColor(Color(1, 1, 0, 1));
-	else
-	{
-		if (const UInt objectId = renderer.objectId; objectId == getId()) renderer.uniforms().setCustomColor(Color(1));
-		else renderer.uniforms().setCustomColor(Color(0.1, 0.1, 0.1, 1));
-	}
-
-	renderer.screenSpaceFromBottomLeft();
-	renderer.uniforms().setMMatrix(matrixFromPositionAndSize(renderPos, getSize()));
-	renderer.rectangle();
-
-	if (content) content->render(window);
-}
+//void UIButton::render(Window& window)
+//{
+//	Renderer& renderer = window.renderer;
+//	const IVec2 renderPos  = getPosition() + IVec2(0, window.getHeight());
+//	const IVec2 renderSize = getSize();
+//	const Bool  hoveredNow = hovered || isPointInside(window, window.mousePosBotLeft);
+//
+//	renderer.useShader("color");
+//	if (pressed) renderer.uniforms().setCustomColor(Color(1, 1, 0, 1));
+//	else if (hasHover && hoveredNow) renderer.uniforms().setCustomColor(getHoverColor());
+//	else if (const UInt objectId = renderer.objectId; objectId == getId()) renderer.uniforms().setCustomColor(Color(1));
+//	else renderer.uniforms().setCustomColor(Color(0.1, 0.1, 0.1, 1));
+//
+//	renderer.screenSpaceFromBottomLeft();
+//	renderer.uniforms().setMMatrix(matrixFromPositionAndSize(renderPos, renderSize));
+//	renderer.rectangle();
+//
+//	renderBorder(renderer, renderPos, renderSize, [&](const IVec2& pos, const IVec2& size) {
+//		renderer.uniforms().setMMatrix(matrixFromPositionAndSize(pos, size));
+//		renderer.rectangle();
+//	});
+//
+//	if (content) content->render(window);
+//}
 
 void UIButton::renderInteractive(Window& window)
 {
@@ -66,4 +70,15 @@ void UIButton::renderInteractive(Window& window)
 	window.renderer.uniforms().setObjectId(getId());
 	window.renderer.uniforms().setMMatrix(matrixFromPositionAndSize(renderPos, getSize()));
 	window.renderer.renderMesh("plane");
+}
+
+void UIButton::onMouseEnter(Window& /*window*/)
+{
+	hovered = true;
+}
+
+void UIButton::onMouseLeave(Window& /*window*/)
+{
+	hovered = false;
+	pressed = false;
 }

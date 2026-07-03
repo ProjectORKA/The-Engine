@@ -58,7 +58,7 @@ void PhysicsPlayGroundRenderer::create(Window& window)
 	GameRenderer::create(window);
 }
 
-void PhysicsPlayGroundRenderer::inputEvent(Window& window, const InputEvent input)
+void PhysicsPlayGroundRenderer::inputEvent(Window& window, InputEvent& input)
 {
 	if(input == pause) sim->paused = !sim->paused;
 }

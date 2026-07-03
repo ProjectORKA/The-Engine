@@ -12,5 +12,5 @@ struct Prototype
 	virtual      ~Prototype() = default;
 	virtual void create(Renderer& r) = 0;
 	virtual void render(Renderer& r, const Player& player) = 0;
-	virtual void inputEvent(Window& window, InputEvent input) = 0;
+	virtual void inputEvent(Window& window, InputEvent& input) = 0;
 };

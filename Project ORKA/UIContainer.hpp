@@ -14,7 +14,7 @@
 ////	void destroy(Window& window) override;
 ////	void render(Window& window) override;
 ////	void renderInteractive(Window& window) override;
-////	void inputEvent(Window& window, InputEvent input) override;
+////	void inputEvent(Window& window, InputEvent& input) override;
 ////
 ////private:
 ////	Vector<UIElement*> contents;

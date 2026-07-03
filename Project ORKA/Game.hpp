@@ -29,6 +29,7 @@ struct GameRenderer : UIElement
 {
 	Framebuffer framebuffer;
 	Bool        framebufferInitialized = false;
+	Bool        renderToFramebuffer    = true;
 
 	void create(Window& window) override;
 	void render(Window& window) override;

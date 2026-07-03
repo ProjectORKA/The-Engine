@@ -29,11 +29,11 @@ void MindMapperSim::create()
 	for(Int i = 0; i < nodeCount; i++) system.addNode();
 }
 
-void MindMapperRenderer::inputEvent(Window& window, const InputEvent input)
+void MindMapperRenderer::inputEvent(Window& window, InputEvent& input)
 {
 	if(input == growToggle) grow = !grow;
-	if(input == exit) window.releaseCursor();
-	if(input == enter) window.captureCursor();
+	if(input == enter) ui.capture(*this);
+	if(input == exit) ui.releaseCapture();
 	player.inputEvent(window, input);
 }
 

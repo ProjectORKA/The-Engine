@@ -213,11 +213,11 @@ void SimpleRtsRenderer::renderScene(Window& window)
 	mutex.unlock();
 }
 
-void SimpleRtsRenderer::inputEvent(Window& window, const InputEvent input)
+void SimpleRtsRenderer::inputEvent(Window& window, InputEvent& input)
 {
-	if (input == enter) window.captureCursor();
+	if (input == enter) ui.capture(*this);
 	if (input == pause) sim->paused = !sim->paused;
-	if (input == exit) window.releaseCursor();
+	if (input == exit) ui.releaseCapture();
 	if (input == toggleWireframe) wireframeMode = !wireframeMode;
 	if (input == reset) sim->reset();
 	player.inputEvent(window, input);

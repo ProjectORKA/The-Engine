@@ -25,7 +25,7 @@ struct SnakeSnake
 
 	void addSegment();
 	void dumbAI(const SnakeFood& f);
-	void inputEvent(Window& window, InputEvent input);
+	void inputEvent(Window& window, InputEvent& input);
 	void update(SnakeFood& snakefood, Float deltaTime);
 	void render(Window& window);
 };
@@ -49,7 +49,7 @@ struct SnakeRenderer final : GameRenderer
 	void update(Window& window) override;
 	void destroy(Window& window) override;
 	void connect(GameSimulation& simulation) override;
-	void inputEvent(Window& window, InputEvent input) override;
+	void inputEvent(Window& window, InputEvent& input) override;
 	void create(Window& window) override;
 	void renderScene(Window& window) override;
 	void renderInteractive(Window& window) override;

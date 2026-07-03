@@ -501,7 +501,7 @@ void SortrRenderer::renderInteractive(Window& window)
 
 	r.idFramebuffer.bindRead(r);
 	IVec4 idData;
-	if (window.capturing) idData = r.idFramebuffer.readPixelsAtCenterUIntRGB(r, FramebufferMode::Color0);
+	if (ui.capturing) idData = r.idFramebuffer.readPixelsAtCenterUIntRGB(r, FramebufferMode::Color0);
 	else idData                  = r.idFramebuffer.readPixelsUIntRGB(r, static_cast<Int>(window.mousePosBotLeft.x), static_cast<Int>(window.mousePosBotLeft.y), FramebufferMode::Color0);
 	r.objectId    = idData.x;
 	r.instanceId  = idData.y;
@@ -519,7 +519,7 @@ Vector<Index> SortrRenderer::indicesOfImagesSortedByPriority() const
 	return indices;
 }
 
-void SortrRenderer::inputEvent(Window& window, const InputEvent input)
+void SortrRenderer::inputEvent(Window& window, InputEvent& input)
 {
 	lastButtonInput = now();
 

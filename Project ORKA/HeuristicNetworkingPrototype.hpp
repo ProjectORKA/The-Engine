@@ -106,5 +106,5 @@ struct HeuristicNetworkingPrototype final : Prototype
 		r.lines(lines);
 	}
 
-	void inputEvent(Window& window, InputEvent input) override {}
+	void inputEvent(Window& window, InputEvent& input) override {}
 };

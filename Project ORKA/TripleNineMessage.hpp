@@ -11,7 +11,7 @@ enum class TripleNineClientToServerMessages : Byte
 	WantsToConnect,
 	WantsToDisconnect,
 	ReturnPing,
-	//SendPlayerData,
+	SendPlayerData,
 };
 
 enum class TripleNineServerToClientMessages : Byte
@@ -21,7 +21,7 @@ enum class TripleNineServerToClientMessages : Byte
 	ConfirmConnection, //send back id
 	BroadcastDisconnectClient,
 	RequestPing,
-	//BroadcastPlayerData,
+	BroadcastPlayerData,
 };
 
 union TripleNineEventID
@@ -53,11 +53,24 @@ struct ServerInfoData
 	//[TODO] player count
 };
 
+struct PlayerStateData
+{
+	ClientID clientID;
+	Token    clientToken;
+	Float    positionX;
+	Float    positionY;
+	Float    positionZ;
+	Float    rotationX;
+	Float    rotationY;
+	Float    rotationZ;
+};
+
 union MessageData
 {
 	PingEventData           pingEventData;
 	DisconnectClientData    disconnectClientData;
 	ConnectionConfirmedData connectionConfirmedData;
+	PlayerStateData         playerStateData;
 };
 
 struct TripleNineMessage

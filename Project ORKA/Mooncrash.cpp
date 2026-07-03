@@ -29,7 +29,7 @@ void MoonCrashPlayer::update(Window& window)
 	auto movementVector = Vec3(0);
 
 	// process input
-	if (window.capturing) camera.rotate(window.mouseDelta * DVec2(mouseSensitivity));
+	if (ui.capturing) camera.rotate(window.mouseDelta * DVec2(mouseSensitivity));
 	if (window.pressed(forward)) movementVector += camera.getForwardVector();
 	if (window.pressed(backward)) movementVector -= camera.getForwardVector();
 	if (window.pressed(right)) movementVector += camera.getRightVector();
@@ -139,20 +139,21 @@ void MoonCrashSimulation::create()
 	loaded = true;
 }
 
-void MoonCrashRenderer::inputEvent(Window& window, const InputEvent input)
+void MoonCrashRenderer::inputEvent(Window& window, InputEvent& input)
 {
 	if (input == wireFrameToggle) window.renderer.wireframeMode = !window.renderer.wireframeMode;
 	if (input == countNodesButton) planetRenderSystem.count();
 	if (input == worldDistortion) planetRenderSystem.worldDistortion = !planetRenderSystem.worldDistortion;
 	if (input == vertexColorToggle) planetRenderSystem.vertexColors = !planetRenderSystem.vertexColors;
+	if (input == chunkBoundsToggle) planetRenderSystem.chunkBoundingBoxes = !planetRenderSystem.chunkBoundingBoxes;
 	if (input == rebuildShaders)
 	{
 		window.renderer.mutex.lock();
 		window.renderer.shaderSystem.rebuild(window.renderer);
 		window.renderer.mutex.unlock();
 	}
-	if (input == enter) window.captureCursor();
-	if (input == exit) window.releaseCursor();
+	if (input == enter) ui.capture(*this);
+	if (input == exit) ui.releaseCapture();
 
 	player.inputEvent(window, input);
 }

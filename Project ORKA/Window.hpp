@@ -20,7 +20,7 @@ enum class WindowState : Byte
 
 enum class WindowDecoration : Byte
 {
-	Decorated   = 1,
+	Decorated = 1,
 	Undecorated = 0,
 };
 
@@ -32,29 +32,32 @@ struct Window final : UIElement
 	Vector<Path> droppedFilePaths;
 	UShort       id = 0;
 
-	ApiWindow   apiWindow        = nullptr;
+	ApiWindow   apiWindow = nullptr;
 	IVec2       storedWindowedModeSize = IVec2(1);
-	IVec2       windowPosition   = IVec2(0);
-	WindowState windowState      = WindowState::Windowed;
+	IVec2       windowPosition = IVec2(0);
+	WindowState windowState = WindowState::Windowed;
 	//mouse
-	DVec2 mousePos        = DVec2(0);
-	DVec2 mouseDelta      = DVec2(0);
+	DVec2 mousePos = DVec2(0);
+	DVec2 mouseDelta = DVec2(0);
 	DVec2 mousePosBotLeft = DVec2(0);
 	//input
-	InputId    altKey         = InputId(InputType::KeyBoard, Alt);
-	InputEvent reloadShaders  = InputEvent(InputType::KeyBoard, F7, true);
+	UIElement* hoveredElement = nullptr;
+	UIElement* mouseCaptureOwner = nullptr;
+	InputId    altKey = InputId(InputType::KeyBoard, Alt);
+	InputEvent reloadShaders = InputEvent(InputType::KeyBoard, F7, true);
 	InputEvent startProfiling = InputEvent(InputType::KeyBoard, F8, true);
-	InputEvent stopProfiling  = InputEvent(InputType::KeyBoard, F8, false);
-	InputEvent openGLLogging  = InputEvent(InputType::KeyBoard, F9, true);
-	InputEvent escape         = InputEvent(InputType::KeyBoard, Esc, true);
-	InputEvent enter          = InputEvent(InputType::KeyBoard, Enter, true);
+	InputEvent stopProfiling = InputEvent(InputType::KeyBoard, F8, false);
+	InputEvent openGLLogging = InputEvent(InputType::KeyBoard, F9, true);
+	InputEvent escape = InputEvent(InputType::KeyBoard, Esc, true);
+	InputEvent enter = InputEvent(InputType::KeyBoard, Enter, true);
 
-	Bool         isVisible            = true;
-	Bool         decorated            = true;
-	Bool         keepRunning          = true;
-	Bool         capturing            = false;
-	Bool         profiling            = false;
+	Bool isVisible = true;
+	Bool decorated = true;
+	Bool profiling = false;
+	Bool keepRunning = true;
+	Bool apiWindowValid = false;
 	Bool openGLLoggingEnabled = false;
+	Color backgroundColor = Color(0.0, 0.0, 0.0, 1.0);
 
 	void destroy();
 	void setWindowed();
@@ -62,9 +65,7 @@ struct Window final : UIElement
 	void centerWindow();
 	void setMinimized();
 	void setFullscreen();
-	void captureCursor();
 	void decorateWindow();
-	void releaseCursor();
 	void unDecorateWindow();
 	void updateWindowState();
 	void updateDecorations();
@@ -76,8 +77,8 @@ struct Window final : UIElement
 	void setIcon(const Path& path) const;
 	void resize(Int width, Int height) const;
 	void setTitle(const String& string) const;
-	void createApiWindow(const String& title, IVec2 size);
-	void create(const String& title, IVec2 size, Bool decorated, Bool visible, WindowState state);
+	void createApiWindow(const String& title, IVec2 size, ApiWindow sharedContextWindow = nullptr);
+	Bool create(const String& title, IVec2 size, Bool decorated, Bool visible, WindowState state, ApiWindow sharedContextWindow = nullptr);
 
 	[[nodiscard]] Bool  hasContent() const;
 	[[nodiscard]] Bool  shouldClose() const;
@@ -85,8 +86,11 @@ struct Window final : UIElement
 	[[nodiscard]] Bool  isFullScreen() const;
 	[[nodiscard]] IVec2 getFrameSize() const;
 	[[nodiscard]] IVec2 getContentSize() const;
+	[[nodiscard]] Color getBackgroundColor() const;
 	[[nodiscard]] Bool  isKeyPressed(Int key) const;
 	[[nodiscard]] Bool  pressed(InputId input) const;
+	UIElement* pickElementAt(const DVec2& point);
+	Bool                routeInput(InputEvent& input);
 };
 
 void windowThread(Window& window);

@@ -14,7 +14,7 @@ void Renderer::end(Window& window)
 	setRenderRegion(TiledRectangle(window.getContentSize()));
 	drawToWindow();
 	pollGraphicsApiError();
-	OpenGL::apiFinish(openGlContext);
+	if constexpr (openglStateTracking) OpenGL::apiFinish(openGlContext);
 	
 	// Disable OpenGL logging if it was enabled for this frame
 	if (window.openGLLoggingEnabled)
@@ -46,7 +46,7 @@ void Renderer::create()
 {
 	OpenGL::apiInit(openGlContext);
 
-	OpenGL::apiSetDebugging(openGlContext, true);
+	OpenGL::apiSetDebugging(openGlContext, debugLoggingIsEnabled);
 
 	if (printDeviceInfo) openGlContext.printOpenGLInfo();
 
@@ -151,7 +151,7 @@ void Renderer::normalizedSpace()
 
 Bool Renderer::getCulling() const
 {
-	return openGlContext.culling;
+	return openGlContext.getCulling();
 }
 
 Float Renderer::deltaTime() const
@@ -371,7 +371,7 @@ void Renderer::clearBackground(const Color color)
 
 void Renderer::setAlphaBlending(const Bool blending)
 {
-	if (openGlContext.blending != blending)
+	if (openGlContext.getBlending() != blending)
 	{
 		if (blending)
 		{
@@ -385,7 +385,7 @@ void Renderer::setAlphaBlending(const Bool blending)
 
 void Renderer::setDepthTest(const Bool isUsingDepth)
 {
-	if (openGlContext.depthTest != isUsingDepth){
+	if (openGlContext.getDepthTest() != isUsingDepth){
 		OpenGL::apiSetDepthTest(openGlContext, isUsingDepth);
 	}
 }
@@ -410,7 +410,7 @@ void Renderer::wireframeCubeCentered(const Float size)
 
 void Renderer::setWireframeMode(const Bool wireframeMode)
 {
-	if(openGlContext.wireframeMode != wireframeMode){
+	if(openGlContext.getWireframeMode() != wireframeMode){
 		if (wireframeMode) OpenGL::apiPolygonMode(openGlContext, GL_FRONT_AND_BACK, GL_LINE);
 		else OpenGL::apiPolygonMode(openGlContext, GL_FRONT_AND_BACK, GL_FILL);
 	}

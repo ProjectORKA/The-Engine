@@ -72,11 +72,11 @@ void DNDSimulation::create()
 	}
 }
 
-void DNDRenderer::inputEvent(Window& window, const InputEvent input)
+void DNDRenderer::inputEvent(Window& window, InputEvent& input)
 {
-	if (input == enter) window.captureCursor();
-	if (input == exit) window.releaseCursor();
-	if (input == select && window.capturing)
+	if (input == enter) ui.capture(*this);
+	if (input == exit) ui.releaseCapture();
+	if (input == select && ui.capturing)
 	{
 		const Index objectId = window.renderer.objectId;
 

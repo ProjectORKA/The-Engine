@@ -88,7 +88,7 @@ void PongPlayer::ballPositionInput(Vector<Ball>& balls)
 	}
 }
 
-void PongRenderer::inputEvent(Window& window, InputEvent input) {}
+void PongRenderer::inputEvent(Window& window, InputEvent& input) {}
 
 void PongPlayer::mouseInput(const DVec2 cursorWorldPosition)
 {

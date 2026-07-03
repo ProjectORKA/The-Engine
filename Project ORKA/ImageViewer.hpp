@@ -67,7 +67,7 @@ struct ImageViewerRenderer final : GameRenderer
 	void connect(GameSimulation& simulation) override;
 	void renderAllImages(Window& window, TiledRectangle area);
 	void renderScene(Window& window) override;
-	void inputEvent(Window& window, InputEvent input) override;
+	void inputEvent(Window& window, InputEvent& input) override;
 	void renderInteractive(Window& window) override;
 };
 

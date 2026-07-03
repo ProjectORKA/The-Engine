@@ -2,20 +2,74 @@
 #include "FileSystem.hpp"
 #include "ResourceManager.hpp"
 #include "OptickProfiling.hpp"
+#include "UserInterface.hpp"
+#include <iostream>
 
 static UShort nextWindowId = 0;
+
+static Vector<UIElement*> buildElementPath(UIElement* element)
+{
+	Vector<UIElement*> path;
+	for (UIElement* current = element; current != nullptr; current = current->parent) path.push_back(current);
+	return path;
+}
+
+static Bool pathContains(const Vector<UIElement*>& path, UIElement* element)
+{
+	for (UIElement* node : path)
+	{
+		if (node == element) return true;
+	}
+	return false;
+}
+
+static void updateHoverTarget(Window& window, UIElement* newTarget)
+{
+	UIElement* previous = window.hoveredElement;
+	if (previous == newTarget) return;
+
+	Vector<UIElement*> previousPath = buildElementPath(previous);
+	Vector<UIElement*> newPath      = buildElementPath(newTarget);
+
+	for (UIElement* element : previousPath)
+	{
+		if (!pathContains(newPath, element))
+		{
+			logDebug("Mouse left " + element->getDebugName());
+			element->setHovered(false);
+			element->onMouseLeave(window);
+		}
+	}
+
+	for (auto it = newPath.rbegin(); it != newPath.rend(); ++it)
+	{
+		UIElement* element = *it;
+		if (!pathContains(previousPath, element))
+		{
+			logDebug("Mouse entered " + element->getDebugName());
+			element->setHovered(true);
+			element->onMouseEnter(window);
+		}
+	}
+
+	const String targetName = newTarget ? newTarget->getDebugName() : "null";
+	logDebug("Mouse is now hovering over " + targetName);
+
+	window.hoveredElement = newTarget;
+}
 
 void Window::destroy()
 {
 	keepRunning = false;
-	thread.join();
+	if (thread.joinable()) thread.join();
 
-	releaseCursor();
+	ui.releaseCapture();
 	if (apiWindow)
 	{
 		glfwDestroyWindow(apiWindow);
 		apiWindow = nullptr;
 	}
+	apiWindowValid = false;
 	if (debugWindowIsEnabled) logDebug("API Window destroyed!");
 }
 
@@ -45,16 +99,6 @@ void Window::setMinimized()
 	windowState = WindowState::Minimized;
 }
 
-void Window::captureCursor()
-{
-	if (!capturing)
-	{
-		mousePos = apiWindowGetCursorPosition(apiWindow);
-		apiWindowDisableCursor(apiWindow);
-		capturing = true;
-	}
-}
-
 void Window::setFullscreen()
 {
 	glfwSetWindowMonitor(apiWindow, External::glfwGetPrimaryMonitor(), 0, 0, glfwGetVideoMode(External::glfwGetPrimaryMonitor())->width, External::glfwGetVideoMode(External::glfwGetPrimaryMonitor())->height, GLFW_DONT_CARE);
@@ -65,16 +109,6 @@ void Window::decorateWindow()
 {
 	apiWindowDecorate(apiWindow);
 	decorated = true;
-}
-
-void Window::releaseCursor()
-{
-	if (capturing)
-	{
-		apiWindowEnableCursor(apiWindow);
-		apiWindowSetCursorPosition(apiWindow, mousePos);
-		capturing = false;
-	}
 }
 
 void Window::unDecorateWindow()
@@ -106,6 +140,7 @@ void Window::updateDecorations()
 
 Bool Window::shouldClose() const
 {
+	if (!apiWindow) return true;
 	return glfwWindowShouldClose(apiWindow);
 }
 
@@ -157,6 +192,9 @@ void windowThread(Window& window)
 			window.setHeight(windowSize.y);
 
 			renderer.begin(window.getSize());
+			renderer.clearBackground(window.getBackgroundColor());
+			renderer.setAlphaBlending(true);
+
 
 			// UI calculations
 			window.updateSizes();
@@ -226,7 +264,7 @@ void Window::initializeGraphicsApi() const
 {
 	glfwMakeContextCurrent(apiWindow);
 
-	External::glfwSwapInterval(0);
+	External::glfwSwapInterval(settings.vsyncEnabled ? 1 : 0);
 }
 
 void Window::setVisible(const Bool visible)
@@ -273,6 +311,53 @@ Bool Window::pressed(const InputId input) const
 	return false;
 }
 
+UIElement* Window::pickElementAt(const DVec2& point)
+{
+	return findDeepestAt(*this, point);
+}
+
+Bool Window::routeInput(InputEvent& input)
+{
+	// Global capture: route all input directly to the capturing element chain.
+	if (ui.capturing)
+	{
+		if (ui.focusedElement)
+		{
+			
+		for (UIElement* element = ui.focusedElement; element != nullptr; element = element->parent)
+		{
+			element->inputEvent(*this, input);
+			if (input.isConsumed()) return true;
+		}
+		return input.isConsumed();
+		}
+		logError("Capturing without focused element!");
+		return false;
+	}
+
+	// mouse down updates focus
+	if (input.id.type == InputType::Mouse && input.state)
+	{
+		UIElement* clicked = pickElementAt(mousePosBotLeft);
+		ui.focus(*this, clicked ? clicked : this);
+	}
+
+	UIElement* target = nullptr;
+	if (input.id.type == InputType::Mouse || input.id.type == InputType::Scroll) target = pickElementAt(mousePosBotLeft);
+	if (!target && ui.focusedWindow == this && ui.focusedElement) target = ui.focusedElement;
+	if (!target && ui.focusedElement) target = ui.focusedElement;
+	if (!target && !children.empty()) target = children.back();
+	if (!target) target = this;
+
+	for (UIElement* element = target; element != nullptr; element = element->parent)
+	{
+		element->inputEvent(*this, input);
+		if (input.isConsumed()) return true;
+	}
+
+	return false;
+}
+
 void Window::setTitle(const String& string) const
 {
 	glfwSetWindowTitle(apiWindow, string.c_str());
@@ -288,7 +373,7 @@ void Window::resize(const Int width, const Int height) const
 	apiWindowResize(apiWindow, width, height);
 }
 
-void Window::createApiWindow(const String& title, const IVec2 size)
+void Window::createApiWindow(const String& title, const IVec2 size, const ApiWindow sharedContextWindow)
 {
 	if (!apiWindow)
 	{
@@ -297,6 +382,7 @@ void Window::createApiWindow(const String& title, const IVec2 size)
 		External::glfwWindowHint(GLFW_RED_BITS, videoMode->redBits);
 		External::glfwWindowHint(GLFW_GREEN_BITS, videoMode->greenBits);
 		External::glfwWindowHint(GLFW_BLUE_BITS, videoMode->blueBits);
+		External::glfwWindowHint(GLFW_ALPHA_BITS, 8);
 		External::glfwWindowHint(GLFW_DEPTH_BITS, 24);
 		External::glfwWindowHint(GLFW_REFRESH_RATE, videoMode->refreshRate);
 		// opengl stuff
@@ -308,7 +394,7 @@ void Window::createApiWindow(const String& title, const IVec2 size)
 		External::glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, true);
 
 		External::glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-		External::glfwWindowHint(GLFW_TRANSPARENT_FRAMEBUFFER, true);
+		External::glfwWindowHint(GLFW_TRANSPARENT_FRAMEBUFFER, settings.transparentFramebufferEnabled ? GLFW_TRUE : GLFW_FALSE);
 		External::glfwWindowHint(GLFW_CENTER_CURSOR, true);
 		External::glfwWindowHint(GLFW_VISIBLE, false);
 		if (!decorated) External::glfwWindowHint(GLFW_DECORATED, false);
@@ -316,7 +402,7 @@ void Window::createApiWindow(const String& title, const IVec2 size)
 
 		if (debugLoggingIsEnabled) External::glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
 
-		apiWindow = apiCreateWindow(size, title.c_str(), nullptr);
+		apiWindow = apiCreateWindow(size, title.c_str(), sharedContextWindow);
 
 		if (!apiWindow) logError("Window could not be created!");
 
@@ -347,6 +433,12 @@ void whenMouseIsMoving(const ApiWindow apiWindow, const Double mouseX, const Dou
 	Window& window         = *static_cast<Window*>(glfwGetWindowUserPointer(apiWindow));
 	window.mousePos        = DVec2(mouseX, mouseY);
 	window.mousePosBotLeft = DVec2(mouseX, window.getHeight() - mouseY);
+
+	// While captured anywhere, ignore hover updates to avoid invisible cursor interactions.
+	if (ui.capturing) return;
+
+	UIElement* newHover = window.pickElementAt(window.mousePosBotLeft);
+	updateHoverTarget(window, newHover);
 }
 
 void whenMouseIsScrolling(const ApiWindow apiWindow, const Double xAxis, const Double yAxis)
@@ -356,8 +448,16 @@ void whenMouseIsScrolling(const ApiWindow apiWindow, const Double xAxis, const D
 	const Int countX = abs(static_cast<Int>(xAxis));
 	const Int countY = abs(static_cast<Int>(yAxis));
 
-	for (Int i = 0; i < countX; i++) window.inputEvent(window, InputEvent(InputType::Scroll, 0, xAxis > 0));
-	for (Int i = 0; i < countY; i++) window.inputEvent(window, InputEvent(InputType::Scroll, 1, yAxis > 0));
+	for (Int i = 0; i < countX; i++)
+	{
+		InputEvent input(InputType::Scroll, 0, xAxis > 0);
+		window.routeInput(input);
+	}
+	for (Int i = 0; i < countY; i++)
+	{
+		InputEvent input(InputType::Scroll, 1, yAxis > 0);
+		window.routeInput(input);
+	}
 }
 
 void whenFilesDroppedOnWindow(const ApiWindow apiWindow, const Int count, const Char** paths)
@@ -369,7 +469,6 @@ void whenFilesDroppedOnWindow(const ApiWindow apiWindow, const Int count, const 
 	{
 		pathVector.emplace_back(paths[i]);
 		logDebug("File dropped: " + pathVector.back().string());
-		pathVector.push_back(paths[i]);
 		if (debugWindowIsEnabled) logDebug("File dropped: " + pathVector.back().string());
 	}
 
@@ -380,7 +479,8 @@ void whenMouseIsPressed(const ApiWindow apiWindow, const Int mouseButton, const 
 {
 	Window& window                 = *static_cast<Window*>(glfwGetWindowUserPointer(apiWindow));
 	window.mouseState[mouseButton] = action > 0;
-	window.inputEvent(window, InputEvent(InputType::Mouse, mouseButton, action));
+	InputEvent input(InputType::Mouse, mouseButton, action);
+	window.routeInput(input);
 }
 
 void whenButtonIsPressed(const ApiWindow apiWindow, const Int key, Int scanCode, const Int action, Int modifiers)
@@ -390,7 +490,10 @@ void whenButtonIsPressed(const ApiWindow apiWindow, const Int key, Int scanCode,
 	if (action == 2) return; // we do not process repeat button presses
 	// [TODO] make sure that "typing events" use them
 
-	const auto input = InputEvent(InputType::KeyBoard, key, action);
+	auto input = InputEvent(InputType::KeyBoard, key, action);
+
+	window.routeInput(input);
+	if (input.isConsumed()) return;
 
 	if (input == window.escape)
 	{
@@ -402,6 +505,8 @@ void whenButtonIsPressed(const ApiWindow apiWindow, const Int key, Int scanCode,
 		if (window.windowState == WindowState::Windowed) window.windowState = WindowState::Fullscreen;
 		else window.windowState                                             = WindowState::Windowed;
 		window.updateWindowState();
+		// Switching monitor mode can reset cursor mode, so restore lock if this window owns capture.
+		if (ui.capturing && ui.focusedWindow == &window) apiWindowDisableCursor(window.apiWindow);
 	}
 	if (input == window.startProfiling)
 	{
@@ -419,20 +524,32 @@ void whenButtonIsPressed(const ApiWindow apiWindow, const Int key, Int scanCode,
 		window.renderer.openGlContext.enableLogging();
 		logDebug("OpenGL logging enabled - capturing all OpenGL calls for this frame");
 	}
-
-	window.inputEvent(window, input);
 }
 
-void Window::create(const String& title, const IVec2 size, const Bool decorated, const Bool visible, const WindowState state)
+Bool Window::create(const String& title, const IVec2 size, const Bool decorated, const Bool visible, const WindowState state, const ApiWindow sharedContextWindow)
 {
-	this->isVisible        = visible;
-	this->decorated        = decorated;
-	this->windowState      = state;
-	this->id               = nextWindowId++;
 	this->storedWindowedModeSize = size;
-	createApiWindow(title, size); // needs to be in this thread
-	setVisible(visible);          // glfw does weird stuff, so we need to force it
+	this->windowState            = state;
+	this->isVisible              = visible;
+	this->decorated              = decorated;
+	this->id                     = nextWindowId++;
+	createApiWindow(title, size, sharedContextWindow); // needs to be in this thread
+	apiWindowValid = apiWindow != nullptr;
+
+	if (!apiWindowValid)
+	{
+		keepRunning = false;
+		return false;
+	}
+
+	setVisible(visible); // glfw does weird stuff, so we need to force it
 	setCallbacks();
 	thread = Thread(windowThread, std::ref(*this));
 	logDebug("Created Window in Main Thread!");
+	return true;
+}
+
+Color Window::getBackgroundColor() const
+{
+	return backgroundColor;
 }

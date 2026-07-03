@@ -1,4 +1,5 @@
 #include "MelonPlayer.hpp"
+#include "UserInterface.hpp"
 #include "Window.hpp"
 
 MelonPlayer::MelonPlayer()
@@ -8,19 +9,19 @@ MelonPlayer::MelonPlayer()
 	camera.setFarClipValue(256.0f);
 
 	trail.resize(1000);
+	for(Vec3& trailPoint : trail) trailPoint = position;
 }
 
 void MelonPlayer::update(Window& window)
 {
 	// mouse input
-	if(window.capturing)
+	if(ui.capturing)
 	{
 		auto delta = Vec3(Vec2(window.mouseDelta) * Vec2(mouseSensitivity), 0);
 		delta *= camera.getPosition().z;
 		velocity = Vec3(0);
 		targetPosition += delta;
 	}
-	else targetPosition = Vec3(window.mousePosBotLeft, 0);
 
 	// get frequently used info
 	const Float delta = window.renderer.deltaTime();
@@ -52,16 +53,28 @@ void MelonPlayer::update(Window& window)
 	const Vec3 cameraDesiredDelta   = cameraTargetPosition - camera.getPosition();
 	camera.setPosition(camera.getPosition() + cameraDesiredDelta * delta * 10.0f);
 
+	for(Int i = static_cast<Int>(trail.size()) - 1; i > 0; --i) trail[i] = trail[i - 1];
 	trail[0] = position;
-
-	for(Int i = static_cast<Int>(trail.size() - 1); i > 1; i--) trail[i] = trail[i - 1];
 }
 
-void MelonPlayer::inputEvent(Window& window, const InputEvent input)
+void MelonPlayer::inputEvent(Window& window, InputEvent& input)
 {
 	if(input == zoomIn) zoomFactor++;
 	if(input == zoomOut) zoomFactor--;
 	zoomFactor = clamp(zoomFactor, -3, 30);
+
+	if(input == teleportForward)
+	{
+		Vec3 forward = direction;
+		if(length(forward) == 0.0f) forward = Vec3(0, 1, 0);
+		forward = normalize(forward);
+
+		const Vec3 teleportDelta = forward * teleportDistance;
+		position += teleportDelta;
+		targetPosition += teleportDelta;
+		lastPosition += teleportDelta;
+		lastPositionAtDistance += teleportDelta;
+	}
 }
 
 void MelonPlayer::render(Window& window)
@@ -79,11 +92,20 @@ void MelonPlayer::render(Window& window)
 	renderer.renderMesh("melonPlayerRolling");
 
 	Vec3Vector lines;
-	for(Int i = 0; i < static_cast<Int>(trail.size()) - 1; i++){
+	lines.reserve((trail.size() - 1) * 2);
+	for(Int i = 0; i < static_cast<Int>(trail.size()) - 1; i++)
+	{
 		lines.emplace_back(trail[i]);
-		lines.emplace_back(trail[i+1]);
+		lines.emplace_back(trail[i + 1]);
 	}
+	renderer.fill(1,0,0);
 	renderer.lines(lines);
 
+	renderer.fill(1);
+	// Smoke quads should render double-sided while still respecting scene depth.
+	renderer.setCulling(false);
+	renderer.setDepthTest(true);
 	smoke.render(renderer);
+	renderer.setDepthTest(true);
+	renderer.setCulling(true);
 }

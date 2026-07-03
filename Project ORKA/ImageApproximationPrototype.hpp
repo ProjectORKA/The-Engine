@@ -18,5 +18,5 @@ struct ImageApproximationPrototype final : Prototype
 
 	void destroy() override;
 	void render(Renderer& r, const Player& player) override;
-	void inputEvent(Window& window, InputEvent input) override;
+	void inputEvent(Window& window, InputEvent& input) override;
 };

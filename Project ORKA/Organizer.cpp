@@ -18,10 +18,10 @@ void OrganizerRenderer::addTask(const Task& task)
 	tasks.push_back(task);
 }
 
-void OrganizerRenderer::inputEvent(Window& window, const InputEvent input)
+void OrganizerRenderer::inputEvent(Window& window, InputEvent& input)
 {
-	if(input == enter) window.captureCursor();
-	if(input == exit) window.releaseCursor();
+	if(input == enter) ui.capture(*this);
+	if(input == exit) ui.releaseCapture();
 	if(input == wireFrameToggle) window.renderer.wireframeMode = !window.renderer.wireframeMode;
 
 	player.inputEvent(window, input);

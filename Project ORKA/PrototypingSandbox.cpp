@@ -16,10 +16,10 @@ void PrototypingRenderer::destroy(Window& window)
 
 void PrototypingRenderer::connect(GameSimulation& simulation) {}
 
-void PrototypingRenderer::inputEvent(Window& window, const InputEvent input)
+void PrototypingRenderer::inputEvent(Window& window, InputEvent& input)
 {
-	if (input == enter) window.captureCursor();
-	if (input == exit) window.releaseCursor();
+	if (input == enter) ui.capture(*this);
+	if (input == exit) ui.releaseCapture();
 	if (input == wireframeToggle) window.renderer.wireframeMode = !window.renderer.wireframeMode;
 	if (input == action) prototype.action();
 	if (input == toggleAction) actionToggle = !actionToggle;

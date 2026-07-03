@@ -12,6 +12,7 @@ struct MelonPlayer final : Player
 	Float          distanceInRadians       = 0;
 	Int            zoomFactor              = 30;
 	Float          mouseSensitivity        = 0.0015f;
+	Float          teleportDistance        = 100.0f;
 	Vec3           position                = Vec3(0);
 	Vec3           targetPosition          = Vec3(0);
 	Vec3           velocity                = Vec3(0);
@@ -24,14 +25,15 @@ struct MelonPlayer final : Player
 	Orientation    orientation             = Orientation(Vec3(0, 1, 0));
 
 	// input
-	InputEvent zoomIn  = InputEvent(InputType::Scroll, 1, false);
-	InputEvent zoomOut = InputEvent(InputType::Scroll, 1, true);
+	InputEvent zoomIn          = InputEvent(InputType::Scroll, 1, false);
+	InputEvent zoomOut         = InputEvent(InputType::Scroll, 1, true);
+	InputEvent teleportForward = InputEvent(InputType::Mouse, Lmb, true);
 
 	//trail
 	Vec3Vector trail;
 
 	MelonPlayer();
 	void update(Window& window) override;
-	void inputEvent(Window& window, InputEvent input) override;
+	void inputEvent(Window& window, InputEvent& input) override;
 	void render(Window& window) override;
 };

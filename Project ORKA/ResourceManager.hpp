@@ -15,6 +15,7 @@ struct ResourceManagerConfig
 struct ResourceManager
 {
 	void create();
+	void destroy();
 	void reloadAllResources();
 	void addResource(const Path& path);
 	void loadResourcesFromFbxFiles() const;

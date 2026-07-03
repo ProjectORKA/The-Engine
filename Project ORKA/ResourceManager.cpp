@@ -49,6 +49,18 @@ void ResourceManager::create()
 	}
 }
 
+void ResourceManager::destroy()
+{
+	if (!initialized) return;
+
+	meshResources.clear();
+	textureResources.clear();
+	vertexShaderResources.clear();
+	fragmentShaderResources.clear();
+
+	initialized = false;
+}
+
 void ResourceManager::reloadAllResources()
 {
 	loadResourcesFromFbxFiles();

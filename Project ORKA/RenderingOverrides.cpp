@@ -19,20 +19,20 @@ WireframeOverride::~WireframeOverride()
 DepthTestOverride::DepthTestOverride(Renderer& renderer, const Bool value)
 {
 	this->renderer = &renderer;
-	stored         = renderer.openGlContext.depthTest;
+	stored         = renderer.openGlContext.getDepthTest();
 	this->renderer->setDepthTest(value);
 }
 
 AlphaBlendOverride::AlphaBlendOverride(Renderer& renderer, const Bool value)
 {
 	this->renderer = &renderer;
-	stored         = renderer.openGlContext.blending;
+	stored         = renderer.openGlContext.getBlending();
 	this->renderer->setAlphaBlending(value);
 }
 
 WireframeOverride::WireframeOverride(Renderer& renderer, const Bool value)
 {
 	this->renderer = &renderer;
-	stored         = renderer.openGlContext.wireframeMode;
+	stored         = renderer.openGlContext.getWireframeMode();
 	this->renderer->setWireframeMode(value);
 }

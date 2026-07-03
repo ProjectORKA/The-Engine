@@ -44,10 +44,10 @@ void SignedDistanceFieldRenderer::renderScene(Window& window)
 
 void SignedDistanceFieldRenderer::renderInteractive(Window& window) {}
 
-void SignedDistanceFieldRenderer::inputEvent(Window& window, const InputEvent input)
+void SignedDistanceFieldRenderer::inputEvent(Window& window, InputEvent& input)
 {
-	if(input == enter) window.captureCursor();
-	if(input == exit) window.releaseCursor();
+	if(input == enter) ui.capture(*this);
+	if(input == exit) ui.releaseCapture();
 	if(input == reloadShaders) window.renderer.shaderSystem.rebuild(window.renderer);
 
 	player.inputEvent(window, input);

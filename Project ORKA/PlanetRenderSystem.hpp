@@ -24,12 +24,13 @@ struct QuadtreeNodeRenderData
 struct PlanetRenderSystem
 {
 	// quadtree
-	QuadtreeNodeRenderData  nodes[MAX_CHUNK_LEVEL][MAX_RENDER_CHUNKS];
+	Deque<QuadtreeNodeRenderData> nodes[MAX_CHUNK_LEVEL];
 	QuadtreeNodeRenderData* needsSubDiv = nullptr;
 	UShort                  nodeCounts[MAX_CHUNK_LEVEL];
 	Bool                    chunkBorders    = true;
 	Bool                    worldDistortion = true;
 	Bool                    vertexColors    = false;
+	Bool                    chunkBoundingBoxes = false;
 
 	void  count() const;
 	void  destroy(Renderer& renderer);

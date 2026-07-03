@@ -2,7 +2,6 @@
 
 #include "Game.hpp"
 #include "Basics.hpp"
-#include "Pong.hpp"
 #include "UIButton.hpp"
 #include "Sandbox.hpp"
 
@@ -25,8 +24,7 @@ struct UISandbox
 	{
 		UIElement a;
 		a.padding(20);
-		a.name("GlobalView");
-		a.background(Color(1, 1, 1, 0.1));
+		a.setName("A");
 		a.row();
 		a.growX(true);
 		a.growY(true);
@@ -34,10 +32,9 @@ struct UISandbox
 		a.setText("A");
 		a.gap(20);
 
-		UIElement b;
+		UIButton b;
 		b.padding(0);
-		b.name("GlobalView");
-		b.background(Color(1, 1, 1, 0.1));
+		b.setName("B");
 		b.row();
 		b.growX(true);
 		b.growY(true);
@@ -46,8 +43,7 @@ struct UISandbox
 
 		UIElement c;
 		c.padding(0);
-		c.name("GlobalView");
-		c.background(Color(1, 1, 1, 0.1));
+		c.setName("C");
 		c.row();
 		c.growX(true);
 		c.growY(true);
@@ -55,53 +51,31 @@ struct UISandbox
 		c.setText("C");
 
 		// Embedded sandbox (3D scene) rendered as a UI element
-		SandboxRenderer sandboxRenderer;
-		sandboxRenderer.padding(20);
-		sandboxRenderer.name("Sandbox");
-		sandboxRenderer.growX(true);
-		sandboxRenderer.growY(true);
+		SandboxRenderer sandbox;
 
-		//UIElement d;
-		//d.padding(20);
-		//d.name("GlobalView");
-		//d.background(Color(1, 1, 1, 0.1));
-		//d.row();
-		//d.growX(true);
-		//d.growY(true);
-		//d.setWidth(200);
-		//d.setHeight(100);
-		//d.setPositionY(-200);
-		//d.setPositionX(300);
-		//d.color(Color(1, 1, 1, 1));
-		//d.setText("D");
+		UIElement d;
+		d.padding(20);
+		d.setName("GlobalView");
+		d.row();
+		d.color(Color(1, 1, 1, 1));
+		d.setText("D");
 
-		//UIElement e;
-		//e.padding(20);
-		//e.name("GlobalView");
-		//e.background(Color(1, 1, 1, 0.1));
-		//e.row();
-		//e.growX(true);
-		//e.growY(true);
-		//e.setWidth(200);
-		//e.setHeight(100);
-		//e.setPositionY(-200);
-		//e.setPositionX(300);
-		//e.color(Color(1, 1, 1, 1));
-		//e.setText("E");
+		UIElement e;
+		e.padding(20);
+		e.setName("GlobalView");
+		e.color(Color(1, 1, 1, 1));
+		e.setText("E");
 
-		//SandboxRenderer f;
-		//f.padding(20);
-		//f.name("GlobalView");
-		//f.background(Color(1, 1, 1, 0.1));
-		//f.row();
-		//f.growX(true);
-		//f.growY(true);
-		//f.setWidth(200);
-		//f.setHeight(200);
-		//f.setPositionY(-200);
-		//f.setPositionX(300);
-		//f.color(Color(1, 1, 1, 1));
-		//f.setText("F");
+		UIElement f;
+		f.padding(20);
+		f.setName("GlobalView");
+		f.color(Color(1, 1, 1, 1));
+		f.setText("F");
+
+		a.addElement(sandbox);
+		a.addElement(d);
+		a.addElement(e);
+		a.addElement(f);
 
 		//PongRenderer g;
 		//g.padding(20);
@@ -132,14 +106,12 @@ struct UISandbox
 		//h.setText("H");
 
 		Window& window = ui.window("ORKA UI Sandbox", settings.defaultWindowWidth, settings.defaultWindowHeight, true, true, WindowState::Windowed);
-		window.name("Window");
-		window.background(Color(0.05, 0.05, 0.05, 1));
+		window.setName("Window");
 		window.addElement(a);
 		window.addElement(b);
-		//window.addElement(c);
-		//window.addElement(sandboxRenderer);
-		window.padding(100);
-		window.gap(0);
+		window.addElement(c);
+		window.padding(5);
+		window.gap(5);
 		window.column();
 		ui.run();
 	}
