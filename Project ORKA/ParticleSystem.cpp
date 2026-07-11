@@ -123,7 +123,7 @@ void ParticleSystem::spawn(const Vec3 loc, const Vec3 vel, const Float visualFor
 	const Float force = max(visualForce, 0.0f);
 
 	spawnPosition[currentId] = loc;
-	spawnVelocity[currentId] = -randomFloatFast(0.2f) * vel + randomUnitVec3Fast() * randomFloatFast(0.01f * force);
+	spawnVelocity[currentId] = -randomFloatFast(-0.01f, 0.2f) * vel + randomUnitVec3Fast() * randomFloatFast(0.01f * force);
 	spawnVelocity[currentId].z = abs(spawnVelocity[currentId].z);
 	maxSize[currentId]         = 0.15f + force * 0.4f * randomFloatFast();
 	maxLifetime[currentId]     = randomFloatFast(0.5f, 1.5f) * (3.0f + powf(force / 10000.0f, 1.5f));

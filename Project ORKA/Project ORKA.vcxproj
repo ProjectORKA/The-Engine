@@ -55,6 +55,8 @@
     <ClInclude Include="KDTreePrototype.hpp" />
     <ClCompile Include="Keva.cpp" />
     <ClCompile Include="LabyrinthGeneratorPrototype.cpp" />
+    <ClCompile Include="MelonAudioLab.cpp" />
+    <ClCompile Include="SoundAnalysisLab.cpp" />
     <ClCompile Include="LifetimeGuard.cpp" />
     <ClCompile Include="Logger.cpp" />
     <ClCompile Include="MSDFText.cpp" />
@@ -99,7 +101,9 @@
     <ClCompile Include="LevelledGraph.cpp" />
     <ClCompile Include="MathDNA.cpp" />
     <ClCompile Include="MatrixSystem.cpp" />
+    <ClCompile Include="MelonEnemy.cpp" />
     <ClCompile Include="MelonPlayer.cpp" />
+    <ClCompile Include="MelonProjectile.cpp" />
     <ClCompile Include="MelonWorld.cpp" />
     <ClCompile Include="Compiler.cpp" />
     <ClCompile Include="File.cpp" />
@@ -187,13 +191,17 @@
     <ClCompile Include="UIButton.cpp" />
     <ClCompile Include="UIContainer.cpp" />
     <ClCompile Include="UIElement.cpp" />
+    <ClCompile Include="UISlider.cpp" />
     <ClCompile Include="UISandbox.cpp" />
     <ClCompile Include="ULLUtil.cpp" />
     <ClCompile Include="Uniforms.cpp" />
     <ClCompile Include="UserInterface.cpp" />
     <ClCompile Include="Window.cpp" />
     <ClCompile Include="WindowAPI.cpp" />
+    <ClCompile Include="WaveformGraph.cpp" />
     <ClInclude Include="LabyrinthGeneratorPrototype.hpp" />
+    <ClInclude Include="MelonAudioLab.hpp" />
+    <ClInclude Include="SoundAnalysisLab.hpp" />
     <ClInclude Include="LockFreeQueue.hpp" />
     <ClInclude Include="Music Visualizer.hpp" />
     <ClInclude Include="OptickProfiling.hpp" />
@@ -264,7 +272,9 @@
     <ClInclude Include="Logger.hpp" />
     <ClInclude Include="MathDNA.hpp" />
     <ClInclude Include="MatrixSystem.hpp" />
+    <ClInclude Include="MelonEnemy.hpp" />
     <ClInclude Include="MelonPlayer.hpp" />
+    <ClInclude Include="MelonProjectile.hpp" />
     <ClInclude Include="MelonWorld.hpp" />
     <ClInclude Include="Memory.hpp" />
     <ClInclude Include="MeshSystem.hpp" />
@@ -368,6 +378,7 @@
     <ClInclude Include="UIButton.hpp" />
     <ClInclude Include="UIContainer.hpp" />
     <ClInclude Include="UIElement.hpp" />
+    <ClInclude Include="UISlider.hpp" />
     <ClInclude Include="UISandbox.hpp" />
     <ClInclude Include="ULLUtil.hpp" />
     <ClInclude Include="Uniforms.hpp" />
@@ -376,6 +387,7 @@
     <ClInclude Include="JobQueue.hpp" />
     <ClInclude Include="Window.hpp" />
     <ClInclude Include="WindowAPI.hpp" />
+    <ClInclude Include="WaveformGraph.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Data\DungeonsAndDiscord\dndSky.frag" />
@@ -579,8 +591,7 @@
       <SubSystem>Console</SubSystem>
     </Link>
     <PostBuildEvent>
-      <Command>
-      </Command>
+      <Command>XCOPY "$(SolutionDir)Project ORKA\Data" "$(TargetDir)Data" /S /Y /I</Command>
       <Message>XCOPY "$(SolutionDir)Project ORKA\Data" "$(TargetDir)Data" /S /Y /I</Message>
     </PostBuildEvent>
     <Manifest>
@@ -616,8 +627,7 @@
       <StackReserveSize>4194304</StackReserveSize>
     </Link>
     <PostBuildEvent>
-      <Command>
-      </Command>
+      <Command>XCOPY "$(SolutionDir)Project ORKA\Data" "$(TargetDir)Data" /S /Y /I</Command>
       <Message>XCOPY "$(SolutionDir)Project ORKA\Data" "$(TargetDir)Data" /S /Y /I</Message>
     </PostBuildEvent>
     <Manifest>
@@ -658,8 +668,7 @@
       <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
     </Link>
     <PostBuildEvent>
-      <Command>
-      </Command>
+      <Command>XCOPY "$(SolutionDir)Project ORKA\Data" "$(TargetDir)Data" /S /Y /I</Command>
       <Message>XCOPY "$(SolutionDir)Project ORKA\Data" "$(TargetDir)Data" /S /Y /I</Message>
     </PostBuildEvent>
   </ItemDefinitionGroup>

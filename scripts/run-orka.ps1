@@ -35,13 +35,43 @@ function Get-OrkaExecutablePath {
         )
     }
 
+    $existing = @()
     foreach ($candidate in $candidates) {
         if (Test-Path $candidate) {
-            return $candidate
+            $existing += Get-Item $candidate
         }
     }
 
+    if ($existing.Count -gt 0) {
+        return ($existing | Sort-Object LastWriteTime -Descending | Select-Object -First 1).FullName
+    }
+
     return $candidates[0]
+}
+
+function Sync-OrkaRuntimeData {
+    param(
+        [string]$ExePath,
+        [string]$RepoRoot
+    )
+
+    $exeDir = Split-Path -Parent $ExePath
+    $sourceData = Join-Path $RepoRoot "Project ORKA\Data"
+    $targetData = Join-Path $exeDir "Data"
+
+    if (-not (Test-Path $sourceData)) {
+        return
+    }
+
+    if (-not (Test-Path $targetData)) {
+        Write-Host "Copying runtime Data folder to '$targetData'..."
+        New-Item -ItemType Directory -Path $targetData -Force | Out-Null
+    }
+
+    & robocopy $sourceData $targetData /E /NFL /NDL /NJH /NJS /NC /NS /NP | Out-Null
+    if ($LASTEXITCODE -ge 8) {
+        throw "Failed to copy Data folder to '$targetData'."
+    }
 }
 
 Write-Host "Building before launch..."
@@ -51,6 +81,8 @@ $exePath = Get-OrkaExecutablePath -Root $repoRoot -ProjectRoot $projectDir -Conf
 if (-not (Test-Path $exePath)) {
     throw "Executable not found after build. Expected near '$exePath'."
 }
+
+Sync-OrkaRuntimeData -ExePath $exePath -RepoRoot $repoRoot
 
 $exeDir = Split-Path -Parent $exePath
 
@@ -63,9 +95,9 @@ if ($Arguments) {
 Push-Location $exeDir
 try {
     if ($Arguments) {
-        & $exePath @Arguments
+        & "$exePath" @Arguments
     } else {
-        & $exePath
+        & "$exePath"
     }
     exit $LASTEXITCODE
 } finally {

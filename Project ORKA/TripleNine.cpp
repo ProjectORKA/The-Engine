@@ -1043,9 +1043,10 @@ void TripleNine::run()
 	{
 		ui.window("Triple Nine", settings.defaultWindowWidth, settings.defaultWindowHeight, true, true, WindowState::Windowed, renderer1);
 
-		Sleep(3000);
-
-		ui.window("Triple Nine", settings.defaultWindowWidth, settings.defaultWindowHeight, true, true, WindowState::Windowed, renderer2);
+		if (useSecondWindow)
+		{
+			ui.window("Triple Nine", settings.defaultWindowWidth, settings.defaultWindowHeight, true, true, WindowState::Windowed, renderer2);
+		}
 	}
 
 	ui.run();

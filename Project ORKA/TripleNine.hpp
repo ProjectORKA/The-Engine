@@ -220,6 +220,7 @@ struct TripleNineRenderer final : GameRenderer
 struct TripleNine
 {
 	Bool                 useIntro = false;
+	Bool                 useSecondWindow = false;
 	ORKAIntroSequence    intro;
 	TripleNineRenderer   renderer1;
 	TripleNineRenderer   renderer2;

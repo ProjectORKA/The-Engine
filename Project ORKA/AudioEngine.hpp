@@ -8,6 +8,30 @@
 
 struct AudioEngine;
 
+// Rough in-game speed ceiling used to map player units/sec to procedural audio speed01.
+inline constexpr Float proceduralMotionMaxSpeedUnitsPerSec = 15000.0f;
+
+struct ProceduralMotionTuning
+{
+	Float humNoiseMix   = 0.45f;
+	Float humPitchScale = 0.3f;
+	Float windPitchScale = 1.0f;
+	Float humGain       = 1.0f;
+	Float windGain      = 1.0f;
+	Float breathGain    = 1.0f;
+	Float responseCurve = 0.25f;
+	Bool  enableHum     = true;
+	Bool  enableWind    = true;
+	Bool  enableBreath  = true;
+};
+
+struct DecodedAudioClip
+{
+	Vector<Float> monoSamples;
+	UInt          sampleRate = 0;
+	UInt          channels   = 0;
+};
+
 struct AudioTrack
 {
 	AudioTrack();
@@ -46,6 +70,18 @@ struct AudioEngine
 
 	AudioTrack* load(const String& id, const Path& path, Bool loop = false);
 	void        play(const String& id);
+	[[nodiscard]] Bool decodeAudioFile(const Path& path, DecodedAudioClip& out);
+
+	// Motion-reactive procedural layer (wind + hum) for gameplay movement feedback.
+	Bool createProceduralMotion();
+	void destroyProceduralMotion();
+
+	[[nodiscard]] Bool hasProceduralMotion() const;
+	void               setProceduralMotionEnabled(Bool enabled);
+	void               setProceduralMotionTuning(const ProceduralMotionTuning& tuning);
+	[[nodiscard]] ProceduralMotionTuning getProceduralMotionTuning() const;
+	void               updateProceduralMotion(Float speed01, Float dopplerDirection, Float deltaTime);
+	void               getProceduralMotionDebugWaveform(Vector<Float>& waveformOut, Vector<Float>& controlOut, Vector<Float>& audioOut, Vector<Float>* humOut = nullptr, Vector<Float>* windOut = nullptr, Vector<Float>* breathOut = nullptr) const;
 
 private:
 	struct Impl;

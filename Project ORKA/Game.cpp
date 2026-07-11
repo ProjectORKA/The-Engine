@@ -154,9 +154,10 @@ void GameRenderer::render(Window& window)
   r.uiSpace(window);
   r.setDepthTest(false);
   r.setCulling(false);
-  // Ensure the intro framebuffer respects alpha when composited onto the
-  // transparent window.
-  r.setAlphaBlending(true);
+  // Composite the game framebuffer as an opaque surface.
+  // Blending here can leak previous UI/backbuffer content through when the
+  // scene alpha is < 1.0, which appears as fullscreen gray/black flicker.
+  r.setAlphaBlending(false);
   WireframeOverride wireframeGuard(r, false);
   r.uniforms().setCustomInt1(1); // flip framebuffer vertically for UI blit
   framebuffer.setAsTexture(r);
@@ -166,6 +167,8 @@ void GameRenderer::render(Window& window)
   r.uniforms().setMMatrix(matrixFromPositionAndSize(static_cast<Float>(renderPos.x), static_cast<Float>(renderPos.y), static_cast<Float>(sz.x), static_cast<Float>(sz.y)));
   r.rectangle();
   r.uniforms().setCustomInt1(0); // reset
+  // Restore blending for UI siblings rendered after this GameRenderer (e.g. control panels).
+  r.setAlphaBlending(true);
  }
  else
  {

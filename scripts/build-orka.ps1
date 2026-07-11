@@ -54,6 +54,7 @@ if (-not $msbuildPath) {
 $targets = if ($Clean) { "Clean;Build" } else { "Build" }
 $arguments = @(
     "`"$solutionPath`"",
+    "/restore",
     "/t:$targets",
     "/p:Configuration=$Configuration",
     "/p:Platform=$Platform",

@@ -320,8 +320,17 @@
     <ClCompile Include="MelonPlayer.cpp">
       <Filter>Apps\3D Apps\Project Melon\MelonPlayer</Filter>
     </ClCompile>
+    <ClCompile Include="MelonEnemy.cpp">
+      <Filter>Apps\3D Apps\Project Melon</Filter>
+    </ClCompile>
+    <ClCompile Include="MelonProjectile.cpp">
+      <Filter>Apps\3D Apps\Project Melon</Filter>
+    </ClCompile>
     <ClCompile Include="MelonWorld.cpp">
       <Filter>Apps\3D Apps\Project Melon\MelonWorld</Filter>
+    </ClCompile>
+    <ClCompile Include="WaveformGraph.cpp">
+      <Filter>Apps\3D Apps\Project Melon</Filter>
     </ClCompile>
     <ClCompile Include="InfiniteDetailPrototype.cpp">
       <Filter>Apps\Console Apps\InfiniteDetailPrototype</Filter>
@@ -364,6 +373,9 @@
     </ClCompile>
     <ClCompile Include="UIContainer.cpp">
       <Filter>Systems\UserInterface\UIContainer</Filter>
+    </ClCompile>
+    <ClCompile Include="UISlider.cpp">
+      <Filter>Systems\UserInterface</Filter>
     </ClCompile>
     <ClCompile Include="Hash.cpp">
       <Filter>Common\Math\Hash</Filter>
@@ -421,6 +433,12 @@
     </ClCompile>
     <ClCompile Include="LabyrinthGeneratorPrototype.cpp">
       <Filter>Apps\3D Apps\PrototypingSandbox\Prototypes\Labyrinth Generator</Filter>
+    </ClCompile>
+    <ClCompile Include="MelonAudioLab.cpp">
+      <Filter>Apps\2D Apps\Music Visualizer</Filter>
+    </ClCompile>
+    <ClCompile Include="SoundAnalysisLab.cpp">
+      <Filter>Apps\2D Apps\Music Visualizer</Filter>
     </ClCompile>
     <ClCompile Include="Engine.cpp">
       <Filter>Systems\Engine</Filter>
@@ -793,6 +811,9 @@
     <ClInclude Include="UIElement.hpp">
       <Filter>Systems\UserInterface\UIElement</Filter>
     </ClInclude>
+    <ClInclude Include="UISlider.hpp">
+      <Filter>Systems\UserInterface</Filter>
+    </ClInclude>
     <ClInclude Include="Uniforms.hpp">
       <Filter>Systems\UserInterface\Window\Renderer\ShaderSystem\Uniforms</Filter>
     </ClInclude>
@@ -850,8 +871,17 @@
     <ClInclude Include="MelonPlayer.hpp">
       <Filter>Apps\3D Apps\Project Melon\MelonPlayer</Filter>
     </ClInclude>
+    <ClInclude Include="MelonEnemy.hpp">
+      <Filter>Apps\3D Apps\Project Melon</Filter>
+    </ClInclude>
+    <ClInclude Include="MelonProjectile.hpp">
+      <Filter>Apps\3D Apps\Project Melon</Filter>
+    </ClInclude>
     <ClInclude Include="MelonWorld.hpp">
       <Filter>Apps\3D Apps\Project Melon\MelonWorld</Filter>
+    </ClInclude>
+    <ClInclude Include="WaveformGraph.hpp">
+      <Filter>Apps\3D Apps\Project Melon</Filter>
     </ClInclude>
     <ClInclude Include="InfiniteDetailPrototype.hpp">
       <Filter>Apps\Console Apps\InfiniteDetailPrototype</Filter>
@@ -1011,6 +1041,12 @@
     </ClInclude>
     <ClInclude Include="LabyrinthGeneratorPrototype.hpp">
       <Filter>Apps\3D Apps\PrototypingSandbox\Prototypes\Labyrinth Generator</Filter>
+    </ClInclude>
+    <ClInclude Include="MelonAudioLab.hpp">
+      <Filter>Apps\2D Apps\Music Visualizer</Filter>
+    </ClInclude>
+    <ClInclude Include="SoundAnalysisLab.hpp">
+      <Filter>Apps\2D Apps\Music Visualizer</Filter>
     </ClInclude>
     <ClInclude Include="GlobalUniformData.hpp">
       <Filter>Systems\UserInterface\Window\Renderer\ShaderSystem\Uniforms</Filter>

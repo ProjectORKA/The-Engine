@@ -23,6 +23,7 @@ void UIButton::inputEvent(Window& window, InputEvent& input)
 	{
 		const Bool inside = hovered || isPointInside(window, window.mousePosBotLeft);
 		pressed          = inside;
+		active           = pressed;
 		if (pressed) input.consume();
 	}
 	if (input == InputEvent(InputType::Mouse, 0, false))
@@ -34,6 +35,7 @@ void UIButton::inputEvent(Window& window, InputEvent& input)
 			input.consume();
 		}
 		pressed = false;
+		active  = false;
 	}
 }
 
@@ -81,4 +83,5 @@ void UIButton::onMouseLeave(Window& /*window*/)
 {
 	hovered = false;
 	pressed = false;
+	active  = false;
 }

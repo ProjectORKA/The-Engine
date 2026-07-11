@@ -63,3 +63,48 @@ inline std::filesystem::path pickFolder()
 
 	return selectedFolder;
 }
+
+inline std::filesystem::path pickAudioFile()
+{
+	std::filesystem::path selectedFile;
+
+	if(HRESULT hr = CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE); SUCCEEDED(hr))
+	{
+		IFileDialog* fileDialog = nullptr;
+		hr                      = CoCreateInstance(CLSID_FileOpenDialog, nullptr, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&fileDialog));
+		if(SUCCEEDED(hr) && fileDialog != nullptr)
+		{
+			constexpr COMDLG_FILTERSPEC audioFilters[] = {
+				{L"Audio Files", L"*.wav;*.ogg;*.flac;*.mp3"},
+				{L"All Files", L"*.*"},
+			};
+			fileDialog->SetFileTypes(static_cast<UINT>(std::size(audioFilters)), audioFilters);
+			fileDialog->SetTitle(L"Import Audio File");
+
+			DWORD options = 0;
+			if(SUCCEEDED(fileDialog->GetOptions(&options))) fileDialog->SetOptions(options | FOS_FILEMUSTEXIST);
+
+			hr = fileDialog->Show(nullptr);
+			if(SUCCEEDED(hr))
+			{
+				IShellItem* shellItem = nullptr;
+				hr                    = fileDialog->GetResult(&shellItem);
+				if(SUCCEEDED(hr) && shellItem != nullptr)
+				{
+					PWSTR filePath = nullptr;
+					hr             = shellItem->GetDisplayName(SIGDN_FILESYSPATH, &filePath);
+					if(SUCCEEDED(hr) && filePath != nullptr)
+					{
+						selectedFile = filePath;
+						CoTaskMemFree(filePath);
+					}
+					shellItem->Release();
+				}
+			}
+			fileDialog->Release();
+		}
+		CoUninitialize();
+	}
+
+	return selectedFile;
+}
