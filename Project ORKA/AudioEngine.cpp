@@ -339,10 +339,13 @@ namespace
 
 struct AudioTrack::Impl
 {
-	ma_sound sound{};
-	Path     source;
-	Bool     loaded  = false;
-	Bool     looping = false;
+	ma_sound            sound{};
+	Path                source;
+	Bool                loaded       = false;
+	Bool                looping      = false;
+	Bool                bufferBacked = false;
+	ma_audio_buffer_ref audioBufferRef{};
+	Vector<Float>       bufferData;
 };
 
 struct AudioEngine::Impl
@@ -364,6 +367,8 @@ AudioTrack::~AudioTrack()
 	if(impl && impl->loaded)
 	{
 		ma_sound_uninit(&impl->sound);
+		if(impl->bufferBacked)
+			ma_audio_buffer_ref_uninit(&impl->audioBufferRef);
 		impl->loaded = false;
 	}
 }
@@ -381,6 +386,47 @@ void AudioTrack::stop()
 {
 	if(!impl || !impl->loaded) return;
 	ma_sound_stop(&impl->sound);
+}
+
+void AudioTrack::setVolume(const Float volume)
+{
+	if(!impl || !impl->loaded) return;
+	ma_sound_set_volume(&impl->sound, std::clamp(volume, 0.0f, 8.0f));
+}
+
+void AudioTrack::setPan(const Float pan)
+{
+	if(!impl || !impl->loaded) return;
+	ma_sound_set_pan(&impl->sound, std::clamp(pan, -1.0f, 1.0f));
+}
+
+void AudioTrack::setPitch(const Float pitch)
+{
+	if(!impl || !impl->loaded) return;
+	ma_sound_set_pitch(&impl->sound, std::clamp(pitch, 0.05f, 4.0f));
+}
+
+void AudioTrack::setSpatialPosition(const Vec3& position)
+{
+	if(!impl || !impl->loaded) return;
+	ma_sound_set_position(&impl->sound, position.x, position.y, position.z);
+}
+
+void AudioTrack::setSpatialVelocity(const Vec3& velocity)
+{
+	if(!impl || !impl->loaded) return;
+	ma_sound_set_velocity(&impl->sound, velocity.x, velocity.y, velocity.z);
+}
+
+void AudioTrack::setSpatialSettings(const AudioSpatialSettings& settings)
+{
+	if(!impl || !impl->loaded) return;
+
+	ma_sound_set_spatialization_enabled(&impl->sound, settings.enabled ? MA_TRUE : MA_FALSE);
+	ma_sound_set_positioning(&impl->sound, settings.relativeToListener ? ma_positioning_relative : ma_positioning_absolute);
+	ma_sound_set_min_distance(&impl->sound, max(settings.minDistance, 0.001f));
+	ma_sound_set_max_distance(&impl->sound, max(settings.maxDistance, settings.minDistance + 0.001f));
+	ma_sound_set_rolloff(&impl->sound, std::clamp(settings.rolloff, 0.0f, 8.0f));
 }
 
 Bool AudioTrack::isLoaded() const
@@ -459,6 +505,7 @@ AudioTrack* AudioEngine::load(const String& id, const Path& path, const Bool loo
 	}
 
 	ma_sound_set_looping(&track.impl->sound, loop ? MA_TRUE : MA_FALSE);
+	ma_sound_set_spatialization_enabled(&track.impl->sound, MA_FALSE);
 
 	track.impl->loaded = true;
 
@@ -478,6 +525,111 @@ void AudioEngine::play(const String& id)
 	}
 
 	logWarning("Tried to play missing audio track (" + id + ")");
+}
+
+void AudioEngine::playAt(const String& id, const Vec3& position, const Vec3& velocity)
+{
+	if(!impl || !impl->initialized) return;
+	if(const auto it = impl->tracks.find(id); it != impl->tracks.end())
+	{
+		AudioSpatialSettings settings;
+		settings.enabled = true;
+		it->second.setSpatialSettings(settings);
+		it->second.setSpatialPosition(position);
+		it->second.setSpatialVelocity(velocity);
+		it->second.play();
+		return;
+	}
+
+	logWarning("Tried to spatial-play missing audio track (" + id + ")");
+}
+
+Bool AudioEngine::setTrackVolume(const String& id, const Float volume)
+{
+	if(!impl || !impl->initialized) return false;
+	if(const auto it = impl->tracks.find(id); it != impl->tracks.end())
+	{
+		it->second.setVolume(volume);
+		return true;
+	}
+	return false;
+}
+
+Bool AudioEngine::setTrackPan(const String& id, const Float pan)
+{
+	if(!impl || !impl->initialized) return false;
+	if(const auto it = impl->tracks.find(id); it != impl->tracks.end())
+	{
+		it->second.setPan(pan);
+		return true;
+	}
+	return false;
+}
+
+Bool AudioEngine::setTrackPitch(const String& id, const Float pitch)
+{
+	if(!impl || !impl->initialized) return false;
+	if(const auto it = impl->tracks.find(id); it != impl->tracks.end())
+	{
+		it->second.setPitch(pitch);
+		return true;
+	}
+	return false;
+}
+
+Bool AudioEngine::setTrackSpatialPosition(const String& id, const Vec3& position)
+{
+	if(!impl || !impl->initialized) return false;
+	if(const auto it = impl->tracks.find(id); it != impl->tracks.end())
+	{
+		it->second.setSpatialPosition(position);
+		return true;
+	}
+	return false;
+}
+
+Bool AudioEngine::setTrackSpatialVelocity(const String& id, const Vec3& velocity)
+{
+	if(!impl || !impl->initialized) return false;
+	if(const auto it = impl->tracks.find(id); it != impl->tracks.end())
+	{
+		it->second.setSpatialVelocity(velocity);
+		return true;
+	}
+	return false;
+}
+
+Bool AudioEngine::setTrackSpatialSettings(const String& id, const AudioSpatialSettings& settings)
+{
+	if(!impl || !impl->initialized) return false;
+	if(const auto it = impl->tracks.find(id); it != impl->tracks.end())
+	{
+		it->second.setSpatialSettings(settings);
+		return true;
+	}
+	return false;
+}
+
+void AudioEngine::setListenerTransform(const Vec3& position, const Vec3& forward, const Vec3& up)
+{
+	if(!impl || !impl->initialized) return;
+
+	Vec3 normalizedForward = forward;
+	Vec3 normalizedUp      = up;
+	if(length(normalizedForward) < 0.0001f) normalizedForward = Vec3(0, 1, 0);
+	if(length(normalizedUp) < 0.0001f) normalizedUp = Vec3(0, 0, 1);
+	normalizedForward = normalize(normalizedForward);
+	normalizedUp      = normalize(normalizedUp);
+
+	ma_engine_listener_set_position(&impl->engine, 0, position.x, position.y, position.z);
+	ma_engine_listener_set_direction(&impl->engine, 0, normalizedForward.x, normalizedForward.y, normalizedForward.z);
+	ma_engine_listener_set_world_up(&impl->engine, 0, normalizedUp.x, normalizedUp.y, normalizedUp.z);
+}
+
+void AudioEngine::setListenerVelocity(const Vec3& velocity)
+{
+	if(!impl || !impl->initialized) return;
+	ma_engine_listener_set_velocity(&impl->engine, 0, velocity.x, velocity.y, velocity.z);
 }
 
 Bool AudioEngine::decodeAudioFile(const Path& path, DecodedAudioClip& out)
@@ -532,6 +684,211 @@ Bool AudioEngine::decodeAudioFile(const Path& path, DecodedAudioClip& out)
 	}
 
 	return true;
+}
+
+Bool AudioEngine::decodeStereoAudioFile(const Path& path, DecodedAudioClip& out)
+{
+	out = {};
+
+	const String filePath = path.string();
+
+	ma_decoder_config probeConfig = ma_decoder_config_init(ma_format_f32, 0, 0);
+	ma_decoder       probe{};
+	if(ma_decoder_init_file(filePath.c_str(), &probeConfig, &probe) != MA_SUCCESS)
+	{
+		logWarning("Failed to open audio file for stereo decode (" + filePath + ")");
+		return false;
+	}
+
+	ma_uint32 nativeChannels   = 0;
+	ma_uint32 nativeSampleRate = 0;
+	ma_decoder_get_data_format(&probe, nullptr, &nativeChannels, &nativeSampleRate, nullptr, 0);
+	ma_decoder_uninit(&probe);
+
+	constexpr ma_uint32 decodeChannels = 2;
+	ma_decoder_config   config         = ma_decoder_config_init(ma_format_f32, decodeChannels, 0);
+	ma_decoder          decoder{};
+	if(ma_decoder_init_file(filePath.c_str(), &config, &decoder) != MA_SUCCESS)
+	{
+		logWarning("Failed to open audio file for stereo decode (" + filePath + ")");
+		return false;
+	}
+
+	out.channels   = nativeChannels;
+	out.sampleRate = nativeSampleRate;
+
+	Vector<Float> interleaved;
+	ma_uint64     totalFrames = 0;
+	if(ma_decoder_get_length_in_pcm_frames(&decoder, &totalFrames) == MA_SUCCESS && totalFrames > 0)
+	{
+		interleaved.resize(static_cast<SizeT>(totalFrames * decodeChannels));
+		ma_uint64 framesRead = 0;
+		if(ma_decoder_read_pcm_frames(&decoder, interleaved.data(), totalFrames, &framesRead) != MA_SUCCESS || framesRead == 0)
+		{
+			ma_decoder_uninit(&decoder);
+			logWarning("Failed to read stereo audio frames (" + filePath + ")");
+			return false;
+		}
+		interleaved.resize(static_cast<SizeT>(framesRead * decodeChannels));
+		totalFrames = framesRead;
+	}
+	else
+	{
+		constexpr ma_uint64 chunkFrames = 4096;
+		Vector<Float>       chunk(chunkFrames * decodeChannels);
+		for(;;)
+		{
+			ma_uint64 framesRead = 0;
+			if(ma_decoder_read_pcm_frames(&decoder, chunk.data(), chunkFrames, &framesRead) != MA_SUCCESS || framesRead == 0) break;
+			interleaved.insert(interleaved.end(), chunk.begin(), chunk.begin() + static_cast<SizeT>(framesRead * decodeChannels));
+			totalFrames += framesRead;
+		}
+	}
+	ma_decoder_uninit(&decoder);
+
+	if(totalFrames == 0)
+	{
+		logWarning("Stereo decoded audio file contained no samples (" + filePath + ")");
+		return false;
+	}
+
+	out.leftSamples.resize(static_cast<SizeT>(totalFrames));
+	out.rightSamples.resize(static_cast<SizeT>(totalFrames));
+	out.monoSamples.resize(static_cast<SizeT>(totalFrames));
+	for(SizeT i = 0; i < static_cast<SizeT>(totalFrames); ++i)
+	{
+		const Float l      = interleaved[i * 2];
+		const Float r      = interleaved[i * 2 + 1];
+		out.leftSamples[i]  = l;
+		out.rightSamples[i] = r;
+		out.monoSamples[i]  = (l + r) * 0.5f;
+	}
+
+	return true;
+}
+
+void AudioEngine::startTrack(const String& id)
+{
+	if(!impl || !impl->initialized) return;
+	if(const auto it = impl->tracks.find(id); it != impl->tracks.end())
+	{
+		if(it->second.impl && it->second.impl->loaded)
+			ma_sound_start(&it->second.impl->sound);
+	}
+}
+
+void AudioEngine::seekTrack(const String& id, const UInt framePosition)
+{
+	if(!impl || !impl->initialized) return;
+	if(const auto it = impl->tracks.find(id); it != impl->tracks.end())
+	{
+		if(it->second.impl && it->second.impl->loaded)
+			ma_sound_seek_to_pcm_frame(&it->second.impl->sound, framePosition);
+	}
+}
+
+void AudioEngine::pauseTrack(const String& id)
+{
+	if(!impl || !impl->initialized) return;
+	if(const auto it = impl->tracks.find(id); it != impl->tracks.end())
+	{
+		if(it->second.impl && it->second.impl->loaded)
+			ma_sound_stop(&it->second.impl->sound);
+	}
+}
+
+void AudioEngine::unloadTrack(const String& id)
+{
+	if(!impl) return;
+	impl->tracks.erase(id);
+}
+
+UInt AudioEngine::getTrackPositionInFrames(const String& id)
+{
+	if(!impl || !impl->initialized) return 0;
+	if(const auto it = impl->tracks.find(id); it != impl->tracks.end())
+	{
+		if(it->second.impl && it->second.impl->loaded)
+		{
+			ma_uint64 cursor = 0;
+			ma_sound_get_cursor_in_pcm_frames(&it->second.impl->sound, &cursor);
+			return static_cast<UInt>(cursor);
+		}
+	}
+	return 0;
+}
+
+Bool AudioEngine::isTrackPlaying(const String& id)
+{
+	if(!impl || !impl->initialized) return false;
+	if(const auto it = impl->tracks.find(id); it != impl->tracks.end())
+	{
+		if(it->second.impl && it->second.impl->loaded)
+			return ma_sound_is_playing(&it->second.impl->sound) == MA_TRUE;
+	}
+	return false;
+}
+
+AudioTrack* AudioEngine::loadFromSamples(const String& id, Vector<Float> samples, const UInt sampleRate, const Bool loop)
+{
+	if(!impl) impl = std::make_unique<Impl>();
+	if(!impl->initialized) create();
+	if(!impl->initialized) return nullptr;
+
+	unloadTrack(id);
+
+	AudioTrack track;
+	track.impl               = std::make_unique<AudioTrack::Impl>();
+	track.impl->bufferBacked = true;
+	track.impl->looping      = loop;
+	track.impl->bufferData   = std::move(samples);
+
+	if(const ma_result result = ma_audio_buffer_ref_init(
+		   ma_format_f32, 1,
+		   track.impl->bufferData.data(),
+		   static_cast<ma_uint64>(track.impl->bufferData.size()),
+		   &track.impl->audioBufferRef);
+	   result != MA_SUCCESS)
+	{
+		logWarning("Failed to init audio buffer ref for track (" + id + "), error: " + toString(result));
+		return nullptr;
+	}
+
+	if(const ma_result result = ma_sound_init_from_data_source(
+		   &impl->engine, &track.impl->audioBufferRef,
+		   0, nullptr, &track.impl->sound);
+	   result != MA_SUCCESS)
+	{
+		ma_audio_buffer_ref_uninit(&track.impl->audioBufferRef);
+		logWarning("Failed to init sound from buffer for track (" + id + "), error: " + toString(result));
+		return nullptr;
+	}
+
+	ma_sound_set_looping(&track.impl->sound, loop ? MA_TRUE : MA_FALSE);
+	ma_sound_set_spatialization_enabled(&track.impl->sound, MA_FALSE);
+	track.impl->loaded = true;
+
+	const auto [iterator, inserted] = impl->tracks.emplace(id, std::move(track));
+	return inserted ? &iterator->second : nullptr;
+}
+
+Bool AudioEngine::updateTrackSamples(const String& id, const Vector<Float>& samples)
+{
+	if(!impl || !impl->initialized) return false;
+	const auto it = impl->tracks.find(id);
+	if(it == impl->tracks.end()) return false;
+	auto& trackImpl = it->second.impl;
+	if(!trackImpl || !trackImpl->loaded || !trackImpl->bufferBacked) return false;
+
+	const SizeT count = min(samples.size(), trackImpl->bufferData.size());
+	std::memcpy(trackImpl->bufferData.data(), samples.data(), count * sizeof(Float));
+	return true;
+}
+
+UInt AudioEngine::getSampleRate() const
+{
+	if(!impl || !impl->initialized) return 48000;
+	return ma_engine_get_sample_rate(&impl->engine);
 }
 
 Bool AudioEngine::createProceduralMotion()
@@ -685,6 +1042,9 @@ Bool AudioEngine::createProceduralMotion()
 	ma_sound_set_looping(&procedural.humSound, MA_TRUE);
 	ma_sound_set_looping(&procedural.windSound, MA_TRUE);
 	ma_sound_set_looping(&procedural.breathSound, MA_TRUE);
+	ma_sound_set_spatialization_enabled(&procedural.humSound, MA_FALSE);
+	ma_sound_set_spatialization_enabled(&procedural.windSound, MA_FALSE);
+	ma_sound_set_spatialization_enabled(&procedural.breathSound, MA_FALSE);
 	procedural.resetRuntimeState();
 
 	procedural.initialized = true;

@@ -11,6 +11,8 @@ namespace
 	constexpr const Char* melonBeatSoundWav = "beat.wav";
 	constexpr const Char* melonSnareSoundId  = "melon_snare";
 	constexpr const Char* melonSnareSoundWav = "snare.wav";
+	constexpr const Char* melonShootSoundId  = "melon_shoot";
+	constexpr const Char* melonShootSoundWav = "shoot.wav";
 }
 
 void MelonRenderer::destroy(Window& window)
@@ -62,6 +64,11 @@ void MelonRenderer::handleBeat()
 		projectile.lifeSecs = 6.0f;
 		projectile.damage   = enemy.projectileDamage();
 		projectiles.push_back(projectile);
+
+		if(audioEngine.has(melonShootSoundId))
+		{
+			audioEngine.playAt(melonShootSoundId, enemy.position, projectile.velocity);
+		}
 	}
 }
 
@@ -73,6 +80,8 @@ void MelonRenderer::update(Window& window)
 	if(playerAlive) player.update(window);
 
 	const Float actualSpeedUnitsPerSec = max(player.speedUnitsPerSec - 0.25f, 0.0f);
+	audioEngine.setListenerTransform(player.camera.getPosition(), player.camera.getForwardVector(), player.camera.getUpVector());
+	audioEngine.setListenerVelocity(player.virtualAudioDeltaPosition / dt);
 	if(actualSpeedUnitsPerSec >= speedWithFalloffUnitsPerSec)
 	{
 		// Instant attack: immediately follow acceleration spikes.
@@ -249,9 +258,23 @@ void MelonRenderer::create(Window& window)
 	audioEngine.createProceduralMotion();
 	audioEngine.load(melonBeatSoundId, resourceManager.getOrkaDataPath() / "Sounds" / melonBeatSoundWav, false);
 	audioEngine.load(melonSnareSoundId, resourceManager.getOrkaDataPath() / "Sounds" / melonSnareSoundWav, false);
+	audioEngine.load(melonShootSoundId, resourceManager.getOrkaDataPath() / "Sounds" / melonShootSoundWav, false);
+	audioEngine.setTrackVolume(melonBeatSoundId, 0.28f);
+	audioEngine.setTrackVolume(melonSnareSoundId, 0.24f);
+	audioEngine.setTrackVolume(melonShootSoundId, 0.35f);
+	audioEngine.setTrackSpatialSettings(melonBeatSoundId, AudioSpatialSettings{});
+	audioEngine.setTrackSpatialSettings(melonSnareSoundId, AudioSpatialSettings{});
+	AudioSpatialSettings shootSpatial;
+	shootSpatial.enabled     = true;
+	shootSpatial.minDistance = 3.0f;
+	shootSpatial.maxDistance = enemySpawnRadius * 3.5f;
+	shootSpatial.rolloff     = 1.15f;
+	audioEngine.setTrackSpatialSettings(melonShootSoundId, shootSpatial);
 	ProceduralMotionTuning tuning = audioEngine.getProceduralMotionTuning();
-	tuning.responseCurve = 0.25f;
-	tuning.windGain = 0.6f;
+	tuning.responseCurve = 0.22f;
+	tuning.humGain       = 2.0f;
+	tuning.windGain      = 1.65f;
+	tuning.breathGain    = 1.75f;
 	audioEngine.setProceduralMotionTuning(tuning);
 	audioEngine.setProceduralMotionEnabled(true);
 
@@ -273,6 +296,11 @@ void MelonRenderer::inputEvent(Window& window, InputEvent& input)
 	if(input == toggleWireframe)
 	{
 		window.renderer.wireframeMode = !window.renderer.wireframeMode;
+		input.consume();
+	}
+	if(input == toggleUi)
+	{
+		uiVisible = !uiVisible;
 		input.consume();
 	}
 	// Keep Alt+Enter available for fullscreen toggle.
@@ -335,6 +363,8 @@ void MelonRenderer::renderScene(Window& window)
 		r.plane();
 	}
 
+	if(!uiVisible) return;
+
 	//ui
 	r.uniforms().setMMatrix(Matrix(1));
 	r.setCulling(false);
@@ -349,7 +379,7 @@ void MelonRenderer::renderScene(Window& window)
 	r.text("Camera Position: " + toString(player.camera.getPosition()), Vec2(30, 90));
 	r.text("Press Enter to capture mouse | RMB to release", Vec2(30, 120));
 	r.text("Press F for wireframe mode", Vec2(30, 150));
-	r.text("Press R to respawn", Vec2(30, 180));
+	r.text("Press R to respawn | F1 toggles UI", Vec2(30, 180));
 	r.text("Ghost trail seconds: " + toString(ghostTrailDurationSecs), Vec2(30, 210));
 	r.text("Speed units/sec (actual): " + toString(player.speedUnitsPerSec), Vec2(30, 240));
 	r.text("Speed with falloff: " + toString(speedWithFalloffUnitsPerSec), Vec2(30, 270));

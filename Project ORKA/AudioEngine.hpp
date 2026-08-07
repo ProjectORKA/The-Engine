@@ -28,8 +28,19 @@ struct ProceduralMotionTuning
 struct DecodedAudioClip
 {
 	Vector<Float> monoSamples;
+	Vector<Float> leftSamples;
+	Vector<Float> rightSamples;
 	UInt          sampleRate = 0;
 	UInt          channels   = 0;
+};
+
+struct AudioSpatialSettings
+{
+	Bool  enabled            = false;
+	Bool  relativeToListener = false;
+	Float minDistance        = 1.0f;
+	Float maxDistance        = 120.0f;
+	Float rolloff            = 1.0f;
 };
 
 struct AudioTrack
@@ -43,6 +54,12 @@ struct AudioTrack
 
 	void play();
 	void stop();
+	void setVolume(Float volume);
+	void setPan(Float pan);
+	void setPitch(Float pitch);
+	void setSpatialPosition(const Vec3& position);
+	void setSpatialVelocity(const Vec3& velocity);
+	void setSpatialSettings(const AudioSpatialSettings& settings);
 
 	[[nodiscard]] Bool isLoaded() const;
 
@@ -70,7 +87,26 @@ struct AudioEngine
 
 	AudioTrack* load(const String& id, const Path& path, Bool loop = false);
 	void        play(const String& id);
+	void        playAt(const String& id, const Vec3& position, const Vec3& velocity = Vec3(0));
+	[[nodiscard]] Bool setTrackVolume(const String& id, Float volume);
+	[[nodiscard]] Bool setTrackPan(const String& id, Float pan);
+	[[nodiscard]] Bool setTrackPitch(const String& id, Float pitch);
+	[[nodiscard]] Bool setTrackSpatialPosition(const String& id, const Vec3& position);
+	[[nodiscard]] Bool setTrackSpatialVelocity(const String& id, const Vec3& velocity);
+	[[nodiscard]] Bool setTrackSpatialSettings(const String& id, const AudioSpatialSettings& settings);
+	void               setListenerTransform(const Vec3& position, const Vec3& forward = Vec3(0, 1, 0), const Vec3& up = Vec3(0, 0, 1));
+	void               setListenerVelocity(const Vec3& velocity);
 	[[nodiscard]] Bool decodeAudioFile(const Path& path, DecodedAudioClip& out);
+	[[nodiscard]] Bool decodeStereoAudioFile(const Path& path, DecodedAudioClip& out);
+	void               startTrack(const String& id);
+	void               seekTrack(const String& id, UInt framePosition);
+	void               pauseTrack(const String& id);
+	void               unloadTrack(const String& id);
+	[[nodiscard]] UInt  getTrackPositionInFrames(const String& id);
+	[[nodiscard]] Bool  isTrackPlaying(const String& id);
+	AudioTrack*         loadFromSamples(const String& id, Vector<Float> samples, UInt sampleRate, Bool loop = false);
+	[[nodiscard]] Bool  updateTrackSamples(const String& id, const Vector<Float>& samples);
+	[[nodiscard]] UInt  getSampleRate() const;
 
 	// Motion-reactive procedural layer (wind + hum) for gameplay movement feedback.
 	Bool createProceduralMotion();

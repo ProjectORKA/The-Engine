@@ -57,8 +57,10 @@ struct MelonRenderer final : GameRenderer
 	Float        mouseSensitivity                 = 0.0015f;
 	Vec3         mousePosA, mousePosB, mousePosC = Vec3(0);
 	InputEvent   toggleWireframe                  = InputEvent(InputType::KeyBoard, F, true);
+	InputEvent   toggleUi                         = InputEvent(InputType::KeyBoard, F1, true);
 	InputEvent   captureMouse                     = InputEvent(InputType::Mouse, Lmb, true);
 	InputEvent   respawnRun                       = InputEvent(InputType::KeyBoard, R, true);
+	Bool         uiVisible                        = true;
 
 	void spawnEnemyAroundPlayer();
 	void handleBeat();
