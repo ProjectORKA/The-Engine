@@ -103,6 +103,7 @@ struct AudioEngine
 	void               pauseTrack(const String& id);
 	void               unloadTrack(const String& id);
 	[[nodiscard]] UInt  getTrackPositionInFrames(const String& id);
+	[[nodiscard]] UInt  getTrackLengthInFrames(const String& id);
 	[[nodiscard]] Bool  isTrackPlaying(const String& id);
 	AudioTrack*         loadFromSamples(const String& id, Vector<Float> samples, UInt sampleRate, Bool loop = false);
 	[[nodiscard]] Bool  updateTrackSamples(const String& id, const Vector<Float>& samples);

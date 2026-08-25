@@ -15,6 +15,7 @@
 #include "FunctionFinder.hpp"
 #include "MelonAudioLab.hpp"
 #include "SoundAnalysisLab.hpp"
+#include "SimpleRTS.hpp"
 
 Vector<GameEntry> GameLoader::buildDefaultEntries()
 {
@@ -27,6 +28,7 @@ Vector<GameEntry> GameLoader::buildDefaultEntries()
 		{"Project Melon", "Stylized melon world prototype with player movement and rendering.", []() { ProjectMelon game; game.run(); }},
 		{"Melon Audio Lab", "Procedural motion audio testbed with hum, wind, and heartbeat layers.", []() { MelonAudioLab game; game.run(); }},
 		{"Sound Analysis Lab", "Import and inspect audio: waveform zoom/scrub, FFT spectrum, and spectrogram.", []() { SoundAnalysisLab game; game.run(); }},
+		{"Simple RTS", "Lightweight RTS sim with humans, wildlife, terrain, and resource systems.", []() { SimpleRts game; game.run(); }},
 		{"Shadertoy (Erosion)", "Shader-based erosion effect inspired by Shadertoy.", []() { ShadertoyGame game; game.run(); }},
 		{"Software Renderer", "CPU rasterizer demo showcasing the software pipeline.", []() { SoftwareRendererGame game; game.run(); }},
 		{"Function Finder", "Curve-fitting playground that searches function parameters against sampled data.", []() { FunctionFinder game; game.run(); }},

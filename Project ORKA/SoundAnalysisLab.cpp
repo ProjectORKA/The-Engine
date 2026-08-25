@@ -13,7 +13,7 @@ namespace
 	constexpr Float dbFloor               = -100.0f;
 	constexpr Float dbCeiling             = 0.0f;
 	constexpr Int   maxSpectrogramColumns = 32768;
-	constexpr Int   displayTexWidth       = 4096;
+	constexpr Int   coarseTexWidth        = 4096;
 	constexpr SizeT waveformPoints        = 1024;
 
 	struct Complex
@@ -153,49 +153,180 @@ namespace
 
 		spectrogramOut.resize(static_cast<SizeT>(numColumns) * defaultMelBins, dbFloor);
 
-		Vector<Complex> fftBuf(spectrogramFftSize);
-
 		const Float halfN     = static_cast<Float>(spectrogramFftSize) * 0.5f;
 		const Float powerNorm = 1.0f / (halfN * halfN);
 
-		for(Int col = 0; col < numColumns; ++col)
+		const Int threadCount   = clamp(static_cast<Int>(std::thread::hardware_concurrency()), 1, 32);
+		const Int colsPerThread = (numColumns + threadCount - 1) / threadCount;
+
+		auto processColumns = [&](const Int colStart, const Int colEnd)
 		{
-			const Float centerF     = static_cast<Float>(col) * static_cast<Float>(totalSamples - 1) / static_cast<Float>(max(numColumns - 1, 1));
-			const Int   windowStart = static_cast<Int>(centerF) - spectrogramFftSize / 2;
+			Vector<Complex> fftBuf(spectrogramFftSize);
 
-			for(Int i = 0; i < spectrogramFftSize; ++i)
+			for(Int col = colStart; col < colEnd; ++col)
 			{
-				const Int sampleIdx = windowStart + i;
-				Float     sample    = 0.0f;
-				if(sampleIdx >= 0 && static_cast<SizeT>(sampleIdx) < totalSamples)
-					sample = samples[static_cast<SizeT>(sampleIdx)];
-				fftBuf[i].re = sample * window[i];
-				fftBuf[i].im = 0.0f;
-			}
+				const Float centerF     = static_cast<Float>(col) * static_cast<Float>(totalSamples - 1) / static_cast<Float>(max(numColumns - 1, 1));
+				const Int   windowStart = static_cast<Int>(centerF) - spectrogramFftSize / 2;
 
-			fftInPlace(fftBuf);
-
-			const Int halfFft = spectrogramFftSize / 2;
-			for(Int bin = 0; bin < defaultMelBins; ++bin)
-			{
-				const Int startBin = melBinEdges[bin];
-				const Int endBin   = melBinEdges[bin + 1];
-
-				Float power = 0.0f;
-				Int   count = 0;
-				for(Int k = startBin; k <= endBin && k < halfFft; ++k)
+				for(Int i = 0; i < spectrogramFftSize; ++i)
 				{
-					power += (fftBuf[k].re * fftBuf[k].re + fftBuf[k].im * fftBuf[k].im) * powerNorm;
-					++count;
+					const Int sampleIdx = windowStart + i;
+					Float     sample    = 0.0f;
+					if(sampleIdx >= 0 && static_cast<SizeT>(sampleIdx) < totalSamples)
+						sample = samples[static_cast<SizeT>(sampleIdx)];
+					fftBuf[i].re = sample * window[i];
+					fftBuf[i].im = 0.0f;
 				}
-				if(count > 0) power /= static_cast<Float>(count);
 
-				Float db = dbFloor;
-				if(power > 1.0e-20f) db = 10.0f * log10(power);
-				db = clamp(db, dbFloor, dbCeiling);
+				fftInPlace(fftBuf);
 
-				spectrogramOut[static_cast<SizeT>(col) * defaultMelBins + bin] = db;
+				const Int halfFft = spectrogramFftSize / 2;
+				for(Int bin = 0; bin < defaultMelBins; ++bin)
+				{
+					const Int startBin = melBinEdges[bin];
+					const Int endBin   = melBinEdges[bin + 1];
+
+					Float power = 0.0f;
+					Int   count = 0;
+					for(Int k = startBin; k <= endBin && k < halfFft; ++k)
+					{
+						power += (fftBuf[k].re * fftBuf[k].re + fftBuf[k].im * fftBuf[k].im) * powerNorm;
+						++count;
+					}
+					if(count > 0) power /= static_cast<Float>(count);
+
+					Float db = dbFloor;
+					if(power > 1.0e-20f) db = 10.0f * log10(power);
+					db = clamp(db, dbFloor, dbCeiling);
+
+					spectrogramOut[static_cast<SizeT>(col) * defaultMelBins + bin] = db;
+				}
 			}
+		};
+
+		if(threadCount <= 1)
+		{
+			processColumns(0, numColumns);
+		}
+		else
+		{
+			Vector<std::thread> threads;
+			threads.reserve(threadCount);
+			for(Int t = 0; t < threadCount; ++t)
+			{
+				const Int start = t * colsPerThread;
+				const Int end   = min(start + colsPerThread, numColumns);
+				if(start < end) threads.emplace_back(processColumns, start, end);
+			}
+			for(auto& th : threads) th.join();
+		}
+	}
+
+	void computeMelPhaseSpectrogram(const Vector<Float>& samples, const UInt sampleRate, Vector<Float>& phaseOut, Int& columnsOut, Int& binsOut)
+	{
+		phaseOut.clear();
+		columnsOut = 0;
+		binsOut    = defaultMelBins;
+
+		if(samples.empty() || sampleRate == 0) return;
+
+		const SizeT totalSamples = samples.size();
+		if(totalSamples < 2) return;
+
+		Int hopSize = max(spectrogramFftSize / 32, static_cast<Int>(totalSamples / maxSpectrogramColumns));
+		Int hop     = 1;
+		while(hop < hopSize) hop <<= 1;
+		hopSize = min(hop, spectrogramFftSize / 2);
+
+		Int numColumns = max(1, static_cast<Int>(totalSamples / hopSize) + 1);
+		numColumns     = min(numColumns, maxSpectrogramColumns);
+		columnsOut     = numColumns;
+
+		const Float nyquist = static_cast<Float>(sampleRate) * 0.5f;
+		const Float melMax  = hzToMel(nyquist);
+		const Float melMin  = hzToMel(20.0f);
+
+		Vector<Int> melBinEdges(defaultMelBins + 1);
+		for(Int i = 0; i <= defaultMelBins; ++i)
+		{
+			const Float mel = melMin + static_cast<Float>(i) * (melMax - melMin) / static_cast<Float>(defaultMelBins);
+			melBinEdges[i]  = clamp(static_cast<Int>(melToHz(mel) * static_cast<Float>(spectrogramFftSize) / static_cast<Float>(sampleRate)), 0, spectrogramFftSize / 2 - 1);
+		}
+
+		Vector<Float> window(spectrogramFftSize);
+		for(Int i = 0; i < spectrogramFftSize; ++i)
+			window[i] = 0.5f * (1.0f - cos(6.28318530718f * static_cast<Float>(i) / static_cast<Float>(spectrogramFftSize - 1)));
+
+		constexpr Float pi    = 3.14159265359f;
+		constexpr Float twoPi = 6.28318530718f;
+
+		phaseOut.resize(static_cast<SizeT>(numColumns) * defaultMelBins, dbFloor);
+
+		const Int threadCount   = clamp(static_cast<Int>(std::thread::hardware_concurrency()), 1, 32);
+		const Int colsPerThread = (numColumns + threadCount - 1) / threadCount;
+
+		auto processColumns = [&](const Int colStart, const Int colEnd)
+		{
+			Vector<Complex> fftBuf(spectrogramFftSize);
+
+			for(Int col = colStart; col < colEnd; ++col)
+			{
+				const Float centerF     = static_cast<Float>(col) * static_cast<Float>(totalSamples - 1) / static_cast<Float>(max(numColumns - 1, 1));
+				const Int   windowStart = static_cast<Int>(centerF) - spectrogramFftSize / 2;
+
+				for(Int i = 0; i < spectrogramFftSize; ++i)
+				{
+					const Int sampleIdx = windowStart + i;
+					Float     sample    = 0.0f;
+					if(sampleIdx >= 0 && static_cast<SizeT>(sampleIdx) < totalSamples)
+						sample = samples[static_cast<SizeT>(sampleIdx)];
+					fftBuf[i].re = sample * window[i];
+					fftBuf[i].im = 0.0f;
+				}
+
+				fftInPlace(fftBuf);
+
+				const Int halfFft = spectrogramFftSize / 2;
+				for(Int bin = 0; bin < defaultMelBins; ++bin)
+				{
+					const Int startBin = melBinEdges[bin];
+					const Int endBin   = melBinEdges[bin + 1];
+
+					Float sumSin = 0.0f;
+					Float sumCos = 0.0f;
+					Int   count  = 0;
+					for(Int k = startBin; k <= endBin && k < halfFft; ++k)
+					{
+						const Float phase = atan2(fftBuf[k].im, fftBuf[k].re);
+						sumSin += sin(phase);
+						sumCos += cos(phase);
+						++count;
+					}
+
+					Float avgPhase = 0.0f;
+					if(count > 0) avgPhase = atan2(sumSin, sumCos);
+
+					const Float norm01 = (avgPhase + pi) / twoPi;
+					phaseOut[static_cast<SizeT>(col) * defaultMelBins + bin] = norm01 * (dbCeiling - dbFloor) + dbFloor;
+				}
+			}
+		};
+
+		if(threadCount <= 1)
+		{
+			processColumns(0, numColumns);
+		}
+		else
+		{
+			Vector<std::thread> threads;
+			threads.reserve(threadCount);
+			for(Int t = 0; t < threadCount; ++t)
+			{
+				const Int start = t * colsPerThread;
+				const Int end   = min(start + colsPerThread, numColumns);
+				if(start < end) threads.emplace_back(processColumns, start, end);
+			}
+			for(auto& th : threads) th.join();
 		}
 	}
 
@@ -251,90 +382,215 @@ namespace
 		for(Int i = 0; i < spectrogramFftSize; ++i)
 			window[i] = 0.5f * (1.0f - cos(6.28318530718f * static_cast<Float>(i) / static_cast<Float>(spectrogramFftSize - 1)));
 
-		Vector<Complex> fftBuf(spectrogramFftSize);
+		const Int threadCount   = clamp(static_cast<Int>(std::thread::hardware_concurrency()), 1, 32);
+		const Int colsPerThread = (numColumns + threadCount - 1) / threadCount;
 
-		for(Int col = 0; col < numColumns; ++col)
+		auto processColumns = [&](const Int colStart, const Int colEnd)
 		{
-			const Float centerF     = static_cast<Float>(col) * static_cast<Float>(totalSamples - 1) / static_cast<Float>(max(numColumns - 1, 1));
-			const Int   windowStart = static_cast<Int>(centerF) - spectrogramFftSize / 2;
+			Vector<Complex> fftBuf(spectrogramFftSize);
 
-			for(Int i = 0; i < spectrogramFftSize; ++i)
+			for(Int col = colStart; col < colEnd; ++col)
 			{
-				const Int sampleIdx = windowStart + i;
-				Float     sample    = 0.0f;
-				if(sampleIdx >= 0 && static_cast<SizeT>(sampleIdx) < totalSamples)
-					sample = samples[static_cast<SizeT>(sampleIdx)];
-				fftBuf[i].re = sample * window[i];
-				fftBuf[i].im = 0.0f;
+				const Float centerF     = static_cast<Float>(col) * static_cast<Float>(totalSamples - 1) / static_cast<Float>(max(numColumns - 1, 1));
+				const Int   windowStart = static_cast<Int>(centerF) - spectrogramFftSize / 2;
+
+				for(Int i = 0; i < spectrogramFftSize; ++i)
+				{
+					const Int sampleIdx = windowStart + i;
+					Float     sample    = 0.0f;
+					if(sampleIdx >= 0 && static_cast<SizeT>(sampleIdx) < totalSamples)
+						sample = samples[static_cast<SizeT>(sampleIdx)];
+					fftBuf[i].re = sample * window[i];
+					fftBuf[i].im = 0.0f;
+				}
+
+				fftInPlace(fftBuf);
+
+				const SizeT colOffset = static_cast<SizeT>(col) * halfBins;
+				for(Int k = 0; k < halfBins; ++k)
+				{
+					realOut[colOffset + k] = fftBuf[k].re;
+					imagOut[colOffset + k] = fftBuf[k].im;
+				}
 			}
+		};
 
-			fftInPlace(fftBuf);
-
-			const SizeT colOffset = static_cast<SizeT>(col) * halfBins;
-			for(Int k = 0; k < halfBins; ++k)
+		if(threadCount <= 1)
+		{
+			processColumns(0, numColumns);
+		}
+		else
+		{
+			Vector<std::thread> threads;
+			threads.reserve(threadCount);
+			for(Int t = 0; t < threadCount; ++t)
 			{
-				realOut[colOffset + k] = fftBuf[k].re;
-				imagOut[colOffset + k] = fftBuf[k].im;
+				const Int start = t * colsPerThread;
+				const Int end   = min(start + colsPerThread, numColumns);
+				if(start < end) threads.emplace_back(processColumns, start, end);
 			}
+			for(auto& th : threads) th.join();
 		}
 	}
 
-	struct ColorEntry
-	{
-		Byte r, g, b;
-	};
-
-	void buildColorLUT(const Float contrastExp, ColorEntry* lut, const Int lutSize)
-	{
-		for(Int i = 0; i < lutSize; ++i)
-		{
-			Float t = static_cast<Float>(i) / static_cast<Float>(lutSize - 1);
-			if(contrastExp != 1.0f) t = pow(t, contrastExp);
-			spectrogramColor(t, lut[i].r, lut[i].g, lut[i].b);
-		}
-	}
-
-	void buildDisplayPixels(
+	void buildDbTexture(
 		const Vector<Float>& spectrogram,
 		const Int            srcColumns,
 		const Int            srcBins,
 		const Float          viewStart,
 		const Float          viewSpan,
-		const Float          brightnessMul,
-		const Float          contrastExp,
 		const Int            outWidth,
-		Vector<Byte>&        pixelsOut)
+		Vector<Float>&       dbOut)
 	{
-		pixelsOut.resize(static_cast<SizeT>(outWidth) * srcBins * 4);
+		dbOut.resize(static_cast<SizeT>(outWidth) * srcBins);
 
-		constexpr Int lutSize = 256;
-		ColorEntry    lut[lutSize];
-		buildColorLUT(contrastExp, lut, lutSize);
+		const Int threadCount   = clamp(static_cast<Int>(std::thread::hardware_concurrency()), 1, 32);
+		const Int colsPerThread = (outWidth + threadCount - 1) / threadCount;
 
-		const Float dbRange = dbCeiling - dbFloor;
-
-		for(Int dx = 0; dx < outWidth; ++dx)
+		auto processColumns = [&](const Int startCol, const Int endCol)
 		{
-			const Float t01    = static_cast<Float>(dx) / static_cast<Float>(max(outWidth - 1, 1));
-			const Float srcPos = (viewStart + t01 * viewSpan) * static_cast<Float>(srcColumns - 1);
-			const Int   col0   = clamp(static_cast<Int>(srcPos), 0, srcColumns - 1);
-			const Int   col1   = clamp(col0 + 1, 0, srcColumns - 1);
-			const Float frac   = srcPos - static_cast<Float>(col0);
-
-			for(Int bin = 0; bin < srcBins; ++bin)
+			for(Int dx = startCol; dx < endCol; ++dx)
 			{
-				const Float db0 = spectrogram[static_cast<SizeT>(col0) * srcBins + bin];
-				const Float db1 = spectrogram[static_cast<SizeT>(col1) * srcBins + bin];
-				const Float db  = db0 + (db1 - db0) * frac;
-				const Float normalized = clamp((db - dbFloor) / dbRange * brightnessMul, 0.0f, 1.0f);
+				const Float t01    = static_cast<Float>(dx) / static_cast<Float>(max(outWidth - 1, 1));
+				const Float srcPos = (viewStart + t01 * viewSpan) * static_cast<Float>(srcColumns - 1);
+				const Int   col0   = clamp(static_cast<Int>(srcPos), 0, srcColumns - 1);
+				const Int   col1   = clamp(col0 + 1, 0, srcColumns - 1);
+				const Float frac   = srcPos - static_cast<Float>(col0);
 
-				const Int   lutIdx     = clamp(static_cast<Int>(normalized * static_cast<Float>(lutSize - 1)), 0, lutSize - 1);
-				const SizeT pixelIndex = (static_cast<SizeT>(bin) * outWidth + dx) * 4;
-				pixelsOut[pixelIndex]     = lut[lutIdx].r;
-				pixelsOut[pixelIndex + 1] = lut[lutIdx].g;
-				pixelsOut[pixelIndex + 2] = lut[lutIdx].b;
-				pixelsOut[pixelIndex + 3] = 255;
+				for(Int bin = 0; bin < srcBins; ++bin)
+				{
+					const Float db0 = spectrogram[static_cast<SizeT>(col0) * srcBins + bin];
+					const Float db1 = spectrogram[static_cast<SizeT>(col1) * srcBins + bin];
+					dbOut[static_cast<SizeT>(bin) * outWidth + dx] = db0 + (db1 - db0) * frac;
+				}
 			}
+		};
+
+		if(threadCount <= 1)
+		{
+			processColumns(0, outWidth);
+		}
+		else
+		{
+			Vector<std::thread> threads;
+			threads.reserve(threadCount);
+			for(Int t = 0; t < threadCount; ++t)
+			{
+				const Int start = t * colsPerThread;
+				const Int end   = min(start + colsPerThread, outWidth);
+				if(start < end) threads.emplace_back(processColumns, start, end);
+			}
+			for(auto& th : threads) th.join();
+		}
+	}
+
+	void computeViewMelSpectrogram(
+		const Vector<Float>&     samples,
+		const UInt               sampleRate,
+		const Float              viewStart,
+		const Float              viewSpan,
+		const Int                outColumns,
+		Vector<Float>&           spectrogramOut,
+		Int&                     binsOut,
+		const std::atomic<bool>* cancelFlag = nullptr)
+	{
+		binsOut = defaultMelBins;
+		spectrogramOut.clear();
+		if(samples.empty() || sampleRate == 0 || outColumns <= 0) return;
+
+		const SizeT totalSamples = samples.size();
+		if(totalSamples < 2) return;
+
+		const Float nyquist = static_cast<Float>(sampleRate) * 0.5f;
+		const Float melMax  = hzToMel(nyquist);
+		const Float melMin  = hzToMel(20.0f);
+
+		Vector<Int> melBinEdges(defaultMelBins + 1);
+		for(Int i = 0; i <= defaultMelBins; ++i)
+		{
+			const Float mel = melMin + static_cast<Float>(i) * (melMax - melMin) / static_cast<Float>(defaultMelBins);
+			melBinEdges[i]  = clamp(static_cast<Int>(melToHz(mel) * static_cast<Float>(spectrogramFftSize) / static_cast<Float>(sampleRate)), 0, spectrogramFftSize / 2 - 1);
+		}
+
+		Vector<Float> window(spectrogramFftSize);
+		for(Int i = 0; i < spectrogramFftSize; ++i)
+			window[i] = 0.5f * (1.0f - cos(6.28318530718f * static_cast<Float>(i) / static_cast<Float>(spectrogramFftSize - 1)));
+
+		spectrogramOut.resize(static_cast<SizeT>(outColumns) * defaultMelBins, dbFloor);
+
+		const Float halfN     = static_cast<Float>(spectrogramFftSize) * 0.5f;
+		const Float powerNorm = 1.0f / (halfN * halfN);
+
+		const Float startSample01 = viewStart;
+		const Float endSample01   = viewStart + viewSpan;
+
+		const Int threadCount   = clamp(static_cast<Int>(std::thread::hardware_concurrency()), 1, 32);
+		const Int colsPerThread = (outColumns + threadCount - 1) / threadCount;
+
+		auto processColumns = [&](const Int colStart, const Int colEnd)
+		{
+			Vector<Complex> fftBuf(spectrogramFftSize);
+
+			for(Int col = colStart; col < colEnd; ++col)
+			{
+				if(cancelFlag && cancelFlag->load(std::memory_order_relaxed)) return;
+
+				const Float t01     = static_cast<Float>(col) / static_cast<Float>(max(outColumns - 1, 1));
+				const Float pos01   = startSample01 + t01 * (endSample01 - startSample01);
+				const Float centerF = pos01 * static_cast<Float>(totalSamples - 1);
+				const Int   windowStart = static_cast<Int>(centerF) - spectrogramFftSize / 2;
+
+				for(Int i = 0; i < spectrogramFftSize; ++i)
+				{
+					const Int sampleIdx = windowStart + i;
+					Float     sample    = 0.0f;
+					if(sampleIdx >= 0 && static_cast<SizeT>(sampleIdx) < totalSamples)
+						sample = samples[static_cast<SizeT>(sampleIdx)];
+					fftBuf[i].re = sample * window[i];
+					fftBuf[i].im = 0.0f;
+				}
+
+				fftInPlace(fftBuf);
+
+				const Int halfFft = spectrogramFftSize / 2;
+				for(Int bin = 0; bin < defaultMelBins; ++bin)
+				{
+					const Int startBin = melBinEdges[bin];
+					const Int endBin   = melBinEdges[bin + 1];
+
+					Float power = 0.0f;
+					Int   count = 0;
+					for(Int k = startBin; k <= endBin && k < halfFft; ++k)
+					{
+						power += (fftBuf[k].re * fftBuf[k].re + fftBuf[k].im * fftBuf[k].im) * powerNorm;
+						++count;
+					}
+					if(count > 0) power /= static_cast<Float>(count);
+
+					Float db = dbFloor;
+					if(power > 1.0e-20f) db = 10.0f * log10(power);
+					db = clamp(db, dbFloor, dbCeiling);
+
+					spectrogramOut[static_cast<SizeT>(col) * defaultMelBins + bin] = db;
+				}
+			}
+		};
+
+		if(threadCount <= 1)
+		{
+			processColumns(0, outColumns);
+		}
+		else
+		{
+			Vector<std::thread> threads;
+			threads.reserve(threadCount);
+			for(Int t = 0; t < threadCount; ++t)
+			{
+				const Int start = t * colsPerThread;
+				const Int end   = min(start + colsPerThread, outColumns);
+				if(start < end) threads.emplace_back(processColumns, start, end);
+			}
+			for(auto& th : threads) th.join();
 		}
 	}
 
@@ -359,6 +615,58 @@ namespace
 	}
 }
 
+namespace
+{
+	std::thread        hrThread;
+	std::atomic<bool>  hrCancel{false};
+	std::atomic<bool>  hrDone{false};
+	Vector<Float>      hrDbTexL, hrDbTexR;
+	Float              hrViewStart = 0.0f;
+	Float              hrViewSpan  = 1.0f;
+	Int                hrTexWidth  = 0;
+}
+
+void SoundAnalysisLabRenderer::cancelHighRes()
+{
+	hrCancel.store(true, std::memory_order_relaxed);
+	if(hrThread.joinable()) hrThread.join();
+	hrCancel.store(false, std::memory_order_relaxed);
+	hrDone.store(false, std::memory_order_relaxed);
+}
+
+void SoundAnalysisLabRenderer::launchHighRes()
+{
+	cancelHighRes();
+
+	const Float visiblePrecomputedCols = viewSpan01 * static_cast<Float>(spectrogramColumns);
+	if(visiblePrecomputedCols >= static_cast<Float>(maxTexWidth) || samplesLeft.empty()) return;
+
+	hrViewStart = viewStart01;
+	hrViewSpan  = viewSpan01;
+	hrTexWidth  = maxTexWidth;
+
+	const Float vs = viewStart01, vp = viewSpan01;
+	const UInt  sr = sampleRate;
+	const Int   tw = maxTexWidth;
+	const Vector<Float>* pL = &samplesLeft;
+	const Vector<Float>* pR = &samplesRight;
+
+	hrThread = std::thread([pL, pR, sr, vs, vp, tw]()
+	{
+		Vector<Float> viewSpecL, viewSpecR;
+		Int viewBins = 0;
+		computeViewMelSpectrogram(*pL, sr, vs, vp, tw, viewSpecL, viewBins, &hrCancel);
+		if(hrCancel.load(std::memory_order_relaxed)) return;
+		computeViewMelSpectrogram(*pR, sr, vs, vp, tw, viewSpecR, viewBins, &hrCancel);
+		if(hrCancel.load(std::memory_order_relaxed)) return;
+
+		buildDbTexture(viewSpecL, tw, viewBins, 0.0f, 1.0f, tw, hrDbTexL);
+		if(hrCancel.load(std::memory_order_relaxed)) return;
+		buildDbTexture(viewSpecR, tw, viewBins, 0.0f, 1.0f, tw, hrDbTexR);
+		hrDone.store(true, std::memory_order_release);
+	});
+}
+
 void SoundAnalysisLabRenderer::refreshSoundFileList()
 {
 	soundFiles.clear();
@@ -375,6 +683,7 @@ void SoundAnalysisLabRenderer::refreshSoundFileList()
 
 void SoundAnalysisLabRenderer::loadSoundFile(const Path& path)
 {
+	cancelHighRes();
 	if(scrubbing) stopScrubSynthesis();
 	if(synthReady)
 	{
@@ -420,6 +729,7 @@ void SoundAnalysisLabRenderer::loadSoundFile(const Path& path)
 	spectrogramDirty = true;
 
 	audioEngine.load(playbackTrackId, path, false);
+	playbackTrackLength = audioEngine.getTrackLengthInFrames(playbackTrackId);
 	audioEngine.setTrackVolume(playbackTrackId, volume);
 }
 
@@ -435,6 +745,11 @@ void SoundAnalysisLabRenderer::computeSpectrograms()
 	computeMelSpectrogram(samplesLeft, sampleRate, spectrogramL, spectrogramColumns, spectrogramMelBins);
 	Int colsR = 0, binsR = 0;
 	computeMelSpectrogram(samplesRight, sampleRate, spectrogramR, colsR, binsR);
+
+	Int phaseCols = 0, phaseBins = 0;
+	computeMelPhaseSpectrogram(samplesLeft, sampleRate, phaseSpecL, phaseCols, phaseBins);
+	computeMelPhaseSpectrogram(samplesRight, sampleRate, phaseSpecR, phaseCols, phaseBins);
+
 	computeSTFT();
 }
 
@@ -447,21 +762,38 @@ void SoundAnalysisLabRenderer::computeSTFT()
 
 void SoundAnalysisLabRenderer::buildSpectrogramPixels()
 {
-	if(spectrogramColumns <= 0 || spectrogramMelBins <= 0)
+	if(samplesMono.empty())
 	{
-		pixelsL.clear();
-		pixelsR.clear();
+		dbTexDataL.clear();
+		dbTexDataR.clear();
+		phaseTexDataL.clear();
+		phaseTexDataR.clear();
 		return;
 	}
-	buildDisplayPixels(spectrogramL, spectrogramColumns, spectrogramMelBins, viewStart01, viewSpan01, brightness, contrast, displayTexWidth, pixelsL);
-	buildDisplayPixels(spectrogramR, spectrogramColumns, spectrogramMelBins, viewStart01, viewSpan01, brightness, contrast, displayTexWidth, pixelsR);
+
+	if(spectrogramColumns <= 0 || spectrogramMelBins <= 0) return;
+
+	buildDbTexture(spectrogramL, spectrogramColumns, spectrogramMelBins, viewStart01, viewSpan01, coarseTexWidth, dbTexDataL);
+	buildDbTexture(spectrogramR, spectrogramColumns, spectrogramMelBins, viewStart01, viewSpan01, coarseTexWidth, dbTexDataR);
+
+	if(!phaseSpecL.empty())
+		buildDbTexture(phaseSpecL, spectrogramColumns, spectrogramMelBins, viewStart01, viewSpan01, coarseTexWidth, phaseTexDataL);
+	if(!phaseSpecR.empty())
+		buildDbTexture(phaseSpecR, spectrogramColumns, spectrogramMelBins, viewStart01, viewSpan01, coarseTexWidth, phaseTexDataR);
+
+	launchHighRes();
 }
 
 void SoundAnalysisLabRenderer::uploadTextures(Renderer& renderer)
 {
-	if(spectrogramColumns <= 0 || spectrogramMelBins <= 0) return;
+	const Vector<Float>& srcL = showPhase ? phaseTexDataL : dbTexDataL;
+	const Vector<Float>& srcR = showPhase ? phaseTexDataR : dbTexDataR;
 
-	if(texturesReady && (textureWidth != displayTexWidth || textureHeight != spectrogramMelBins))
+	if(srcL.empty() && srcR.empty()) return;
+
+	const Int texH = defaultMelBins;
+
+	if(texturesReady && (textureWidth != coarseTexWidth || textureHeight != texH))
 	{
 		textureL.unload(renderer);
 		textureR.unload(renderer);
@@ -470,32 +802,72 @@ void SoundAnalysisLabRenderer::uploadTextures(Renderer& renderer)
 
 	if(!texturesReady)
 	{
-		const IVec2 texSize(displayTexWidth, spectrogramMelBins);
-		textureL.load(renderer, texSize, WritePixelsFormat::RGBA, DataType::Byte, Wrapping::Clamped);
-		textureR.load(renderer, texSize, WritePixelsFormat::RGBA, DataType::Byte, Wrapping::Clamped);
+		const IVec2 texSize(coarseTexWidth, texH);
+		textureL.load(renderer, texSize, WritePixelsFormat::Red, DataType::Float, Wrapping::Clamped);
+		textureR.load(renderer, texSize, WritePixelsFormat::Red, DataType::Float, Wrapping::Clamped);
 		textureL.setFilters(renderer, Filter::Linear, Filter::Linear);
 		textureR.setFilters(renderer, Filter::Linear, Filter::Linear);
-		textureWidth  = displayTexWidth;
-		textureHeight = spectrogramMelBins;
+		textureWidth  = coarseTexWidth;
+		textureHeight = texH;
 		texturesReady = true;
 	}
 
-	if(!pixelsL.empty())
+	if(!srcL.empty())
 	{
 		OpenGL::Textures::apiTextureSubImage2D(
 			renderer.openGlContext, textureL.getOpenGLID(),
-			0, 0, 0, displayTexWidth, spectrogramMelBins,
-			WritePixelsFormat::RGBA, DataType::Byte, pixelsL.data());
+			0, 0, 0, coarseTexWidth, texH,
+			WritePixelsFormat::Red, DataType::Float, srcL.data());
 	}
-	if(!pixelsR.empty())
+	if(!srcR.empty())
 	{
 		OpenGL::Textures::apiTextureSubImage2D(
 			renderer.openGlContext, textureR.getOpenGLID(),
-			0, 0, 0, displayTexWidth, spectrogramMelBins,
-			WritePixelsFormat::RGBA, DataType::Byte, pixelsR.data());
+			0, 0, 0, coarseTexWidth, texH,
+			WritePixelsFormat::Red, DataType::Float, srcR.data());
 	}
 
 	spectrogramDirty = false;
+}
+
+void SoundAnalysisLabRenderer::uploadHighRes(Renderer& renderer)
+{
+	const Int texH = defaultMelBins;
+	const Int tw   = hrTexWidth;
+
+	if(highResTexAllocated && highResTexWidth != tw)
+	{
+		highResTextureL.unload(renderer);
+		highResTextureR.unload(renderer);
+		highResTexAllocated = false;
+	}
+
+	if(!highResTexAllocated)
+	{
+		const IVec2 texSize(tw, texH);
+		highResTextureL.load(renderer, texSize, WritePixelsFormat::Red, DataType::Float, Wrapping::Clamped);
+		highResTextureR.load(renderer, texSize, WritePixelsFormat::Red, DataType::Float, Wrapping::Clamped);
+		highResTextureL.setFilters(renderer, Filter::Linear, Filter::Linear);
+		highResTextureR.setFilters(renderer, Filter::Linear, Filter::Linear);
+		highResTexWidth     = tw;
+		highResTexAllocated = true;
+	}
+
+	if(!hrDbTexL.empty())
+		OpenGL::Textures::apiTextureSubImage2D(
+			renderer.openGlContext, highResTextureL.getOpenGLID(),
+			0, 0, 0, tw, texH,
+			WritePixelsFormat::Red, DataType::Float, hrDbTexL.data());
+	if(!hrDbTexR.empty())
+		OpenGL::Textures::apiTextureSubImage2D(
+			renderer.openGlContext, highResTextureR.getOpenGLID(),
+			0, 0, 0, tw, texH,
+			WritePixelsFormat::Red, DataType::Float, hrDbTexR.data());
+
+	cachedHRViewStart = hrViewStart;
+	cachedHRViewSpan  = hrViewSpan;
+	highResAvailable  = true;
+	highResDirty      = false;
 }
 
 void SoundAnalysisLabRenderer::rebuildWaveformPreview()
@@ -607,8 +979,9 @@ void SoundAnalysisLabRenderer::updateScrubSynthesis(const Float pos01)
 
 void SoundAnalysisLabRenderer::startScrubSynthesis(const Float pos01)
 {
-	scrubbing       = true;
-	scrubPosition01 = pos01;
+	scrubbing              = true;
+	scrubPosition01        = pos01;
+	wasPlayingBeforeScrub  = playing;
 
 	if(playing)
 	{
@@ -638,17 +1011,23 @@ void SoundAnalysisLabRenderer::stopScrubSynthesis()
 
 	if(!samplesMono.empty())
 	{
-		const UInt seekFrame = static_cast<UInt>(clamp(scrubPosition01, 0.0f, 1.0f) * static_cast<Float>(samplesMono.size()));
+		const UInt seekFrame = static_cast<UInt>(clamp(scrubPosition01, 0.0f, 1.0f) * static_cast<Float>(playbackTrackLength));
 		audioEngine.seekTrack(playbackTrackId, seekFrame);
+		if(wasPlayingBeforeScrub)
+		{
+			audioEngine.startTrack(playbackTrackId);
+			playing = true;
+		}
 	}
+	wasPlayingBeforeScrub = false;
 }
 
 Float SoundAnalysisLabRenderer::getPlaybackPosition01()
 {
 	if(scrubbing) return scrubPosition01;
-	if(samplesMono.empty()) return 0.0f;
+	if(samplesMono.empty() || playbackTrackLength == 0) return 0.0f;
 	const UInt framePos = audioEngine.getTrackPositionInFrames(playbackTrackId);
-	return clamp(static_cast<Float>(framePos) / static_cast<Float>(samplesMono.size()), 0.0f, 1.0f);
+	return clamp(static_cast<Float>(framePos) / static_cast<Float>(playbackTrackLength), 0.0f, 1.0f);
 }
 
 Float SoundAnalysisLabRenderer::getTotalDurationSeconds() const
@@ -660,6 +1039,26 @@ Float SoundAnalysisLabRenderer::getTotalDurationSeconds() const
 void SoundAnalysisLabRenderer::create(Window& window)
 {
 	GameRenderer::create(window);
+
+	Renderer& r = window.renderer;
+	r.shaderSystem.add(r, "spectrogram");
+
+	constexpr Int cmapSize = 256;
+	Vector<Byte> cmapData(cmapSize * 4);
+	for(Int i = 0; i < cmapSize; ++i)
+	{
+		const Float t = static_cast<Float>(i) / static_cast<Float>(cmapSize - 1);
+		spectrogramColor(t, cmapData[i * 4], cmapData[i * 4 + 1], cmapData[i * 4 + 2]);
+		cmapData[i * 4 + 3] = 255;
+	}
+	colormapTexture.load(r, IVec2(cmapSize, 1), WritePixelsFormat::RGBA, DataType::Byte, Wrapping::Clamped);
+	colormapTexture.setFilters(r, Filter::Linear, Filter::Linear);
+	OpenGL::Textures::apiTextureSubImage2D(
+		r.openGlContext, colormapTexture.getOpenGLID(),
+		0, 0, 0, cmapSize, 1,
+		WritePixelsFormat::RGBA, DataType::Byte, cmapData.data());
+	colormapReady = true;
+
 	audioEngine.create();
 	refreshSoundFileList();
 	if(!soundFiles.empty()) loadSoundFileByIndex(0);
@@ -667,6 +1066,7 @@ void SoundAnalysisLabRenderer::create(Window& window)
 
 void SoundAnalysisLabRenderer::destroy(Window& window)
 {
+	cancelHighRes();
 	if(scrubbing) stopScrubSynthesis();
 	if(synthReady)
 	{
@@ -680,6 +1080,17 @@ void SoundAnalysisLabRenderer::destroy(Window& window)
 		textureL.unload(window.renderer);
 		textureR.unload(window.renderer);
 		texturesReady = false;
+	}
+	if(highResTexAllocated)
+	{
+		highResTextureL.unload(window.renderer);
+		highResTextureR.unload(window.renderer);
+		highResTexAllocated = false;
+	}
+	if(colormapReady)
+	{
+		colormapTexture.unload(window.renderer);
+		colormapReady = false;
 	}
 	GameRenderer::destroy(window);
 }
@@ -695,8 +1106,56 @@ void SoundAnalysisLabRenderer::update(Window& window)
 		if(!selectedFile.empty()) loadSoundFile(selectedFile);
 	}
 
-	if(playing && !audioEngine.isTrackPlaying(playbackTrackId))
-		playing = false;
+	if(pendingFileStep != 0)
+	{
+		const Int step = pendingFileStep;
+		pendingFileStep = 0;
+		if(!soundFiles.empty()) loadSoundFileByIndex(currentFileIndex + step);
+	}
+
+	if(pendingTogglePlay)
+	{
+		pendingTogglePlay = false;
+		if(!samplesMono.empty())
+		{
+			if(playing)
+			{
+				audioEngine.pauseTrack(playbackTrackId);
+				playing = false;
+			}
+			else
+			{
+				if(getPlaybackPosition01() >= 1.0f)
+					audioEngine.seekTrack(playbackTrackId, 0);
+				audioEngine.startTrack(playbackTrackId);
+				playing = true;
+			}
+		}
+	}
+
+	if(pendingZoom.active)
+	{
+		const Float factor   = pendingZoom.factor;
+		const Float focusX01 = pendingZoom.focusX01;
+		pendingZoom.active = false;
+		applyZoom(factor, focusX01);
+	}
+
+	if(playing)
+	{
+		if(!audioEngine.isTrackPlaying(playbackTrackId) || getPlaybackPosition01() >= 1.0f)
+		{
+			audioEngine.pauseTrack(playbackTrackId);
+			playing = false;
+		}
+	}
+
+	if(hrDone.load(std::memory_order_acquire))
+	{
+		if(hrThread.joinable()) hrThread.join();
+		hrDone.store(false, std::memory_order_relaxed);
+		highResDirty = true;
+	}
 }
 
 void SoundAnalysisLabRenderer::inputEvent(Window& window, InputEvent& input)
@@ -708,26 +1167,17 @@ void SoundAnalysisLabRenderer::inputEvent(Window& window, InputEvent& input)
 	}
 	if(input == prevFileKey && !soundFiles.empty())
 	{
-		loadSoundFileByIndex(currentFileIndex - 1);
+		pendingFileStep = -1;
 		input.consume();
 	}
 	if(input == nextFileKey && !soundFiles.empty())
 	{
-		loadSoundFileByIndex(currentFileIndex + 1);
+		pendingFileStep = 1;
 		input.consume();
 	}
 	if(input == togglePlayKey && !samplesMono.empty())
 	{
-		if(playing)
-		{
-			audioEngine.pauseTrack(playbackTrackId);
-			playing = false;
-		}
-		else
-		{
-			audioEngine.startTrack(playbackTrackId);
-			playing = true;
-		}
+		pendingTogglePlay = true;
 		input.consume();
 	}
 
@@ -744,12 +1194,12 @@ void SoundAnalysisLabRenderer::inputEvent(Window& window, InputEvent& input)
 			const Float focusX01 = clamp((mouse.x - margin) / graphW, 0.0f, 1.0f);
 			if(input == zoomInKey)
 			{
-				applyZoom(1.15f, focusX01);
+				pendingZoom = {1.15f, focusX01, true};
 				input.consume();
 			}
 			if(input == zoomOutKey)
 			{
-				applyZoom(1.0f / 1.15f, focusX01);
+				pendingZoom = {1.0f / 1.15f, focusX01, true};
 				input.consume();
 			}
 		}
@@ -838,10 +1288,13 @@ void SoundAnalysisLabRenderer::renderScene(Window& window)
 	const Float specRY = waveY + waveformH + gap;
 	const Float specLY = specRY + specH + gap;
 
+	if(highResDirty) uploadHighRes(r);
+
 	if(texturesReady && spectrogramColumns > 0)
 	{
-		r.useShader("texture");
-		r.uniforms().setCustomInt1(0);
+		r.useShader("spectrogram");
+		r.uniforms().setCustomColor(Vec4(brightnessLow, brightnessHigh, contrastLow, contrastHigh));
+		colormapTexture.useTextureInSlot(r, 1);
 
 		r.uniforms().setMMatrix(matrixFromPositionAndSize(margin + graphW * 0.5f, specLY + specH * 0.5f, graphW, specH));
 		textureL.useTextureInSlot(r, 0);
@@ -861,6 +1314,32 @@ void SoundAnalysisLabRenderer::renderScene(Window& window)
 		r.uniforms().setMMatrix(matrixFromPositionAndSize(
 			margin + graphW * 0.5f, specRY + specH * 0.5f, graphW, specH));
 		r.plane();
+	}
+
+	if(highResAvailable && highResTexAllocated && !showPhase)
+	{
+		const Float hrLeft  = (cachedHRViewStart - viewStart01) / viewSpan01;
+		const Float hrRight = (cachedHRViewStart + cachedHRViewSpan - viewStart01) / viewSpan01;
+
+		if(hrRight > 0.0f && hrLeft < 1.0f)
+		{
+			const Float screenLeft  = margin + hrLeft * graphW;
+			const Float screenRight = margin + hrRight * graphW;
+			const Float screenW     = screenRight - screenLeft;
+			const Float centerX     = (screenLeft + screenRight) * 0.5f;
+
+			r.useShader("spectrogram");
+			r.uniforms().setCustomColor(Vec4(brightnessLow, brightnessHigh, contrastLow, contrastHigh));
+			colormapTexture.useTextureInSlot(r, 1);
+
+			r.uniforms().setMMatrix(matrixFromPositionAndSize(centerX, specLY + specH * 0.5f, screenW, specH));
+			highResTextureL.useTextureInSlot(r, 0);
+			r.plane();
+
+			r.uniforms().setMMatrix(matrixFromPositionAndSize(centerX, specRY + specH * 0.5f, screenW, specH));
+			highResTextureR.useTextureInSlot(r, 0);
+			r.plane();
+		}
 	}
 
 	waveformGraph.positionFromBottomLeft = Vec2(margin, waveY);
@@ -916,8 +1395,8 @@ void SoundAnalysisLabRenderer::renderScene(Window& window)
 
 	r.fontSize(12.0f);
 	r.fill(1.0f, 1.0f, 1.0f, 0.75f);
-	r.text("L", Vec2(margin + 5.0f, specLY + specH - 16.0f));
-	r.text("R", Vec2(margin + 5.0f, specRY + specH - 16.0f));
+	r.text(showPhase ? "L Phase" : "L", Vec2(margin + 5.0f, specLY + specH - 16.0f));
+	r.text(showPhase ? "R Phase" : "R", Vec2(margin + 5.0f, specRY + specH - 16.0f));
 
 	r.fontSize(9.0f);
 	r.fill(1.0f, 1.0f, 1.0f, 0.4f);
@@ -975,6 +1454,16 @@ void ImportAudioButton::inputEvent(Window& window, InputEvent& input)
 	UIButton::inputEvent(window, input);
 }
 
+void PhaseToggleButton::doThis()
+{
+	if(renderer)
+	{
+		renderer->showPhase = !renderer->showPhase;
+		renderer->spectrogramDirty = true;
+		setText(renderer->showPhase ? "Show Magnitude" : "Show Phase");
+	}
+}
+
 SoundAnalysisLabControls::SoundAnalysisLabControls(SoundAnalysisLabRenderer& renderer)
 {
 	setName("SoundAnalysisLabControls");
@@ -1001,6 +1490,18 @@ SoundAnalysisLabControls::SoundAnalysisLabControls(SoundAnalysisLabRenderer& ren
 	importButton.color(Color(1.0f, 1.0f, 1.0f, 1.0f));
 	importButton.setText("Import Audio File...");
 
+	phaseToggleButton.renderer = &renderer;
+	phaseToggleButton.setName("PhaseToggleButton");
+	phaseToggleButton.padding(10);
+	phaseToggleButton.growX(false);
+	phaseToggleButton.setWidth(276);
+	phaseToggleButton.setHeight(36);
+	phaseToggleButton.background(Color(1.0f, 1.0f, 1.0f, 0.08f));
+	phaseToggleButton.hoveredBackground(Color(1.0f, 1.0f, 1.0f, 0.16f));
+	phaseToggleButton.activeBackground(Color(1.0f, 1.0f, 1.0f, 0.28f));
+	phaseToggleButton.color(Color(1.0f, 1.0f, 1.0f, 1.0f));
+	phaseToggleButton.setText("Show Phase");
+
 	fileIndexSlider
 		.setLabel("Bundled Sound")
 		.setRange(0.0f, max(static_cast<Float>(renderer.soundFiles.size()) - 1.0f, 0.0f))
@@ -1024,37 +1525,42 @@ SoundAnalysisLabControls::SoundAnalysisLabControls(SoundAnalysisLabRenderer& ren
 	volumeSlider.growX(false);
 	volumeSlider.setWidth(276);
 
-	brightnessSlider
-		.setLabel("Brightness")
+	brightnessLowSlider
+		.setLabel("Brightness Low")
 		.setRange(0.1f, 10.0f)
-		.bind(renderer.brightness)
-		.setOnValueChanged([&renderer](const Float value)
-		{
-			renderer.brightness = value;
-			renderer.buildSpectrogramPixels();
-			renderer.spectrogramDirty = true;
-		});
-	brightnessSlider.growX(false);
-	brightnessSlider.setWidth(276);
+		.bind(renderer.brightnessLow);
+	brightnessLowSlider.growX(false);
+	brightnessLowSlider.setWidth(276);
 
-	contrastSlider
-		.setLabel("Contrast")
+	brightnessHighSlider
+		.setLabel("Brightness High")
+		.setRange(0.1f, 10.0f)
+		.bind(renderer.brightnessHigh);
+	brightnessHighSlider.growX(false);
+	brightnessHighSlider.setWidth(276);
+
+	contrastLowSlider
+		.setLabel("Contrast Low")
 		.setRange(0.1f, 50.0f)
-		.bind(renderer.contrast)
-		.setOnValueChanged([&renderer](const Float value)
-		{
-			renderer.contrast = value;
-			renderer.buildSpectrogramPixels();
-			renderer.spectrogramDirty = true;
-		});
-	contrastSlider.growX(false);
-	contrastSlider.setWidth(276);
+		.bind(renderer.contrastLow);
+	contrastLowSlider.growX(false);
+	contrastLowSlider.setWidth(276);
+
+	contrastHighSlider
+		.setLabel("Contrast High")
+		.setRange(0.1f, 50.0f)
+		.bind(renderer.contrastHigh);
+	contrastHighSlider.growX(false);
+	contrastHighSlider.setWidth(276);
 
 	addElement(importButton);
+	addElement(phaseToggleButton);
 	addElement(fileIndexSlider);
 	addElement(volumeSlider);
-	addElement(brightnessSlider);
-	addElement(contrastSlider);
+	addElement(brightnessLowSlider);
+	addElement(brightnessHighSlider);
+	addElement(contrastLowSlider);
+	addElement(contrastHighSlider);
 }
 
 void SoundAnalysisLab::run() const

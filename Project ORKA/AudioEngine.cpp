@@ -818,6 +818,21 @@ UInt AudioEngine::getTrackPositionInFrames(const String& id)
 	return 0;
 }
 
+UInt AudioEngine::getTrackLengthInFrames(const String& id)
+{
+	if(!impl || !impl->initialized) return 0;
+	if(const auto it = impl->tracks.find(id); it != impl->tracks.end())
+	{
+		if(it->second.impl && it->second.impl->loaded)
+		{
+			ma_uint64 length = 0;
+			ma_sound_get_length_in_pcm_frames(&it->second.impl->sound, &length);
+			return static_cast<UInt>(length);
+		}
+	}
+	return 0;
+}
+
 Bool AudioEngine::isTrackPlaying(const String& id)
 {
 	if(!impl || !impl->initialized) return false;

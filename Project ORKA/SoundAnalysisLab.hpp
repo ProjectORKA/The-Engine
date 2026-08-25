@@ -25,32 +25,53 @@ struct SoundAnalysisLabRenderer final : GameRenderer
 	Int           spectrogramColumns = 0;
 	Int           spectrogramMelBins = 0;
 
-	Vector<Byte> pixelsL;
-	Vector<Byte> pixelsR;
-	GPUTexture   textureL;
-	GPUTexture   textureR;
-	Bool         texturesReady    = false;
-	Bool         spectrogramDirty = false;
+	Vector<Float> dbTexDataL;
+	Vector<Float> dbTexDataR;
+	GPUTexture    textureL;
+	GPUTexture    textureR;
+	GPUTexture    colormapTexture;
+	Bool          texturesReady    = false;
+	Bool          colormapReady    = false;
+	Bool          spectrogramDirty = false;
 
 	WaveformGraph waveformGraph;
 	Vector<Float> waveformPreview;
 
-	String playbackTrackId = "salPlayback";
-	Bool   playing         = false;
+	String playbackTrackId      = "salPlayback";
+	UInt   playbackTrackLength = 0;
+	Bool   playing             = false;
 	Float  volume          = 0.8f;
-	Float  brightness      = 1.0f;
-	Float  contrast        = 1.0f;
+	Float  brightnessLow   = 1.3f;
+	Float  brightnessHigh  = 2.0f;
+	Float  contrastLow     = 5.0f;
+	Float  contrastHigh    = 5.0f;
+	Bool   wasPlayingBeforeScrub = false;
 
 	Float zoom        = 1.0f;
 	Float viewStart01 = 0.0f;
 	Float viewSpan01  = 1.0f;
 	Int   textureWidth  = 0;
 	Int   textureHeight = 0;
+	Int   maxTexWidth   = 16384;
+
+	Bool       highResAvailable    = false;
+	Bool       highResDirty        = false;
+	Float      cachedHRViewStart   = 0.0f;
+	Float      cachedHRViewSpan    = 1.0f;
+	GPUTexture highResTextureL, highResTextureR;
+	Bool       highResTexAllocated = false;
+	Int        highResTexWidth     = 0;
 
 	Vector<Float> stftRealL, stftImagL;
 	Vector<Float> stftRealR, stftImagR;
 	Int           stftColumns  = 0;
 	Int           stftHalfBins = 0;
+
+	Bool          showPhase    = false;
+	Vector<Float> phaseSpecL;
+	Vector<Float> phaseSpecR;
+	Vector<Float> phaseTexDataL;
+	Vector<Float> phaseTexDataR;
 
 	String        synthTrackId    = "salSynth";
 	Vector<Float> synthBuffer;
@@ -59,7 +80,16 @@ struct SoundAnalysisLabRenderer final : GameRenderer
 	Bool          scrubUseFFT     = true;
 	Float         scrubPosition01 = 0.0f;
 
-	Bool pendingImport = false;
+	Bool pendingImport   = false;
+	Int  pendingFileStep = 0;
+	Bool pendingTogglePlay = false;
+
+	struct PendingZoom
+	{
+		Float factor   = 1.0f;
+		Float focusX01 = 0.5f;
+		Bool  active   = false;
+	} pendingZoom;
 
 	InputEvent importAudioKey = InputEvent(InputType::KeyBoard, O, true);
 	InputEvent prevFileKey    = InputEvent(InputType::KeyBoard, LeftBracket, true);
@@ -78,6 +108,9 @@ struct SoundAnalysisLabRenderer final : GameRenderer
 	void syncViewFromZoom();
 	void applyZoom(Float factor, Float focusX01);
 	void computeSTFT();
+	void launchHighRes();
+	void cancelHighRes();
+	void uploadHighRes(Renderer& renderer);
 	void startScrubSynthesis(Float pos01);
 	void updateScrubSynthesis(Float pos01);
 	void stopScrubSynthesis();
@@ -101,13 +134,23 @@ struct ImportAudioButton final : UIButton
 	void inputEvent(Window& window, InputEvent& input) override;
 };
 
+struct PhaseToggleButton final : UIButton
+{
+	SoundAnalysisLabRenderer* renderer = nullptr;
+
+	void doThis() override;
+};
+
 struct SoundAnalysisLabControls final : UIElement
 {
-	ImportAudioButton importButton;
-	UISlider          fileIndexSlider;
+	ImportAudioButton  importButton;
+	PhaseToggleButton  phaseToggleButton;
+	UISlider           fileIndexSlider;
 	UISlider          volumeSlider;
-	UISlider          brightnessSlider;
-	UISlider          contrastSlider;
+	UISlider          brightnessLowSlider;
+	UISlider          brightnessHighSlider;
+	UISlider          contrastLowSlider;
+	UISlider          contrastHighSlider;
 
 	explicit SoundAnalysisLabControls(SoundAnalysisLabRenderer& renderer);
 };
