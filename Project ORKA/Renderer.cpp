@@ -599,6 +599,34 @@ void Renderer::setAlphaBlending(const Bool enable, const BlendFunction src, cons
 	OpenGL::apiBlendEquation(openGlContext, eq);
 }
 
+void Renderer::dispatchCompute(const UInt numGroupsX, const UInt numGroupsY, const UInt numGroupsZ)
+{
+	uniforms().upload(openGlContext);
+	OpenGL::apiDispatchCompute(openGlContext, numGroupsX, numGroupsY, numGroupsZ);
+}
+
+void Renderer::memoryBarrier(const UInt barriers)
+{
+	OpenGL::apiMemoryBarrier(openGlContext, barriers);
+}
+
+void Renderer::bindImageTexture(const UInt unit, const TextureID texture, const ImageAccess access, const SizedInternalFormat format)
+{
+	OpenGL::apiBindImageTexture(openGlContext, unit, texture, 0, false, 0, access, format);
+}
+
+void Renderer::setProgramPointSize(const Bool enabled)
+{
+	if (enabled) OpenGL::apiEnable(openGlContext, EnableParameters::ProgramPointSize);
+	else OpenGL::apiDisable(openGlContext, EnableParameters::ProgramPointSize);
+}
+
+void Renderer::drawArrays(const PrimitiveMode mode, const Int first, const Int count)
+{
+	uniforms().upload(openGlContext);
+	OpenGL::VertexArray::apiDrawArrays(openGlContext, mode, first, count);
+}
+
 void Renderer::renderMeshInstanced(const Name& name, const Vec2Vector& positions, const Vec2Vector& directions, const Vector<Float>& scales)
 {
 	renderMeshInstanced(name, matrixArrayFromPositionsDirectionsAndSizes(positions, directions, scales));

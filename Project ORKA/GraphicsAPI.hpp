@@ -91,6 +91,22 @@ enum class BlendEquation : UInt
 	Maximum = GL_MAX,
 };
 
+enum class ImageAccess : UInt
+{
+	ReadOnly = GL_READ_ONLY,
+	WriteOnly = GL_WRITE_ONLY,
+	ReadWrite = GL_READ_WRITE
+};
+
+enum class MemoryBarrierBit : UInt
+{
+	ShaderImageAccess = GL_SHADER_IMAGE_ACCESS_BARRIER_BIT,
+	ShaderStorage = GL_SHADER_STORAGE_BARRIER_BIT,
+	Framebuffer = GL_FRAMEBUFFER_BARRIER_BIT,
+	TextureFetch = GL_TEXTURE_FETCH_BARRIER_BIT,
+	All = GL_ALL_BARRIER_BITS
+};
+
 enum class PrimitiveMode : UInt
 {
 	Lines = GL_LINES,
@@ -917,6 +933,9 @@ namespace OpenGL
 	void apiViewport(OpenGlContext& openGlContext, Int x, Int y, Int w, Int h);
 	void apiObjectLabel(OpenGlContext& openGlContext, ObjectLabelType type, UInt objectID, const String& label);
 	void apiBlendFunc(OpenGlContext& openGlContext, BlendFunction sourceFactor, BlendFunction destinationFactor);
+	void apiDispatchCompute(OpenGlContext& openGlContext, UInt numGroupsX, UInt numGroupsY, UInt numGroupsZ);
+	void apiMemoryBarrier(OpenGlContext& openGlContext, UInt barriers);
+	void apiBindImageTexture(OpenGlContext& openGlContext, UInt unit, TextureID texture, Int level, Bool layered, Int layer, ImageAccess access, SizedInternalFormat format);
 }
 
 namespace OpenGL::Textures
@@ -957,6 +976,7 @@ namespace OpenGL::VertexArray
 
 	void apiBindVertexArray(OpenGlContext& openGlContext, VertexArrayID vertexArrayID);
 	void apiDeleteVertexArray(OpenGlContext& openGlContext, const VertexArrayID& vertexArrayID);
+	void apiDrawArrays(OpenGlContext& openGlContext, PrimitiveMode mode, Int first, Int count);
 	void apiDrawElements(OpenGlContext& openGlContext, PrimitiveMode mode, Int indexCount, const void* indices);
 	void apiVertexArrayElementBuffer(OpenGlContext& openGlContext, VertexArrayID vertexArrayID, BufferID indexBufferID);
 	void apiEnableVertexArrayAttrib(OpenGlContext& openGlContext, VertexArrayID vertexArrayID, AttributeIndex attributeID);
@@ -1029,6 +1049,8 @@ struct OpenGLBuffer
 	void destroy(OpenGlContext& openGlContext);
 	void bind(OpenGlContext& openGlContext) const;
 	void unbind(OpenGlContext& openGlContext) const;
+	void bindBase(OpenGlContext& openGlContext, BindingPoint bindingLocation) const;
+	void allocate(OpenGlContext& openGlContext, BufferTarget targetValue, ULL byteCount, BufferUsage usageValue, const String& name, BindingPoint bindingLocation);
 	void update(OpenGlContext& openGlContext, const Matrix& data);
 	void update(OpenGlContext& openGlContext, const Vector<Int>& data);
 	void update(OpenGlContext& openGlContext, const Vec2Vector& data);
@@ -1079,6 +1101,7 @@ struct OpenGLVertexArrayObject
 	void bindIndexBuffer(OpenGlContext& openGlContext, BufferID indexBufferID) const;
 	void unbindVertexBuffer(OpenGlContext& openGlContext, AttributeIndex attributeIndex) const;
 	void render(OpenGlContext& openGlContext, PrimitiveMode primitiveMode, Int indexCount, const void* indicesOrOffset) const;
+	void renderArrays(OpenGlContext& openGlContext, PrimitiveMode primitiveMode, Int first, Int count) const;
 	void renderInstanced(OpenGlContext& openGlContext, PrimitiveMode primitiveMode, Int indexCount, const void* indicesOrOffset, Int instanceCount) const;
 	void bindVertexBuffer(OpenGlContext& openGlContext, AttributeIndex attributeIndex, BufferID bufferID, LL offset, Int stride, UInt divisor, Int numComponents, DataType type, Bool normalized, UInt relativeOffset) const;
 
@@ -1112,6 +1135,7 @@ struct OpenGLShaderProgram
 	void               destroy(OpenGlContext& openGlContext);
 	void               use(OpenGlContext& openGlContext) const;
 	[[nodiscard]] Bool create(OpenGlContext& openGlContext, const String& name, const String& vertexShaderSource, const String& fragmentShaderSource);
+	[[nodiscard]] Bool createCompute(OpenGlContext& openGlContext, const String& name, const String& computeShaderSource);
 
 private:
 	UInt programId = -1;

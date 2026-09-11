@@ -1,4 +1,5 @@
 #include "TripleNine.hpp"
+#include "Crosshair.hpp"
 #include <algorithm>
 
 Index TripleNineEnemy::getId() const
@@ -377,16 +378,7 @@ void TripleNineRenderer::renderScene(Window& window)
 	// [TODO] reenable Bloom
 	if (bloom) renderBloom(r);
 
-	// crosshair
-	r.uniforms().reset();
-	r.screenSpaceFromBottomLeft();
-	r.fill(0.1f, 0.1f, 0.1f);
-	r.useShader("color");
-	r.uniforms().setMMatrix(matrixFromPositionAndSize(Vec2(window.getContentSize() / 2), 3));
-	r.renderMesh("circle");
-	r.fill(1, 1, 1);
-	r.uniforms().setMMatrix(matrixFromPositionAndSize(Vec2(window.getContentSize() / 2), 2));
-	r.renderMesh("circle");
+	renderCrosshairDot(window);
 
 	if (renderText)
 	{

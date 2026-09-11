@@ -99,6 +99,11 @@ struct Renderer
 	void  fullScreenShader(const Name& name);
 	void  fill(Float r, Float g, Float b, Float a);
 	void  postProcess(const Name& name, const Framebuffer& source, const Framebuffer& destination);
+	void  dispatchCompute(UInt numGroupsX, UInt numGroupsY, UInt numGroupsZ = 1);
+	void  memoryBarrier(UInt barriers);
+	void  bindImageTexture(UInt unit, TextureID texture, ImageAccess access, SizedInternalFormat format);
+	void  setProgramPointSize(Bool enabled);
+	void  drawArrays(PrimitiveMode mode, Int first, Int count);
 
 	//primitives
 	void plane();

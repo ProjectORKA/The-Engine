@@ -57,6 +57,7 @@ void ResourceManager::destroy()
 	textureResources.clear();
 	vertexShaderResources.clear();
 	fragmentShaderResources.clear();
+	computeShaderResources.clear();
 
 	initialized = false;
 }
@@ -69,7 +70,7 @@ void ResourceManager::reloadAllResources()
 
 	// get all data files
 	paths.clear();
-	const Vector<String> fileTypes = {".fbx", ".mesh", ".png", ".bmp", ".exr", ".hdr", ".jpg", ".vert", ".frag"};
+	const Vector<String> fileTypes = {".fbx", ".mesh", ".png", ".bmp", ".exr", ".hdr", ".jpg", ".vert", ".frag", ".comp"};
 	paths                          = getAllFilesInDirectory(orkaDataPath, fileTypes);
 	for(auto p : paths) addResource(p);
 
@@ -143,7 +144,12 @@ void ResourceManager::addResource(const Path& path)
 		vertexShaderResources[Name(path.stem().string())] = path;
 		return;
 	}
-	if(extension == ".frag") fragmentShaderResources[Name(path.stem().string())] = path;
+	if(extension == ".frag")
+	{
+		fragmentShaderResources[Name(path.stem().string())] = path;
+		return;
+	}
+	if(extension == ".comp") computeShaderResources[Name(path.stem().string())] = path;
 }
 
 Path ResourceManager::getOrkaCachedMeshPath() const
@@ -208,6 +214,19 @@ Bool ResourceManager::hasFragmentShaderResource(const Name& name) const
 {
 	if(!initialized) logError("Resource manager not initialized!");
 	return fragmentShaderResources.contains(name);
+}
+
+Path ResourceManager::getComputeShaderResourcePath(const Name& name)
+{
+	if(!initialized) logError("Resource manager not initialized!");
+	if(!computeShaderResources.contains(name)) logError("Compute shader resource not found! (" + toString(name) + ")");
+	return computeShaderResources[name];
+}
+
+Bool ResourceManager::hasComputeShaderResource(const Name& name) const
+{
+	if(!initialized) logError("Resource manager not initialized!");
+	return computeShaderResources.contains(name);
 }
 
 ResourceManager resourceManager;

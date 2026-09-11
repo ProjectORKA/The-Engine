@@ -22,4 +22,5 @@ struct ShaderSystem
 	Index          use(Renderer& renderer, const Name& name);
 	Index          getShaderId(Renderer& renderer, const Name& name);
 	void           add(Renderer& renderer, const Name& name, const String& vertexShaderCode, const String& fragmentShaderCode);
+	void           addCompute(Renderer& renderer, const Name& name, const String& computeShaderCode);
 };

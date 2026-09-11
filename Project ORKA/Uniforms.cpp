@@ -76,6 +76,11 @@ Float Uniforms::getCustom1() const
 	return data.custom1;
 }
 
+Float Uniforms::getCustom2() const
+{
+	return data.custom2;
+}
+
 Int Uniforms::getInstanced() const
 {
 	return data.instanced;
@@ -136,6 +141,11 @@ String Uniforms::getUniformShaderCode()
 	return uniformBlockShaderCode;
 }
 
+String Uniforms::getComputeUniformShaderCode()
+{
+	return computeUniformBlockShaderCode;
+}
+
 Int Uniforms::getFramebufferWidth() const
 {
 	return data.framebufferWidth;
@@ -187,6 +197,15 @@ void Uniforms::setCustom1(const Float value)
 	if(value != data.custom1)
 	{
 		data.custom1 = value;
+		needsUpdate  = true;
+	}
+}
+
+void Uniforms::setCustom2(const Float value)
+{
+	if(value != data.custom2)
+	{
+		data.custom2 = value;
 		needsUpdate  = true;
 	}
 }
@@ -304,6 +323,8 @@ void Uniforms::create(OpenGlContext& openGlContext)
 	reset();
 	const Path uniformShaderCodePath = resourceManager.getOrkaDataPath().append("shaders").append("uniforms.glsl");
 	uniformBlockShaderCode           = loadString(uniformShaderCodePath);
+	const Path computeUniformShaderCodePath = resourceManager.getOrkaDataPath().append("shaders").append("uniformsCompute.glsl");
+	computeUniformBlockShaderCode           = loadString(computeUniformShaderCodePath);
 	openGlUniformBuffer.create(openGlContext, data, 0);
 	needsUpdate = true;
 }

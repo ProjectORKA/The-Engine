@@ -2,8 +2,47 @@
 #include "Debug.hpp"
 #include "ResourceManager.hpp"
 #include "Renderer.hpp"
+#include "FileSystem.hpp"
 
 String uniformName = "/uniforms.glsl";
+
+namespace
+{
+	constexpr const char* IncludePrefix = "//! #include \"";
+
+	Bool isEngineUniformInclude(const String& includeName)
+	{
+		return includeName == "uniforms.glsl" || includeName == "uniformsCompute.glsl";
+	}
+
+	String expandShaderIncludes(const String& source, const Path& shaderDirectory)
+	{
+		String expanded;
+		std::istringstream stream(source);
+		String line;
+		while (std::getline(stream, line))
+		{
+			if (line.rfind(IncludePrefix, 0) == 0)
+			{
+				const auto endQuote = line.find('"', std::strlen(IncludePrefix));
+				if (endQuote != String::npos)
+				{
+					const String includeName = line.substr(std::strlen(IncludePrefix), endQuote - std::strlen(IncludePrefix));
+					if (!isEngineUniformInclude(includeName))
+					{
+						const Path includePath = shaderDirectory / includeName;
+						expanded.append(expandShaderIncludes(loadString(includePath), shaderDirectory));
+						continue;
+					}
+				}
+			}
+
+			expanded.append(line);
+			expanded.push_back('\n');
+		}
+		return expanded;
+	}
+}
 
 void ShaderSystem::rebuild(Renderer& renderer)
 {
@@ -50,6 +89,17 @@ void ShaderSystem::create(Renderer& renderer)
 
 void ShaderSystem::add(Renderer& renderer, const Name& name)
 {
+	if (resourceManager.hasComputeShaderResource(name) && !resourceManager.hasVertexShaderResource(name))
+	{
+		const Path computeShaderPath = resourceManager.getComputeShaderResourcePath(name);
+		if (!doesPathExist(computeShaderPath)) logError("Compute shader not found");
+
+		String computeShaderCode = uniforms.getComputeUniformShaderCode();
+		computeShaderCode.append(expandShaderIncludes(loadString(computeShaderPath), computeShaderPath.parent_path()));
+		addCompute(renderer, name, computeShaderCode);
+		return;
+	}
+
 	const Path vertexShaderPath   = resourceManager.getVertexShaderResourcePath(name);
 	const Path fragmentShaderPath = resourceManager.getFragmentShaderResourcePath(name);
 
@@ -93,6 +143,14 @@ void ShaderSystem::add(Renderer& renderer, const Name& name, const String& verte
 	// create shader
 	shaderPrograms.back().create(renderer.openGlContext, name, vertexShaderCode, fragmentShaderCode);
 	// register the new shader
+	currentShaderProgramId = static_cast<UInt>(shaderPrograms.size()) - 1;
+	shaderNames[name]      = currentShaderProgramId;
+}
+
+void ShaderSystem::addCompute(Renderer& renderer, const Name& name, const String& computeShaderCode)
+{
+	shaderPrograms.emplace_back();
+	shaderPrograms.back().createCompute(renderer.openGlContext, name, computeShaderCode);
 	currentShaderProgramId = static_cast<UInt>(shaderPrograms.size()) - 1;
 	shaderNames[name]      = currentShaderProgramId;
 }

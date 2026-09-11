@@ -29,11 +29,13 @@ struct ResourceManager
 	[[nodiscard]] Bool hasTextureResource(const Name& name) const;
 	[[nodiscard]] Bool hasVertexShaderResource(const Name& name) const;
 	[[nodiscard]] Bool hasFragmentShaderResource(const Name& name) const;
+	[[nodiscard]] Bool hasComputeShaderResource(const Name& name) const;
 
 	Path getMeshResourcePath(const Name& name);
 	Path getTextureResourcePath(const Name& name);
 	Path getVertexShaderResourcePath(const Name& name);
 	Path getFragmentShaderResourcePath(const Name& name);
+	Path getComputeShaderResourcePath(const Name& name);
 
 private:
 	Bool initialized = false;
@@ -49,6 +51,7 @@ private:
 	Map<Name, Path> textureResources;
 	Map<Name, Path> vertexShaderResources;
 	Map<Name, Path> fragmentShaderResources;
+	Map<Name, Path> computeShaderResources;
 };
 
 extern ResourceManager resourceManager;

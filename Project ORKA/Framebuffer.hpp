@@ -10,6 +10,7 @@ struct Framebuffer
 	[[nodiscard]] Int   getWidth() const;
 	[[nodiscard]] Int   getHeight() const;
 	[[nodiscard]] Float aspectRatio() const;
+	[[nodiscard]] TextureID getColorTextureID() const;
 	[[nodiscard]] IVec4 readPixelsAtCenterUIntRGB(Renderer& renderer, FramebufferMode attachment) const;
 	[[nodiscard]] Vec4  readPixelsAtCenterVec4(Renderer& renderer, FramebufferMode attachment) const;
 	[[nodiscard]] IVec4 readPixelsUIntRGB(Renderer& renderer, Int x, Int y, FramebufferMode attachment) const;

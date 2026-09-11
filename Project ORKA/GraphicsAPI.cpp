@@ -73,9 +73,25 @@ void OpenGLBuffer::unbind(OpenGlContext& openGlContext) const
 {
 	OpenGL::Buffers::apiBindBuffer(openGlContext, target, 0);
 }
+void OpenGLBuffer::bindBase(OpenGlContext& openGlContext, const BindingPoint bindingLocation) const
+{
+	OpenGL::Buffers::apiBindBufferBase(openGlContext, target, bindingLocation, bufferObjectID);
+}
+void OpenGLBuffer::allocate(OpenGlContext& openGlContext, const BufferTarget targetValue, const ULL byteCount, const BufferUsage usageValue, const String& name, const BindingPoint bindingLocation)
+{
+	this->target = targetValue;
+	this->usage  = usageValue;
+	if (bufferObjectID != static_cast<VertexBufferID>(-1)) OpenGL::Buffers::apiDeleteBuffer(openGlContext, bufferObjectID);
+	bufferObjectID = OpenGL::Buffers::apiCreateBuffer(openGlContext);
+	OpenGL::apiObjectLabel(openGlContext, ObjectLabelType::Buffer, bufferObjectID, name);
+	if (target == BufferTarget::TransformFeedback || target == BufferTarget::Uniform || target == BufferTarget::ShaderStorage || target == BufferTarget::AtomicCounter)
+		OpenGL::Buffers::apiBindBufferBase(openGlContext, target, bindingLocation, bufferObjectID);
+	OpenGL::Buffers::apiNamedBufferData(openGlContext, bufferObjectID, byteCount, nullptr, usage);
+}
 void OpenGLBuffer::destroy(OpenGlContext& openGlContext)
 {
 	OpenGL::Buffers::apiDeleteBuffer(openGlContext, bufferObjectID);
+	bufferObjectID = -1;
 }
 void OpenGLBuffer::update(OpenGlContext& openGlContext, const Matrix& data)
 {
@@ -383,6 +399,46 @@ Bool OpenGLShaderProgram::create(OpenGlContext& openGlContext, const String& nam
 	return true;
 }
 
+Bool OpenGLShaderProgram::createCompute(OpenGlContext& openGlContext, const String& name, const String& computeShaderSource)
+{
+	const UInt computeShaderId = OpenGL::Shaders::apiCreateShader(openGlContext, ShaderType::Compute);
+
+	const char* computeShaderSourcePtr = computeShaderSource.c_str();
+	OpenGL::Shaders::apiShaderSource(openGlContext, computeShaderId, 1, &computeShaderSourcePtr, nullptr);
+	OpenGL::Shaders::apiCompileShader(openGlContext, computeShaderId);
+
+	const Int computeCompileStatus = OpenGL::Shaders::apiGetShaderIntegerValue(openGlContext, computeShaderId, ShaderParameters::CompileStatus);
+	if (computeCompileStatus != 1)
+	{
+		const String computeInfoLog = OpenGL::Shaders::apiGetShaderInfoLog(openGlContext, computeShaderId);
+		logError("Compiling compute shader (" + name + ") failed. Error: " + computeInfoLog);
+	}
+
+	programId = OpenGL::Shaders::apiCreateProgram(openGlContext);
+	OpenGL::Shaders::apiAttachShader(openGlContext, programId, computeShaderId);
+	OpenGL::Shaders::apiLinkProgram(openGlContext, programId);
+
+	const Int linkStatus = OpenGL::Shaders::apiGetProgramIntegerValue(openGlContext, programId, ShaderProgramParameters::LinkStatus);
+	if (linkStatus != 1)
+	{
+		const String log = OpenGL::Shaders::apiGetProgramInfoLog(openGlContext, programId);
+		logError("Linking compute shader program (" + name + ") failed. Error: " + log);
+	}
+
+	if (!linkStatus || !computeCompileStatus)
+	{
+		OpenGL::Shaders::apiDeleteShader(openGlContext, computeShaderId);
+		OpenGL::Shaders::apiDeleteProgram(openGlContext, programId);
+		programId = -1;
+		return false;
+	}
+
+	OpenGL::Shaders::apiUniformBlockBinding(openGlContext, programId, 0, 0);
+	OpenGL::Shaders::apiDetachShader(openGlContext, programId, computeShaderId);
+	OpenGL::Shaders::apiDeleteShader(openGlContext, computeShaderId);
+	return true;
+}
+
 UInt OpenGLFramebuffer::getID() const
 {
 	return framebufferId;
@@ -492,6 +548,10 @@ void OpenGLVertexArrayObject::unbindVertexBuffer(OpenGlContext& openGlContext, c
 void OpenGLVertexArrayObject::render(OpenGlContext& openGlContext, const PrimitiveMode primitiveMode, const Int indexCount, const void* indicesOrOffset) const
 {
 	OpenGL::VertexArray::apiDrawElements(openGlContext, primitiveMode, indexCount, indicesOrOffset);
+}
+void OpenGLVertexArrayObject::renderArrays(OpenGlContext& openGlContext, const PrimitiveMode primitiveMode, const Int first, const Int count) const
+{
+	OpenGL::VertexArray::apiDrawArrays(openGlContext, primitiveMode, first, count);
 }
 void OpenGLVertexArrayObject::renderInstanced(OpenGlContext& openGlContext, const PrimitiveMode primitiveMode, const Int indexCount, const void* indicesOrOffset, const Int instanceCount) const
 {
@@ -902,6 +962,27 @@ void OpenGL::apiBlendFunc(OpenGlContext& openGlContext, const BlendFunction sour
 	#endif // TRACE_OPENGL
 	External::glBlendFunc(static_cast<UInt>(sourceFactor), static_cast<UInt>(destinationFactor));
 }
+void OpenGL::apiDispatchCompute(OpenGlContext& openGlContext, const UInt numGroupsX, const UInt numGroupsY, const UInt numGroupsZ)
+{
+	#ifdef TRACE_OPENGL
+	openGlContext.write("glDispatchCompute(" + toString(numGroupsX) + ", " + toString(numGroupsY) + ", " + toString(numGroupsZ) + ");");
+	#endif // TRACE_OPENGL
+	External::glDispatchCompute(numGroupsX, numGroupsY, numGroupsZ);
+}
+void OpenGL::apiMemoryBarrier(OpenGlContext& openGlContext, const UInt barriers)
+{
+	#ifdef TRACE_OPENGL
+	openGlContext.write("glMemoryBarrier(" + toString(barriers) + ");");
+	#endif // TRACE_OPENGL
+	External::glMemoryBarrier(barriers);
+}
+void OpenGL::apiBindImageTexture(OpenGlContext& openGlContext, const UInt unit, const TextureID texture, const Int level, const Bool layered, const Int layer, const ImageAccess access, const SizedInternalFormat format)
+{
+	#ifdef TRACE_OPENGL
+	openGlContext.write("glBindImageTexture(...);");
+	#endif // TRACE_OPENGL
+	External::glBindImageTexture(unit, texture, level, layered ? GL_TRUE : GL_FALSE, layer, static_cast<UInt>(access), static_cast<UInt>(format));
+}
 void OpenGL::Textures::apiBindTextureUnit(OpenGlContext& openGlContext, const TextureSlot textureUnitSlot, const TextureID textureID)
 {
 	#ifdef TRACE_OPENGL
@@ -917,6 +998,13 @@ Int OpenGL::Shaders::apiGetShaderIntegerValue(OpenGlContext& openGlContext, cons
 	Int result;
 	External::glGetShaderiv(shaderId, static_cast<UInt>(parameter), &result);
 	return result;
+}
+void OpenGL::VertexArray::apiDrawArrays(OpenGlContext& openGlContext, const PrimitiveMode mode, const Int first, const Int count)
+{
+	#ifdef TRACE_OPENGL
+	openGlContext.write("glDrawArrays(" + toString(static_cast<UInt>(mode)) + ", " + toString(first) + ", " + toString(count) + ");");
+	#endif // TRACE_OPENGL
+	External::glDrawArrays(static_cast<UInt>(mode), first, count);
 }
 void OpenGL::VertexArray::apiDrawElements(OpenGlContext& openGlContext, const PrimitiveMode mode, const Int indexCount, const void* indices)
 {

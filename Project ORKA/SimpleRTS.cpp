@@ -1,5 +1,6 @@
 #include "SimpleRTS.hpp"
 
+#include "Crosshair.hpp"
 #include "Random.hpp"
 #include "UserInterface.hpp"
 
@@ -209,6 +210,7 @@ void SimpleRtsRenderer::renderScene(Window& window)
 
 	performanceGraph.addTime(r.time.getDelta());
 	performanceGraph.render(window);
+	renderCrosshairDot(window);
 	////////////////////////
 	mutex.unlock();
 }

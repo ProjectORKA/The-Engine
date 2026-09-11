@@ -65,6 +65,7 @@
     <ClCompile Include="Orbital Oblivion.cpp" />
     <ClCompile Include="ParallelizedConvexHullPrototype.cpp" />
     <ClCompile Include="PerformanceGraph.cpp" />
+    <ClCompile Include="Crosshair.cpp" />
     <ClCompile Include="SimpleRtsWolfSystem.cpp" />
     <ClCompile Include="SimplexNoise.cpp" />
     <ClCompile Include="SineWaveTerrainRegressor.cpp" />
@@ -79,6 +80,7 @@
     <ClCompile Include="PrototypingSandbox.cpp" />
     <ClCompile Include="RenderingOverrides.cpp" />
     <ClCompile Include="SDFRenderer.cpp" />
+    <ClCompile Include="SdfPointcloud.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Collision.cpp" />
     <ClCompile Include="CPUMesh.cpp" />
@@ -206,6 +208,7 @@
     <ClInclude Include="Music Visualizer.hpp" />
     <ClInclude Include="OptickProfiling.hpp" />
     <ClInclude Include="PerformanceGraph.hpp" />
+    <ClInclude Include="Crosshair.hpp" />
     <ClInclude Include="SimpleRtsWolfSystem.hpp" />
     <ClInclude Include="SimplexNoise.hpp" />
     <ClInclude Include="SineWaveTerrainRegressor.hpp" />
@@ -355,6 +358,7 @@
     <ClInclude Include="PerlinNoise.hpp" />
     <ClInclude Include="Plot.hpp" />
     <ClInclude Include="SDFRenderer.hpp" />
+    <ClInclude Include="SdfPointcloud.hpp" />
     <ClInclude Include="SoftwareRendererGame.hpp" />
     <ClInclude Include="GameLoader.hpp" />
     <ClInclude Include="SimpleRts.hpp" />
@@ -402,6 +406,11 @@
     <None Include="Data\Shaders\flappyBird.vert" />
     <None Include="Data\Shaders\sdfScene.frag" />
     <None Include="Data\Shaders\sdfScene.vert" />
+    <None Include="Data\Shaders\sdfPointcloudSplat.frag" />
+    <None Include="Data\Shaders\sdfPointcloudSplat.vert" />
+    <None Include="Data\Shaders\sdfPointcloudFill.comp" />
+    <None Include="Data\Shaders\milkyWaySky.glsl" />
+    <None Include="Data\Shaders\uniformsCompute.glsl" />
     <None Include="Data\Shaders\bloomDownsample.frag" />
     <None Include="Data\Shaders\bloomDownsample.vert" />
     <None Include="Data\Shaders\bloomPrefilter.frag" />

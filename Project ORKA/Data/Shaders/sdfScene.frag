@@ -8,7 +8,7 @@ layout(location = 0) out vec4 fragmentColor;
 
 float eps = 0.0001f;
 float maxDist = 1000.0f;
-int steps = 512;
+int steps = 256;
 
 float plane(vec3 p){
 	return p.z;

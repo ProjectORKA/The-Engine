@@ -27,3 +27,14 @@ void ShaderProgram::create(OpenGlContext& openGlContext, const Name& name, const
 
 	loaded = openglShaderProgram.create(openGlContext, toString(name), vertexShaderCode, fragmentShaderCode);
 }
+
+void ShaderProgram::createCompute(OpenGlContext& openGlContext, const Name& name, const String& computeShaderCode)
+{
+	if(loaded)
+	{
+		logError("Shader program already loaded!");
+		return;
+	}
+
+	loaded = openglShaderProgram.createCompute(openGlContext, toString(name), computeShaderCode);
+}

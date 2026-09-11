@@ -185,6 +185,9 @@
     <ClCompile Include="SDFRenderer.cpp">
       <Filter>Apps\3D Apps\SDFRenderer</Filter>
     </ClCompile>
+    <ClCompile Include="SdfPointcloud.cpp">
+      <Filter>Apps\3D Apps\SdfPointcloud</Filter>
+    </ClCompile>
     <ClCompile Include="FileTypes.cpp">
       <Filter>Common\Platform\FileSystem\File\FileTypes</Filter>
     </ClCompile>
@@ -421,6 +424,9 @@
     </ClCompile>
     <ClCompile Include="PerformanceGraph.cpp">
       <Filter>Systems\Profiling\PerformanceGraph</Filter>
+    </ClCompile>
+    <ClCompile Include="Crosshair.cpp">
+      <Filter>Systems\UserInterface\Window\Renderer\Crosshair</Filter>
     </ClCompile>
     <ClCompile Include="PrimitivesRenderer.cpp">
       <Filter>Systems\UserInterface\Window\Renderer\PrimitivesRenderer</Filter>
@@ -663,6 +669,9 @@
     </ClInclude>
     <ClInclude Include="SDFRenderer.hpp">
       <Filter>Apps\3D Apps\SDFRenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="SdfPointcloud.hpp">
+      <Filter>Apps\3D Apps\SdfPointcloud</Filter>
     </ClInclude>
     <ClInclude Include="SimpleRtsTreeSystem.hpp">
       <Filter>Apps\3D Apps\SimpleRts\SimpleRtsTreeSystem</Filter>
@@ -1024,6 +1033,9 @@
     <ClInclude Include="PerformanceGraph.hpp">
       <Filter>Systems\Profiling\PerformanceGraph</Filter>
     </ClInclude>
+    <ClInclude Include="Crosshair.hpp">
+      <Filter>Systems\UserInterface\Window\Renderer\Crosshair</Filter>
+    </ClInclude>
     <ClInclude Include="PrimitivesRenderer.hpp">
       <Filter>Systems\UserInterface\Window\Renderer\PrimitivesRenderer</Filter>
     </ClInclude>
@@ -1344,6 +1356,21 @@
     <None Include="Data\Shaders\sdfScene.vert">
       <Filter>Apps\3D Apps\SDFRenderer\Shaders</Filter>
     </None>
+    <None Include="Data\Shaders\sdfPointcloudSplat.frag">
+      <Filter>Apps\3D Apps\SdfPointcloud\Shaders</Filter>
+    </None>
+    <None Include="Data\Shaders\sdfPointcloudSplat.vert">
+      <Filter>Apps\3D Apps\SdfPointcloud\Shaders</Filter>
+    </None>
+    <None Include="Data\Shaders\sdfPointcloudFill.comp">
+      <Filter>Apps\3D Apps\SdfPointcloud\Shaders</Filter>
+    </None>
+    <None Include="Data\Shaders\milkyWaySky.glsl">
+      <Filter>Apps\3D Apps\SdfPointcloud\Shaders</Filter>
+    </None>
+    <None Include="Data\Shaders\uniformsCompute.glsl">
+      <Filter>Apps\3D Apps\SdfPointcloud\Shaders</Filter>
+    </None>
     <None Include="Data\Shaders\imageViewer.frag">
       <Filter>Apps\2D Apps\Image Viewer\Shaders</Filter>
     </None>
@@ -1555,6 +1582,12 @@
     </Filter>
     <Filter Include="Apps\3D Apps\SDFRenderer\Shaders">
       <UniqueIdentifier>{858f325e-3999-47b8-a868-3a7becc21f37}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Apps\3D Apps\SdfPointcloud">
+      <UniqueIdentifier>{c8e4a1f2-3b5d-4e6f-9a0b-1c2d3e4f5a6b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Apps\3D Apps\SdfPointcloud\Shaders">
+      <UniqueIdentifier>{d9f5b2a3-4c6e-5f70-ab1c-2d3e4f5a6b7c}</UniqueIdentifier>
     </Filter>
     <Filter Include="Apps\3D Apps\Flappy Bird\Shaders">
       <UniqueIdentifier>{a20a3031-6bf3-41b8-a8cd-654e232af350}</UniqueIdentifier>
@@ -1864,6 +1897,9 @@
     </Filter>
     <Filter Include="Systems\UserInterface\Window\Renderer\PrimitivesRenderer">
       <UniqueIdentifier>{0b800092-8777-4e7d-a00d-b3f0fdfdd9a0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Systems\UserInterface\Window\Renderer\Crosshair">
+      <UniqueIdentifier>{c8e4a1b2-5f3d-4a7e-9c1b-2d6e8f0a4b7c}</UniqueIdentifier>
     </Filter>
     <Filter Include="Apps\3D Apps\SimpleRts\SimpleRtsQuadtreeSystem">
       <UniqueIdentifier>{114a064c-e1b5-4982-b19c-d064ef052cc4}</UniqueIdentifier>

@@ -89,6 +89,15 @@ Float Framebuffer::aspectRatio() const
 {
 	return static_cast<Float>(size.x) / static_cast<Float>(size.y);
 }
+TextureID Framebuffer::getColorTextureID() const
+{
+	for (const FramebufferTexture& framebufferTexture : framebufferTextures)
+	{
+		if (framebufferTexture.isColor()) return framebufferTexture.getGLID();
+	}
+	logError("Framebuffer does not have a color texture!");
+	return static_cast<TextureID>(-1);
+}
 void Framebuffer::clearColor(Renderer& renderer, const Vec4 clearColor) const
 {
 	if (!complete || openglFramebuffer.getID() == static_cast<UInt>(-1))
