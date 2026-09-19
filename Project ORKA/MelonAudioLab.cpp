@@ -1,6 +1,9 @@
 #include "MelonAudioLab.hpp"
 
 #include "AudioEngine.hpp"
+#include "Renderer.hpp"
+#include "UI/Theme/UiAppFlex.hpp"
+#include "UI/Theme/UiLegacyTheme.hpp"
 #include "Window.hpp"
 
 namespace
@@ -92,7 +95,8 @@ void MelonAudioLabRenderer::renderScene(Window& window)
 	r.useShader("color");
 
 	const IVec2 canvas = getSize();
-	r.fill(0.06f, 0.06f, 0.06f, 1.0f);
+	const Color canvasFill = Ui::UiLegacyTheme::canvasBackground(Ui::UiThemeMode::Dark);
+	r.fill(canvasFill.r, canvasFill.g, canvasFill.b, canvasFill.a);
 	r.uniforms().setMMatrix(matrixFromPositionAndSize(canvas.x * 0.5f, canvas.y * 0.5f, static_cast<Float>(canvas.x), static_cast<Float>(canvas.y)));
 	r.plane();
 
@@ -156,11 +160,8 @@ MelonAudioLabToggle::MelonAudioLabToggle(Bool& boundValue, String componentLabel
 	growX(false);
 	setWidth(336);
 	setHeight(28);
-	padding(6);
-	border(1, Color(1, 1, 1, 0.12f));
-	background(Color(0.08f, 0.08f, 0.1f, 0.95f));
-	hoveredBackground(Color(0.12f, 0.12f, 0.14f, 0.95f));
-	activeBackground(Color(0.16f, 0.16f, 0.18f, 0.95f));
+	padding(static_cast<Int>(Ui::UiAppFlex::p10));
+	Ui::UiLegacyTheme::applyControlStyle(*this);
 	setText(label + ": " + (boundValue ? "On" : "Off"));
 }
 
@@ -186,12 +187,9 @@ MelonAudioLabControls::MelonAudioLabControls(MelonAudioLabRenderer& renderer)
 	growX(false);
 	growY(true);
 	setWidth(360);
-	gap(10);
-	padding(12);
-	background(Color(0.02f, 0.02f, 0.025f, 0.95f));
-	hoveredBackground(Color(0.02f, 0.02f, 0.025f, 0.95f));
-	activeBackground(Color(0.02f, 0.02f, 0.025f, 0.95f));
-	border(1, Color(1, 1, 1, 0.12f));
+	gap(static_cast<Int>(Ui::UiAppFlex::g10));
+	padding(static_cast<Int>(Ui::UiAppFlex::p10));
+	Ui::UiLegacyTheme::applyPanelStyle(*this);
 
 	addElement(humToggle);
 	addElement(windToggle);
@@ -278,8 +276,8 @@ void MelonAudioLab::run() const
 
 	Window& window = ui.window("Melon Audio Lab", settings.defaultWindowWidth, settings.defaultWindowHeight, true, true, WindowState::Windowed);
 	window.row();
-	window.gap(10);
-	window.padding(10);
+	window.gap(static_cast<Int>(Ui::UiAppFlex::g10));
+	window.padding(static_cast<Int>(Ui::UiAppFlex::p10));
 
 	renderer.growX(true);
 	renderer.growY(true);

@@ -1,4 +1,5 @@
 #include "TripleNine.hpp"
+#include "Renderer.hpp"
 #include "Crosshair.hpp"
 #include <algorithm>
 
@@ -467,7 +468,12 @@ void TripleNineRenderer::renderInteractive(Window& window)
 	r.idFramebuffer.bindRead(r);
 	IVec4 idData;
 	if (ui.capturing) idData = r.idFramebuffer.readPixelsAtCenterUIntRGB(r, FramebufferMode::Color0);
-	else idData                  = r.idFramebuffer.readPixelsUIntRGB(r, static_cast<Int>(window.mousePosBotLeft.x), static_cast<Int>(window.mousePosBotLeft.y), FramebufferMode::Color0);
+	else
+	{
+		const DVec2 mouse = window.mousePositionBotLeft();
+		idData = r.idFramebuffer.readPixelsUIntRGB(r,
+			static_cast<Int>(mouse.x), static_cast<Int>(mouse.y), FramebufferMode::Color0);
+	}
 	r.objectId    = idData.x;
 	r.instanceId  = idData.y;
 	r.primitiveId = idData.z;

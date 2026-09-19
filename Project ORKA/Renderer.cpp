@@ -5,6 +5,20 @@
 #include "RenderingOverrides.hpp"
 #include "Window.hpp"
 #include "OptickProfiling.hpp"
+#include "UI/Render/UiRenderer.hpp"
+
+namespace
+{
+	Mutex modernUiRenderersMutex;
+	Map<Renderer*, UniquePointer<Ui::UiRenderer>> modernUiRenderers;
+
+	Ui::UiRenderer* modernUiRendererFor(Renderer& renderer)
+	{
+		const LockGuard<Mutex> lock(modernUiRenderersMutex);
+		const auto found = modernUiRenderers.find(&renderer);
+		return found == modernUiRenderers.end() ? nullptr : found->second.get();
+	}
+}
 
 void Renderer::end(Window& window)
 {
@@ -13,6 +27,7 @@ void Renderer::end(Window& window)
 	setAlphaBlending(true);
 	setRenderRegion(TiledRectangle(window.getContentSize()));
 	drawToWindow();
+	capturePresentFrame(window.getContentSize());
 	pollGraphicsApiError();
 	if constexpr (openglStateTracking) OpenGL::apiFinish(openGlContext);
 	
@@ -30,11 +45,9 @@ void Renderer::end(Window& window)
 
 void Renderer::sync()
 {
-	// Non-blocking sync so window callbacks (like resize) never stall the UI.
-	if (mutex.try_lock())
-	{
-		mutex.unlock();
-	}
+	// Wait for the render thread to finish the current frame so resize callbacks
+	// never observe a half-presented or cleared default framebuffer.
+	const LockGuard<Mutex> lock(mutex);
 }
 
 void Renderer::plane()
@@ -57,6 +70,12 @@ void Renderer::create()
 	meshSystem.create(*this);
 	shaderSystem.create(*this);
 	primitivesRenderer.create(*this);
+	{
+		auto backend = std::make_unique<Ui::UiRenderer>();
+		backend->create(*this);
+		const LockGuard<Mutex> lock(modernUiRenderersMutex);
+		modernUiRenderers[this] = std::move(backend);
+	}
 
 	// advanced systems
 	textRenderSystem.create(*this);
@@ -72,16 +91,36 @@ void Renderer::create()
 	postProcessFramebuffer.add(*this, WritePixelsFormat::Depth, DataType::Float, FramebufferAttachment::Depth, false, Wrapping::Clamped);
 	postProcessFramebuffer.checkComplete(*this);
 
+	presentRetainFramebuffer.create(*this, "PresentRetainFramebuffer", IVec2(settings.defaultWindowWidth, settings.defaultWindowHeight));
+	presentRetainFramebuffer.add(*this, WritePixelsFormat::RGBA, DataType::Float, FramebufferAttachment::Color0, true, Wrapping::Clamped);
+	presentRetainFramebuffer.checkComplete(*this);
+
 	OpenGL::apiClipControl(openGlContext, GL_LOWER_LEFT, GL_ZERO_TO_ONE);
 	OpenGL::apiSetScissorTest(openGlContext, true);
 }
 
 void Renderer::destroy()
 {
+	{
+		UniquePointer<Ui::UiRenderer> backend;
+		{
+			const LockGuard<Mutex> lock(modernUiRenderersMutex);
+			const auto found = modernUiRenderers.find(this);
+			if (found != modernUiRenderers.end())
+			{
+				backend = std::move(found->second);
+				modernUiRenderers.erase(found);
+			}
+		}
+		if (backend) backend->destroy(*this);
+	}
 	primitivesRenderer.destroy(*this);
 
 	idFramebuffer.destroy(*this);
 	postProcessFramebuffer.destroy(*this);
+	presentRetainFramebuffer.destroy(*this);
+	presentRetainValid = false;
+	presentedSize = IVec2(0);
 
 	textRenderSystem.destroy(*this);
 	//renderObjectSystem.destroy();
@@ -89,6 +128,49 @@ void Renderer::destroy()
 	meshSystem.destroy(*this);
 	shaderSystem.destroy(*this);
 	textureSystem.destroy(*this);
+}
+
+void Ui::submitUi(Renderer& renderer, const UiRenderPacket& packet)
+{
+	if (UiRenderer* backend = modernUiRendererFor(renderer)) backend->submit(renderer, packet);
+}
+
+void Ui::setUiRendererCallbacks(
+	Renderer& renderer, UiRendererCallbacks callbacks)
+{
+	if (UiRenderer* backend = modernUiRendererFor(renderer))
+		backend->setCallbacks(std::move(callbacks));
+}
+
+void Ui::uploadUiGlyphAtlas(
+	Renderer& renderer, const UiResourceRef& resource,
+	const UiGlyphPixelFormat format, const UInt width, const UInt height,
+	const UiGlyphRect& rect, const Byte* pixels, const SizeT byteCount)
+{
+	if (UiRenderer* backend = modernUiRendererFor(renderer))
+		backend->uploadGlyphAtlas(
+			renderer, resource, format, width, height, rect, pixels, byteCount);
+}
+
+void Ui::releaseUiGlyphAtlases(Renderer& renderer, const U32 serviceId)
+{
+	if (UiRenderer* backend = modernUiRendererFor(renderer))
+		backend->releaseGlyphAtlases(serviceId);
+}
+
+void Ui::uploadUiImageTexture(
+	Renderer& renderer, const UiResourceRef& resource, const U32 ownerId,
+	const UInt width, const UInt height, const Byte* rgbaPixels, const SizeT byteCount)
+{
+	if (UiRenderer* backend = modernUiRendererFor(renderer))
+		backend->uploadImageTexture(
+			renderer, resource, ownerId, width, height, rgbaPixels, byteCount);
+}
+
+void Ui::releaseUiImageTextures(Renderer& renderer, const U32 ownerId)
+{
+	if (UiRenderer* backend = modernUiRendererFor(renderer))
+		backend->releaseImageTextures(ownerId);
 }
 
 void Renderer::uiSpace(const Window& window)
@@ -186,18 +268,64 @@ void Renderer::fill(const Vec4 color)
 	uniforms().setCustomColor(color);
 }
 
-void Renderer::begin(const IVec2 size)
+void Renderer::stretchPresentRetainToWindow(const IVec2 targetSize)
+{
+	if (!presentRetainValid || presentedSize.x <= 0 || presentedSize.y <= 0) return;
+	if (!presentRetainFramebuffer.isComplete()) return;
+
+	presentRetainFramebuffer.bindRead(*this);
+	drawToWindow();
+	OpenGL::apiViewport(openGlContext, 0, 0, targetSize.x, targetSize.y);
+	OpenGL::apiScissor(openGlContext, 0, 0, targetSize.x, targetSize.y);
+	OpenGL::apiBlitFramebuffer(
+		openGlContext,
+		0, 0, presentedSize.x, presentedSize.y,
+		0, 0, targetSize.x, targetSize.y,
+		GL_COLOR_BUFFER_BIT, Filter::Linear);
+	OpenGL::apiClearDepth(openGlContext);
+}
+
+void Renderer::capturePresentFrame(const IVec2 size)
+{
+	if (size.x <= 0 || size.y <= 0) return;
+
+	presentRetainFramebuffer.resize(*this, size);
+	if (!presentRetainFramebuffer.isComplete()) return;
+
+	OpenGL::apiBindReadFramebuffer(openGlContext, 0);
+	presentRetainFramebuffer.bindDraw(*this);
+	OpenGL::apiBlitFramebuffer(
+		openGlContext,
+		0, 0, size.x, size.y,
+		0, 0, size.x, size.y,
+		GL_COLOR_BUFFER_BIT, Filter::Nearest);
+	drawToWindow();
+
+	presentedSize = size;
+	presentRetainValid = true;
+}
+
+void Renderer::begin(const IVec2 size, const Color backgroundColor)
 {
 	time.update(); // advances the time
 
 	mutex.lock(); // used for synchronizing other threads
-	setFramebufferSize(*this, size);
+	drawToWindow();
 	setRenderRegion(TiledRectangle(size));
+	OpenGL::apiViewport(openGlContext, 0, 0, size.x, size.y);
+	OpenGL::apiScissor(openGlContext, 0, 0, size.x, size.y);
+
+	const Bool sizeChanged = size != presentedSize;
+	if (sizeChanged && presentRetainValid)
+		stretchPresentRetainToWindow(size);
+	else
+		clearBackground(backgroundColor);
+
+	setFramebufferSize(*this, size);
 
 	uniforms().setWindowWidth(size.x);
 	uniforms().setWindowHeight(size.y);
 	uniforms().setTime(time.getDelta()); // makes time available to shaders
-	drawToWindow();
 }
 
 void Renderer::fill(const Float color)

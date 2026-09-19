@@ -3,22 +3,6 @@
 #include "UserInterface.hpp"
 #include "Game.hpp"
 #include "Player.hpp"
-
-//prototypes
-//#include "KDTreePrototype.hpp"
-//#include "WeirdSphereAlgorithm.hpp"
-//#include "KDTreeImplementation.hpp"
-//#include "AxisNeighborPrototype.hpp"
-//#include "DelaunayTriangulation.hpp"
-//#include "AxisNeighborPrototype2.hpp"
-//#include "TriangulationPrototype.hpp"
-//#include "SquareNeighborPrototype.hpp"
-//#include "PersistentInfoPrototype.hpp"
-//#include "LabyrinthGeneratorPrototype.hpp"
-//#include "ClosestConnectionPrototype.hpp"
-//#include "ParallelizedConvexHullPrototype.hpp"
-#include "ImageApproximationPrototype.hpp"
-#include "HeuristicNetworkingPrototype.hpp"
 #include "SineWaveTerrainRegressor.hpp"
 
 struct PrototypingRenderer final : GameRenderer
@@ -35,22 +19,6 @@ struct PrototypingRenderer final : GameRenderer
 	InputEvent  action           = InputEvent(InputType::KeyBoard, G, true);
 	InputEvent  toggleAction     = InputEvent(InputType::KeyBoard, T, true);
 
-	// prototypes
-	// KDTreePrototype prototype;
-	// KDTreePrototype2 prototype;
-	// AxisNeighborPrototype prototype;
-	// AxisNeighborPrototype2 prototype;
-	// TriangulationPrototype prototype;
-	// PersistentInfoPrototype prototype;
-	// SquareNeighborPrototype prototype;
-	// LabyrinthGeneratorPrototype prototype;
-	// PlaneIntersectionPrototype prototype;
-	// ClosestConnectionPrototype prototype;
-	// WeirdSphereAlgorithmPrototype prototype;
-	// ParallelizedConvexHullPrototype prototype;
-	// NeuralNetworkTerrainRegressor prototype;
-	// ImageApproximationPrototype prototype;
-	//HeuristicNetworkingPrototype prototype;
 	SineWaveTerrainRegressor prototype;
 
 	void update(Window& window) override;

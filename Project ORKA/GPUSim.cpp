@@ -1,5 +1,6 @@
 #include "GPUSim.hpp"
 
+#include "Renderer.hpp"
 #include "RenderingOverrides.hpp"
 
 void GPUSimRenderer::update(Window& window) {}

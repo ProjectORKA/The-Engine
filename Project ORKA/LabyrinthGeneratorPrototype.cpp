@@ -1,5 +1,6 @@
 #include "LabyrinthGeneratorPrototype.hpp"
 
+#include "Renderer.hpp"
 #include "Window.hpp"
 
 void LabyrinthGeneratorPrototype::action()

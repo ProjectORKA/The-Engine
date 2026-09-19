@@ -1,0 +1,29 @@
+.controller-menu {
+	width: 72vw;
+	max-width: 960dp;
+	height: 84vh;
+	display: flex;
+	flex-direction: column;
+	gap: 16dp;
+	padding: 28dp;
+	background-color: #11172be8;
+}
+.heading { font-size: 36dp; color: #ffffff; }
+.mission-list { flex-grow: 1; gap: 8dp; overflow-y: auto; }
+.mission {
+	min-height: 68dp;
+	display: flex;
+	flex-direction: column;
+	padding: 12dp;
+	background-color: #202944;
+}
+.mission:hover { background-color: #283659; }
+.mission:focus { border-color: #73c7ff; border-width: 3dp; }
+.mission:selected { background-color: #315985; }
+.mission:disabled { color: #778099; }
+.mission-name { font-size: 20dp; }
+.mission-detail { color: #b8c2d8; }
+.actions { display: flex; justify-content: end; gap: 12dp; }
+.actions > button { min-width: 140dp; min-height: 48dp; }
+.primary { background-color: #2674b8; }
+.hint { align-self: center; color: #a8b4ca; }

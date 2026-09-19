@@ -1,4 +1,5 @@
 #include "PlanetSystemPlayer.hpp"
+#include "Renderer.hpp"
 #include "Window.hpp"
 
 void PlanetSystemPlayer::render(Window& window)

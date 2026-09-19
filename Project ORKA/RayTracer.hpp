@@ -1,32 +1,31 @@
 #pragma once
 
 #include "Game.hpp"
-#include "GPUTexture.hpp"
 #include "Player.hpp"
 
 struct RayTracerRenderer final : GameRenderer
 {
-	Name       textureName = "RayTracerTexture";
-	GPUTexture displayTexture;
+	Framebuffer accumFramebuffer;
 	DebugPlayer player;
 
-	Vector<Vec3> colorAccumulation;
-	Vector<UInt> sampleCounts;
-	IVec2        renderSize = IVec2(0);
-	UInt         frameSamples;
-	Bool         sceneDirty = true;
+	UInt   frameSamples     = 0;
+	Vec3   lastCameraPosition;
+	DVec3  lastCameraRotation;
+	Bool   resetAccumulation = true;
+	Bool   showOverlay       = true;
+	UInt   accumulationEpoch = 1;
+	String tracerStatus      = "Initializing GPU path tracer...";
 
-	Int maxPathDepth      = 12;
-	Int samplesPerFrame   = 1;
-	Bool enableDepthOfField = false;
-	Float lensRadius      = 0.05f;
-	Float focusDistance   = 3.5f;
-	Float verticalFov     = 40.0f;
+	Float verticalFov        = 40.0f;
+	Bool  enableDepthOfField = false;
+	Float lensRadius         = 0.05f;
+	Float focusDistance      = 3.5f;
 
 	InputEvent captureMouse = InputEvent(InputType::Mouse, Lmb, true);
 	InputEvent releaseMouse = InputEvent(InputType::Mouse, Rmb, false);
 	InputEvent resetSamples = InputEvent(InputType::KeyBoard, R, true);
-	InputEvent toggleDof    = InputEvent(InputType::KeyBoard, D, true);
+	InputEvent reloadShaders  = InputEvent(InputType::KeyBoard, T, true);
+	InputEvent toggleOverlay  = InputEvent(InputType::KeyBoard, H, true);
 
 	void create(Window& window) override;
 	void update(Window& window) override;
@@ -37,10 +36,11 @@ struct RayTracerRenderer final : GameRenderer
 	void inputEvent(Window& window, InputEvent& input) override;
 
 private:
-	void resetAccumulation(const IVec2& size);
+	void ensureBuffers(Renderer& renderer, const IVec2& size);
+	void updateCameraUniforms(Renderer& renderer) const;
 	void markSceneDirty();
-	void traceFrame(const IVec2& size, UInt seed);
-	void uploadBuffer(Renderer& renderer, const IVec2& size);
+	void renderTracePass(Renderer& renderer, const IVec2& size);
+	void renderDisplayPass(Renderer& renderer, const IVec2& size);
 	void drawOverlay(Renderer& renderer);
 };
 

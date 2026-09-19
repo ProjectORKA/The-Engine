@@ -1,0 +1,6 @@
+// Global ORKA UI tokens — import this (via app-master.ui.scss) in any authored surface.
+// Layout uses flex classes (p*, g*, row, align-*); theme paint uses UiAppTheme helpers (field-label, panel, …).
+// Sizes come from font-size + padding + flex-grow — avoid hardcoded row/column dimensions here.
+
+$font-body: 16dp;
+$font-title: 28dp;

@@ -1,4 +1,5 @@
 #include "ProjectMelon.hpp"
+#include "Renderer.hpp"
 #include "Window.hpp"
 #include "Random.hpp"
 #include "AudioEngine.hpp"

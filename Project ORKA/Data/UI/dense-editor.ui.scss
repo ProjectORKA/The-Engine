@@ -1,0 +1,49 @@
+$line: #343b49;
+$surface: #20242d;
+$raised: #292f3a;
+$text: #d9deea;
+
+.editor-grid {
+	width: 100%;
+	height: 100%;
+	display: grid;
+	grid-template-columns: 260dp 1fr 320dp;
+	grid-template-rows: 42dp 1fr 24dp;
+	background-color: $surface;
+	color: $text;
+}
+
+.toolbar {
+	grid-column: 1;
+	grid-column-span: 3;
+	display: flex;
+	align-items: center;
+	gap: 6dp;
+	padding: 5dp;
+	background-color: $raised;
+	border-bottom-color: $line;
+}
+
+.hierarchy { grid-column: 1; grid-row: 2; overflow-y: auto; }
+.viewport { grid-column: 2; grid-row: 2; display: overlay; overflow: hidden; }
+.inspector { grid-column: 3; grid-row: 2; overflow-y: auto; }
+.status {
+	grid-column: 1;
+	grid-column-span: 3;
+	grid-row: 3;
+	display: flex;
+	justify-content: space-between;
+	padding-left: 8dp;
+	padding-right: 8dp;
+}
+.pane-title { height: 28dp; padding: 6dp; background-color: $raised; }
+.tree-row { height: 22dp; padding-left: 8dp; }
+.tree-row:selected { background-color: #315275; }
+.property-row {
+	display: grid;
+	grid-template-columns: 2fr 3fr;
+	min-height: 26dp;
+	gap: 6dp;
+	padding: 4dp;
+}
+.viewport-stat { left: 8dp; top: 8dp; background-color: #000000aa; padding: 5dp; }

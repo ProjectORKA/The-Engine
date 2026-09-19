@@ -1,8 +1,10 @@
 #pragma once
 
-//#ifdef _WIN32
-//#define _WIN32_WINNT 0x0A00
-//#endif
+#ifdef _WIN32
+#ifndef _WIN32_WINNT
+#define _WIN32_WINNT 0x0A00
+#endif
+#endif
 
 //#define ASIO_NO_TS_EXECUTORS
 //#define ASIO_USE_TS_EXECUTOR_AS_DEFAULT

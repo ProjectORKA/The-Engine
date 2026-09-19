@@ -274,3 +274,8 @@ __pycache__/
 *.save
 /Project ORKA/Cache/Meshes/dnd.mesh
 /Project ORKA/Data/DungeonsAndDiscord/dnd.fbx
+
+# Optional advanced text backend libraries built by vcpkg. The install root has
+# to stay clear of paths containing spaces because ICU configures with autotools.
+/text-deps/
+vcpkg_installed/

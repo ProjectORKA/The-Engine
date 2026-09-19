@@ -1,4 +1,5 @@
 #include "MoonCrash.hpp"
+#include "Renderer.hpp"
 
 MoonCrashPlayer::MoonCrashPlayer()
 {

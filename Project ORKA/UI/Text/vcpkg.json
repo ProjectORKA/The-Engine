@@ -1,0 +1,24 @@
+{
+  "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg-tool/main/docs/vcpkg.schema.json",
+  "name": "orka-optional-advanced-text",
+  "version-string": "1.0.0",
+  "description": "Pinned example manifest for ORKA's manually enabled advanced text backend.",
+  "builtin-baseline": "52d80838fb40c755b1615fbc9c7b994a33742a22",
+  "dependencies": [
+    "freetype",
+    {
+      "name": "harfbuzz",
+      "features": [
+        "icu"
+      ]
+    },
+    "icu",
+    {
+      "name": "msdfgen",
+      "default-features": false,
+      "features": [
+        "extensions"
+      ]
+    }
+  ]
+}

@@ -1,4 +1,5 @@
 #include "UIElement.hpp"
+#include "Renderer.hpp"
 #include "RenderingOverrides.hpp"
 #include "UserInterface.hpp"
 
@@ -75,7 +76,7 @@ void UIElement::setHovered(Bool newState) {
 DVec2 UIElement::getMousePosTopLeft(const Window& window) const
 {
 	const DVec2 topLeft(positionX, positionY + window.getHeight());
-	const DVec2 mouse = window.mousePosBotLeft;
+	const DVec2 mouse = window.mousePositionBotLeft();
 
 	return { mouse.x - topLeft.x, topLeft.y - mouse.y };
 }
@@ -83,7 +84,7 @@ DVec2 UIElement::getMousePosTopLeft(const Window& window) const
 DVec2 UIElement::getMousePosBottomLeft(const Window& window) const
 {
 	const DVec2 bottomLeft(positionX, positionY + window.getHeight() - height);
-	const DVec2 mouse = window.mousePosBotLeft;
+	const DVec2 mouse = window.mousePositionBotLeft();
 
 	return { mouse.x - bottomLeft.x, mouse.y - bottomLeft.y };
 }

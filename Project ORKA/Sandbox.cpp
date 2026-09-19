@@ -1,4 +1,5 @@
 #include "Sandbox.hpp"
+#include "Renderer.hpp"
 #include "UserInterface.hpp"
 
 void SandboxRenderer::update(Window& window)

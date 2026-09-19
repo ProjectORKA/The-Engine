@@ -1,4 +1,11 @@
 #include "Basics.hpp"
+#include "Settings.hpp"
+
+String toString(const ULL v)
+{
+	if (printULLWithBits) return "(" + BitSet<sizeof(ULL) * 8>(v).to_string() + ") = " + std::to_string(v);
+	return std::to_string(v);
+}
 
 Name::Name()
 {

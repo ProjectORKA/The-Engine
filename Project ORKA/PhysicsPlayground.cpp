@@ -1,4 +1,5 @@
 #include "PhysicsPlayground.hpp"
+#include "Renderer.hpp"
 #include "PhysicsSystem.hpp"
 
 void PhysicsPlaygroundSimulation::destroy() {}

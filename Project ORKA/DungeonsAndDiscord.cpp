@@ -1,5 +1,6 @@
 #include "DungeonsAndDiscord.hpp"
 #include "File.hpp"
+#include "Renderer.hpp"
 #include "Window.hpp"
 #include "Random.hpp"
 

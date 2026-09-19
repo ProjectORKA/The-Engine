@@ -1,4 +1,15 @@
 #include "GameLoader.hpp"
+
+#include "Debug.hpp"
+#include "ResourceManager.hpp"
+#include "UI/Authoring/UiAuthoredHost.hpp"
+#include "UI/Binding/UiBindingRegistry.hpp"
+#include "UI/Theme/UiAppFlex.hpp"
+#include "UI/Theme/UiAppHelpers.hpp"
+#include "UI/Theme/UiAppTheme.hpp"
+#include "UI/Samples/UiControlsDemo.hpp"
+#include "UI/Text/UiIconCatalog.hpp"
+#include "UI/Widgets/UiWidgets.hpp"
 #include "Window.hpp"
 #include "WindowAPI.hpp"
 
@@ -8,7 +19,6 @@
 #include "ShadertoyRenderer.hpp"
 #include "SoftwareRendererGame.hpp"
 #include "TripleNine.hpp"
-#include "UISandbox.hpp"
 #include "Voxels.hpp"
 #include "Mooncrash.hpp"
 #include "RayTracer.hpp"
@@ -18,24 +28,61 @@
 #include "SimpleRTS.hpp"
 #include "SdfPointcloud.hpp"
 
+namespace
+{
+	using namespace Ui;
+
+	UiValue gamesCatalog(const Vector<GameEntry>& entries)
+	{
+		Vector<UiValue> games;
+		games.reserve(entries.size());
+		for (Int index = 0; index < static_cast<Int>(entries.size()); ++index)
+		{
+			const GameEntry& entry = entries[static_cast<SizeT>(index)];
+			games.push_back(UiValue::fromObject({
+				{"id", UiValue::fromString("game-" + toString(index))},
+				{"iconId", UiValue::fromString("game-" + toString(index) + "-icon")},
+				{"name", UiValue::fromString(entry.displayName)},
+				{"description", UiValue::fromString(entry.description)},
+				{"icon", UiValue::fromString(entry.iconName)}
+				}));
+		}
+		return UiValue::fromArray(std::move(games));
+	}
+
+	void publishUiCopy(UiPropertyRegistry& properties, const UiAppTheme& theme, const SizeT projectCount)
+	{
+		(void)properties.set("ui.themeToggleLabel",
+			UiValue::fromString(theme.getMode() == UiThemeMode::Light ? "Dark mode" : "Light mode"));
+		(void)properties.set("ui.projectCount",
+			UiValue::fromString(toString(projectCount) + " total"));
+	}
+
+	void publishLauncherCatalog(UiPropertyRegistry& properties, const Vector<GameEntry>& entries)
+	{
+		(void)properties.set("launcher.games", gamesCatalog(entries));
+	}
+}
+
 Vector<GameEntry> GameLoader::buildDefaultEntries()
 {
+	using namespace Ui::Icons;
 	return {
-		{"UI Sandbox", "UI layout playground with embedded scene renderer.", []() { UISandbox game; game.run(); }},
-		{"Sandbox", "A small playground to experiment with engine features.", []() { Sandbox game; game.run(); }},
-		{"Pong", "Classic Pong built with ORKA's UI and input systems.", []() { Pong game; game.run(); }},
-		{"Voxels", "Ray-marched voxel world with camera controls and lighting.", []() { Voxels game; game.run(); }},
-		{"MoonCrash", "Planet-scale terrain and atmosphere simulation.", []() { MoonCrash game; game.run(); }},
-		{"Project Melon", "Stylized melon world prototype with player movement and rendering.", []() { ProjectMelon game; game.run(); }},
-		{"Melon Audio Lab", "Procedural motion audio testbed with hum, wind, and heartbeat layers.", []() { MelonAudioLab game; game.run(); }},
-		{"Sound Analysis Lab", "Import and inspect audio: waveform zoom/scrub, FFT spectrum, and spectrogram.", []() { SoundAnalysisLab game; game.run(); }},
-		{"Simple RTS", "Lightweight RTS sim with humans, wildlife, terrain, and resource systems.", []() { SimpleRts game; game.run(); }},
-		{"SDF Pointcloud", "Screenspace pointcloud SDF with temporal reprojection and compute hole-fill.", []() { SdfPointcloud game; game.run(); }},
-		{"Shadertoy (Erosion)", "Shader-based erosion effect inspired by Shadertoy.", []() { ShadertoyGame game; game.run(); }},
-		{"Software Renderer", "CPU rasterizer demo showcasing the software pipeline.", []() { SoftwareRendererGame game; game.run(); }},
-		{"Function Finder", "Curve-fitting playground that searches function parameters against sampled data.", []() { FunctionFinder game; game.run(); }},
-		{"Triple Nine", "Arena shooter prototype with bloom rendering and intro support.", []() { TripleNine game; game.run(); }},
-		{"Cornell Box Ray Tracer", "CPU path tracer with diffuse, metal, glass materials and progressive accumulation.", []() { RayTracerGame game; game.run(); }}
+		{"UI Controls Demo", "Interactive reference for the unified ORKA design system and controls.", Adjustments, []() { UiControlsDemo game; game.run(); }},
+		{"Sandbox", "A small playground to experiment with engine features.", Box, []() { Sandbox game; game.run(); }},
+		{"Pong", "Classic Pong built with ORKA's UI and input systems.", DeviceGamepad, []() { Pong game; game.run(); }},
+		{"Voxels", "Ray-marched voxel world with camera controls and lighting.", Cube, []() { Voxels game; game.run(); }},
+		{"MoonCrash", "Planet-scale terrain and atmosphere simulation.", Rocket, []() { MoonCrash game; game.run(); }},
+		{"Project Melon", "Stylized melon world prototype with player movement and rendering.", Palette, []() { ProjectMelon game; game.run(); }},
+		{"Melon Audio Lab", "Procedural motion audio testbed with hum, wind, and heartbeat layers.", Music, []() { MelonAudioLab game; game.run(); }},
+		{"Sound Analysis Lab", "Import and inspect audio: waveform zoom/scrub, FFT spectrum, and spectrogram.", WaveSine, []() { SoundAnalysisLab game; game.run(); }},
+		{"Simple RTS", "Lightweight RTS sim with humans, wildlife, terrain, and resource systems.", Sword, []() { SimpleRts game; game.run(); }},
+		{"SDF Pointcloud", "Screenspace pointcloud SDF with temporal reprojection and compute hole-fill.", Cpu, []() { SdfPointcloud game; game.run(); }},
+		{"Shadertoy (Erosion)", "Shader-based erosion effect inspired by Shadertoy.", Photo, []() { ShadertoyGame game; game.run(); }},
+		{"Software Renderer", "CPU rasterizer demo showcasing the software pipeline.", Cpu, []() { SoftwareRendererGame game; game.run(); }},
+		{"Function Finder", "Curve-fitting playground that searches function parameters against sampled data.", FunctionIcon, []() { FunctionFinder game; game.run(); }},
+		{"Triple Nine", "Arena shooter prototype with bloom rendering and intro support.", Target, []() { TripleNine game; game.run(); }},
+		{"Cornell Box Ray Tracer", "GPU PBR path tracer with GGX metals, glass, area-light NEE, and progressive accumulation.", Photo, []() { RayTracerGame game; game.run(); }}
 	};
 }
 
@@ -45,95 +92,103 @@ GameLoader::GameLoader()
 	selectionIndex.store(-1);
 
 	column();
-	padding(40);
-	gap(10);
 	growX(true);
 	growY(true);
+	background(Color(0, 0, 0, 0));
+	addElement(host);
 }
 
-GameLoader::LaunchButton::LaunchButton(GameLoader& loaderRef, const Int index)
+void GameLoader::applyTheme()
 {
-	owner      = &loaderRef;
-	entryIndex = index;
+	host.useAppTheme(theme);
+	if (!authoredReady || !authored) return;
+	publishUiCopy(authored->properties(), theme, entries.size());
+	authored->syncFromProperties();
+	wireLauncherInteractions();
 }
 
-void GameLoader::LaunchButton::doThis()
+void GameLoader::toggleTheme()
 {
-	if (!owner) return;
+	theme.setMode(theme.getMode() == UiThemeMode::Light ? UiThemeMode::Dark : UiThemeMode::Light);
+	applyTheme();
+}
 
-	Window* owningWindowResolved = owningWindow;
-	if (!owningWindowResolved)
-	{
-		UIElement* current = this;
-		while (current != nullptr && owningWindowResolved == nullptr)
+void GameLoader::applyLauncherLayout()
+{
+	if (!authored) return;
+	authored->ensureNodeLayout("game-loader", [](UiLayoutStyle& style)
 		{
-			owningWindowResolved = dynamic_cast<Window*>(current);
-			current              = current->parent;
+			style.width = UiSizeSpec::percent(1);
+			style.height = UiSizeSpec::percent(1);
+		});
+	authored->ensureNodeLayout("game-loader-shell", [](UiLayoutStyle& style)
+		{
+			style.width = UiSizeSpec::percent(1);
+			style.height = UiSizeSpec::percent(1);
+		});
+	authored->ensureNodeLayout("type-title", [](UiLayoutStyle& style)
+		{
+			style.flexShrink = 0;
+			style.height = UiSizeSpec::fixed(UiAppTypography::titleLine);
+		});
+	authored->ensureNodeLayout("type-kicker", [](UiLayoutStyle& style)
+		{
+			style.flexShrink = 0;
+			style.height = UiSizeSpec::fixed(UiAppTypography::bodyLine);
+		});
+	authored->ensureNodeLayout("game-list-panel", [](UiLayoutStyle& style)
+		{
+			style.flexGrow = 1;
+			style.flexShrink = 1;
+		});
+	authored->ensureNodeLayout("game-list", [](UiLayoutStyle& style)
+		{
+			style.flexGrow = 1;
+			style.flexShrink = 1;
+		});
+}
+
+void GameLoader::wireLauncherInteractions()
+{
+	if (!authored) return;
+
+	UiWidgetFactory& widgets = authored->widgets();
+	UiDocument& document = host.document();
+	UiEventRouter& router = host.eventRouter();
+
+	for (Int index = 0; index < static_cast<Int>(entries.size()); ++index)
+	{
+		const String buttonId = "game-" + toString(index);
+		const String iconId = buttonId + "-icon";
+		const UiWidgetHandle button = authored->widgetBridge().findById(buttonId);
+		if (!widgets.isValid(button)) continue;
+
+		if (UiButtonState* buttonState = widgets.state<UiButtonState>(button))
+		{
+			buttonState->onActivate = [this, index](UiWidgetHandle)
+				{
+					if (owningWindow) onGameSelected(*owningWindow, index);
+				};
+		}
+
+		if (UiNode* buttonNode = document.get(widgets.node(button)))
+			buttonNode->state.semantics.label = entries[static_cast<SizeT>(index)].displayName;
+
+		setHitTestInvisibleRecursive(document, router, widgets.node(button));
+
+		const UiWidgetHandle icon = authored->widgetBridge().findById(iconId);
+		if (!widgets.isValid(icon)) continue;
+		if (UiImageState* iconState = widgets.state<UiImageState>(icon))
+		{
+			iconState->resource = entries[static_cast<SizeT>(index)].iconName;
+			iconState->icon = true;
+			if (UiNode* iconNode = document.get(widgets.node(icon)))
+			{
+				iconNode->state.semantics.value = entries[static_cast<SizeT>(index)].iconName;
+				document.markDirty(widgets.node(icon), DirtyFlag::Paint);
+			}
 		}
 	}
-
-	if (owningWindowResolved) owner->onGameSelected(*owningWindowResolved, entryIndex);
-}
-
-void GameLoader::buildUi()
-{
-	if (built) return;
-
-	buttons.clear();
-	entryContents.clear();
-	nameLabels.clear();
-	descriptionLabels.clear();
-
-	buttons.reserve(entries.size());
-	entryContents.reserve(entries.size());
-	nameLabels.reserve(entries.size());
-	descriptionLabels.reserve(entries.size());
-
-	titleLabel.setText("Select a game to launch");
-	titleLabel.color(Color(1.0f));
-	titleLabel.growX(true);
-	titleLabel.padding(10);
-	titleLabel.growY(false);
-	titleLabel.setHeight(36);
-	addElement(titleLabel);
-
-	for (Int i = 0; i < static_cast<Int>(entries.size()); ++i)
-	{
-		buttons.emplace_back(*this, i);
-		auto& button = buttons.back();
-		button.padding(12);
-		button.growX(true);
-		button.background(Color(1.0, 1.0, 1.0, 0.08));
-		button.hoveredBackground(Color(1.0, 1.0, 1.0, 0.16));
-		button.activeBackground(Color(1.0, 1.0, 1.0, 0.28));
-
-		entryContents.emplace_back();
-		UIElement& container = entryContents.back();
-		container.column();
-		container.gap(4);
-		container.growX(true);
-
-		nameLabels.emplace_back();
-		UIElement& nameLabel = nameLabels.back();
-		nameLabel.setText(entries[static_cast<SizeT>(i)].displayName);
-		nameLabel.growX(true);
-		nameLabel.padding(10);
-
-		descriptionLabels.emplace_back();
-		UIElement& descriptionLabel = descriptionLabels.back();
-		descriptionLabel.setText(entries[static_cast<SizeT>(i)].description);
-		descriptionLabel.growX(true);
-		descriptionLabel.padding(10);
-
-		container.addElement(nameLabel);
-		container.addElement(descriptionLabel);
-
-		button.insert(container);
-
-		addElement(button);
-	}
-
-	built = true;
 }
 
 void GameLoader::onGameSelected(Window& window, const Int index)
@@ -141,9 +196,7 @@ void GameLoader::onGameSelected(Window& window, const Int index)
 	selectionIndex.store(index);
 
 	if (index >= 0 && index < static_cast<Int>(entries.size()))
-	{
 		selectedGame = entries[static_cast<SizeT>(index)].launch;
-	}
 	else selectedGame = {};
 
 	window.keepRunning = false;
@@ -152,16 +205,69 @@ void GameLoader::onGameSelected(Window& window, const Int index)
 
 void GameLoader::create(Window& window)
 {
-	if (!built) buildUi();
+	owningWindow = &window;
+	const IVec2 size = window.getSize();
+	setWidth(size.x);
+	setHeight(size.y);
+	host.setWidth(size.x);
+	host.setHeight(size.y);
 
-	for (LaunchButton& button : buttons) button.owningWindow = &window;
-
+	host.useAppTheme(theme);
 	UIElement::create(window);
+
+	authored = std::make_unique<UiAuthoredHost>(host);
+
+	(void)authored->commands().registerCommand("Launcher.ToggleTheme", {},
+		[this](const Vector<UiValue>&)
+		{
+			toggleTheme();
+			return true;
+		});
+
+	const Path uiDirectory = resourceManager.getOrkaDataPath() / "UI";
+	if (!authored->loadFromFiles(
+		uiDirectory / "game-loader.ui.html",
+		uiDirectory / "game-loader.ui.scss"))
+	{
+		logError("GameLoader: failed to load authored UI bundle.");
+		for (const UiDiagnostic& diagnostic : authored->diagnostics())
+			logError("  " + diagnostic.message);
+		return;
+	}
+
+	publishUiCopy(authored->properties(), theme, entries.size());
+	publishLauncherCatalog(authored->properties(), entries);
+
+	if (!authored->mount())
+	{
+		logError("GameLoader: failed to mount authored UI.");
+		for (const UiDiagnostic& diagnostic : authored->diagnostics())
+			logError("  " + diagnostic.message);
+		return;
+	}
+
+	applyLauncherLayout();
+	authoredReady = true;
+	applyTheme();
+}
+
+void GameLoader::update(Window& window)
+{
+	const IVec2 size = window.getSize();
+	setWidth(size.x);
+	setHeight(size.y);
+	host.setWidth(size.x);
+	host.setHeight(size.y);
+	if (authoredReady) authored->syncControlLayouts();
+	UIElement::update(window);
 }
 
 void GameLoader::destroy(Window& window)
 {
 	UIElement::destroy(window);
+	authored.reset();
+	owningWindow = nullptr;
+	authoredReady = false;
 }
 
 Function<void()> GameLoader::consumeSelectedGame()
@@ -171,4 +277,3 @@ Function<void()> GameLoader::consumeSelectedGame()
 	selectionIndex.store(-1);
 	return result;
 }
-

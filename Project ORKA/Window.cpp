@@ -1,11 +1,44 @@
 #include "Window.hpp"
+#include "Renderer.hpp"
 #include "FileSystem.hpp"
 #include "ResourceManager.hpp"
 #include "OptickProfiling.hpp"
 #include "UserInterface.hpp"
+#include "Agent/AgentBridge.hpp"
+#include <bit>
+#include <chrono>
 #include <iostream>
+#include <thread>
 
 static UShort nextWindowId = 0;
+
+Window::Window()
+	: rendererOwner_(std::make_unique<Renderer>())
+	, renderer(*rendererOwner_)
+{
+}
+
+Window::~Window() = default;
+
+namespace
+{
+	static_assert(Atomic<U64>::is_always_lock_free,
+		"Pointer publication must remain lock-free");
+
+	U64 packMousePosition(const DVec2 position)
+	{
+		const U64 x = std::bit_cast<U32>(static_cast<Float>(position.x));
+		const U64 y = std::bit_cast<U32>(static_cast<Float>(position.y));
+		return (x << 32) | y;
+	}
+
+	DVec2 unpackMousePosition(const U64 packed)
+	{
+		return DVec2(
+			std::bit_cast<Float>(static_cast<U32>(packed >> 32)),
+			std::bit_cast<Float>(static_cast<U32>(packed)));
+	}
+}
 
 static Vector<UIElement*> buildElementPath(UIElement* element)
 {
@@ -166,8 +199,6 @@ void windowThread(Window& window)
 	if (window.windowState == WindowState::Windowed) window.centerWindow();
 	if (window.windowState == WindowState::Windowed || window.windowState == WindowState::Maximized) window.updateDecorations();
 
-	auto prevPos = DVec2(0);
-
 	OPTICK_THREAD("Window Thread");
 
 	// main render loop for the window
@@ -176,9 +207,10 @@ void windowThread(Window& window)
 		OPTICK_FRAME("Window Frame");
 		if (window.isVisible)
 		{
+			const auto agentFrameStart = std::chrono::steady_clock::now();
+			window.agentFrameIndex.fetch_add(1);
 
-			window.mouseDelta      = window.mousePosBotLeft - prevPos;
-			prevPos                = window.mousePosBotLeft;
+			window.sampleMousePositionForFrame();
 			const IVec2 windowSize = window.getContentSize();
 			// When the window is minimized or being closed, the framebuffer size can
 			// temporarily report zero. Skip rendering for that frame to avoid
@@ -186,24 +218,29 @@ void windowThread(Window& window)
 			if (windowSize.x <= 0 || windowSize.y <= 0)
 			{
 				window.mouseDelta = DVec2(0);
+				// Avoid spinning at 100% CPU while minimized or during close teardown.
+				std::this_thread::sleep_for(std::chrono::milliseconds(1));
 				continue;
 			}
 			window.setWidth(windowSize.x);
 			window.setHeight(windowSize.y);
 
-			renderer.begin(window.getSize());
-			renderer.clearBackground(window.getBackgroundColor());
+			renderer.begin(window.getSize(), window.getBackgroundColor());
 			renderer.setAlphaBlending(true);
 
 
 			// UI calculations
+			const auto layoutStart = std::chrono::steady_clock::now();
 			window.updateSizes();
 			window.growSizes();
 			window.updatePositions();
+			const auto updateStart = std::chrono::steady_clock::now();
 
 			window.update(window);
+			const auto renderStart = std::chrono::steady_clock::now();
 			window.renderInteractive(window);
 			window.render(window);
+			const auto finalizeStart = std::chrono::steady_clock::now();
 
 			if constexpr (USE_OPTICK)
 			{
@@ -216,8 +253,23 @@ void windowThread(Window& window)
 			OPTICK_PUSH("Finalize");
 
 			renderer.end(window); // checks errors and unlocks renderer
+			agentBridge.drainRender(window);
 
 			apiWindowSwapBuffers(window.apiWindow);
+			const auto frameEnd = std::chrono::steady_clock::now();
+			const auto milliseconds = [](const auto begin, const auto end)
+			{
+				return std::chrono::duration<Double, std::milli>(end - begin).count();
+			};
+			agentBridge.recordFrame({
+				window.id,
+				window.agentFrameIndex.load(),
+				milliseconds(agentFrameStart, frameEnd),
+				milliseconds(layoutStart, updateStart),
+				milliseconds(updateStart, renderStart),
+				milliseconds(renderStart, finalizeStart),
+				milliseconds(finalizeStart, frameEnd)
+			});
 			OPTICK_POP();
 		}
 		window.mouseDelta = DVec2(0);
@@ -231,6 +283,8 @@ void windowThread(Window& window)
 void Window::setCallbacks() const
 {
 	glfwSetKeyCallback(apiWindow, whenButtonIsPressed);
+	glfwSetCharCallback(apiWindow, whenUnicodeCharacterIsInput);
+	glfwSetWindowFocusCallback(apiWindow, whenWindowFocusChanges);
 	glfwSetCursorPosCallback(apiWindow, whenMouseIsMoving);
 	glfwSetScrollCallback(apiWindow, whenMouseIsScrolling);
 	glfwSetDropCallback(apiWindow, whenFilesDroppedOnWindow);
@@ -297,14 +351,16 @@ void Window::setPosition(const IVec2 position)
 
 Bool Window::isKeyPressed(const Int key) const
 {
-	return apiWindowKeyIsPressed(apiWindow, key);
+	const Bool injected = key >= 0 && key < static_cast<Int>(injectedKeyState.size())
+		&& injectedKeyState[key].load();
+	return injected || apiWindowKeyIsPressed(apiWindow, key);
 }
 
 Bool Window::pressed(const InputId input) const
 {
 	switch (input.type)
 	{
-	case InputType::KeyBoard: return glfwGetKey(apiWindow, input.id);
+	case InputType::KeyBoard: return isKeyPressed(input.id);
 	case InputType::Mouse: return mouseState[input.id];
 	default: logError("Unsupported InputType!");
 	}
@@ -316,14 +372,43 @@ UIElement* Window::pickElementAt(const DVec2& point)
 	return findDeepestAt(*this, point);
 }
 
+void Window::publishMousePosition(const DVec2 logicalPosition)
+{
+	publishedMousePosition.store(packMousePosition(logicalPosition), std::memory_order_release);
+}
+
+DVec2 Window::mousePosition() const
+{
+	return unpackMousePosition(publishedMousePosition.load(std::memory_order_acquire));
+}
+
+DVec2 Window::mousePositionBotLeft() const
+{
+	const DVec2 position = mousePosition();
+	return DVec2(position.x, getHeight() - position.y);
+}
+
+void Window::sampleMousePositionForFrame()
+{
+	const DVec2 previous = frameMousePositionBotLeft;
+	frameMousePosition = mousePosition();
+	frameMousePositionBotLeft =
+		DVec2(frameMousePosition.x, getHeight() - frameMousePosition.y);
+	mouseDelta = frameMousePositionBotLeft - previous;
+
+	// Layout, legacy hover state, retained hover state, camera deltas, and
+	// rendering now all consume the same frame-local pointer sample.
+	if (!ui.capturing)
+		updateHoverTarget(*this, pickElementAt(frameMousePositionBotLeft));
+}
+
 Bool Window::routeInput(InputEvent& input)
 {
 	// Global capture: route all input directly to the capturing element chain.
 	if (ui.capturing)
 	{
-		if (ui.focusedElement)
+		if (ui.focusedElement && uiElementBelongsToWindow(ui.focusedElement, *this))
 		{
-			
 		for (UIElement* element = ui.focusedElement; element != nullptr; element = element->parent)
 		{
 			element->inputEvent(*this, input);
@@ -338,14 +423,15 @@ Bool Window::routeInput(InputEvent& input)
 	// mouse down updates focus
 	if (input.id.type == InputType::Mouse && input.state)
 	{
-		UIElement* clicked = pickElementAt(mousePosBotLeft);
+		UIElement* clicked = pickElementAt(mousePositionBotLeft());
 		ui.focus(*this, clicked ? clicked : this);
 	}
 
 	UIElement* target = nullptr;
-	if (input.id.type == InputType::Mouse || input.id.type == InputType::Scroll) target = pickElementAt(mousePosBotLeft);
-	if (!target && ui.focusedWindow == this && ui.focusedElement) target = ui.focusedElement;
-	if (!target && ui.focusedElement) target = ui.focusedElement;
+	if (input.id.type == InputType::Mouse || input.id.type == InputType::Scroll)
+		target = pickElementAt(mousePositionBotLeft());
+	if (!target && ui.focusedElement && uiElementBelongsToWindow(ui.focusedElement, *this))
+		target = ui.focusedElement;
 	if (!target && !children.empty()) target = children.back();
 	if (!target) target = this;
 
@@ -358,8 +444,80 @@ Bool Window::routeInput(InputEvent& input)
 	return false;
 }
 
-void Window::setTitle(const String& string) const
+void Window::injectPointerMove(const DVec2 logicalPosition)
 {
+	apiWindowSetCursorPosition(apiWindow, logicalPosition);
+	whenMouseIsMoving(apiWindow, logicalPosition.x, logicalPosition.y);
+}
+
+void Window::injectMouseButton(const Int button, const Bool down)
+{
+	if(button < 0 || button >= 8) throw std::runtime_error("Mouse button must be between 0 and 7");
+	whenMouseIsPressed(apiWindow, button, down ? GLFW_PRESS : GLFW_RELEASE, 0);
+}
+
+void Window::injectScroll(const Double x, const Double y)
+{
+	whenMouseIsScrolling(apiWindow, x, y);
+}
+
+void Window::injectKey(const Int key, const Bool down, const Int modifiers, const Bool repeat)
+{
+	if(key < 0 || key >= static_cast<Int>(injectedKeyState.size()))
+		throw std::runtime_error("Key code is outside the supported range");
+	injectedKeyState[key].store(down);
+	whenButtonIsPressed(apiWindow, key, 0,
+		repeat ? GLFW_REPEAT : (down ? GLFW_PRESS : GLFW_RELEASE), modifiers);
+}
+
+void Window::injectText(const String& utf8) const
+{
+	for(SizeT i = 0; i < utf8.size();)
+	{
+		const Byte first = static_cast<Byte>(utf8[i++]);
+		U32 codepoint = first;
+		SizeT continuation = 0;
+		if((first & 0xe0) == 0xc0) { codepoint = first & 0x1f; continuation = 1; }
+		else if((first & 0xf0) == 0xe0) { codepoint = first & 0x0f; continuation = 2; }
+		else if((first & 0xf8) == 0xf0) { codepoint = first & 0x07; continuation = 3; }
+		else if(first > 0x7f) throw std::runtime_error("Text is not valid UTF-8");
+		if(i + continuation > utf8.size()) throw std::runtime_error("Text is not valid UTF-8");
+		for(SizeT j = 0; j < continuation; ++j)
+		{
+			const Byte next = static_cast<Byte>(utf8[i++]);
+			if((next & 0xc0) != 0x80) throw std::runtime_error("Text is not valid UTF-8");
+			codepoint = (codepoint << 6) | (next & 0x3f);
+		}
+		if(codepoint > 0x10ffff || (codepoint >= 0xd800 && codepoint <= 0xdfff))
+			throw std::runtime_error("Text is not valid UTF-8");
+		if(unicodeInputCallback) unicodeInputCallback(codepoint);
+	}
+}
+
+void Window::forwardCompositionStart() const
+{
+	if (compositionStartCallback) compositionStartCallback();
+}
+
+void Window::forwardCompositionUpdate(const String& utf8, const SizeT selectionStart,
+	const SizeT selectionEnd) const
+{
+	if (compositionUpdateCallback) compositionUpdateCallback(utf8, selectionStart, selectionEnd);
+}
+
+void Window::forwardCompositionCommit(const String& utf8) const
+{
+	if (compositionCommitCallback) compositionCommitCallback(utf8);
+}
+
+void Window::forwardCompositionCancel() const
+{
+	if (compositionCancelCallback) compositionCancelCallback();
+}
+
+void Window::setTitle(const String& string)
+{
+	title = string;
 	glfwSetWindowTitle(apiWindow, string.c_str());
 }
 
@@ -430,15 +588,8 @@ void whenFramebufferIsResized(const ApiWindow apiWindow, const Int width, const 
 
 void whenMouseIsMoving(const ApiWindow apiWindow, const Double mouseX, const Double mouseY)
 {
-	Window& window         = *static_cast<Window*>(glfwGetWindowUserPointer(apiWindow));
-	window.mousePos        = DVec2(mouseX, mouseY);
-	window.mousePosBotLeft = DVec2(mouseX, window.getHeight() - mouseY);
-
-	// While captured anywhere, ignore hover updates to avoid invisible cursor interactions.
-	if (ui.capturing) return;
-
-	UIElement* newHover = window.pickElementAt(window.mousePosBotLeft);
-	updateHoverTarget(window, newHover);
+	Window& window = *static_cast<Window*>(glfwGetWindowUserPointer(apiWindow));
+	window.publishMousePosition(DVec2(mouseX, mouseY));
 }
 
 void whenMouseIsScrolling(const ApiWindow apiWindow, const Double xAxis, const Double yAxis)
@@ -487,8 +638,8 @@ void whenButtonIsPressed(const ApiWindow apiWindow, const Int key, Int scanCode,
 {
 	Window& window = *static_cast<Window*>(glfwGetWindowUserPointer(apiWindow));
 
-	if (action == 2) return; // we do not process repeat button presses
-	// [TODO] make sure that "typing events" use them
+	if (window.keyInputCallback) window.keyInputCallback(key, scanCode, action, modifiers);
+	if (action == GLFW_REPEAT) return; // legacy controls still intentionally ignore repeats
 
 	auto input = InputEvent(InputType::KeyBoard, key, action);
 
@@ -526,8 +677,21 @@ void whenButtonIsPressed(const ApiWindow apiWindow, const Int key, Int scanCode,
 	}
 }
 
+void whenUnicodeCharacterIsInput(const ApiWindow apiWindow, const UInt codepoint)
+{
+	Window& window = *static_cast<Window*>(glfwGetWindowUserPointer(apiWindow));
+	if (window.unicodeInputCallback) window.unicodeInputCallback(codepoint);
+}
+
+void whenWindowFocusChanges(const ApiWindow apiWindow, const Int focused)
+{
+	Window& window = *static_cast<Window*>(glfwGetWindowUserPointer(apiWindow));
+	if (window.focusInputCallback) window.focusInputCallback(focused == GLFW_TRUE);
+}
+
 Bool Window::create(const String& title, const IVec2 size, const Bool decorated, const Bool visible, const WindowState state, const ApiWindow sharedContextWindow)
 {
+	this->title                  = title;
 	this->storedWindowedModeSize = size;
 	this->windowState            = state;
 	this->isVisible              = visible;

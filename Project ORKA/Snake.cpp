@@ -1,4 +1,5 @@
 #include "Snake.hpp"
+#include "Renderer.hpp"
 #include "Random.hpp"
 
 void SnakeSnake::addSegment()

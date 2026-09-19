@@ -42,7 +42,7 @@ struct Renderer
 	void sync();
 	void create();
 	void destroy();
-	void begin(IVec2 size);
+	void begin(IVec2 size, Color backgroundColor);
 	//render state
 	void drawToWindow();
 	void enableScissor();
@@ -148,5 +148,11 @@ struct Renderer
 
 private:
 	RenderRegion renderRegion;
+	Framebuffer  presentRetainFramebuffer;
+	IVec2        presentedSize = IVec2(0);
+	Bool         presentRetainValid = false;
+
+	void stretchPresentRetainToWindow(IVec2 targetSize);
+	void capturePresentFrame(IVec2 size);
 	//IVec2        windowSize = IVec2(0);
 };

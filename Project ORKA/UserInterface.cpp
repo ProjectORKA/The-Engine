@@ -1,15 +1,10 @@
 #include "UserInterface.hpp"
 #include "Renderer.hpp"
 #include "Window.hpp"
+#include "Agent/AgentBridge.hpp"
 #include <stdexcept>
 
 UserInterface ui;
-
-void UITextBox::create(Window& window) {}
-void UITextBox::update(Window& window) {}
-void UITextBox::destroy(Window& window) {}
-void UITextBox::renderInteractive(Window& window) {}
-void UITextBox::inputEvent(Window& window, InputEvent& input) {}
 
 Bool UserInterface::ensureInitialized()
 {
@@ -39,12 +34,14 @@ void UserInterface::run(const Bool terminateOnExit)
 	{
 		// collect input
 		External::glfwPollEvents();
+		agentBridge.drainMain();
 
 		// iterate over all windows while being able to delete them at the same time
 		for (auto window = windows.begin(); window != windows.end();)
 		{
 			if (window->shouldClose())
 			{
+				clearFocusForWindow(*window);
 				window->destroy();
 				window = windows.erase(window);
 			}
@@ -60,11 +57,6 @@ void UserInterface::run(const Bool terminateOnExit)
 
 UserInterface::UserInterface() { ensureInitialized(); }
 
-UITextBox::UITextBox(String& data)
-{
-	this->data = &data;
-}
-
 static Window* owningWindow(UIElement* element)
 {
 	for (UIElement* current = element; current != nullptr; current = current->parent)
@@ -72,6 +64,27 @@ static Window* owningWindow(UIElement* element)
 		if (auto* asWindow = dynamic_cast<Window*>(current)) return asWindow;
 	}
 	return nullptr;
+}
+
+Bool uiElementBelongsToWindow(const UIElement* element, const Window& window)
+{
+	for (const UIElement* current = element; current != nullptr; current = current->parent)
+	{
+		if (current == &window) return true;
+	}
+	return false;
+}
+
+void UserInterface::clearFocusForWindow(const Window& window)
+{
+	if (focusedWindow == &window)
+	{
+		focusedWindow = nullptr;
+		focusedElement = nullptr;
+		return;
+	}
+	if (focusedElement && uiElementBelongsToWindow(focusedElement, window))
+		focusedElement = nullptr;
 }
 
 static ApiWindow selectSharedContextWindow(const List<Window>& windows)
@@ -83,20 +96,6 @@ static ApiWindow selectSharedContextWindow(const List<Window>& windows)
 		if (window.apiWindow != nullptr && window.apiWindowValid) return window.apiWindow;
 	}
 	return nullptr;
-}
-
-void UITextBox::render(Window& window)
-{
-	Renderer& renderer = window.renderer;
-
-	renderer.uiSpace(window);
-	const IVec2 renderPos = getPosition() + IVec2(0, window.getHeight());
-	const Matrix m = matrixFromPosition(Vec3(renderPos, 0));
-	renderer.uniforms().setMMatrix(m);
-	renderer.fontSize(16.0f);
-	renderer.textRenderSystem.setLetterSpacing(0.6f);
-	renderer.textRenderSystem.alignText(Alignment::left, Alignment::bottom);
-	renderer.textRenderSystem.render(renderer, *data);
 }
 
 Window& UserInterface::window(const String& title, const Int width, const Int height, const Bool decorated, const Bool visible, const WindowState state)
@@ -157,7 +156,8 @@ void UserInterface::releaseCapture()
 		return;
 	}
 	apiWindowEnableCursor(focusedWindow->apiWindow);
-	apiWindowSetCursorPosition(focusedWindow->apiWindow, focusedWindow->mousePos);
+	apiWindowSetCursorPosition(
+		focusedWindow->apiWindow, focusedWindow->mousePosition());
 
 	capturing = false;
 	focusedElement = nullptr;
@@ -170,7 +170,8 @@ void UserInterface::capture(UIElement& element)
 
 	if (capturing) releaseCapture();
 	focus(*window, &element);
-	window->mousePos = apiWindowGetCursorPosition(window->apiWindow);
+	window->publishMousePosition(
+		apiWindowGetCursorPosition(window->apiWindow));
 	apiWindowDisableCursor(window->apiWindow);
 	capturing = true;
 }

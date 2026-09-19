@@ -1,5 +1,6 @@
 #include "AIPlayground.hpp"
 #include "PerlinNoise.hpp"
+#include "Renderer.hpp"
 #include "Window.hpp"
 
 void AIPlaygroundRenderer::update(Window& window)

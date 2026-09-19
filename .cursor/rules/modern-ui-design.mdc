@@ -1,0 +1,29 @@
+---
+description: Modern retained UI design and layout rules for Project ORKA
+globs: Project ORKA/UI/**/*
+alwaysApply: false
+---
+
+# Modern UI Design Rules
+
+Full reference: `Project ORKA/UI/DESIGN_RULES.md`
+Master theme: `Project ORKA/UI/Theme/UiAppTheme.hpp`
+Flex spacing: `Project ORKA/UI/Theme/UiAppFlex.hpp`
+
+## Must follow
+
+1. **Flex + class spacing only.** Flex containers default to column; use `row` only for horizontal stacks, plus `p5`–`p80` and `g5`–`g80` on widget classes. No arbitrary padding, gap, or margin values in surface code.
+
+2. **Use `UiAppTheme` for colors/typography.** No ad-hoc color literals. Legacy panels use `UiLegacyTheme`.
+
+3. **Widgets semantic, themes visual.** Chrome lives in `UiAppTheme.cpp` via `UiAppClass` — not in widget/demo code.
+
+4. **Light + dark mode.** Install with `host.useAppTheme(theme)`.
+
+5. **Visible focus** on all focusable controls.
+
+6. **Composite controls need layout sync.** `attachLayoutEngine` + `syncControlLayouts` for toggles/checkboxes/selects.
+
+7. **Labeled rows.** `UiAppLayout::labelColumnWidth` + `setHitTestInvisibleRecursive()`.
+
+8. **Showcase in UI Demo.** New reusable tokens/components appear in `UI/Samples/UiControlsDemo.cpp`.

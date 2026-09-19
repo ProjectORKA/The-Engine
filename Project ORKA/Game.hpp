@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Framebuffer.hpp"
+#include "Time.hpp"
 #include "UserInterface.hpp"
 
 struct GameSimulation

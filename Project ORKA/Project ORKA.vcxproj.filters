@@ -1,6 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
+    <ClCompile Include="Agent\**\*.cpp">
+      <Filter>Systems\Agent Bridge</Filter>
+    </ClCompile>
+    <ClInclude Include="Agent\**\*.hpp">
+      <Filter>Systems\Agent Bridge</Filter>
+    </ClInclude>
+    <ClCompile Include="UI\**\*.cpp">
+      <Filter>Systems\UserInterface\Modern UI</Filter>
+    </ClCompile>
+    <ClInclude Include="UI\**\*.hpp">
+      <Filter>Systems\UserInterface\Modern UI</Filter>
+    </ClInclude>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Math.cpp">
       <Filter>Common\Math</Filter>
@@ -95,9 +107,6 @@
     <ClCompile Include="Snake.cpp">
       <Filter>Apps\3D Apps\Snake</Filter>
     </ClCompile>
-    <ClCompile Include="UISandbox.cpp">
-      <Filter>Apps\2D Apps\UISandbox</Filter>
-    </ClCompile>
     <ClCompile Include="optick\optick_capi.cpp">
       <Filter>Systems\Profiling\Optick</Filter>
     </ClCompile>
@@ -124,9 +133,6 @@
     </ClCompile>
     <ClCompile Include="optick\optick_server.cpp">
       <Filter>Systems\Profiling\Optick</Filter>
-    </ClCompile>
-    <ClCompile Include="RedDotHack.cpp">
-      <Filter>Apps\Console Apps\Red Dot Hack</Filter>
     </ClCompile>
     <ClCompile Include="SimpleRtsHumanSystem.cpp">
       <Filter>Apps\3D Apps\SimpleRts\SimpleRtsHumanSystem</Filter>
@@ -389,6 +395,9 @@
     <ClCompile Include="ImageViewerResource.cpp">
       <Filter>Apps\2D Apps\Image Viewer</Filter>
     </ClCompile>
+    <ClCompile Include="OrkaPch.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
     <ClCompile Include="Basics.cpp">
       <Filter>Common</Filter>
     </ClCompile>
@@ -493,6 +502,15 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="OrkaPch.hpp">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="OrkaStdIncludes.hpp">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="OrkaTypes.hpp">
+      <Filter>Common</Filter>
+    </ClInclude>
     <ClInclude Include="Basics.hpp">
       <Filter>Common</Filter>
     </ClInclude>
@@ -613,9 +631,6 @@
     <ClInclude Include="Snake.hpp">
       <Filter>Apps\3D Apps\Snake</Filter>
     </ClInclude>
-    <ClInclude Include="UISandbox.hpp">
-      <Filter>Apps\2D Apps\UISandbox</Filter>
-    </ClInclude>
     <ClInclude Include="optick\optick.config.h">
       <Filter>Systems\Profiling\Optick</Filter>
     </ClInclude>
@@ -664,9 +679,6 @@
     <ClInclude Include="optick\optick_server.h">
       <Filter>Systems\Profiling\Optick</Filter>
     </ClInclude>
-    <ClInclude Include="RedDotHack.hpp">
-      <Filter>Apps\Console Apps\Red Dot Hack</Filter>
-    </ClInclude>
     <ClInclude Include="SDFRenderer.hpp">
       <Filter>Apps\3D Apps\SDFRenderer</Filter>
     </ClInclude>
@@ -711,9 +723,6 @@
     </ClInclude>
     <ClInclude Include="Game.hpp">
       <Filter>Systems\Game</Filter>
-    </ClInclude>
-    <ClInclude Include="GuessingGame.hpp">
-      <Filter>Apps\Console Apps</Filter>
     </ClInclude>
     <ClInclude Include="Input.hpp">
       <Filter>Systems\UserInterface\Window\Input</Filter>
@@ -1430,6 +1439,9 @@
     <Filter Include="Systems">
       <UniqueIdentifier>{b4f2b5de-70d4-4e92-ae12-f3bd645a0851}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Systems\Agent Bridge">
+      <UniqueIdentifier>{56403b4a-9185-4689-a3b7-dc8458f1a54f}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Common\Datastructures">
       <UniqueIdentifier>{5a5dae91-e254-40ff-b04f-2df22cfa42e4}</UniqueIdentifier>
     </Filter>
@@ -1529,9 +1541,6 @@
     <Filter Include="Apps\3D Apps\Snake">
       <UniqueIdentifier>{278e34ba-bb32-495a-b4dd-d94d2f665ce4}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Apps\2D Apps\UISandbox">
-      <UniqueIdentifier>{2647ab04-846e-4d7e-af69-330fd4b2dedb}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Apps\Console Apps\Red Dot Hack">
       <UniqueIdentifier>{d38fd067-26a3-41e6-b226-631c47430093}</UniqueIdentifier>
     </Filter>
@@ -1603,6 +1612,9 @@
     </Filter>
     <Filter Include="Systems\UserInterface">
       <UniqueIdentifier>{ef171534-caff-475a-8456-47ac18be609c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Systems\UserInterface\Modern UI">
+      <UniqueIdentifier>{10882f74-0745-4780-a3b8-2e5c27e1331c}</UniqueIdentifier>
     </Filter>
     <Filter Include="Systems\UserInterface\UIElement">
       <UniqueIdentifier>{fbf9a91e-3a84-4389-b1a9-637eebe785e4}</UniqueIdentifier>

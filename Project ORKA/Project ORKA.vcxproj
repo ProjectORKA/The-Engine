@@ -22,6 +22,21 @@
     <ResourceCompile Include="icon.rc" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="OrkaPch.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+      </ForcedIncludeFiles>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+      </ForcedIncludeFiles>
+    </ClCompile>
+    <ClCompile Include="Agent\**\*.cpp" />
+    <ClInclude Include="Agent\**\*.hpp" />
+    <ClCompile Include="UI\**\*.cpp">
+      <Optimization Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">MaxSpeed</Optimization>
+      <BasicRuntimeChecks Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Default</BasicRuntimeChecks>
+    </ClCompile>
+    <ClInclude Include="UI\**\*.hpp" />
     <ClCompile Include="AIPlayground.cpp" />
     <ClCompile Include="AudioEngine.cpp" />
     <ClCompile Include="BitmapTextRenderSystem.cpp" />
@@ -38,6 +53,9 @@
     <ClCompile Include="ImageViewerResource.cpp" />
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="KDTreePrototype.cpp" />
+    <ClInclude Include="OrkaPch.hpp" />
+    <ClInclude Include="OrkaStdIncludes.hpp" />
+    <ClInclude Include="OrkaTypes.hpp" />
     <ClInclude Include="AxisNeighborPrototype2.hpp" />
     <ClInclude Include="ClosestConnectionPrototype.hpp" />
     <ClInclude Include="DelaunayTriangulation.hpp" />
@@ -172,7 +190,6 @@
     <ClCompile Include="TripleNine.cpp" />
     <ClCompile Include="RayTracer.cpp" />
     <ClCompile Include="Random.cpp" />
-    <ClCompile Include="RedDotHack.cpp" />
     <ClCompile Include="Sandbox.cpp" />
     <ClCompile Include="ShadertoyRenderer.cpp" />
     <ClCompile Include="SoftwareRendererGame.cpp" />
@@ -194,7 +211,6 @@
     <ClCompile Include="UIContainer.cpp" />
     <ClCompile Include="UIElement.cpp" />
     <ClCompile Include="UISlider.cpp" />
-    <ClCompile Include="UISandbox.cpp" />
     <ClCompile Include="ULLUtil.cpp" />
     <ClCompile Include="Uniforms.cpp" />
     <ClCompile Include="UserInterface.cpp" />
@@ -263,7 +279,6 @@
     <ClInclude Include="GPUSim.hpp" />
     <ClInclude Include="GPUTexture.hpp" />
     <ClInclude Include="GraphicsAPI.hpp" />
-    <ClInclude Include="GuessingGame.hpp" />
     <ClInclude Include="RayTracer.hpp" />
     <ClInclude Include="Heightmap.hpp" />
     <ClInclude Include="ImageViewer.hpp" />
@@ -347,7 +362,6 @@
     <ClInclude Include="TextureSystem.hpp" />
     <ClInclude Include="TransformationStack.hpp" />
     <ClInclude Include="TripleNine.hpp" />
-    <ClInclude Include="RedDotHack.hpp" />
     <ClInclude Include="LevelledGraph.hpp" />
     <ClInclude Include="NameGenerator.hpp" />
     <ClInclude Include="File.hpp" />
@@ -383,7 +397,6 @@
     <ClInclude Include="UIContainer.hpp" />
     <ClInclude Include="UIElement.hpp" />
     <ClInclude Include="UISlider.hpp" />
-    <ClInclude Include="UISandbox.hpp" />
     <ClInclude Include="ULLUtil.hpp" />
     <ClInclude Include="Uniforms.hpp" />
     <ClInclude Include="UserInterface.hpp" />
@@ -613,10 +626,12 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>
-      </AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)External Libraries\ASIO\asio-1.18.1\include;$(SolutionDir)text-deps\x64-windows\include;$(SolutionDir)text-deps\x64-windows\include\harfbuzz;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>ORKA_UI_ENABLE_ADVANCED_TEXT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>OrkaPch.hpp</PrecompiledHeaderFile>
+      <ForcedIncludeFiles>OrkaPch.hpp;%(ForcedIncludeFiles)</ForcedIncludeFiles>
       <SupportJustMyCode>true</SupportJustMyCode>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <LanguageStandard>stdcpp20</LanguageStandard>
@@ -627,17 +642,17 @@
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)text-deps\x64-windows\debug\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
-      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>ws2_32.lib;mswsock.lib;harfbuzz.lib;icuucd.lib;icuind.lib;msdfgen-core.lib;msdfgen-ext.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>
       </IgnoreSpecificDefaultLibraries>
       <SubSystem>Console</SubSystem>
       <StackReserveSize>4194304</StackReserveSize>
     </Link>
     <PostBuildEvent>
-      <Command>XCOPY "$(SolutionDir)Project ORKA\Data" "$(TargetDir)Data" /S /Y /I</Command>
-      <Message>XCOPY "$(SolutionDir)Project ORKA\Data" "$(TargetDir)Data" /S /Y /I</Message>
+      <Command>powershell -ExecutionPolicy Bypass -File "$(SolutionDir)scripts\sync-orka-output.ps1" -TargetDir "$(TargetDir)." -Configuration Debug</Command>
+      <Message>Sync Data/ and runtime DLLs when newer than output</Message>
     </PostBuildEvent>
     <Manifest>
       <SuppressStartupBanner>true</SuppressStartupBanner>
@@ -660,7 +675,7 @@
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <CompileAs>CompileAsCpp</CompileAs>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
-      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/utf-8 /FS %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -689,23 +704,25 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)External Libraries\STBIMAGE;$(SolutionDir)External Libraries\FREETYPE\include;$(SolutionDir)External Libraries\ASIO\asio-1.18.1\include;$(SolutionDir)External Libraries\STB IMAGE;$(SolutionDir)External Libraries\ASSIMP\include;$(SolutionDir)External Libraries\GLM;$(SolutionDir)External Libraries\GLEW\include;$(SolutionDir)External Libraries\GLFW 64 bit\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)External Libraries\STBIMAGE;$(SolutionDir)External Libraries\FREETYPE\include;$(SolutionDir)External Libraries\ASIO\asio-1.18.1\include;$(SolutionDir)External Libraries\STB IMAGE;$(SolutionDir)External Libraries\ASSIMP\include;$(SolutionDir)External Libraries\GLM;$(SolutionDir)External Libraries\GLEW\include;$(SolutionDir)External Libraries\GLFW 64 bit\include;$(SolutionDir)text-deps\x64-windows\include;$(SolutionDir)text-deps\x64-windows\include\harfbuzz;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <FloatingPointModel>Fast</FloatingPointModel>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <PreprocessorDefinitions>%(PreprocessorDefinitions);%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>OrkaPch.hpp</PrecompiledHeaderFile>
+      <ForcedIncludeFiles>OrkaPch.hpp;%(ForcedIncludeFiles)</ForcedIncludeFiles>
+      <PreprocessorDefinitions>ORKA_UI_ENABLE_ADVANCED_TEXT;%(PreprocessorDefinitions);%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <EnableModules>false</EnableModules>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <CompileAs>CompileAsCpp</CompileAs>
-      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/utf-8 /FS %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>
-      </AdditionalLibraryDirectories>
+      <AdditionalDependencies>ws2_32.lib;mswsock.lib;harfbuzz.lib;icuuc.lib;icuin.lib;msdfgen-core.lib;msdfgen-ext.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)text-deps\x64-windows\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <IgnoreSpecificDefaultLibraries>
       </IgnoreSpecificDefaultLibraries>
@@ -715,11 +732,8 @@
       <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
     </Link>
     <PostBuildEvent>
-      <Command>
-XCOPY "$(SolutionDir)Project ORKA\Data" "$(TargetDir)Data" /S /Y /I
-XCOPY "C:\vcpkg\installed\x64-windows\bin\*.dll" "$(TargetDir)" /Y /D
-      </Command>
-      <Message>XCOPY "$(SolutionDir)Project ORKA\Data" "$(TargetDir)Data" /S /Y /I</Message>
+      <Command>powershell -ExecutionPolicy Bypass -File "$(SolutionDir)scripts\sync-orka-output.ps1" -TargetDir "$(TargetDir)." -Configuration Release</Command>
+      <Message>Sync Data/ and runtime DLLs when newer than output</Message>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

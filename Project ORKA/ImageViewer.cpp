@@ -1,4 +1,5 @@
 #include "ImageViewer.hpp"
+#include "Renderer.hpp"
 #include "FileSystem.hpp"
 #include "FileTypes.hpp"
 #include "JobSystem.hpp"

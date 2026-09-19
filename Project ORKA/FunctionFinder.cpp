@@ -1,4 +1,5 @@
 #include "FunctionFinder.hpp"
+#include "Renderer.hpp"
 #include "JobSystem.hpp"
 #include "Random.hpp"
 #include "UserInterface.hpp"

@@ -1,5 +1,6 @@
 #include "WaveformGraph.hpp"
 
+#include "Renderer.hpp"
 #include "RenderingOverrides.hpp"
 
 void WaveformGraph::setSamples(const Vector<Float>& waveformSamples, const Vector<Float>& controlSamples, const Vector<Float>& audioSamples)

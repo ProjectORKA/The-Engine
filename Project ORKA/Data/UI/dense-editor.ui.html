@@ -1,0 +1,35 @@
+<ui class="editor-grid">
+	<div class="toolbar">
+		<button (activate)="Editor.New">New</button>
+		<button (activate)="Editor.Save">Save</button>
+		<label [text]="document.path"/>
+	</div>
+	<div class="hierarchy">
+		<label class="pane-title">Hierarchy</label>
+		<virtual-list [count]="scene.nodeCount" [rowHeight]="editor.rowHeight">
+			@for (item of scene.visibleNodes; track item.id) {
+				<button class="tree-row"
+					[selected]="item.selected" (activate)="Editor.SelectNode">
+					<label [text]="item.name"/>
+				</button>
+			}
+		</virtual-list>
+	</div>
+	<div class="viewport">
+		<world-view [scene]="scene.active"/>
+		<label class="viewport-stat" [text]="renderer.frameTime"/>
+	</div>
+	<div class="inspector">
+		<label class="pane-title" [text]="selection.name"/>
+		@for (property of selection.properties; track property.id) {
+			<div class="property-row">
+				<label [text]="property.label"/>
+				<text-input [text]="property.value"/>
+			</div>
+		}
+	</div>
+	<div class="status">
+		<label [text]="editor.status"/>
+		<label [text]="renderer.batchCount"/>
+	</div>
+</ui>

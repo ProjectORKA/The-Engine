@@ -1,5 +1,6 @@
 #include "Player.hpp"
 
+#include "Renderer.hpp"
 #include "UserInterface.hpp"
 #include "Window.hpp"
 

@@ -2,6 +2,9 @@
 
 #include "FileSystem.hpp"
 #include "ResourceManager.hpp"
+#include "Renderer.hpp"
+#include "UI/Theme/UiAppFlex.hpp"
+#include "UI/Theme/UiLegacyTheme.hpp"
 #include "UserInterface.hpp"
 #include "Window.hpp"
 #include "Windows.hpp"
@@ -1471,35 +1474,28 @@ SoundAnalysisLabControls::SoundAnalysisLabControls(SoundAnalysisLabRenderer& ren
 	growX(false);
 	growY(true);
 	setWidth(300);
-	gap(10);
-	padding(12);
-	background(Color(0.02f, 0.02f, 0.025f, 0.95f));
-	hoveredBackground(Color(0.02f, 0.02f, 0.025f, 0.95f));
-	activeBackground(Color(0.02f, 0.02f, 0.025f, 0.95f));
-	border(1, Color(1, 1, 1, 0.12f));
+	gap(static_cast<Int>(Ui::UiAppFlex::g10));
+	padding(static_cast<Int>(Ui::UiAppFlex::p10));
+	Ui::UiLegacyTheme::applyPanelStyle(*this);
 
 	importButton.renderer = &renderer;
 	importButton.setName("ImportAudioButton");
-	importButton.padding(10);
+	importButton.padding(static_cast<Int>(Ui::UiAppFlex::p10));
 	importButton.growX(false);
 	importButton.setWidth(276);
-	importButton.setHeight(36);
-	importButton.background(Color(1.0f, 1.0f, 1.0f, 0.08f));
-	importButton.hoveredBackground(Color(1.0f, 1.0f, 1.0f, 0.16f));
-	importButton.activeBackground(Color(1.0f, 1.0f, 1.0f, 0.28f));
-	importButton.color(Color(1.0f, 1.0f, 1.0f, 1.0f));
+	importButton.setHeight(static_cast<Int>(Ui::UiAppLayout::controlRowHeight - Ui::UiAppFlex::p10));
+	Ui::UiLegacyTheme::applyControlStyle(importButton);
+	importButton.color(Color(0.96f, 0.96f, 0.97f, 1.0f));
 	importButton.setText("Import Audio File...");
 
 	phaseToggleButton.renderer = &renderer;
 	phaseToggleButton.setName("PhaseToggleButton");
-	phaseToggleButton.padding(10);
+	phaseToggleButton.padding(static_cast<Int>(Ui::UiAppFlex::p10));
 	phaseToggleButton.growX(false);
 	phaseToggleButton.setWidth(276);
-	phaseToggleButton.setHeight(36);
-	phaseToggleButton.background(Color(1.0f, 1.0f, 1.0f, 0.08f));
-	phaseToggleButton.hoveredBackground(Color(1.0f, 1.0f, 1.0f, 0.16f));
-	phaseToggleButton.activeBackground(Color(1.0f, 1.0f, 1.0f, 0.28f));
-	phaseToggleButton.color(Color(1.0f, 1.0f, 1.0f, 1.0f));
+	phaseToggleButton.setHeight(static_cast<Int>(Ui::UiAppLayout::controlRowHeight - Ui::UiAppFlex::p10));
+	Ui::UiLegacyTheme::applyControlStyle(phaseToggleButton);
+	phaseToggleButton.color(Color(0.96f, 0.96f, 0.97f, 1.0f));
 	phaseToggleButton.setText("Show Phase");
 
 	fileIndexSlider
@@ -1570,8 +1566,8 @@ void SoundAnalysisLab::run() const
 
 	Window& window = ui.window("Sound Analysis Lab", settings.defaultWindowWidth, settings.defaultWindowHeight, true, true, WindowState::Windowed);
 	window.row();
-	window.gap(10);
-	window.padding(10);
+	window.gap(static_cast<Int>(Ui::UiAppFlex::g10));
+	window.padding(static_cast<Int>(Ui::UiAppFlex::p10));
 
 	renderer.growX(true);
 	renderer.growY(true);

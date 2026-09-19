@@ -1,5 +1,6 @@
 #include "SimpleRTS.hpp"
 
+#include "Renderer.hpp"
 #include "Crosshair.hpp"
 #include "Random.hpp"
 #include "UserInterface.hpp"

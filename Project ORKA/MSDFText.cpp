@@ -1,4 +1,5 @@
 #include "MSDFText.hpp"
+#include "Renderer.hpp"
 
 void MSDFTextRenderer::update(Window& window) {}
 

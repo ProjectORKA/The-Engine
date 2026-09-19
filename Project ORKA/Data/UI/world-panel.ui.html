@@ -1,0 +1,18 @@
+<ui class="world-panel">
+	<div class="plate">
+		<label class="title" [text]="terminal.title"/>
+		<label class="connection" [text]="terminal.connectionState"/>
+		<scroll-view class="messages" [scrollAnchor]="terminal.anchor">
+			@for (message of terminal.messages; track message.id) {
+				<div class="message">
+					<label class="author" [text]="message.author"/>
+					<label class="body" [text]="message.text"/>
+				</div>
+			}
+		</scroll-view>
+		<div class="composer">
+			<text-input [text]="terminal.draft"/>
+			<button (activate)="Terminal.Send">Send</button>
+		</div>
+	</div>
+</ui>

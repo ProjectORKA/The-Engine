@@ -1,4 +1,5 @@
 #include "PerformanceGraph.hpp"
+#include "Renderer.hpp"
 #include "RenderingOverrides.hpp"
 
 void PerformanceGraph::addTime(const Float time)

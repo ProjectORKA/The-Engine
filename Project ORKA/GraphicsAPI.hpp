@@ -923,6 +923,11 @@ namespace OpenGL
 	void apiBlendEquation(OpenGlContext& openGlContext, BlendEquation equation);
 	void apiBindDrawFramebuffer(OpenGlContext& openGlContext, FramebufferID framebufferID);
 	void apiBindReadFramebuffer(OpenGlContext& openGlContext, FramebufferID framebufferID);
+	void apiBlitFramebuffer(
+		OpenGlContext& openGlContext,
+		Int srcX0, Int srcY0, Int srcX1, Int srcY1,
+		Int dstX0, Int dstY0, Int dstX1, Int dstY1,
+		UInt mask, Filter filter);
 	void apiSetCulling(OpenGlContext& openGlContext, Bool value);
 	void apiSetBlending(OpenGlContext& openGlContext, Bool value);
 	void apiSetDebugging(OpenGlContext& openGlContext, Bool value);

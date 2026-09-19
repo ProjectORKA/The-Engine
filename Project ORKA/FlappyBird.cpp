@@ -1,4 +1,5 @@
 #include "FlappyBird.hpp"
+#include "Renderer.hpp"
 #include "Random.hpp"
 
 void FlappyBirdBird::jump()

@@ -1,4 +1,5 @@
 #include "Pong.hpp"
+#include "Renderer.hpp"
 #include "Window.hpp"
 #include "Random.hpp"
 #include "AudioEngine.hpp"

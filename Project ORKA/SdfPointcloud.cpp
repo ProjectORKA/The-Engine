@@ -1,4 +1,5 @@
 #include "SdfPointcloud.hpp"
+#include "Renderer.hpp"
 #include "Window.hpp"
 
 namespace

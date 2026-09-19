@@ -1,4 +1,5 @@
 #include "Organizer.hpp"
+#include "Renderer.hpp"
 #include "Random.hpp"
 
 void OrganizerRenderer::destroy(Window& window)

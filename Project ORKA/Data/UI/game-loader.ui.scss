@@ -1,0 +1,44 @@
+@import "app-master.ui.scss";
+
+.game-loader {
+	width: 100%;
+	height: 100%;
+}
+
+#game-loader-shell {
+	width: 100%;
+	height: 100%;
+}
+
+.shell-block {
+	flex-shrink: 0;
+}
+
+#game-list-panel {
+	flex-grow: 1;
+	flex-shrink: 1;
+	min-height: 0;
+	overflow: hidden;
+}
+
+#game-list {
+	flex-grow: 1;
+	min-height: 0;
+	overflow-y: auto;
+	align-content: flex-start;
+}
+
+.launcher-entry {
+	min-height: 73dp;
+	flex-shrink: 0;
+}
+
+.header-icon {
+	width: $font-body;
+	height: $font-body;
+	flex-shrink: 0;
+}
+
+.theme-toggle {
+	flex-shrink: 0;
+}

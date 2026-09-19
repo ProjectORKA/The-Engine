@@ -1,0 +1,40 @@
+<ui id="game-loader" class="app-root game-loader p20">
+	<div id="game-loader-shell" class="app-shell g10">
+		<div class="shell-block row g10 align-center">
+			<image class="header-icon icon-muted" icon="apps" />
+			<label id="type-kicker" class="typography-sample flex-grow">PROJECT ORKA</label>
+			<button id="game-loader-theme-toggle" class="theme-toggle p10" label="Toggle light and dark theme"
+				[text]="ui.themeToggleLabel" (activate)="Launcher.ToggleTheme" />
+		</div>
+
+		<label id="type-title" class="shell-block typography-sample">Game Launcher</label>
+		<label class="shell-block field-label">Choose an experiment, prototype, or tool to launch.</label>
+
+		<div class="shell-block row g10 align-center">
+			<label class="field-label flex-grow">AVAILABLE PROJECTS</label>
+			<div id="game-loader-count-pill" class="app-badge p10">
+				<label id="game-loader-count" class="text-badge" [text]="ui.projectCount" />
+			</div>
+		</div>
+
+		<div id="game-list-panel" class="panel p10">
+			<div id="game-list" class="row flex-wrap g10">
+				@for (game of launcher.games; track game.id) {
+				<button class="launcher-entry b250 row p10 g10 align-center min-w-0 flex-grow" [id]="game.id"
+					[label]="game.name">
+					<image [id]="game.iconId" class="list-item-icon icon-muted" icon="box" />
+					<div class="g5 flex-grow min-w-0">
+						<label class="text-body" [text]="game.name" />
+						<label class="entry-description" [text]="game.description" />
+					</div>
+				</button>
+				}
+			</div>
+		</div>
+
+		<div class="shell-block row g10 align-center">
+			<image class="header-icon icon-muted" icon="player-play" />
+			<label class="entry-description flex-grow">Click a tile to launch · Scroll for more</label>
+		</div>
+	</div>
+</ui>

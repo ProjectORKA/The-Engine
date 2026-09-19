@@ -3,9 +3,6 @@
 #include "Settings.hpp"
 #include "Basics.hpp"
 
-//#include <fmt/core.h>
-#include <fmt/color.h>
-
 inline void print(const String& text)
 {
 	std::cout << text;
@@ -45,21 +42,21 @@ inline void clearConsole()
 }
 
 void messageBox(const String& message, const String& title);
-
-inline void printToConsole(const String& message)
-{
-	fmt::print("{}\n", message);
-}
-
-inline void printHighlighted(const String& highlighted, const Vec4 color, const String& message)
-{
-	fmt::println("{}{}", fmt::format(fg(static_cast<fmt::color>(colorToRGBHex(color))) | fmt::emphasis::bold, "{}", highlighted), message);
-}
+using DebugLogSink = Function<void(const String&, const String&, const String&)>;
+void setDebugLogSink(DebugLogSink sink);
+void emitStructuredDebugLog(const String& level, const String& category, const String& message);
+void printToConsole(const String& message);
+void printHighlighted(const String& highlighted, const Vec4 color, const String& message);
 
 template <typename T>
 void logDebug(T value)
 {
-	if (debugLoggingIsEnabled) printHighlighted("Debug: ", Color(0, 1, 0, 0), toString(value));
+	if (debugLoggingIsEnabled)
+	{
+		const String message = toString(value);
+		emitStructuredDebugLog("debug", "engine", message);
+		printHighlighted("Debug: ", Color(0, 1, 0, 0), message);
+	}
 }
 
 template <typename T>
@@ -67,7 +64,9 @@ void logWarning(T value)
 {
 	if (warningLoggingIsEnabled)
 	{
-		printHighlighted("Warning: ", Color(1, 1, 0, 0), toString(value));
+		const String message = toString(value);
+		emitStructuredDebugLog("warning", "engine", message);
+		printHighlighted("Warning: ", Color(1, 1, 0, 0), message);
 		#ifdef _WIN32
 		if (debugBreakOnWarning) __debugbreak();
 		#endif
@@ -80,7 +79,9 @@ void logError(T value)
 {
 	if (errorLoggingIsEnabled)
 	{
-		printHighlighted("ERROR: ", Color(1, 0, 0, 0), toString(value));
+		const String message = toString(value);
+		emitStructuredDebugLog("error", "engine", message);
+		printHighlighted("ERROR: ", Color(1, 0, 0, 0), message);
 		beep();
 		#ifdef _WIN32
 		if (debugBreakOnError) __debugbreak();

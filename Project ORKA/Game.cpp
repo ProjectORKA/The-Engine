@@ -1,4 +1,5 @@
 #include "Game.hpp"
+#include "Renderer.hpp"
 #include "Window.hpp"
 #include "Debug.hpp"
 #include "RenderingOverrides.hpp"

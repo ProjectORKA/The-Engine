@@ -1,4 +1,5 @@
 #include "MindMapper.hpp"
+#include "Renderer.hpp"
 
 void MindMapperSim::destroy() {}
 

@@ -1,5 +1,6 @@
 #include "UISlider.hpp"
 
+#include "Renderer.hpp"
 #include "Window.hpp"
 
 namespace
@@ -143,7 +144,7 @@ void UISlider::inputEvent(Window& window, InputEvent& input)
 {
 	if(input == InputEvent(InputType::Mouse, 0, true))
 	{
-		const Bool inside = hovered || isPointInside(window, window.mousePosBotLeft);
+		const Bool inside = hovered || isPointInside(window, window.mousePositionBotLeft());
 		if(inside)
 		{
 			dragging = true;

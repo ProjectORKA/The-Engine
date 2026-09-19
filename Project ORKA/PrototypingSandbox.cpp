@@ -1,4 +1,5 @@
 #include "PrototypingSandbox.hpp"
+#include "Renderer.hpp"
 #include "PerlinNoise.hpp"
 #include "UserInterface.hpp"
 

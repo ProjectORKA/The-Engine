@@ -1,4 +1,5 @@
 #include "MindMap.hpp"
+#include "Renderer.hpp"
 #include "Random.hpp"
 #include "Window.hpp"
 

@@ -1,0 +1,42 @@
+@import "tokens.ui.scss";
+
+// Flex containers default to column (UiLayoutStyle). Use .row for horizontal stacks.
+.col {
+	display: flex;
+	flex-direction: column;
+}
+
+.row {
+	display: flex;
+	flex-direction: row;
+}
+
+.flex-wrap {
+	flex-wrap: wrap;
+}
+
+.flex-wrap-balance {
+	flex-wrap: balance;
+}
+
+.flex-grow {
+	flex-grow: 1;
+}
+
+.min-w-0 {
+	min-width: 0;
+}
+
+// Flex-basis wrap tokens (b50–b350) and align-* tokens are layout classes parsed by UiAppFlex — not SCSS rules.
+
+.p5 { padding: 5dp; }
+.p10 { padding: 10dp; }
+.p20 { padding: 20dp; }
+.p40 { padding: 40dp; }
+.p80 { padding: 80dp; }
+
+.g5 { gap: 5dp; }
+.g10 { gap: 10dp; }
+.g20 { gap: 20dp; }
+.g40 { gap: 40dp; }
+.g80 { gap: 80dp; }

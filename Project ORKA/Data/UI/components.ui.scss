@@ -1,0 +1,65 @@
+@import "tokens.ui.scss";
+
+.section-header {
+	align-items: center;
+}
+
+.labeled-row {
+	align-items: stretch;
+}
+
+.labeled-row > .field-label {
+	flex-shrink: 0;
+}
+
+.slider-row {
+	align-items: stretch;
+	flex-grow: 1;
+}
+
+.token-grid {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+}
+
+.color-token-grid {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: balance;
+}
+
+.token-item {
+	flex-grow: 1;
+	flex-shrink: 0;
+	min-width: 0;
+}
+
+.token-swatch {
+	width: 100%;
+	height: 48dp;
+}
+
+.typography-row {
+	align-items: center;
+}
+
+.status-panel {
+	flex-shrink: 0;
+}
+
+.title-icon {
+	width: $font-title;
+	height: $font-title;
+	flex-shrink: 0;
+}
+
+.section-icon {
+	width: $font-body;
+	height: $font-body;
+	flex-shrink: 0;
+}
+
+.readout {
+	flex-shrink: 0;
+}

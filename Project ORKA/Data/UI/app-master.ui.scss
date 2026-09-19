@@ -1,0 +1,7 @@
+// Master stylesheet for authored ORKA UI surfaces.
+// Import once from page-level .ui.scss files:
+//   @import "app-master.ui.scss";
+
+@import "tokens.ui.scss";
+@import "flex.ui.scss";
+@import "components.ui.scss";

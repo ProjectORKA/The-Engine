@@ -1,0 +1,19 @@
+<ui class="controller-menu">
+	<label class="heading">Select Mission</label>
+	<div class="mission-list">
+		@for (mission of menu.missions; track mission.id) {
+			<button class="mission"
+				[enabled]="mission.unlocked" [selected]="mission.selected"
+				(activate)="Menu.SelectMission">
+				<label class="mission-name" [text]="mission.name"/>
+				<label class="mission-detail" [text]="mission.description"/>
+			</button>
+		}
+	</div>
+	<div class="actions">
+		<button (activate)="Menu.Back">Back</button>
+		<button class="primary" [enabled]="menu.canLaunch"
+			(activate)="Menu.Launch">Launch</button>
+	</div>
+	<label class="hint" [text]="input.activeController"/>
+</ui>

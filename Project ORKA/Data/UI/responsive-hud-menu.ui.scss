@@ -1,0 +1,47 @@
+$space: 12dp;
+$panel: #182033e6;
+$accent: #53b8ff;
+
+@mixin card($padding) {
+	background-color: $panel;
+	padding: $padding;
+	border-radius: 8dp;
+}
+
+.hud-shell {
+	width: 100%;
+	height: 100%;
+	padding: $space;
+	display: overlay;
+	font-size: 16dp;
+}
+
+.hud-top {
+	@include card($space);
+	width: 96vw;
+	min-height: 52dp;
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	gap: $space;
+	align-items: center;
+}
+
+.hud-title { flex-grow: 1; color: #ffffff; }
+.hud-vitals { display: flex; gap: 8dp; }
+.vital { color: $accent; min-width: 72dp; }
+.icon-button:hover { background-color: #2b4666; }
+.objective-stack { width: 34vw; margin-top: 76dp; gap: 8dp; }
+.objective { @include card(10dp); }
+.pause-menu {
+	@include card(24dp);
+	width: 34vw;
+	min-width: 280dp;
+	max-width: 520dp;
+	gap: 10dp;
+	align-self: center;
+}
+.menu-heading { font-size: 2em; color: #ffffff; }
+.menu-action { min-height: 44dp; }
+.menu-action:focus { border-color: $accent; }
+.menu-action.danger { color: #ff7272; }

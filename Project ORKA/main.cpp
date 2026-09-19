@@ -27,10 +27,47 @@
 #include "Engine.hpp"
 #include "GameLoader.hpp"
 #include "ORKAIntroSequence.hpp"
+#include "UI/Testing/UiBenchmarks.hpp"
+#include "UI/Testing/UiValidation.hpp"
+#include "Agent/AgentBridge.hpp"
 #include "UserInterface.hpp"
 
 int main(const int argc, char* argv[])
 {
+	for (Int i = 1; i < argc; ++i)
+	{
+		const String argument = argv[i];
+		if (argument == "--agent-bridge-test")
+		{
+			const Bool passed = runAgentBridgeSelfTests();
+			std::cout << "Agent bridge self-tests: " << (passed ? "passed" : "failed") << '\n';
+			return passed ? 0 : 1;
+		}
+		if (argument == "--modern-ui-test")
+		{
+			const Ui::Testing::UiValidationReport report = Ui::Testing::runModernUiValidation();
+			std::cout << "Modern UI validation: " << report.passed << " passed, "
+				<< report.failed << " failed, " << report.budgetExceeded << " over budget.\n";
+			for (const auto& test : report.cases)
+			{
+				if (test.status == Ui::Testing::UiValidationStatus::Passed) continue;
+				std::cout << "  " << test.name << ": " << static_cast<Int>(test.status) << '\n';
+				for (const auto& failure : test.failures)
+					std::cout << "    " << failure.check << " expected " << failure.expected
+						<< ", got " << failure.actual << '\n';
+			}
+			return report.succeeded() ? 0 : 1;
+		}
+		if (argument == "--modern-ui-benchmark")
+		{
+			const Ui::Testing::UiBenchmarkReport report = Ui::Testing::runModernUiBenchmarks();
+			for (const auto& sample : report.samples)
+				std::cout << sample.name << ": " << sample.medianIterationMicroseconds
+					<< " us median (" << sample.operations << " operations)\n";
+			return report.completed() ? 0 : 1;
+		}
+	}
+
 	Engine engine;
 	engine.create(argc, argv, false);
 

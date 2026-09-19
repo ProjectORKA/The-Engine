@@ -1,4 +1,5 @@
 #include "ORKAIntroSequence.hpp"
+#include "Renderer.hpp"
 #include "Window.hpp"
 #include "Camera.hpp"
 

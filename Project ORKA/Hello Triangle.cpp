@@ -1,4 +1,5 @@
 #include "Hello Triangle.hpp"
+#include "Renderer.hpp"
 
 void HelloTriangleRenderer::update(Window& window) {}
 

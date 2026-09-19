@@ -714,7 +714,18 @@ void OpenGL::apiEnable(OpenGlContext& openGlContext, EnableParameters parameter)
 }
 void OpenGL::apiScissor(OpenGlContext& openGlContext, Int x, Int y, Int w, Int h)
 {
-	if (x < 0 || y < 0 || w < 0 || h < 0) logWarning("Scissor parameters must be positive!");
+	if (w <= 0 || h <= 0) return;
+	if (x < 0)
+	{
+		w = std::max(0, w + x);
+		x = 0;
+	}
+	if (y < 0)
+	{
+		h = std::max(0, h + y);
+		y = 0;
+	}
+	if (w <= 0 || h <= 0) return;
 	if (openGlContext.scissorX != x || openGlContext.scissorY != y || openGlContext.scissorW != w || openGlContext.scissorH != h)
 	{
 		#ifdef TRACE_OPENGL
@@ -874,6 +885,20 @@ void OpenGL::apiBindReadFramebuffer(OpenGlContext& openGlContext, const Framebuf
 	openGlContext.write("glBindFramebuffer(" + toString(static_cast<UInt>(FramebufferTarget::Read)) + "," + toString(framebufferID) + ");");
 	#endif // TRACE_OPENGL
 	External::glBindFramebuffer(static_cast<UInt>(FramebufferTarget::Read), framebufferID);
+}
+void OpenGL::apiBlitFramebuffer(
+	OpenGlContext& openGlContext,
+	const Int srcX0, const Int srcY0, const Int srcX1, const Int srcY1,
+	const Int dstX0, const Int dstY0, const Int dstX1, const Int dstY1,
+	const UInt mask, const Filter filter)
+{
+	#ifdef TRACE_OPENGL
+	openGlContext.write("glBlitFramebuffer(...);");
+	#endif // TRACE_OPENGL
+	External::glBlitFramebuffer(
+		srcX0, srcY0, srcX1, srcY1,
+		dstX0, dstY0, dstX1, dstY1,
+		mask, static_cast<UInt>(filter));
 }
 String OpenGL::Shaders::apiGetProgramInfoLog(OpenGlContext& openGlContext, const ProgramID programId)
 {

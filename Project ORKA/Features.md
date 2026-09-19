@@ -216,13 +216,10 @@ Post-processing and effects include:
 - Clickable button with hover/pressed states, optional embedded content
 - Virtual `doThis()` callback
 
-### UITextBox (`UserInterface.hpp`)
-- Editable text bound to a `String*`
-
 ### GameLoader (`GameLoader.hpp` / `GameLoader.cpp`)
 - Post-intro game picker UI (column of launch buttons with name + description)
 - Records selection and closes window to launch chosen game
-- Nine registered entries (see Games and demos)
+- Fifteen registered entries (see Games and demos)
 
 ### ORKA intro sequence (`ORKAIntroSequence.hpp`)
 - Animated ORKA logo intro (~5s), undecorated window
@@ -231,26 +228,29 @@ Post-processing and effects include:
 ### Performance graph (`PerformanceGraph.hpp`)
 - Rolling FPS/time graph as UI overlay (Simple RTS uses it)
 
-### UI Sandbox (`UISandbox.hpp`)
-- UI layout playground: nested row/column panels with embedded **SandboxRenderer** (3D scene inside a UI panel)
-
 ---
 
 ## Games and demos
 
-### Registered in GameLoader (9)
+### Registered in GameLoader (15)
 
 | Game | Description | Key features |
 |------|-------------|--------------|
-| **UI Sandbox** | UI layout + embedded 3D | Flex layout demo, SandboxRenderer as child element |
+| **UI Controls Demo** | Modern UI widget showcase | Toggles, checkboxes, sliders, text fields on the retained UI stack |
 | **Sandbox** | Engine feature playground | DebugPlayer fly cam, Suzanne mesh, wireframe toggle (F), FPS overlay |
 | **Pong** | Classic Pong | 2-player/AI paddles, multi-ball, particle collisions, UI-integrated |
 | **Voxels** | Ray-marched voxel world | Bit-packed chunks, slice/ray modes, GPU 3D texture, lighting |
 | **MoonCrash** | Planet-scale terrain | Quadtree/octree LOD, atmosphere, threaded sim, chunk debug toggles |
 | **Project Melon** | Stylized melon world | Procedural paths/scenery/rocks, MelonPlayer, MelonUberShader |
+| **Melon Audio Lab** | Procedural motion audio | Hum, wind, and heartbeat layers driven by player movement |
+| **Sound Analysis Lab** | Audio inspection tool | Waveform zoom/scrub, FFT spectrum, spectrogram |
+| **Simple RTS** | Lightweight RTS sim | Humans, wildlife, terrain, resource systems, performance graph |
+| **SDF Pointcloud** | Screenspace SDF demo | Pointcloud SDF with temporal reprojection and compute hole-fill |
 | **Shadertoy (Erosion)** | GPU erosion effect | Multi-pass buffers, auto-exposure, tonemap, star field |
 | **Software Renderer** | CPU rasterizer demo | Pixel buffer → GPU texture upload |
+| **Function Finder** | Curve-fitting playground | Searches function parameters against sampled data |
 | **Triple Nine** | Arena shooter prototype | Bloom pipeline (8 passes), sky/AO/map shaders, optional intro, UDP networking scaffold |
+| **Cornell Box Ray Tracer** | GPU path tracer | GGX metals, glass, area-light NEE, progressive accumulation |
 
 ### Other runnable games (not in GameLoader)
 
@@ -259,11 +259,9 @@ Post-processing and effects include:
 | **Organizer** | 3D org-chart visualization — companies/users as meshes, connection lines, 3D name labels, intro sequence |
 | **Flappy Bird** | Side-scroller with 100 AI birds, pipe columns, pause/slow-mo, dedicated shader |
 | **Snake** | Classic snake with dumb AI option, normalized-space rendering |
-| **Simple RTS** | Ecosystem sim — humans, wolves, rabbits, trees, bushes, berries, terrain, quadtree; threaded sim, performance graph |
 | **Dungeons and Discord** | 3D scene editor — entity placement, multi-select, wireframe, scene import, dice rolls |
 | **MindMapper** | Force-directed graph sim (100 nodes), threaded physics, interactive rendering |
 | **Physics Playground** | 128-particle Verlet sim with gravity and distance-based connections |
-| **Function Finder** | Interactive curve fitting — plots data, optimizes parameters (up to 4-param functions), Bezier visualization |
 | **Orbital Oblivion** | Space RTS prototype — teams, 200 ships, 5 planets, flocking AI, bloom, pause |
 | **SDF Renderer** | SDF ray-march scene explorer |
 | **GPU Sim** | Fragment-shader cellular/GPU simulation |
@@ -272,7 +270,6 @@ Post-processing and effects include:
 | **AI Playground** | Empty 3D sandbox scaffold for AI experiments |
 | **Prototyping Sandbox** | Swappable prototype plugins behind a fly camera (see Prototypes) |
 | **Keva** | Turn-based RPG design stub — characters, items, slots, inventory (sim only, console options) |
-| **Guessing Game** | Console number-guessing game (no graphics) |
 | **Music Visualizer** | Standalone GLFW HSV shader toy (not integrated with engine UI) |
 | **Tree System** | Procedural branch/leaf tree generation demo |
 
@@ -332,7 +329,6 @@ Post-processing and effects include:
 - **Debug.hpp** — colored console output (fmt), logDebug/Warning/Error, debugbreak, pause, messageBox
 - **Settings.hpp** — compile-time debug flags (OpenGL tracing, audio debug, job system debug, etc.)
 - **OptickProfiling.hpp** — Optick profiler integration (F8 toggle in windows)
-- **RedDotHack.hpp** — input simulation helpers (left/right click, cheat test)
 
 ### Configuration (`Settings.hpp`)
 - Default 1920×1080, 144 FPS target

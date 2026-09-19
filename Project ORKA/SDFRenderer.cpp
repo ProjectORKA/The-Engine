@@ -1,4 +1,5 @@
 #include "SDFRenderer.hpp"
+#include "Renderer.hpp"
 
 void SignedDistanceFieldRenderer::update(Window& window)
 {

@@ -1,7 +1,9 @@
 #pragma once
 
 #include "Basics.hpp"
-#include "UIButton.hpp"
+#include "UI/Authoring/UiAuthoredHost.hpp"
+#include "UI/Theme/UiAppTheme.hpp"
+#include "UI/UiHost.hpp"
 
 struct Window;
 
@@ -9,6 +11,7 @@ struct GameEntry
 {
 	String           displayName;
 	String           description;
+	String           iconName;
 	Function<void()> launch;
 };
 
@@ -24,34 +27,26 @@ struct GameLoader final : UIElement
 	GameLoader();
 
 	void create(Window& window) override;
+	void update(Window& window) override;
 	void destroy(Window& window) override;
 
 	[[nodiscard]] Function<void()> consumeSelectedGame();
 
 private:
-	struct LaunchButton final : UIButton
-	{
-		GameLoader* owner      = nullptr;
-		Window*     owningWindow = nullptr;
-		Int         entryIndex = -1;
-
-		LaunchButton(GameLoader& loaderRef, Int index);
-		void doThis() override;
-	};
-
-	void buildUi();
+	void applyTheme();
+	void toggleTheme();
+	void applyLauncherLayout();
+	void wireLauncherInteractions();
 	void onGameSelected(Window& window, Int index);
 	static Vector<GameEntry> buildDefaultEntries();
 
-	Vector<GameEntry>     entries;
-	Vector<LaunchButton>  buttons;
-	Vector<UIElement>     entryContents;
-	Vector<UIElement>     nameLabels;
-	Vector<UIElement>     descriptionLabels;
-	UIElement             titleLabel;
+	Vector<GameEntry> entries;
+	Ui::UiAppTheme theme = Ui::UiAppTheme::light();
+	Ui::UiHost host;
+	UniquePointer<Ui::UiAuthoredHost> authored;
+	Window* owningWindow = nullptr;
 
 	Atomic<Int>      selectionIndex = -1;
 	Function<void()> selectedGame;
-	Bool             built = false;
+	Bool             authoredReady = false;
 };
-
