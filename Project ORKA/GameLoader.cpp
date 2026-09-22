@@ -26,6 +26,7 @@
 #include "SoundAnalysisLab.hpp"
 #include "SimpleRTS.hpp"
 #include "SdfPointcloud.hpp"
+#include "AI/AiChat.hpp"
 
 namespace
 {
@@ -65,6 +66,7 @@ Vector<GameEntry> GameLoader::buildDefaultEntries()
 {
 	return {
 		{"UI Controls Demo", "Interactive reference for the unified ORKA design system and controls.", []() { UiControlsDemo game; game.run(); }},
+		{"AI Chat", "Local Qwen-class chat via engine-managed llama.cpp — baseline for NPCs, tools, and voice.", []() { AiChat game; game.run(); }},
 		{"Sandbox", "A small playground to experiment with engine features.", []() { Sandbox game; game.run(); }},
 		{"Pong", "Classic Pong built with ORKA's UI and input systems.", []() { Pong game; game.run(); }},
 		{"Voxels", "Ray-marched voxel world with camera controls and lighting.", []() { Voxels game; game.run(); }},

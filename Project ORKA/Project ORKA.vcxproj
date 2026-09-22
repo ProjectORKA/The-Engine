@@ -32,6 +32,8 @@
     </ClCompile>
     <ClCompile Include="Agent\**\*.cpp" />
     <ClInclude Include="Agent\**\*.hpp" />
+    <ClCompile Include="AI\**\*.cpp" />
+    <ClInclude Include="AI\**\*.hpp" />
     <ClCompile Include="UI\**\*.cpp">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">MaxSpeed</Optimization>
       <BasicRuntimeChecks Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Default</BasicRuntimeChecks>

@@ -27,6 +27,7 @@ When an edit request is broad, inspect these files first:
 - `Project ORKA/Data/UI/app-master.ui.scss` + `controls-demo.ui.html` - global authored styles + demo markup.
 - `Project ORKA/Renderer.hpp` + `Project ORKA/Renderer.cpp` - render facade and systems.
 - `Project ORKA/Settings.hpp` - project-wide constants and debug toggles.
+- `Project ORKA/AI/` + **AI Chat** game (`AI/AiChat.cpp`, `Data/UI/ai-chat.ui.html`) — engine-managed local LLM via llama-server; pins in `AI/AiConfig.hpp`. GPU: `AiGpuDetect.cpp` + CUDA zips/cudart DLLs via `AiRuntimeResolve.cpp`. If runtime download fails with 404, update `llamaCppReleaseTag` or rely on GitHub API fallback.
 
 ## Architecture Guardrails
 

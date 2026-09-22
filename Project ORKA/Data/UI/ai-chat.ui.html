@@ -1,0 +1,53 @@
+<ui id="ai-chat-root" class="app-root ai-chat p20">
+	<div id="ai-chat-shell" class="app-shell g10">
+		<div class="row g10 align-center">
+			<image class="header-icon icon-muted" icon="notes" />
+			<label id="type-title" class="fg1">AI Chat</label>
+			<button id="ai-chat-theme-toggle" class="theme-toggle p10" label="Toggle light and dark theme"
+				[text]="ui.themeToggleLabel" (activate)="AiChat.ToggleTheme" />
+		</div>
+
+		<label class="entry-description" [text]="ui.subtitle" />
+
+		@if (state.showConsent) {
+		<div id="ai-consent-panel" class="panel section g10">
+			<label class="field-label">LOCAL AI SETUP</label>
+			<label [text]="state.consentBody" />
+			<div class="row g10">
+				<button id="ai-consent-decline" class="p10 fg1" text="Not now" (activate)="AiChat.DeclineConsent" />
+				<button id="ai-consent-accept" class="p10 fg1" text="Yes, install and continue"
+					(activate)="AiChat.AcceptConsent" />
+			</div>
+		</div>
+		}
+
+		@if (!state.showConsent) {
+		<div id="ai-chat-main" class="panel g10 fg1 min-h-0">
+			<label class="field-label">CONVERSATION</label>
+			<div id="ai-chat-scroll" class="app-scroll section g10">
+				@for (message of chat.messages; track message.id) {
+				<div class="g5">
+					<label class="field-label" [text]="message.roleLabel" />
+					<label class="fg1" [text]="message.text" />
+				</div>
+				}
+			</div>
+
+			<label class="field-label">STATUS</label>
+			<label class="status-text" [text]="state.statusLine" />
+
+			<div class="labeled-row row g10">
+				<label class="field-label">Engine tools</label>
+				<checkbox class="fg1" text="Allow file read/list/write tools (Project ORKA workspace)"
+					label="Enable AI tools" [value]="state.toolsEnabled" />
+			</div>
+
+			<div class="row g10 align-end">
+				<textarea id="ai-chat-input" class="fg1" placeholder="Message the model…" label="Chat input"
+					[value]="state.draft" />
+				<button id="ai-chat-send" class="p10" text="Send" (activate)="AiChat.Send" />
+			</div>
+		</div>
+		}
+	</div>
+</ui>
