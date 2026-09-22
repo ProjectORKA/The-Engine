@@ -51,7 +51,7 @@ Supported markup tags: `div`, `label`, `button`, `toggle`, `checkbox`, `slider`,
 
 **Ids are for wiring, not styling.** Only add `id="…"` when runtime code or a binding needs it; use classes (`UiAppClass`, page SCSS) for layout and theme. Do not add ids that mirror an existing class.
 
-**Every class must do work.** A class is valid only when it is handled by compiled SCSS (layout/size/overflow), `UiAppTheme` (typography, surfaces, swatches, icon tint), or C++ wiring. Do not add decorative or documentary class names (`section`, `icon-default`, duplicate spacing helpers). Prefer a bare flex/gap wrapper (`class="g10"`) over a no-op semantic alias. Drop redundant duplicates on the same node (e.g. `flex-wrap` when `.token-grid` already wraps, `flex-grow` when `.slider-row` already grows, `row`/`g10` on a single-child row).
+**Every class must do work.** A class is valid only when it is handled by compiled SCSS (layout/size/overflow), `UiAppTheme` (typography, surfaces, swatches, icon tint), or C++ wiring. Do not add decorative or documentary class names (`section`, `icon-default`, duplicate spacing helpers). Prefer a bare flex/gap wrapper (`class="g10"`) over a no-op semantic alias. Drop redundant duplicates on the same node (e.g. `wrap` when `.token-grid` already wraps, `flex-grow` when `.slider-row` already grows, `row`/`g10` on a single-child row).
 
 ## Architecture
 
@@ -81,7 +81,9 @@ Master spacing: `UI/Theme/UiAppFlex.hpp`. Valid class tokens only:
 |               |    |           |    | `b300`      | 300 |
 |               |    |           |    | `b350`      | 350 |
 
-**Basis classes (`b50`–`b350`)** set `flex-basis` on items inside a wrapping row (`row flex-wrap` or `row flex-wrap-balance`). Greedy `flex-wrap` breaks when the next item would overflow. **`flex-wrap: balance`** (`.color-token-grid`) precomputes line breaks to minimize flex-grow stretch — especially avoiding a single orphaned item stretched across a full row. Token rows use `.token-item` (`flex-grow: 1`, `flex-shrink: 0`, `min-width: 0`) so items on each balanced line share leftover space evenly.
+**Utility classes:** `fg1` (`flex-grow: 1`), `wrap` (balanced flex line breaks), `mw0` / `mh0` (zero min width/height for shrink). Legacy names `flex-grow`, `min-w-0`, and `min-h-0` still parse. Authored `flex-wrap: balance` still parses as an alias.
+
+**Basis classes (`b50`–`b350`)** set `flex-basis` on items inside a wrapping row (`row wrap`). **`wrap`** precomputes line breaks to minimize flex-grow stretch — especially avoiding a single orphaned item stretched across a full row. Token rows (`.color-token-grid`) use `.token-item` (`flex-grow: 1`, `flex-shrink: 0`, `min-width: 0`) so items on each line share leftover space evenly.
 
 **Align classes** position flex children with semantic top/left/bot/right names instead of separate `justify-content` + `align-items` rules. They map to the current flex direction (`column` default, or `row` when present):
 
@@ -118,6 +120,7 @@ Corner radius is `0` app-wide (square chrome).
 ### Scroll areas
 
 - Prefer CSS overflow on a normal `div`: `overflow-y: auto` / `overflow: hidden` in authored SCSS. `UiHost` wires wheel input, clipping (scissor), and scrollbars automatically. Flex children with overflow shrink to their viewport; content inside keeps its intrinsic height and drives `scrollExtent`.
+- Flex items default to **content-aware minimum sizes** (headers and labels stay readable). Scroll flex children need **`min-height: 0`** (SCSS) or **`mh0`** so they can shrink inside a column; use **`mw0`** / **`min-width: 0`** for horizontal shrink in rows.
 - Keep status chrome or primary actions outside the scroller when possible.
 - Use `<scroll-view>` only when you need widget-specific APIs (virtual lists, scroll anchors). Legacy manual binding via `updateScrollMetrics()` + `applyScrollShift()` remains available for those paths.
 

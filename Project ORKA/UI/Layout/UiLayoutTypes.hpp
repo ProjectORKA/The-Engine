@@ -60,6 +60,8 @@ namespace Ui
 		Fr,
 	};
 
+	// Auto on min-width/min-height means content-aware minimum (min-content), not zero.
+	// Explicit min-width: 0 / min-height: 0 use UiSizeKind::Fixed with value 0.
 	struct UiSizeSpec
 	{
 		UiSizeKind kind = UiSizeKind::Auto;
@@ -75,7 +77,7 @@ namespace Ui
 	enum class UiDisplay : Byte { Flex, Grid, Overlay, None };
 	enum class UiOverflow : Byte { Visible, Hidden, Scroll, Auto };
 	enum class UiAxis : Byte { Row, Column };
-	enum class UiWrap : Byte { NoWrap, Wrap, Balance };
+	enum class UiWrap : Byte { NoWrap, Wrap };
 	enum class UiJustify : Byte { Start, Center, End, SpaceBetween, SpaceAround, SpaceEvenly };
 	enum class UiAlign : Byte { Auto, Start, Center, End, Stretch, Baseline };
 	enum class UiPositionType : Byte { Flow, Absolute };

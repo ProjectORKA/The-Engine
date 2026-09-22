@@ -11,20 +11,23 @@
 	flex-direction: row;
 }
 
-.flex-wrap {
+.wrap {
 	flex-wrap: wrap;
 }
 
-.flex-wrap-balance {
-	flex-wrap: balance;
-}
-
+.fg1,
 .flex-grow {
 	flex-grow: 1;
 }
 
+.mw0,
 .min-w-0 {
 	min-width: 0;
+}
+
+.mh0,
+.min-h-0 {
+	min-height: 0;
 }
 
 // Flex-basis wrap tokens (b50–b350) and align-* tokens are layout classes parsed by UiAppFlex — not SCSS rules.

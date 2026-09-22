@@ -176,8 +176,8 @@ namespace Ui
 				else if (property == "flex-wrap")
 				{
 					const String name = lower(value.text);
-					if (name == "wrap") style.flexWrap = UiWrap::Wrap;
-					else if (name == "balance") style.flexWrap = UiWrap::Balance;
+					if (name == "wrap" || name == "balance")
+						style.flexWrap = UiWrap::Wrap;
 					else style.flexWrap = UiWrap::NoWrap;
 				}
 				else if (property == "position")

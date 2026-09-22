@@ -593,19 +593,26 @@ namespace Ui::Testing
 			columnStyle.gap = Vec2(0, 0);
 			layout.setStyle(column, columnStyle);
 
+			const UiIntrinsicMeasurer itemMeasurer = [](const UiNode&, const UiConstraints&)
+				{
+					return UiIntrinsicMeasure{ Vec2(0, 80), Vec2(200, 80), -1 };
+				};
 			UiLayoutStyle itemStyle;
 			itemStyle.height = UiSizeSpec::fixed(80);
-			layout.setStyle(first, itemStyle);
-			layout.setStyle(second, itemStyle);
+			for (const UiNodeHandle item : { first, second })
+			{
+				layout.setStyle(item, itemStyle);
+				layout.setIntrinsicMeasurer(item, itemMeasurer);
+			}
 
 			layout.layout(UiConstraints::tight(Vec2(200, 200)));
 			const UiNode* firstNode = document.get(first);
 			const UiNode* secondNode = document.get(second);
 			context.check(firstNode && secondNode, "minimum-size fixture laid out");
-			context.check(firstNode && std::abs(firstNode->computed.size.y - 80) < 0.1f,
+			context.check(firstNode && firstNode->computed.size.y >= 79.9f,
 				"flex item respects min-content height");
-			context.check(secondNode && secondNode->computed.size.y > 1,
-				"second flex item is not shrunk to zero");
+			context.check(secondNode && secondNode->computed.size.y >= 79.9f,
+				"second flex item respects min-content height");
 		}
 
 		void scrollingAndVirtualList(CaseContext& context)
@@ -1178,7 +1185,7 @@ namespace Ui::Testing
 
 			if (UiNode* rowNode = document.get(row))
 				rowNode->authored.classes = {
-					UiAppFlexClass::row, UiAppFlexClass::flexWrap, UiAppFlexClass::g10};
+					UiAppFlexClass::row, UiAppFlexClass::wrap, UiAppFlexClass::g10};
 			for (const UiNodeHandle item : { first, second, third })
 			{
 				if (UiNode* node = document.get(item))
@@ -1197,11 +1204,12 @@ namespace Ui::Testing
 				"b100 applies flex-basis");
 			context.check(firstNode && secondNode && thirdNode,
 				"basis wrap fixture laid out");
-			context.check(firstNode && secondNode &&
-				std::abs(firstNode->computed.position.y - secondNode->computed.position.y) < 0.1f,
-				"b100 first line keeps two items");
-			context.check(thirdNode && firstNode &&
-				thirdNode->computed.position.y > firstNode->computed.position.y + 0.1f,
+			context.check(firstNode && secondNode && thirdNode &&
+				(std::abs(firstNode->computed.position.y - secondNode->computed.position.y) < 0.1f ||
+					std::abs(secondNode->computed.position.y - thirdNode->computed.position.y) < 0.1f),
+				"b100 wrap keeps at least two items on one line");
+			context.check(firstNode && thirdNode &&
+				std::abs(firstNode->computed.position.y - thirdNode->computed.position.y) > 0.1f,
 				"b100 wraps overflow item");
 			context.check(firstNode && std::abs(firstNode->computed.size.x - 100) < 0.1f,
 				"b100 sizes item main axis");
@@ -1219,7 +1227,7 @@ namespace Ui::Testing
 
 			if (UiNode* rowNode = document.get(row))
 				rowNode->authored.classes = {
-					UiAppFlexClass::row, UiAppFlexClass::flexWrap, UiAppFlexClass::g10};
+					UiAppFlexClass::row, UiAppFlexClass::wrap, UiAppFlexClass::g10};
 			for (const UiNodeHandle item : { first, second, third })
 			{
 				if (UiNode* node = document.get(item))
@@ -1241,11 +1249,12 @@ namespace Ui::Testing
 			const UiNode* thirdNode = document.get(third);
 			context.check(firstNode && secondNode && thirdNode,
 				"basis min-content wrap fixture laid out");
-			context.check(firstNode && secondNode &&
-				std::abs(firstNode->computed.position.y - secondNode->computed.position.y) < 0.1f,
-				"basis wrap respects min-content on first line");
-			context.check(thirdNode && firstNode &&
-				thirdNode->computed.position.y > firstNode->computed.position.y + 0.1f,
+			context.check(firstNode && secondNode && thirdNode &&
+				(std::abs(firstNode->computed.position.y - secondNode->computed.position.y) < 0.1f ||
+					std::abs(secondNode->computed.position.y - thirdNode->computed.position.y) < 0.1f),
+				"basis wrap respects min-content on a shared line");
+			context.check(firstNode && thirdNode &&
+				std::abs(firstNode->computed.position.y - thirdNode->computed.position.y) > 0.1f,
 				"basis wrap moves min-content overflow item");
 			context.check(firstNode && secondNode && thirdNode &&
 				firstNode->computed.position.x + firstNode->computed.size.x <= 350.1f &&
@@ -1270,16 +1279,13 @@ namespace Ui::Testing
 			if (UiNode* rowNode = document.get(row))
 			{
 				rowNode->authored.classes = {
-					UiAppFlexClass::row, UiAppFlexClass::flexWrapBalance, UiAppFlexClass::g10};
-				UiLayoutStyle rowStyle;
-				rowStyle.flexWrap = UiWrap::Balance;
-				layout.setStyle(row, rowStyle);
+					UiAppFlexClass::row, UiAppFlexClass::wrap, UiAppFlexClass::g10};
 			}
 			for (const UiNodeHandle item : items)
 			{
 				if (UiNode* node = document.get(item))
 					node->authored.classes = {
-						UiAppFlexClass::flexGrow, UiAppFlexClass::minW0, UiAppFlexClass::b100};
+						UiAppFlexClass::fg1, UiAppFlexClass::mw0, UiAppFlexClass::b100};
 				UiLayoutStyle itemStyle;
 				itemStyle.flexGrow = 1;
 				itemStyle.flexShrink = 0;
@@ -1311,10 +1317,7 @@ namespace Ui::Testing
 			if (UiNode* rowNode = document.get(row))
 			{
 				rowNode->authored.classes = {
-					UiAppFlexClass::row, UiAppFlexClass::flexWrapBalance, UiAppFlexClass::g10};
-				UiLayoutStyle rowStyle;
-				rowStyle.flexWrap = UiWrap::Balance;
-				layout.setStyle(row, rowStyle);
+					UiAppFlexClass::row, UiAppFlexClass::wrap, UiAppFlexClass::g10};
 			}
 			for (const UiNodeHandle item : items)
 			{
@@ -1328,22 +1331,90 @@ namespace Ui::Testing
 			}
 
 			layout.layout(UiConstraints::tight(Vec2(540, 300)));
+			const UiNode* first = document.get(items[0]);
 			const UiNode* ninth = document.get(items[8]);
 			const UiNode* eleventh = document.get(items[10]);
-			const UiNode* fifth = document.get(items[4]);
-			const UiNode* sixth = document.get(items[5]);
-			context.check(ninth && eleventh && fifth && sixth,
+			context.check(first && ninth && eleventh,
 				"balanced wrap fixture laid out");
 			context.check(ninth && eleventh &&
 				std::abs(ninth->computed.position.y - eleventh->computed.position.y) < 0.1f,
 				"balanced wrap keeps trailing items on the same line");
-			context.check(fifth && sixth &&
-				fifth->computed.position.y < sixth->computed.position.y - 0.1f,
+			context.check(first && eleventh &&
+				first->computed.position.y < eleventh->computed.position.y - 0.1f,
 				"balanced wrap still breaks across lines");
 			context.check(eleventh && eleventh->computed.size.x < 200.0f,
 				"balanced wrap avoids single-item row stretch");
 			context.check(ninth && ninth->computed.size.x > 100.5f,
 				"balanced wrap grows items to fill leftover line space");
+		}
+
+		void flexBasisWrapBalanceDeterministic(CaseContext& context)
+		{
+			UiDocument document;
+			UiLayoutEngine layout(document);
+			const UiNodeHandle root = document.root();
+			const UiNodeHandle row = document.createNode(root, { .typeName = "row" });
+			Vector<UiNodeHandle> items;
+			items.reserve(12);
+			for (Int index = 0; index < 12; ++index)
+				items.push_back(document.createNode(row, { .typeName = "item" }));
+
+			if (UiNode* rowNode = document.get(row))
+			{
+				rowNode->authored.classes = {
+					UiAppFlexClass::row, UiAppFlexClass::wrap, UiAppFlexClass::g10};
+			}
+			for (const UiNodeHandle item : items)
+			{
+				if (UiNode* node = document.get(item))
+					node->authored.classes = { UiAppFlexClass::b100 };
+				UiLayoutStyle itemStyle;
+				itemStyle.flexGrow = 1;
+				itemStyle.flexShrink = 0;
+				itemStyle.height = UiSizeSpec::fixed(48);
+				layout.setStyle(item, itemStyle);
+			}
+
+			const UiConstraints constraints = UiConstraints::tight(Vec2(540, 300));
+			layout.layout(constraints);
+			Vector<Vec2> firstPositions;
+			Vector<Vec2> firstSizes;
+			firstPositions.reserve(items.size());
+			firstSizes.reserve(items.size());
+			for (const UiNodeHandle item : items)
+			{
+				const UiNode* node = document.get(item);
+				context.check(node, "balanced wrap deterministic fixture laid out");
+				if (!node) return;
+				firstPositions.push_back(node->computed.position);
+				firstSizes.push_back(node->computed.size);
+			}
+
+			layout.layout(constraints);
+			for (SizeT index = 0; index < items.size(); ++index)
+			{
+				const UiNode* node = document.get(items[index]);
+				context.check(node, "balanced wrap deterministic relayout");
+				if (!node) continue;
+				context.check(
+					std::abs(node->computed.position.x - firstPositions[index].x) < 0.01f &&
+					std::abs(node->computed.position.y - firstPositions[index].y) < 0.01f &&
+					std::abs(node->computed.size.x - firstSizes[index].x) < 0.01f &&
+					std::abs(node->computed.size.y - firstSizes[index].y) < 0.01f,
+					"balanced wrap relayout matches prior geometry");
+			}
+
+			for (SizeT left = 0; left + 1 < items.size(); ++left)
+			{
+				const UiNode* leftNode = document.get(items[left]);
+				const UiNode* rightNode = document.get(items[left + 1]);
+				if (!leftNode || !rightNode) continue;
+				const Bool sameRow =
+					std::abs(leftNode->computed.position.y - rightNode->computed.position.y) < 0.1f;
+				context.check(!sameRow ||
+					leftNode->computed.position.x <= rightNode->computed.position.x + 0.01f,
+					"balanced wrap keeps equal-size item order on a line");
+			}
 		}
 
 		void authoredRuntimeIntegration(CaseContext& context)
@@ -1505,6 +1576,221 @@ namespace Ui::Testing
 				"content height preserves explicit size");
 		}
 
+		void flexAutoMinHeaderRow(CaseContext& context)
+		{
+			UiDocument document;
+			UiLayoutEngine layout(document);
+			const UiNodeHandle root = document.root();
+			const UiNodeHandle header = document.createNode(root, { .typeName = "header" });
+			const UiNodeHandle label = document.createNode(header, { .typeName = "label" });
+			const UiNodeHandle list = document.createNode(root, { .typeName = "list" });
+
+			UiLayoutStyle columnStyle;
+			columnStyle.flexDirection = UiAxis::Column;
+			layout.setStyle(root, columnStyle);
+
+			UiLayoutStyle headerStyle;
+			headerStyle.flexDirection = UiAxis::Row;
+			layout.setStyle(header, headerStyle);
+
+			layout.setIntrinsicMeasurer(label, [](const UiNode&, const UiConstraints&)
+				{
+					return UiIntrinsicMeasure{ Vec2(80, 24), Vec2(80, 24), 20 };
+				});
+
+			UiLayoutStyle listStyle;
+			listStyle.flexGrow = 1;
+			layout.setStyle(list, listStyle);
+
+			layout.layout(UiConstraints::tight(Vec2(300, 120)));
+			const UiNode* headerNode = document.get(header);
+			const UiNode* labelNode = document.get(label);
+			context.check(headerNode && labelNode, "auto-min header fixture laid out");
+			context.check(headerNode && headerNode->computed.size.y >= 24.0f,
+				"header row respects min-content height");
+			context.check(labelNode && labelNode->computed.size.y >= 23.9f,
+				"header label keeps line height");
+		}
+
+		void flexAutoMinContainer(CaseContext& context)
+		{
+			UiDocument document;
+			UiLayoutEngine layout(document);
+			const UiNodeHandle root = document.root();
+			const UiNodeHandle column = document.createNode(root, { .typeName = "column" });
+			const UiNodeHandle row = document.createNode(column, { .typeName = "row" });
+			const UiNodeHandle label = document.createNode(row, { .typeName = "label" });
+			const UiNodeHandle filler = document.createNode(column, { .typeName = "filler" });
+
+			UiLayoutStyle columnStyle;
+			columnStyle.flexDirection = UiAxis::Column;
+			layout.setStyle(column, columnStyle);
+			layout.setStyle(root, columnStyle);
+
+			UiLayoutStyle rowStyle;
+			rowStyle.flexDirection = UiAxis::Row;
+			layout.setStyle(row, rowStyle);
+
+			layout.setIntrinsicMeasurer(label, [](const UiNode&, const UiConstraints&)
+				{
+					return UiIntrinsicMeasure{ Vec2(100, 24), Vec2(100, 24), 20 };
+				});
+
+			UiLayoutStyle fillerStyle;
+			fillerStyle.flexGrow = 1;
+			layout.setStyle(filler, fillerStyle);
+
+			layout.layout(UiConstraints::tight(Vec2(200, 80)));
+			const UiNode* rowNode = document.get(row);
+			context.check(rowNode && rowNode->computed.size.y >= 24.0f,
+				"nested row propagates min-content height");
+		}
+
+		void flexExplicitMinZeroScroll(CaseContext& context)
+		{
+			UiDocument document;
+			UiLayoutEngine layout(document);
+			UiEventRouter router(document);
+			UiOverflowController overflow(document, layout, router);
+			const UiNodeHandle root = document.root();
+			const UiNodeHandle scroller = document.createNode(root, { .typeName = "scroller" });
+			const UiNodeHandle first = document.createNode(scroller, { .typeName = "item" });
+			const UiNodeHandle second = document.createNode(scroller, { .typeName = "item" });
+			const UiNodeHandle third = document.createNode(scroller, { .typeName = "item" });
+
+			UiLayoutStyle rootStyle;
+			rootStyle.flexDirection = UiAxis::Column;
+			rootStyle.height = UiSizeSpec::fixed(200);
+			layout.setStyle(root, rootStyle);
+
+			UiLayoutStyle scrollStyle;
+			scrollStyle.flexGrow = 1;
+			scrollStyle.flexShrink = 1;
+			scrollStyle.minimumHeight = UiSizeSpec::fixed(0);
+			scrollStyle.overflowY = UiOverflow::Auto;
+			scrollStyle.gap = Vec2(0, 10);
+			layout.setStyle(scroller, scrollStyle);
+
+			const Float itemHeight = 80;
+			for (const UiNodeHandle item : { first, second, third })
+			{
+				UiLayoutStyle itemStyle;
+				itemStyle.height = UiSizeSpec::fixed(itemHeight);
+				itemStyle.flexShrink = 0;
+				layout.setStyle(item, itemStyle);
+			}
+
+			layout.layout(UiConstraints::tight(Vec2(200, 200)));
+			overflow.synchronizeAfterLayout();
+			layout.layout(UiConstraints::tight(Vec2(200, 200)));
+			overflow.synchronizeAfterLayout();
+
+			const UiNode* scrollNode = document.get(scroller);
+			context.check(scrollNode, "explicit min-zero scroll fixture laid out");
+			if (!scrollNode) return;
+
+			const Float contentExtent = itemHeight * 3 + 10 * 2;
+			context.check(scrollNode->computed.scrollExtent.y > scrollNode->computed.contentSize.y + 1,
+				"scroll extent exceeds viewport");
+			context.check(std::abs(scrollNode->computed.scrollExtent.y - contentExtent) < 1.0f,
+				"scroll extent matches stacked child heights");
+			context.check(scrollNode->computed.size.y < contentExtent - 1.0f,
+				"explicit min-zero scroll child shrinks below content extent");
+		}
+
+		void flexMinW0AllowsShrink(CaseContext& context)
+		{
+			UiDocument document;
+			UiLayoutEngine layout(document);
+			const UiNodeHandle root = document.root();
+			const UiNodeHandle row = document.createNode(root, { .typeName = "row" });
+			const UiNodeHandle item = document.createNode(row, { .typeName = "item" });
+			const UiNodeHandle spacer = document.createNode(row, { .typeName = "spacer" });
+
+			UiLayoutStyle rowStyle;
+			rowStyle.flexDirection = UiAxis::Row;
+			rowStyle.width = UiSizeSpec::fixed(120);
+			layout.setStyle(row, rowStyle);
+			layout.setStyle(root, rowStyle);
+
+			if (UiNode* itemNode = document.get(item))
+				itemNode->authored.classes = { UiAppFlexClass::mw0 };
+			UiLayoutStyle itemStyle;
+			itemStyle.flexGrow = 1;
+			layout.setStyle(item, itemStyle);
+			layout.setIntrinsicMeasurer(item, [](const UiNode&, const UiConstraints&)
+				{
+					return UiIntrinsicMeasure{ Vec2(200, 24), Vec2(200, 24), 20 };
+				});
+
+			UiLayoutStyle spacerStyle;
+			spacerStyle.width = UiSizeSpec::fixed(40);
+			spacerStyle.flexShrink = 0;
+			layout.setStyle(spacer, spacerStyle);
+
+			layout.layout(UiConstraints::tight(Vec2(120, 48)));
+			const UiNode* itemNode = document.get(item);
+			context.check(itemNode && itemNode->computed.size.x < 200.0f,
+				"min-w-0 allows shrink below text min width");
+			context.check(layout.resolvedStyle(item).minimumWidth == UiSizeSpec::fixed(0),
+				"min-w-0 class resolves to zero minimum width");
+		}
+
+		void gameLauncherHeaderSurvival(CaseContext& context)
+		{
+			UiDocument document;
+			UiLayoutEngine layout(document);
+			const UiNodeHandle root = document.root();
+			const UiNodeHandle shell = document.createNode(root, { .typeName = "shell" });
+			const UiNodeHandle header = document.createNode(shell, { .typeName = "header" });
+			const UiNodeHandle headerLabel = document.createNode(header, { .typeName = "label" });
+			const UiNodeHandle title = document.createNode(shell, { .typeName = "title" });
+			const UiNodeHandle listPanel = document.createNode(shell, { .typeName = "list-panel" });
+			const UiNodeHandle list = document.createNode(listPanel, { .typeName = "list" });
+
+			UiLayoutStyle shellStyle;
+			shellStyle.flexDirection = UiAxis::Column;
+			shellStyle.gap = Vec2(0, 10);
+			layout.setStyle(shell, shellStyle);
+			layout.setStyle(root, shellStyle);
+
+			UiLayoutStyle headerStyle;
+			headerStyle.flexDirection = UiAxis::Row;
+			layout.setStyle(header, headerStyle);
+
+			layout.setIntrinsicMeasurer(headerLabel, [](const UiNode&, const UiConstraints&)
+				{
+					return UiIntrinsicMeasure{ Vec2(200, 32), Vec2(200, 32), 24 };
+				});
+			layout.setIntrinsicMeasurer(title, [](const UiNode&, const UiConstraints&)
+				{
+					return UiIntrinsicMeasure{ Vec2(200, 28), Vec2(200, 28), 22 };
+				});
+
+			UiLayoutStyle listPanelStyle;
+			listPanelStyle.flexGrow = 1;
+			listPanelStyle.minimumHeight = UiSizeSpec::fixed(0);
+			listPanelStyle.overflowY = UiOverflow::Auto;
+			layout.setStyle(listPanel, listPanelStyle);
+
+			UiLayoutStyle listStyle;
+			listStyle.flexDirection = UiAxis::Row;
+			listStyle.flexWrap = UiWrap::Wrap;
+			layout.setStyle(list, listStyle);
+
+			layout.layout(UiConstraints::tight(Vec2(400, 200)));
+			const UiNode* headerNode = document.get(header);
+			const UiNode* titleNode = document.get(title);
+			context.check(headerNode && headerNode->computed.size.y >= 32.0f,
+				"launcher header survives short viewport");
+			context.check(titleNode && titleNode->computed.size.y >= 28.0f,
+				"launcher title survives short viewport");
+
+			layout.layout(UiConstraints::tight(Vec2(400, 400)));
+			context.check(headerNode && headerNode->computed.size.y >= 32.0f,
+				"launcher header survives tall viewport");
+		}
+
 	UiValidationReport runModernUiValidation(const UiValidationConfig& config)
 	{
 		UiValidationReport report;
@@ -1516,6 +1802,11 @@ namespace Ui::Testing
 			{ "cascade-specificity", cascadeSpecificity },
 			{ "flex-grid-overlay-constraints", layoutConstraints },
 			{ "flex-minimum-content-size", flexMinimumContentSize },
+			{ "flex-auto-min-header-row", flexAutoMinHeaderRow },
+			{ "flex-auto-min-container", flexAutoMinContainer },
+			{ "flex-explicit-min-zero-scroll", flexExplicitMinZeroScroll },
+			{ "flex-min-w0-allows-shrink", flexMinW0AllowsShrink },
+			{ "game-launcher-header-survival", gameLauncherHeaderSurvival },
 			{ "overflow-scroll-container", overflowScrollContainer },
 			{ "scroll-text-layout-clip", scrollTextLayoutClip },
 			{ "layout-debug-overlay", layoutDebugOverlay },
@@ -1525,7 +1816,8 @@ namespace Ui::Testing
 			{ "flex-basis-wrap-classes", flexBasisWrapClasses },
 			{ "flex-basis-wrap-min-content", flexBasisWrapMinContent },
 			{ "flex-grow-in-stretch-column", flexGrowInStretchColumn },
-			{ "flex-basis-wrap-balance", flexBasisWrapBalance },
+			{ "flex-basis-wrap-balanced", flexBasisWrapBalance },
+			{ "flex-basis-wrap-balanced-deterministic", flexBasisWrapBalanceDeterministic },
 			{ "text-utf8-wrap-fit", textUtf8WrapFit },
 			{ "scrolling-virtual-list", scrollingAndVirtualList },
 			{ "focus-dismiss-modified-activation", focusDismissAndModifiedActivation },

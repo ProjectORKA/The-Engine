@@ -70,6 +70,7 @@ namespace Ui
 		[[nodiscard]] UiValue readProperty(const String& path, const UiPropertyRegistry& scope) const;
 		void bindPropertyPaths(const UiCompiledBundle& bundle, UInt blueprintIndex, Record& record);
 		void syncRecordFromScope(Record& record, const UiPropertyRegistry& scope);
+		void syncRecordIdMapping(Record& record);
 		void attachChangeHandlers(Record& record);
 		[[nodiscard]] Vector<UiSelectOption> readSelectOptions(const UiValue& value) const;
 	};

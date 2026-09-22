@@ -75,8 +75,8 @@ Hard requirements agents must not skip:
 - **Prefer authored UI** for demo/layout surfaces; keep C++ to property/command wiring via `UiAuthoredHost`.
 - **CSS overflow on `div`** (`overflow`, `overflow-x`, `overflow-y`: visible/hidden/scroll/auto) is handled automatically by `UiHost` + `UiOverflowController` — clipping via scissor, wheel + scrollbar input, no manual `updateScrollMetrics()` / `applyScrollShift()`. Reserve `<scroll-view>` for virtual lists or scroll-anchor bindings.
 - **No unused markup ids** — add `id="…"` only when C++ (`ensureNodeLayout`, `findById`, …), bindings (`[id]="…"` for token/theme lookup), or tests need it. Prefer semantic classes for styling; do not duplicate class names as ids.
-- **No dead markup classes** — every class must be handled by SCSS, `UiAppTheme`, or C++ wiring. Do not add decorative aliases or duplicate helpers already on the same node. Nested surfaces use `panel` / `section` theme classes (highlight stacking in `UiAppTheme.cpp`); do not hand-pick nested background colors.
-- **Wrap rows use `b50`–`b350`** — basis classes on items + `row flex-wrap` (greedy) or `flex-wrap: balance` (optimal line breaks for grow rows) on the container; color swatches use `.color-token-grid`. See `UiAppFlex.hpp` and `.token-item b100` in the controls demo.
+- **No dead markup classes or UI clutter** — every class must be handled by SCSS, `UiAppTheme`, or C++ wiring. Do not add decorative aliases, one-off layout workaround classes, or duplicate helpers already on the same node; prefer fixing layout (e.g. content-aware flex mins, `min-h-0` on scroll children) or existing flex/theme tokens over new names. Nested surfaces use `panel` / `section` theme classes (highlight stacking in `UiAppTheme.cpp`); do not hand-pick nested background colors.
+- **Wrap rows use `b50`–`b350`** — basis classes on items + `row wrap` on the container (balanced line breaks for grow rows); color swatches use `.color-token-grid`. Prefer short flex utilities (`fg1`, `wrap`, `mw0`, `mh0`). See `UiAppFlex.hpp` and `.token-item b100` in the controls demo.
 
 Reference implementation: `Data/UI/controls-demo.ui.html` + `Project ORKA/GameLoader.cpp`.
 

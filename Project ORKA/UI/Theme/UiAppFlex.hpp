@@ -34,10 +34,10 @@ namespace Ui
 	{
 		inline constexpr const char* col = "col";
 		inline constexpr const char* row = "row";
-		inline constexpr const char* flexWrap = "flex-wrap";
-		inline constexpr const char* flexWrapBalance = "flex-wrap-balance";
-		inline constexpr const char* flexGrow = "flex-grow";
-		inline constexpr const char* minW0 = "min-w-0";
+		inline constexpr const char* wrap = "wrap";
+		inline constexpr const char* fg1 = "fg1";
+		inline constexpr const char* mw0 = "mw0";
+		inline constexpr const char* mh0 = "mh0";
 
 		inline constexpr const char* p5 = "p5";
 		inline constexpr const char* p10 = "p10";

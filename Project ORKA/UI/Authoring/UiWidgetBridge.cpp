@@ -240,6 +240,19 @@ namespace Ui
 		}
 	}
 
+	void UiWidgetBridge::syncRecordIdMapping(Record& record)
+	{
+		for (auto iterator = idToStableKey.begin(); iterator != idToStableKey.end();)
+		{
+			if (iterator->second == record.stableKey) iterator = idToStableKey.erase(iterator);
+			else ++iterator;
+		}
+		if (!record.node.isValid()) return;
+		const UiNode* node = factory.document.get(record.node);
+		if (!node || node->authored.id.empty()) return;
+		idToStableKey[node->authored.id] = record.stableKey;
+	}
+
 	void UiWidgetBridge::syncRecordFromScope(Record& record, const UiPropertyRegistry& scope)
 	{
 		if (!record.handle.isValid()) return;
@@ -504,6 +517,7 @@ namespace Ui
 		{
 			bindPropertyPaths(bundle, blueprintIndex, *record);
 			syncRecordFromScope(*record, scope);
+			syncRecordIdMapping(*record);
 		}
 	}
 

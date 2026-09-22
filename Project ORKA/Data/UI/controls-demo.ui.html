@@ -1,7 +1,9 @@
-<ui id="controls-root" class="app-root controls-demo p20 g10">
+<ui id="controls-root" class="app-root controls-demo p20">
 	<div class="section row align-center g20">
-		<image class="title-icon p10" icon="adjustments" />
-		<label id="type-title" class="typography-sample flex-grow p20">ORKA Design System</label>
+		<div class="row align-center p20 g20">
+			<image class="title-icon" icon="adjustments" />
+			<label id="type-title" class="fg1 p20">ORKA Design System</label>
+		</div>
 		<button [text]="ui.themeToggleLabel" (activate)="Demo.ToggleTheme" />
 	</div>
 
@@ -15,7 +17,7 @@
 			</div>
 			<div class="color-token-grid g10">
 				@for (token of tokens.colors; track token.id) {
-				<div class="token-item flex-grow min-w-0 b100 g5">
+				<div class="token-item fg1 min-w-0 b100 g5">
 					<div class="token-swatch theme-swatch" [id]="token.id" />
 					<label class="palette-label" [text]="token.label" />
 				</div>
@@ -29,7 +31,7 @@
 			</div>
 			<div class="token-grid g10">
 				@for (token of tokens.padding; track token.id) {
-				<div class="token-item flex-grow min-w-0 b100 g5">
+				<div class="token-item fg1 min-w-0 b100 g5">
 					<div class="token-swatch spacing-sample" [id]="token.id" />
 					<label class="palette-label" [text]="token.label" />
 				</div>
@@ -43,7 +45,7 @@
 			</div>
 			<div class="token-grid g10">
 				@for (token of tokens.gap; track token.id) {
-				<div class="token-item flex-grow min-w-0 b100 g5">
+				<div class="token-item fg1 min-w-0 b100 g5">
 					<div class="token-swatch spacing-sample" [id]="token.id" />
 					<label class="palette-label" [text]="token.label" />
 				</div>
@@ -57,7 +59,7 @@
 			</div>
 			@for (sample of tokens.typography; track sample.id) {
 			<div class="typography-row">
-				<label class="typography-sample flex-grow" [id]="sample.id" [text]="sample.text" />
+				<label class="fg1" [id]="sample.id" [text]="sample.text" />
 			</div>
 			}
 		</div>
@@ -67,55 +69,55 @@
 				<label class="field-label">ALIGN CLASSES</label>
 			</div>
 			<div class="token-grid g10">
-				<div class="token-item flex-grow min-w-0 b150 g5">
+				<div class="token-item fg1 min-w-0 b150 g5">
 					<div class="align-demo-frame panel p5 align-top-left">
 						<div class="align-demo-dot theme-swatch" id="color-accent" />
 					</div>
 					<label class="palette-label">align-top-left</label>
 				</div>
-				<div class="token-item flex-grow min-w-0 b150 g5">
+				<div class="token-item fg1 min-w-0 b150 g5">
 					<div class="align-demo-frame panel p5 align-top-center">
 						<div class="align-demo-dot theme-swatch" id="color-accent" />
 					</div>
 					<label class="palette-label">align-top-center</label>
 				</div>
-				<div class="token-item flex-grow min-w-0 b150 g5">
+				<div class="token-item fg1 min-w-0 b150 g5">
 					<div class="align-demo-frame panel p5 align-top-right">
 						<div class="align-demo-dot theme-swatch" id="color-accent" />
 					</div>
 					<label class="palette-label">align-top-right</label>
 				</div>
-				<div class="token-item flex-grow min-w-0 b150 g5">
+				<div class="token-item fg1 min-w-0 b150 g5">
 					<div class="align-demo-frame panel p5 align-left">
 						<div class="align-demo-dot theme-swatch" id="color-accent" />
 					</div>
 					<label class="palette-label">align-left</label>
 				</div>
-				<div class="token-item flex-grow min-w-0 b150 g5">
+				<div class="token-item fg1 min-w-0 b150 g5">
 					<div class="align-demo-frame panel p5 align-center">
 						<div class="align-demo-dot theme-swatch" id="color-accent" />
 					</div>
 					<label class="palette-label">align-center</label>
 				</div>
-				<div class="token-item flex-grow min-w-0 b150 g5">
+				<div class="token-item fg1 min-w-0 b150 g5">
 					<div class="align-demo-frame panel p5 align-right">
 						<div class="align-demo-dot theme-swatch" id="color-accent" />
 					</div>
 					<label class="palette-label">align-right</label>
 				</div>
-				<div class="token-item flex-grow min-w-0 b150 g5">
+				<div class="token-item fg1 min-w-0 b150 g5">
 					<div class="align-demo-frame panel p5 align-bot-left">
 						<div class="align-demo-dot theme-swatch" id="color-accent" />
 					</div>
 					<label class="palette-label">align-bot-left</label>
 				</div>
-				<div class="token-item flex-grow min-w-0 b150 g5">
+				<div class="token-item fg1 min-w-0 b150 g5">
 					<div class="align-demo-frame panel p5 align-bot-center">
 						<div class="align-demo-dot theme-swatch" id="color-accent" />
 					</div>
 					<label class="palette-label">align-bot-center</label>
 				</div>
-				<div class="token-item flex-grow min-w-0 b150 g5">
+				<div class="token-item fg1 min-w-0 b150 g5">
 					<div class="align-demo-frame panel p5 align-bot-right">
 						<div class="align-demo-dot theme-swatch" id="color-accent" />
 					</div>
@@ -130,7 +132,7 @@
 			</div>
 			<div class="token-grid g10">
 				@for (token of tokens.layout; track token.id) {
-				<div class="token-item flex-grow min-w-0 b100 g5">
+				<div class="token-item fg1 min-w-0 b100 g5">
 					<div class="token-swatch spacing-sample" [id]="token.id" />
 					<label class="palette-label" [text]="token.label" />
 				</div>
@@ -145,12 +147,12 @@
 			</div>
 			<div class="labeled-row row g10">
 				<label class="field-label">Enable lighting</label>
-				<toggle class="flex-grow" text="Scene lighting" label="Enable lighting"
+				<toggle class="fg1" text="Scene lighting" label="Enable lighting"
 					[value]="state.lightingEnabled" />
 			</div>
 			<div class="labeled-row row g10">
 				<label class="field-label">Debug overlay</label>
-				<toggle class="flex-grow" text="Overlay panel" label="Debug overlay" [value]="state.debugOverlay" />
+				<toggle class="fg1" text="Overlay panel" label="Debug overlay" [value]="state.debugOverlay" />
 			</div>
 		</div>
 
@@ -161,12 +163,12 @@
 			</div>
 			<div class="labeled-row row g10">
 				<label class="field-label">VSync</label>
-				<checkbox class="flex-grow" text="Synchronize to display refresh" label="VSync"
+				<checkbox class="fg1" text="Synchronize to display refresh" label="VSync"
 					[value]="state.vsyncEnabled" />
 			</div>
 			<div class="labeled-row row g10">
 				<label class="field-label">Notifications</label>
-				<checkbox class="flex-grow" text="Show system notifications" label="Notifications"
+				<checkbox class="fg1" text="Show system notifications" label="Notifications"
 					[value]="state.notificationsEnabled" />
 			</div>
 		</div>
@@ -179,14 +181,14 @@
 			<div class="labeled-row row g10">
 				<label class="field-label">Master volume</label>
 				<div class="slider-row row g10">
-					<slider class="flex-grow" min="0" max="100" step="1" label="Master volume" [value]="state.volume" />
+					<slider class="fg1" min="0" max="100" step="1" label="Master volume" [value]="state.volume" />
 					<label class="value-readout readout" [text]="state.volumeLabel" />
 				</div>
 			</div>
 			<div class="labeled-row row g10">
 				<label class="field-label">Screen brightness</label>
 				<div class="slider-row row g10">
-					<slider class="flex-grow" min="0" max="1" step="0.05" label="Screen brightness"
+					<slider class="fg1" min="0" max="1" step="0.05" label="Screen brightness"
 						[value]="state.brightness" />
 					<label class="value-readout readout" [text]="state.brightnessLabel" />
 				</div>
@@ -200,12 +202,12 @@
 			</div>
 			<div class="labeled-row row g10">
 				<label class="field-label">Quality preset</label>
-				<select class="flex-grow" label="Quality preset" [value]="state.qualityPreset"
+				<select class="fg1" label="Quality preset" [value]="state.qualityPreset"
 					[options]="options.quality" />
 			</div>
 			<div class="labeled-row row g10">
 				<label class="field-label">Render mode</label>
-				<select class="flex-grow" label="Render mode" [value]="state.renderMode"
+				<select class="fg1" label="Render mode" [value]="state.renderMode"
 					[options]="options.renderMode" />
 			</div>
 		</div>
@@ -217,11 +219,11 @@
 			</div>
 			<div class="labeled-row row g10">
 				<label class="field-label">Player name</label>
-				<input class="flex-grow" placeholder="Enter a name" label="Player name" [value]="state.playerName" />
+				<input class="fg1" placeholder="Enter a name" label="Player name" [value]="state.playerName" />
 			</div>
 			<div class="labeled-row row g10">
 				<label class="field-label">Session notes</label>
-				<textarea class="flex-grow" placeholder="Type notes here" label="Session notes" [value]="state.notes" />
+				<textarea class="fg1" placeholder="Type notes here" label="Session notes" [value]="state.notes" />
 			</div>
 		</div>
 
@@ -230,6 +232,6 @@
 
 	<div id="controls-status-panel" class="panel status-panel p10 g10">
 		<label class="field-label">LIVE STATUS</label>
-		<label class="status-text flex-grow" [text]="state.statusText" />
+		<label class="status-text fg1" [text]="state.statusText" />
 	</div>
 </ui>

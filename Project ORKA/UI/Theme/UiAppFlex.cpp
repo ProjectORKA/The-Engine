@@ -186,14 +186,14 @@ namespace Ui
 				style.display = UiDisplay::Flex;
 				style.flexDirection = UiAxis::Row;
 			}
-			else if (className == UiAppFlexClass::flexWrap)
+			else if (className == UiAppFlexClass::wrap)
 				style.flexWrap = UiWrap::Wrap;
-			else if (className == UiAppFlexClass::flexWrapBalance)
-				style.flexWrap = UiWrap::Balance;
-			else if (className == UiAppFlexClass::flexGrow)
+			else if (className == UiAppFlexClass::fg1 || className == "flex-grow")
 				style.flexGrow = 1;
-			else if (className == UiAppFlexClass::minW0)
+			else if (className == UiAppFlexClass::mw0 || className == "min-w-0")
 				style.minimumWidth = UiSizeSpec::fixed(0);
+			else if (className == UiAppFlexClass::mh0 || className == "min-h-0")
+				style.minimumHeight = UiSizeSpec::fixed(0);
 			Float paddingValue = 0;
 			if (parsePaddingClass(className, paddingValue)) padding = paddingValue;
 			Float gapValue = 0;

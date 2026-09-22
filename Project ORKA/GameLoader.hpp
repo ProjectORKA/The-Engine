@@ -11,7 +11,6 @@ struct GameEntry
 {
 	String           displayName;
 	String           description;
-	String           iconName;
 	Function<void()> launch;
 };
 

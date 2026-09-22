@@ -78,13 +78,19 @@ namespace Ui
 			return UiConstraints::loose(maximum);
 		}
 
-		[[nodiscard]] Float defaultFlexMinimumMain(
+		[[nodiscard]] Float flexAutomaticMinimumMain(
 			const UiIntrinsicMeasure& measured, const UiAxis axis)
 		{
-			const Float measuredMinimum = mainValue(measured.minimum, axis);
-			if (measuredMinimum > 0) return measuredMinimum;
-			// Preferred often reflects the parent constraint (width:100% children), not min-content.
-			return 0;
+			return mainValue(measured.minimum, axis);
+		}
+
+		[[nodiscard]] Float flexItemMinimumMainAuto(
+			const UiLayoutStyle& childStyle, const UiIntrinsicMeasure& measured, const UiAxis axis)
+		{
+			const Bool childClipsMainAxis =
+				(axis == UiAxis::Column && childStyle.overflowY != UiOverflow::Visible) ||
+				(axis == UiAxis::Row && childStyle.overflowX != UiOverflow::Visible);
+			return childClipsMainAxis ? 0.0f : flexAutomaticMinimumMain(measured, axis);
 		}
 
 		[[nodiscard]] Float hypotheticalFlexMain(
@@ -128,11 +134,27 @@ namespace Ui
 		struct FlexWrapBreakItem
 		{
 			Float outerMain = 0;
+			Float minimumOuterMain = 0;
 			Float cross = 0;
+			Float minimumCross = 0;
 			Float baseline = -1;
 			Float basis = 0;
 			Float grow = 0;
 		};
+
+		constexpr Float flexWrapBalanceCostEpsilon = 1e-5f;
+
+		// When several break plans share the same cost (common with equal-size grow items),
+		// prefer packing more items on the current line so line breaks stay stable.
+		[[nodiscard]] Bool preferFlexWrapBreakPlan(
+			const Float candidateCost, const SizeT candidateEnd,
+			const Float bestCost, const SizeT bestEnd, const SizeT unsetEnd)
+		{
+			if (candidateCost < bestCost - flexWrapBalanceCostEpsilon) return true;
+			if (candidateCost > bestCost + flexWrapBalanceCostEpsilon) return false;
+			if (bestEnd == unsetEnd) return true;
+			return candidateEnd > bestEnd;
+		}
 
 		[[nodiscard]] Float flexItemOuterMain(const FlexItem& item, const UiAxis axis)
 		{
@@ -282,7 +304,8 @@ namespace Ui
 					const Float lineCost = flexLineBalanceBadness(
 						items, start, end, availableMain, itemGap, itemCount);
 					const Float totalCost = lineCost + cost[end];
-					if (totalCost < cost[start])
+					if (preferFlexWrapBreakPlan(
+						totalCost, end, cost[start], nextBreak[start], itemCount))
 					{
 						cost[start] = totalCost;
 						nextBreak[start] = end;
@@ -304,10 +327,8 @@ namespace Ui
 			const Vector<FlexWrapBreakItem>& items, const Float availableMain,
 			const Float itemGap, const UiWrap wrap)
 		{
-			if (wrap == UiWrap::Balance)
-				return balancedFlexLineBreaks(items, availableMain, itemGap);
 			if (wrap == UiWrap::Wrap && std::isfinite(availableMain))
-				return greedyFlexLineBreaks(items, availableMain, itemGap);
+				return balancedFlexLineBreaks(items, availableMain, itemGap);
 			Vector<SizeT> breaks;
 			breaks.push_back(0);
 			breaks.push_back(items.size());
@@ -636,9 +657,9 @@ namespace Ui
 			else if (heightExplicit && !widthExplicit) contentPreferred.x = contentPreferred.y * nodeStyle.aspectRatio;
 		}
 
-		const Float minimumContentWidth = nodeStyle.minimumWidth.kind == UiSizeKind::Auto ? 0 :
+		const Float minimumContentWidth = nodeStyle.minimumWidth.kind == UiSizeKind::Auto ? content.minimum.x :
 			resolve(nodeStyle.minimumWidth, maxContentWidth, content.minimum.x, node, constraints.hasBoundedWidth());
-		const Float minimumContentHeight = nodeStyle.minimumHeight.kind == UiSizeKind::Auto ? 0 :
+		const Float minimumContentHeight = nodeStyle.minimumHeight.kind == UiSizeKind::Auto ? content.minimum.y :
 			resolve(nodeStyle.minimumHeight, maxContentHeight, content.minimum.y, node, constraints.hasBoundedHeight());
 		const Float maximumContentWidth = nodeStyle.maximumWidth.kind == UiSizeKind::Auto ? uiLayoutInfinity :
 			resolve(nodeStyle.maximumWidth, maxContentWidth, contentPreferred.x, node, constraints.hasBoundedWidth());
@@ -693,15 +714,12 @@ namespace Ui
 			const UiSizeSpec& minimumMainSpec = axis == UiAxis::Row ? childStyle.minimumWidth : childStyle.minimumHeight;
 			const UiSizeSpec& maximumMainSpec = axis == UiAxis::Row ? childStyle.maximumWidth : childStyle.maximumHeight;
 			Float minimumMain = 0;
-			if (minimumMainSpec.kind != UiSizeKind::Auto)
+			if (minimumMainSpec.kind == UiSizeKind::Fixed && minimumMainSpec.value == 0)
+				minimumMain = 0;
+			else if (minimumMainSpec.kind != UiSizeKind::Auto)
 				minimumMain = resolve(minimumMainSpec, availableMain, 0, child, std::isfinite(availableMain));
 			else
-			{
-				const Bool childClipsMainAxis =
-					(axis == UiAxis::Column && childStyle.overflowY != UiOverflow::Visible) ||
-					(axis == UiAxis::Row && childStyle.overflowX != UiOverflow::Visible);
-				minimumMain = childClipsMainAxis ? 0.0f : defaultFlexMinimumMain(measured, axis);
-			}
+				minimumMain = flexItemMinimumMainAuto(childStyle, measured, axis);
 			Float maximumMain = uiLayoutInfinity;
 			if (maximumMainSpec.kind != UiSizeKind::Auto)
 				maximumMain = resolve(maximumMainSpec, availableMain, childBasis, child, std::isfinite(availableMain));
@@ -709,7 +727,11 @@ namespace Ui
 			FlexWrapBreakItem breakItem;
 			breakItem.outerMain = hypotheticalMain + mainStart(childStyle.margin, axis) +
 				mainEnd(childStyle.margin, axis);
+			breakItem.minimumOuterMain = minimumMain + mainStart(childStyle.margin, axis) +
+				mainEnd(childStyle.margin, axis);
 			breakItem.cross = crossValue(measured.preferred, axis) + crossStart(childStyle.margin, axis) +
+				crossEnd(childStyle.margin, axis);
+			breakItem.minimumCross = crossValue(measured.minimum, axis) + crossStart(childStyle.margin, axis) +
 				crossEnd(childStyle.margin, axis);
 			breakItem.basis = childBasis;
 			breakItem.grow = nonNegative(childStyle.flexGrow);
@@ -721,24 +743,43 @@ namespace Ui
 			breakItems, availableMain, itemGap, parentStyle.flexWrap);
 		Float widest = 0;
 		Float totalCross = 0;
+		Float minimumMain = 0;
+		Float minimumCross = 0;
 		for (SizeT lineIndex = 0; lineIndex + 1 < breaks.size(); ++lineIndex)
 		{
 			Float lineMain = 0;
 			Float lineCross = 0;
+			Float lineMinimumMain = 0;
+			Float lineMinimumCross = 0;
 			for (SizeT index = breaks[lineIndex]; index < breaks[lineIndex + 1]; ++index)
 			{
-				if (index > breaks[lineIndex]) lineMain += itemGap;
+				if (index > breaks[lineIndex])
+				{
+					lineMain += itemGap;
+					lineMinimumMain += itemGap;
+				}
 				lineMain += breakItems[index].outerMain;
+				lineMinimumMain += breakItems[index].minimumOuterMain;
 				lineCross = std::max(lineCross, breakItems[index].cross);
+				lineMinimumCross = std::max(lineMinimumCross, breakItems[index].minimumCross);
 			}
 			widest = std::max(widest, lineMain);
+			minimumMain = std::max(minimumMain, lineMinimumMain);
 			totalCross += lineCross;
-			if (lineIndex > 0) totalCross += lineGap;
+			minimumCross += lineMinimumCross;
+			if (lineIndex > 0)
+			{
+				totalCross += lineGap;
+				minimumCross += lineGap;
+			}
 		}
 		Vec2 preferred(0);
 		setMain(preferred, axis, widest);
 		setCross(preferred, axis, totalCross);
-		return { Vec2(0), preferred, baseline };
+		Vec2 minimum(0);
+		setMain(minimum, axis, minimumMain);
+		setCross(minimum, axis, minimumCross);
+		return { minimum, preferred, baseline };
 	}
 
 	Vector<UiLayoutEngine::GridPlacement> UiLayoutEngine::placeGridItems(
@@ -1021,19 +1062,12 @@ namespace Ui
 			flexItem.shrink = scrollMainAxis ? 0 : nonNegative(childStyle.flexShrink);
 			const UiSizeSpec& minimumMainSpec = axis == UiAxis::Row ? childStyle.minimumWidth : childStyle.minimumHeight;
 			const UiSizeSpec& maximumMainSpec = axis == UiAxis::Row ? childStyle.maximumWidth : childStyle.maximumHeight;
-			if (minimumMainSpec.kind != UiSizeKind::Auto)
+			if (minimumMainSpec.kind == UiSizeKind::Fixed && minimumMainSpec.value == 0)
+				flexItem.minimumMain = 0;
+			else if (minimumMainSpec.kind != UiSizeKind::Auto)
 				flexItem.minimumMain = resolve(minimumMainSpec, availableMain, 0, child, true);
 			else
-			{
-				// Scroll/clip containers can shrink within a flex parent (CSS min-height: 0).
-				// Their descendants keep min-content minimums below.
-				const Bool childClipsMainAxis =
-					(axis == UiAxis::Column && childStyle.overflowY != UiOverflow::Visible) ||
-					(axis == UiAxis::Row && childStyle.overflowX != UiOverflow::Visible);
-				flexItem.minimumMain = childClipsMainAxis
-					? 0.0f
-					: defaultFlexMinimumMain(measured, axis);
-			}
+				flexItem.minimumMain = flexItemMinimumMainAuto(childStyle, measured, axis);
 			if (maximumMainSpec.kind != UiSizeKind::Auto)
 				flexItem.maximumMain = resolve(maximumMainSpec, availableMain, flexItem.main, child, true);
 			flexItem.baseline = measured.baseline;

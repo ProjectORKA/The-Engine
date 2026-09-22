@@ -8,7 +8,6 @@
 #include "UI/Theme/UiAppHelpers.hpp"
 #include "UI/Theme/UiAppTheme.hpp"
 #include "UI/Samples/UiControlsDemo.hpp"
-#include "UI/Text/UiIconCatalog.hpp"
 #include "UI/Widgets/UiWidgets.hpp"
 #include "Window.hpp"
 #include "WindowAPI.hpp"
@@ -41,10 +40,8 @@ namespace
 			const GameEntry& entry = entries[static_cast<SizeT>(index)];
 			games.push_back(UiValue::fromObject({
 				{"id", UiValue::fromString("game-" + toString(index))},
-				{"iconId", UiValue::fromString("game-" + toString(index) + "-icon")},
 				{"name", UiValue::fromString(entry.displayName)},
-				{"description", UiValue::fromString(entry.description)},
-				{"icon", UiValue::fromString(entry.iconName)}
+				{"description", UiValue::fromString(entry.description)}
 				}));
 		}
 		return UiValue::fromArray(std::move(games));
@@ -66,23 +63,22 @@ namespace
 
 Vector<GameEntry> GameLoader::buildDefaultEntries()
 {
-	using namespace Ui::Icons;
 	return {
-		{"UI Controls Demo", "Interactive reference for the unified ORKA design system and controls.", Adjustments, []() { UiControlsDemo game; game.run(); }},
-		{"Sandbox", "A small playground to experiment with engine features.", Box, []() { Sandbox game; game.run(); }},
-		{"Pong", "Classic Pong built with ORKA's UI and input systems.", DeviceGamepad, []() { Pong game; game.run(); }},
-		{"Voxels", "Ray-marched voxel world with camera controls and lighting.", Cube, []() { Voxels game; game.run(); }},
-		{"MoonCrash", "Planet-scale terrain and atmosphere simulation.", Rocket, []() { MoonCrash game; game.run(); }},
-		{"Project Melon", "Stylized melon world prototype with player movement and rendering.", Palette, []() { ProjectMelon game; game.run(); }},
-		{"Melon Audio Lab", "Procedural motion audio testbed with hum, wind, and heartbeat layers.", Music, []() { MelonAudioLab game; game.run(); }},
-		{"Sound Analysis Lab", "Import and inspect audio: waveform zoom/scrub, FFT spectrum, and spectrogram.", WaveSine, []() { SoundAnalysisLab game; game.run(); }},
-		{"Simple RTS", "Lightweight RTS sim with humans, wildlife, terrain, and resource systems.", Sword, []() { SimpleRts game; game.run(); }},
-		{"SDF Pointcloud", "Screenspace pointcloud SDF with temporal reprojection and compute hole-fill.", Cpu, []() { SdfPointcloud game; game.run(); }},
-		{"Shadertoy (Erosion)", "Shader-based erosion effect inspired by Shadertoy.", Photo, []() { ShadertoyGame game; game.run(); }},
-		{"Software Renderer", "CPU rasterizer demo showcasing the software pipeline.", Cpu, []() { SoftwareRendererGame game; game.run(); }},
-		{"Function Finder", "Curve-fitting playground that searches function parameters against sampled data.", FunctionIcon, []() { FunctionFinder game; game.run(); }},
-		{"Triple Nine", "Arena shooter prototype with bloom rendering and intro support.", Target, []() { TripleNine game; game.run(); }},
-		{"Cornell Box Ray Tracer", "GPU PBR path tracer with GGX metals, glass, area-light NEE, and progressive accumulation.", Photo, []() { RayTracerGame game; game.run(); }}
+		{"UI Controls Demo", "Interactive reference for the unified ORKA design system and controls.", []() { UiControlsDemo game; game.run(); }},
+		{"Sandbox", "A small playground to experiment with engine features.", []() { Sandbox game; game.run(); }},
+		{"Pong", "Classic Pong built with ORKA's UI and input systems.", []() { Pong game; game.run(); }},
+		{"Voxels", "Ray-marched voxel world with camera controls and lighting.", []() { Voxels game; game.run(); }},
+		{"MoonCrash", "Planet-scale terrain and atmosphere simulation.", []() { MoonCrash game; game.run(); }},
+		{"Project Melon", "Stylized melon world prototype with player movement and rendering.", []() { ProjectMelon game; game.run(); }},
+		{"Melon Audio Lab", "Procedural motion audio testbed with hum, wind, and heartbeat layers.", []() { MelonAudioLab game; game.run(); }},
+		{"Sound Analysis Lab", "Import and inspect audio: waveform zoom/scrub, FFT spectrum, and spectrogram.", []() { SoundAnalysisLab game; game.run(); }},
+		{"Simple RTS", "Lightweight RTS sim with humans, wildlife, terrain, and resource systems.", []() { SimpleRts game; game.run(); }},
+		{"SDF Pointcloud", "Screenspace pointcloud SDF with temporal reprojection and compute hole-fill.", []() { SdfPointcloud game; game.run(); }},
+		{"Shadertoy (Erosion)", "Shader-based erosion effect inspired by Shadertoy.", []() { ShadertoyGame game; game.run(); }},
+		{"Software Renderer", "CPU rasterizer demo showcasing the software pipeline.", []() { SoftwareRendererGame game; game.run(); }},
+		{"Function Finder", "Curve-fitting playground that searches function parameters against sampled data.", []() { FunctionFinder game; game.run(); }},
+		{"Triple Nine", "Arena shooter prototype with bloom rendering and intro support.", []() { TripleNine game; game.run(); }},
+		{"Cornell Box Ray Tracer", "GPU PBR path tracer with GGX metals, glass, area-light NEE, and progressive accumulation.", []() { RayTracerGame game; game.run(); }}
 	};
 }
 
@@ -126,16 +122,6 @@ void GameLoader::applyLauncherLayout()
 			style.width = UiSizeSpec::percent(1);
 			style.height = UiSizeSpec::percent(1);
 		});
-	authored->ensureNodeLayout("type-title", [](UiLayoutStyle& style)
-		{
-			style.flexShrink = 0;
-			style.height = UiSizeSpec::fixed(UiAppTypography::titleLine);
-		});
-	authored->ensureNodeLayout("type-kicker", [](UiLayoutStyle& style)
-		{
-			style.flexShrink = 0;
-			style.height = UiSizeSpec::fixed(UiAppTypography::bodyLine);
-		});
 	authored->ensureNodeLayout("game-list-panel", [](UiLayoutStyle& style)
 		{
 			style.flexGrow = 1;
@@ -159,7 +145,6 @@ void GameLoader::wireLauncherInteractions()
 	for (Int index = 0; index < static_cast<Int>(entries.size()); ++index)
 	{
 		const String buttonId = "game-" + toString(index);
-		const String iconId = buttonId + "-icon";
 		const UiWidgetHandle button = authored->widgetBridge().findById(buttonId);
 		if (!widgets.isValid(button)) continue;
 
@@ -175,19 +160,6 @@ void GameLoader::wireLauncherInteractions()
 			buttonNode->state.semantics.label = entries[static_cast<SizeT>(index)].displayName;
 
 		setHitTestInvisibleRecursive(document, router, widgets.node(button));
-
-		const UiWidgetHandle icon = authored->widgetBridge().findById(iconId);
-		if (!widgets.isValid(icon)) continue;
-		if (UiImageState* iconState = widgets.state<UiImageState>(icon))
-		{
-			iconState->resource = entries[static_cast<SizeT>(index)].iconName;
-			iconState->icon = true;
-			if (UiNode* iconNode = document.get(widgets.node(icon)))
-			{
-				iconNode->state.semantics.value = entries[static_cast<SizeT>(index)].iconName;
-				document.markDirty(widgets.node(icon), DirtyFlag::Paint);
-			}
-		}
 	}
 }
 
