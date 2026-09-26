@@ -21,6 +21,9 @@ namespace
 		Bool notificationsEnabled = false;
 		Double volume = 65;
 		Double brightness = 0.75;
+		Double particleCap = 2500;
+		Double temperature = 21.5;
+		Double unboundOffset = 0;
 		String qualityPreset = "high";
 		String renderMode = "forward";
 		String playerName = "Pilot";
@@ -89,6 +92,9 @@ namespace
 		(void)properties.set("state.notificationsEnabled", UiValue::fromBool(state.notificationsEnabled));
 		(void)properties.set("state.volume", UiValue::fromNumber(state.volume));
 		(void)properties.set("state.brightness", UiValue::fromNumber(state.brightness));
+		(void)properties.set("state.particleCap", UiValue::fromNumber(state.particleCap));
+		(void)properties.set("state.temperature", UiValue::fromNumber(state.temperature));
+		(void)properties.set("state.unboundOffset", UiValue::fromNumber(state.unboundOffset));
 		(void)properties.set("state.qualityPreset", UiValue::fromString(state.qualityPreset));
 		(void)properties.set("state.renderMode", UiValue::fromString(state.renderMode));
 		(void)properties.set("state.playerName", UiValue::fromString(state.playerName));
@@ -250,6 +256,12 @@ namespace
 						state.volume = value.number;
 					else if (path == "state.brightness" && value.type == UiValueType::Number)
 						state.brightness = value.number;
+					else if (path == "state.particleCap" && value.type == UiValueType::Number)
+						state.particleCap = value.number;
+					else if (path == "state.temperature" && value.type == UiValueType::Number)
+						state.temperature = value.number;
+					else if (path == "state.unboundOffset" && value.type == UiValueType::Number)
+						state.unboundOffset = value.number;
 					else if (path == "state.qualityPreset" && value.type == UiValueType::String)
 						state.qualityPreset = value.string;
 					else if (path == "state.renderMode" && value.type == UiValueType::String)

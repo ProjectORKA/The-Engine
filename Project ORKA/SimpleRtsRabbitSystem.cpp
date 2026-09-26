@@ -19,23 +19,23 @@ void SimpleRtsRabbitSystem::spawnEntity(const SimpleRtsSimulation& sim)
 void SimpleRtsRabbitSystem::update(SimpleRtsSimulation& sim)
 {
 	// age
-	for (Int i = 0; i < count; i++)
+	for (Int i = 0; i < spawnCount; i++)
 	{
 		ages[i] += sim.timeStep();
 	}
 
-	for (Int i = 0; i < count; i++)
+	for (Int i = 0; i < spawnCount; i++)
 	{
 		if (ages[i] >= rabbitMaxAge) killRabbit(i);
 	}
 
-	for (Int i = 0; i < count; i++)
+	for (Int i = 0; i < spawnCount; i++)
 	{
 		sizes[i]  = sizeFromAge(ages[i]);
 		speeds[i] = speedFromAge(ages[i]);
 	}
 
-	for (Int i = 0; i < count; i++)
+	for (Int i = 0; i < spawnCount; i++)
 	{
 		switch (states[i])
 		{
@@ -49,7 +49,7 @@ void SimpleRtsRabbitSystem::update(SimpleRtsSimulation& sim)
 			{
 				directions[i] = normalize(directions[i] + randomUnitVec2Fast() * jitter);
 				Vec2 pos      = positions[i] + directions[i] * sim.timeStep() * speeds[i] * hopSpeed;
-				loopWithinCentered(pos, sim.mapSize);
+				loopWithinCentered(pos, sim.worldSettings.mapSize);
 				positions[i] = pos;
 				renderPositions[i] = Vec3(pos, sim.getTerrainHeight(pos));
 
@@ -64,7 +64,7 @@ void SimpleRtsRabbitSystem::update(SimpleRtsSimulation& sim)
 			{
 				directions[i] = normalize(directions[i] + randomUnitVec2Fast() * jitter);
 				Vec2 pos      = positions[i] + directions[i] * sim.timeStep() * speeds[i];
-				loopWithinCentered(pos, sim.mapSize);
+				loopWithinCentered(pos, sim.worldSettings.mapSize);
 				positions[i] = pos;
 				renderPositions[i] = Vec3(pos, sim.getTerrainHeight(pos));
 			}
@@ -86,12 +86,24 @@ Float SimpleRtsRabbitSystem::speedFromAge(const Float age) const
 void SimpleRtsRabbitSystem::create(const SimpleRtsSimulation& sim)
 {
 	name = "RabbitSystem";
-	if (debugSimpleRts) logDebug("Spawning " + std::to_string(count) + " rabbits");
-	for (Int i = 0; i < count; i++) spawnEntity(sim);
+	spawnCount = sim.worldSettings.rabbits;
+	if (debugSimpleRts) logDebug("Spawning " + std::to_string(spawnCount) + " rabbits");
+	for (Int i = 0; i < spawnCount; i++) spawnEntity(sim);
 	if (debugSimpleRts) logDebug("Spawned rabbits");
 }
 
-void SimpleRtsRabbitSystem::destroy(const SimpleRtsSimulation& sim) {}
+void SimpleRtsRabbitSystem::destroy(const SimpleRtsSimulation& sim)
+{
+	ages.clear();
+	states.clear();
+	sizes.clear();
+	speeds.clear();
+	directions.clear();
+	positions.clear();
+	renderPositions.clear();
+	waitTimes.clear();
+	spawnCount = 0;
+}
 
 Bool SimpleRtsRabbitSystem::doesCollide(const Vec2 position, const Float radius) const
 {
@@ -100,7 +112,7 @@ Bool SimpleRtsRabbitSystem::doesCollide(const Vec2 position, const Float radius)
 
 void SimpleRtsRabbitSystem::killRabbit(const Int id)
 {
-	Index parentID = randomIntFast(0, count - 1);
+	Index parentID = randomIntFast(0, max(0, spawnCount - 1));
 	ages[id]       = 0.0f;
 	speeds[id]     = minSpeed;
 	sizes[id]      = rabbitMinSize;

@@ -376,6 +376,8 @@ namespace Ui
 		if (!event.defaultPrevented) runDefault(event);
 		if (event.capturePointer) (void)capturePointer(event.pointerId, event.target);
 		if (event.releasePointer) releasePointer(event.pointerId, event.target);
+		if (event.captureSystemCursor) pendingSystemCursorCapture = true;
+		if (event.releaseSystemCursor) pendingSystemCursorRelease = true;
 		if (event.focusTarget) (void)focus(event.target);
 		--dispatchDepth;
 		if (!dispatchDepth) applyDeferredOperations();
@@ -883,10 +885,20 @@ namespace Ui
 		cleanInvalidState();
 	}
 
+	void UiEventRouter::consumeSystemCursorRequests(Bool& capture, Bool& release)
+	{
+		capture = pendingSystemCursorCapture;
+		release = pendingSystemCursorRelease;
+		pendingSystemCursorCapture = false;
+		pendingSystemCursorRelease = false;
+	}
+
 	void UiEventRouter::reset()
 	{
 		cancelAllPointers();
 		clearFocus();
+		pendingSystemCursorCapture = false;
+		pendingSystemCursorRelease = false;
 		listeners.clear();
 		pendingListeners.clear();
 		defaults.clear();

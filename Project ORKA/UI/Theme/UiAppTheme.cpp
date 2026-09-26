@@ -178,6 +178,59 @@ namespace Ui
 			return std::clamp((value - minimum) / (maximum - minimum), 0.0, 1.0);
 		}
 
+		[[nodiscard]] Bool paintNumberField(
+			const UiAppColors& colors, const UiNode& node, const UiQuadGeometry& geometry,
+			UiDisplayList& output, const UiDocument* document, const UiNodeHandle handle,
+			const UiTextPainter& textPainter, UiSvgIconService* iconService)
+		{
+			const UiLinearColor fill = document && handle.isValid()
+				? resolveControlFill(document, handle, colors, node)
+				: node.state.active ? colors.surfaceControlActive
+				: node.state.hovered ? colors.surfaceControlHover : colors.surfaceControl;
+			if (!output.addSolidQuad(geometry, fill)) return false;
+
+			if (hasClass(node, "is-number-display") && hasClass(node, "has-number-progress"))
+			{
+				const Float fraction = static_cast<Float>(parseRangeFraction(node));
+				const Float fillWidth = std::max(2.0f, geometry.size.x * fraction);
+				if (!output.addSolidQuad(
+					UiQuadGeometry{geometry.position, Vec2(fillWidth, geometry.size.y), squareCorners},
+					colors.surfaceTrackFill)) return false;
+			}
+
+			if (!hasClass(node, "ui-authored-border"))
+			{
+				const UiLinearColor border = node.state.hovered ? colors.borderHover : colors.border;
+				if (!output.addInsetBorder(geometry, 1, border)) return false;
+			}
+
+			if ((node.state.hovered || node.state.active) && hasClass(node, "is-number-display") &&
+				iconService)
+			{
+				const Float chevronSize = UiAppTypography::bodySize;
+				const Float inset = UiAppFlex::p10;
+				const Float centerY = geometry.position.y + geometry.size.y * 0.5f;
+				const UiLinearColor chevronColor = colors.iconMuted;
+				const UiQuadGeometry leftChevron{
+					Vec2(geometry.position.x + inset,
+						centerY - chevronSize * 0.5f),
+					Vec2(chevronSize, chevronSize), squareCorners};
+				const UiQuadGeometry rightChevron{
+					Vec2(geometry.position.x + geometry.size.x - inset - chevronSize,
+						centerY - chevronSize * 0.5f),
+					Vec2(chevronSize, chevronSize), squareCorners};
+				(void)iconService->paint(
+					output, Icons::ChevronLeft, leftChevron, chevronColor,
+					static_cast<UInt>(chevronSize));
+				(void)iconService->paint(
+					output, Icons::ChevronRight, rightChevron, chevronColor,
+					static_cast<UInt>(chevronSize));
+			}
+
+			if (!paintFocusRing(colors, node, geometry, output)) return false;
+			return textPainter.paint(node, output);
+		}
+
 		[[nodiscard]] Bool paintSlider(
 			const UiAppColors& colors, const UiNode& node, const UiQuadGeometry& geometry,
 			UiDisplayList& output)
@@ -479,11 +532,33 @@ namespace Ui
 				style.padding = Vec2(0);
 				style.wrap = false;
 				const String& type = node.authored.typeName;
+				if (type == "NumberField")
+				{
+					style.wrap = false;
+					style.color = colors.textPrimary;
+					style.caretColor = colors.textPrimary;
+					style.selectionColor = srgb(
+						straightLinear(colors.accent).r,
+						straightLinear(colors.accent).g,
+						straightLinear(colors.accent).b,
+						0.40f);
+					style.fontSize = UiAppTypography::bodySize;
+					style.lineHeight = UiAppTypography::bodyLine;
+					if (hasClass(node, "is-number-display"))
+						style.horizontalAlign = UiTextHorizontalAlign::Center;
+					return;
+				}
 				if (type == "TextField" || type == "TextArea" || type == "Button" ||
 					type == "MenuItem")
 				{
 					style.wrap = type == "TextArea";
 					style.color = colors.textPrimary;
+					style.caretColor = colors.textPrimary;
+					style.selectionColor = srgb(
+						straightLinear(colors.accent).r,
+						straightLinear(colors.accent).g,
+						straightLinear(colors.accent).b,
+						0.40f);
 					style.fontSize = UiAppTypography::bodySize;
 					style.lineHeight = UiAppTypography::bodyLine;
 					return;
@@ -666,6 +741,12 @@ namespace Ui
 						? resolveAncestorBackground(document, context.handle, colors)
 						: colors.surfaceRoot;
 					fill = stackHighlight(parentFill, colors.surfaceHighlight, 2);
+				}
+				else if (type == "NumberField")
+				{
+					return finishWithAuthoredBorder(paintNumberField(
+						colors, node, geometry, output, document, context.handle, textPainter,
+						iconService));
 				}
 				else if (type == "Button" || type == "TextField" || type == "TextArea")
 				{

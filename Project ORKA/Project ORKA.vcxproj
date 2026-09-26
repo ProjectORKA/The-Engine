@@ -199,6 +199,9 @@
     <ClCompile Include="PerlinNoise.cpp" />
     <ClCompile Include="Plot.cpp" />
     <ClCompile Include="SimpleRts.cpp" />
+    <ClCompile Include="SimpleRtsSettingsPanel.cpp" />
+    <ClCompile Include="SimpleRtsWorldPresets.cpp" />
+    <ClCompile Include="SimpleRtsWorldSettings.cpp" />
     <ClCompile Include="Snake.cpp" />
     <ClCompile Include="TerrainRendering.cpp" />
     <ClCompile Include="TerrainSystem.cpp" />
@@ -378,6 +381,9 @@
     <ClInclude Include="SoftwareRendererGame.hpp" />
     <ClInclude Include="GameLoader.hpp" />
     <ClInclude Include="SimpleRts.hpp" />
+    <ClInclude Include="SimpleRtsSettingsPanel.hpp" />
+    <ClInclude Include="SimpleRtsWorldPresets.hpp" />
+    <ClInclude Include="SimpleRtsWorldSettings.hpp" />
     <ClInclude Include="Snake.hpp" />
     <ClInclude Include="SphereMeshing.hpp" />
     <ClInclude Include="TerrainRendering.hpp" />
@@ -475,8 +481,12 @@
     <None Include="Data\Shaders\sdfTerrain.vert" />
     <None Include="Data\Shaders\simpleRTS.frag" />
     <None Include="Data\Shaders\simpleRTS.vert" />
+    <None Include="Data\Shaders\simpleRTSOcean.frag" />
+    <None Include="Data\Shaders\simpleRTSOcean.vert" />
     <None Include="Data\Shaders\simpleRTSSky.frag" />
     <None Include="Data\Shaders\simpleRTSSky.vert" />
+    <None Include="Data\Shaders\simpleRTSTerrain.frag" />
+    <None Include="Data\Shaders\simpleRTSTerrain.vert" />
     <None Include="Data\Shaders\sky.frag" />
     <None Include="Data\Shaders\sky.vert" />
     <None Include="Data\Shaders\sortr.frag" />

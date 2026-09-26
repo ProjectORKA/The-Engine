@@ -10,6 +10,13 @@ namespace External
 using ApiWindow  = External::GLFWwindow*;
 using ApiMonitor = External::GLFWmonitor*;
 
+enum class ApiCursorType : Int
+{
+	Arrow = 0,
+	Hand,
+	IBeam,
+};
+
 void           apiWindowRestore(ApiWindow apiWindow);
 void           apiMaximizeWindow(ApiWindow apiWindow);
 void           apiWindowDecorate(ApiWindow apiWindow);
@@ -35,5 +42,6 @@ void           apiWindowResize(ApiWindow apiWindow, Int width, Int height);
 void           whenWindowApiThrowsError(Int error, const Char* description);
 void           apiSetWindowShouldClose(ApiWindow apiWindow, Bool shouldClose);
 void           apiWindowSetCursorPosition(ApiWindow apiWindow, DVec2 position);
+void           apiWindowSetStandardCursor(ApiWindow apiWindow, ApiCursorType cursor);
 ApiWindow      apiCreateWindow(IVec2 size, const Char* title, ApiWindow shared);
 void           apiWindowSetWindowedMode(ApiWindow apiWindow, TiledRectangle monitorArea);

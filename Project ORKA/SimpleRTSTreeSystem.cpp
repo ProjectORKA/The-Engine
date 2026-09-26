@@ -34,8 +34,9 @@ void SimpleRtsTreeSystem::reset(const SimpleRtsSimulation& sim)
 void SimpleRtsTreeSystem::create(const SimpleRtsSimulation& sim)
 {
 	name = "TreeSystem";
-	if (debugSimpleRts) logDebug("Creating " + toString(count) + " trees.");
-	while (positions.size() < count) spawnTree(sim);
+	const UInt spawnCount = static_cast<UInt>(sim.worldSettings.trees);
+	if (debugSimpleRts) logDebug("Creating " + toString(spawnCount) + " trees.");
+	while (positions.size() < spawnCount) spawnTree(sim);
 	if (debugSimpleRts) logDebug("Created trees.");
 }
 
@@ -84,11 +85,11 @@ void SimpleRtsTreeSystem::cutTree(const SimpleRtsSimulation& sim, const UInt id)
 	if (true)
 	{
 		Vec2 newTreePosition = positions[randomIntFast(positions.size())];
-		loopWithinCentered(newTreePosition, sim.mapSize);
+		loopWithinCentered(newTreePosition, sim.worldSettings.mapSize);
 		while (pointWithinDistanceOfOtherPoints(newTreePosition, positions.toVec2(), treeRadius))
 		{
 			newTreePosition += randomPointInCircleFast(treeSpread);
-			loopWithinCentered(newTreePosition, sim.mapSize);
+			loopWithinCentered(newTreePosition, sim.worldSettings.mapSize);
 		}
 		positions[id] = Vec3(newTreePosition, sim.getTerrainHeight(newTreePosition));
 	}

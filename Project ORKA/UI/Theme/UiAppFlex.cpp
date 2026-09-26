@@ -222,7 +222,8 @@ namespace Ui
 			style.padding.right != 0 || style.padding.bottom != 0)
 			return;
 		const String& type = node.authored.typeName;
-		if (type == "Button" || type == "TextField" || type == "TextArea" || type == "MenuItem")
+		if (type == "Button" || type == "TextField" || type == "NumberField" || type == "TextArea" ||
+			type == "MenuItem")
 			style.padding = uniformPadding(UiAppFlex::p10);
 	}
 

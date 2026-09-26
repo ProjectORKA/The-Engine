@@ -9,7 +9,6 @@ struct SimpleRtsSimulation;
 struct SimpleRtsTreeSystem : SimpleRtsSystem
 {
 	// constants
-	const UInt  count                 = 100;
 	const Float treeRadius            = 1.0f;
 	const Float minGrownTreeHeight    = 1.0f;
 	const Float maxGrownTreeHeight    = 3.0f;

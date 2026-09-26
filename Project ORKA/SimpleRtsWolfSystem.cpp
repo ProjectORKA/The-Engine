@@ -15,27 +15,27 @@ void SimpleRtsWolfSystem::spawnEntity(const SimpleRtsSimulation& sim)
 
 void SimpleRtsWolfSystem::update(SimpleRtsSimulation& sim)
 {
-	for (Int i = 0; i < count; i++)
+	for (Int i = 0; i < spawnCount; i++)
 	{
 		ages[i] += sim.timeStep();
 	}
 
-	for (Int i = 0; i < count; i++)
+	for (Int i = 0; i < spawnCount; i++)
 	{
 		if (ages[i] >= rabbitMaxAge) killWolf(i);
 	}
 
-	for (Int i = 0; i < count; i++)
+	for (Int i = 0; i < spawnCount; i++)
 	{
 		sizes[i]  = sizeFromAge(ages[i]);
 		speeds[i] = speedFromAge(ages[i]);
 	}
 
-	for (Int i = 0; i < count; i++) directions[i] = normalize(directions[i] + randomUnitVec2Fast() * jitter);
-	for (Int i = 0; i < count; i++)
+	for (Int i = 0; i < spawnCount; i++) directions[i] = normalize(directions[i] + randomUnitVec2Fast() * jitter);
+	for (Int i = 0; i < spawnCount; i++)
 	{
 		Vec2 pos = positions[i] + directions[i] * sim.timeStep() * speeds[i];
-		loopWithinCentered(pos, sim.mapSize);
+		loopWithinCentered(pos, sim.worldSettings.mapSize);
 		positions[i] = pos;
 		renderPositions[i] = Vec3(pos, sim.getTerrainHeight(pos));
 	}
@@ -59,16 +59,26 @@ Bool SimpleRtsWolfSystem::doesCollide(const Vec2 position, const Float radius) c
 void SimpleRtsWolfSystem::create(const SimpleRtsSimulation& sim)
 {
 	name = "RabbitSystem";
-	if (debugSimpleRts) logDebug("Spawning " + std::to_string(count) + " wolves");
-	for (Int i = 0; i < count; i++) spawnEntity(sim);
+	spawnCount = sim.worldSettings.wolves;
+	if (debugSimpleRts) logDebug("Spawning " + std::to_string(spawnCount) + " wolves");
+	for (Int i = 0; i < spawnCount; i++) spawnEntity(sim);
 	if (debugSimpleRts) logDebug("Spawned wolves");
 }
 
-void SimpleRtsWolfSystem::destroy(const SimpleRtsSimulation& sim) {}
+void SimpleRtsWolfSystem::destroy(const SimpleRtsSimulation& sim)
+{
+	sizes.clear();
+	ages.clear();
+	positions.clear();
+	renderPositions.clear();
+	directions.clear();
+	speeds.clear();
+	spawnCount = 0;
+}
 
 void SimpleRtsWolfSystem::killWolf(const Int id)
 {
-	Index parentID = randomIntFast(0, count - 1);
+	Index parentID = randomIntFast(0, max(0, spawnCount - 1));
 	ages[id]       = 0.0f;
 	speeds[id]     = minSpeed;
 	sizes[id]      = rabbitMinSize;

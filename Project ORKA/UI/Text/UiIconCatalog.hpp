@@ -9,6 +9,8 @@ namespace Ui
 	{
 		inline constexpr const Char* Check = "check";
 		inline constexpr const Char* ChevronDown = "chevron-down";
+		inline constexpr const Char* ChevronLeft = "chevron-left";
+		inline constexpr const Char* ChevronRight = "chevron-right";
 		inline constexpr const Char* PlayerPlay = "player-play";
 		inline constexpr const Char* Apps = "apps";
 		inline constexpr const Char* DeviceGamepad = "device-gamepad-2";

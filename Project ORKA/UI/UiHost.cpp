@@ -1,11 +1,16 @@
 #include "UiHost.hpp"
+
+#include <algorithm>
+
 #include "../Debug.hpp"
 #include "../KeyMap.hpp"
 #include "../Renderer.hpp"
 #include "../ResourceManager.hpp"
 #include "../Window.hpp"
+#include "../WindowAPI.hpp"
 #include "Inspector/UiLayoutDebugOverlay.hpp"
 #include "Render/UiRenderer.hpp"
+#include "Widgets/UiWidgets.hpp"
 
 namespace Ui
 {
@@ -39,6 +44,12 @@ namespace Ui
 
 		// Preference order for the platform UI font. The font service resolves
 		// no operating system collections itself, so the host supplies a path.
+		Bool hasClass(const UiNode& node, const String& value)
+		{
+			return std::find(node.authored.classes.begin(), node.authored.classes.end(), value) !=
+				node.authored.classes.end();
+		}
+
 		constexpr SystemFontCandidate systemFontCandidates[]{
 			{"segoeui.ttf", "Segoe UI"},
 			{"calibri.ttf", "Calibri"},
@@ -130,7 +141,7 @@ namespace Ui
 		(void)routedEvents.dispatch(move);
 	}
 
-	void UiHost::dispatchEvents()
+	void UiHost::dispatchEvents(Window& window)
 	{
 		for (const UiEvent& event : queuedEvents.drain())
 		{
@@ -153,7 +164,10 @@ namespace Ui
 		retainedDocument.applyDeferredMutations();
 		retainedDocument.processDirty(dirty(DirtyFlag::Bindings) | dirty(DirtyFlag::Style));
 		synchronizeTextMeasurers();
-		dispatchEvents();
+		if (widgetFactoryForInput) widgetFactoryForInput->setInputWindow(&window);
+		dispatchEvents(window);
+		if (widgetFactoryForInput) widgetFactoryForInput->driveNumberScrubFrame(window);
+		window.applyUiCursorRequests();
 		retainedLayoutEngine.layout();
 		retainedOverflowController.synchronizeAfterLayout();
 		if (retainedOverflowController.consumePendingRelayout())
@@ -173,6 +187,36 @@ namespace Ui
 			retainedLayoutEngine.layout();
 			retainedOverflowController.synchronizeAfterLayout();
 		}
+
+		if (!apiWindowCursorIsCaptured(window.apiWindow))
+		{
+			ApiCursorType cursor = ApiCursorType::Arrow;
+			UiNodeHandle hovered = routedEvents.hoveredNode();
+			while (const UiNode* node = retainedDocument.get(hovered))
+			{
+				const String& type = node->authored.typeName;
+				if (type == "NumberField")
+				{
+					cursor = hasClass(*node, "is-number-editing")
+						? ApiCursorType::IBeam : ApiCursorType::Hand;
+					break;
+				}
+				if (type == "TextField" || type == "TextArea")
+				{
+					cursor = ApiCursorType::IBeam;
+					break;
+				}
+				if (type == "Button" || type == "Toggle" || type == "Checkbox" ||
+					type == "Select" || type == "Combo" || type == "Slider" || type == "Range" ||
+					type == "MenuItem")
+				{
+					cursor = ApiCursorType::Hand;
+					break;
+				}
+				hovered = node->parentHandle();
+			}
+			apiWindowSetStandardCursor(window.apiWindow, cursor);
+		}
 	}
 
 	void UiHost::synchronizeTextMeasurers()
@@ -187,7 +231,12 @@ namespace Ui
 				auto tracked = std::ranges::find_if(textMeasurers,
 					[&](const TextMeasurerState& state)
 					{ return state.handle == handle; });
-				if (node.authored.text.empty())
+				const String& type = node.authored.typeName;
+				const Bool editableField = type == "TextField" || type == "NumberField" ||
+					type == "TextArea";
+				// Empty editable fields still need one line of intrinsic height so parents
+				// don't collapse; non-editable empty text clears its measurer as before.
+				if (node.authored.text.empty() && !editableField)
 				{
 					if (retainedLayoutEngine.hasIntrinsicMeasurer(handle) &&
 						retainedLayoutEngine.intrinsicMeasurerOwner(handle) == owner)
@@ -217,6 +266,26 @@ namespace Ui
 					[this, handle, style](const UiNode& measuredNode,
 						const UiConstraints& constraints)
 					{
+						if (measuredNode.authored.text.empty())
+						{
+							const Float fontSize = style.fontSize > 0 ? style.fontSize : 16.0f;
+							const Float lineHeight = style.lineHeight > 0 ? style.lineHeight : fontSize * 1.5f;
+							const Vec2 padding = glm::max(style.padding, Vec2(0)) * 2.0f;
+							const Vec2 content(0.0f, lineHeight);
+							const UiIntrinsicMeasure measured{
+								content, constraints.constrain(content), fontSize * 0.8f };
+							if (UiNode* mutableNode = retainedDocument.get(handle))
+							{
+								mutableNode->computed.textFontSize = fontSize;
+								mutableNode->computed.textLineHeight = lineHeight;
+								mutableNode->computed.textLineCount = 1;
+							}
+							return UiIntrinsicMeasure{
+								constraints.constrain(measured.minimum + padding),
+								constraints.constrain(measured.preferred + padding),
+								measured.baseline < 0 ? -1 : measured.baseline + style.padding.y };
+						}
+
 						UiTextLayoutResult textLayout;
 						const UiIntrinsicMeasure result =
 							retainedFontService.measureIntrinsic(
@@ -254,6 +323,14 @@ namespace Ui
 			retainedDocument.markDirty(
 				retainedDocument.root(), DirtyFlag::Paint);
 		}
+
+		// Caret blink requires focused editable fields to repaint every frame.
+		retainedDocument.traverse([&](const UiNodeHandle handle, UiNode& node)
+			{
+				if (node.state.focused && node.state.semantics.showTextCaret)
+					retainedDocument.markDirty(handle, DirtyFlag::Paint);
+			});
+
 		if (!nodePainter) return;
 
 		UiDisplayList displayList;
@@ -293,6 +370,8 @@ namespace Ui
 
 	void UiHost::destroy(Window& window)
 	{
+		window.requestUiCursorRelease();
+		widgetFactoryForInput = nullptr;
 		window.unicodeInputCallback = {};
 		window.keyInputCallback = {};
 		window.focusInputCallback = {};

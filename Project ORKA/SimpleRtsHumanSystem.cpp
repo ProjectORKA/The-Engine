@@ -30,21 +30,22 @@ void SimpleRtsHumanSystem::create(const SimpleRtsSimulation& sim)
 	loadedNames    = loadStringVector("Data/Text/simpleRTSHumanMaleNames.txt");
 	loadedSurNames = loadStringVector("Data/Text/simpleRTSHumanSurnames.txt");
 
-	names.reserve(count);
-	speed.reserve(count);
-	scales.reserve(count);
-	states.reserve(count);
-	dailyEnergyRequirement.reserve(count);
-	storedEnergy.reserve(count);
-	surNames.reserve(count);
-	targetId.reserve(count);
-	positions.reserve(count);
-	renderPositions.reserve(count);
-	directions.reserve(count);
-	targetPositions.reserve(count);
+	const Int spawnCount = sim.worldSettings.humans;
+	names.reserve(static_cast<SizeT>(spawnCount));
+	speed.reserve(static_cast<SizeT>(spawnCount));
+	scales.reserve(static_cast<SizeT>(spawnCount));
+	states.reserve(static_cast<SizeT>(spawnCount));
+	dailyEnergyRequirement.reserve(static_cast<SizeT>(spawnCount));
+	storedEnergy.reserve(static_cast<SizeT>(spawnCount));
+	surNames.reserve(static_cast<SizeT>(spawnCount));
+	targetId.reserve(static_cast<SizeT>(spawnCount));
+	positions.reserve(static_cast<SizeT>(spawnCount));
+	renderPositions.reserve(static_cast<SizeT>(spawnCount));
+	directions.reserve(static_cast<SizeT>(spawnCount));
+	targetPositions.reserve(static_cast<SizeT>(spawnCount));
 
-	if (debugSimpleRts) logDebug("Spawning " + std::to_string(count) + " humans");
-	for (int i = 0; i < count; i++) spawnHuman(sim);
+	if (debugSimpleRts) logDebug("Spawning " + std::to_string(spawnCount) + " humans");
+	for (Int i = 0; i < spawnCount; i++) spawnHuman(sim);
 	if (debugSimpleRts) logDebug("Spawned humans");
 }
 
@@ -67,7 +68,7 @@ void SimpleRtsHumanSystem::update(SimpleRtsSimulation& sim)
 			if (states[i] == SimpleRtsHumanState::Wandering)
 			{
 				positions[i] += directions[i] * speed[i] * wanderingWalkingSpeedMultiplier * sim.timeStep();
-				loopWithinCentered(positions[i], sim.mapSize);
+				loopWithinCentered(positions[i], sim.worldSettings.mapSize);
 				renderPositions[i] = Vec3(positions[i], sim.getTerrainHeight(positions[i]));
 				if (storedEnergy[i] < 0.5f * dailyEnergyRequirement[i])
 				{
@@ -92,8 +93,8 @@ void SimpleRtsHumanSystem::update(SimpleRtsSimulation& sim)
 
 			if (states[i] == SimpleRtsHumanState::SearchFood)
 			{
-				if (const Vec2 delta = deltaInLoopingSpace(positions[i], targetPositions[i], sim.mapSize); delta != Vec2(0)) directions[i] = normalize(delta);
-				const Index berryBushId = idOfClosestPointInLoopingSpace(positions[i], sim.berryBushSystem.positions, sim.mapSize);
+				if (const Vec2 delta = deltaInLoopingSpace(positions[i], targetPositions[i], sim.worldSettings.mapSize); delta != Vec2(0)) directions[i] = normalize(delta);
+				const Index berryBushId = idOfClosestPointInLoopingSpace(positions[i], sim.berryBushSystem.positions, sim.worldSettings.mapSize);
 				targetId[i]             = berryBushId;
 				targetPositions[i]      = sim.berryBushSystem.positions[berryBushId];
 				states[i]               = SimpleRtsHumanState::MoveToFood;
@@ -102,7 +103,7 @@ void SimpleRtsHumanSystem::update(SimpleRtsSimulation& sim)
 			if (states[i] == SimpleRtsHumanState::MoveToFood)
 			{
 				// Calculate delta in looping space and its length
-				const Vec2  delta = deltaInLoopingSpace(positions[i], targetPositions[i], sim.mapSize);
+				const Vec2  delta = deltaInLoopingSpace(positions[i], targetPositions[i], sim.worldSettings.mapSize);
 				const Float dist  = length(delta);
 
 				if (delta == Vec2(0) || dist == 0.0)
@@ -119,7 +120,7 @@ void SimpleRtsHumanSystem::update(SimpleRtsSimulation& sim)
 					states[i] = SimpleRtsHumanState::EatFood;
 				}
 				else positions[i] += directions[i] * moveDistance;
-				loopWithinCentered(positions[i], sim.mapSize);
+				loopWithinCentered(positions[i], sim.worldSettings.mapSize);
 				renderPositions[i] = Vec3(positions[i], sim.getTerrainHeight(positions[i]));
 			}
 
@@ -134,7 +135,22 @@ void SimpleRtsHumanSystem::update(SimpleRtsSimulation& sim)
 	timer.stop();
 }
 
-void SimpleRtsHumanSystem::destroy(const SimpleRtsSimulation& sim) {}
+void SimpleRtsHumanSystem::destroy(const SimpleRtsSimulation& sim)
+{
+	names.clear();
+	speed.clear();
+	scales.clear();
+	states.clear();
+	dailyEnergyRequirement.clear();
+	storedEnergy.clear();
+	surNames.clear();
+	targetId.clear();
+	positions.clear();
+	renderPositions.clear();
+	directions.clear();
+	targetPositions.clear();
+	humanCount = 0;
+}
 
 Bool SimpleRtsHumanSystem::doesCollide(const Vec2 position, const Float radius) const
 {

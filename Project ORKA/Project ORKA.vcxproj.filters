@@ -1278,6 +1278,18 @@
     <None Include="Data\Shaders\simpleRTS.vert">
       <Filter>Shaders</Filter>
     </None>
+    <None Include="Data\Shaders\simpleRTSOcean.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Data\Shaders\simpleRTSOcean.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Data\Shaders\simpleRTSTerrain.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Data\Shaders\simpleRTSTerrain.vert">
+      <Filter>Shaders</Filter>
+    </None>
     <None Include="Data\Shaders\sky.frag">
       <Filter>Shaders</Filter>
     </None>

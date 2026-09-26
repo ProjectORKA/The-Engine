@@ -5,7 +5,6 @@
 struct SimpleRtsBodySystem : SimpleRtsSystem
 {
 	Vec3Vector positions;
-	Int        count  = 1000;
 	Float      radius = 1.5f;
 
 	void update(SimpleRtsSimulation& sim) override;

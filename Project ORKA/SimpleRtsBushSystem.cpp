@@ -3,7 +3,10 @@
 
 void SimpleRtsBushSystem::update(SimpleRtsSimulation& sim) {}
 
-void SimpleRtsBushSystem::destroy(const SimpleRtsSimulation& sim) {}
+void SimpleRtsBushSystem::destroy(const SimpleRtsSimulation& sim)
+{
+	positions.clear();
+}
 
 void SimpleRtsBushSystem::setPosition(const SimpleRtsSimulation& sim, const Index index, const Vec2 position)
 {
@@ -23,8 +26,9 @@ void SimpleRtsBushSystem::render(Renderer& renderer)
 void SimpleRtsBushSystem::create(const SimpleRtsSimulation& sim)
 {
 	name = "BushSystem";
-	if (debugSimpleRts) logDebug("Spawning " + std::to_string(count) + " bushes");
-	for (int i = 0; i < count; i++) spawnEntity(sim);
+	const Int spawnCount = sim.worldSettings.bushes;
+	if (debugSimpleRts) logDebug("Spawning " + std::to_string(spawnCount) + " bushes");
+	for (Int i = 0; i < spawnCount; i++) spawnEntity(sim);
 	if (debugSimpleRts) logDebug("Spawned bushes");
 }
 
@@ -40,5 +44,5 @@ Bool SimpleRtsBushSystem::doesCollide(const Vec2 position, const Float radius) c
 
 Int SimpleRtsBushSystem::getCount() const
 {
-	return count;
+	return static_cast<Int>(positions.size());
 }

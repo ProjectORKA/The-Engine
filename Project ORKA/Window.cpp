@@ -377,6 +377,69 @@ void Window::publishMousePosition(const DVec2 logicalPosition)
 	publishedMousePosition.store(packMousePosition(logicalPosition), std::memory_order_release);
 }
 
+void Window::alignFrameMouseSample(const DVec2 logicalPosition)
+{
+	publishMousePosition(logicalPosition);
+	frameMousePosition = logicalPosition;
+	frameMousePositionBotLeft =
+		DVec2(logicalPosition.x, getHeight() - static_cast<Float>(logicalPosition.y));
+	mouseDelta = DVec2(0);
+}
+
+void Window::requestUiCursorCapture(const DVec2 anchor)
+{
+	LockGuard lock(uiCursorRequestMutex);
+	uiCursorLockAnchor = anchor;
+	uiCursorReleaseRequested.store(false, std::memory_order_release);
+	uiCursorCaptureRequested.store(true, std::memory_order_release);
+}
+
+void Window::requestUiCursorRelease()
+{
+	uiCursorCaptureRequested.store(false, std::memory_order_release);
+	uiCursorReleaseRequested.store(true, std::memory_order_release);
+}
+
+DVec2 Window::scrubCursorAnchor() const
+{
+	LockGuard lock(uiCursorRequestMutex);
+	return uiCursorLockAnchor;
+}
+
+void Window::applyUiCursorRequests()
+{
+	if (!apiWindow) return;
+
+	const Bool release =
+		uiCursorReleaseRequested.exchange(false, std::memory_order_acq_rel);
+	const Bool capture =
+		uiCursorCaptureRequested.exchange(false, std::memory_order_acq_rel);
+
+	// Release wins when both were queued in the same interval (scrub end must not
+	// lose to a stale capture flag processed in the same call).
+	if (release)
+	{
+		DVec2 anchor = DVec2(0);
+		{
+			LockGuard lock(uiCursorRequestMutex);
+			anchor = uiCursorLockAnchor;
+		}
+		apiWindowEnableCursor(apiWindow);
+		apiWindowSetCursorPosition(apiWindow, anchor);
+		alignFrameMouseSample(anchor);
+	}
+	else if (capture)
+	{
+		const DVec2 anchor = apiWindowGetCursorPosition(apiWindow);
+		{
+			LockGuard lock(uiCursorRequestMutex);
+			uiCursorLockAnchor = anchor;
+		}
+		alignFrameMouseSample(anchor);
+		apiWindowDisableCursor(apiWindow);
+	}
+}
+
 DVec2 Window::mousePosition() const
 {
 	return unpackMousePosition(publishedMousePosition.load(std::memory_order_acquire));

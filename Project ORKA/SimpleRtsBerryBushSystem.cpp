@@ -17,11 +17,13 @@ void SimpleRtsBerryBushSystem::render(Renderer& renderer)
 void SimpleRtsBerryBushSystem::create(const SimpleRtsSimulation& sim)
 {
 	name = "BerryBushSystem";
-	if (debugSimpleRts) logDebug("Spawning " + std::to_string(count) + " berry bushes");
+	const Int spawnCount = sim.worldSettings.berryBushes;
+	if (debugSimpleRts) logDebug("Spawning " + std::to_string(spawnCount) + " berry bushes");
 	mutex.lock();
-	positions.resize(count);
+	positions.clear();
+	positions.reserve(static_cast<SizeT>(spawnCount));
 	mutex.unlock();
-	for (Int i = 0; i < count; i++) spawnEntity(sim);
+	for (Int i = 0; i < spawnCount; i++) spawnEntity(sim);
 	if (debugSimpleRts) logDebug("Spawned berry bushes");
 }
 
@@ -40,4 +42,9 @@ void SimpleRtsBerryBushSystem::eat(const Index berryBushId, SimpleRtsSimulation&
 	sim.bushSystem.setPosition(sim, bushId, position);
 }
 
-void SimpleRtsBerryBushSystem::destroy(const SimpleRtsSimulation& sim) {}
+void SimpleRtsBerryBushSystem::destroy(const SimpleRtsSimulation& sim)
+{
+	mutex.lock();
+	positions.clear();
+	mutex.unlock();
+}

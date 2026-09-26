@@ -16,7 +16,6 @@ struct SimpleRtsBushSystem : SimpleRtsSystem
 	void               setPosition(const SimpleRtsSimulation& sim, Index index, Vec2 position);
 
 private:
-	Int        count  = 10000;
 	Float      radius = 0.5f;
 	Vec3Vector positions;
 };

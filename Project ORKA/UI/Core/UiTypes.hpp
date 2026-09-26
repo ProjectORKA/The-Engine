@@ -78,6 +78,12 @@ namespace Ui
 		String value;
 		Bool selected = false;
 		Bool checked = false;
+		// Editable text chrome (TextField / NumberField / TextArea). Byte offsets into
+		// the live edit string; painters ignore these when showTextCaret is false.
+		Bool showTextCaret = false;
+		SizeT selectionStart = 0;
+		SizeT selectionEnd = 0;
+		SizeT caretByte = 0;
 	};
 
 	struct UiStateData

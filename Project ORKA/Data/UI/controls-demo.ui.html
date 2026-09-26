@@ -175,6 +175,28 @@
 
 		<div class="section g10">
 			<div class="section-header row g10">
+				<image class="section-icon" icon="hash" />
+				<label class="field-label">NUMBER INPUTS</label>
+			</div>
+			<div class="labeled-row row g10">
+				<label class="field-label">Particle cap</label>
+				<number-input class="fg1" min="0" max="10000" step="100" integer="true" label="Particle cap"
+					[value]="state.particleCap" />
+			</div>
+			<div class="labeled-row row g10">
+				<label class="field-label">Temperature</label>
+				<number-input class="fg1 b150" min="-40" max="120" step="0.5" unit="°C" label="Temperature"
+					[value]="state.temperature" />
+			</div>
+			<div class="labeled-row row g10">
+				<label class="field-label">Offset</label>
+				<number-input class="fg1 b150" integer="true" step="1" label="Unbound offset"
+					[value]="state.unboundOffset" />
+			</div>
+		</div>
+
+		<div class="section g10">
+			<div class="section-header row g10">
 				<image class="section-icon" icon="volume" />
 				<label class="field-label">SLIDERS</label>
 			</div>

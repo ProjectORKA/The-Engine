@@ -1,5 +1,7 @@
 #include "UiAuthoredHost.hpp"
 
+#include "../Theme/UiAppTheme.hpp"
+
 namespace Ui
 {
 	UiAuthoredHost::UiAuthoredHost(UiHost& newHost)
@@ -10,6 +12,15 @@ namespace Ui
 		styleAdapter(host.document(), host.layoutEngine())
 	{
 		widgetFactory->attachLayoutEngine(host.layoutEngine());
+		widgetFactory->attachTextMetrics(
+			host.fontService().shapeProvider(),
+			makeAppTextStyleProvider(host.appTheme()));
+		host.registerWidgetFactory(widgetFactory.get());
+	}
+
+	UiAuthoredHost::~UiAuthoredHost()
+	{
+		host.registerWidgetFactory(nullptr);
 	}
 
 	Bool UiAuthoredHost::loadFromFiles(const Path& markupPath, const Path& stylePath)
@@ -76,6 +87,9 @@ namespace Ui
 
 	void UiAuthoredHost::syncControlLayouts()
 	{
+		widgetFactory->attachTextMetrics(
+			host.fontService().shapeProvider(),
+			makeAppTextStyleProvider(host.appTheme()));
 		widgetBridgeImpl->syncControlLayouts();
 	}
 }

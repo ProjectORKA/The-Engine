@@ -20,6 +20,7 @@ When an edit request is broad, inspect these files first:
 - `Project ORKA/Game.hpp` - simulation/renderer split contract.
 - `Project ORKA/UserInterface.hpp` + `Project ORKA/UIElement.hpp` - legacy UI tree model.
 - `Project ORKA/UI/DESIGN_RULES.md` - **modern retained UI design rules (read before UI work).**
+- `Project ORKA/UI/UI_REDESIGN_PLAN.md` - **target UI architecture (app shell, components, surfaces, multi-window); read before game-shell or large UI refactors.**
 - `Project ORKA/UI/Theme/UiAppTheme.hpp` - **master app theme (colors, typography, layout, light/dark).**
 - `Project ORKA/UI/Theme/UiAppFlex.hpp` - **flex spacing classes (p5–p80, g5–g80, col/row).**
 - `Project ORKA/UI/UiHost.hpp` + `Project ORKA/UI/Widgets/UiWidgets.hpp` - modern UI host and controls.
@@ -28,6 +29,7 @@ When an edit request is broad, inspect these files first:
 - `Project ORKA/Renderer.hpp` + `Project ORKA/Renderer.cpp` - render facade and systems.
 - `Project ORKA/Settings.hpp` - project-wide constants and debug toggles.
 - `Project ORKA/AI/` + **AI Chat** game (`AI/AiChat.cpp`, `Data/UI/ai-chat.ui.html`) — engine-managed local LLM via llama-server; pins in `AI/AiConfig.hpp`. GPU: `AiGpuDetect.cpp` + CUDA zips/cudart DLLs via `AiRuntimeResolve.cpp`. If runtime download fails with 404, update `llamaCppReleaseTag` or rely on GitHub API fallback.
+- **Simple RTS** world presets: `SimpleRtsWorldSettings` + setup UI (`Data/UI/simple-rts-world.ui.html`). Built-ins under `Data/SimpleRts/presets/` (seeded on first run); user saves in cache `simple-rts/presets/`. Simulation starts only after **Start / rebuild world**; **F2** reopens setup. When the setup overlay is hidden, it must not participate in legacy hit-testing (`isPointInside` / focus back to the game renderer) or its `UiHost` will consume LMB, scroll, and block mouse capture.
 
 ## Architecture Guardrails
 
@@ -70,7 +72,7 @@ Hard requirements agents must not skip:
 - **Theme paints, widgets semantic** — visuals only in `UiAppTheme.cpp`; surfaces use `UiAppClass` style classes.
 - **Light + dark mode** — both modes must look correct; add a theme toggle on new app shells when practical.
 - **Visible focus** on all focusable controls.
-- **Use `UiWidgetFactory` controls** (toggle, checkbox, slider, select, textField) instead of mimicking them with boxes.
+- **Use `UiWidgetFactory` controls** (toggle, checkbox, slider, `numberField` / `<number-input>`, select, textField) instead of mimicking them with boxes. **Number fields default to Blender-style display mode**: centered value, optional min/max progress fill, hover step chevrons, drag-to-scrub (window-thread `UiWidgetFactory::driveNumberScrubFrame` from `UiHost::update` using `Window::mouseDelta`; optional cursor hide via `Window::requestUiCursorCapture` / `applyUiCursorRequests` on the poll-events thread — do not route scrub through `PointerMove`/`Drag` or `UiHost` cursor warp), click to switch to left-aligned typing. Markup: `min`/`max` (bound), `integer`, `unit`, `progress="false"`. Typed commit **clamps only** (min/max); `step` is for arrows/scrub finalize, not free typing (avoids `1`→`0` when step is 25). Empty editable fields must keep a one-line **intrinsic text measure** in `UiHost::synchronizeTextMeasurers` — do not fake height with control `min-height` (that makes buttons/inputs too tall).
 - **Attach layout engine + `syncControlLayouts()`** when using composite controls (toggles, checkboxes, selects).
 - **Showcase new reusable tokens/components** in `Data/UI/controls-demo.ui.html` (markup) + global SCSS under `Data/UI/`.
 - **Prefer authored UI** for demo/layout surfaces; keep C++ to property/command wiring via `UiAuthoredHost`.

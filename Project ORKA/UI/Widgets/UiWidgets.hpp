@@ -6,8 +6,11 @@
 #include "../Layout/UiLayoutEngine.hpp"
 #include "../Layout/UiScroll.hpp"
 #include "../Render/UiPaintBuilder.hpp"
+#include "../Text/UiTextPainter.hpp"
 
 #include <variant>
+
+struct Window;
 
 namespace Ui
 {
@@ -48,6 +51,7 @@ namespace Ui
 		Range,
 		Progress,
 		TextField,
+		NumberField,
 		TextArea,
 		Select,
 		Combo,
@@ -209,6 +213,26 @@ namespace Ui
 		UiActivateCallback onSubmit;
 	};
 
+	enum class UiNumberFieldMode : Byte
+	{
+		Display,
+		Edit,
+	};
+
+	struct UiNumberFieldConfig : UiWidgetCommon
+	{
+		Bool bounded = true;
+		Bool integer = false;
+		Bool showProgress = true;
+		Double minimum = 0;
+		Double maximum = 1;
+		Double step = 0;
+		Double value = 0;
+		String unit;
+		String placeholder;
+		UiNumberChangeCallback onChange;
+	};
+
 	struct UiSelectOption
 	{
 		String value;
@@ -271,8 +295,33 @@ namespace Ui
 		explicit UiTextInputState(UiTextEditLimits limits = {}) : editor(limits) {}
 		UiTextEditModel editor;
 		String placeholder;
+		Bool draggingSelection = false;
+		SizeT selectionAnchor = 0;
 		UiTextChangeCallback onChange;
 		UiActivateCallback onSubmit;
+	};
+	struct UiNumberFieldState
+	{
+		Bool bounded = true;
+		Bool integer = false;
+		Bool showProgress = true;
+		Double minimum = 0;
+		Double maximum = 1;
+		Double step = 0;
+		Double value = 0;
+		Double internalValue = 0;
+		String unit;
+		UiTextEditModel editor;
+		String placeholder;
+		UiNumberFieldMode mode = UiNumberFieldMode::Display;
+		Bool focused = false;
+		Bool scrubbing = false;
+		Bool pendingDisplayClick = false;
+		Double scrubStartValue = 0;
+		Double scrubAccumulatedPixels = 0;
+		Bool draggingSelection = false;
+		SizeT selectionAnchor = 0;
+		UiNumberChangeCallback onChange;
 	};
 	struct UiSelectState
 	{
@@ -288,7 +337,7 @@ namespace Ui
 		UiBoxState, UiTextState, UiImageState, UiScrollViewState, UiVirtualListState,
 		UiFocusScopeState, UiPortalState, UiWorldSurfaceState, UiGameViewportState,
 		UiButtonState, UiToggleState, UiRadioGroupState, UiSliderState,
-		UiProgressState, UiTextInputState, UiSelectState>;
+		UiProgressState, UiTextInputState, UiNumberFieldState, UiSelectState>;
 
 	class UiWidgetFactory
 	{
@@ -327,6 +376,7 @@ namespace Ui
 		[[nodiscard]] UiWidgetHandle range(UiRangeConfig config);
 		[[nodiscard]] UiWidgetHandle progress(UiProgressConfig config);
 		[[nodiscard]] UiWidgetHandle textField(UiTextInputConfig config);
+		[[nodiscard]] UiWidgetHandle numberField(UiNumberFieldConfig config);
 		[[nodiscard]] UiWidgetHandle textArea(UiTextInputConfig config);
 		[[nodiscard]] UiWidgetHandle select(UiSelectConfig config);
 		[[nodiscard]] UiWidgetHandle combo(UiSelectConfig config);
@@ -344,7 +394,13 @@ namespace Ui
 		[[nodiscard]] Bool materializeVirtualList(UiWidgetHandle handle);
 		void renderGameViewports() const;
 		void attachLayoutEngine(UiLayoutEngine& layoutEngine);
+		void attachTextMetrics(UiTextShapeProvider shapeProvider, UiTextStyleProvider styleProvider);
 		void syncControlLayouts();
+		void setInputWindow(Window* window) { inputWindow = window; }
+		// Window-thread scrub driver: uses Window::mouseDelta while LMB is held.
+		void driveNumberScrubFrame(Window& window);
+
+		[[nodiscard]] SizeT hitTestEditByte(UiNodeHandle node, Float viewportX) const;
 
 		template <typename State>
 		[[nodiscard]] State* state(UiWidgetHandle handle)
@@ -383,8 +439,24 @@ namespace Ui
 		UiDocument& document;
 		UiEventRouter& router;
 		UiLayoutEngine* layout = nullptr;
+		UiTextShapeProvider textShapeProvider;
+		UiTextStyleProvider textStyleProvider;
 		Vector<Slot> slots;
 		Vector<UInt> freeSlots;
+		Window* inputWindow = nullptr;
+		struct NumberScrubSession
+		{
+			UiWidgetHandle handle;
+			Window* window = nullptr;
+			Double scrubStartValue = 0;
+			Double scrubAccumulatedPixels = 0;
+			Bool moved = false;
+		};
+		Bool numberScrubActive = false;
+		NumberScrubSession numberScrub{};
+
+		void beginNumberScrub(UiWidgetHandle handle);
+		void finishNumberScrub(Bool clickToEditIfUntouched);
 
 		[[nodiscard]] Slot* get(UiWidgetHandle handle);
 		[[nodiscard]] const Slot* get(UiWidgetHandle handle) const;
@@ -405,6 +477,9 @@ namespace Ui
 		void syncToggle(Slot& slot);
 		void syncSlider(Slot& slot);
 		void syncText(Slot& slot);
+		void syncNumberField(Slot& slot);
+		Bool commitNumberField(Slot& slot, UiWidgetHandle handle, Bool notify);
+		void applyNumberScrubPixels(Slot& slot, UiNumberFieldState& state, Double deltaPixels);
 		void syncSelect(Slot& slot);
 		void layoutSelectChildren(Slot& slot);
 		void layoutToggleChildren(Slot& slot);

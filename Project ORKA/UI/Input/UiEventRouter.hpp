@@ -66,6 +66,8 @@ namespace Ui
 		Bool immediatePropagationStopped = false;
 		Bool capturePointer = false;
 		Bool releasePointer = false;
+		Bool captureSystemCursor = false;
+		Bool releaseSystemCursor = false;
 		Bool focusTarget = false;
 
 		void preventDefault() { defaultPrevented = true; }
@@ -153,6 +155,7 @@ namespace Ui
 
 		void applyDeferredOperations();
 		void reset();
+		void consumeSystemCursorRequests(Bool& capture, Bool& release);
 
 	private:
 		struct Listener;
@@ -181,6 +184,8 @@ namespace Ui
 		UiNodeHandle focused;
 		U64 nextListener = 1;
 		UInt dispatchDepth = 0;
+		Bool pendingSystemCursorCapture = false;
+		Bool pendingSystemCursorRelease = false;
 
 		[[nodiscard]] Vector<UiNodeHandle> pathTo(UiNodeHandle node) const;
 		[[nodiscard]] Bool isDescendantOf(UiNodeHandle node, UiNodeHandle ancestor) const;

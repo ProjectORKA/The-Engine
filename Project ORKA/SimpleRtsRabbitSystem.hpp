@@ -19,7 +19,7 @@ struct SimpleRtsRabbitSystem : SimpleRtsSystem
 	const Float minSpeed      = 0.1f;
 	const Float maxSpeed      = 8.0f;
 	const Float jitter        = 0.1f;
-	const Int   count         = 10000;
+	Int spawnCount = 0;
 
 	Vector<Float>       sizes;
 	Vector<Float>       ages;

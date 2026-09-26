@@ -108,6 +108,8 @@ namespace Ui
 	Bool UiTextEditModel::setText(String text)
 	{
 		if (!accepts(text)) return false;
+		// Keep caret/selection when a binding refresh republishes the same string.
+		if (value == text) return true;
 		value = std::move(text);
 		selected = { value.size(), value.size() };
 		composing = false;

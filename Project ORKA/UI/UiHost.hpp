@@ -17,6 +17,8 @@
 
 namespace Ui
 {
+	class UiWidgetFactory;
+
 	// Adapter between the existing immediate UIElement tree and the retained UI.
 	// Each host owns one document and one per-window input queue.
 	struct UiHost final : UIElement
@@ -69,6 +71,8 @@ namespace Ui
 		{
 			layoutDebugToggleRequested.store(true, std::memory_order_release);
 		}
+		// Optional factory hook for window-thread input drivers (number-field scrub).
+		void registerWidgetFactory(UiWidgetFactory* factory) { widgetFactoryForInput = factory; }
 
 	private:
 		UiDocument retainedDocument;
@@ -99,13 +103,14 @@ namespace Ui
 		void refreshAppThemePainter();
 		DVec2 pointerPosition = DVec2(0);
 		Bool pointerPositionKnown = false;
+		UiWidgetFactory* widgetFactoryForInput = nullptr;
 		Bool created = false;
 		Bool layoutDebugMode = false;
 		std::atomic<Bool> layoutDebugToggleRequested{ false };
 
 		void updateViewport(Window& window);
 		void synchronizePointer(Window& window);
-		void dispatchEvents();
+		void dispatchEvents(Window& window);
 		void synchronizeTextMeasurers();
 	};
 }

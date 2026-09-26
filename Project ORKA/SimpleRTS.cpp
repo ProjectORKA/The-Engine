@@ -3,9 +3,16 @@
 #include "Renderer.hpp"
 #include "Crosshair.hpp"
 #include "Random.hpp"
+#include "SimpleRtsWorldPresets.hpp"
 #include "UserInterface.hpp"
 
-Bool debugSimpleRts = true;
+Bool debugSimpleRts = false;
+
+SimpleRtsRenderer::SimpleRtsRenderer()
+	: settingsPanel(*this)
+{
+	addElement(settingsPanel);
+}
 
 // wolves howl, stretch, kiss, sit, lay and play when idle
 // wolves avoid walking in water in cold temperatures
@@ -22,22 +29,31 @@ Bool debugSimpleRts = true;
 
 void SimpleRts::run()
 {
-	sim.start();
-	sim.waitUntilLoaded();
+	(void)SimpleRtsWorldPresets::loadLastSettings(sim.worldSettings);
+	renderer.settingsPanel.draftSettings = sim.worldSettings;
 	renderer.connect(sim);
 	ui.window("Simple RTS", settings.defaultWindowWidth, settings.defaultWindowHeight, true, true, WindowState::Windowed, renderer);
 	ui.run();
-	sim.stop();
+	if (sim.isLoaded() || sim.getKeepRunning())
+		sim.stop();
 }
 
 void SimpleRtsSimulation::destroy()
 {
+	for (const auto system : systems)
+		system->destroy(*this);
+	systems.clear();
 	loaded = false;
 }
 
 void SimpleRtsSimulation::reset()
 {
-	destroy();
+	if (loaded)
+	{
+		for (const auto system : systems)
+			system->destroy(*this);
+		systems.clear();
+	}
 	create();
 }
 
@@ -55,14 +71,49 @@ void SimpleRtsSimulation::create()
 	for (const auto s : systems) s->create(*this);
 
 	quadtreeSystem.create(*this);
-	quadtreeSystem.update(*this, mapSize);
+	quadtreeSystem.update(*this, worldSettings.mapSize);
 
 	loaded = true;
 }
 
 void SimpleRtsRenderer::create(Window& window)
 {
+	owningWindow = &window;
 	GameRenderer::create(window);
+	growX(true);
+	growY(true);
+}
+
+void SimpleRtsRenderer::render(Window& window)
+{
+	GameRenderer::render(window);
+	if (settingsPanel.isVisiblePanel())
+		settingsPanel.render(window);
+}
+
+void SimpleRtsRenderer::unloadWorldGpu()
+{
+	if (!owningWindow) return;
+	if (terrainMesh.isLoaded()) terrainMesh.unload(owningWindow->renderer);
+	if (oceanMesh.isLoaded()) oceanMesh.unload(owningWindow->renderer);
+}
+
+void SimpleRtsRenderer::startWorld()
+{
+	if (!sim) return;
+	sim->worldSettings = settingsPanel.draftSettings;
+	if (!sim->getKeepRunning() && !sim->isLoaded())
+		sim->start();
+}
+
+void SimpleRtsRenderer::restartWorld()
+{
+	if (!sim) return;
+	unloadWorldGpu();
+	if (sim->getKeepRunning() || sim->isLoaded())
+		sim->stop();
+	sim->worldSettings = settingsPanel.draftSettings;
+	sim->start();
 }
 
 void SimpleRtsRenderer::destroy(Window& window)
@@ -97,7 +148,7 @@ void SimpleRtsSimulation::update(Float delta)
 
 Float SimpleRtsSimulation::getTerrainHeight(const Vec2 vec) const
 {
-	return terrainSystem.terrainFunction(vec.x/mapSize, vec.y/mapSize, mapSize);
+	return terrainSystem.sampleHeight(*this, vec.x / worldSettings.mapSize, vec.y / worldSettings.mapSize);
 }
 
 void SimpleRtsRenderer::update(Window& window)
@@ -106,6 +157,7 @@ void SimpleRtsRenderer::update(Window& window)
 	Vec3 pos = player.camera.getPosition();
 	pos.z    = max(0.0f, pos.z);
 	player.camera.setPosition(pos);
+	UIElement::update(window);
 }
 
 void SimpleRtsSimulation::render(Renderer& r) const
@@ -143,7 +195,7 @@ Vec3 SimpleRtsSimulation::getRandomSpawnPos(const Float radius) const
 	Bool doesSpawnCollide;
 	do
 	{
-		pos              = randomVec2Fast(-mapSize, mapSize);
+		pos              = randomVec2Fast(-worldSettings.mapSize, worldSettings.mapSize);
 		doesSpawnCollide = doesCollide(pos, radius);
 		tries++;
 	}
@@ -157,18 +209,28 @@ Vec3 SimpleRtsSimulation::getRandomSpawnPos() const
 	Int  tries = 0;
 	do
 	{
-		pos              = randomVec2Fast(-mapSize, mapSize);
+		pos              = randomVec2Fast(-worldSettings.mapSize, worldSettings.mapSize);
 		tries++;
 	}
 	while (terrainSystem.isWater(*this, pos));
 	return {pos, getTerrainHeight(pos)};
 }
 
-void SimpleRtsRenderer::renderInteractive(Window& window) {}
+void SimpleRtsRenderer::renderInteractive(Window& window)
+{
+	if (settingsPanel.isVisiblePanel())
+		settingsPanel.renderInteractive(window);
+}
 
 void SimpleRtsRenderer::renderScene(Window& window)
 {
 	Renderer& r = window.renderer;
+
+	if (!sim || !sim->isLoaded())
+	{
+		r.clearBackground(Color(0.05f, 0.07f, 0.1f, 1));
+		return;
+	}
 
 	mutex.lock();
 
@@ -192,11 +254,20 @@ void SimpleRtsRenderer::renderScene(Window& window)
 	//world
 	player.render(window);
 	r.fill(1.0f);
+	if (!terrainMesh.isLoaded()) terrainMesh.upload(r, sim->terrainSystem.terrainMesh);
+	r.useShader("simpleRTSTerrain");
+	terrainMesh.render(r);
+
+	if (sim->worldSettings.enableWater && sim->terrainSystem.oceanMesh.isLoaded())
+	{
+		if (!oceanMesh.isLoaded()) oceanMesh.upload(r, sim->terrainSystem.oceanMesh);
+		r.useShader("simpleRTSOcean");
+		oceanMesh.render(r);
+	}
+
 	r.useTexture("simpleRTSTexture");
 	r.useShader("simpleRTS");
 	sim->render(r);
-	if (!terrainMesh.isLoaded()) terrainMesh.upload(r, sim->terrainSystem.terrainMesh);
-	terrainMesh.render(r);
 
 	//ui
 	r.setDepthTest(false);
@@ -218,11 +289,23 @@ void SimpleRtsRenderer::renderScene(Window& window)
 
 void SimpleRtsRenderer::inputEvent(Window& window, InputEvent& input)
 {
+	if (input == toggleSetup)
+	{
+		settingsPanel.togglePanel();
+		return;
+	}
+
+	if (settingsPanel.isVisiblePanel())
+	{
+		settingsPanel.inputEvent(window, input);
+		return;
+	}
+
 	if (input == enter) ui.capture(*this);
-	if (input == pause) sim->paused = !sim->paused;
+	if (input == pause && sim->isLoaded()) sim->paused = !sim->paused;
 	if (input == exit) ui.releaseCapture();
 	if (input == toggleWireframe) wireframeMode = !wireframeMode;
-	if (input == reset) sim->reset();
+	if (input == reset && sim->isLoaded()) restartWorld();
 	player.inputEvent(window, input);
 }
 

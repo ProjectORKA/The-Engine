@@ -35,7 +35,6 @@ struct SimpleRtsHumanSystem : SimpleRtsSystem
 private:
 	Timer       timer;
 	const Float humanRadius                     = 0.5f;
-	const UInt  count                           = 10000;
 	const Float minHumanSize                    = 0.8f;
 	const Float maxHumanSize                    = 1.2f;
 	const Float humanSpeedMin                   = 2.0;

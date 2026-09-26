@@ -13,6 +13,7 @@ namespace Ui
 	{
 	public:
 		explicit UiAuthoredHost(UiHost& host);
+		~UiAuthoredHost();
 
 		[[nodiscard]] UiPropertyRegistry& properties() { return propertyRegistry; }
 		[[nodiscard]] UiCommandRegistry& commands() { return commandRegistry; }

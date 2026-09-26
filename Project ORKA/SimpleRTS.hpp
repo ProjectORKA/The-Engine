@@ -12,12 +12,14 @@
 #include "SimpleRtsTerrainSystem.hpp"
 #include "SimpleRtsQuadtreeSystem.hpp"
 #include "SimpleRtsBerryBushSystem.hpp"
+#include "SimpleRtsWorldSettings.hpp"
+#include "SimpleRtsSettingsPanel.hpp"
 
 extern Bool debugSimpleRts;
 
 struct SimpleRtsSimulation final : GameSimulation
 {
-	const Float mapSize = 2000.0f;
+	SimpleRtsWorldSettings worldSettings;
 
 	ULL    frame     = 0;
 	Double totalTime = 0.0f;
@@ -53,12 +55,17 @@ struct SimpleRtsSimulation final : GameSimulation
 
 struct SimpleRtsRenderer final : GameRenderer
 {
+	SimpleRtsRenderer();
+
 	Mutex                mutex;
 	DebugPlayer          player;
 	PerformanceGraph     performanceGraph;
 	Bool                 wireframeMode = false;
 	SimpleRtsSimulation* sim           = nullptr;
 	GPUMesh terrainMesh;
+	GPUMesh oceanMesh;
+	SimpleRtsSettingsPanel settingsPanel;
+	Window* owningWindow = nullptr;
 
 	//input
 	InputEvent enter           = InputEvent(InputType::Mouse, Lmb, true);
@@ -66,9 +73,15 @@ struct SimpleRtsRenderer final : GameRenderer
 	InputEvent pause           = InputEvent(InputType::KeyBoard, P, true);
 	InputEvent toggleWireframe = InputEvent(InputType::KeyBoard, F, false);
 	InputEvent reset           = InputEvent(InputType::KeyBoard, R, false);
+	InputEvent toggleSetup     = InputEvent(InputType::KeyBoard, F2, false);
+
+	void startWorld();
+	void restartWorld();
+	void unloadWorldGpu();
 
 	void update(Window& window) override;
 	void create(Window& window) override;
+	void render(Window& window) override;
 	void destroy(Window& window) override;
 	void connect(GameSimulation& simulation) override;
 	void renderScene(Window& window) override;

@@ -30,6 +30,11 @@ namespace Ui
 			return {};
 		}
 
+		Bool hasLiteralAttribute(const UiMarkupNode& node, const String& name)
+		{
+			return !literalAttribute(node, name).empty();
+		}
+
 		Double parseNumber(const String& text, const Double fallback)
 		{
 			if (text.empty()) return fallback;
@@ -114,8 +119,8 @@ namespace Ui
 		if (node.kind == UiMarkupNodeKind::Text || node.kind == UiMarkupNodeKind::Comment) return false;
 		const String name = tagName(node);
 		return name == "button" || name == "toggle" || name == "checkbox" || name == "slider" ||
-			name == "select" || name == "input" || name == "textarea" || name == "progress" ||
-			name == "scroll-view" || name == "image";
+			name == "select" || name == "input" || name == "number-input" || name == "textarea" ||
+			name == "progress" || name == "scroll-view" || name == "image";
 	}
 
 	Bool UiWidgetBridge::ownsNode(const UiNodeHandle node) const
@@ -220,7 +225,11 @@ namespace Ui
 					{ writeProperty(path, UiValue::fromBool(value)); };
 			break;
 		case UiWidgetKind::Slider:
+		case UiWidgetKind::NumberField:
 			if (auto* state = std::get_if<UiSliderState>(&slot->state))
+				state->onChange = [this, path = record.valuePath](UiWidgetHandle, const Double value)
+					{ writeProperty(path, UiValue::fromNumber(value)); };
+			if (auto* state = std::get_if<UiNumberFieldState>(&slot->state))
 				state->onChange = [this, path = record.valuePath](UiWidgetHandle, const Double value)
 					{ writeProperty(path, UiValue::fromNumber(value)); };
 			break;
@@ -267,6 +276,7 @@ namespace Ui
 					(void)factory.setBoolValue(record.handle, value.boolean, false);
 				break;
 			case UiWidgetKind::Slider:
+			case UiWidgetKind::NumberField:
 			case UiWidgetKind::Progress:
 				if (value.type == UiValueType::Number)
 					(void)factory.setNumberValue(record.handle, value.number, false);
@@ -421,18 +431,44 @@ namespace Ui
 				record.handle = factory.select(std::move(config));
 				record.kind = UiWidgetKind::Select;
 			}
-			else if (name == "input")
+			else if (name == "input" || name == "number-input")
 			{
-				UiTextInputConfig config;
-				config.parent = parent;
-				config.id = common.id;
-				config.label = common.label;
-				config.classes = common.classes;
-				config.enabled = common.enabled;
-				config.tabIndex = common.tabIndex;
-				config.placeholder = literalAttribute(blueprint, "placeholder");
-				record.handle = factory.textField(std::move(config));
-				record.kind = UiWidgetKind::TextField;
+				const String inputType = literalAttribute(blueprint, "type");
+				const Bool numeric = name == "number-input" || inputType == "number";
+				if (numeric)
+				{
+					UiNumberFieldConfig config;
+					config.parent = parent;
+					config.id = common.id;
+					config.label = common.label;
+					config.classes = common.classes;
+					config.enabled = common.enabled;
+					config.tabIndex = common.tabIndex;
+					config.placeholder = literalAttribute(blueprint, "placeholder");
+					config.bounded = hasLiteralAttribute(blueprint, "min") ||
+						hasLiteralAttribute(blueprint, "max");
+					config.integer = parseBool(literalAttribute(blueprint, "integer"), false);
+					config.showProgress = parseBool(literalAttribute(blueprint, "progress"), config.bounded);
+					config.unit = literalAttribute(blueprint, "unit");
+					config.minimum = parseNumber(literalAttribute(blueprint, "min"), 0);
+					config.maximum = parseNumber(literalAttribute(blueprint, "max"), 1);
+					config.step = parseNumber(literalAttribute(blueprint, "step"), 0);
+					record.handle = factory.numberField(std::move(config));
+					record.kind = UiWidgetKind::NumberField;
+				}
+				else
+				{
+					UiTextInputConfig config;
+					config.parent = parent;
+					config.id = common.id;
+					config.label = common.label;
+					config.classes = common.classes;
+					config.enabled = common.enabled;
+					config.tabIndex = common.tabIndex;
+					config.placeholder = literalAttribute(blueprint, "placeholder");
+					record.handle = factory.textField(std::move(config));
+					record.kind = UiWidgetKind::TextField;
+				}
 			}
 			else if (name == "textarea")
 			{

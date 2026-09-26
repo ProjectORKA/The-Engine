@@ -149,6 +149,28 @@ void apiWindowSetCursorPosition(const ApiWindow apiWindow, const DVec2 position)
 	glfwSetCursorPos(apiWindow, position.x, position.y);
 }
 
+void apiWindowSetStandardCursor(const ApiWindow apiWindow, const ApiCursorType cursor)
+{
+	if (!apiWindow || apiWindowCursorIsCaptured(apiWindow)) return;
+
+	static External::GLFWcursor* arrow = nullptr;
+	static External::GLFWcursor* hand = nullptr;
+	static External::GLFWcursor* ibeam = nullptr;
+	if (!arrow) arrow = External::glfwCreateStandardCursor(GLFW_ARROW_CURSOR);
+	if (!hand) hand = External::glfwCreateStandardCursor(GLFW_HAND_CURSOR);
+	if (!ibeam) ibeam = External::glfwCreateStandardCursor(GLFW_IBEAM_CURSOR);
+
+	External::GLFWcursor* chosen = arrow;
+	switch (cursor)
+	{
+	case ApiCursorType::Hand: chosen = hand; break;
+	case ApiCursorType::IBeam: chosen = ibeam; break;
+	case ApiCursorType::Arrow:
+	default: chosen = arrow; break;
+	}
+	External::glfwSetCursor(apiWindow, chosen);
+}
+
 void apiWindowSetWindowedMode(const ApiWindow apiWindow, const TiledRectangle monitorArea)
 {
 	glfwSetWindowMonitor(apiWindow, nullptr, monitorArea.position.x, monitorArea.position.y, monitorArea.size.x, monitorArea.size.y, GLFW_DONT_CARE);

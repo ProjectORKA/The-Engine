@@ -79,6 +79,11 @@ public:
 	DVec2 frameMousePositionBotLeft = DVec2(0);
 	DVec2 mouseDelta = DVec2(0);
 	WindowMousePositionBottomLeft mousePosBotLeft{this};
+	// Retained UI cursor scrub requests GLFW changes on the poll-events thread.
+	mutable Mutex uiCursorRequestMutex;
+	DVec2 uiCursorLockAnchor = DVec2(0);
+	std::atomic<Bool> uiCursorCaptureRequested{ false };
+	std::atomic<Bool> uiCursorReleaseRequested{ false };
 	//input
 	UIElement* hoveredElement = nullptr;
 	UIElement* mouseCaptureOwner = nullptr;
@@ -138,6 +143,8 @@ public:
 	[[nodiscard]] Bool  isKeyPressed(Int key) const;
 	[[nodiscard]] Bool  pressed(InputId input) const;
 	void publishMousePosition(DVec2 logicalPosition);
+	// Resets frame delta after cursor mode changes or synthetic repositioning.
+	void alignFrameMouseSample(DVec2 logicalPosition);
 	void sampleMousePositionForFrame();
 	[[nodiscard]] DVec2 mousePosition() const;
 	[[nodiscard]] DVec2 mousePositionBotLeft() const;
@@ -154,6 +161,10 @@ public:
 	void forwardCompositionUpdate(const String& utf8, SizeT selectionStart, SizeT selectionEnd) const;
 	void forwardCompositionCommit(const String& utf8) const;
 	void forwardCompositionCancel() const;
+	void requestUiCursorCapture(DVec2 anchor);
+	void requestUiCursorRelease();
+	void applyUiCursorRequests();
+	[[nodiscard]] DVec2 scrubCursorAnchor() const;
 };
 
 inline WindowMousePositionBottomLeft::operator DVec2() const

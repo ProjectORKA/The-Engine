@@ -14,6 +14,7 @@ struct UserInterface
 	Atomic<Bool> capturing = false;
 	Window*      focusedWindow = nullptr; //if capturing, this is the window that is capturing
 	UIElement*   focusedElement = nullptr; //if capturing, this is the element that is capturing
+	DVec2        capturedCursorPosition = DVec2(0); // logical position before cursor lock
 
 	UserInterface();
 

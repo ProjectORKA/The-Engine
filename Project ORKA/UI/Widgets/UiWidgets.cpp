@@ -1,5 +1,7 @@
 #include "UiWidgets.hpp"
 
+#include "../../Window.hpp"
+#include "../../WindowAPI.hpp"
 #include "../Layout/UiOverflowController.hpp"
 #include "../Theme/UiAppFlex.hpp"
 #include "../Theme/UiAppHelpers.hpp"
@@ -42,6 +44,157 @@ namespace Ui
 			if (!result.empty() && result.back() == '.') result.pop_back();
 			return result;
 		}
+
+		void publishTextCaret(UiNode& root, const UiTextEditModel& editor)
+		{
+			const UiTextRange range = editor.selection();
+			root.state.semantics.showTextCaret = true;
+			root.state.semantics.selectionStart = range.minimum();
+			root.state.semantics.selectionEnd = range.maximum();
+			root.state.semantics.caretByte = editor.caret();
+		}
+
+		Bool isNumberDraft(const String& text)
+		{
+			if (text.empty() || text == "-" || text == "." || text == "-.") return true;
+			SizeT index = 0;
+			if (text[index] == '-')
+			{
+				++index;
+				if (index >= text.size()) return true;
+			}
+			Bool sawDot = false;
+			for (; index < text.size(); ++index)
+			{
+				const Char character = text[index];
+				if (character == '.')
+				{
+					if (sawDot) return false;
+					sawDot = true;
+					continue;
+				}
+				if (character < '0' || character > '9') return false;
+			}
+			return true;
+		}
+
+		Bool parseCommittedNumber(const String& text, Double& out)
+		{
+			if (text.empty()) return false;
+			Char* end = nullptr;
+			const Double parsed = std::strtod(text.c_str(), &end);
+			if (!end || *end != '\0' || !std::isfinite(parsed)) return false;
+			out = parsed;
+			return true;
+		}
+
+		enum class NumberHitZone : Byte
+		{
+			Decrement,
+			Increment,
+			Scrub,
+		};
+
+		[[nodiscard]] Float numberStepZoneWidth(const UiNode* root)
+		{
+			const Float chevronSize = UiAppTypography::bodySize;
+			return UiAppFlex::p10 + chevronSize + UiAppFlex::p5;
+		}
+
+		[[nodiscard]] Double defaultNumberStep(const UiNumberFieldState& state)
+		{
+			if (state.step > 0) return state.step;
+			if (state.integer) return 1.0;
+			if (state.bounded && state.maximum > state.minimum)
+				return std::max((state.maximum - state.minimum) / 100.0, 0.01);
+			return 0.1;
+		}
+
+		void clampInternalValue(UiNumberFieldState& state)
+		{
+			if (!state.bounded) return;
+			state.internalValue = std::clamp(state.internalValue, state.minimum, state.maximum);
+		}
+
+		void syncValueFromInternal(UiNumberFieldState& state)
+		{
+			clampInternalValue(state);
+			state.value = state.integer
+				? static_cast<Double>(std::llround(state.internalValue)) : state.internalValue;
+			if (state.bounded)
+				state.value = std::clamp(state.value, state.minimum, state.maximum);
+		}
+
+		[[nodiscard]] String numberDisplayText(const UiNumberFieldState& state)
+		{
+			const Double display = state.integer
+				? static_cast<Double>(std::llround(state.internalValue)) : state.internalValue;
+			String text = numberText(display);
+			if (!state.unit.empty()) text += state.unit;
+			return text;
+		}
+
+		[[nodiscard]] NumberHitZone numberHitZone(
+			const UiNode* root, const UiNumberFieldState& state, const Float localX)
+		{
+			if (!root || state.mode != UiNumberFieldMode::Display) return NumberHitZone::Scrub;
+			const Float zone = numberStepZoneWidth(root);
+			if (localX <= zone) return NumberHitZone::Decrement;
+			if (localX >= root->computed.size.x - zone) return NumberHitZone::Increment;
+			return NumberHitZone::Scrub;
+		}
+
+		[[nodiscard]] Float localPointerX(const UiNode* root, const UiRoutedEvent& event)
+		{
+			if (!root) return 0;
+			return static_cast<Float>(event.position.x - root->computed.position.x);
+		}
+
+		[[nodiscard]] Double scrubDeltaForPixels(
+			const UiNumberFieldState& state, const UiNode* root, const Double deltaPixels)
+		{
+			const Float width = root && root->computed.size.x > 1.0f ? root->computed.size.x : 1.0f;
+			if (state.bounded && state.maximum > state.minimum)
+				return (deltaPixels / static_cast<Double>(width)) * (state.maximum - state.minimum);
+			if (state.integer) return deltaPixels;
+			return deltaPixels * defaultNumberStep(state);
+		}
+
+		[[nodiscard]] Double quantizeNumber(
+			const Double value, const Double minimum, const Double maximum, const Double step)
+		{
+			Double result = value;
+			if (step > 0) result = minimum + std::round((result - minimum) / step) * step;
+			return std::clamp(result, minimum, maximum);
+		}
+
+		void finalizeScrubValue(UiNumberFieldState& state)
+		{
+			if (state.step > 0)
+			{
+				if (state.bounded)
+					state.internalValue = quantizeNumber(
+						state.internalValue, state.minimum, state.maximum, state.step);
+				else state.internalValue = std::round(state.internalValue / state.step) * state.step;
+			}
+			syncValueFromInternal(state);
+		}
+
+		void enterNumberEditMode(UiNumberFieldState& state)
+		{
+			state.mode = UiNumberFieldMode::Edit;
+			state.scrubbing = false;
+			state.scrubAccumulatedPixels = 0;
+			(void)state.editor.setText(numberText(state.value));
+		}
+
+		void enterNumberDisplayMode(UiNumberFieldState& state)
+		{
+			state.mode = UiNumberFieldMode::Display;
+			state.draggingSelection = false;
+			state.scrubbing = false;
+			state.scrubAccumulatedPixels = 0;
+		}
 	}
 
 	String UiWidgetClasses::root(const UiWidgetKind kind)
@@ -67,6 +220,7 @@ namespace Ui
 		case UiWidgetKind::Range: return "ui-range";
 		case UiWidgetKind::Progress: return "ui-progress";
 		case UiWidgetKind::TextField: return "ui-text-field";
+		case UiWidgetKind::NumberField: return "ui-number-field";
 		case UiWidgetKind::TextArea: return "ui-text-area";
 		case UiWidgetKind::Select: return "ui-select";
 		case UiWidgetKind::Combo: return "ui-combo";
@@ -112,8 +266,107 @@ namespace Ui
 	{
 	}
 
+	void UiWidgetFactory::applyNumberScrubPixels(
+		Slot& slot, UiNumberFieldState& state, const Double deltaPixels)
+	{
+		constexpr Double scrubDeltaEpsilon = 0.01;
+		if (std::abs(deltaPixels) < scrubDeltaEpsilon) return;
+		const UiNode* root = document.get(slot.root);
+		if (!root) return;
+		numberScrub.scrubAccumulatedPixels += deltaPixels;
+		numberScrub.moved = std::abs(numberScrub.scrubAccumulatedPixels) >= 0.5;
+		state.scrubAccumulatedPixels = numberScrub.scrubAccumulatedPixels;
+		state.internalValue = numberScrub.scrubStartValue +
+			scrubDeltaForPixels(state, root, numberScrub.scrubAccumulatedPixels);
+		syncValueFromInternal(state);
+		syncNumberField(slot);
+	}
+
+	void UiWidgetFactory::beginNumberScrub(const UiWidgetHandle handle)
+	{
+		Slot* slot = get(handle);
+		auto* state = slot ? std::get_if<UiNumberFieldState>(&slot->state) : nullptr;
+		if (!slot || !state || slot->readOnly) return;
+		numberScrubActive = true;
+		numberScrub.handle = handle;
+		numberScrub.window = inputWindow;
+		numberScrub.scrubStartValue = state->internalValue;
+		numberScrub.scrubAccumulatedPixels = 0;
+		numberScrub.moved = false;
+		state->scrubbing = true;
+		state->scrubStartValue = state->internalValue;
+		state->scrubAccumulatedPixels = 0;
+		state->pendingDisplayClick = true;
+		if (UiNode* root = document.get(slot->root))
+			root->state.active = true;
+		if (inputWindow && inputWindow->apiWindow)
+		{
+			const DVec2 anchor = apiWindowGetCursorPosition(inputWindow->apiWindow);
+			inputWindow->requestUiCursorCapture(anchor);
+		}
+		syncNumberField(*slot);
+	}
+
+	void UiWidgetFactory::finishNumberScrub(const Bool clickToEditIfUntouched)
+	{
+		if (!numberScrubActive) return;
+		Slot* slot = get(numberScrub.handle);
+		auto* state = slot ? std::get_if<UiNumberFieldState>(&slot->state) : nullptr;
+		const UiWidgetHandle handle = numberScrub.handle;
+		const Bool moved = numberScrub.moved;
+		Window* const cursorWindow = numberScrub.window ? numberScrub.window : inputWindow;
+		numberScrubActive = false;
+		numberScrub = {};
+
+		if (cursorWindow) cursorWindow->requestUiCursorRelease();
+
+		if (!slot || !state)
+			return;
+
+		if (moved)
+		{
+			const Double previous = state->value;
+			finalizeScrubValue(*state);
+			syncNumberField(*slot);
+			if (state->onChange && state->value != previous)
+				state->onChange(handle, state->value);
+		}
+		else if (clickToEditIfUntouched && state->pendingDisplayClick)
+		{
+			enterNumberEditMode(*state);
+			syncNumberField(*slot);
+		}
+
+		state->scrubbing = false;
+		state->pendingDisplayClick = false;
+		if (UiNode* root = document.get(slot->root))
+			root->state.active = false;
+	}
+
+	void UiWidgetFactory::driveNumberScrubFrame(Window& window)
+	{
+		if (!numberScrubActive || !numberScrub.handle.isValid()) return;
+		Slot* slot = get(numberScrub.handle);
+		auto* state = slot ? std::get_if<UiNumberFieldState>(&slot->state) : nullptr;
+		if (!slot || !state || slot->readOnly || state->mode != UiNumberFieldMode::Display)
+		{
+			finishNumberScrub(false);
+			return;
+		}
+
+		const InputId leftButton(InputType::Mouse, 0);
+		if (!window.pressed(leftButton))
+		{
+			finishNumberScrub(true);
+			return;
+		}
+
+		applyNumberScrubPixels(*slot, *state, static_cast<Double>(window.mouseDelta.x));
+	}
+
 	UiWidgetFactory::~UiWidgetFactory()
 	{
+		finishNumberScrub(false);
 		for (Slot& slot : slots)
 		{
 			if (!slot.occupied) continue;
@@ -234,6 +487,7 @@ namespace Ui
 
 	Bool UiWidgetFactory::destroy(const UiWidgetHandle handle)
 	{
+		if (numberScrubActive && numberScrub.handle == handle) finishNumberScrub(false);
 		Slot* slot = get(handle);
 		if (!slot) return false;
 		if (const auto* scope = std::get_if<UiFocusScopeState>(&slot->state);
@@ -711,6 +965,82 @@ namespace Ui
 			syncText(*slot);
 			if (state->onChange) state->onChange(handle, state->editor.text());
 		};
+		listen(handle, node(handle), UiRoutedEventType::PointerDown,
+			[this, handle](UiRoutedEvent& event)
+			{
+				Slot* slot = get(handle);
+				auto* state = slot ? std::get_if<UiTextInputState>(&slot->state) : nullptr;
+				if (!slot || !state) return;
+				event.focusTarget = true;
+				event.capturePointer = true;
+				const SizeT hit = hitTestEditByte(slot->root, static_cast<Float>(event.position.x));
+				const Bool shift = (event.modifiers & modifierShift) != 0;
+				if (shift) state->editor.setSelection(state->selectionAnchor, hit);
+				else
+				{
+					state->selectionAnchor = hit;
+					state->editor.setSelection(hit, hit);
+				}
+				state->draggingSelection = true;
+				syncText(*slot);
+				event.handled = true;
+			});
+		listen(handle, node(handle), UiRoutedEventType::PointerMove,
+			[this, handle](UiRoutedEvent& event)
+			{
+				Slot* slot = get(handle);
+				auto* state = slot ? std::get_if<UiTextInputState>(&slot->state) : nullptr;
+				if (!slot || !state || !state->draggingSelection) return;
+				const SizeT hit = hitTestEditByte(slot->root, static_cast<Float>(event.position.x));
+				state->editor.setSelection(state->selectionAnchor, hit);
+				syncText(*slot);
+				event.handled = true;
+			});
+		listen(handle, node(handle), UiRoutedEventType::Drag,
+			[this, handle](UiRoutedEvent& event)
+			{
+				Slot* slot = get(handle);
+				auto* state = slot ? std::get_if<UiTextInputState>(&slot->state) : nullptr;
+				if (!slot || !state || !state->draggingSelection) return;
+				const SizeT hit = hitTestEditByte(slot->root, static_cast<Float>(event.position.x));
+				state->editor.setSelection(state->selectionAnchor, hit);
+				syncText(*slot);
+				event.handled = true;
+			});
+		listen(handle, node(handle), UiRoutedEventType::PointerUp,
+			[this, handle](UiRoutedEvent& event)
+			{
+				if (auto* state = this->state<UiTextInputState>(handle))
+					state->draggingSelection = false;
+				event.handled = true;
+			});
+		listen(handle, node(handle), UiRoutedEventType::DragEnd,
+			[this, handle](UiRoutedEvent& event)
+			{
+				if (auto* state = this->state<UiTextInputState>(handle))
+					state->draggingSelection = false;
+				event.handled = true;
+			});
+		listen(handle, node(handle), UiRoutedEventType::DoubleClick,
+			[this, handle](UiRoutedEvent& event)
+			{
+				Slot* slot = get(handle);
+				auto* state = slot ? std::get_if<UiTextInputState>(&slot->state) : nullptr;
+				if (!slot || !state) return;
+				(void)state->editor.execute(UiTextEditCommand::SelectAll);
+				state->selectionAnchor = 0;
+				syncText(*slot);
+				event.handled = true;
+			});
+		listen(handle, node(handle), UiRoutedEventType::FocusIn,
+			[this, handle](UiRoutedEvent& event)
+			{
+				Slot* slot = get(handle);
+				auto* state = slot ? std::get_if<UiTextInputState>(&slot->state) : nullptr;
+				if (!slot || !state) return;
+				syncText(*slot);
+				event.handled = true;
+			});
 		listen(handle, node(handle), UiRoutedEventType::TextInput,
 			[this, handle, changed](UiRoutedEvent& event)
 			{
@@ -790,6 +1120,330 @@ namespace Ui
 				}
 				if (didEdit) changed();
 				else syncText(*slot);
+				event.handled = true;
+				event.preventDefault();
+			});
+		return handle;
+	}
+
+	UiWidgetHandle UiWidgetFactory::numberField(UiNumberFieldConfig config)
+	{
+		UiNumberFieldState state;
+		state.bounded = config.bounded;
+		state.integer = config.integer;
+		state.showProgress = config.showProgress;
+		state.minimum = config.minimum;
+		state.maximum = config.bounded
+			? std::max(config.minimum, config.maximum) : config.maximum;
+		state.step = std::max(0.0, config.step);
+		state.unit = std::move(config.unit);
+		if (state.bounded)
+			state.value = quantize(config.value, state.minimum, state.maximum, state.step);
+		else state.value = config.value;
+		state.internalValue = state.value;
+		state.placeholder = std::move(config.placeholder);
+		state.onChange = std::move(config.onChange);
+		UiTextEditMetadata metadata;
+		metadata.readOnly = config.readOnly;
+		metadata.multiline = false;
+		state.editor.setMetadata(metadata);
+		state.editor.setValidationCallback([](const String& text) { return isNumberDraft(text); });
+		(void)state.editor.setText(numberText(state.value));
+
+		const UiWidgetHandle handle = create(UiWidgetKind::NumberField, config, "NumberField",
+			UiSemanticRole::TextBox, std::move(state));
+		configureInteraction(node(handle), config, true);
+		if (Slot* slot = get(handle)) syncNumberField(*slot);
+
+		const auto refreshDisplay = [this, handle]()
+		{
+			if (Slot* slot = get(handle)) syncNumberField(*slot);
+		};
+		const auto commit = [this, handle](const Bool notify)
+		{
+			Slot* slot = get(handle);
+			return slot ? commitNumberField(*slot, handle, notify) : false;
+		};
+		const auto applyStep = [this, handle, refreshDisplay](const Int direction)
+		{
+			Slot* slot = get(handle);
+			auto* state = slot ? std::get_if<UiNumberFieldState>(&slot->state) : nullptr;
+			const UiNode* root = slot ? document.get(slot->root) : nullptr;
+			if (!slot || !state || !root || !root->state.enabled || slot->readOnly) return;
+			const Double previous = state->value;
+			const Double increment = defaultNumberStep(*state);
+			state->internalValue += increment * static_cast<Double>(direction);
+			finalizeScrubValue(*state);
+			syncNumberField(*slot);
+			if (state->onChange && state->value != previous)
+				state->onChange(handle, state->value);
+		};
+
+		listen(handle, node(handle), UiRoutedEventType::PointerDown,
+			[this, handle, refreshDisplay, applyStep](UiRoutedEvent& event)
+			{
+				Slot* slot = get(handle);
+				auto* state = slot ? std::get_if<UiNumberFieldState>(&slot->state) : nullptr;
+				const UiNode* root = slot ? document.get(slot->root) : nullptr;
+				if (!slot || !state || !root || slot->readOnly || !root->state.enabled) return;
+				event.focusTarget = true;
+				state->focused = true;
+				if (state->mode == UiNumberFieldMode::Display)
+				{
+					const NumberHitZone zone = numberHitZone(root, *state, localPointerX(root, event));
+					if (zone == NumberHitZone::Decrement)
+					{
+						state->pendingDisplayClick = false;
+						state->scrubbing = false;
+						applyStep(-1);
+						event.handled = true;
+						event.preventDefault();
+						return;
+					}
+					if (zone == NumberHitZone::Increment)
+					{
+						state->pendingDisplayClick = false;
+						state->scrubbing = false;
+						applyStep(1);
+						event.handled = true;
+						event.preventDefault();
+						return;
+					}
+					event.capturePointer = true;
+					beginNumberScrub(handle);
+					event.handled = true;
+					return;
+				}
+				event.capturePointer = true;
+				const SizeT hit = hitTestEditByte(slot->root, static_cast<Float>(event.position.x));
+				const Bool shift = (event.modifiers & modifierShift) != 0;
+				if (shift) state->editor.setSelection(state->selectionAnchor, hit);
+				else
+				{
+					state->selectionAnchor = hit;
+					state->editor.setSelection(hit, hit);
+				}
+				state->draggingSelection = true;
+				refreshDisplay();
+				event.handled = true;
+			});
+		listen(handle, node(handle), UiRoutedEventType::Drag,
+			[this, handle, refreshDisplay](UiRoutedEvent& event)
+			{
+				Slot* slot = get(handle);
+				auto* state = slot ? std::get_if<UiNumberFieldState>(&slot->state) : nullptr;
+				if (!slot || !state || state->mode != UiNumberFieldMode::Edit ||
+					!state->draggingSelection) return;
+				const SizeT hit = hitTestEditByte(slot->root, static_cast<Float>(event.position.x));
+				state->editor.setSelection(state->selectionAnchor, hit);
+				refreshDisplay();
+				event.handled = true;
+			});
+		listen(handle, node(handle), UiRoutedEventType::PointerMove,
+			[this, handle, refreshDisplay](UiRoutedEvent& event)
+			{
+				Slot* slot = get(handle);
+				auto* state = slot ? std::get_if<UiNumberFieldState>(&slot->state) : nullptr;
+				if (!slot || !state) return;
+				// Scrub uses Drag only — PointerMove would double-count with Drag.
+				if (state->mode != UiNumberFieldMode::Edit || !state->draggingSelection) return;
+				const SizeT hit = hitTestEditByte(slot->root, static_cast<Float>(event.position.x));
+				state->editor.setSelection(state->selectionAnchor, hit);
+				refreshDisplay();
+				event.handled = true;
+			});
+		listen(handle, node(handle), UiRoutedEventType::PointerUp,
+			[this, handle, refreshDisplay](UiRoutedEvent& event)
+			{
+				Slot* slot = get(handle);
+				auto* state = slot ? std::get_if<UiNumberFieldState>(&slot->state) : nullptr;
+				if (!slot || !state) return;
+				if (numberScrubActive && numberScrub.handle == handle)
+					finishNumberScrub(true);
+				state->draggingSelection = false;
+				event.handled = true;
+			});
+		listen(handle, node(handle), UiRoutedEventType::DragEnd,
+			[this, handle](UiRoutedEvent& event)
+			{
+				if (auto* state = this->state<UiNumberFieldState>(handle))
+					state->draggingSelection = false;
+				event.handled = true;
+			});
+		listen(handle, node(handle), UiRoutedEventType::DoubleClick,
+			[this, handle, refreshDisplay](UiRoutedEvent& event)
+			{
+				Slot* slot = get(handle);
+				auto* state = slot ? std::get_if<UiNumberFieldState>(&slot->state) : nullptr;
+				if (!slot || !state || slot->readOnly) return;
+				enterNumberEditMode(*state);
+				(void)state->editor.execute(UiTextEditCommand::SelectAll);
+				state->selectionAnchor = 0;
+				refreshDisplay();
+				event.handled = true;
+			});
+		listen(handle, node(handle), UiRoutedEventType::FocusIn,
+			[this, handle, refreshDisplay](UiRoutedEvent& event)
+			{
+				Slot* slot = get(handle);
+				auto* state = slot ? std::get_if<UiNumberFieldState>(&slot->state) : nullptr;
+				if (!slot || !state) return;
+				state->focused = true;
+				refreshDisplay();
+				event.handled = true;
+			});
+		listen(handle, node(handle), UiRoutedEventType::FocusOut,
+			[this, handle, commit, refreshDisplay](UiRoutedEvent& event)
+			{
+				Slot* slot = get(handle);
+				auto* state = slot ? std::get_if<UiNumberFieldState>(&slot->state) : nullptr;
+				if (!slot || !state) return;
+				state->focused = false;
+				state->draggingSelection = false;
+				if (numberScrubActive && numberScrub.handle == handle)
+					finishNumberScrub(false);
+				if (state->mode == UiNumberFieldMode::Edit)
+				{
+					(void)commit(true);
+					enterNumberDisplayMode(*state);
+					refreshDisplay();
+				}
+				event.handled = true;
+			});
+
+		const auto edited = [this, handle, refreshDisplay]()
+		{
+			Slot* slot = get(handle);
+			auto* state = slot ? std::get_if<UiNumberFieldState>(&slot->state) : nullptr;
+			if (!slot || !state) return;
+			refreshDisplay();
+		};
+
+		listen(handle, node(handle), UiRoutedEventType::TextInput,
+			[this, handle, edited](UiRoutedEvent& event)
+			{
+				Slot* slot = get(handle);
+				auto* state = slot ? std::get_if<UiNumberFieldState>(&slot->state) : nullptr;
+				if (!slot || !state || slot->readOnly || !document.get(slot->root)->state.enabled ||
+					state->mode != UiNumberFieldMode::Edit) return;
+				if (state->editor.insert(event.text, event.timestampMicroseconds)) edited();
+				event.handled = true;
+			});
+		listen(handle, node(handle), UiRoutedEventType::CompositionStart,
+			[this, handle](UiRoutedEvent&)
+			{
+				if (auto* state = this->state<UiNumberFieldState>(handle))
+					if (state->mode == UiNumberFieldMode::Edit) state->editor.compositionStart();
+			});
+		listen(handle, node(handle), UiRoutedEventType::CompositionUpdate,
+			[this, handle](UiRoutedEvent& event)
+			{
+				if (auto* state = this->state<UiNumberFieldState>(handle))
+					if (state->mode == UiNumberFieldMode::Edit)
+						(void)state->editor.compositionUpdate(event.text);
+			});
+		listen(handle, node(handle), UiRoutedEventType::CompositionCommit,
+			[this, handle, edited](UiRoutedEvent& event)
+			{
+				if (auto* state = this->state<UiNumberFieldState>(handle))
+					if (state->mode == UiNumberFieldMode::Edit &&
+						state->editor.compositionCommit(event.text, event.timestampMicroseconds))
+						edited();
+			});
+		listen(handle, node(handle), UiRoutedEventType::CompositionCancel,
+			[this, handle](UiRoutedEvent&)
+			{
+				if (auto* state = this->state<UiNumberFieldState>(handle))
+					if (state->mode == UiNumberFieldMode::Edit) state->editor.compositionCancel();
+			});
+		listen(handle, node(handle), UiRoutedEventType::KeyDown,
+			[this, handle, edited, commit, refreshDisplay, applyStep](UiRoutedEvent& event)
+			{
+				Slot* slot = get(handle);
+				auto* state = slot ? std::get_if<UiNumberFieldState>(&slot->state) : nullptr;
+				if (!slot || !state || !document.get(slot->root)->state.enabled) return;
+				if (state->mode == UiNumberFieldMode::Display)
+				{
+					if (event.key == keyUp || event.key == keyDown)
+					{
+						if (!slot->readOnly)
+						{
+							applyStep(event.key == keyUp ? 1 : -1);
+							event.handled = true;
+							event.preventDefault();
+						}
+					}
+					return;
+				}
+				const Bool shift = (event.modifiers & modifierShift) != 0;
+				const Bool control = (event.modifiers & modifierControl) != 0;
+				Bool didEdit = false;
+				switch (event.key)
+				{
+				case keyBackspace:
+					if (!slot->readOnly)
+						didEdit = state->editor.deleteBackward(event.timestampMicroseconds);
+					break;
+				case keyDelete:
+					if (!slot->readOnly)
+						didEdit = state->editor.deleteForward(event.timestampMicroseconds);
+					break;
+				case keyLeft:
+					if (control) state->editor.moveByWord(-1, shift);
+					else state->editor.moveByCluster(-1, shift);
+					break;
+				case keyRight:
+					if (control) state->editor.moveByWord(1, shift);
+					else state->editor.moveByCluster(1, shift);
+					break;
+				case keyHome: state->editor.moveToLineBoundary(false, shift); break;
+				case keyEnd: state->editor.moveToLineBoundary(true, shift); break;
+				case keyEnter:
+					if (!slot->readOnly)
+					{
+						(void)commit(true);
+						enterNumberDisplayMode(*state);
+						refreshDisplay();
+					}
+					break;
+				case keyTab:
+					if (!slot->readOnly)
+					{
+						(void)commit(true);
+						enterNumberDisplayMode(*state);
+						refreshDisplay();
+					}
+					return;
+				case keyUp:
+				case keyDown:
+					if (!slot->readOnly)
+					{
+						applyStep(event.key == keyUp ? 1 : -1);
+						if (state->mode == UiNumberFieldMode::Edit)
+							(void)state->editor.setText(numberText(state->value));
+						refreshDisplay();
+						event.handled = true;
+						event.preventDefault();
+						return;
+					}
+					break;
+				case 'A':
+					if (control) (void)state->editor.execute(UiTextEditCommand::SelectAll);
+					else return;
+					break;
+				case 'Z':
+					if (control && !slot->readOnly)
+						didEdit = shift ? state->editor.redo() : state->editor.undo();
+					else return;
+					break;
+				case 'Y':
+					if (control && !slot->readOnly) didEdit = state->editor.redo();
+					else return;
+					break;
+				default: return;
+				}
+				if (didEdit) edited();
+				else refreshDisplay();
 				event.handled = true;
 				event.preventDefault();
 			});
@@ -975,6 +1629,12 @@ namespace Ui
 			metadata.readOnly = readOnly;
 			state->editor.setMetadata(metadata);
 		}
+		if (auto* state = std::get_if<UiNumberFieldState>(&slot->state))
+		{
+			UiTextEditMetadata metadata = state->editor.metadata();
+			metadata.readOnly = readOnly;
+			state->editor.setMetadata(metadata);
+		}
 		markChanged(*slot);
 		return true;
 	}
@@ -996,12 +1656,26 @@ namespace Ui
 		const UiWidgetHandle handle, const Double value, const Bool notify)
 	{
 		Slot* slot = get(handle);
-		auto* state = slot ? std::get_if<UiSliderState>(&slot->state) : nullptr;
-		if (!slot || !state || state->range) return false;
-		state->value = quantize(value, state->minimum, state->maximum, state->step);
-		syncSlider(*slot);
-		if (notify && state->onChange) state->onChange(handle, state->value);
-		return true;
+		if (!slot) return false;
+		if (auto* state = std::get_if<UiSliderState>(&slot->state))
+		{
+			if (state->range) return false;
+			state->value = quantize(value, state->minimum, state->maximum, state->step);
+			syncSlider(*slot);
+			if (notify && state->onChange) state->onChange(handle, state->value);
+			return true;
+		}
+		if (auto* state = std::get_if<UiNumberFieldState>(&slot->state))
+		{
+			state->internalValue = value;
+			syncValueFromInternal(*state);
+			if (state->mode == UiNumberFieldMode::Edit)
+				(void)state->editor.setText(numberText(state->value));
+			syncNumberField(*slot);
+			if (notify && state->onChange) state->onChange(handle, state->value);
+			return true;
+		}
+		return false;
 	}
 
 	Bool UiWidgetFactory::setRangeValue(const UiWidgetHandle handle,
@@ -1131,6 +1805,23 @@ namespace Ui
 	void UiWidgetFactory::attachLayoutEngine(UiLayoutEngine& layoutEngine)
 	{
 		layout = &layoutEngine;
+	}
+
+	void UiWidgetFactory::attachTextMetrics(
+		UiTextShapeProvider shapeProvider, UiTextStyleProvider styleProvider)
+	{
+		textShapeProvider = std::move(shapeProvider);
+		textStyleProvider = std::move(styleProvider);
+	}
+
+	SizeT UiWidgetFactory::hitTestEditByte(const UiNodeHandle node, const Float viewportX) const
+	{
+		const UiNode* root = document.get(node);
+		if (!root) return 0;
+		UiTextPainter painter({}, textStyleProvider, textShapeProvider);
+		UiTextEditMetrics metrics;
+		if (!painter.buildEditMetrics(*root, {}, metrics)) return 0;
+		return metrics.byteAtX(viewportX);
 	}
 
 	void UiWidgetFactory::syncControlLayouts()
@@ -1447,6 +2138,65 @@ namespace Ui
 		}
 	}
 
+	void UiWidgetFactory::syncNumberField(Slot& slot)
+	{
+		auto* state = std::get_if<UiNumberFieldState>(&slot.state);
+		UiNode* root = document.get(slot.root);
+		if (!state || !root) return;
+		if (state->mode == UiNumberFieldMode::Display)
+		{
+			addClass(*root, "is-number-display");
+			removeClass(*root, "is-number-editing");
+			root->authored.text = numberDisplayText(*state);
+			removeClass(*root, "is-placeholder-visible");
+			root->state.semantics.showTextCaret = false;
+			if (state->bounded && state->showProgress)
+				addClass(*root, "has-number-progress");
+			else removeClass(*root, "has-number-progress");
+		}
+		else
+		{
+			removeClass(*root, "is-number-display");
+			addClass(*root, "is-number-editing");
+			removeClass(*root, "has-number-progress");
+			root->authored.text = state->editor.displayText();
+			if (root->authored.text.empty())
+			{
+				root->authored.text = state->placeholder;
+				addClass(*root, "is-placeholder-visible");
+			}
+			else removeClass(*root, "is-placeholder-visible");
+			publishTextCaret(*root, state->editor);
+		}
+		root->state.semantics.value = numberText(state->value);
+		if (state->bounded)
+			root->state.semantics.label =
+				numberText(state->minimum) + ":" + numberText(state->maximum);
+		else root->state.semantics.label.clear();
+		markChanged(slot);
+	}
+
+	Bool UiWidgetFactory::commitNumberField(Slot& slot, const UiWidgetHandle handle, const Bool notify)
+	{
+		auto* state = std::get_if<UiNumberFieldState>(&slot.state);
+		if (!state) return false;
+		Double parsed = state->value;
+		const String text = state->editor.text();
+		if (!parseCommittedNumber(text, parsed))
+			parsed = state->value;
+		const Double previous = state->value;
+		// Typed values clamp only — step is for arrow keys, not free typing (avoids 1→0 with step 25).
+		const Double committed = state->bounded
+			? std::clamp(parsed, state->minimum, state->maximum) : parsed;
+		state->value = committed;
+		state->internalValue = committed;
+		(void)state->editor.setText(numberText(state->value));
+		syncNumberField(slot);
+		if (notify && state->onChange && committed != previous)
+			state->onChange(handle, state->value);
+		return true;
+	}
+
 	void UiWidgetFactory::syncText(Slot& slot)
 	{
 		auto* state = std::get_if<UiTextInputState>(&slot.state);
@@ -1460,6 +2210,7 @@ namespace Ui
 		}
 		else removeClass(*root, "is-placeholder-visible");
 		root->state.semantics.value = state->editor.semanticValue();
+		publishTextCaret(*root, state->editor);
 		markChanged(slot);
 	}
 

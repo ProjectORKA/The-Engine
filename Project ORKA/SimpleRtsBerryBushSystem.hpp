@@ -4,7 +4,6 @@
 
 struct SimpleRtsBerryBushSystem : SimpleRtsSystem
 {
-	Int        count  = 10000;
 	Float      radius = 0.5f;
 	Vec3Vector positions;
 	Mutex mutex;

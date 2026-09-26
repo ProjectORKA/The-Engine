@@ -1,6 +1,7 @@
 #include "UiTextPainter.hpp"
 
 #include <algorithm>
+#include <chrono>
 #include <cmath>
 
 namespace Ui
@@ -144,6 +145,206 @@ namespace Ui
 			clip.size = glm::max(end - start, Vec2(0));
 			return clip;
 		}
+
+		[[nodiscard]] Bool hasClass(const UiNode& node, const String& name)
+		{
+			for (const String& styleClass : node.authored.classes)
+				if (styleClass == name) return true;
+			return false;
+		}
+
+		[[nodiscard]] Bool resolveContentBox(
+			const UiNode& node, const UiTextPaintStyle& style,
+			Vec2& boxPosition, Vec2& boxSize, Vec2& innerPosition, Vec2& innerSize)
+		{
+			boxPosition = node.computed.contentPosition;
+			boxSize = node.computed.contentSize;
+			if (boxSize.x <= 0 || boxSize.y <= 0)
+			{
+				boxPosition = node.computed.position;
+				boxSize = node.computed.size;
+			}
+			if (boxSize.x <= 0 || boxSize.y <= 0) return false;
+			innerPosition = boxPosition + glm::max(style.padding, Vec2(0));
+			innerSize = glm::max(boxSize - glm::max(style.padding, Vec2(0)) * 2.0f, Vec2(0));
+			return innerSize.x > 0 && innerSize.y > 0;
+		}
+
+		[[nodiscard]] Float resolvePixelSize(
+			const UiTextPaintStyle& style, const Vec2 innerSize)
+		{
+			const Float boundedDefault = std::clamp(innerSize.y * 0.45f, 8.0f, 16.0f);
+			return std::clamp(
+				style.fontSize > 0 ? style.fontSize : boundedDefault, 4.0f, 256.0f);
+		}
+
+		void buildClusterBytes(const String& text, Vector<SizeT>& clusterBytes)
+		{
+			clusterBytes.clear();
+			clusterBytes.push_back(0);
+			SizeT cursor = 0;
+			while (cursor < text.size())
+			{
+				(void)decodeOne(text, cursor);
+				clusterBytes.push_back(cursor);
+			}
+		}
+
+		[[nodiscard]] Float glyphAdvanceFor(
+			const UiTextGlyphProvider& glyphProvider, const U32 codepoint, const Float pixelSize)
+		{
+			if (codepoint == '\t') return UiTextPainter::fallbackGlyph(' ', pixelSize).advance * 4.0f;
+			UiTextGlyphRenderInfo glyph;
+			const Bool advanced = glyphProvider && glyphProvider(codepoint, pixelSize, glyph) &&
+				glyph.resource.id != 0 && glyph.advance > 0;
+			if (!advanced) return UiTextPainter::fallbackGlyph(codepoint, pixelSize).advance;
+			return glyph.advance;
+		}
+
+		void fillMetricsFromShaped(
+			UiTextEditMetrics& metrics, const UiTextPaintLayout& shaped,
+			const String& text, const Float left, const Float innerTop)
+		{
+			buildClusterBytes(text, metrics.clusterBytes);
+			metrics.clusterX.assign(metrics.clusterBytes.size(), left);
+			metrics.left = left;
+			if (!shaped.layout.lines.empty())
+			{
+				const UiTextLine& line = shaped.layout.lines.front();
+				metrics.baseline = innerTop + line.y + line.baseline;
+				metrics.lineHeight = line.height > 0 ? line.height : shaped.layout.fontSize;
+				metrics.ascent = line.baseline > 0 ? line.baseline : metrics.lineHeight * 0.8f;
+			}
+			else
+			{
+				metrics.baseline = innerTop + shaped.layout.fontSize * 0.8f;
+				metrics.lineHeight = shaped.layout.fontSize;
+				metrics.ascent = shaped.layout.fontSize * 0.8f;
+			}
+
+			Vector<Float> advances(metrics.clusterBytes.size() > 0
+				? metrics.clusterBytes.size() - 1 : 0, 0.0f);
+			if (!shaped.layout.lines.empty())
+			{
+				const UiTextLine& line = shaped.layout.lines.front();
+				const UInt lineEnd = line.firstCodepoint + line.codepointCount;
+				for (const UiShapedGlyphRenderInfo& shapedGlyph : shaped.glyphs)
+				{
+					if (shapedGlyph.codepointIndex < line.firstCodepoint ||
+						shapedGlyph.codepointIndex >= lineEnd) continue;
+					if (shapedGlyph.codepointIndex < advances.size())
+						advances[shapedGlyph.codepointIndex] += shapedGlyph.glyph.advance;
+				}
+			}
+			Float pen = left;
+			metrics.clusterX[0] = pen;
+			for (SizeT index = 0; index < advances.size(); ++index)
+			{
+				pen += advances[index];
+				metrics.clusterX[index + 1] = pen;
+			}
+		}
+
+		void fillMetricsFromFallback(
+			UiTextEditMetrics& metrics, const UiTextGlyphProvider& glyphProvider,
+			const String& text, const Float left, const Float innerTop,
+			const Float pixelSize, const Float lineHeight, const Float ascent)
+		{
+			buildClusterBytes(text, metrics.clusterBytes);
+			metrics.clusterX.clear();
+			metrics.clusterX.reserve(metrics.clusterBytes.size());
+			metrics.left = left;
+			metrics.baseline = innerTop + ascent;
+			metrics.ascent = ascent;
+			metrics.lineHeight = lineHeight > 0 ? lineHeight : ascent + 2.0f;
+			Float pen = left;
+			metrics.clusterX.push_back(pen);
+			SizeT cursor = 0;
+			while (cursor < text.size())
+			{
+				const U32 codepoint = decodeOne(text, cursor);
+				if (codepoint != '\r' && codepoint != '\n')
+					pen += glyphAdvanceFor(glyphProvider, codepoint, pixelSize);
+				metrics.clusterX.push_back(pen);
+			}
+		}
+
+		[[nodiscard]] Bool caretBlinkVisible()
+		{
+			using namespace std::chrono;
+			const U64 ms = static_cast<U64>(
+				duration_cast<milliseconds>(steady_clock::now().time_since_epoch()).count());
+			return ((ms / 530) % 2) == 0;
+		}
+
+		[[nodiscard]] Bool paintTextEditChrome(
+			const UiNode& node, UiDisplayList& output, const UiTextPaintStyle& style,
+			const UiTextEditMetrics& metrics, const Float innerHeight)
+		{
+			if (!node.state.focused || !node.state.semantics.showTextCaret) return true;
+			const Bool placeholder = hasClass(node, "is-placeholder-visible");
+			const SizeT textEnd = placeholder || metrics.clusterBytes.empty()
+				? 0
+				: metrics.clusterBytes.back();
+			const SizeT caretByte = placeholder
+				? 0
+				: std::min(node.state.semantics.caretByte, textEnd);
+			const SizeT selectionStart = placeholder
+				? 0
+				: std::min(node.state.semantics.selectionStart, textEnd);
+			const SizeT selectionEnd = placeholder
+				? 0
+				: std::min(node.state.semantics.selectionEnd, textEnd);
+			const SizeT rangeStart = std::min(selectionStart, selectionEnd);
+			const SizeT rangeEnd = std::max(selectionStart, selectionEnd);
+
+			const Float top = metrics.baseline - metrics.ascent;
+			// Match glyph ink height (ascent + small descent), not the larger line box.
+			const Float height = std::min(metrics.ascent + std::max(2.0f, metrics.ascent * 0.2f),
+				std::max(innerHeight, metrics.ascent));
+
+			if (rangeStart < rangeEnd)
+			{
+				const Float startX = metrics.xAtByte(rangeStart);
+				const Float endX = metrics.xAtByte(rangeEnd);
+				const UiQuadGeometry selection{
+					Vec2(startX, top),
+					Vec2(std::max(endX - startX, 1.0f), height),
+					Vec4(0) };
+				if (!output.addSolidQuad(selection, style.selectionColor)) return false;
+			}
+
+			if (!caretBlinkVisible()) return true;
+			const Float caretX = metrics.xAtByte(caretByte);
+			const UiQuadGeometry caret{
+				Vec2(std::floor(caretX), top),
+				Vec2(2.0f, height),
+				Vec4(0) };
+			return output.addSolidQuad(caret, style.caretColor);
+		}
+	}
+
+	Float UiTextEditMetrics::xAtByte(const SizeT byteOffset) const
+	{
+		if (clusterBytes.empty() || clusterX.empty()) return left;
+		SizeT best = 0;
+		for (SizeT index = 0; index < clusterBytes.size(); ++index)
+		{
+			if (clusterBytes[index] <= byteOffset) best = index;
+			else break;
+		}
+		return clusterX[std::min(best, clusterX.size() - 1)];
+	}
+
+	SizeT UiTextEditMetrics::byteAtX(const Float x) const
+	{
+		if (clusterBytes.empty()) return 0;
+		for (SizeT index = 0; index + 1 < clusterX.size(); ++index)
+		{
+			const Float mid = (clusterX[index] + clusterX[index + 1]) * 0.5f;
+			if (x < mid) return clusterBytes[index];
+		}
+		return clusterBytes.back();
 	}
 
 	UiTextPainter::UiTextPainter(
@@ -209,29 +410,49 @@ namespace Ui
 		}
 	}
 
+	Bool UiTextPainter::buildEditMetrics(
+		const UiNode& node, UiTextPaintStyle style, UiTextEditMetrics& metrics) const
+	{
+		if (styleProvider) styleProvider(node, style);
+		Vec2 boxPosition, boxSize, innerPosition, innerSize;
+		if (!resolveContentBox(node, style, boxPosition, boxSize, innerPosition, innerSize))
+			return false;
+
+		const Float pixelSize = resolvePixelSize(style, innerSize);
+		const UiTextGlyphRenderInfo fallbackMetrics = fallbackGlyph('M', pixelSize);
+		const Float lineHeight = style.lineHeight > 0
+			? style.lineHeight : fallbackMetrics.lineHeight;
+		const Float left = innerPosition.x;
+		const Bool placeholder = hasClass(node, "is-placeholder-visible");
+		const String text = placeholder ? String{} : node.authored.text;
+
+		UiTextPaintLayout shapedLayout;
+		if (!placeholder && shapeProvider &&
+			shapeProvider(node, style, innerSize, shapedLayout) &&
+			!shapedLayout.layout.lines.empty())
+		{
+			fillMetricsFromShaped(metrics, shapedLayout, text, left, innerPosition.y);
+			return true;
+		}
+
+		fillMetricsFromFallback(metrics, glyphProvider, text, left, innerPosition.y,
+			pixelSize, lineHeight, fallbackMetrics.ascent);
+		return true;
+	}
+
 	Bool UiTextPainter::paint(
 		const UiNode& node, UiDisplayList& output, UiTextPaintStyle style) const
 	{
-		if (node.authored.text.empty()) return true;
+		const Bool paintCaretOnly = node.authored.text.empty() &&
+			node.state.focused && node.state.semantics.showTextCaret;
+		if (node.authored.text.empty() && !paintCaretOnly) return true;
 		if (styleProvider) styleProvider(node, style);
 
-		Vec2 boxPosition = node.computed.contentPosition;
-		Vec2 boxSize = node.computed.contentSize;
-		if (boxSize.x <= 0 || boxSize.y <= 0)
-		{
-			boxPosition = node.computed.position;
-			boxSize = node.computed.size;
-		}
-		if (boxSize.x <= 0 || boxSize.y <= 0) return true;
+		Vec2 boxPosition, boxSize, innerPosition, innerSize;
+		if (!resolveContentBox(node, style, boxPosition, boxSize, innerPosition, innerSize))
+			return true;
 
-		const Vec2 innerPosition = boxPosition + glm::max(style.padding, Vec2(0));
-		const Vec2 innerSize = glm::max(
-			boxSize - glm::max(style.padding, Vec2(0)) * 2.0f, Vec2(0));
-		if (innerSize.x <= 0 || innerSize.y <= 0) return true;
-
-		const Float boundedDefault = std::clamp(innerSize.y * 0.45f, 8.0f, 16.0f);
-		const Float pixelSize = std::clamp(
-			style.fontSize > 0 ? style.fontSize : boundedDefault, 4.0f, 256.0f);
+		const Float pixelSize = resolvePixelSize(style, innerSize);
 		const UiTextGlyphRenderInfo fallbackMetrics = fallbackGlyph('M', pixelSize);
 		const Float lineHeight = style.lineHeight > 0
 			? style.lineHeight : fallbackMetrics.lineHeight;
@@ -263,28 +484,53 @@ namespace Ui
 		};
 
 		UiTextPaintLayout shapedLayout;
-		if (shapeProvider && shapeProvider(node, style, innerSize, shapedLayout))
+		const Bool shaped = !paintCaretOnly && shapeProvider &&
+			shapeProvider(node, style, innerSize, shapedLayout);
+
+		UiTextEditMetrics editMetrics;
+		if (shaped)
+			fillMetricsFromShaped(editMetrics, shapedLayout,
+				hasClass(node, "is-placeholder-visible") ? String{} : node.authored.text,
+				left, innerPosition.y);
+		else
+			fillMetricsFromFallback(editMetrics, glyphProvider,
+				hasClass(node, "is-placeholder-visible") ? String{} : node.authored.text,
+				left, innerPosition.y, pixelSize, lineHeight, fallbackMetrics.ascent);
+
+		if (!paintTextEditChrome(node, output, style, editMetrics, innerSize.y))
+			return finish(false);
+		if (paintCaretOnly) return finish(true);
+
+		Float horizontalOffset = 0;
+		if (style.horizontalAlign == UiTextHorizontalAlign::Center &&
+			!editMetrics.clusterX.empty())
+		{
+			const Float textWidth = editMetrics.clusterX.back() - editMetrics.left;
+			horizontalOffset = std::max(0.0f, (innerSize.x - textWidth) * 0.5f);
+		}
+
+		if (shaped)
 		{
 			for (const UiTextLine& line : shapedLayout.layout.lines)
 			{
-				penX = left;
+				penX = left + horizontalOffset;
 				baseline = innerPosition.y + line.y + line.baseline;
 				const UInt lineEnd =
 					line.firstCodepoint + line.codepointCount;
-				for (const UiShapedGlyphRenderInfo& shaped : shapedLayout.glyphs)
+				for (const UiShapedGlyphRenderInfo& shapedGlyph : shapedLayout.glyphs)
 				{
-					if (shaped.codepointIndex < line.firstCodepoint ||
-						shaped.codepointIndex >= lineEnd) continue;
-					const UiTextGlyphRenderInfo& glyph = shaped.glyph;
-					if (shaped.codepoint != ' ' && shaped.codepoint != '\t' &&
-						shaped.codepoint != '\r' && shaped.codepoint != '\n')
+					if (shapedGlyph.codepointIndex < line.firstCodepoint ||
+						shapedGlyph.codepointIndex >= lineEnd) continue;
+					const UiTextGlyphRenderInfo& glyph = shapedGlyph.glyph;
+					if (shapedGlyph.codepoint != ' ' && shapedGlyph.codepoint != '\t' &&
+						shapedGlyph.codepoint != '\r' && shapedGlyph.codepoint != '\n')
 					{
 						UInt resourceIndex = invalidUiResourceIndex;
 						if (!output.addResource(glyph.resource, resourceIndex))
 							return finish(false);
 						const UiQuadGeometry geometry{
 							glyphOrigin(glyph,
-								Vec2(penX, baseline) + glyph.bearing + shaped.offset),
+								Vec2(penX, baseline) + glyph.bearing + shapedGlyph.offset),
 							glyph.bitmapSize, Vec4(0) };
 						if (!addGlyph(output, glyph, geometry, resourceIndex, style.color))
 							return finish(false);
@@ -295,6 +541,7 @@ namespace Ui
 			return finish(true);
 		}
 
+		penX = left + horizontalOffset;
 		for (SizeT cursor = 0;
 			cursor < node.authored.text.size() && decoded < style.maximumCodepoints;
 			++decoded)
@@ -303,7 +550,7 @@ namespace Ui
 			if (codepoint == '\r') continue;
 			if (codepoint == '\n')
 			{
-				penX = left;
+				penX = left + horizontalOffset;
 				baseline += lineHeight;
 				if (baseline - fallbackMetrics.ascent >= bottom) break;
 				continue;
@@ -312,8 +559,8 @@ namespace Ui
 			if (codepoint == '\t')
 			{
 				const Float tabAdvance = fallbackGlyph(' ', pixelSize).advance * 4.0f;
-				if (style.wrap && penX > left && penX + tabAdvance > right)
-					{ penX = left; baseline += lineHeight; }
+				if (style.wrap && penX > left + horizontalOffset && penX + tabAdvance > right)
+					{ penX = left + horizontalOffset; baseline += lineHeight; }
 				else penX += tabAdvance;
 				if (baseline - fallbackMetrics.ascent >= bottom) break;
 				continue;
@@ -326,9 +573,9 @@ namespace Ui
 				glyph.advance > 0 && glyph.lineHeight > 0;
 			if (!advanced) glyph = fallbackGlyph(codepoint, pixelSize);
 
-			if (style.wrap && penX > left && penX + glyph.advance > right)
+			if (style.wrap && penX > left + horizontalOffset && penX + glyph.advance > right)
 			{
-				penX = left;
+				penX = left + horizontalOffset;
 				baseline += lineHeight;
 			}
 			if (baseline - fallbackMetrics.ascent >= bottom) break;

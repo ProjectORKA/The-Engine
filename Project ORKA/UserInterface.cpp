@@ -34,6 +34,7 @@ void UserInterface::run(const Bool terminateOnExit)
 	{
 		// collect input
 		External::glfwPollEvents();
+		for (Window& window : windows) window.applyUiCursorRequests();
 		agentBridge.drainMain();
 
 		// iterate over all windows while being able to delete them at the same time
@@ -156,8 +157,8 @@ void UserInterface::releaseCapture()
 		return;
 	}
 	apiWindowEnableCursor(focusedWindow->apiWindow);
-	apiWindowSetCursorPosition(
-		focusedWindow->apiWindow, focusedWindow->mousePosition());
+	apiWindowSetCursorPosition(focusedWindow->apiWindow, capturedCursorPosition);
+	focusedWindow->alignFrameMouseSample(capturedCursorPosition);
 
 	capturing = false;
 	focusedElement = nullptr;
@@ -170,8 +171,8 @@ void UserInterface::capture(UIElement& element)
 
 	if (capturing) releaseCapture();
 	focus(*window, &element);
-	window->publishMousePosition(
-		apiWindowGetCursorPosition(window->apiWindow));
+	capturedCursorPosition = apiWindowGetCursorPosition(window->apiWindow);
+	window->alignFrameMouseSample(capturedCursorPosition);
 	apiWindowDisableCursor(window->apiWindow);
 	capturing = true;
 }

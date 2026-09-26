@@ -34,7 +34,7 @@ Page-level `.ui.scss` files should start with `@import "app-master.ui.scss";` so
 
 Runtime pipeline: `UiAuthoredHost` loads markup + styles → `UiTemplateInstantiator` + `UiWidgetBridge` (interactive tags) → `UiStyleApplicationAdapter`. C++ only registers commands, publishes property bindings (`state.*`, `tokens.*`), and installs `UiAppTheme`.
 
-Supported markup tags: `div`, `label`, `button`, `toggle`, `checkbox`, `slider`, `select`, `input`, `textarea`, `progress`, `scroll-view`, `image`. Bindings: `[value]`, `[text]`, `[options]`, `@for (...) { ... }`, `@if (...) { ... }`, `(activate)="Command.Name"`.
+Supported markup tags: `div`, `label`, `button`, `toggle`, `checkbox`, `slider`, `number-input`, `select`, `input` (text or `type="number"`), `textarea`, `progress`, `scroll-view`, `image`. Bindings: `[value]`, `[text]`, `[options]`, `@for (...) { ... }`, `@if (...) { ... }`, `(activate)="Command.Name"`.
 
 ```html
 @for (token of tokens.colors; track token.id) {
@@ -56,7 +56,7 @@ Supported markup tags: `div`, `label`, `button`, `toggle`, `checkbox`, `slider`,
 ## Architecture
 
 - **Widgets emit semantics; themes paint visuals.** Widget code sets type names, style classes, roles, and state. Colors, borders, slider tracks, switch thumbs, focus rings, and dropdown chrome belong in `UI/Theme/UiAppTheme.cpp`, not in widget/demo code.
-- **Prefer `UiWidgetFactory` controls** (`button`, `toggle`, `checkbox`, `slider`, `select`, `textField`, `textArea`, `scrollView`) over hand-built `Box`/`Text` trees that mimic controls.
+- **Prefer `UiWidgetFactory` controls** (`button`, `toggle`, `checkbox`, `slider`, `numberField`, `select`, `textField`, `textArea`, `scrollView`) over hand-built `Box`/`Text` trees that mimic controls.
 - **Attach the layout engine to the widget factory** when a surface uses toggles, checkboxes, selects, or other composite controls:
   ```cpp
   widgets = std::make_unique<UiWidgetFactory>(host.document(), host.eventRouter());

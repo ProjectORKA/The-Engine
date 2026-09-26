@@ -59,7 +59,7 @@ struct UIElement
 	[[nodiscard]] DVec2         getMousePosTopLeft(const Window& window) const;
 	[[nodiscard]] DVec2         getMousePosBottomLeft(const Window& window) const;
 	[[nodiscard]] UIElement*    findDeepestAt(Window& window, const DVec2& point);
-	[[nodiscard]] Bool          isPointInside(const Window& window, const DVec2& point) const;
+	[[nodiscard]] virtual Bool    isPointInside(const Window& window, const DVec2& point) const;
 
 protected:
 	String text;
