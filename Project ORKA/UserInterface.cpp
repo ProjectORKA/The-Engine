@@ -15,7 +15,7 @@ Bool UserInterface::ensureInitialized()
 		return false;
 	}
 	glfwReady = true;
-	logDebug("GLFW initialized!");
+	if(debugGlfwIsEnabled) logDebug("GLFW initialized!");
 	External::glfwSetErrorCallback(whenWindowApiThrowsError);
 	return true;
 }
@@ -23,6 +23,7 @@ Bool UserInterface::ensureInitialized()
 void UserInterface::terminate()
 {
 	if (!glfwReady) return;
+	apiReleaseStandardCursors();
 	External::glfwTerminate();
 	glfwReady = false;
 }
@@ -160,6 +161,7 @@ void UserInterface::releaseCapture()
 	apiWindowSetCursorPosition(focusedWindow->apiWindow, capturedCursorPosition);
 	focusedWindow->alignFrameMouseSample(capturedCursorPosition);
 
+	if (debugMouseCaptureEventsIsEnabled) logDebug("Mouse release");
 	capturing = false;
 	focusedElement = nullptr;
 }
@@ -174,5 +176,7 @@ void UserInterface::capture(UIElement& element)
 	capturedCursorPosition = apiWindowGetCursorPosition(window->apiWindow);
 	window->alignFrameMouseSample(capturedCursorPosition);
 	apiWindowDisableCursor(window->apiWindow);
+	if (debugMouseCaptureEventsIsEnabled)
+		logDebug("Mouse capture: " + element.getDebugName());
 	capturing = true;
 }

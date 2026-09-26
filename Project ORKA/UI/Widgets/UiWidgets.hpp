@@ -8,6 +8,7 @@
 #include "../Render/UiPaintBuilder.hpp"
 #include "../Text/UiTextPainter.hpp"
 
+#include <atomic>
 #include <variant>
 
 struct Window;
@@ -397,6 +398,10 @@ namespace Ui
 		void attachTextMetrics(UiTextShapeProvider shapeProvider, UiTextStyleProvider styleProvider);
 		void syncControlLayouts();
 		void setInputWindow(Window* window) { inputWindow = window; }
+		// Poll thread: end hidden-cursor scrub if the window loses focus.
+		void notifyWindowFocusLost(Window& window);
+		void cancelActiveNumberScrub();
+		[[nodiscard]] Bool isNumberScrubActive() const { return numberScrubActive; }
 		// Window-thread scrub driver: uses Window::mouseDelta while LMB is held.
 		void driveNumberScrubFrame(Window& window);
 
@@ -453,6 +458,7 @@ namespace Ui
 			Bool moved = false;
 		};
 		Bool numberScrubActive = false;
+		std::atomic<Bool> numberScrubAbortFromFocus{ false };
 		NumberScrubSession numberScrub{};
 
 		void beginNumberScrub(UiWidgetHandle handle);

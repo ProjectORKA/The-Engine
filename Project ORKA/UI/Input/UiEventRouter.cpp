@@ -20,10 +20,16 @@ namespace Ui
 		constexpr Int modifierSuper = 0x0008;
 		constexpr Int activationModifierMask =
 			modifierShift | modifierControl | modifierAlt | modifierSuper;
+		constexpr Int primaryMouseButton = 0;
 
 		Bool hasActivationModifiers(const Int modifiers)
 		{
 			return (modifiers & activationModifierMask) != 0;
+		}
+
+		Bool isPrimaryPointerButton(const UiEvent& source)
+		{
+			return source.pointerKind != UiPointerKind::Mouse || source.code == primaryMouseButton;
 		}
 
 		String utf8(const U32 value)
@@ -275,6 +281,16 @@ namespace Ui
 		return true;
 	}
 
+	UiNodeHandle UiEventRouter::capturedPointerNode(const UInt pointerId) const
+	{
+		for (const PointerState& state : pointers)
+		{
+			if (state.id != pointerId) continue;
+			return owner.isValid(state.captured) ? state.captured : UiNodeHandle{};
+		}
+		return {};
+	}
+
 	UiNodeHandle UiEventRouter::hoveredNode(const UInt pointerId) const
 	{
 		for (const PointerState& state : pointers)
@@ -461,6 +477,12 @@ namespace Ui
 		}
 	}
 
+	Bool UiEventRouter::dispatchRouted(UiRoutedEvent event)
+	{
+		cleanInvalidState();
+		return route(event);
+	}
+
 	Bool UiEventRouter::dispatch(const UiEvent& source)
 	{
 		cleanInvalidState();
@@ -533,21 +555,24 @@ namespace Ui
 			const Bool pressed = source.action == UiEventAction::Pressed;
 			if (pressed)
 			{
-				state->pressed = physicalTarget;
-				state->pressedPosition = source.position;
-				state->button = source.code;
-				if (UiNode* node = owner.get(state->pressed))
-				{
-					node->state.active = true;
-					owner.markDirty(state->pressed, DirtyFlag::Paint);
-				}
-				UiRoutedEvent down{ .type = UiRoutedEventType::PointerDown, .target = state->pressed,
+				UiRoutedEvent down{ .type = UiRoutedEventType::PointerDown, .target = physicalTarget,
 					.position = source.position, .timestampMicroseconds = timestamp,
 					.pointerId = source.pointerId, .pointerKind = source.pointerKind,
 					.button = source.code, .modifiers = source.modifiers };
 				const Bool handled = route(down);
-				if (interaction(state->pressed).focusable) (void)focus(state->pressed);
-				else if (owner.isValid(focused)) clearFocus();
+				if (isPrimaryPointerButton(source))
+				{
+					state->pressed = physicalTarget;
+					state->pressedPosition = source.position;
+					state->button = source.code;
+					if (UiNode* node = owner.get(state->pressed))
+					{
+						node->state.active = true;
+						owner.markDirty(state->pressed, DirtyFlag::Paint);
+					}
+					if (interaction(state->pressed).focusable) (void)focus(state->pressed);
+					else if (owner.isValid(focused)) clearFocus();
+				}
 				return handled;
 			}
 
@@ -557,14 +582,16 @@ namespace Ui
 				.pointerId = source.pointerId, .pointerKind = source.pointerKind,
 				.button = source.code, .modifiers = source.modifiers };
 			Bool handled = route(up);
-			if (owner.isValid(state->dragging))
+			const Bool endsTrackedPress =
+				owner.isValid(state->pressed) && source.code == state->button;
+			if (endsTrackedPress && owner.isValid(state->dragging))
 			{
 				UiRoutedEvent end = up;
 				end.type = UiRoutedEventType::DragEnd;
 				end.target = state->dragging;
 				handled = route(end) || handled;
 			}
-			else if (owner.isValid(state->pressed) && state->pressed == physicalTarget)
+			else if (endsTrackedPress && state->pressed == physicalTarget && isPrimaryPointerButton(source))
 			{
 				UiRoutedEvent activate = up;
 				activate.type = UiRoutedEventType::Activate;
@@ -586,14 +613,17 @@ namespace Ui
 					state->lastClickTime = timestamp;
 				}
 			}
-			if (UiNode* node = owner.get(state->pressed))
+			if (endsTrackedPress)
 			{
-				node->state.active = false;
-				owner.markDirty(state->pressed, DirtyFlag::Paint);
+				if (UiNode* node = owner.get(state->pressed))
+				{
+					node->state.active = false;
+					owner.markDirty(state->pressed, DirtyFlag::Paint);
+				}
+				state->pressed = {};
+				state->dragging = {};
+				releasePointer(source.pointerId);
 			}
-			state->pressed = {};
-			state->dragging = {};
-			releasePointer(source.pointerId);
 			return handled;
 		}
 
@@ -708,6 +738,7 @@ namespace Ui
 		for (const PointerState& state : pointers) ids.push_back(state.id);
 		for (const UInt id : ids) cancelPointer(id);
 		pointers.clear();
+		pendingSystemCursorRelease = true;
 	}
 
 	Bool UiEventRouter::focus(const UiNodeHandle node)

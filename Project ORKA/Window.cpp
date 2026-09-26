@@ -4,6 +4,7 @@
 #include "ResourceManager.hpp"
 #include "OptickProfiling.hpp"
 #include "UserInterface.hpp"
+#include "Debug.hpp"
 #include "Agent/AgentBridge.hpp"
 #include <bit>
 #include <chrono>
@@ -68,7 +69,7 @@ static void updateHoverTarget(Window& window, UIElement* newTarget)
 	{
 		if (!pathContains(newPath, element))
 		{
-			logDebug("Mouse left " + element->getDebugName());
+			if (debugMouseHoverIsEnabled) logDebug("Mouse left " + element->getDebugName());
 			element->setHovered(false);
 			element->onMouseLeave(window);
 		}
@@ -79,14 +80,14 @@ static void updateHoverTarget(Window& window, UIElement* newTarget)
 		UIElement* element = *it;
 		if (!pathContains(previousPath, element))
 		{
-			logDebug("Mouse entered " + element->getDebugName());
+			if (debugMouseHoverIsEnabled) logDebug("Mouse entered " + element->getDebugName());
 			element->setHovered(true);
 			element->onMouseEnter(window);
 		}
 	}
 
 	const String targetName = newTarget ? newTarget->getDebugName() : "null";
-	logDebug("Mouse is now hovering over " + targetName);
+	if (debugMouseHoverIsEnabled) logDebug("Mouse is now hovering over " + targetName);
 
 	window.hoveredElement = newTarget;
 }
@@ -361,7 +362,9 @@ Bool Window::pressed(const InputId input) const
 	switch (input.type)
 	{
 	case InputType::KeyBoard: return isKeyPressed(input.id);
-	case InputType::Mouse: return mouseState[input.id];
+	case InputType::Mouse:
+		if (input.id < 0 || input.id >= static_cast<Int>(mouseButtonDown.size())) return false;
+		return mouseButtonDown[input.id].load(std::memory_order_acquire);
 	default: logError("Unsupported InputType!");
 	}
 	return false;
@@ -386,58 +389,72 @@ void Window::alignFrameMouseSample(const DVec2 logicalPosition)
 	mouseDelta = DVec2(0);
 }
 
-void Window::requestUiCursorCapture(const DVec2 anchor)
+void Window::requestUiStandardCursor(const ApiCursorType cursor)
 {
-	LockGuard lock(uiCursorRequestMutex);
-	uiCursorLockAnchor = anchor;
-	uiCursorReleaseRequested.store(false, std::memory_order_release);
-	uiCursorCaptureRequested.store(true, std::memory_order_release);
+	uiStandardCursor.store(static_cast<Int>(cursor), std::memory_order_release);
 }
 
-void Window::requestUiCursorRelease()
+void Window::requestUiCursorCapture(const Bool capture)
 {
-	uiCursorCaptureRequested.store(false, std::memory_order_release);
-	uiCursorReleaseRequested.store(true, std::memory_order_release);
-}
-
-DVec2 Window::scrubCursorAnchor() const
-{
-	LockGuard lock(uiCursorRequestMutex);
-	return uiCursorLockAnchor;
+	uiCursorCaptureRequested.store(capture, std::memory_order_release);
 }
 
 void Window::applyUiCursorRequests()
 {
 	if (!apiWindow) return;
 
-	const Bool release =
-		uiCursorReleaseRequested.exchange(false, std::memory_order_acq_rel);
-	const Bool capture =
-		uiCursorCaptureRequested.exchange(false, std::memory_order_acq_rel);
+	const Bool gameCapture = ui.capturing && ui.focusedWindow == this;
+	const Bool uiCapture = uiCursorCaptureRequested.load(std::memory_order_acquire);
+	const Bool cursorDisabled = apiWindowCursorIsCaptured(apiWindow);
+	const Bool cursorHidden = apiWindowCursorIsHidden(apiWindow);
 
-	// Release wins when both were queued in the same interval (scrub end must not
-	// lose to a stale capture flag processed in the same call).
-	if (release)
+	if (gameCapture)
 	{
-		DVec2 anchor = DVec2(0);
-		{
-			LockGuard lock(uiCursorRequestMutex);
-			anchor = uiCursorLockAnchor;
-		}
+		if (!cursorDisabled) apiWindowDisableCursor(apiWindow);
+		return;
+	}
+
+	// Stuck relative capture from a game while retained UI is idle.
+	if (cursorDisabled)
+	{
+		const DVec2 restore = mousePosition();
 		apiWindowEnableCursor(apiWindow);
-		apiWindowSetCursorPosition(apiWindow, anchor);
-		alignFrameMouseSample(anchor);
+		apiWindowSetCursorPosition(apiWindow, restore);
+		alignFrameMouseSample(restore);
+		if (debugUiCursorIsEnabled)
+			logWarning("UiCursor: restored visible cursor (unexpected GLFW disabled mode)");
 	}
-	else if (capture)
+
+	if (uiCapture)
 	{
-		const DVec2 anchor = apiWindowGetCursorPosition(apiWindow);
-		{
-			LockGuard lock(uiCursorRequestMutex);
-			uiCursorLockAnchor = anchor;
-		}
-		alignFrameMouseSample(anchor);
-		apiWindowDisableCursor(apiWindow);
+		if (!cursorHidden) apiWindowHideCursor(apiWindow);
 	}
+	else if (cursorHidden)
+	{
+		apiWindowEnableCursor(apiWindow);
+	}
+
+	if (!apiWindowCursorIsCaptured(apiWindow))
+	{
+		const ApiCursorType cursor = static_cast<ApiCursorType>(
+			uiStandardCursor.load(std::memory_order_acquire));
+		apiWindowSetStandardCursor(apiWindow, cursor);
+	}
+}
+
+ApiCursorType Window::queuedStandardCursor() const
+{
+	return static_cast<ApiCursorType>(uiStandardCursor.load(std::memory_order_acquire));
+}
+
+Bool Window::uiCursorCapturePending() const
+{
+	return uiCursorCaptureRequested.load(std::memory_order_acquire);
+}
+
+Bool Window::systemCursorHiddenByGlfw() const
+{
+	return apiWindow ? apiWindowCursorIsCaptured(apiWindow) : false;
 }
 
 DVec2 Window::mousePosition() const
@@ -692,7 +709,8 @@ void whenFilesDroppedOnWindow(const ApiWindow apiWindow, const Int count, const 
 void whenMouseIsPressed(const ApiWindow apiWindow, const Int mouseButton, const Int action, Int modifiers)
 {
 	Window& window                 = *static_cast<Window*>(glfwGetWindowUserPointer(apiWindow));
-	window.mouseState[mouseButton] = action > 0;
+	if (mouseButton >= 0 && mouseButton < static_cast<Int>(window.mouseButtonDown.size()))
+		window.mouseButtonDown[mouseButton].store(action > 0, std::memory_order_release);
 	InputEvent input(InputType::Mouse, mouseButton, action);
 	window.routeInput(input);
 }
@@ -772,7 +790,7 @@ Bool Window::create(const String& title, const IVec2 size, const Bool decorated,
 	setVisible(visible); // glfw does weird stuff, so we need to force it
 	setCallbacks();
 	thread = Thread(windowThread, std::ref(*this));
-	logDebug("Created Window in Main Thread!");
+	if (debugWindowIsEnabled) logDebug("Created Window in Main Thread!");
 	return true;
 }
 

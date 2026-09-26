@@ -3,8 +3,10 @@
 #include "AgentBridge.hpp"
 #include "AgentImage.hpp"
 #include "../UserInterface.hpp"
+#include "../UI/Agent/UiAgentBridgeApi.hpp"
 #include "../UI/UiHost.hpp"
 
+#include <algorithm>
 #include <cctype>
 #include <stdexcept>
 
@@ -131,62 +133,6 @@ namespace
 		return result;
 	}
 
-	AgentValue inspectLegacy(UIElement& root)
-	{
-		AgentValue::Array nodes;
-		Function<void(UIElement&, Int)> visit = [&](UIElement& element, const Int depth)
-		{
-			if(nodes.size() >= 4096) return;
-			const IVec2 position = element.getPosition();
-			const IVec2 size = element.getSize();
-			nodes.emplace_back(AgentValue::Object{
-				{"id", element.getId()}, {"parentId", element.parent ? element.parent->getId() : maxUInt},
-				{"depth", depth}, {"name", element.getDebugName()},
-				{"x", position.x}, {"y", position.y}, {"width", size.x}, {"height", size.y},
-				{"children", static_cast<U64>(element.children.size())}
-			});
-			for(UIElement* child : element.children) if(child) visit(*child, depth + 1);
-		};
-		visit(root, 0);
-		return AgentValue::Object{{"kind", "legacy"}, {"nodes", std::move(nodes)}};
-	}
-
-	Ui::UiHost* findUiHost(UIElement& element)
-	{
-		if(auto* host = dynamic_cast<Ui::UiHost*>(&element)) return host;
-		for(UIElement* child : element.children)
-			if(child) if(Ui::UiHost* host = findUiHost(*child)) return host;
-		return nullptr;
-	}
-
-	AgentValue inspectUi(Window& window)
-	{
-		AgentValue result = inspectLegacy(window);
-		Ui::UiHost* host = findUiHost(window);
-		if(!host) return result;
-		AgentValue::Array nodes;
-		host->document().traverse([&](const Ui::UiNodeHandle handle, Ui::UiNode& node)
-		{
-			if(nodes.size() >= 8192) return;
-			const Ui::UiSemanticData& semantics = node.state.semantics;
-			nodes.emplace_back(AgentValue::Object{
-				{"index", handle.index}, {"generation", handle.generation},
-				{"parentIndex", node.parentHandle().index},
-				{"type", node.authored.typeName}, {"id", node.authored.id}, {"text", node.authored.text},
-				{"x", node.computed.position.x}, {"y", node.computed.position.y},
-				{"width", node.computed.size.x}, {"height", node.computed.size.y},
-				{"visible", node.state.visible}, {"enabled", node.state.enabled},
-				{"focused", node.state.focused}, {"hovered", node.state.hovered},
-				{"semanticLabel", semantics.label}, {"semanticValue", semantics.value}
-			});
-		});
-		result.asObject()["modern"] = AgentValue::Object{
-			{"nodeCount", static_cast<U64>(host->document().nodeCount())},
-			{"nodes", std::move(nodes)}
-		};
-		return result;
-	}
-
 	void add(const String& method, const String& summary, const AgentThreadAffinity affinity,
 		const Bool requiresWindow, AgentCommandHandler handler)
 	{
@@ -245,6 +191,43 @@ void registerAgentEngineCommands()
 			Window& window = contextWindow(context);
 			window.injectMouseButton(mouseButton(string(params, "button")), boolean(params, "down"));
 			return AgentValue::Object{{"accepted", true}};
+		});
+	add("input.pointer.drag", "Drags the pointer between two logical positions",
+		AgentThreadAffinity::Main, true,
+		[](const AgentCommandContext& context, const AgentValue& params)
+		{
+			Window& window = contextWindow(context);
+			const Double x0 = params.find("x0") ? number(params, "x0") : number(params, "x");
+			const Double y0 = params.find("y0") ? number(params, "y0") : number(params, "y");
+			const Double x1 = number(params, "x1");
+			const Double y1 = number(params, "y1");
+			Int steps = 8;
+			if (const AgentValue* stepParam = params.find("steps"))
+			{
+				if (!stepParam->isInteger()) throw std::runtime_error("steps must be an integer");
+				steps = static_cast<Int>(stepParam->asInteger(8));
+				if (steps < 2) steps = 2;
+				if (steps > 256) steps = 256;
+			}
+			const Int button = mouseButton(params.find("button") && params.find("button")->isString()
+				? params.find("button")->asString() : "left");
+			window.injectPointerMove({x0, y0});
+			window.injectMouseButton(button, true);
+			for (Int step = 1; step < steps; ++step)
+			{
+				const Double t = static_cast<Double>(step) / static_cast<Double>(steps - 1);
+				window.injectPointerMove({
+					x0 + (x1 - x0) * t,
+					y0 + (y1 - y0) * t
+				});
+			}
+			window.injectMouseButton(button, false);
+			return AgentValue::Object{
+				{"accepted", true},
+				{"steps", steps},
+				{"from", AgentValue::Object{{"x", x0}, {"y", y0}}},
+				{"to", AgentValue::Object{{"x", x1}, {"y", y1}}}
+			};
 		});
 	add("input.click", "Clicks a synthetic mouse button", AgentThreadAffinity::Main, true,
 		[](const AgentCommandContext& context, const AgentValue& params)
@@ -311,13 +294,67 @@ void registerAgentEngineCommands()
 	add("ui.inspect", "Returns legacy and retained UI structure", AgentThreadAffinity::Render, true,
 		[](const AgentCommandContext& context, const AgentValue&)
 		{
-			return inspectUi(contextWindow(context));
+			return Ui::buildUiInspectResult(contextWindow(context));
+		});
+	add("ui.commands.list", "Lists authored UI commands for semantic automation",
+		AgentThreadAffinity::Render, true,
+		[](const AgentCommandContext& context, const AgentValue&)
+		{
+			return Ui::agentUiListCommands(contextWindow(context));
+		});
+	add("ui.command.invoke", "Invokes an authored UI command by name",
+		AgentThreadAffinity::Render, true,
+		[](const AgentCommandContext& context, const AgentValue& params)
+		{
+			return Ui::agentUiInvokeCommand(contextWindow(context), params);
+		});
+	add("ui.properties.list", "Lists authored UI binding properties and values",
+		AgentThreadAffinity::Render, true,
+		[](const AgentCommandContext& context, const AgentValue& params)
+		{
+			return Ui::agentUiListProperties(contextWindow(context), params);
+		});
+	add("ui.property.get", "Reads one authored UI property by path",
+		AgentThreadAffinity::Render, true,
+		[](const AgentCommandContext& context, const AgentValue& params)
+		{
+			return Ui::agentUiGetProperty(contextWindow(context), params);
+		});
+	add("ui.property.set", "Sets one authored UI property by path",
+		AgentThreadAffinity::Render, true,
+		[](const AgentCommandContext& context, const AgentValue& params)
+		{
+			return Ui::agentUiSetProperty(contextWindow(context), params);
+		});
+	add("ui.node.focus", "Focuses a retained UI node by id or handle",
+		AgentThreadAffinity::Render, true,
+		[](const AgentCommandContext& context, const AgentValue& params)
+		{
+			return Ui::agentUiFocusNode(contextWindow(context), params);
+		});
+	add("ui.node.activate", "Activates a retained UI node without pointer input",
+		AgentThreadAffinity::Render, true,
+		[](const AgentCommandContext& context, const AgentValue& params)
+		{
+			return Ui::agentUiActivateNode(contextWindow(context), params);
+		});
+	add("ui.node.setValue", "Sets a widget value by markup id",
+		AgentThreadAffinity::Render, true,
+		[](const AgentCommandContext& context, const AgentValue& params)
+		{
+			return Ui::agentUiSetNodeValue(contextWindow(context), params);
+		});
+	add("ui.cursor.getState", "Reports GLFW cursor mode, scrub state, and hover/capture targets",
+		AgentThreadAffinity::Render, true,
+		[](const AgentCommandContext& context, const AgentValue&)
+		{
+			return Ui::agentUiGetCursorState(contextWindow(context));
 		});
 	add("ui.layoutDebug.toggle", "Toggles retained UI layout debug overlay", AgentThreadAffinity::Main, true,
 		[](const AgentCommandContext& context, const AgentValue&)
 		{
 			Window& window = contextWindow(context);
-			Ui::UiHost* host = findUiHost(window);
+			Ui::UiHost* host = Ui::findUiHost(window);
 			if(!host) throw std::runtime_error("Window has no UiHost");
 			host->requestLayoutDebugToggle();
 			return AgentValue::Object{

@@ -15,6 +15,8 @@ namespace External
 #include "UIElement.hpp"
 #include "LifeTimeGuard.hpp"
 
+#include <atomic>
+
 struct Renderer;
 
 enum class WindowState : Byte
@@ -60,7 +62,7 @@ public:
 	Renderer& renderer;
 
 	Thread       thread;
-	MouseState   mouseState;
+	Array<std::atomic<Bool>, 8> mouseButtonDown{};
 	Array<Atomic<Bool>, 512> injectedKeyState{};
 	Vector<Path> droppedFilePaths;
 	UShort       id = 0;
@@ -79,11 +81,8 @@ public:
 	DVec2 frameMousePositionBotLeft = DVec2(0);
 	DVec2 mouseDelta = DVec2(0);
 	WindowMousePositionBottomLeft mousePosBotLeft{this};
-	// Retained UI cursor scrub requests GLFW changes on the poll-events thread.
-	mutable Mutex uiCursorRequestMutex;
-	DVec2 uiCursorLockAnchor = DVec2(0);
+	std::atomic<Int> uiStandardCursor{ static_cast<Int>(ApiCursorType::Arrow) };
 	std::atomic<Bool> uiCursorCaptureRequested{ false };
-	std::atomic<Bool> uiCursorReleaseRequested{ false };
 	//input
 	UIElement* hoveredElement = nullptr;
 	UIElement* mouseCaptureOwner = nullptr;
@@ -161,10 +160,16 @@ public:
 	void forwardCompositionUpdate(const String& utf8, SizeT selectionStart, SizeT selectionEnd) const;
 	void forwardCompositionCommit(const String& utf8) const;
 	void forwardCompositionCancel() const;
-	void requestUiCursorCapture(DVec2 anchor);
-	void requestUiCursorRelease();
+	// Queue the GLFW standard cursor shape; applied only from the poll-events thread
+	// inside applyUiCursorRequests() when the system cursor is visible.
+	void requestUiStandardCursor(ApiCursorType cursor);
+	// Queue retained-UI cursor hide (slider/range drag). Applied on the poll-events thread.
+	void requestUiCursorCapture(Bool capture);
+	// Poll-events thread only: heal stuck GLFW hidden mode + apply standard cursor shape.
 	void applyUiCursorRequests();
-	[[nodiscard]] DVec2 scrubCursorAnchor() const;
+	[[nodiscard]] ApiCursorType queuedStandardCursor() const;
+	[[nodiscard]] Bool uiCursorCapturePending() const;
+	[[nodiscard]] Bool systemCursorHiddenByGlfw() const;
 };
 
 inline WindowMousePositionBottomLeft::operator DVec2() const

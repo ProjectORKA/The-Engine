@@ -138,6 +138,15 @@ namespace Ui
 		return true;
 	}
 
+	UiPropertyRegistrySnapshot UiPropertyRegistry::snapshot() const
+	{
+		UiPropertyRegistrySnapshot result;
+		result.version = registryVersion;
+		for (const auto& [path, entry] : properties)
+			result.properties[path] = { entry.value, entry.version };
+		return result;
+	}
+
 	Bool UiCommandRegistry::registerCommand(String name, UiCommandSignature signature, Function<Bool(const Vector<UiValue>&)> callback)
 	{
 		if (!isDottedName(name, maximumNameBytes) || signature.arguments.size() > maximumArguments || !callback ||

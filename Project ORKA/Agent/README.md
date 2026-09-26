@@ -135,7 +135,15 @@ Coordinates are logical client coordinates with `(0, 0)` at the top-left, positi
 Inspection and artifacts:
 
 - `screenshot.capture` captures a window or framebuffer. Params include optional `windowId` and `path`.
-- `ui.inspect` returns the current inspectable UI tree/state. Params may include `windowId` and implementation-advertised filters.
+- `ui.inspect` returns the current inspectable UI tree/state, including retained-node semantics, widget kinds, and registered authored commands when a `UiAuthoredHost` is active. Params: optional `windowId`.
+- `ui.commands.list` lists authored UI command names and argument types. Params: `windowId`.
+- `ui.command.invoke` runs an authored command without pointer input. Params: `windowId`, `name`, optional `arguments` array.
+- `ui.properties.list` lists binding property paths and values. Params: `windowId`, optional `prefix`.
+- `ui.property.get` reads one binding property. Params: `windowId`, `path`.
+- `ui.property.set` writes one binding property and syncs authored UI. Params: `windowId`, `path`, `value`.
+- `ui.node.focus` focuses a node by markup `id` or `nodeIndex`/`nodeGeneration`. Params: `windowId`, target selector.
+- `ui.node.activate` sends an activate event to a node (buttons, menu items, command-bound controls). Params: `windowId`, target selector.
+- `ui.node.setValue` sets a widget value by markup `id`. Params: `windowId`, `id`, `value` (`bool`, `number`, or `string`), optional `notify` (default `true`).
 - `logs.read` returns buffered structured log records. Params include optional `afterId` and `limit`.
 - `profile.start` starts a profiling session. Params may include `name`.
 - `profile.stop` stops the active or identified session. Params may include `profileId`.

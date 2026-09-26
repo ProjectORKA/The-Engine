@@ -1,10 +1,9 @@
 #include "TextureSystem.hpp"
-
-bool debugTextureSystem = true;
+#include "Settings.hpp"
 
 void TextureSystem::create(Renderer& renderer)
 {
-	if (debugTextureSystem) logDebug("Creating TextureSystem");
+	if (debugTextureSystemIsEnabled) logDebug("Creating TextureSystem");
 	Vector<Byte> pixels;
 	pixels.resize(16);
 	pixels[0]  = 0;
@@ -34,7 +33,7 @@ void TextureSystem::destroy(Renderer& renderer)
 	for (GPUTexture& gpuTexture : gpuTextures) gpuTexture.unload(renderer);
 	gpuTextures.clear();
 	textureNames.clear();
-	if (debugTextureSystem) logDebug("Destroyed TextureSystem");
+	if (debugTextureSystemIsEnabled) logDebug("Destroyed TextureSystem");
 }
 
 void TextureSystem::resize(Renderer& renderer, const IVec2 size)
@@ -55,7 +54,7 @@ void TextureSystem::use(Renderer& renderer, const Index textureId)
 
 void TextureSystem::add(Renderer& renderer, const CpuTexture& cpuTexture)
 {
-	if (debugTextureSystem) logDebug("Adding Texture: " + cpuTexture.getName().toString());
+	if (debugTextureSystemIsEnabled) logDebug("Adding Texture: " + cpuTexture.getName().toString());
 	gpuTextures.emplace_back();
 	gpuTextures.back().load(renderer, cpuTexture);
 	currentTextureId                   = gpuTextures.size() - 1;

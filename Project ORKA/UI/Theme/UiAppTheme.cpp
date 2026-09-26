@@ -178,6 +178,17 @@ namespace Ui
 			return std::clamp((value - minimum) / (maximum - minimum), 0.0, 1.0);
 		}
 
+		// Display-mode progress sits under centered primary text; surfaceTrackFill matches text in dark mode.
+		[[nodiscard]] UiLinearColor numberFieldProgressFill(
+			const UiLinearColor controlFill, const UiAppColors& colors)
+		{
+			const Vec4 text = straightLinear(colors.textPrimary);
+			const Float textLuma =
+				text.r * 0.2126f + text.g * 0.7152f + text.b * 0.0722f;
+			if (textLuma > 0.5f) return colors.surfaceTrack;
+			return stackHighlight(controlFill, colors.surfaceHighlight, 3);
+		}
+
 		[[nodiscard]] Bool paintNumberField(
 			const UiAppColors& colors, const UiNode& node, const UiQuadGeometry& geometry,
 			UiDisplayList& output, const UiDocument* document, const UiNodeHandle handle,
@@ -193,9 +204,10 @@ namespace Ui
 			{
 				const Float fraction = static_cast<Float>(parseRangeFraction(node));
 				const Float fillWidth = std::max(2.0f, geometry.size.x * fraction);
+				const UiLinearColor progressFill = numberFieldProgressFill(fill, colors);
 				if (!output.addSolidQuad(
 					UiQuadGeometry{geometry.position, Vec2(fillWidth, geometry.size.y), squareCorners},
-					colors.surfaceTrackFill)) return false;
+					progressFill)) return false;
 			}
 
 			if (!hasClass(node, "ui-authored-border"))

@@ -95,8 +95,12 @@ namespace Ui
 					action == GLFW_PRESS ? UiEventAction::Pressed : UiEventAction::Released;
 				(void)enqueueEvent(std::move(event));
 			};
-		window.focusInputCallback = [this](const Bool focused)
-			{ (void)platformTextInput.windowFocusChanged(focused); };
+		window.focusInputCallback = [this, &window](const Bool focused)
+			{
+				if (!focused && widgetFactoryForInput)
+					widgetFactoryForInput->notifyWindowFocusLost(window);
+				(void)platformTextInput.windowFocusChanged(focused);
+			};
 		window.compositionStartCallback = [this]() { (void)platformTextInput.compositionStart(); };
 		window.compositionUpdateCallback = [this](const String& text, const SizeT start, const SizeT end)
 			{ (void)platformTextInput.compositionUpdate(text, start, end); };
@@ -148,6 +152,16 @@ namespace Ui
 			(void)routedEvents.dispatch(event);
 		}
 		routedEvents.applyDeferredOperations();
+		applySystemCursorRequests(window);
+	}
+
+	void UiHost::applySystemCursorRequests(Window& window)
+	{
+		Bool capture = false;
+		Bool release = false;
+		routedEvents.consumeSystemCursorRequests(capture, release);
+		if (capture) window.requestUiCursorCapture(true);
+		if (release) window.requestUiCursorCapture(false);
 	}
 
 	void UiHost::update(Window& window)
@@ -167,7 +181,6 @@ namespace Ui
 		if (widgetFactoryForInput) widgetFactoryForInput->setInputWindow(&window);
 		dispatchEvents(window);
 		if (widgetFactoryForInput) widgetFactoryForInput->driveNumberScrubFrame(window);
-		window.applyUiCursorRequests();
 		retainedLayoutEngine.layout();
 		retainedOverflowController.synchronizeAfterLayout();
 		if (retainedOverflowController.consumePendingRelayout())
@@ -188,35 +201,34 @@ namespace Ui
 			retainedOverflowController.synchronizeAfterLayout();
 		}
 
-		if (!apiWindowCursorIsCaptured(window.apiWindow))
+		ApiCursorType cursor = ApiCursorType::Arrow;
+		UiNodeHandle cursorTarget = routedEvents.capturedPointerNode();
+		if (!retainedDocument.isValid(cursorTarget))
+			cursorTarget = routedEvents.hoveredNode();
+		while (const UiNode* node = retainedDocument.get(cursorTarget))
 		{
-			ApiCursorType cursor = ApiCursorType::Arrow;
-			UiNodeHandle hovered = routedEvents.hoveredNode();
-			while (const UiNode* node = retainedDocument.get(hovered))
+			const String& type = node->authored.typeName;
+			if (type == "NumberField")
 			{
-				const String& type = node->authored.typeName;
-				if (type == "NumberField")
-				{
-					cursor = hasClass(*node, "is-number-editing")
-						? ApiCursorType::IBeam : ApiCursorType::Hand;
-					break;
-				}
-				if (type == "TextField" || type == "TextArea")
-				{
-					cursor = ApiCursorType::IBeam;
-					break;
-				}
-				if (type == "Button" || type == "Toggle" || type == "Checkbox" ||
-					type == "Select" || type == "Combo" || type == "Slider" || type == "Range" ||
-					type == "MenuItem")
-				{
-					cursor = ApiCursorType::Hand;
-					break;
-				}
-				hovered = node->parentHandle();
+				cursor = hasClass(*node, "is-number-editing")
+					? ApiCursorType::IBeam : ApiCursorType::Hand;
+				break;
 			}
-			apiWindowSetStandardCursor(window.apiWindow, cursor);
+			if (type == "TextField" || type == "TextArea")
+			{
+				cursor = ApiCursorType::IBeam;
+				break;
+			}
+			if (type == "Button" || type == "Toggle" || type == "Checkbox" ||
+				type == "Select" || type == "Combo" || type == "Slider" || type == "Range" ||
+				type == "MenuItem")
+			{
+				cursor = ApiCursorType::Hand;
+				break;
+			}
+			cursorTarget = node->parentHandle();
 		}
+		window.requestUiStandardCursor(cursor);
 	}
 
 	void UiHost::synchronizeTextMeasurers()
@@ -370,7 +382,8 @@ namespace Ui
 
 	void UiHost::destroy(Window& window)
 	{
-		window.requestUiCursorRelease();
+		window.requestUiCursorCapture(false);
+		if (widgetFactoryForInput) widgetFactoryForInput->cancelActiveNumberScrub();
 		widgetFactoryForInput = nullptr;
 		window.unicodeInputCallback = {};
 		window.keyInputCallback = {};
@@ -506,5 +519,30 @@ namespace Ui
 	Bool UiHost::enqueueEvent(UiEvent event)
 	{
 		return queuedEvents.push(std::move(event));
+	}
+
+	void UiHost::setAgentSurface(const UiHostAgentSurface surface)
+	{
+		agentBindings = surface;
+	}
+
+	void UiHost::applyAgentMutation(const Function<void()>& mutate)
+	{
+		if (!mutate) return;
+		mutate();
+		retainedDocument.applyDeferredMutations();
+		retainedDocument.processDirty(dirty(DirtyFlag::Bindings) | dirty(DirtyFlag::Style));
+		synchronizeTextMeasurers();
+		retainedLayoutEngine.layout();
+		retainedOverflowController.synchronizeAfterLayout();
+		if (retainedOverflowController.consumePendingRelayout())
+		{
+			retainedLayoutEngine.layout();
+			retainedOverflowController.synchronizeAfterLayout();
+		}
+		retainedDocument.applyDeferredMutations();
+		retainedDocument.processDirty(dirty(DirtyFlag::Bindings) | dirty(DirtyFlag::Style));
+		synchronizeTextMeasurers();
+		if (widgetFactoryForInput) widgetFactoryForInput->syncControlLayouts();
 	}
 }

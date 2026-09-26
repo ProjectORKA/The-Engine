@@ -1,5 +1,6 @@
 #include "GraphicsAPI.hpp"
 #include "Math.hpp"
+#include "Settings.hpp"
 
 // OpenGLTexture2D
 
@@ -597,7 +598,10 @@ void OpenGL::apiInit(OpenGlContext& openGlContext)
 	// GLEW can leave a benign GL_INVALID_ENUM on some drivers.
 	while (External::glGetError() != GL_NO_ERROR) {}
 
-	if (External::glewIsSupported("GL_ARB_direct_state_access")) logDebug("DSA is supported!");
+	if (External::glewIsSupported("GL_ARB_direct_state_access"))
+	{
+		if (debugGraphicsApiIsEnabled) logDebug("DSA is supported!");
+	}
 	else logError("DSA is not supported!");
 }
 void OpenGL::apiFinish(OpenGlContext& openGlContext)

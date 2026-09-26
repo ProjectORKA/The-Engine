@@ -305,7 +305,7 @@ struct AgentBridge::Implementation
 					{"maxFrameBytes", static_cast<U64>(config.maxFrameBytes)},
 					{"affinities", AgentValue::Array{"io", "main", "render"}},
 					{"features", AgentValue::Array{
-						"screenshots", "input", "ui-inspection", "logs", "profiling", "registered-functions"}},
+						"screenshots", "input", "ui-inspection", "ui-semantic", "logs", "profiling", "registered-functions"}},
 					{"coordinates", AgentValue::Object{
 						{"origin", "top-left"}, {"x", "right"}, {"y", "down"}, {"units", "logical-pixels"}}},
 					{"artifactRoot", std::filesystem::absolute(Path("AgentArtifacts")).lexically_normal().string()}

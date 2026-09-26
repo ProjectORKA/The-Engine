@@ -1,8 +1,7 @@
 #include "GPUTexture.hpp"
 #include "AIPlayground.hpp"
 #include "Renderer.hpp"
-
-bool debugGPUTexture = true;
+#include "Settings.hpp"
 
 Bool GPUTexture::isLoaded() const
 {
@@ -24,7 +23,7 @@ void GPUTexture::unload(Renderer& renderer)
 {
 	if (loaded)
 	{
-		if (debugGPUTexture) logDebug("Unloading GPUTexture: " + toString(name));
+		if (debugGpuTextureIsEnabled) logDebug("Unloading GPUTexture: " + toString(name));
 		openglTexture.destroy(renderer.openGlContext);
 		loaded = false;
 	}
@@ -62,7 +61,7 @@ void GPUTexture::load(Renderer& renderer, const CpuTexture& cpuTexture)
 	{
 		if (loaded) unload(renderer);
 
-		if (debugGPUTexture) logDebug("Loading GPUTexture: " + toString(cpuTexture.getName()));
+		if (debugGpuTextureIsEnabled) logDebug("Loading GPUTexture: " + toString(cpuTexture.getName()));
 
 		name       = cpuTexture.getName();
 		wrapping   = cpuTexture.getWrapping();

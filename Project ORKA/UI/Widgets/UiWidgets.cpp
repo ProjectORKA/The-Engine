@@ -1,5 +1,6 @@
 #include "UiWidgets.hpp"
 
+#include "../../Debug.hpp"
 #include "../../Window.hpp"
 #include "../../WindowAPI.hpp"
 #include "../Layout/UiOverflowController.hpp"
@@ -299,11 +300,6 @@ namespace Ui
 		state->pendingDisplayClick = true;
 		if (UiNode* root = document.get(slot->root))
 			root->state.active = true;
-		if (inputWindow && inputWindow->apiWindow)
-		{
-			const DVec2 anchor = apiWindowGetCursorPosition(inputWindow->apiWindow);
-			inputWindow->requestUiCursorCapture(anchor);
-		}
 		syncNumberField(*slot);
 	}
 
@@ -314,11 +310,8 @@ namespace Ui
 		auto* state = slot ? std::get_if<UiNumberFieldState>(&slot->state) : nullptr;
 		const UiWidgetHandle handle = numberScrub.handle;
 		const Bool moved = numberScrub.moved;
-		Window* const cursorWindow = numberScrub.window ? numberScrub.window : inputWindow;
 		numberScrubActive = false;
 		numberScrub = {};
-
-		if (cursorWindow) cursorWindow->requestUiCursorRelease();
 
 		if (!slot || !state)
 			return;
@@ -343,9 +336,32 @@ namespace Ui
 			root->state.active = false;
 	}
 
+	void UiWidgetFactory::cancelActiveNumberScrub()
+	{
+		if (numberScrubActive) finishNumberScrub(false);
+	}
+
+	void UiWidgetFactory::notifyWindowFocusLost(Window&)
+	{
+		numberScrubAbortFromFocus.store(true, std::memory_order_release);
+		if (debugUiCursorIsEnabled)
+			logDebug("UiCursor: window focus lost — scrub abort queued");
+	}
+
 	void UiWidgetFactory::driveNumberScrubFrame(Window& window)
 	{
 		if (!numberScrubActive || !numberScrub.handle.isValid()) return;
+		if (numberScrubAbortFromFocus.exchange(false, std::memory_order_acq_rel))
+		{
+			finishNumberScrub(false);
+			return;
+		}
+		if (window.apiWindow &&
+			glfwGetWindowAttrib(window.apiWindow, GLFW_FOCUSED) != GLFW_TRUE)
+		{
+			finishNumberScrub(false);
+			return;
+		}
 		Slot* slot = get(numberScrub.handle);
 		auto* state = slot ? std::get_if<UiNumberFieldState>(&slot->state) : nullptr;
 		if (!slot || !state || slot->readOnly || state->mode != UiNumberFieldMode::Display)
@@ -812,15 +828,21 @@ namespace Ui
 			event.handled = true;
 		};
 		listen(handle, root, UiRoutedEventType::PointerDown,
-			[updateFromPointer](UiRoutedEvent& event) mutable
+			[this, updateFromPointer](UiRoutedEvent& event) mutable
 			{
+				cancelActiveNumberScrub();
 				updateFromPointer(event);
 				event.capturePointer = true;
+				event.captureSystemCursor = true;
 				event.focusTarget = true;
 			});
 		listen(handle, root, UiRoutedEventType::Drag, updateFromPointer);
 		listen(handle, root, UiRoutedEventType::PointerUp,
-			[](UiRoutedEvent& event) { event.releasePointer = true; });
+			[](UiRoutedEvent& event)
+			{
+				event.releasePointer = true;
+				event.releaseSystemCursor = true;
+			});
 		listen(handle, root, UiRoutedEventType::KeyDown,
 			[this, handle](UiRoutedEvent& event)
 			{
@@ -865,6 +887,7 @@ namespace Ui
 		listen(handle, root, UiRoutedEventType::PointerDown,
 			[this, handle](UiRoutedEvent& event)
 			{
+				cancelActiveNumberScrub();
 				Slot* slot = get(handle);
 				auto* state = slot ? std::get_if<UiSliderState>(&slot->state) : nullptr;
 				if (!slot || !state || slot->readOnly) return;
@@ -876,6 +899,7 @@ namespace Ui
 				syncSlider(*slot);
 				if (state->onRangeChange) state->onRangeChange(handle, state->value, state->upperValue);
 				event.capturePointer = true;
+				event.captureSystemCursor = true;
 				event.focusTarget = true;
 				event.handled = true;
 			});
@@ -893,7 +917,11 @@ namespace Ui
 				event.handled = true;
 			});
 		listen(handle, root, UiRoutedEventType::PointerUp,
-			[](UiRoutedEvent& event) { event.releasePointer = true; });
+			[](UiRoutedEvent& event)
+			{
+				event.releasePointer = true;
+				event.releaseSystemCursor = true;
+			});
 		listen(handle, root, UiRoutedEventType::KeyDown,
 			[this, handle](UiRoutedEvent& event)
 			{
@@ -1275,7 +1303,19 @@ namespace Ui
 			{
 				Slot* slot = get(handle);
 				auto* state = slot ? std::get_if<UiNumberFieldState>(&slot->state) : nullptr;
-				if (!slot || !state || slot->readOnly) return;
+				const UiNode* root = slot ? document.get(slot->root) : nullptr;
+				if (!slot || !state || !root || slot->readOnly) return;
+				// Rapid chevron clicks synthesize DoubleClick; only the value area opens edit.
+				if (state->mode == UiNumberFieldMode::Display)
+				{
+					const NumberHitZone zone =
+						numberHitZone(root, *state, localPointerX(root, event));
+					if (zone != NumberHitZone::Scrub)
+					{
+						event.handled = true;
+						return;
+					}
+				}
 				enterNumberEditMode(*state);
 				(void)state->editor.execute(UiTextEditCommand::SelectAll);
 				state->selectionAnchor = 0;

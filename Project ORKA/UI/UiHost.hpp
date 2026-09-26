@@ -17,7 +17,19 @@
 
 namespace Ui
 {
+	class UiCommandRegistry;
+	class UiPropertyRegistry;
+	class UiWidgetBridge;
 	class UiWidgetFactory;
+
+	struct UiHostAgentSurface
+	{
+		UiCommandRegistry* commands = nullptr;
+		UiPropertyRegistry* properties = nullptr;
+		UiWidgetBridge* widgetBridge = nullptr;
+		UiWidgetFactory* widgets = nullptr;
+		Function<void()> syncAuthoredBindings;
+	};
 
 	// Adapter between the existing immediate UIElement tree and the retained UI.
 	// Each host owns one document and one per-window input queue.
@@ -73,6 +85,9 @@ namespace Ui
 		}
 		// Optional factory hook for window-thread input drivers (number-field scrub).
 		void registerWidgetFactory(UiWidgetFactory* factory) { widgetFactoryForInput = factory; }
+		void setAgentSurface(UiHostAgentSurface surface);
+		[[nodiscard]] const UiHostAgentSurface& agentSurface() const { return agentBindings; }
+		void applyAgentMutation(const Function<void()>& mutate);
 
 	private:
 		UiDocument retainedDocument;
@@ -107,10 +122,12 @@ namespace Ui
 		Bool created = false;
 		Bool layoutDebugMode = false;
 		std::atomic<Bool> layoutDebugToggleRequested{ false };
+		UiHostAgentSurface agentBindings;
 
 		void updateViewport(Window& window);
 		void synchronizePointer(Window& window);
 		void dispatchEvents(Window& window);
+		void applySystemCursorRequests(Window& window);
 		void synchronizeTextMeasurers();
 	};
 }

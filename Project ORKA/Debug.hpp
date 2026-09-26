@@ -93,5 +93,6 @@ void logError(T value)
 
 inline void logDebugLaunchParameters(const Int count, Char** params)
 {
-	for (int i = 0; i < count; i++) logDebug(params[i]);
+	if (!debugLaunchParameters) return;
+	for (int i = 0; i < count; i++) logDebug("Launch parameter " + toString(i) + ": " + toString(params[i]));
 }

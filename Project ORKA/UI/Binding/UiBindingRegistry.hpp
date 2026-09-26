@@ -49,6 +49,18 @@ namespace Ui
 		U64 version = 0;
 	};
 
+	struct UiPropertyDescriptor
+	{
+		UiValue value;
+		U64 version = 0;
+	};
+
+	struct UiPropertyRegistrySnapshot
+	{
+		Map<String, UiPropertyDescriptor> properties;
+		U64 version = 0;
+	};
+
 	class UiPropertyRegistry
 	{
 	public:
@@ -61,6 +73,7 @@ namespace Ui
 		[[nodiscard]] Bool erase(const String& path);
 		[[nodiscard]] SizeT size() const { return properties.size(); }
 		[[nodiscard]] U64 version() const { return registryVersion; }
+		[[nodiscard]] UiPropertyRegistrySnapshot snapshot() const;
 
 	private:
 		Map<String, UiPropertyEntry> properties;

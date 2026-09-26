@@ -312,7 +312,8 @@ void CpuMesh::load(Name name)
 		Float currentWaitTime = 0.0f;
 		const Float retryInterval = 1.0f; // Log every second
 
-		logDebug("Attempting to load mesh file from(" + path.string() + ")");
+		if (debugMeshLoadingIsEnabled)
+			logDebug("Attempting to load mesh file from(" + path.string() + ")");
 
 		this->name = name;
 

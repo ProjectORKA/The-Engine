@@ -707,6 +707,48 @@ namespace Ui::Testing
 			context.check(activations == 1, "modified Enter does not activate focused control");
 		}
 
+		void secondaryMouseButtonDoesNotActivate(CaseContext& context)
+		{
+			constexpr Int secondaryMouseButton = 1;
+
+			UiDocument document;
+			const UiNodeHandle root = document.root();
+			const UiNodeHandle button = document.createNode(root, { .typeName = "button" });
+			document.get(root)->computed.size = Vec2(400, 200);
+			document.get(button)->computed.position = Vec2(10, 10);
+			document.get(button)->computed.size = Vec2(100, 50);
+
+			UiEventRouter router(document);
+			UiInteractionData buttonInteraction;
+			buttonInteraction.focusable = true;
+			buttonInteraction.hitTestVisible = true;
+			router.setInteraction(button, buttonInteraction);
+			router.setInteraction(root, { .hitTestVisible = true });
+
+			Int activations = 0;
+			(void)router.addListener(button, UiRoutedEventType::Activate,
+				[&](UiRoutedEvent&) { ++activations; });
+
+			UiEvent down;
+			down.type = UiEventType::PointerButton;
+			down.action = UiEventAction::Pressed;
+			down.pointerId = 1;
+			down.position = DVec2(20, 20);
+			down.code = secondaryMouseButton;
+			(void)router.dispatch(down);
+
+			UiEvent up = down;
+			up.action = UiEventAction::Released;
+			(void)router.dispatch(up);
+			context.check(activations == 0, "secondary mouse button does not activate control");
+
+			down.code = 0;
+			(void)router.dispatch(down);
+			up.code = 0;
+			(void)router.dispatch(up);
+			context.check(activations == 1, "primary mouse button activates control");
+		}
+
 		void eventPhasesFocusController(CaseContext& context)
 		{
 			UiDocument document;
@@ -1821,6 +1863,7 @@ namespace Ui::Testing
 			{ "text-utf8-wrap-fit", textUtf8WrapFit },
 			{ "scrolling-virtual-list", scrollingAndVirtualList },
 			{ "focus-dismiss-modified-activation", focusDismissAndModifiedActivation },
+			{ "secondary-mouse-button-no-activate", secondaryMouseButtonDoesNotActivate },
 			{ "event-phases-focus-controller", eventPhasesFocusController },
 			{ "text-editing-undo-composition", textEditing },
 			{ "glyph-render-mode-distance-metadata", glyphRenderModeAndMetadata },

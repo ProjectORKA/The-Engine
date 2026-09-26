@@ -16,10 +16,22 @@ namespace Ui
 			host.fontService().shapeProvider(),
 			makeAppTextStyleProvider(host.appTheme()));
 		host.registerWidgetFactory(widgetFactory.get());
+		host.setAgentSurface({
+			&commandRegistry,
+			&propertyRegistry,
+			widgetBridgeImpl.get(),
+			widgetFactory.get(),
+			[this]
+			{
+				syncFromProperties();
+				syncControlLayouts();
+			}
+		});
 	}
 
 	UiAuthoredHost::~UiAuthoredHost()
 	{
+		host.setAgentSurface({});
 		host.registerWidgetFactory(nullptr);
 	}
 

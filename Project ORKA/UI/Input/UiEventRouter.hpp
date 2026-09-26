@@ -135,7 +135,9 @@ namespace Ui
 
 		[[nodiscard]] UiNodeHandle hitTest(DVec2 viewportPosition) const;
 		[[nodiscard]] UiNodeHandle hoveredNode(UInt pointerId = 0) const;
+		[[nodiscard]] UiNodeHandle capturedPointerNode(UInt pointerId = 0) const;
 		[[nodiscard]] Bool dispatch(const UiEvent& event);
+		[[nodiscard]] Bool dispatchRouted(UiRoutedEvent event);
 		[[nodiscard]] Bool dispatchWorldEvent(UiEvent event, const UiWorldRay& ray);
 		void setWorldSurfaceMapper(UiWorldSurfaceMapper mapper);
 

@@ -4,6 +4,38 @@ These rules apply to the retained UI stack under `Project ORKA/UI/` — `UiHost`
 
 Read this file before adding or changing widgets, themes, layouts, or UI samples.
 
+## Start here (key paths)
+
+When an edit touches modern UI, inspect these first:
+
+- `Project ORKA/UI/UI_REDESIGN_PLAN.md` — target architecture for app shell, surfaces, and large refactors
+- `Project ORKA/UI/Theme/UiAppTheme.hpp` + `UI/Theme/UiAppFlex.hpp` — master theme (colors, typography, light/dark) and flex spacing (`p5`–`p80`, `g5`–`g80`, `col`/`row`)
+- `Project ORKA/UI/UiHost.hpp` + `UI/Widgets/UiWidgets.hpp` — modern host and controls
+- `Project ORKA/UI/Authoring/UiAuthoredHost.hpp` — load `.ui.html` + `.ui.scss` bundles onto a host
+- `Project ORKA/UserInterface.hpp` + `Project ORKA/UIElement.hpp` — legacy UI tree (when touching legacy panels)
+- `Project ORKA/Data/UI/app-master.ui.scss` + `controls-demo.ui.html` — global authored styles and demo markup
+- Reference wiring: `Project ORKA/GameLoader.cpp`; C++ sample host: `UI/Samples/UiControlsDemo.cpp`
+
+## Agent requirements (must not skip)
+
+**Single source of truth:** `UiAppTheme.hpp` (colors/typography) + `UiAppFlex.hpp` (flex spacing). Install with `host.useAppTheme(theme)` and semantic classes from `UiAppClass` / `UiAppFlexClass`.
+
+1. **Flex + class spacing only** — flex containers default to **column**; add `row` only for horizontal stacks. Use `p5`–`p80` and `g5`–`g80` on widget classes, and `align-top-left` … `align-bot-right` for semantic child alignment (see `UiAppFlex.hpp`). No arbitrary padding, gap, or margin in surface code (legacy panels use `UiAppFlex::p10` etc.).
+2. **Use `UiAppTheme` tokens** — no ad-hoc color literals or font sizes. Legacy `UIElement` panels use `UiLegacyTheme`.
+3. **Theme paints, widgets semantic** — visuals only in `UiAppTheme.cpp`; surfaces use `UiAppClass` style classes.
+4. **Light + dark mode** — both modes must look correct; add a theme toggle on new app shells when practical.
+5. **Visible focus** on all focusable controls.
+6. **Use `UiWidgetFactory` controls** (toggle, checkbox, slider, `numberField` / `<number-input>`, select, textField) instead of mimicking them with boxes — see [Number fields](#number-fields-numberfield--number-input).
+7. **Attach layout engine + `syncControlLayouts()`** when using composite controls (toggles, checkboxes, selects).
+8. **Showcase new reusable tokens/components** in `Data/UI/controls-demo.ui.html` (markup) + global SCSS under `Data/UI/`.
+9. **Prefer authored UI** for demo/layout surfaces; keep C++ to property/command wiring via `UiAuthoredHost`.
+10. **CSS overflow on `div`** (`overflow`, `overflow-x`, `overflow-y`: visible/hidden/scroll/auto) is handled automatically by `UiHost` + `UiOverflowController` — clipping via scissor, wheel + scrollbar input, no manual `updateScrollMetrics()` / `applyScrollShift()`. Reserve `<scroll-view>` for virtual lists or scroll-anchor bindings.
+11. **No unused markup ids** — add `id="…"` only when C++ (`ensureNodeLayout`, `findById`, …), bindings (`[id]="…"` for token/theme lookup), or tests need it. Prefer semantic classes for styling; do not duplicate class names as ids.
+12. **No dead markup classes or UI clutter** — every class must be handled by SCSS, `UiAppTheme`, or C++ wiring. Do not add decorative aliases, one-off layout workaround classes, or duplicate helpers already on the same node; prefer fixing layout (e.g. content-aware flex mins, `min-h-0` on scroll children) or existing flex/theme tokens over new names. Nested surfaces use `panel` / `section` theme classes (highlight stacking in `UiAppTheme.cpp`); do not hand-pick nested background colors.
+13. **Wrap rows use `b50`–`b350`** — basis classes on items + `row wrap` on the container (balanced line breaks for grow rows); color swatches use `.color-token-grid`. Prefer short flex utilities (`fg1`, `wrap`, `mw0`, `mh0`). See `UiAppFlex.hpp` and `.token-item b100` in the controls demo.
+
+Reference implementation: `Data/UI/controls-demo.ui.html` + `Project ORKA/GameLoader.cpp`.
+
 ## Master Theme (Required)
 
 **All modern UI surfaces must use the unified app theme** defined in `UI/Theme/UiAppTheme.hpp`.
@@ -142,6 +174,14 @@ Corner radius is `0` app-wide (square chrome).
 - Dropdown menus must be laid out when open (`syncControlLayouts`).
 - Open menus reparent to the document root to avoid scroll clipping.
 
+### Number fields (`numberField` / `<number-input>`)
+
+- **Default display mode is Blender-style:** centered value, optional min/max progress fill, hover step chevrons, drag-to-scrub, click to switch to left-aligned typing.
+- **Scrub on the window thread:** `UiWidgetFactory::driveNumberScrubFrame` from `UiHost::update` using `Window::mouseDelta`; optional cursor hide via `Window::requestUiCursorCapture` / `applyUiCursorRequests` on the poll-events thread. Do not route scrub through `PointerMove`/`Drag` or `UiHost` cursor warp.
+- **Markup:** `min`/`max` (bound), `integer`, `unit`, `progress="false"`.
+- **Typed commit clamps only** (min/max); `step` is for arrows/scrub finalize, not free typing (avoids `1`→`0` when step is 25).
+- **Empty editable fields** must keep a one-line **intrinsic text measure** in `UiHost::synchronizeTextMeasurers` — do not fake height with control `min-height` (that makes buttons/inputs too tall).
+
 ### Focus and keyboard
 
 - **Every focusable control must have a visible focused state** (`node.state.focused`).
@@ -158,9 +198,14 @@ Corner radius is `0` app-wide (square chrome).
 
 ## Samples and Demos
 
-- Reference implementation: `UI/Samples/UiControlsDemo.cpp`.
+- **Authored reference:** `Data/UI/controls-demo.ui.html` + global SCSS under `Data/UI/`; launcher wiring in `Project ORKA/GameLoader.cpp`.
+- **C++ sample host:** `UI/Samples/UiControlsDemo.cpp`.
 - Reference theme: `UI/Theme/UiAppTheme.hpp` + `UI/Theme/UiAppTheme.cpp`.
 - A UI demo must exercise: theme tokens (colors, spacing, typography, layout), toggles, checkboxes, sliders, dropdowns, text fields, light/dark toggle, scroll, focus rings, and live status output.
+
+## Validation
+
+- **`--modern-ui-test` must exit on its own.** A headless `Project ORKA.exe` still running (often at high CPU) after that command usually means an infinite parser/layout loop — start with `malformed-deterministic-corpus` and `UiMarkupParser::parseText` progress guarantees.
 
 ## Checklist Before Submitting UI Changes
 
