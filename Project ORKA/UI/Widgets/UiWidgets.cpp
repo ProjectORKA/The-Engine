@@ -212,7 +212,7 @@ namespace Ui
 		case UiWidgetKind::Portal: return "ui-portal";
 		case UiWidgetKind::Overlay: return "ui-overlay";
 		case UiWidgetKind::WorldSurface: return "ui-world-surface";
-		case UiWidgetKind::GameViewport: return "ui-game-viewport";
+		case UiWidgetKind::InteractiveSurface: return "ui-interactive-surface";
 		case UiWidgetKind::Button: return "ui-button";
 		case UiWidgetKind::Toggle: return "ui-toggle";
 		case UiWidgetKind::Checkbox: return "ui-checkbox";
@@ -666,12 +666,29 @@ namespace Ui
 		return handle;
 	}
 
-	UiWidgetHandle UiWidgetFactory::gameViewport(UiGameViewportConfig config)
+	UiWidgetHandle UiWidgetFactory::interactiveSurface(UiInteractiveSurfaceConfig config)
 	{
-		const UiWidgetHandle handle = create(UiWidgetKind::GameViewport, config, "GameViewport",
-			UiSemanticRole::Application, UiGameViewportState{std::move(config.render)});
-		configureInteraction(node(handle), config, true);
+		const UiWidgetHandle handle = create(UiWidgetKind::InteractiveSurface, config, "InteractiveSurface",
+			UiSemanticRole::Application, UiInteractiveSurfaceState{std::move(config.render)});
+		const UiNodeHandle root = node(handle);
+		configureInteraction(root, config, true);
+		// Focus the surface on press, but do not mark handled — shells need the
+		// unconsumed InputEvent for ui.capture / camera look (LMB/RMB).
+		listen(handle, root, UiRoutedEventType::PointerDown,
+			[](UiRoutedEvent& event)
+			{
+				event.focusTarget = true;
+			});
 		return handle;
+	}
+
+	void UiWidgetFactory::setInteractiveSurfaceRender(
+		const UiWidgetHandle handle, UiInteractiveSurfaceCallback render)
+	{
+		Slot* slot = get(handle);
+		if (!slot || slot->kind != UiWidgetKind::InteractiveSurface) return;
+		if (auto* state = std::get_if<UiInteractiveSurfaceState>(&slot->state))
+			state->render = std::move(render);
 	}
 
 	UiWidgetHandle UiWidgetFactory::button(UiButtonConfig config)
@@ -1886,16 +1903,17 @@ namespace Ui
 		}
 	}
 
-	void UiWidgetFactory::renderGameViewports() const
+	void UiWidgetFactory::renderInteractiveSurfaces(const UiNodeHandle only) const
 	{
 		for (UInt index = 0; index < slots.size(); ++index)
 		{
 			const Slot& slot = slots[index];
 			if (!slot.occupied) continue;
-			const auto* state = std::get_if<UiGameViewportState>(&slot.state);
+			if (only.isValid() && slot.root != only) continue;
+			const auto* state = std::get_if<UiInteractiveSurfaceState>(&slot.state);
 			const UiNode* root = document.get(slot.root);
 			if (!state || !state->render || !root || !root->state.visible) continue;
-			state->render(UiGameViewportContext{
+			state->render(UiInteractiveSurfaceContext{
 				UiWidgetHandle{index, slot.generation}, slot.root,
 				root->computed.position, root->computed.size});
 		}

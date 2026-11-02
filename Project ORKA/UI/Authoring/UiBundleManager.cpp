@@ -1,4 +1,6 @@
 #include "UiBundleManager.hpp"
+#include "UiComponentExpander.hpp"
+#include "UiComponentRegistry.hpp"
 
 #include <cctype>
 
@@ -176,9 +178,21 @@ namespace Ui
 	{
 		UiCompiledBundle result;
 		result.generation = generation;
-		const UiMarkupParseResult markup = UiMarkupParser::parse(sources.markup, sources.markupName, budgets);
+
+		UiComponentRegistry registry;
+		registry.registerBuiltInComponents(sources.markupRoot);
+		String processedMarkup = preprocessUiImports(
+			sources.markup, sources.markupRoot, registry, result.diagnostics);
+		const UiMarkupParseResult markup = UiMarkupParser::parse(
+			processedMarkup, sources.markupName, budgets);
 		result.blueprint = markup.document;
 		appendDiagnostics(result.diagnostics, markup.diagnostics);
+		Bool componentsExpanded = true;
+		if (markup.valid)
+		{
+			componentsExpanded = expandRegisteredComponents(
+				result.blueprint, sources.markupRoot, registry, budgets, result.diagnostics);
+		}
 		const UiStyleCompileResult style = UiStyleCompiler::compile(
 			sources.style, sources.styleName, sources.styleOptions);
 		result.styles = style.sheet;
@@ -279,7 +293,7 @@ namespace Ui
 			}
 		}
 
-		Bool hasErrors = !markup.valid || !style.valid;
+		Bool hasErrors = !markup.valid || !style.valid || !componentsExpanded;
 		for (const UiDiagnostic& diagnostic : result.diagnostics)
 			if (diagnostic.severity == DiagnosticSeverity::Error) { hasErrors = true; break; }
 		result.valid = generation != 0 && !hasErrors;
@@ -293,6 +307,7 @@ namespace Ui
 	{
 		UiBundleLoadResult result;
 		result.sources.markupName = markupPath.string();
+		result.sources.markupRoot = markupPath.parent_path();
 		result.sources.styleName = stylePath.string();
 		const Bool markupValid = readBoundedFile(
 			markupPath,

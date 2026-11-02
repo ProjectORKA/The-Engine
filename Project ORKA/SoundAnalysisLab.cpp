@@ -1,10 +1,16 @@
 #include "SoundAnalysisLab.hpp"
 
+#include "Debug.hpp"
 #include "FileSystem.hpp"
+#include "KeyMap.hpp"
 #include "ResourceManager.hpp"
 #include "Renderer.hpp"
-#include "UI/Theme/UiAppFlex.hpp"
-#include "UI/Theme/UiLegacyTheme.hpp"
+#include "Settings.hpp"
+#include "UI/Authoring/UiAuthoredHost.hpp"
+#include "UI/Authoring/UiMarkupSurfaceRegistry.hpp"
+#include "UI/Surfaces/UiInteractiveSurface.hpp"
+#include "UI/Theme/UiAppTheme.hpp"
+#include "UI/UiHost.hpp"
 #include "UserInterface.hpp"
 #include "Window.hpp"
 #include "Windows.hpp"
@@ -1187,7 +1193,7 @@ void SoundAnalysisLabRenderer::inputEvent(Window& window, InputEvent& input)
 	if(!samplesMono.empty())
 	{
 		const IVec2 canvas = getSize();
-		const Vec2  mouse  = Vec2(window.mousePosBotLeft);
+		const Vec2  mouse  = Vec2(getMousePosBottomLeft(window));
 		constexpr Float margin = 20.0f;
 		const Float graphW = max(static_cast<Float>(canvas.x) - margin * 2.0f, 100.0f);
 
@@ -1214,7 +1220,7 @@ void SoundAnalysisLabRenderer::renderInteractive(Window& window)
 	if(samplesMono.empty()) return;
 
 	const IVec2 canvas = getSize();
-	const Vec2  mouse  = Vec2(window.mousePosBotLeft);
+	const Vec2  mouse  = Vec2(getMousePosBottomLeft(window));
 
 	constexpr Float headerH   = 80.0f;
 	constexpr Float waveformH = 60.0f;
@@ -1447,133 +1453,183 @@ void SoundAnalysisLabRenderer::renderScene(Window& window)
 	}
 }
 
-void ImportAudioButton::doThis()
+namespace
 {
-	if(renderer) renderer->pendingImport = true;
-}
+	using namespace Ui;
 
-void ImportAudioButton::inputEvent(Window& window, InputEvent& input)
-{
-	UIButton::inputEvent(window, input);
-}
-
-void PhaseToggleButton::doThis()
-{
-	if(renderer)
+	void publishSoundAnalysisState(
+		UiPropertyRegistry& properties, SoundAnalysisLabRenderer& renderer)
 	{
-		renderer->showPhase = !renderer->showPhase;
-		renderer->spectrogramDirty = true;
-		setText(renderer->showPhase ? "Show Magnitude" : "Show Phase");
+		const Int fileCount = static_cast<Int>(renderer.soundFiles.size());
+		const String filePosition = fileCount > 0
+			? toString(renderer.currentFileIndex + 1) + " / " + toString(fileCount)
+			: "No bundled sounds";
+		(void)properties.set("state.fileName", UiValue::fromString(
+			renderer.loadedFileName.empty() ? "No audio loaded" : renderer.loadedFileName));
+		(void)properties.set("state.filePosition", UiValue::fromString(filePosition));
+		(void)properties.set("state.playLabel", UiValue::fromString(
+			renderer.playing ? "Pause" : "Play"));
+		(void)properties.set("state.phaseLabel", UiValue::fromString(
+			renderer.showPhase ? "Show magnitude" : "Show phase"));
+		(void)properties.set("state.volume", UiValue::fromNumber(renderer.volume));
+		(void)properties.set("state.brightnessLow", UiValue::fromNumber(renderer.brightnessLow));
+		(void)properties.set("state.brightnessHigh", UiValue::fromNumber(renderer.brightnessHigh));
+		(void)properties.set("state.contrastLow", UiValue::fromNumber(renderer.contrastLow));
+		(void)properties.set("state.contrastHigh", UiValue::fromNumber(renderer.contrastHigh));
 	}
-}
 
-SoundAnalysisLabControls::SoundAnalysisLabControls(SoundAnalysisLabRenderer& renderer)
-{
-	setName("SoundAnalysisLabControls");
-	column();
-	growX(false);
-	growY(true);
-	setWidth(300);
-	gap(static_cast<Int>(Ui::UiAppFlex::g10));
-	padding(static_cast<Int>(Ui::UiAppFlex::p10));
-	Ui::UiLegacyTheme::applyPanelStyle(*this);
+	struct SoundAnalysisLabShell final : UIElement
+	{
+		UiAppTheme theme = UiAppTheme::dark();
+		UiHost host;
+		UniquePointer<UiAuthoredHost> authored;
+		SoundAnalysisLabRenderer renderer;
+		Window* owningWindow = nullptr;
+		Bool ready = false;
 
-	importButton.renderer = &renderer;
-	importButton.setName("ImportAudioButton");
-	importButton.padding(static_cast<Int>(Ui::UiAppFlex::p10));
-	importButton.growX(false);
-	importButton.setWidth(276);
-	importButton.setHeight(static_cast<Int>(Ui::UiAppLayout::controlRowHeight - Ui::UiAppFlex::p10));
-	Ui::UiLegacyTheme::applyControlStyle(importButton);
-	importButton.color(Color(0.96f, 0.96f, 0.97f, 1.0f));
-	importButton.setText("Import Audio File...");
-
-	phaseToggleButton.renderer = &renderer;
-	phaseToggleButton.setName("PhaseToggleButton");
-	phaseToggleButton.padding(static_cast<Int>(Ui::UiAppFlex::p10));
-	phaseToggleButton.growX(false);
-	phaseToggleButton.setWidth(276);
-	phaseToggleButton.setHeight(static_cast<Int>(Ui::UiAppLayout::controlRowHeight - Ui::UiAppFlex::p10));
-	Ui::UiLegacyTheme::applyControlStyle(phaseToggleButton);
-	phaseToggleButton.color(Color(0.96f, 0.96f, 0.97f, 1.0f));
-	phaseToggleButton.setText("Show Phase");
-
-	fileIndexSlider
-		.setLabel("Bundled Sound")
-		.setRange(0.0f, max(static_cast<Float>(renderer.soundFiles.size()) - 1.0f, 0.0f))
-		.setValue(static_cast<Float>(renderer.currentFileIndex))
-		.setOnValueChanged([&renderer](const Float value)
+		SoundAnalysisLabShell()
 		{
-			renderer.loadSoundFileByIndex(static_cast<Int>(round(value)));
-		});
-	fileIndexSlider.growX(false);
-	fileIndexSlider.setWidth(276);
+			addElement(host);
+			growX(true);
+			growY(true);
+			background(Color(0, 0, 0, 0));
+		}
 
-	volumeSlider
-		.setLabel("Volume")
-		.setRange(0.0f, 1.5f)
-		.bind(renderer.volume)
-		.setOnValueChanged([&renderer](const Float value)
+		void refresh()
 		{
-			renderer.volume = value;
-			audioEngine.setTrackVolume(renderer.playbackTrackId, value);
-		});
-	volumeSlider.growX(false);
-	volumeSlider.setWidth(276);
+			if (!authored) return;
+			publishSoundAnalysisState(authored->properties(), renderer);
+			authored->syncFromProperties();
+		}
 
-	brightnessLowSlider
-		.setLabel("Brightness Low")
-		.setRange(0.1f, 10.0f)
-		.bind(renderer.brightnessLow);
-	brightnessLowSlider.growX(false);
-	brightnessLowSlider.setWidth(276);
+		void create(Window& window) override
+		{
+			owningWindow = &window;
+			const IVec2 size = window.getSize();
+			setWidth(size.x);
+			setHeight(size.y);
+			host.setWidth(size.x);
+			host.setHeight(size.y);
+			host.useAppTheme(theme);
+			UIElement::create(window);
 
-	brightnessHighSlider
-		.setLabel("Brightness High")
-		.setRange(0.1f, 10.0f)
-		.bind(renderer.brightnessHigh);
-	brightnessHighSlider.growX(false);
-	brightnessHighSlider.setWidth(276);
+			renderer.renderToFramebuffer = false;
+			renderer.create(window);
+			UiMarkupSurfaceRegistry::global().registerInteractiveSurfaceTag("sound-analysis-view");
+			authored = std::make_unique<UiAuthoredHost>(host);
 
-	contrastLowSlider
-		.setLabel("Contrast Low")
-		.setRange(0.1f, 50.0f)
-		.bind(renderer.contrastLow);
-	contrastLowSlider.growX(false);
-	contrastLowSlider.setWidth(276);
+			(void)authored->commands().registerCommand("SoundLab.Import", {},
+				[this](const Vector<UiValue>&) { renderer.pendingImport = true; return true; });
+			(void)authored->commands().registerCommand("SoundLab.Previous", {},
+				[this](const Vector<UiValue>&) { renderer.pendingFileStep = -1; return true; });
+			(void)authored->commands().registerCommand("SoundLab.Next", {},
+				[this](const Vector<UiValue>&) { renderer.pendingFileStep = 1; return true; });
+			(void)authored->commands().registerCommand("SoundLab.TogglePlay", {},
+				[this](const Vector<UiValue>&) { renderer.pendingTogglePlay = true; return true; });
+			(void)authored->commands().registerCommand("SoundLab.TogglePhase", {},
+				[this](const Vector<UiValue>&)
+				{
+					renderer.showPhase = !renderer.showPhase;
+					renderer.spectrogramDirty = true;
+					refresh();
+					return true;
+				});
 
-	contrastHighSlider
-		.setLabel("Contrast High")
-		.setRange(0.1f, 50.0f)
-		.bind(renderer.contrastHigh);
-	contrastHighSlider.growX(false);
-	contrastHighSlider.setWidth(276);
+			authored->widgetBridge().setPropertyChangeHandler(
+				[this](const String& path, const UiValue& value)
+				{
+					if (value.type != UiValueType::Number) return;
+					const Float number = static_cast<Float>(value.number);
+					if (path == "state.volume")
+					{
+						renderer.volume = number;
+						audioEngine.setTrackVolume(renderer.playbackTrackId, number);
+					}
+					else if (path == "state.brightnessLow") renderer.brightnessLow = number;
+					else if (path == "state.brightnessHigh") renderer.brightnessHigh = number;
+					else if (path == "state.contrastLow") renderer.contrastLow = number;
+					else if (path == "state.contrastHigh") renderer.contrastHigh = number;
+					refresh();
+				});
 
-	addElement(importButton);
-	addElement(phaseToggleButton);
-	addElement(fileIndexSlider);
-	addElement(volumeSlider);
-	addElement(brightnessLowSlider);
-	addElement(brightnessHighSlider);
-	addElement(contrastLowSlider);
-	addElement(contrastHighSlider);
+			const Path uiDirectory = resourceManager.getOrkaDataPath() / "UI";
+			if (!authored->loadFromFiles(
+				uiDirectory / "sound-analysis-lab.ui.html",
+				uiDirectory / "sound-analysis-lab.ui.scss") || !authored->mount())
+			{
+				logError("Sound Analysis Lab: failed to mount authored UI.");
+				for (const UiDiagnostic& diagnostic : authored->diagnostics())
+					logError("  " + diagnostic.message);
+				return;
+			}
+
+			const UiWidgetHandle surface = authored->widgetBridge().findById("sound-analysis-view");
+			const UiNodeHandle surfaceNode = authored->widgets().node(surface);
+			(void)host.eventRouter().addListener(
+				host.document().root(), UiRoutedEventType::KeyDown,
+				[this, surfaceNode](UiRoutedEvent& event)
+				{
+					if (host.eventRouter().focusedNode() != surfaceNode) return;
+					if (event.key == O) renderer.pendingImport = true;
+					else if (event.key == LeftBracket) renderer.pendingFileStep = -1;
+					else if (event.key == RightBracket) renderer.pendingFileStep = 1;
+					else if (event.key == Space) renderer.pendingTogglePlay = true;
+					else return;
+					event.handled = true;
+					event.preventDefault();
+				});
+			authored->widgets().setInteractiveSurfaceRender(surface,
+				[this](const UiInteractiveSurfaceContext& context)
+				{
+					if (!owningWindow) return;
+					renderer.setPositionX(static_cast<Int>(context.position.x));
+					renderer.setPositionY(static_cast<Int>(context.position.y));
+					renderer.setWidth(static_cast<Int>(context.size.x));
+					renderer.setHeight(static_cast<Int>(context.size.y));
+					renderer.renderInteractive(*owningWindow);
+					renderer.render(*owningWindow);
+				});
+			ready = true;
+			refresh();
+		}
+
+		void update(Window& window) override
+		{
+			const IVec2 size = window.getSize();
+			setWidth(size.x);
+			setHeight(size.y);
+			host.setWidth(size.x);
+			host.setHeight(size.y);
+			renderer.update(window);
+			if (ready)
+			{
+				refresh();
+				authored->syncControlLayouts();
+			}
+			host.update(window);
+		}
+
+		void inputEvent(Window& window, InputEvent& input) override
+		{
+			renderer.inputEvent(window, input);
+		}
+
+		void destroy(Window& window) override
+		{
+			renderer.destroy(window);
+			authored.reset();
+			ready = false;
+			owningWindow = nullptr;
+			host.destroy(window);
+		}
+	};
 }
 
 void SoundAnalysisLab::run() const
 {
-	SoundAnalysisLabRenderer renderer;
-	SoundAnalysisLabControls controls(renderer);
-
-	Window& window = ui.window("Sound Analysis Lab", settings.defaultWindowWidth, settings.defaultWindowHeight, true, true, WindowState::Windowed);
-	window.row();
-	window.gap(static_cast<Int>(Ui::UiAppFlex::g10));
-	window.padding(static_cast<Int>(Ui::UiAppFlex::p10));
-
-	renderer.growX(true);
-	renderer.growY(true);
-	controls.growY(true);
-
-	window.addElement(renderer);
-	window.addElement(controls);
+	SoundAnalysisLabShell shell;
+	Window& window = ui.window("Sound Analysis Lab", settings.defaultWindowWidth,
+		settings.defaultWindowHeight, true, true, WindowState::Windowed);
+	window.addElement(shell);
 	ui.run();
 }

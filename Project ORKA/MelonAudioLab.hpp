@@ -2,8 +2,6 @@
 
 #include "AudioEngine.hpp"
 #include "Game.hpp"
-#include "UIButton.hpp"
-#include "UISlider.hpp"
 #include "WaveformGraph.hpp"
 
 struct Window;
@@ -35,34 +33,6 @@ struct MelonAudioLabRenderer final : GameRenderer
 	void renderScene(Window& window) override;
 	void inputEvent(Window& window, InputEvent& input) override;
 	void renderInteractive(Window& window) override;
-};
-
-struct MelonAudioLabToggle final : UIButton
-{
-	Bool*  value  = nullptr;
-	String label;
-
-	MelonAudioLabToggle(Bool& boundValue, String componentLabel);
-	void doThis() override;
-	void update(Window& window) override;
-};
-
-struct MelonAudioLabControls final : UIElement
-{
-	MelonAudioLabToggle humToggle;
-	MelonAudioLabToggle windToggle;
-	MelonAudioLabToggle breathToggle;
-	UISlider humNoiseMixSlider;
-	UISlider humPitchSlider;
-	UISlider windPitchSlider;
-	UISlider humGainSlider;
-	UISlider windGainSlider;
-	UISlider heartbeatGainSlider;
-	UISlider responseCurveSlider;
-	UISlider speedSlider;
-	UISlider dopplerDirectionSlider;
-
-	explicit MelonAudioLabControls(MelonAudioLabRenderer& renderer);
 };
 
 struct MelonAudioLab

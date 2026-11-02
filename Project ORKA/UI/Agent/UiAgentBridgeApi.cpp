@@ -54,7 +54,7 @@ namespace Ui
 			case UiWidgetKind::Portal: return "portal";
 			case UiWidgetKind::Overlay: return "overlay";
 			case UiWidgetKind::WorldSurface: return "worldsurface";
-			case UiWidgetKind::GameViewport: return "gameviewport";
+			case UiWidgetKind::InteractiveSurface: return "interactivesurface";
 			case UiWidgetKind::Button: return "button";
 			case UiWidgetKind::Toggle: return "toggle";
 			case UiWidgetKind::Checkbox: return "checkbox";

@@ -1,9 +1,17 @@
 #include "MelonAudioLab.hpp"
 
 #include "AudioEngine.hpp"
+#include "Debug.hpp"
 #include "Renderer.hpp"
-#include "UI/Theme/UiAppFlex.hpp"
+#include "ResourceManager.hpp"
+#include "Settings.hpp"
+#include "UI/Authoring/UiAuthoredHost.hpp"
+#include "UI/Authoring/UiMarkupSurfaceRegistry.hpp"
+#include "UI/Surfaces/UiInteractiveSurface.hpp"
+#include "UI/Theme/UiAppTheme.hpp"
 #include "UI/Theme/UiLegacyTheme.hpp"
+#include "UI/UiHost.hpp"
+#include "UserInterface.hpp"
 #include "Window.hpp"
 
 namespace
@@ -152,138 +160,154 @@ void MelonAudioLabRenderer::renderScene(Window& window)
 
 void MelonAudioLabRenderer::renderInteractive(Window& window) {}
 
-MelonAudioLabToggle::MelonAudioLabToggle(Bool& boundValue, String componentLabel)
-	: value(&boundValue)
-	, label(std::move(componentLabel))
+namespace
 {
-	row();
-	growX(false);
-	setWidth(336);
-	setHeight(28);
-	padding(static_cast<Int>(Ui::UiAppFlex::p10));
-	Ui::UiLegacyTheme::applyControlStyle(*this);
-	setText(label + ": " + (boundValue ? "On" : "Off"));
-}
+	using namespace Ui;
 
-void MelonAudioLabToggle::doThis()
-{
-	if(value) *value = !*value;
-}
+	void publishMelonAudioState(UiPropertyRegistry& properties, const MelonAudioLabRenderer& renderer)
+	{
+		(void)properties.set("state.enableHum", UiValue::fromBool(renderer.enableHum));
+		(void)properties.set("state.enableWind", UiValue::fromBool(renderer.enableWind));
+		(void)properties.set("state.enableBreath", UiValue::fromBool(renderer.enableBreath));
+		(void)properties.set("state.humNoiseMix", UiValue::fromNumber(renderer.humNoiseMix));
+		(void)properties.set("state.humPitchScale", UiValue::fromNumber(renderer.humPitchScale));
+		(void)properties.set("state.windPitchScale", UiValue::fromNumber(renderer.windPitchScale));
+		(void)properties.set("state.humGain", UiValue::fromNumber(renderer.humGain));
+		(void)properties.set("state.windGain", UiValue::fromNumber(renderer.windGain));
+		(void)properties.set("state.breathGain", UiValue::fromNumber(renderer.breathGain));
+		(void)properties.set("state.responseCurve", UiValue::fromNumber(renderer.responseCurve));
+		(void)properties.set("state.simulatedSpeed", UiValue::fromNumber(renderer.simulatedSpeed01));
+		(void)properties.set("state.dopplerDirection", UiValue::fromNumber(renderer.simulatedDopplerDirection));
+	}
 
-void MelonAudioLabToggle::update(Window& window)
-{
-	UIElement::update(window);
-	if(!value) return;
-	setText(label + ": " + (*value ? "On" : "Off"));
-}
+	struct MelonAudioLabShell final : UIElement
+	{
+		UiAppTheme theme = UiAppTheme::dark();
+		UiHost host;
+		UniquePointer<UiAuthoredHost> authored;
+		MelonAudioLabRenderer renderer;
+		Window* owningWindow = nullptr;
+		Bool ready = false;
 
-MelonAudioLabControls::MelonAudioLabControls(MelonAudioLabRenderer& renderer)
-	: humToggle(renderer.enableHum, "Hum")
-	, windToggle(renderer.enableWind, "Wind")
-	, breathToggle(renderer.enableBreath, "Heartbeat")
-{
-	setName("MelonAudioLabControls");
-	column();
-	growX(false);
-	growY(true);
-	setWidth(360);
-	gap(static_cast<Int>(Ui::UiAppFlex::g10));
-	padding(static_cast<Int>(Ui::UiAppFlex::p10));
-	Ui::UiLegacyTheme::applyPanelStyle(*this);
+		MelonAudioLabShell()
+		{
+			addElement(host);
+			growX(true);
+			growY(true);
+			background(Color(0, 0, 0, 0));
+		}
 
-	addElement(humToggle);
-	addElement(windToggle);
-	addElement(breathToggle);
+		void refresh()
+		{
+			if (!authored) return;
+			publishMelonAudioState(authored->properties(), renderer);
+			authored->syncFromProperties();
+		}
 
-	humNoiseMixSlider
-		.setLabel("Hum/Noise Mix")
-		.setRange(0.0f, 1.0f)
-		.bind(renderer.humNoiseMix);
-	humNoiseMixSlider.growX(false);
-	humNoiseMixSlider.setWidth(336);
+		void create(Window& window) override
+		{
+			owningWindow = &window;
+			const IVec2 size = window.getSize();
+			setWidth(size.x);
+			setHeight(size.y);
+			host.setWidth(size.x);
+			host.setHeight(size.y);
+			host.useAppTheme(theme);
+			UIElement::create(window);
 
-	humPitchSlider
-		.setLabel("Hum Pitch Scale")
-		.setRange(0.1f, 0.5f)
-		.bind(renderer.humPitchScale);
-	humPitchSlider.growX(false);
-	humPitchSlider.setWidth(336);
+			renderer.renderToFramebuffer = false;
+			renderer.create(window);
+			UiMarkupSurfaceRegistry::global().registerInteractiveSurfaceTag("melon-audio-view");
+			authored = std::make_unique<UiAuthoredHost>(host);
+			authored->widgetBridge().setPropertyChangeHandler(
+				[this](const String& path, const UiValue& value)
+				{
+					if (value.type == UiValueType::Bool)
+					{
+						if (path == "state.enableHum") renderer.enableHum = value.boolean;
+						else if (path == "state.enableWind") renderer.enableWind = value.boolean;
+						else if (path == "state.enableBreath") renderer.enableBreath = value.boolean;
+					}
+					else if (value.type == UiValueType::Number)
+					{
+						const Float number = static_cast<Float>(value.number);
+						if (path == "state.humNoiseMix") renderer.humNoiseMix = number;
+						else if (path == "state.humPitchScale") renderer.humPitchScale = number;
+						else if (path == "state.windPitchScale") renderer.windPitchScale = number;
+						else if (path == "state.humGain") renderer.humGain = number;
+						else if (path == "state.windGain") renderer.windGain = number;
+						else if (path == "state.breathGain") renderer.breathGain = number;
+						else if (path == "state.responseCurve") renderer.responseCurve = number;
+						else if (path == "state.simulatedSpeed") renderer.simulatedSpeed01 = number;
+						else if (path == "state.dopplerDirection") renderer.simulatedDopplerDirection = number;
+					}
+					refresh();
+				});
 
-	windPitchSlider
-		.setLabel("Wind Pitch Scale")
-		.setRange(0.05f, 3.0f)
-		.bind(renderer.windPitchScale);
-	windPitchSlider.growX(false);
-	windPitchSlider.setWidth(336);
+			const Path uiDirectory = resourceManager.getOrkaDataPath() / "UI";
+			if (!authored->loadFromFiles(
+				uiDirectory / "melon-audio-lab.ui.html",
+				uiDirectory / "melon-audio-lab.ui.scss") || !authored->mount())
+			{
+				logError("Melon Audio Lab: failed to mount authored UI.");
+				for (const UiDiagnostic& diagnostic : authored->diagnostics())
+					logError("  " + diagnostic.message);
+				return;
+			}
 
-	humGainSlider
-		.setLabel("Hum Gain")
-		.setRange(0.0f, 2.5f)
-		.bind(renderer.humGain);
-	humGainSlider.growX(false);
-	humGainSlider.setWidth(336);
+			const UiWidgetHandle surface = authored->widgetBridge().findById("melon-audio-view");
+			authored->widgets().setInteractiveSurfaceRender(surface,
+				[this](const UiInteractiveSurfaceContext& context)
+				{
+					if (!owningWindow) return;
+					renderer.setPositionX(static_cast<Int>(context.position.x));
+					renderer.setPositionY(static_cast<Int>(context.position.y));
+					renderer.setWidth(static_cast<Int>(context.size.x));
+					renderer.setHeight(static_cast<Int>(context.size.y));
+					renderer.renderInteractive(*owningWindow);
+					renderer.render(*owningWindow);
+				});
+			ready = true;
+			refresh();
+		}
 
-	windGainSlider
-		.setLabel("Wind Gain")
-		.setRange(0.0f, 2.5f)
-		.bind(renderer.windGain);
-	windGainSlider.growX(false);
-	windGainSlider.setWidth(336);
+		void update(Window& window) override
+		{
+			const IVec2 size = window.getSize();
+			setWidth(size.x);
+			setHeight(size.y);
+			host.setWidth(size.x);
+			host.setHeight(size.y);
+			renderer.update(window);
+			if (ready)
+			{
+				refresh();
+				authored->syncControlLayouts();
+			}
+			host.update(window);
+		}
 
-	heartbeatGainSlider
-		.setLabel("Heartbeat Gain")
-		.setRange(0.0f, 2.5f)
-		.bind(renderer.breathGain);
-	heartbeatGainSlider.growX(false);
-	heartbeatGainSlider.setWidth(336);
+		void inputEvent(Window& window, InputEvent& input) override
+		{
+			renderer.inputEvent(window, input);
+		}
 
-	responseCurveSlider
-		.setLabel("Speed Response Curve")
-		.setRange(0.0f, 0.5f)
-		.bind(renderer.responseCurve);
-	responseCurveSlider.growX(false);
-	responseCurveSlider.setWidth(336);
-
-	speedSlider
-		.setLabel("Motion Speed")
-		.setRange(0.0f, 1.0f)
-		.bind(renderer.simulatedSpeed01);
-	speedSlider.growX(false);
-	speedSlider.setWidth(336);
-
-	dopplerDirectionSlider
-		.setLabel("Doppler Direction")
-		.setRange(-1.0f, 1.0f)
-		.bind(renderer.simulatedDopplerDirection);
-	dopplerDirectionSlider.growX(false);
-	dopplerDirectionSlider.setWidth(336);
-
-	addElement(humNoiseMixSlider);
-	addElement(humPitchSlider);
-	addElement(windPitchSlider);
-	addElement(humGainSlider);
-	addElement(windGainSlider);
-	addElement(heartbeatGainSlider);
-	addElement(responseCurveSlider);
-	addElement(speedSlider);
-	addElement(dopplerDirectionSlider);
+		void destroy(Window& window) override
+		{
+			renderer.destroy(window);
+			authored.reset();
+			ready = false;
+			owningWindow = nullptr;
+			host.destroy(window);
+		}
+	};
 }
 
 void MelonAudioLab::run() const
 {
-	MelonAudioLabRenderer renderer;
-	MelonAudioLabControls controls(renderer);
-
-	Window& window = ui.window("Melon Audio Lab", settings.defaultWindowWidth, settings.defaultWindowHeight, true, true, WindowState::Windowed);
-	window.row();
-	window.gap(static_cast<Int>(Ui::UiAppFlex::g10));
-	window.padding(static_cast<Int>(Ui::UiAppFlex::p10));
-
-	renderer.growX(true);
-	renderer.growY(true);
-	controls.growY(true);
-
-	window.addElement(renderer);
-	window.addElement(controls);
+	MelonAudioLabShell shell;
+	Window& window = ui.window("Melon Audio Lab", settings.defaultWindowWidth,
+		settings.defaultWindowHeight, true, true, WindowState::Windowed);
+	window.addElement(shell);
 	ui.run();
 }

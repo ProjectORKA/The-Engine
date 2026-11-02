@@ -1,0 +1,32 @@
+<ui id="sound-analysis-root" class="app-root row g10 p10">
+	<sound-analysis-view id="sound-analysis-view" class="fg1 mh0 mw0" label="Audio spectrogram" />
+
+	<div class="lab-controls panel column g10 p10 mh0">
+		<label class="typography-sample">Sound Analysis</label>
+		<label class="field-label" [text]="state.fileName" />
+		<label [text]="state.filePosition" />
+
+		<div class="row g10">
+			<button class="fg1" text="Previous" (activate)="SoundLab.Previous" />
+			<button class="fg1" text="Next" (activate)="SoundLab.Next" />
+		</div>
+		<button text="Import audio file…" (activate)="SoundLab.Import" />
+		<div class="row g10">
+			<button class="fg1" [text]="state.playLabel" (activate)="SoundLab.TogglePlay" />
+			<button class="fg1" [text]="state.phaseLabel" (activate)="SoundLab.TogglePhase" />
+		</div>
+
+		<div class="app-scroll column g10 mh0">
+			<label class="field-label">PLAYBACK</label>
+			<div class="labeled-row row g10"><label>Volume</label><slider class="fg1" min="0" max="1.5" step="0.01" [value]="state.volume" /></div>
+
+			<label class="field-label">SPECTROGRAM</label>
+			<div class="labeled-row row g10"><label>Brightness low</label><slider class="fg1" min="0.1" max="10" step="0.1" [value]="state.brightnessLow" /></div>
+			<div class="labeled-row row g10"><label>Brightness high</label><slider class="fg1" min="0.1" max="10" step="0.1" [value]="state.brightnessHigh" /></div>
+			<div class="labeled-row row g10"><label>Contrast low</label><slider class="fg1" min="0.1" max="50" step="0.1" [value]="state.contrastLow" /></div>
+			<div class="labeled-row row g10"><label>Contrast high</label><slider class="fg1" min="0.1" max="50" step="0.1" [value]="state.contrastHigh" /></div>
+		</div>
+
+		<label class="field-label">Scroll over the graph to zoom. Click and drag to scrub.</label>
+	</div>
+</ui>

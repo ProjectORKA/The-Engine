@@ -79,6 +79,8 @@ namespace Ui
 
 		void setLayoutDebugEnabled(const Bool enabled) { layoutDebugMode = enabled; }
 		[[nodiscard]] Bool layoutDebugEnabled() const { return layoutDebugMode; }
+		void setDomViewerHighlight(UiNodeHandle node) { domViewerHighlightNode = node; }
+		[[nodiscard]] UiNodeHandle domViewerHighlight() const { return domViewerHighlightNode; }
 		void requestLayoutDebugToggle()
 		{
 			layoutDebugToggleRequested.store(true, std::memory_order_release);
@@ -122,6 +124,7 @@ namespace Ui
 		Bool created = false;
 		Bool layoutDebugMode = false;
 		std::atomic<Bool> layoutDebugToggleRequested{ false };
+		UiNodeHandle domViewerHighlightNode;
 		UiHostAgentSurface agentBindings;
 
 		void updateViewport(Window& window);

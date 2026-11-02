@@ -10,6 +10,7 @@ namespace Ui
 	{
 		String markup;
 		String markupName;
+		Path markupRoot;
 		String style;
 		String styleName;
 		UiStyleCompileOptions styleOptions;

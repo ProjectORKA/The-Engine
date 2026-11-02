@@ -1,5 +1,7 @@
 #include "UiPaintBuilder.hpp"
 
+#include <algorithm>
+
 namespace Ui
 {
 	namespace
@@ -23,13 +25,25 @@ namespace Ui
 	Bool UiDirtyPaintBuilder::build(UiDocument& document, UiDisplayList& output,
 		const UiNodePainter& painter, Vector<UiPaintBuildDiagnostic>& diagnostics)
 	{
-		diagnostics.clear();
 		if (output.isFinalized())
 		{
+			diagnostics.clear();
 			diagnostics.push_back({ UiPaintBuildDiagnosticCode::OutputAlreadyFinalized, {},
 				"Cannot replace a finalized display list." });
 			return false;
 		}
+
+		Vector<UiNodeHandle> paintOrder;
+		if (!rebuildCache(document, painter, diagnostics, paintOrder)) return false;
+		return assembleRange(document, output, diagnostics, paintOrder, 0,
+			static_cast<UInt>(paintOrder.size()));
+	}
+
+	Bool UiDirtyPaintBuilder::rebuildCache(UiDocument& document, const UiNodePainter& painter,
+		Vector<UiPaintBuildDiagnostic>& diagnostics, Vector<UiNodeHandle>& paintOrder)
+	{
+		diagnostics.clear();
+		paintOrder.clear();
 		if (!painter)
 		{
 			diagnostics.push_back({ UiPaintBuildDiagnosticCode::MissingPainter, {},
@@ -37,11 +51,10 @@ namespace Ui
 			return false;
 		}
 
-		Vector<UiNodeHandle> traversal;
 		std::set<U64> liveKeys;
 		document.traverse([&](const UiNodeHandle handle, UiNode&)
 			{
-				traversal.push_back(handle);
+				paintOrder.push_back(handle);
 				liveKeys.insert(key(handle));
 			});
 
@@ -52,9 +65,9 @@ namespace Ui
 		}
 
 		Bool succeeded = true;
-		for (UInt order = 0; order < traversal.size(); ++order)
+		for (UInt order = 0; order < paintOrder.size(); ++order)
 		{
-			const UiNodeHandle handle = traversal[order];
+			const UiNodeHandle handle = paintOrder[order];
 			UiNode* node = document.get(handle);
 			if (!node) continue;
 
@@ -97,11 +110,26 @@ namespace Ui
 			});
 			node->dirtyFlags &= ~dirty(DirtyFlag::Paint);
 		}
-		if (!succeeded) return false;
+		return succeeded;
+	}
 
-		UiDisplayList assembled(limits);
-		for (const UiNodeHandle handle : traversal)
+	Bool UiDirtyPaintBuilder::assembleRange(UiDocument& document, UiDisplayList& output,
+		Vector<UiPaintBuildDiagnostic>& diagnostics, const Vector<UiNodeHandle>& paintOrder,
+		const UInt begin, const UInt end)
+	{
+		if (output.isFinalized())
 		{
+			diagnostics.push_back({ UiPaintBuildDiagnosticCode::OutputAlreadyFinalized, {},
+				"Cannot replace a finalized display list." });
+			return false;
+		}
+
+		const UInt first = std::min(begin, static_cast<UInt>(paintOrder.size()));
+		const UInt last = std::min(end, static_cast<UInt>(paintOrder.size()));
+		UiDisplayList assembled(limits);
+		for (UInt index = first; index < last; ++index)
+		{
+			const UiNodeHandle handle = paintOrder[index];
 			const auto cached = cache.find(key(handle));
 			if (cached == cache.end()) continue;
 			const UiNode* node = document.get(handle);

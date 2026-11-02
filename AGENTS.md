@@ -26,7 +26,7 @@ When an edit request is broad, inspect these files first:
 - `Project ORKA/Renderer.hpp` + `Project ORKA/Renderer.cpp` - render facade and systems.
 - `Project ORKA/Settings.hpp` - project-wide constants and debug toggles.
 - Repo root `ISSUES.md` + `FEATURES.md` - agent-maintained backlog (bugs/debt vs. future ideas); append while working (see [Issues and feature backlog](#issues-and-feature-backlog)).
-- Per-game guides when touching a demo — e.g. `Project ORKA/AI/AiChat.md`, `Project ORKA/SimpleRTS.md`.
+- Per-game guides when touching a demo — e.g. `Project ORKA/AI/AiChat.md`, `Project ORKA/SimpleRTS.md`, `Project ORKA/Pong.md`.
 
 ## Per-project docs
 
@@ -51,7 +51,7 @@ When adding a game with non-obvious agent pitfalls, create or extend its `<Proje
 
 ## Discover, Reuse, and Keep Call Sites Current
 
-Agents must **inspect thoroughly before writing**. This repo has seen duplicate implementations and half-migrated legacy paths when agents skipped discovery or stopped at the first match.
+Agents must **inspect thoroughly before writing**. Skipping discovery or stopping at the first match produces duplicate implementations and half-migrated legacy paths.
 
 **Before adding code:**
 
@@ -90,6 +90,8 @@ Write code that a developer from JavaScript, Python, or C# can follow without de
 ## Modern UI
 
 When editing `Project ORKA/UI/`, `Project ORKA/Data/UI/`, UI samples, game launcher UI, or theme/painter code, follow `Project ORKA/UI/DESIGN_RULES.md` (start-here paths, agent requirements, theme, layout, controls, validation). For large app-shell refactors, also read `Project ORKA/UI/UI_REDESIGN_PLAN.md`.
+
+Pointer hits on a `UiHost` are handled by `UiEventRouter`. Legacy `UIElement::inputEvent` still runs for `ui.capturing` and for keys the retained document does not handle.
 
 ## Rendering and Shader Work
 
@@ -205,6 +207,7 @@ Treat cleanup as part of the task, not optional follow-up.
 
 1. **Clear agent todos** — mark completed or cancel stale items; do not leave in-progress todos from finished work. If the task surfaced out-of-scope bugs or ideas, confirm they are recorded in `ISSUES.md` / `FEATURES.md`.
 2. **Do not add markdown clutter** — no task plans, status logs, session summaries, or “DONE” checklists in new `.md` files unless the user explicitly asked for documentation.
+   **Current state only:** docs, comments, backlog entries and agent memories describe the repo as it is now and where it is going. No history, changelog notes, "previously / used to / was renamed" remarks, postmortems or resolved items. Delete such text entirely once it stops being true; git history is the only record of the past.
 3. **Delete temporary docs** created during the task (plans, benchmarks, migration notes) once the code is merged-quality. Keep only durable docs the repo already uses (`AGENTS.md`, `ISSUES.md`, `FEATURES.md`, `UI/DESIGN_RULES.md`, subsystem READMEs when genuinely needed).
 4. **Prefer code over docs** for how things work — short comments at non-obvious call sites beat parallel documentation.
 5. **Fold lasting rules into the right doc** — repo-wide → root `AGENTS.md`; game/feature → that project’s `<Project>.md` (one short rule, not a postmortem). Remove or merge stale text when adding new guidance; do not grow root `AGENTS.md` with game catalogs.
@@ -216,6 +219,7 @@ Treat cleanup as part of the task, not optional follow-up.
 - If build/test execution is unavailable, provide clear manual verification steps tied to changed code paths.
 - UI headless tests (`--modern-ui-test`): see `Project ORKA/UI/DESIGN_RULES.md` (Validation).
 - Agent bridge semantic UI (no pointer): `Project ORKA/Agent/README.md` — `ui.inspect`, `ui.command.invoke`, `ui.property.*`, `ui.node.*` on windows with `UiAuthoredHost`.
+- For visual/layout bugs, verify at runtime instead of guessing: launch with `--agent-bridge`, wait ~10 s for the intro sequence (earlier `ui.inspect` returns zero-size nodes), find launcher id `game-<index>` (order in `GameLoader::buildDefaultEntries`) in `ui.inspect`, pass its `index` and `generation` to `ui.node.activate` as `nodeIndex` / `nodeGeneration`, then `screenshot.capture` (saved under `AgentArtifacts/` next to the exe; `agent.waitFrames` needs a `windowId`) + `ui.inspect` (computed x/y/width/height per node).
 
 ## Build Verification (Agent Checklist)
 

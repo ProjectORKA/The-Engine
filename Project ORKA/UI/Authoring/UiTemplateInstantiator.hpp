@@ -24,6 +24,11 @@ namespace Ui
 
 		[[nodiscard]] Bool reconcile(const UiCompiledBundle& bundle,
 			UiNodeHandle parent = {}, const UiTemplateRuntimeBudgets& budgets = {});
+		[[nodiscard]] Bool reconcileLogicalWindowSubtree(
+			const UiCompiledBundle& bundle,
+			UInt blueprintIndex,
+			UiNodeHandle parent = {},
+			const UiTemplateRuntimeBudgets& budgets = {});
 		[[nodiscard]] const Vector<UiDiagnostic>& diagnostics() const { return runtimeDiagnostics; }
 		void setWidgetBridge(UiWidgetBridge* bridge) { widgetBridge = bridge; }
 		void clear();

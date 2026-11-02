@@ -1,0 +1,11 @@
+@import "pong-score.ui.html" as pong-score;
+@import "pong-game-view.ui.html" as pong-game-view;
+@import "pong-playfield.ui.html" as pong-playfield;
+
+<ui id="menu-demo-root" class="app-root menu-demo p20">
+	<div id="menu-demo-shell" class="column g10 fg1">
+		<label class="typography-sample">Menu shell (component composition sample)</label>
+		<label class="entry-description">Imports register pong-* components; playfield stacks scores above and below the game view.</label>
+		<pong-playfield class="fg1 minh0" />
+	</div>
+</ui>

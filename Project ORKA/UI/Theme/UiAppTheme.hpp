@@ -40,6 +40,8 @@ namespace Ui
 		inline constexpr const Char* shell = "app-shell";
 		inline constexpr const Char* scroll = "app-scroll";
 		inline constexpr const Char* panel = "panel";
+		// Translucent black modal dim. Same in light and dark so it reads over a bright game.
+		inline constexpr const Char* scrim = "scrim";
 		inline constexpr const Char* section = "section";
 		inline constexpr const Char* badge = "app-badge";
 		inline constexpr const Char* textBody = "text-body";

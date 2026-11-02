@@ -1,0 +1,12 @@
+<ui>
+	<div id="pong-playfield" class="column g10 fg1 align-stretch">
+		<div class="row g10 align-center">
+			<pong-score caption="PLAYER 2" [score]="state.pong.score.p2" />
+			<label id="pong-ai-difficulty" class="entry-description" [text]="state.pong.aiDifficulty" />
+		</div>
+		<pong-game-view />
+		<div class="row align-center">
+			<pong-score caption="PLAYER 1" [score]="state.pong.score.p1" />
+		</div>
+	</div>
+</ui>

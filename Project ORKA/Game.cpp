@@ -86,7 +86,7 @@ void GameRenderer::create(Window& window)
 		}
 	}
 
-	if (hasValidArea(size))
+	if (renderToFramebuffer && hasValidArea(size))
 	{
 		framebuffer.create(window.renderer, "GameFramebuffer", size);
 		framebuffer.add(window.renderer, WritePixelsFormat::RGBA, DataType::Float, FramebufferAttachment::Color0, true, Wrapping::Clamped);
@@ -94,7 +94,8 @@ void GameRenderer::create(Window& window)
 		framebuffer.checkComplete(window.renderer);
 		framebufferInitialized = true;
 	}
-	else logWarning("GameRenderer framebuffer not created: invalid size " + toString(size));
+	else if (renderToFramebuffer)
+		logWarning("GameRenderer framebuffer not created: invalid size " + toString(size));
 	UIElement::create(window);
 }
 

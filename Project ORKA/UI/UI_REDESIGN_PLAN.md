@@ -1,286 +1,126 @@
-# UI redesign plan (retained UI as the app shell)
+# UI architecture and roadmap (retained UI as the app shell)
 
-This document is the **source of truth** for why ORKA is moving from a hybrid UI stack to a single retained, authored UI model. Future agents should read this before large UI or game-shell refactors.
-
-Related docs: `UI/DESIGN_RULES.md` (styling/widgets today), `AGENTS.md` (threading guardrails).
+Target model for ORKA's UI and the work left to reach it. Read before large UI or game-shell refactors. Styling, widgets and validation: `UI/DESIGN_RULES.md`. Threading guardrails: `AGENTS.md`.
 
 ---
 
-## Goal (one sentence)
+## Goal
 
-**One global retained UI document owns windows, layout, text, and input; games and tools are composable components (interactive surfaces + HUD markup), not separate `UIElement` trees per app.**
-
----
-
-## Current state (as of 2026)
-
-### Two widget stacks, one tree shell
-
-| Layer | Role today | Key types / files |
-|-------|------------|-------------------|
-| **Shell** | Window layout, hit-test order, legacy draw chrome | `UIElement`, `Window` (`Window.hpp`), `UserInterface.cpp` |
-| **Modern retained UI** | Document, flex layout, MSDF text, controls | `UiHost`, `UiDocument`, `UiLayoutEngine`, `UiWidgetFactory`, `UiAuthoredHost` |
-| **Games** | Often the **root** of the shell | `GameRenderer : UIElement`, `PongRenderer`, `SimpleRtsRenderer` + bolt-on panels |
-| **Immediate text** | HUD / debug without layout | `Renderer::text()` in game `renderScene` |
-
-Modern surfaces (launcher, controls demo, AI chat, RTS setup) are implemented as:
-
-```text
-Window → wrapper UIElement → UiHost (child) → authored .ui.html
-```
-
-Games like **Pong** use **no** `UiHost`: score is `Renderer::text()` inside `renderScene`. Games that have real time settings or an editor invert the desired model: the **game** is at the window root; realtime settings UI is a sibling panel.
-
-### Authored UI today
-
-- Bundles: paired `*.ui.html` + `*.ui.scss` under `Data/UI/`.
-- Pipeline: `UiAuthoredHost` → `UiBundleCompiler` → `UiTemplateInstantiator` + `UiWidgetBridge`.
-- Supported tags are **flat** (see `DESIGN_RULES.md`); `@for` / `@if` / bindings exist; **no** Angular-style component imports or multi-file composition yet.
-- `dense-editor.ui.html` is an **aspirational** layout (`<world-view>`, grid panes) — not wired as the engine shell.
-
-### Viewport-shaped ideas (partial, not product)
-
-- `UiWidgetFactory::gameViewport()` / `worldSurface()` exist (`UiWidgets.hpp`) but **`renderGameViewports()` is not driven from `UiHost::render`**.
-- This plan **deprecates “viewport widget” as the primary model** in favor of **interactive surface nodes** (see below). Viewport APIs may be folded into that or removed after migration.
-
-### Input and threading (constraint for redesign)
-
-- **Main thread:** `glfwPollEvents` → GLFW callbacks → `Window::routeInput` → legacy bubble and/or `UiHost::enqueueEvent`.
-- **Window thread:** `sampleMousePositionForFrame` → `UiHost::update` (pointer sync, queue drain, layout, scrub drivers).
-- See prior agent discussions: frame `mouseDelta` is **window-thread**; queued buttons/keys are **main → window**. Any unified model must preserve one coherent policy (document in this file when decided).
+**One retained UI document owns windows, layout, text and input; games and tools are composable components (interactive surfaces + HUD markup), not separate `UIElement` trees per app.**
 
 ---
 
-## Problems (why redesign)
+## Architecture
 
-1. **Inverted ownership** — Games are layout roots; app UI is attached to the game. Target: **app UI is root; game is a region inside it.**
-2. **Duplicate systems** — Two layouts (`UIElement` flex vs `UiLayoutEngine`), two text paths (`Renderer::text` vs `UiTextPainter`), two input paths (immediate vs queued router).
-3. **Integration tax** — Using modern layout/text requires **adding a `UiHost` child**, not calling one API from game code.
-4. **Windows are special** — OS windows are tied to `Window : UIElement` + one child tree; no first-class “multiple logical windows / splits” in the document.
-5. **No component composition** — Cannot ship `pong.html` and `<pong-score />` from another bundle; no multi-root “app DOM” assembly.
-6. **Debuggability** — No built-in live DOM inspector in the UI itself.
+### App shell
 
----
+- One shell `UIElement` per OS window hosts a `UiHost` + `AppHost` (`using AppHost = UiAuthoredHost`). The authored document is the app; the shell is only a size/backbuffer adapter.
+- Reference shells: launcher (`GameLoader.cpp`, handed over from `ORKAIntroSequence.cpp`), Pong (`Pong.cpp`, `Data/UI/pong.ui.html`), Simple RTS (`SimpleRTS.cpp`, `simple-rts.ui.html` with `state.setupVisible`), Melon Audio Lab, Sound Analysis Lab, AI Chat.
 
-## Target architecture
+### Authored bundles
 
-### 1. Single app document (`UiDocument`)
+- Paired `*.ui.html` + `*.ui.scss` under `Data/UI/`, compiled by `UiAuthoredHost` → `UiBundleCompiler` → `UiTemplateInstantiator` + `UiWidgetBridge`.
+- Components: `@import "…" as tag;` expands through `UiComponentExpander` / `UiComponentRegistry` (e.g. `pong-score.ui.html`, `pong-game-view.ui.html` composed into `menu.ui.html`).
 
-- Every ORKA application frame is described by **one retained document** (possibly assembled from many component templates).
-- **OS windows** are nodes in that document (see §3), not the only place UI lives.
-- Legacy `UIElement` becomes a **thin adapter** (or is deleted after migration): size sync, optional GL backbuffer hook, **no** parallel widget set.
+### Interactive surfaces (game = layout node)
 
-### 2. Game = interactive surface (not a dedicated “viewport” type)
-
-A running game is a **normal layout node** (conceptually a `<div>`) with:
+A running game is a normal layout node with:
 
 | Concern | Behavior |
 |---------|----------|
-| **Visual** | Background / content from a **surface provider** (FBO, swapchain region, or procedural draw callback) — “special background,” not a separate engine concept in markup. |
-| **Input** | Focusable, pointer capture, keyboard focus — **same event router** as buttons and text fields when the surface is “active.” |
-| **Children** | Allowed — e.g. `<ingame-hud>` overlay inside `<game>`. |
-| **Lifecycle** | C++ **component controller** bound by tag (e.g. `<pong-game>`) owns sim/renderer; UI binds to `state.*` properties. |
+| **Visual** | Drawn by a surface provider (FBO or draw callback) into the node's computed layout rect. |
+| **Input** | Same event router as controls; focus on pointer down, pointer capture like any control. |
+| **Children** | Allowed, e.g. HUD markup inside the surface node. |
+| **Lifecycle** | A C++ controller registered by tag (`UiMarkupSurfaceRegistry`) owns sim/renderer; markup binds to `state.*`. |
 
-Markup shape (illustrative):
+Types: `UI/Surfaces/UiInteractiveSurface.hpp`, `UiWidgetKind::InteractiveSurface`, `UiWidgetFactory::interactiveSurface()`. `UiHost::render` calls `renderInteractiveSurfaces()`.
 
-```html
-<ui>
-  <window>
-    <editor class="row">
-      <sidepanel class="fb300">…</sidepanel>
-      <pong class="row fg1 p20">
-        <pong-score class="fb200" player="1">
-        <pong-game-view class="fg1">
-        <pong-score class="fb200" player="2">
-      </game>
-    </editor>
-  </window>
-</ui>
-```
+### Logical windows
 
-**Standalone vs editor:** Same component templates; root layout differs (full-screen `<game>` only vs `<editor>` chrome). No second integration path.
-
-### 3. Window nodes are not special
-
-**Logical window** = document subtree rooted at `<window>` (or equivalent), mapped to:
-
-- **One OS window** (today’s `Window`), or
-- **A tile in a parent OS window** (flex sibling → automatic split), or
-- **Future:** second OS window from the same document (multi-monitor / editor + game).
-
-Examples:
-
-```html
-<ui>
-  <window title="Pong P1">
-    <pong player="1" />
-  </window>
-  <window title="Pong P2">
-    <pong player="2" />
-  </window>
-</ui>
-```
+- `<window title="…">` subtrees map to OS windows (`LogicalWindow`, `mountLogicalWindow`; demo: `UiLogicalWindowsDemo`, `logical-windows-demo.ui.html`).
+- Split screen is plain flex: two surface siblings in one window (`pong-split.ui.html`).
 
 ```html
 <ui>
   <window title="Split demo" class="row">
-      <pong player="1" class="fg1" />
-      <pong player="2" class="fg1" />
+    <pong player="1" class="fg1" />
+    <pong player="2" class="fg1" />
   </window>
 </ui>
 ```
 
-**Engine work:** window manager reads document → creates/updates N OS windows OR one window with flex splits; input routing uses document focus path, not only `pickElementAt` on legacy tree.
+### DOM viewer
 
-### 4. Component system (Angular-like composition)
+`<dom-viewer />` renders a self-excluding text tree of the live document (`UI/Inspector/UiDomViewerText`); clicking a line highlights the node (`UiHost::domViewerHighlight`). Used in the Controls Demo.
 
-**Requirements:**
+### Input path
 
-- **Component definition** — e.g. `pong.ui.html` + optional `pong.ui.scss` + C++ registration (controller, properties, commands).
-- **Custom tags** — `<pong-score player="1" />`, `<pong-game-view />` expand to internal blueprint subtree.
-- **Composition** — Root `editor.ui.html` imports/includes components; compiler produces **one merged blueprint graph** (or linked bundle with stable node IDs).
-- **Inputs** — Attributes map to component `@Input`-style properties (`player="1"` → `state.pong.p1.*` or scoped registry).
-- **Track / reconcile** — Reuse existing `UiTemplateInstantiator` reconcile model; extend compiler for imports and component boundaries.
-
-**Agent note:** Do not bolt on a second template language; extend `UiMarkupParser` / `UiBundleCompiler` and document the grammar in `DESIGN_RULES.md` when implemented.
-
-### 5. DOM viewer component (debug)
-
-Built-in component, e.g. `<dom-viewer />` or `<ui-inspector />`:
-
-- Renders a **textual tree** of the live retained DOM (tags, ids, classes, key bindings, focus/hover flags).
-- **Must exclude its own subtree** from the dump (prevent recursion / infinite mirror).
-- Usable in a **dedicated debug window** or panel:
-
-```html
-<ui>
-  …
-  <window title="UI Inspector">
-    <dom-viewer/>
-  </window>
-</ui>
-```
-
-Implementation sketch: walk `UiDocument` from root (or bound subtree); format to multiline text or monospace `TextArea`; optional sync highlight on click (later phase).
+- **Main thread:** `glfwPollEvents` → GLFW callbacks → `Window::routeInput`. Pointer hits on a `UiHost` go only to that host; the host consumes an event when the document handles it. Unhandled keys continue to `UIElement::inputEvent`.
+- **Window thread:** `sampleMousePositionForFrame` → `UiHost::update` (pointer sync, queue drain, layout, scrub drivers). Frame `mouseDelta` is window-thread; queued buttons/keys go main → window.
 
 ---
 
-## Relationship to existing code
+## Remaining work
 
-| Keep / extend | Retire / shrink |
-|---------------|-----------------|
-| `UiDocument`, `UiLayoutEngine`, `UiEventRouter`, `UiWidgetFactory`, themes | `UIButton`, `UISlider`, hand-built `UIElement` chrome for new work |
-| `UiAuthoredHost` → rename/evolve to **AppHost** | `GameRenderer : UIElement` as default game entry (replace with surface component) |
-| `UiPropertyRegistry`, commands, bindings | Per-game `addElement(settingsPanel)` siblings |
-| `dense-editor.ui.html` as layout reference | `UiGameViewport` as primary abstraction (merge into surface) |
-| `GameSimulation` / `GameRenderer` **logic** | Scores via `Renderer::text` for product HUD |
+1. **Migrate the remaining games.** Most demos still use `GameRenderer : UIElement` as the window root (29 headers). Move each to an interactive surface component with authored HUD; new games must not add `GameRenderer` roots.
+2. **Shrink `UIElement` / `Window`** to a thin adapter (size sync, optional GL backbuffer). Remove `UiLegacyTheme` once no legacy panel uses it.
+3. **One text path for app UI.** Product HUD text moves from `Renderer::text()` to authored labels; `Renderer::text()` stays for debug overlays.
+4. **Retire `ui.capturing`.** 3D camera games (`Mooncrash`, `MelonPlayer`, `DungeonsAndDiscord`, …) still use it; route their capture through surface pointer capture.
+5. **Unify the input/threading policy** (one owner for cursor capture and keyboard routing per window, see `ISSUES.md`) and record it in `DESIGN_RULES.md`.
 
 ---
 
-## Phased migration
+## Markup conventions
 
-Phases are ordered; **do not skip phase 0** (inventory + one vertical slice).
-
-### Phase 0 — Document and vertical slice (proof)
-
-- [ ] Wire **one** interactive surface tag (e.g. `<pong-game>`) in a **single** `UiHost` root filling the OS window.
-- [ ] Move Pong score to authored labels bound to `state.pong.score.*`.
-- [ ] Prove input: surface receives pointer when focused; HUD buttons still work.
-- [ ] Update this plan with “done” dates and file pointers.
-
-**Exit criteria:** Pong playable with **no** `PongRenderer : UIElement` as window root; one `.ui.html` root.
-
-### Phase 1 — App shell owns the window
-
-- [ ] Launcher / intro transition: post-intro shell is **only** retained UI (already close — `GameLoader` + `UiHost`).
-- [ ] Standard pattern: `Window` creates **one** `AppHost`; no game type registered as direct child of `Window` except host adapter.
-- [ ] `Simple RTS`: invert to shell + `<rts-world surface="…">` + setup overlay as markup, not `SimpleRtsSettingsPanel` sibling tree.
-
-### Phase 2 — Surface nodes (game-as-div)
-
-- [ ] Define `UiSurface` / `UiInteractiveSurface` semantic role: layout rect + draw callback + focus/capture policy.
-- [ ] Map markup tag → C++ factory registration (component plugin table).
-- [ ] Deprecate standalone `GameRenderer` framebuffer sizing from `UIElement` layout; size comes from **computed layout rect**.
-
-### Phase 3 — Component compiler
-
-- [ ] `@import` / `<component src="pong.ui.html" />` or equivalent in bundle compiler.
-- [ ] Custom element registry: tag name → blueprint template + controller factory.
-- [ ] Sample: `pong.ui.html` with `<pong-score />`, `<pong-game-view />`, composed into `menu.ui.html`.
-
-### Phase 4 — Logical windows
-
-- [ ] `<window>` node → OS window lifecycle (create, title, resize, close).
-- [ ] Multi-window document (two OS windows, one process).
-- [ ] Split-single-window: two surfaces in one OS window via flex (no extra OS windows).
-
-### Phase 5 — DOM viewer + inspector UX
-
-- [ ] `<dom-viewer />` component (self-excluding tree dump).
-- [ ] Optional: pick node in viewer → highlight in main UI (later).
-
-### Phase 6 — Legacy removal
-
-- [ ] Remove unused `UIElement` widget controls after demos migrated.
-- [ ] Single input path into `UiEventRouter` (legacy `routeInput` delegates to host or hit-test document only).
-- [ ] Delete or stub `UiGameViewport` if fully replaced by surface nodes.
+- **Root tag:** `<ui>` or `<app>`, one per bundle or merged app graph.
+- **Window:** `<window title="…" id="…">`; optional for single-window apps.
+- **Surface / game:** project tags (`<pong-game>`, `<rts-world>`) registered by the game module in `UiMarkupSurfaceRegistry`.
+- **Layout:** `UiAppFlex` classes only; split screen is flex, not an engine mode.
+- **State:** `state.*` bindings per component scope; cross-window state in a shared registry.
 
 ---
 
-## Markup conventions (target)
+## Input and focus rules
 
-- **Root tag:** `<ui>` or `<app>` — one per bundle or merged app graph.
-- **Window:** `<window title="…" id="…">` — logical window; not required for single-window apps (implicit default window).
-- **Surface / game:** project-specific tags (`<pong>`, `<rts-world>`, `<world-view>`) registered by game module.
-- **Layout:** existing flex classes (`UiAppFlex`) — splitscreen is **only** flex, not a special engine mode.
-- **State:** `state.*` bindings per component scope; document cross-window state in a shared registry when needed.
-
----
-
-## Input and focus (design rules for implementation)
-
-1. **Hit-test retained document first** (including surfaces and children HUD).
-2. **Surface focus** — clicking a game surface focuses it; keys route to surface controller when focused (unless focus in child text field).
-3. **Pointer capture** — surfaces use same capture/release as controls; no parallel `ui.capturing` for UI (keep `ui.capturing` only for legacy 3D camera until removed).
-4. **Threading** — discrete events may enqueue; continuous drag/scrub uses window-thread frame samples (see number-field scrub pattern in `AGENTS.md`).
-5. **Multi-window** — each OS window owns a view into the same or linked document; focus is per logical window.
-
-*(Update this section when the unified policy is implemented.)*
-
----
-
-## Non-goals (for now)
-
-- Embedding a full Chromium/HTML5 engine.
-- CSS grid/flex beyond what `UiLayoutEngine` + SCSS adapter already support.
-- Networked UI or remote DOM.
-- Backward compatibility with every old demo in one release — migrate high-value demos in phases.
+1. Hit-test the retained document first (surfaces and their HUD children included).
+2. Clicking a surface focuses it; keys route to the surface controller while focused, unless focus is in a child text field.
+3. Surfaces use the same pointer capture/release as controls.
+4. Discrete events may be queued; continuous drag/scrub uses window-thread frame samples.
+5. Each OS window views the same or a linked document; focus is per logical window.
 
 ---
 
 ## Open questions
 
-1. **One document vs document per OS window** — single global `UiDocument` with window subtrees (preferred for DOM viewer) vs one document per window with sync registry.
-2. **Simulation thread** — surfaces expose “tick” hooks; registry maps surface id → `GameSimulation` (unchanged principle from `Game.hpp`).
-3. **Intro / GameLoader** — remain special-case process or become `<launcher>` component in permanent shell.
-4. **Agent bridge / headless** — `--modern-ui-test` must still exit; DOM viewer optional in test builds.
+1. **One document vs one per OS window**: a single global `UiDocument` with window subtrees (preferred for the DOM viewer) or one document per window with a sync registry.
+2. **Simulation hookup**: registry from surface id → `GameSimulation` (keeps the split from `Game.hpp`).
+3. **Launcher**: stay a special-case flow or become a `<launcher>` component in a permanent shell.
+4. **Headless**: `--modern-ui-test` must keep exiting cleanly; DOM viewer optional in test builds.
 
 ---
 
-## Success criteria (project-level)
+## Non-goals
 
-- New games ship **component markup + controller** only; no new `GameRenderer : UIElement` roots.
-- **Editor and standalone** differ only by root layout markup.
-- Two instances of the same game in one window = **two surface siblings in flex**, no custom splitscreen code.
-- **DOM viewer** can inspect full UI from a second logical window without recursion.
-- **One** layout engine and **one** text renderer for app UI.
+- Embedding a full Chromium/HTML5 engine.
+- CSS grid/flex beyond what `UiLayoutEngine` + the SCSS adapter support.
+- Networked UI or remote DOM.
+
+---
+
+## Success criteria
+
+- New games ship component markup + controller only.
+- Editor and standalone differ only by root layout markup.
+- Two instances of a game in one window are two surface siblings in flex.
+- The DOM viewer can inspect the full UI from a second logical window.
+- One layout engine and one text renderer for app UI.
 
 ---
 
 ## Agent checklist (before large UI refactors)
 
 1. Read this file + `DESIGN_RULES.md`.
-2. Prefer extending `UiAuthoredHost` / compiler / surface registry over new `UIElement` widgets.
-3. Do not add permanent `GameViewport`-only paths if surface node covers the use case.
-4. Keep sim/render split; surfaces draw on window thread, sim ticks on sim thread.
-5. When a phase completes, update **Phase checklist** above and add a one-line pointer in `AGENTS.md` if the workflow change is repo-wide.
+2. Extend `UiAuthoredHost`, the bundle compiler or the surface registry instead of adding `UIElement` widgets.
+3. Keep the sim/render split: surfaces draw on the window thread, sims tick on the sim thread.
+4. Extend `UiMarkupParser` / `UiBundleCompiler` instead of adding a second template language; document new grammar in `DESIGN_RULES.md`.
+5. When remaining work lands, delete its item here and update the Architecture section.

@@ -3,8 +3,6 @@
 #include "AudioEngine.hpp"
 #include "Game.hpp"
 #include "GPUTexture.hpp"
-#include "UIButton.hpp"
-#include "UISlider.hpp"
 #include "WaveformGraph.hpp"
 
 struct Window;
@@ -124,35 +122,6 @@ struct SoundAnalysisLabRenderer final : GameRenderer
 	void renderScene(Window& window) override;
 	void inputEvent(Window& window, InputEvent& input) override;
 	void renderInteractive(Window& window) override;
-};
-
-struct ImportAudioButton final : UIButton
-{
-	SoundAnalysisLabRenderer* renderer = nullptr;
-
-	void doThis() override;
-	void inputEvent(Window& window, InputEvent& input) override;
-};
-
-struct PhaseToggleButton final : UIButton
-{
-	SoundAnalysisLabRenderer* renderer = nullptr;
-
-	void doThis() override;
-};
-
-struct SoundAnalysisLabControls final : UIElement
-{
-	ImportAudioButton  importButton;
-	PhaseToggleButton  phaseToggleButton;
-	UISlider           fileIndexSlider;
-	UISlider          volumeSlider;
-	UISlider          brightnessLowSlider;
-	UISlider          brightnessHighSlider;
-	UISlider          contrastLowSlider;
-	UISlider          contrastHighSlider;
-
-	explicit SoundAnalysisLabControls(SoundAnalysisLabRenderer& renderer);
 };
 
 struct SoundAnalysisLab

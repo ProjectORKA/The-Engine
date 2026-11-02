@@ -36,6 +36,7 @@ namespace Ui
 			if (node.kind == UiMarkupNodeKind::Component) return node.name;
 			const String name = lower(node.name);
 			if (name == "button") return "Button";
+			if (name == "window") return "LogicalWindow";
 			if (name == "div" || name == "panel") return "Box";
 			if (name == "label" || name == "span" || name == "p") return "Text";
 			if (name == "input") return "TextField";
@@ -355,6 +356,43 @@ namespace Ui
 			widgetBridge->applyInstanceBindings(bundle, blueprintIndex, stableKey, scope);
 		for (SizeT child = 0; child < blueprint.children.size(); ++child)
 			instantiateNode(bundle, blueprint.children[child], instance.node, stableKey, child, scope);
+	}
+
+	Bool UiTemplateInstantiator::reconcileLogicalWindowSubtree(
+		const UiCompiledBundle& bundle,
+		const UInt blueprintIndex,
+		UiNodeHandle parent,
+		const UiTemplateRuntimeBudgets& budgets)
+	{
+		runtimeDiagnostics.clear();
+		if (!bundle.valid)
+		{
+			diagnose("Cannot instantiate an invalid authored UI bundle.", {});
+			return false;
+		}
+		if (blueprintIndex >= bundle.blueprint.nodes.size())
+		{
+			diagnose("Logical window blueprint index is out of range.", {});
+			return false;
+		}
+		if (!parent.isValid()) parent = document.root();
+		if (!document.isValid(parent) || document.isTraversing()) return false;
+		limits = budgets;
+		++reconcileSerial;
+		instantiateNode(bundle, blueprintIndex, parent, "$", 0, properties);
+
+		for (auto iterator = instances.begin(); iterator != instances.end();)
+		{
+			if (iterator->second.seenGeneration == reconcileSerial) { ++iterator; continue; }
+			for (const UiListenerToken token : iterator->second.listeners) (void)router.removeListener(token);
+			if (widgetBridge && widgetBridge->ownsNode(iterator->second.node))
+				widgetBridge->destroyRecord(iterator->first);
+			else if (document.isValid(iterator->second.node))
+				(void)document.destroyNode(iterator->second.node);
+			iterator = instances.erase(iterator);
+		}
+		if (widgetBridge) widgetBridge->destroyStale(reconcileSerial);
+		return true;
 	}
 
 	Bool UiTemplateInstantiator::reconcile(

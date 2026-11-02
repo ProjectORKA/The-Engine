@@ -13,7 +13,6 @@
 #include "SimpleRtsQuadtreeSystem.hpp"
 #include "SimpleRtsBerryBushSystem.hpp"
 #include "SimpleRtsWorldSettings.hpp"
-#include "SimpleRtsSettingsPanel.hpp"
 
 extern Bool debugSimpleRts;
 
@@ -53,46 +52,9 @@ struct SimpleRtsSimulation final : GameSimulation
 	Float getTerrainHeight(const Vec2 vec) const;
 };
 
-struct SimpleRtsRenderer final : GameRenderer
-{
-	SimpleRtsRenderer();
-
-	Mutex                mutex;
-	DebugPlayer          player;
-	PerformanceGraph     performanceGraph;
-	Bool                 wireframeMode = false;
-	SimpleRtsSimulation* sim           = nullptr;
-	GPUMesh terrainMesh;
-	GPUMesh oceanMesh;
-	SimpleRtsSettingsPanel settingsPanel;
-	Window* owningWindow = nullptr;
-
-	//input
-	InputEvent enter           = InputEvent(InputType::Mouse, Lmb, true);
-	InputEvent exit            = InputEvent(InputType::Mouse, Rmb, false);
-	InputEvent pause           = InputEvent(InputType::KeyBoard, P, true);
-	InputEvent toggleWireframe = InputEvent(InputType::KeyBoard, F, false);
-	InputEvent reset           = InputEvent(InputType::KeyBoard, R, false);
-	InputEvent toggleSetup     = InputEvent(InputType::KeyBoard, F2, false);
-
-	void startWorld();
-	void restartWorld();
-	void unloadWorldGpu();
-
-	void update(Window& window) override;
-	void create(Window& window) override;
-	void render(Window& window) override;
-	void destroy(Window& window) override;
-	void connect(GameSimulation& simulation) override;
-	void renderScene(Window& window) override;
-	void inputEvent(Window& window, InputEvent& input) override;
-	void renderInteractive(Window& window) override;
-};
-
 struct SimpleRts
 {
 	SimpleRtsSimulation sim;
-	SimpleRtsRenderer   renderer;
 
 	void run();
 };

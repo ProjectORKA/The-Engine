@@ -43,6 +43,11 @@ namespace Ui
 		void destroyRecord(const String& stableKey);
 		void clear();
 		void syncControlLayouts();
+		void syncDomViewers(
+			const UiDocument& document,
+			UiNodeHandle focused = {},
+			UiNodeHandle picked = {});
+		void setDomViewerPickHandler(Function<void(UiNodeHandle)> handler);
 
 	private:
 		struct Record
@@ -55,6 +60,8 @@ namespace Ui
 			String textPath;
 			String optionsPath;
 			U64 seenGeneration = 0;
+			Bool domViewer = false;
+			Vector<UiNodeHandle> domViewerLineHandles;
 		};
 
 		UiWidgetFactory& factory;
@@ -72,6 +79,9 @@ namespace Ui
 		void syncRecordFromScope(Record& record, const UiPropertyRegistry& scope);
 		void syncRecordIdMapping(Record& record);
 		void attachChangeHandlers(Record& record);
+		void attachDomViewerPicker(Record& record);
 		[[nodiscard]] Vector<UiSelectOption> readSelectOptions(const UiValue& value) const;
+
+		Function<void(UiNodeHandle)> onDomViewerPick;
 	};
 }

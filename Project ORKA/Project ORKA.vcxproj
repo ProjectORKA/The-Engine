@@ -199,7 +199,6 @@
     <ClCompile Include="PerlinNoise.cpp" />
     <ClCompile Include="Plot.cpp" />
     <ClCompile Include="SimpleRts.cpp" />
-    <ClCompile Include="SimpleRtsSettingsPanel.cpp" />
     <ClCompile Include="SimpleRtsWorldPresets.cpp" />
     <ClCompile Include="SimpleRtsWorldSettings.cpp" />
     <ClCompile Include="Snake.cpp" />
@@ -212,10 +211,7 @@
     <ClCompile Include="TreeSystem.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Time.cpp" />
-    <ClCompile Include="UIButton.cpp" />
-    <ClCompile Include="UIContainer.cpp" />
     <ClCompile Include="UIElement.cpp" />
-    <ClCompile Include="UISlider.cpp" />
     <ClCompile Include="ULLUtil.cpp" />
     <ClCompile Include="Uniforms.cpp" />
     <ClCompile Include="UserInterface.cpp" />
@@ -381,7 +377,6 @@
     <ClInclude Include="SoftwareRendererGame.hpp" />
     <ClInclude Include="GameLoader.hpp" />
     <ClInclude Include="SimpleRts.hpp" />
-    <ClInclude Include="SimpleRtsSettingsPanel.hpp" />
     <ClInclude Include="SimpleRtsWorldPresets.hpp" />
     <ClInclude Include="SimpleRtsWorldSettings.hpp" />
     <ClInclude Include="Snake.hpp" />
@@ -401,10 +396,7 @@
     <ClInclude Include="TiledMath.hpp" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="Time.hpp" />
-    <ClInclude Include="UIButton.hpp" />
-    <ClInclude Include="UIContainer.hpp" />
     <ClInclude Include="UIElement.hpp" />
-    <ClInclude Include="UISlider.hpp" />
     <ClInclude Include="ULLUtil.hpp" />
     <ClInclude Include="Uniforms.hpp" />
     <ClInclude Include="UserInterface.hpp" />

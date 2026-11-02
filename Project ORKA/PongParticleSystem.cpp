@@ -45,13 +45,27 @@ void PongParticleSystem::spawn(const Vec2 pos, const Vec2 baseVelocity)
 {
 	currentId++;
 	if(currentId >= particleCount) currentId = 0;
-	const Vec2  baseDir   = normalize(-baseVelocity);
-	position[currentId] = pos;
-	velocity[currentId] = -baseVelocity * Vec2(2); //+ randomUnitVec2Fast() * randomFloatFast(1.0f);
+
+	const Float incomingSpeed = length(baseVelocity);
+	Vec2 away(0.0f, 1.0f);
+	if(incomingSpeed > 0.0001f) away = -baseVelocity / incomingSpeed;
+
+	// Even fan around the bounce direction. A shared velocity makes one streak, not a burst.
+	const Float angle = randomFloatFast(-1.15f, 1.15f);
+	const Float c     = cos(angle);
+	const Float s     = sin(angle);
+	const Vec2 direction(away.x * c - away.y * s, away.x * s + away.y * c);
+
+	// A fraction of ball speed. Drag in update() stops the spark before it crosses the court.
+	const Float kick  = clamp(incomingSpeed * 1.1f, 1.75f, 4.0f);
+	const Float speed = randomFloatFast(kick * 0.4f, kick);
+
+	position[currentId]    = pos;
+	velocity[currentId]    = direction * speed;
 	lifetime[currentId]    = 0.0f;
-	maxLifetime[currentId] = randomFloatFast(0.2f, 1.0f);
-	sizeStart[currentId]   = 0.03f;
-	alive[currentId] = true;
+	maxLifetime[currentId] = randomFloatFast(0.4f, 0.9f);
+	sizeStart[currentId]   = randomFloatFast(0.011f, 0.02f);
+	alive[currentId]       = true;
 }
 
 void PongParticleSystem::update(const Float deltaTime)
@@ -68,7 +82,7 @@ void PongParticleSystem::update(const Float deltaTime)
 		}
 
 		position[i] += velocity[i] * deltaTime;
-		velocity[i] *= 0.995f; // gentle slowdown
+		velocity[i] *= exp(-14.0f * deltaTime);
 	}
 }
 
@@ -82,7 +96,8 @@ void PongParticleSystem::render(Renderer& renderer) const
 		if(!alive[i]) continue;
 
 		const Float t    = lifetime[i] / maxLifetime[i];
-		const Float size = sizeStart[i] * (1.0f - t);
+		const Float fade = 1.0f - t;
+		const Float size = sizeStart[i] * fade * fade;
 		if(size <= 0) continue;
 
 		transforms.emplace_back(matrixFromPositionAndSize(position[i], size));

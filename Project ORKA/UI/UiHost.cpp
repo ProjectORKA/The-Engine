@@ -343,34 +343,111 @@ namespace Ui
 					retainedDocument.markDirty(handle, DirtyFlag::Paint);
 			});
 
-		if (!nodePainter) return;
-
-		UiDisplayList displayList;
-		if (!paintBuilder.build(retainedDocument, displayList, nodePainter, paintBuildDiagnostics))
+		if (!nodePainter)
+		{
+			if (widgetFactoryForInput) widgetFactoryForInput->renderInteractiveSurfaces();
 			return;
-		if (!appendAppScrollbarOverlays(retainedAppTheme.colors, retainedDocument, displayList))
+		}
+
+		Vector<UiNodeHandle> paintOrder;
+		if (!paintBuilder.rebuildCache(
+			retainedDocument, nodePainter, paintBuildDiagnostics, paintOrder))
 			return;
 
 		(void)retainedIconService.uploadPendingTextures(window.renderer);
 
-		UiRenderPacket packet;
-		if (!UiDisplayListFinalizer::finalize(displayList, packet, packetDiagnostics))
-			return;
+		Vector<UInt> surfaceOrder;
+		if (widgetFactoryForInput)
+		{
+			for (UInt index = 0; index < paintOrder.size(); ++index)
+			{
+				const UiNode* node = retainedDocument.get(paintOrder[index]);
+				if (!node || !node->state.visible) continue;
+				if (node->authored.typeName == "InteractiveSurface") surfaceOrder.push_back(index);
+			}
+		}
 
-		submitUi(window.renderer, packet);
+		auto submitList = [&](UiDisplayList& list) -> Bool
+		{
+			if (list.commands().empty()) return true;
+			UiRenderPacket packet;
+			if (!UiDisplayListFinalizer::finalize(list, packet, packetDiagnostics)) return false;
+			submitUi(window.renderer, packet);
+			return true;
+		};
 
-		// Paint the layout debugger in a separate display list so overlay quads
-		// never interact with scroll/rounded clip stacks from the main UI tree.
-		if (!layoutDebugMode) return;
+		// Ancestor fills paint before each surface so they do not cover the game.
+		// Later nodes (pause menus, dropdowns, HUD inside the surface) paint after it.
+		if (surfaceOrder.empty())
+		{
+			UiDisplayList displayList;
+			if (!paintBuilder.assembleRange(retainedDocument, displayList, paintBuildDiagnostics,
+				paintOrder, 0, static_cast<UInt>(paintOrder.size())))
+				return;
+			if (!appendAppScrollbarOverlays(retainedAppTheme.colors, retainedDocument, displayList))
+				return;
+			if (!submitList(displayList)) return;
+		}
+		else
+		{
+			UInt cursor = 0;
+			for (const UInt surfaceIndex : surfaceOrder)
+			{
+				UiDisplayList beforeSurface;
+				if (!paintBuilder.assembleRange(retainedDocument, beforeSurface, paintBuildDiagnostics,
+					paintOrder, cursor, surfaceIndex + 1))
+					return;
+				if (!submitList(beforeSurface)) return;
+				widgetFactoryForInput->renderInteractiveSurfaces(paintOrder[surfaceIndex]);
+				cursor = surfaceIndex + 1;
+			}
 
-		const UiNodeHandle hoveredNode = routedEvents.hoveredNode();
-		if (!retainedDocument.isValid(hoveredNode)) return;
+			UiDisplayList afterSurfaces;
+			if (!paintBuilder.assembleRange(retainedDocument, afterSurfaces, paintBuildDiagnostics,
+				paintOrder, cursor, static_cast<UInt>(paintOrder.size())))
+				return;
+			if (!appendAppScrollbarOverlays(retainedAppTheme.colors, retainedDocument, afterSurfaces))
+				return;
+			if (!submitList(afterSurfaces)) return;
+		}
 
+		// Paint debug overlays in a separate display list so quads never interact
+		// with scroll/rounded clip stacks from the main UI tree.
 		UiDisplayList overlayList;
-		const Inspector::UiLayoutDebugOverlayResult painted =
-			Inspector::UiLayoutDebugOverlay::paintHovered(
-				retainedDocument, retainedLayoutEngine, hoveredNode, overlayList);
-		if (!painted.valid || !painted.painted) return;
+		Bool paintedOverlay = false;
+
+		if (layoutDebugMode)
+		{
+			const UiNodeHandle hoveredNode = routedEvents.hoveredNode();
+			if (retainedDocument.isValid(hoveredNode))
+			{
+				const Inspector::UiLayoutDebugOverlayResult painted =
+					Inspector::UiLayoutDebugOverlay::paintHovered(
+						retainedDocument, retainedLayoutEngine, hoveredNode, overlayList);
+				paintedOverlay = paintedOverlay || (painted.valid && painted.painted);
+			}
+		}
+
+		if (retainedDocument.isValid(domViewerHighlightNode))
+		{
+			Inspector::UiLayoutDebugOverlayStyle pickStyle;
+			pickStyle.contentColor =
+				UiLinearColor::fromStraightSrgb(Vec4(1.0f, 0.35f, 0.55f, 0.45f));
+			pickStyle.paddingColor =
+				UiLinearColor::fromStraightSrgb(Vec4(1.0f, 0.55f, 0.2f, 0.40f));
+			pickStyle.marginColor =
+				UiLinearColor::fromStraightSrgb(Vec4(1.0f, 0.75f, 0.15f, 0.45f));
+			pickStyle.borderOutlineColor =
+				UiLinearColor::fromStraightSrgb(Vec4(1.0f, 0.2f, 0.35f, 0.95f));
+			pickStyle.outlineWidth = 2.0f;
+			const Inspector::UiLayoutDebugOverlayResult painted =
+				Inspector::UiLayoutDebugOverlay::paintHovered(
+					retainedDocument, retainedLayoutEngine, domViewerHighlightNode, overlayList,
+					pickStyle);
+			paintedOverlay = paintedOverlay || (painted.valid && painted.painted);
+		}
+
+		if (!paintedOverlay) return;
 
 		UiRenderPacket overlayPacket;
 		Vector<UiRenderDiagnostic> overlayDiagnostics;
@@ -513,7 +590,9 @@ namespace Ui
 			return;
 		}
 
-		if (enqueueEvent(event)) input.consume();
+		// Dispatch on the window thread and consume only when the retained
+		// document handles the event, so unhandled keys can reach legacy shells.
+		if (routedEvents.dispatch(event)) input.consume();
 	}
 
 	Bool UiHost::enqueueEvent(UiEvent event)

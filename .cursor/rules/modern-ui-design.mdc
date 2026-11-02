@@ -24,6 +24,6 @@ Flex spacing: `Project ORKA/UI/Theme/UiAppFlex.hpp`
 
 6. **Composite controls need layout sync.** `attachLayoutEngine` + `syncControlLayouts` for toggles/checkboxes/selects.
 
-7. **Labeled rows.** `UiAppLayout::labelColumnWidth` + `setHitTestInvisibleRecursive()`.
+7. **Labeled rows.** Labels must not steal hit tests: `setHitTestInvisibleRecursive()` from `UiAppHelpers.hpp`.
 
-8. **Showcase in UI Demo.** New reusable tokens/components appear in `UI/Samples/UiControlsDemo.cpp`.
+8. **Showcase in UI Demo.** New reusable tokens/components appear in `Data/UI/controls-demo.ui.html`.

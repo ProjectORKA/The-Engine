@@ -1,0 +1,10 @@
+<ui id="pong-split-root" class="app-root row g10 p10">
+	<window title="Player 1" class="fg1 panel minh0 column p10">
+		<label class="text-badge">Split view — left slot</label>
+		<pong-score caption="PLAYER 1" [score]="state.pong.score.p1" />
+	</window>
+	<window title="Player 2" class="fg1 panel minh0 column p10">
+		<label class="text-badge">Split view — right slot</label>
+		<pong-score caption="PLAYER 2" [score]="state.pong.score.p2" />
+	</window>
+</ui>

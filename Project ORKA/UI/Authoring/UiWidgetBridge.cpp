@@ -1,6 +1,8 @@
 #include "UiWidgetBridge.hpp"
+#include "UiMarkupSurfaceRegistry.hpp"
 
 #include "../Binding/UiExpression.hpp"
+#include "../Inspector/UiDomViewerText.hpp"
 #include "../Text/UiIconCatalog.hpp"
 
 #include <cctype>
@@ -120,7 +122,9 @@ namespace Ui
 		const String name = tagName(node);
 		return name == "button" || name == "toggle" || name == "checkbox" || name == "slider" ||
 			name == "select" || name == "input" || name == "number-input" || name == "textarea" ||
-			name == "progress" || name == "scroll-view" || name == "image";
+			name == "progress" || name == "scroll-view" || name == "image" ||
+			name == "dom-viewer" || name == "ui-inspector" ||
+			UiMarkupSurfaceRegistry::global().isInteractiveSurfaceTag(name);
 	}
 
 	Bool UiWidgetBridge::ownsNode(const UiNodeHandle node) const
@@ -265,6 +269,7 @@ namespace Ui
 	void UiWidgetBridge::syncRecordFromScope(Record& record, const UiPropertyRegistry& scope)
 	{
 		if (!record.handle.isValid()) return;
+		if (record.domViewer) return;
 		if (!record.valuePath.empty())
 		{
 			const UiValue value = readProperty(record.valuePath, scope);
@@ -524,11 +529,39 @@ namespace Ui
 				record.handle = factory.image(std::move(config));
 				record.kind = UiWidgetKind::Image;
 			}
+			else if (UiMarkupSurfaceRegistry::global().isInteractiveSurfaceTag(name))
+			{
+				UiInteractiveSurfaceConfig config;
+				config.parent = parent;
+				config.id = common.id;
+				config.label = common.label;
+				config.classes = common.classes;
+				config.enabled = common.enabled;
+				config.tabIndex = common.tabIndex;
+				record.handle = factory.interactiveSurface(std::move(config));
+				record.kind = UiWidgetKind::InteractiveSurface;
+			}
+			else if (name == "dom-viewer" || name == "ui-inspector")
+			{
+				UiTextInputConfig config;
+				config.parent = parent;
+				config.id = common.id;
+				config.label = common.label.empty() ? "DOM viewer" : common.label;
+				config.classes = common.classes;
+				config.enabled = common.enabled;
+				config.readOnly = true;
+				config.multiline = true;
+				config.placeholder = "Live UI tree…";
+				record.handle = factory.textArea(std::move(config));
+				record.kind = UiWidgetKind::TextArea;
+				record.domViewer = true;
+			}
 
 			if (!record.handle.isValid()) return false;
 			record.node = factory.node(record.handle);
 			bindPropertyPaths(bundle, blueprintIndex, record);
 			attachChangeHandlers(record);
+			if (record.domViewer) attachDomViewerPicker(record);
 		}
 		else if (record.node.isValid())
 		{
@@ -591,5 +624,46 @@ namespace Ui
 	void UiWidgetBridge::syncControlLayouts()
 	{
 		factory.syncControlLayouts();
+	}
+
+	void UiWidgetBridge::setDomViewerPickHandler(Function<void(UiNodeHandle)> handler)
+	{
+		onDomViewerPick = std::move(handler);
+	}
+
+	void UiWidgetBridge::attachDomViewerPicker(Record& record)
+	{
+		if (!record.domViewer || !record.handle.isValid() || !record.node.isValid()) return;
+		const String stableKey = record.stableKey;
+		factory.listen(record.handle, record.node, UiRoutedEventType::PointerUp,
+			[this, stableKey](UiRoutedEvent& event)
+			{
+				Record* pickedRecord = findRecord(stableKey);
+				if (!pickedRecord || !onDomViewerPick) return;
+				const UiTextInputState* state = factory.state<UiTextInputState>(pickedRecord->handle);
+				if (!state) return;
+				const String& text = state->editor.text();
+				const SizeT line = Inspector::domViewerLineIndexAtCaret(text, state->editor.caret());
+				if (line >= pickedRecord->domViewerLineHandles.size()) return;
+				const UiNodeHandle node = pickedRecord->domViewerLineHandles[line];
+				if (node.isValid()) onDomViewerPick(node);
+				event.handled = true;
+			});
+	}
+
+	void UiWidgetBridge::syncDomViewers(
+		const UiDocument& document, const UiNodeHandle focused, const UiNodeHandle picked)
+	{
+		for (auto& [key, record] : records)
+		{
+			(void)key;
+			if (!record.domViewer || !record.handle.isValid()) continue;
+			const Inspector::UiDomViewerDump dump = Inspector::buildDomViewerDump(
+				document, record.node, focused, picked);
+			record.domViewerLineHandles = dump.lineHandles;
+			const UiTextInputState* current = factory.state<UiTextInputState>(record.handle);
+			if (!current || current->editor.text() != dump.text)
+				(void)factory.setTextValue(record.handle, dump.text, false);
+		}
 	}
 }

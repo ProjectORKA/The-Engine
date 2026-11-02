@@ -31,7 +31,7 @@ When an edit touches modern UI, inspect these first:
 9. **Prefer authored UI** for demo/layout surfaces; keep C++ to property/command wiring via `UiAuthoredHost`.
 10. **CSS overflow on `div`** (`overflow`, `overflow-x`, `overflow-y`: visible/hidden/scroll/auto) is handled automatically by `UiHost` + `UiOverflowController` — clipping via scissor, wheel + scrollbar input, no manual `updateScrollMetrics()` / `applyScrollShift()`. Reserve `<scroll-view>` for virtual lists or scroll-anchor bindings. As in CSS, `visible` on one axis clips when the other axis scrolls, and `align-items: stretch` only fills axes whose width/height is auto — give a child an explicit size to opt out of stretch.
 11. **No unused markup ids** — add `id="…"` only when C++ (`ensureNodeLayout`, `findById`, …), bindings (`[id]="…"` for token/theme lookup), or tests need it. Prefer semantic classes for styling; do not duplicate class names as ids.
-12. **No dead markup classes or UI clutter** — every class must be handled by SCSS, `UiAppTheme`, or C++ wiring. Do not add decorative aliases, one-off layout workaround classes, or duplicate helpers already on the same node; prefer fixing layout (e.g. content-aware flex mins, `min-h-0` on scroll children) or existing flex/theme tokens over new names. Nested surfaces use `panel` / `section` theme classes (highlight stacking in `UiAppTheme.cpp`); do not hand-pick nested background colors.
+12. **No dead markup classes or UI clutter** — every class must be handled by SCSS, `UiAppTheme`, or C++ wiring. Do not add decorative aliases, one-off layout workaround classes, or duplicate helpers already on the same node; prefer fixing layout (e.g. content-aware flex mins, `mh0` on scroll children) or existing flex/theme tokens over new names. Nested surfaces use `panel` / `section` theme classes (highlight stacking in `UiAppTheme.cpp`); do not hand-pick nested background colors.
 13. **Wrap rows use `b50`–`b350`** — basis classes on items + `row wrap` on the container (balanced line breaks for grow rows); color swatches use `.color-token-grid`. Prefer short flex utilities (`fg1`, `wrap`, `mw0`, `mh0`). See `UiAppFlex.hpp` and `.token-item b100` in the controls demo.
 
 Reference implementation: `Data/UI/controls-demo.ui.html` + `Project ORKA/GameLoader.cpp`.
@@ -41,7 +41,7 @@ Reference implementation: `Data/UI/controls-demo.ui.html` + `Project ORKA/GameLo
 **All modern UI surfaces must use the unified app theme** defined in `UI/Theme/UiAppTheme.hpp`.
 
 - **Do not** add ad-hoc color literals, spacing values, or typography sizes in demo/game UI code.
-- **Do not** create per-surface palettes (the old `UiControlsDemoPalette` pattern is removed).
+- **Do not** create per-surface palettes.
 - Install the theme with `host.useAppTheme(theme)`. Use `UiAppFlexClass` for layout/spacing; use remaining `UiAppClass` paint helpers (e.g. `field-label`, `typography-sample`, `panel`) only where the theme paints typography or chrome.
 - Legacy `UIElement` panels should use `UiLegacyTheme` helpers so colors stay aligned with the master theme.
 
@@ -66,7 +66,44 @@ Page-level `.ui.scss` files should start with `@import "app-master.ui.scss";` so
 
 Runtime pipeline: `UiAuthoredHost` loads markup + styles → `UiTemplateInstantiator` + `UiWidgetBridge` (interactive tags) → `UiStyleApplicationAdapter`. C++ only registers commands, publishes property bindings (`state.*`, `tokens.*`), and installs `UiAppTheme`.
 
-Supported markup tags: `div`, `label`, `button`, `toggle`, `checkbox`, `slider`, `number-input`, `select`, `input` (text or `type="number"`), `textarea`, `progress`, `scroll-view`, `image`. Bindings: `[value]`, `[text]`, `[options]`, `@for (...) { ... }`, `@if (...) { ... }`, `(activate)="Command.Name"`.
+Supported markup tags: `div`, `label`, `button`, `toggle`, `checkbox`, `slider`, `number-input`, `select`, `input` (text or `type="number"`), `textarea`, `progress`, `scroll-view`, `image`, plus **interactive surface** tags registered in `UiMarkupSurfaceRegistry` (built-ins: `pong-game`, `rts-world`). Bindings: `[value]`, `[text]`, `[options]`, `@for (...) { ... }`, `@if (...) { ... }`, `(activate)="Command.Name"`.
+
+### Interactive surfaces (games in layout)
+
+- Markup tags map through `UiMarkupSurfaceRegistry` → `UiWidgetFactory::interactiveSurface()` (focusable, pointer-down focuses the surface node but does **not** consume the `InputEvent`, so app-shell `inputEvent` can still run `ui.capture` / release).
+- Draw in C++ with `setInteractiveSurfaceRender(handle, callback)`; use `interactiveSurfaceGlViewport()` from `UI/Surfaces/UiInteractiveSurface.hpp` for GL `setRenderRegion` (size comes from **computed layout**, not `GameRenderer` / `UIElement` sizing).
+- Register new game tags before `loadFromFiles`: `UiMarkupSurfaceRegistry::global().registerInteractiveSurfaceTag("my-game")`.
+- `UiHost::render` paints UI **up through** each interactive surface, draws that surface, then paints the nodes that follow it. Ancestor fills stay behind the game. Later nodes (pause menus, dropdowns, HUD inside the surface) paint on top. A full-window dim uses the `scrim` theme class.
+- Reference: `Pong.cpp`, `SimpleRTS.cpp`, `UI/UI_REDESIGN_PLAN.md` (Interactive surfaces).
+
+### Component fragments (compile-time composition)
+
+- **Registry:** `UiComponentRegistry` maps tag → fragment file under `Data/UI/` (built-ins: `pong-score`, `pong-game-view`, `pong-playfield`).
+- **`@import`:** `@import "pong-score.ui.html" as pong-score;` registers a tag (line stripped before parse). Syntax: `@import "file.ui.html" as tag-name;`
+- **Usage:** `<pong-score caption="PLAYER 1" [score]="state.pong.score.p1" />` — fragment props are passed via attributes; inner `[text]="score"` receives `[score]` from the call site.
+- **Sample graph:** `menu.ui.html` (imports) → `<pong-playfield />` → `<pong-score />` + `<pong-game-view />`; product shell: `pong.ui.html`.
+- Fragments wrap content in `<ui>…</ui>`; expansion runs in `UiBundleCompiler` before bindings compile.
+
+### Logical `<window>` nodes
+
+- **Single OS window:** wrap app content in `<window title="…" class="fg1">` — `syncPrimaryOsWindowTitle()` applies the title when exactly one logical window exists (see `Pong`).
+- **Split in one OS window:** siblings under `<ui class="row">` — see `pong-split.ui.html` (two `<window>` tiles, one process/window when mounted with `mount()`).
+- **Multi OS window:** one `<window id="…" title="…">` per OS window; use `UiAuthoredHost::mountLogicalWindow(id)` per `UiHost` — see `logical-windows-demo.ui.html` + launcher **Logical Windows Demo**.
+- Catalog: `buildLogicalWindowCatalog()` / `UiAuthoredHost::logicalWindows()`.
+
+### `<dom-viewer />` (debug)
+
+- Built-in tag (alias `ui-inspector`): read-only multiline dump of the live `UiDocument`.
+- The viewer’s own widget subtree is omitted from the dump to avoid recursion.
+- Refreshed each `UiAuthoredHost::syncFromProperties()` via `UiWidgetBridge::syncDomViewers`.
+- Example: bottom panel in `controls-demo.ui.html`.
+- **Pick to highlight:** click a line in the dom viewer; the matching node gets a layout overlay on the main UI (`>` marks the picked line in the dump).
+
+### Input routing
+
+- `Window::routeInput` sends pointer and scroll hits that land on a `UiHost` to that host only.
+- `UiHost::inputEvent` dispatches into `UiEventRouter` immediately and consumes the legacy event only when the document handles it.
+- Unhandled keys continue to legacy `UIElement::inputEvent` for game shells where no platform key callback owns the event. `ui.capturing` is still the 3D-camera path.
 
 ```html
 @for (token of tokens.colors; track token.id) {
@@ -113,7 +150,7 @@ Master spacing: `UI/Theme/UiAppFlex.hpp`. Valid class tokens only:
 |               |    |           |    | `b300`      | 300 |
 |               |    |           |    | `b350`      | 350 |
 
-**Utility classes:** `fg1` (`flex-grow: 1`), `wrap` (balanced flex line breaks), `mw0` / `mh0` (zero min width/height for shrink). Legacy names `flex-grow`, `min-w-0`, and `min-h-0` still parse. Authored `flex-wrap: balance` still parses as an alias.
+**Utility classes:** `fg1` (`flex-grow: 1`), `wrap` (balanced flex line breaks), `mw0` / `mh0` (zero min width/height for shrink). Aliases `flex-grow`, `min-w-0`, `min-h-0` and `flex-wrap: balance` also parse; prefer the short names.
 
 **Basis classes (`b50`–`b350`)** set `flex-basis` on items inside a wrapping row (`row wrap`). **`wrap`** precomputes line breaks to minimize flex-grow stretch — especially avoiding a single orphaned item stretched across a full row. Token rows (`.color-token-grid`) use `.token-item` (`flex-grow: 1`, `flex-shrink: 0`, `min-width: 0`) so items on each line share leftover space evenly.
 
@@ -154,7 +191,7 @@ Corner radius is `0` app-wide (square chrome).
 - Prefer CSS overflow on a normal `div`: `overflow-y: auto` / `overflow: hidden` in authored SCSS. `UiHost` wires wheel input, clipping (scissor), and scrollbars automatically. Flex children with overflow shrink to their viewport; content inside keeps its intrinsic height and drives `scrollExtent`.
 - Flex items default to **content-aware minimum sizes** (headers and labels stay readable). Scroll flex children need **`min-height: 0`** (SCSS) or **`mh0`** so they can shrink inside a column; use **`mw0`** / **`min-width: 0`** for horizontal shrink in rows.
 - Keep status chrome or primary actions outside the scroller when possible.
-- Use `<scroll-view>` only when you need widget-specific APIs (virtual lists, scroll anchors). Legacy manual binding via `updateScrollMetrics()` + `applyScrollShift()` remains available for those paths.
+- Use `<scroll-view>` only when you need widget-specific APIs (virtual lists, scroll anchors). Those paths bind manually via `updateScrollMetrics()` + `applyScrollShift()`.
 
 ## Controls
 

@@ -4,10 +4,9 @@ Agent notes for the **Simple RTS** demo/simulation. Implementation: `SimpleRTS.c
 
 ## Start here
 
-- `SimpleRTS.cpp` / `SimpleRTS.hpp` — game lifecycle
+- `SimpleRTS.cpp` / `SimpleRTS.hpp` — `SimpleRtsAppShell` (single `UiHost` root) + simulation
+- `Data/UI/simple-rts.ui.html` — world setup (`@if state.setupVisible`) + `<rts-world>` game surface
 - `SimpleRtsWorldSettings` + `SimpleRtsWorldPresets` — world configuration
-- `SimpleRtsSettingsPanel` — in-game settings UI
-- `Data/UI/simple-rts-world.ui.html` — world setup overlay
 
 ## World presets
 
@@ -17,5 +16,5 @@ Agent notes for the **Simple RTS** demo/simulation. Implementation: `SimpleRTS.c
 ## Simulation and setup UI
 
 - Simulation starts only after **Start / rebuild world**.
-- **F2** reopens the setup overlay.
-- When the setup overlay is **hidden**, it must **not** participate in legacy hit-testing (`isPointInside`) or focus must return to the game renderer. Otherwise its `UiHost` consumes LMB, scroll, and blocks mouse capture.
+- **F2** toggles setup (`state.setupVisible`); when hidden, only `<rts-world>` is in the document.
+- Game camera capture (LMB) routes through the app shell when setup is closed.

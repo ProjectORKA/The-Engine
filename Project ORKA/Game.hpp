@@ -26,6 +26,8 @@ protected:
 
 void gameSimulationThread(GameSimulation& sim);
 
+// Legacy game root: sizes from UIElement layout + optional FBO composite.
+// New apps should use AppHost + <interactive-surface tags> (layout rect from UiLayoutEngine).
 struct GameRenderer : UIElement
 {
 	Framebuffer framebuffer;

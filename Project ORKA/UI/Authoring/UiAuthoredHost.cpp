@@ -27,10 +27,16 @@ namespace Ui
 				syncControlLayouts();
 			}
 		});
+		widgetBridgeImpl->setDomViewerPickHandler([this](const UiNodeHandle node)
+			{
+				domViewerPickedNode = node;
+				host.setDomViewerHighlight(node);
+			});
 	}
 
 	UiAuthoredHost::~UiAuthoredHost()
 	{
+		host.setDomViewerHighlight({});
 		host.setAgentSurface({});
 		host.registerWidgetFactory(nullptr);
 	}
@@ -72,9 +78,45 @@ namespace Ui
 			});
 	}
 
+	Vector<UiLogicalWindowEntry> UiAuthoredHost::logicalWindows() const
+	{
+		Vector<UiLogicalWindowEntry> entries;
+		if (activeBundle && activeBundle->valid)
+			buildLogicalWindowCatalog(activeBundle->blueprint, entries);
+		return entries;
+	}
+
+	Bool UiAuthoredHost::mountLogicalWindow(const String& windowId)
+	{
+		if (!activeBundle || !activeBundle->valid) return false;
+		Vector<UiLogicalWindowEntry> entries;
+		buildLogicalWindowCatalog(activeBundle->blueprint, entries);
+		const UiLogicalWindowEntry* entry = findLogicalWindow(entries, windowId);
+		if (!entry)
+		{
+			diagnosticsLog.push_back({ DiagnosticSeverity::Error,
+				"Logical window not found in bundle: " + windowId, {} });
+			return false;
+		}
+		instantiator.setWidgetBridge(widgetBridgeImpl.get());
+		mountedLogicalBlueprintIndex = entry->blueprintIndex;
+		if (!instantiator.reconcileLogicalWindowSubtree(
+			*activeBundle, entry->blueprintIndex, host.document().root()))
+			return false;
+		styleAdapter.apply(activeBundle->styles);
+		host.setPaintStyleTokens([this](const UiNodeHandle handle)
+			{ return styleAdapter.paintTokens(handle); });
+		for (const UiDiagnostic& diagnostic : instantiator.diagnostics())
+			diagnosticsLog.push_back(diagnostic);
+		for (const UiDiagnostic& diagnostic : styleAdapter.diagnostics())
+			diagnosticsLog.push_back(diagnostic);
+		return true;
+	}
+
 	Bool UiAuthoredHost::mount(const UiNodeHandle parent)
 	{
 		if (!activeBundle || !activeBundle->valid) return false;
+		mountedLogicalBlueprintIndex = maxUInt;
 		instantiator.setWidgetBridge(widgetBridgeImpl.get());
 		if (!instantiator.reconcile(*activeBundle, parent.isValid() ? parent : host.document().root()))
 			return false;
@@ -91,10 +133,18 @@ namespace Ui
 	void UiAuthoredHost::syncFromProperties()
 	{
 		if (!activeBundle) return;
-		(void)instantiator.reconcile(*activeBundle, host.document().root());
+		instantiator.setWidgetBridge(widgetBridgeImpl.get());
+		if (mountedLogicalBlueprintIndex != maxUInt)
+		{
+			(void)instantiator.reconcileLogicalWindowSubtree(
+				*activeBundle, mountedLogicalBlueprintIndex, host.document().root());
+		}
+		else (void)instantiator.reconcile(*activeBundle, host.document().root());
 		styleAdapter.apply(activeBundle->styles);
 		host.setPaintStyleTokens([this](const UiNodeHandle handle)
 			{ return styleAdapter.paintTokens(handle); });
+		widgetBridgeImpl->syncDomViewers(
+			host.document(), host.eventRouter().focusedNode(), domViewerPickedNode);
 	}
 
 	void UiAuthoredHost::syncControlLayouts()

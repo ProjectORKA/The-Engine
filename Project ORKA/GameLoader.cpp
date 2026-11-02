@@ -8,6 +8,7 @@
 #include "UI/Theme/UiAppHelpers.hpp"
 #include "UI/Theme/UiAppTheme.hpp"
 #include "UI/Samples/UiControlsDemo.hpp"
+#include "UI/Samples/UiLogicalWindowsDemo.hpp"
 #include "UI/Widgets/UiWidgets.hpp"
 #include "Window.hpp"
 #include "WindowAPI.hpp"
@@ -66,6 +67,7 @@ Vector<GameEntry> GameLoader::buildDefaultEntries()
 {
 	return {
 		{"UI Controls Demo", "Interactive reference for the unified ORKA design system and controls.", []() { UiControlsDemo game; game.run(); }},
+		{"Logical Windows Demo", "Two OS windows from one authored document via <window> nodes and mountLogicalWindow.", []() { UiLogicalWindowsDemo demo; demo.run(); }},
 		{"AI Chat", "Local Qwen-class chat via engine-managed llama.cpp — baseline for NPCs, tools, and voice.", []() { AiChat game; game.run(); }},
 		{"Sandbox", "A small playground to experiment with engine features.", []() { Sandbox game; game.run(); }},
 		{"Pong", "Classic Pong built with ORKA's UI and input systems.", []() { Pong game; game.run(); }},

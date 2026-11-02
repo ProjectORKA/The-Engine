@@ -1,0 +1,21 @@
+<ui id="pong-root" class="app-root pong-shell">
+	<window title="Pong" class="column g10 fg1 p10">
+		<div id="pong-shell" class="column g10 fg1">
+			<div class="row g10 align-center">
+				<label class="typography-sample fg1">Pong</label>
+				<button id="pong-reset" class="p10" text="Reset scores" (activate)="Pong.Reset" />
+			</div>
+
+			<pong-playfield class="fg1 minh0" />
+		</div>
+	</window>
+	@if (state.pong.paused) {
+		<div class="scrim pause-scrim align-center">
+			<div class="panel g20 p40">
+				<label class="typography-sample">Paused</label>
+				<button class="p20" text="Resume" (activate)="Pong.Resume" />
+				<button class="p20" text="Exit" (activate)="Pong.Exit" />
+			</div>
+		</div>
+	}
+</ui>

@@ -1,0 +1,26 @@
+<ui id="melon-audio-root" class="app-root row g10 p10">
+	<melon-audio-view id="melon-audio-view" class="fg1 mh0 mw0" label="Procedural audio visualization" />
+
+	<div class="lab-controls panel column g10 p10 mh0">
+		<label class="typography-sample">Melon Audio Lab</label>
+		<label class="field-label">AUDIO LAYERS</label>
+		<toggle text="Hum" [value]="state.enableHum" />
+		<toggle text="Wind" [value]="state.enableWind" />
+		<toggle text="Heartbeat" [value]="state.enableBreath" />
+
+		<div class="app-scroll column g10 mh0">
+			<label class="field-label">SYNTHESIS</label>
+			<div class="labeled-row row g10"><label>Hum / noise mix</label><slider class="fg1" min="0" max="1" step="0.01" [value]="state.humNoiseMix" /></div>
+			<div class="labeled-row row g10"><label>Hum pitch scale</label><slider class="fg1" min="0.1" max="0.5" step="0.01" [value]="state.humPitchScale" /></div>
+			<div class="labeled-row row g10"><label>Wind pitch scale</label><slider class="fg1" min="0.05" max="3" step="0.01" [value]="state.windPitchScale" /></div>
+			<div class="labeled-row row g10"><label>Hum gain</label><slider class="fg1" min="0" max="2.5" step="0.01" [value]="state.humGain" /></div>
+			<div class="labeled-row row g10"><label>Wind gain</label><slider class="fg1" min="0" max="2.5" step="0.01" [value]="state.windGain" /></div>
+			<div class="labeled-row row g10"><label>Heartbeat gain</label><slider class="fg1" min="0" max="2.5" step="0.01" [value]="state.breathGain" /></div>
+			<div class="labeled-row row g10"><label>Response curve</label><slider class="fg1" min="0" max="0.5" step="0.01" [value]="state.responseCurve" /></div>
+
+			<label class="field-label">SIMULATION</label>
+			<div class="labeled-row row g10"><label>Motion speed</label><slider class="fg1" min="0" max="1" step="0.01" [value]="state.simulatedSpeed" /></div>
+			<div class="labeled-row row g10"><label>Doppler direction</label><slider class="fg1" min="-1" max="1" step="0.01" [value]="state.dopplerDirection" /></div>
+		</div>
+	</div>
+</ui>

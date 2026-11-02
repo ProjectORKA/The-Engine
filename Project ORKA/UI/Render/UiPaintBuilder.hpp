@@ -40,6 +40,13 @@ namespace Ui
 
 		[[nodiscard]] Bool build(UiDocument& document, UiDisplayList& output,
 			const UiNodePainter& painter, Vector<UiPaintBuildDiagnostic>& diagnostics);
+		// Fills the fragment cache and writes document paint order. Call before assembleRange.
+		[[nodiscard]] Bool rebuildCache(UiDocument& document, const UiNodePainter& painter,
+			Vector<UiPaintBuildDiagnostic>& diagnostics, Vector<UiNodeHandle>& paintOrder);
+		// Emits cached fragments for paintOrder[begin, end) in that order.
+		[[nodiscard]] Bool assembleRange(UiDocument& document, UiDisplayList& output,
+			Vector<UiPaintBuildDiagnostic>& diagnostics, const Vector<UiNodeHandle>& paintOrder,
+			UInt begin, UInt end);
 		void invalidateAll();
 		void invalidate(UiNodeHandle node);
 		[[nodiscard]] SizeT cachedNodeCount() const { return cache.size(); }

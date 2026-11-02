@@ -4,6 +4,7 @@
 #include "ResourceManager.hpp"
 #include "OptickProfiling.hpp"
 #include "UserInterface.hpp"
+#include "UI/UiHost.hpp"
 #include "Debug.hpp"
 #include "Agent/AgentBridge.hpp"
 #include <bit>
@@ -484,39 +485,63 @@ void Window::sampleMousePositionForFrame()
 
 Bool Window::routeInput(InputEvent& input)
 {
-	// Global capture: route all input directly to the capturing element chain.
+	// Global capture stays on the legacy element chain (3D camera look).
 	if (ui.capturing)
 	{
 		if (ui.focusedElement && uiElementBelongsToWindow(ui.focusedElement, *this))
 		{
-		for (UIElement* element = ui.focusedElement; element != nullptr; element = element->parent)
-		{
-			element->inputEvent(*this, input);
-			if (input.isConsumed()) return true;
-		}
-		return input.isConsumed();
+			for (UIElement* element = ui.focusedElement; element != nullptr; element = element->parent)
+			{
+				element->inputEvent(*this, input);
+				if (input.isConsumed()) return true;
+			}
+			return input.isConsumed();
 		}
 		logError("Capturing without focused element!");
 		return false;
 	}
 
-	// mouse down updates focus
+	const Bool pointerEvent = input.id.type == InputType::Mouse || input.id.type == InputType::Scroll;
+	UIElement* target = nullptr;
+	if (pointerEvent) target = pickElementAt(mousePositionBotLeft());
+	else if (ui.focusedElement && uiElementBelongsToWindow(ui.focusedElement, *this))
+		target = ui.focusedElement;
+	if (!target && !children.empty()) target = children.back();
+	if (!target) target = this;
+
+	Ui::UiHost* retainedHost = nullptr;
+	for (UIElement* element = target; element != nullptr; element = element->parent)
+	{
+		if (auto* host = dynamic_cast<Ui::UiHost*>(element))
+		{
+			retainedHost = host;
+			break;
+		}
+	}
+
+	// Pointer hits on a retained host stay on that host. Keys are offered to the
+	// host first; anything the document does not handle continues to legacy elements.
+	if (retainedHost && (pointerEvent || input.id.type == InputType::KeyBoard ||
+		input.id.type == InputType::Controller))
+	{
+		retainedHost->inputEvent(*this, input);
+		if (input.isConsumed())
+		{
+			if (input.id.type == InputType::Mouse && input.state)
+				ui.focus(*this, retainedHost);
+			return true;
+		}
+	}
+
 	if (input.id.type == InputType::Mouse && input.state)
 	{
 		UIElement* clicked = pickElementAt(mousePositionBotLeft());
 		ui.focus(*this, clicked ? clicked : this);
 	}
 
-	UIElement* target = nullptr;
-	if (input.id.type == InputType::Mouse || input.id.type == InputType::Scroll)
-		target = pickElementAt(mousePositionBotLeft());
-	if (!target && ui.focusedElement && uiElementBelongsToWindow(ui.focusedElement, *this))
-		target = ui.focusedElement;
-	if (!target && !children.empty()) target = children.back();
-	if (!target) target = this;
-
 	for (UIElement* element = target; element != nullptr; element = element->parent)
 	{
+		if (element == retainedHost) continue;
 		element->inputEvent(*this, input);
 		if (input.isConsumed()) return true;
 	}

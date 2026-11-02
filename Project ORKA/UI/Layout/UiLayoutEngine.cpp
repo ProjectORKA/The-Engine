@@ -1104,6 +1104,11 @@ namespace Ui
 			for (FlexLine& line : lines)
 				line.cross = std::max(line.cross, availableCross);
 		}
+		// A single-line (nowrap) container's line always spans its full cross size,
+		// so rows given extra height (e.g. via flex-grow) can stretch or center children.
+		if (parentStyle.flexWrap == UiWrap::NoWrap && lines.size() == 1 &&
+			std::isfinite(availableCross) && availableCross > 0)
+			lines.front().cross = std::max(lines.front().cross, availableCross);
 
 		Float totalCross = 0;
 		for (const FlexLine& line : lines) totalCross += line.cross;

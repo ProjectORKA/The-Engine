@@ -68,7 +68,8 @@ namespace Ui
 		[[nodiscard]] Bool isSectionChrome(const UiNode& node)
 		{
 			return hasClass(node, UiAppClass::panel) || hasClass(node, UiAppClass::section) ||
-				hasClass(node, "dock-panel") || node.authored.typeName == "GameViewport" ||
+				hasClass(node, "dock-panel") || node.authored.typeName == "LogicalWindow" ||
+				node.authored.typeName == "InteractiveSurface" ||
 				node.authored.typeName == "WorldSurface";
 		}
 
@@ -720,6 +721,11 @@ namespace Ui
 					hasClass(node, "launcher-scroll"))
 				{
 					drawFill = false;
+				}
+				else if (hasClass(node, UiAppClass::scrim))
+				{
+					drawFill = true;
+					fill = srgb(0, 0, 0, 0.55f);
 				}
 				else if (isSectionChrome(node))
 				{

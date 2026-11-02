@@ -272,9 +272,6 @@
     <ClCompile Include="TransformationStack.cpp">
       <Filter>Systems\UserInterface\Window\Renderer\MatrixSystem\TransformationStack</Filter>
     </ClCompile>
-    <ClCompile Include="UIButton.cpp">
-      <Filter>Systems\UserInterface\UIButton</Filter>
-    </ClCompile>
     <ClCompile Include="UIElement.cpp">
       <Filter>Systems\UserInterface\UIElement</Filter>
     </ClCompile>
@@ -379,12 +376,6 @@
     </ClCompile>
     <ClCompile Include="ParallelizedConvexHullPrototype.cpp">
       <Filter>Apps\3D Apps\PrototypingSandbox\Prototypes\ParalellizedConvexHullPrototype</Filter>
-    </ClCompile>
-    <ClCompile Include="UIContainer.cpp">
-      <Filter>Systems\UserInterface\UIContainer</Filter>
-    </ClCompile>
-    <ClCompile Include="UISlider.cpp">
-      <Filter>Systems\UserInterface</Filter>
     </ClCompile>
     <ClCompile Include="Hash.cpp">
       <Filter>Common\Math\Hash</Filter>
@@ -823,14 +814,8 @@
     <ClInclude Include="TransformationStack.hpp">
       <Filter>Systems\UserInterface\Window\Renderer\MatrixSystem\TransformationStack</Filter>
     </ClInclude>
-    <ClInclude Include="UIButton.hpp">
-      <Filter>Systems\UserInterface\UIButton</Filter>
-    </ClInclude>
     <ClInclude Include="UIElement.hpp">
       <Filter>Systems\UserInterface\UIElement</Filter>
-    </ClInclude>
-    <ClInclude Include="UISlider.hpp">
-      <Filter>Systems\UserInterface</Filter>
     </ClInclude>
     <ClInclude Include="Uniforms.hpp">
       <Filter>Systems\UserInterface\Window\Renderer\ShaderSystem\Uniforms</Filter>
@@ -963,9 +948,6 @@
     </ClInclude>
     <ClInclude Include="PointRenderer.hpp">
       <Filter>Systems\UserInterface\Window\Renderer\PointRenderer</Filter>
-    </ClInclude>
-    <ClInclude Include="UIContainer.hpp">
-      <Filter>Systems\UserInterface\UIContainer</Filter>
     </ClInclude>
     <ClInclude Include="JobQueue.hpp">
       <Filter>Common\Datastructures\JobQueue</Filter>
@@ -1631,9 +1613,6 @@
     <Filter Include="Systems\UserInterface\UIElement">
       <UniqueIdentifier>{fbf9a91e-3a84-4389-b1a9-637eebe785e4}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Systems\UserInterface\UIButton">
-      <UniqueIdentifier>{4ce34e4b-e245-404a-9f5e-e639e3a7e46c}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Systems\UserInterface\Window">
       <UniqueIdentifier>{f3bff6a8-3354-43c7-a98d-50dbb613f4a8}</UniqueIdentifier>
     </Filter>
@@ -1855,9 +1834,6 @@
     </Filter>
     <Filter Include="Systems\UserInterface\Window\Renderer\PointRenderer">
       <UniqueIdentifier>{629b9eb2-045b-44a0-8900-74c5f2e0994f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Systems\UserInterface\UIContainer">
-      <UniqueIdentifier>{d2d0a9d3-c1ba-4caf-a65f-360f1aca33d9}</UniqueIdentifier>
     </Filter>
     <Filter Include="Common\Datastructures\JobQueue">
       <UniqueIdentifier>{2cca24f8-9588-40d8-8a4e-3bb755c8dc8c}</UniqueIdentifier>

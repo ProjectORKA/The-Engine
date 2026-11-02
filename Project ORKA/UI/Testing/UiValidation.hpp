@@ -66,7 +66,8 @@ namespace Ui::Testing
 	};
 
 	// Dependency-free CPU validation. No assertion, window, graphics context,
-	// filesystem mutation, or process-global test registration is used.
+	// or process-global test registration is used. The component expansion case
+	// writes a temporary fragment under the OS temp directory and deletes it.
 	[[nodiscard]] UiValidationReport runModernUiValidation(
 		const UiValidationConfig& config = {});
 }

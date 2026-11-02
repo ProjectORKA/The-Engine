@@ -1,6 +1,7 @@
 #pragma once
 
 #include "UiBundleManager.hpp"
+#include "UiLogicalWindowCatalog.hpp"
 #include "UiStyleApplicationAdapter.hpp"
 #include "UiTemplateInstantiator.hpp"
 #include "UiWidgetBridge.hpp"
@@ -25,6 +26,8 @@ namespace Ui
 
 		[[nodiscard]] Bool loadFromFiles(const Path& markupPath, const Path& stylePath);
 		[[nodiscard]] Bool mount(UiNodeHandle parent = {});
+		[[nodiscard]] Bool mountLogicalWindow(const String& windowId = {});
+		[[nodiscard]] Vector<UiLogicalWindowEntry> logicalWindows() const;
 		void syncFromProperties();
 		void syncControlLayouts();
 		void ensureNodeLayout(const String& nodeId, const Function<void(UiLayoutStyle&)>& configure);
@@ -40,5 +43,10 @@ namespace Ui
 		SharedPointer<const UiCompiledBundle> activeBundle;
 		Vector<UiDiagnostic> diagnosticsLog;
 		U64 bundleGeneration = 0;
+		UInt mountedLogicalBlueprintIndex = maxUInt;
+		UiNodeHandle domViewerPickedNode;
 	};
+
+	// Phase-1 app shell name; same type as UiAuthoredHost until a wider rename lands.
+	using AppHost = UiAuthoredHost;
 }

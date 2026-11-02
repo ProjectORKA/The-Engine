@@ -43,7 +43,7 @@ namespace Ui
 		Portal,
 		Overlay,
 		WorldSurface,
-		GameViewport,
+		InteractiveSurface,
 		Button,
 		Toggle,
 		Checkbox,
@@ -137,15 +137,15 @@ namespace Ui
 		UiWorldSurfaceMapper rayMapper;
 	};
 
-	struct UiGameViewportContext
+	struct UiInteractiveSurfaceContext
 	{
 		UiWidgetHandle widget;
 		UiNodeHandle node;
 		Vec2 position = Vec2(0);
 		Vec2 size = Vec2(0);
 	};
-	using UiGameViewportCallback = Function<void(const UiGameViewportContext&)>;
-	struct UiGameViewportConfig : UiWidgetCommon { UiGameViewportCallback render; };
+	using UiInteractiveSurfaceCallback = Function<void(const UiInteractiveSurfaceContext&)>;
+	struct UiInteractiveSurfaceConfig : UiWidgetCommon { UiInteractiveSurfaceCallback render; };
 
 	using UiActivateCallback = Function<void(UiWidgetHandle)>;
 	using UiBoolChangeCallback = Function<void(UiWidgetHandle, Bool)>;
@@ -268,7 +268,7 @@ namespace Ui
 		UiWorldSurfaceMetadata metadata;
 		UiWorldSurfaceMapper rayMapper;
 	};
-	struct UiGameViewportState { UiGameViewportCallback render; };
+	struct UiInteractiveSurfaceState { UiInteractiveSurfaceCallback render; };
 	struct UiButtonState { Bool pressed = false; UiActivateCallback onActivate; };
 	struct UiToggleState { Bool value = false; Bool pressed = false; UiBoolChangeCallback onChange; };
 	struct UiRadioGroupState
@@ -336,7 +336,7 @@ namespace Ui
 
 	using UiWidgetState = std::variant<
 		UiBoxState, UiTextState, UiImageState, UiScrollViewState, UiVirtualListState,
-		UiFocusScopeState, UiPortalState, UiWorldSurfaceState, UiGameViewportState,
+		UiFocusScopeState, UiPortalState, UiWorldSurfaceState, UiInteractiveSurfaceState,
 		UiButtonState, UiToggleState, UiRadioGroupState, UiSliderState,
 		UiProgressState, UiTextInputState, UiNumberFieldState, UiSelectState>;
 
@@ -367,7 +367,7 @@ namespace Ui
 		[[nodiscard]] UiWidgetHandle portal(UiPortalConfig config);
 		[[nodiscard]] UiWidgetHandle overlay(UiPortalConfig config);
 		[[nodiscard]] UiWidgetHandle worldSurface(UiWorldSurfaceConfig config);
-		[[nodiscard]] UiWidgetHandle gameViewport(UiGameViewportConfig config);
+		[[nodiscard]] UiWidgetHandle interactiveSurface(UiInteractiveSurfaceConfig config);
 
 		[[nodiscard]] UiWidgetHandle button(UiButtonConfig config);
 		[[nodiscard]] UiWidgetHandle toggle(UiToggleConfig config);
@@ -393,7 +393,9 @@ namespace Ui
 
 		[[nodiscard]] Bool updateScrollMetrics(UiWidgetHandle handle, Vec2 extent, Vec2 viewport);
 		[[nodiscard]] Bool materializeVirtualList(UiWidgetHandle handle);
-		void renderGameViewports() const;
+		// only invalid renders every visible surface. A valid handle renders that node.
+		void renderInteractiveSurfaces(UiNodeHandle only = {}) const;
+		void setInteractiveSurfaceRender(UiWidgetHandle handle, UiInteractiveSurfaceCallback render);
 		void attachLayoutEngine(UiLayoutEngine& layoutEngine);
 		void attachTextMetrics(UiTextShapeProvider shapeProvider, UiTextStyleProvider styleProvider);
 		void syncControlLayouts();

@@ -2,7 +2,7 @@
 
 Project ORKA is an open-source C++ game engine and demo collection. It uses a **left-handed coordinate system** (+X right, +Y forward, +Z up, Blender-style). The stack includes **OpenGL/GLEW**, **GLFW**, **GLM**, **miniaudio**, and **ASIO**.
 
-**Default entry point:** `main.cpp` launches **Sandbox** directly. A **GameLoader** menu and **ORKAIntroSequence** exist for picking games at runtime.
+**Entry point:** `main.cpp` plays the **ORKAIntroSequence**, then shows the **GameLoader** launcher; the selected game runs after the launcher closes.
 
 ---
 
@@ -111,7 +111,7 @@ Central rendering facade with subsystems:
 ### Framebuffer (`Framebuffer.hpp`)
 - Multi-attachment FBOs with resize, clear (color/depth), readback, completeness checks
 
-### Shaders (`Data/Shaders/` — 109 GLSL files)
+### Shaders (`Data/Shaders/`)
 Post-processing and effects include:
 - **Bloom** — prefilter, downsample, upsample chain (Triple Nine uses 8 bloom passes)
 - **Tonemapping**, **gamma correction**, **auto-exposure**
@@ -212,10 +212,6 @@ Post-processing and effects include:
 - Recursive layout (sizes, positions), hit testing, mouse enter/leave
 - Virtual lifecycle: create, update, render, destroy, inputEvent, renderInteractive
 
-### UIButton (`UIButton.hpp` / `UIButton.cpp`)
-- Clickable button with hover/pressed states, optional embedded content
-- Virtual `doThis()` callback
-
 ### GameLoader (`GameLoader.hpp` / `GameLoader.cpp`)
 - Post-intro game picker UI (column of launch buttons with name + description)
 - Records selection and closes window to launch chosen game
@@ -232,11 +228,13 @@ Post-processing and effects include:
 
 ## Games and demos
 
-### Registered in GameLoader (15)
+### Registered in GameLoader
 
 | Game | Description | Key features |
 |------|-------------|--------------|
 | **UI Controls Demo** | Modern UI widget showcase | Toggles, checkboxes, sliders, text fields on the retained UI stack |
+| **Logical Windows Demo** | Multi-window authored UI | Two OS windows from one document via `<window>` nodes |
+| **AI Chat** | Local LLM chat | Engine-managed llama.cpp server, GPU detection (see `AI/AiChat.md`) |
 | **Sandbox** | Engine feature playground | DebugPlayer fly cam, Suzanne mesh, wireframe toggle (F), FPS overlay |
 | **Pong** | Classic Pong | 2-player/AI paddles, multi-ball, particle collisions, UI-integrated |
 | **Voxels** | Ray-marched voxel world | Bit-packed chunks, slice/ray modes, GPU 3D texture, lighting |
@@ -340,7 +338,7 @@ Post-processing and effects include:
 - **Project ORKA.vcxproj** — Visual Studio project
 
 ### Data and assets
-- **Data/Shaders/** — 109 GLSL shaders for demos and engine features
+- **Data/Shaders/** — GLSL shaders for demos and engine features
 - **Data/** — meshes, textures, fonts (loaded via ResourceManager)
 - **Cache/Meshes/** — FBX-derived cached meshes
 
@@ -362,13 +360,13 @@ main.cpp → Engine (Audio, Resources, Jobs)
               → UserInterface
                    → Window (per-thread)
                         → Renderer (Mesh, Shader, Texture, Text, Primitives)
-                        → UIElement tree
-                             → GameRenderer (offscreen FBO → composite)
+                        → shell UIElement → UiHost (authored .ui.html document)
+                             → interactive surfaces (games drawn into layout rects)
                                   ↔ GameSimulation (background thread)
 ```
 
 **Notable patterns:**
-- Everything visual is a **UIElement** tree (including 3D via `GameRenderer`)
+- App UI is a retained, authored document; games are interactive surface nodes inside it (see `UI/UI_REDESIGN_PLAN.md`). Older games still use a `GameRenderer : UIElement` window root.
 - Simulations run on **background threads**; renderers connect via `connect()`
 - Resources are **name-based** (meshes, shaders, textures looked up by string)
 - **Left-handed** Blender-style coordinates throughout
@@ -377,8 +375,8 @@ main.cpp → Engine (Audio, Resources, Jobs)
 
 ## External links
 
-- GitHub: https://github.com/ProjectORKA/Project-ORKA
+- GitHub: https://github.com/ProjectORKA/The-Engine
 - Website: https://project-orka.com
 - Discord: https://discord.gg/NUH4bRzqwJ
 
-**License note (from `main.cpp`):** Non-commercial use; modify and share freely.
+**License:** CC BY-NC-SA 4.0, see `LICENSE`; third-party parts in `THIRD_PARTY.md`.

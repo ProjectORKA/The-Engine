@@ -1,4 +1,5 @@
 #include "UiValidation.hpp"
+#include "../Authoring/UiComponentExpander.hpp"
 #include "../Inspector/UiLayoutDebugOverlay.hpp"
 #include "../Layout/UiOverflowController.hpp"
 #include "../Render/UiDisplayList.hpp"
@@ -11,6 +12,8 @@
 #include <chrono>
 #include <cmath>
 #include <exception>
+#include <filesystem>
+#include <fstream>
 #include <memory>
 
 namespace Ui::Testing
@@ -1525,6 +1528,89 @@ namespace Ui::Testing
 			context.check(commands.invoke("Rows.Activate", {}) && activations == 1,
 				"typed allowlisted command invokes");
 		}
+
+		void componentExpandSurvivesReallocation(CaseContext& context)
+		{
+			const Path directory = std::filesystem::temp_directory_path() / "orka-ui-component-expand";
+			std::error_code ioError;
+			std::filesystem::remove_all(directory, ioError);
+			std::filesystem::create_directories(directory, ioError);
+			const Path fragmentPath = directory / "score-chip.ui.html";
+			{
+				std::ofstream stream(fragmentPath, std::ios::binary);
+				stream << "<ui><div id=\"chip-root\" class=\"from-fragment\">";
+				for (Int index = 0; index < 48; ++index)
+					stream << "<label>row</label>";
+				stream << "</div></ui>";
+				context.check(stream.good(), "component fragment written");
+			}
+
+			UiComponentRegistry registry;
+			registry.registerComponent("score-chip", fragmentPath);
+
+			const UiMarkupParseResult parsed = UiMarkupParser::parse(
+				"<ui><div id=\"shell\"><score-chip id=\"player-score\" class=\"from-host\" /></div></ui>",
+				"expand-realloc.ui.html");
+			context.check(parsed.valid, "component host markup parses");
+			if (!parsed.valid)
+			{
+				std::filesystem::remove_all(directory, ioError);
+				return;
+			}
+
+			UiMarkupDocument document;
+			document.rootIndex = parsed.document.rootIndex;
+			document.nodes.reserve(parsed.document.nodes.size());
+			for (const UiMarkupNode& node : parsed.document.nodes)
+				document.nodes.push_back(node);
+			const SizeT packedCapacity = document.nodes.capacity();
+
+			Vector<UiDiagnostic> diagnostics;
+			const Bool expanded = expandRegisteredComponents(
+				document, directory, registry, UiTemplateBudgets{}, diagnostics);
+			String diagnosticText;
+			for (const UiDiagnostic& diagnostic : diagnostics)
+			{
+				if (!diagnosticText.empty()) diagnosticText += "; ";
+				diagnosticText += diagnostic.message;
+			}
+			context.check(expanded, "component expansion succeeds", "true", diagnosticText);
+			context.check(document.nodes.capacity() > packedCapacity,
+				"component clone reallocates the node vector");
+
+			UInt shellIndex = maxUInt;
+			UInt scoreIndex = maxUInt;
+			UInt liveScoreCount = 0;
+			for (UInt index = 0; index < document.nodes.size(); ++index)
+			{
+				const UiMarkupNode& node = document.nodes[index];
+				if (node.id == "shell") shellIndex = index;
+				if (node.kind == UiMarkupNodeKind::Comment) continue;
+				if (node.id != "player-score") continue;
+				scoreIndex = index;
+				++liveScoreCount;
+				Bool hostClass = false;
+				Bool fragmentClass = false;
+				for (const String& className : node.classes)
+				{
+					if (className == "from-host") hostClass = true;
+					if (className == "from-fragment") fragmentClass = true;
+				}
+				context.check(hostClass, "instance class copied onto expanded root");
+				context.check(fragmentClass, "fragment class kept on expanded root");
+			}
+			context.check(liveScoreCount == 1, "instance id copied onto one live node");
+			context.check(shellIndex != maxUInt && scoreIndex != maxUInt,
+				"expanded score stays parented");
+			if (shellIndex != maxUInt && scoreIndex != maxUInt)
+			{
+				Bool parented = false;
+				for (const UInt child : document.nodes[shellIndex].children)
+					if (child == scoreIndex) parented = true;
+				context.check(parented, "host parent points at expanded fragment");
+			}
+			std::filesystem::remove_all(directory, ioError);
+		}
 	}
 
 	void tablerIconRasterization(CaseContext& context)
@@ -1879,6 +1965,7 @@ namespace Ui::Testing
 			{ "measured-painted-text-agreement", measuredPaintedTextAgreement },
 			{ "hot-reload-retains-valid-bundle", hotReloadRetainsPrevious },
 			{ "authored-runtime-integration", authoredRuntimeIntegration },
+			{ "component-expand-survives-reallocation", componentExpandSurvivesReallocation },
 			{ "tabler-icon-rasterization", tablerIconRasterization },
 		};
 		for (SizeT index = 0; index < cases.size(); ++index)
