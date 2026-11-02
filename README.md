@@ -26,3 +26,7 @@ Or take a look at our website: [project-orka.com](https://project-orka.com)
 * [ASSIMP](https://www.assimp.org/) - Mesh Loader
 * [STB IMAGE](https://github.com/nothings/stb) - Image loading
 * [OPTICK](https://github.com/bombomby/optick) - Profiling
+
+## License
+Project ORKA is licensed under [CC BY-NC-SA 4.0](LICENSE): free to use, modify and share for non-commercial purposes, with credit, and modified versions must use the same license.
+Third-party code, fonts and assets keep their own licenses, listed in [THIRD_PARTY.md](THIRD_PARTY.md).

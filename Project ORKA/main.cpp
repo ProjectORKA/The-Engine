@@ -13,8 +13,9 @@
 //  https://discord.gg/NUH4bRzqwJ
 
 //	Legal stuff:
-//	You can do whatever you want as long as it's not used commercially!
-//	Modify, hack and tinker around as you please.
+//	Project ORKA is licensed under CC BY-NC-SA 4.0 (see LICENSE in the repository root).
+//	Modify, hack and tinker around as you please, just give credit, keep it non-commercial
+//	and share your changes under the same license. Third-party parts: see THIRD_PARTY.md.
 //	If you've got something that you would like to share, you can upload your work to Project ORKA
 //  (There's no simple process yet, so if you don't know how to make pull requests, just get in touch with us.)
 

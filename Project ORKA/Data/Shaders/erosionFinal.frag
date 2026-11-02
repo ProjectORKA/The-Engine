@@ -1,3 +1,12 @@
+// Terrain erosion demo: a port of third-party Shadertoy code, not original ORKA code.
+//  - Based on "Terrain Erosion Noise" by Fewes, https://www.shadertoy.com/view/7ljcRW,
+//    a fork of "Eroded Terrain Noise" by clayjohn, https://www.shadertoy.com/view/MtGcWh
+//    (MIT License, Copyright 2020 Clay John).
+//  - noised(): "Noise - Gradient - 2D - Deriv" by Inigo Quilez, https://www.shadertoy.com/view/XdXBRH (MIT License).
+//  - boxIntersection(): technique from Inigo Quilez, https://iquilezles.org/articles/intersectors
+//  - RNM(): Reoriented Normal Mapping (Barre-Brisebois & Hill, 2012).
+// This file is part of the erosion demo set and is shared under CC BY-NC-SA 3.0 like erosionBufferA.frag.
+// Full license texts and notices: THIRD_PARTY.md in the repository root.
 
 //! #include "uniforms.glsl"
 

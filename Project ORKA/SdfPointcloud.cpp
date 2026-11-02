@@ -145,8 +145,6 @@ void SdfPointcloudRenderer::runHoleFillCompute(Renderer& renderer, const IVec2 s
 {
 	pointCloudBuffer.bindBase(renderer.openGlContext, PointSsboBinding);
 	renderer.bindImageTexture(0, sdfFramebuffer.getColorTextureID(), ImageAccess::ReadWrite, SizedInternalFormat::RGBA32F);
-	renderer.useTexture("noise", 1);
-	renderer.useTexture("terrainNoise", 2);
 	renderer.useShader("sdfPointcloudFill");
 
 	const UInt groupsX = (static_cast<UInt>(size.x) + 7u) / 8u;

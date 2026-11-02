@@ -125,6 +125,7 @@ When editing `Project ORKA/UI/`, `Project ORKA/Data/UI/`, UI samples, game launc
 - Make focused edits only for the requested task—but **within that scope**, still update all affected call sites and avoid leaving parallel legacy implementations (see [Discover, Reuse, and Keep Call Sites Current](#discover-reuse-and-keep-call-sites-current)).
 - Do not refactor unrelated files "while here."
 - Do not introduce new third-party dependencies unless explicitly requested.
+- Do not paste third-party code or assets (Shadertoy shaders, snippets, textures, fonts) without checking the license first. Shadertoy defaults to CC BY-NC-SA 3.0 and some authors forbid reuse entirely. Credit the source in the file and add it to `THIRD_PARTY.md`; the project license is in `LICENSE`.
 - Do not run destructive git commands.
 - If project appears dirty, avoid reverting unrelated local changes.
 - Never write build output, logs, or scratch files to the repo root (one-off `cl.exe` / launch redirects included); use your temp dir or `x64/`.

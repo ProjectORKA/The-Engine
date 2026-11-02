@@ -1,3 +1,6 @@
+// Erosion demo tonemap. Tonemap_ACES(): Krzysztof Narkowicz's ACES filmic curve fit (2016).
+// Part of the erosion demo set, shared under CC BY-NC-SA 3.0 like erosionBufferA.frag.
+// Full license texts and notices: THIRD_PARTY.md in the repository root.
 //! #include "uniforms.glsl"
 
 layout(location = 0) out vec4 fragmentColor;

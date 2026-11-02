@@ -1,3 +1,12 @@
+// Terrain erosion demo: a port of third-party Shadertoy code, not original ORKA code.
+//  - Based on "Terrain Erosion Noise" by Fewes, https://www.shadertoy.com/view/7ljcRW,
+//    a fork of "Eroded Terrain Noise" by clayjohn, https://www.shadertoy.com/view/MtGcWh
+//    (MIT License, Copyright 2020 Clay John).
+//  - noised(): "Noise - Gradient - 2D - Deriv" by Inigo Quilez, https://www.shadertoy.com/view/XdXBRH (MIT License).
+//  - Ridges() / Erosion(): adapted from guil's "Gavoronoise", https://www.shadertoy.com/view/llsGWl,
+//    licensed CC BY-NC-SA 3.0 (https://creativecommons.org/licenses/by-nc-sa/3.0/).
+// Because of the Gavoronoise part, this file as a whole is shared under CC BY-NC-SA 3.0.
+// Full license texts and notices: THIRD_PARTY.md in the repository root.
 
 //! #include "uniforms.glsl"
 
