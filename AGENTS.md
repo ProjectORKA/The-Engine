@@ -127,6 +127,8 @@ When editing `Project ORKA/UI/`, `Project ORKA/Data/UI/`, UI samples, game launc
 - Do not introduce new third-party dependencies unless explicitly requested.
 - Do not run destructive git commands.
 - If project appears dirty, avoid reverting unrelated local changes.
+- Never write build output, logs, or scratch files to the repo root (one-off `cl.exe` / launch redirects included); use your temp dir or `x64/`.
+- `Project ORKA/Cache/` is engine-generated (AI runtimes, configs, user saves) and gitignored: never commit it. Defaults that must ship go in `Data/` and get seeded into Cache at runtime.
 
 ## Repository critique and improvement ideas
 

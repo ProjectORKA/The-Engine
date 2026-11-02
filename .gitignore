@@ -272,7 +272,8 @@ __pycache__/
 *.blend2
 *.blend3
 *.save
-/Project ORKA/Cache/Meshes/dnd.mesh
+# Engine-generated output (downloaded AI runtimes, configs, user saves). See ResourceManager.cpp.
+/Project ORKA/Cache/
 /Project ORKA/Data/DungeonsAndDiscord/dnd.fbx
 
 # Optional advanced text backend libraries built by vcpkg. The install root has
