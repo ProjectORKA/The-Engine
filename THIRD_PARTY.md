@@ -37,7 +37,7 @@ Project ORKA itself is licensed under CC BY-NC-SA 4.0 (see `LICENSE`). The items
 
 | File | Source | License |
 |---|---|---|
-| `Data/Textures/milky-way.jpg` | Most likely the "Stars + Milky Way" texture from Solar System Scope, https://www.solarsystemscope.com/textures/ (unconfirmed: the 8192x4096 size matches, but the image has no embedded credit) | CC BY 4.0, https://creativecommons.org/licenses/by/4.0/ |
+| `Data/Textures/milky-way.jpg` | "Stars + Milky Way" texture from Solar System Scope, https://www.solarsystemscope.com/textures/ (source unconfirmed) | CC BY 4.0, https://creativecommons.org/licenses/by/4.0/ |
 
 All other meshes, textures, HDRs and sounds in `Project ORKA/Data/` are believed to be made by Project ORKA contributors. If you know otherwise, add the source here.
 

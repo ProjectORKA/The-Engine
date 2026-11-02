@@ -19,13 +19,15 @@ Or take a look at our website: [project-orka.com](https://project-orka.com)
 * Transparent framebuffer
 * Separate input thread (main thread) (even lower input lag)
 
-### Requirements (already included):
-* [GLFW](https://www.glfw.org/) - Windows
-* [GLEW](http://glew.sourceforge.net/) - OpenGL
-* [GLM](https://glm.g-truc.net/0.9.9/index.html) - Math
-* [ASSIMP](https://www.assimp.org/) - Mesh Loader
-* [STB IMAGE](https://github.com/nothings/stb) - Image loading
-* [OPTICK](https://github.com/bombomby/optick) - Profiling
+## Getting started
+Windows + Visual Studio 2022 (Desktop development with C++). Libraries are installed through [vcpkg](https://vcpkg.io); the list is in `libraries.txt`. The [ORKA Launcher](https://www.project-orka.com/getting-started) sets this up automatically.
+
+Build from the repository root:
+```
+powershell -ExecutionPolicy Bypass -File .\scripts\build-orka.ps1
+```
+
+Main libraries: [GLFW](https://www.glfw.org/) (windows), [GLEW](https://glew.sourceforge.net/) (OpenGL), [GLM](https://github.com/g-truc/glm) (math), [Assimp](https://www.assimp.org/) (meshes), [FreeType](https://freetype.org/) (fonts), [OpenAL Soft](https://openal-soft.org/) (audio), [ASIO](https://think-async.com/Asio/) (networking), [Optick](https://github.com/bombomby/optick) (profiling, included).
 
 ## License
 Project ORKA is licensed under [CC BY-NC-SA 4.0](LICENSE): free to use, modify and share for non-commercial purposes, with credit, and modified versions must use the same license.
