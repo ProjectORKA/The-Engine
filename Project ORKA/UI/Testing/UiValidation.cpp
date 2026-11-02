@@ -534,8 +534,9 @@ namespace Ui::Testing
 
 			UiEvent move;
 			move.type = UiEventType::PointerMove;
+			// Hover the row's free space past the items; the row center lands on the second item.
 			move.position = DVec2(
-				rowNode->computed.position.x + rowNode->computed.size.x * 0.5,
+				rowNode->computed.position.x + rowNode->computed.size.x - 4,
 				rowNode->computed.position.y + rowNode->computed.size.y * 0.5);
 			(void)router.dispatch(move);
 			context.check(router.hoveredNode().index == row.index,
@@ -1201,17 +1202,21 @@ namespace Ui::Testing
 				layout.setStyle(child, childStyle);
 			}
 
-			layout.layout(UiConstraints::tight(Vec2(220, 120)));
+			// Tall enough that both 100px boxes keep their size; positions are absolute.
+			layout.layout(UiConstraints::tight(Vec2(220, 220)));
 			const UiNode* centeredChild = document.get(columnChild);
 			const UiNode* cornerChild = document.get(rowChild);
-			context.check(centeredChild && cornerChild, "align fixture laid out");
-			context.check(centeredChild && std::abs(centeredChild->computed.position.x - 40) < 0.1f,
+			const UiNode* rowBoxNode = document.get(rowBox);
+			context.check(centeredChild && cornerChild && rowBoxNode, "align fixture laid out");
+			if (!centeredChild || !cornerChild || !rowBoxNode) return;
+			const Vec2 cornerOffset = cornerChild->computed.position - rowBoxNode->computed.position;
+			context.check(std::abs(centeredChild->computed.position.x - 40) < 0.1f,
 				"align-center positions child on cross axis");
-			context.check(centeredChild && std::abs(centeredChild->computed.position.y - 40) < 0.1f,
+			context.check(std::abs(centeredChild->computed.position.y - 40) < 0.1f,
 				"align-center positions child on main axis");
-			context.check(cornerChild && std::abs(cornerChild->computed.position.x - 80) < 0.1f,
+			context.check(std::abs(cornerOffset.x - 80) < 0.1f,
 				"row align-top-right positions child on main axis");
-			context.check(cornerChild && std::abs(cornerChild->computed.position.y - 0) < 0.1f,
+			context.check(std::abs(cornerOffset.y - 0) < 0.1f,
 				"row align-top-right positions child on cross axis");
 		}
 

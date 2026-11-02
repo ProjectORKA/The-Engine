@@ -19,6 +19,13 @@ namespace Ui
 		Float crossValue(const Vec2 value, const UiAxis axis) { return axis == UiAxis::Row ? value.y : value.x; }
 		void setMain(Vec2& value, const UiAxis axis, const Float amount) { (axis == UiAxis::Row ? value.x : value.y) = amount; }
 		void setCross(Vec2& value, const UiAxis axis, const Float amount) { (axis == UiAxis::Row ? value.y : value.x) = amount; }
+		// CSS: align stretch only fills an axis whose size is auto; explicit sizes win.
+		Bool stretchesWidth(const UiLayoutStyle& style) { return style.width.kind == UiSizeKind::Auto; }
+		Bool stretchesHeight(const UiLayoutStyle& style) { return style.height.kind == UiSizeKind::Auto; }
+		Bool stretchesCross(const UiLayoutStyle& style, const UiAxis axis)
+		{
+			return axis == UiAxis::Row ? stretchesHeight(style) : stretchesWidth(style);
+		}
 		Float mainStart(const UiEdges& edges, const UiAxis axis) { return axis == UiAxis::Row ? edges.left : edges.top; }
 		Float mainEnd(const UiEdges& edges, const UiAxis axis) { return axis == UiAxis::Row ? edges.right : edges.bottom; }
 		Float crossStart(const UiEdges& edges, const UiAxis axis) { return axis == UiAxis::Row ? edges.top : edges.left; }
@@ -34,9 +41,13 @@ namespace Ui
 			return left.x == right.x && left.y == right.y;
 		}
 
-		[[nodiscard]] UiOverflow scrollClipPolicy(const UiOverflow overflow)
+		// CSS: `visible` paired with a non-visible axis computes to `auto`, so both axes clip
+		// (children must not paint over the other axis's scrollbar gutter).
+		[[nodiscard]] UiOverflow scrollClipPolicy(const UiOverflow overflow, const UiOverflow otherAxis)
 		{
-			return overflowAllowsScrolling(overflow) ? UiOverflow::Hidden : overflow;
+			if (overflowAllowsScrolling(overflow)) return UiOverflow::Hidden;
+			if (overflow == UiOverflow::Visible && otherAxis != UiOverflow::Visible) return UiOverflow::Hidden;
+			return overflow;
 		}
 
 		void intersectClipAxis(
@@ -981,9 +992,9 @@ namespace Ui
 		// not known yet, so assume unbounded content for auto overflow.
 		UiRect childClip = clip;
 		intersectClipAxis(childClip, scrollport, UiAxis::Row,
-			scrollClipPolicy(nodeStyle.overflowX), uiLayoutInfinity, scrollport.size.x);
+			scrollClipPolicy(nodeStyle.overflowX, nodeStyle.overflowY), uiLayoutInfinity, scrollport.size.x);
 		intersectClipAxis(childClip, scrollport, UiAxis::Column,
-			scrollClipPolicy(nodeStyle.overflowY), uiLayoutInfinity, scrollport.size.y);
+			scrollClipPolicy(nodeStyle.overflowY, nodeStyle.overflowX), uiLayoutInfinity, scrollport.size.y);
 
 		switch (nodeStyle.display)
 		{
@@ -1006,10 +1017,10 @@ namespace Ui
 		item->computed.scrollExtent = glm::max(extent, Vec2(0));
 
 		intersectClipAxis(clip, scrollport, UiAxis::Row,
-			scrollClipPolicy(nodeStyle.overflowX),
+			scrollClipPolicy(nodeStyle.overflowX, nodeStyle.overflowY),
 			item->computed.scrollExtent.x, scrollport.size.x);
 		intersectClipAxis(clip, scrollport, UiAxis::Column,
-			scrollClipPolicy(nodeStyle.overflowY),
+			scrollClipPolicy(nodeStyle.overflowY, nodeStyle.overflowX),
 			item->computed.scrollExtent.y, scrollport.size.y);
 		const Bool clipChanged = !equalRect(nodeState.cachedClip, clip);
 		item->computed.clipPosition = clip.position;
@@ -1149,7 +1160,7 @@ namespace Ui
 				Float childCross = flexItem.cross;
 				if (alignment == UiAlign::Center) crossOffset += (line.cross - outerCross) * 0.5f;
 				else if (alignment == UiAlign::End) crossOffset += line.cross - outerCross;
-				else if (alignment == UiAlign::Stretch)
+				else if (alignment == UiAlign::Stretch && stretchesCross(childStyle, axis))
 					childCross = std::max(0.0f, line.cross - crossStart(flexItem.margin, axis) - crossEnd(flexItem.margin, axis));
 				else if (alignment == UiAlign::Baseline && flexItem.baseline >= 0)
 					crossOffset = line.baseline - flexItem.baseline;
@@ -1234,7 +1245,12 @@ namespace Ui
 			for (UInt y = placement.row; y < placement.row + placement.rowSpan; ++y) height += rowSizes[y] + parentStyle.gap.y;
 			const Vec2 cellSize = glm::max(Vec2(width - childStyle.margin.horizontal(), height - childStyle.margin.vertical()), Vec2(0));
 			const UiAlign alignment = childStyle.alignSelf == UiAlign::Auto ? parentStyle.alignItems : childStyle.alignSelf;
-			Vec2 size = alignment == UiAlign::Stretch ? cellSize : glm::min(measured.preferred, cellSize);
+			Vec2 size = glm::min(measured.preferred, cellSize);
+			if (alignment == UiAlign::Stretch)
+			{
+				if (stretchesWidth(childStyle)) size.x = cellSize.x;
+				if (stretchesHeight(childStyle)) size.y = cellSize.y;
+			}
 			Vec2 alignmentOffset(0);
 			if (alignment == UiAlign::Center) alignmentOffset = (cellSize - size) * 0.5f;
 			else if (alignment == UiAlign::End) alignmentOffset = cellSize - size;
@@ -1257,9 +1273,12 @@ namespace Ui
 			const UiIntrinsicMeasure measured = measureNode(child, UiConstraints::loose(contentRect.size), depth);
 			const UiAlign alignment = childStyle.alignSelf == UiAlign::Auto ? parentStyle.alignItems : childStyle.alignSelf;
 			Vec2 size = measured.preferred;
-			if (alignment == UiAlign::Stretch)
-				size = glm::max(contentRect.size - childStyle.margin.total(), Vec2(0));
 			const Vec2 available = glm::max(contentRect.size - childStyle.margin.total(), Vec2(0));
+			if (alignment == UiAlign::Stretch)
+			{
+				if (stretchesWidth(childStyle)) size.x = available.x;
+				if (stretchesHeight(childStyle)) size.y = available.y;
+			}
 			Vec2 offset(0);
 			if (alignment == UiAlign::Center) offset = (available - glm::min(size, available)) * 0.5f;
 			else if (alignment == UiAlign::End) offset = available - glm::min(size, available);
